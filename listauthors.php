@@ -70,7 +70,7 @@ if ($list_pos>0)
 </form>
 
 <table border='1' align='center' class='tbl_data'>
-<tr><th colspan="3" class='tbl_head'>Author name</th><th class='tbl_head'>Status</th></tr>
+<tr><th class='tbl_head'>Author name</th><th class='tbl_head'>Status</th></tr>
 <?php
 // Process the output of the query
 for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
@@ -88,7 +88,7 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 }
 
 ?>
-<tr><td colspan="3"><a href="edit_author.php?author=0">Add author</a></td></tr>
+<tr><td colspan="2"><a href="edit_author.php?author=0">Add author</a></td></tr>
 </table>
 
 <?php
