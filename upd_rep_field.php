@@ -18,16 +18,44 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.1 2005/02/07 15:15:10 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.2 2005/02/07 15:34:42 mlutfy Exp $
 */
 
 include('inc/inc.php');
-include_lcm('inc_lang');
 
 // Clean the POST values
-$rep = intval($_GET['rep']);
-$order = intval($_GET['order']);
+$rep = intval($_REQUEST['rep']);
+// $order = intval($_REQUEST['order']);
 
+if (isset($_REQUEST['remove'])) {
+	$remove = $_REQUEST['remove']; // = { 'column', 'line' }
+
+	if ($remove == 'column') {
+		$id_column = intval($_REQUEST['id_column']);
+	
+		if (! $id_column)
+			die ("remove column: missing valid 'id_column'");
+	
+		$query = "DELETE FROM lcm_rep_col
+					WHERE id_report = " . $rep . "
+					AND id_column = " . $id_column;
+	
+		lcm_query($query);
+	} else if ($remove == 'line') {
+		$id_line = intval($_REQUEST['id_line']);
+	
+		if (! $id_line)
+			die ("remove line: missing valid 'id_line'");
+		
+		$query = "DELETE FROM lcm_rep_line
+					WHERE id_report = " . $rep . "
+					AND id_line = " . $id_line;
+	
+		lcm_query($query);
+	}
+}
+
+/*
 if (($rep>0) && ($order)) {
 	// Remove the column
 	$q = "DELETE FROM lcm_rep_col
@@ -42,7 +70,7 @@ if (($rep>0) && ($order)) {
 				AND col_order>$order)";
 	$result = lcm_query($q);
 
-}
+} */
 
 header("Location: " . $GLOBALS['HTTP_REFERER']);
 
