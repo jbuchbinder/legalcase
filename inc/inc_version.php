@@ -111,6 +111,9 @@ $convert_command = 'convert';
 // Should we debug in data/lcm.log ?
 $debug = true;
 
+// Shoud we highligh translation strings? (helps to find non-translated strings)
+$debug_tr = false;
+
 // Should SQL queries run in debug mode?
 $sql_debug = true;
 
@@ -148,10 +151,10 @@ if (@file_exists('inc/my_options.php'))
 	include('inc/my_options.php');
 
 // Current version of LCM
-$lcm_version = 0.21;
+$lcm_version = 0.22;
 
 // Current version of LCM shown on screen
-$lcm_version_shown = "0.2.1";
+$lcm_version_shown = "0.2.2";
 
 // Current version of LCM database
 $lcm_db_version = 15;
@@ -780,7 +783,7 @@ function is_valid_email($address) {
 //
 function _T($text, $args = '') {
 	include_lcm('inc_lang');
-	return traduire_chaine($text, $args);
+	return translate_string($text, $args);
 }
 
 // Strings in the process of being translated
