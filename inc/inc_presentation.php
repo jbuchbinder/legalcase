@@ -1823,7 +1823,7 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 	echo "<div class='bandeau-icones' >\n";
 	echo "<table width='$largeur' cellpadding='0' cellspacing='0' border='0' align='center'><tr>\n";
 
-	icone_bandeau_principal (_T('icone_a_suivre'), "index.php3", "asuivre-48.png", "asuivre", $rubrique, "", "asuivre", $sous_rubrique);
+	icone_bandeau_principal (_T('icone_a_suivre'), "index.php", "asuivre-48.png", "asuivre", $rubrique, "", "asuivre", $sous_rubrique);
 	icone_bandeau_principal (_T('icone_edition_site'), "naviguer.php3", "documents-48$spip_lang_rtl.png", "documents", $rubrique, "", "rubriques", $sous_rubrique);
 	icone_bandeau_principal (_T('titre_forum'), "forum.php3", "messagerie-48.png", "redacteurs", $rubrique, "", "forum-interne", $sous_rubrique);
 	icone_bandeau_principal (_T('icone_auteurs'), "auteurs.php3", "redacteurs-48.png", "auteurs", $rubrique, "", "redacteurs", $sous_rubrique);
