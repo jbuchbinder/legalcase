@@ -18,11 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.16 2005/03/23 22:24:43 antzi Exp $
+	$Id: org_det.php,v 1.17 2005/03/24 14:45:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
+include_lcm('inc_acc');
+include_lcm('inc_contacts');
 
 $org = (isset($_REQUEST['org']) ? intval($_REQUEST['org']) : 0);
 
@@ -49,10 +50,10 @@ if ($row = lcm_fetch_array($result)) {
 
 	// Show tabs
 	$groups = array(
-				'general' => _T('org_tab_general'),
-				'representatives' => _T('org_tab_representatives'),
-				'cases' => _T('org_tab_cases'),
-				'attachments' => _T('org_tab_attachments'));
+				'general' => _T('generic_tab_general'),
+				'representatives' => _T('generic_tab_representatives'),
+				'cases' => _T('generic_tab_cases'),
+				'attachments' => _T('generic_tab_documents'));
 
 	$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 	show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
@@ -68,14 +69,19 @@ if ($row = lcm_fetch_array($result)) {
 		
 			//		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
 			//		echo 'Organisation name: ' . $row['name'] . "<br />\n";
-			echo 'Address: ' . $row['address'] . "<br />\n"; // TRAD
-			echo _Ti('time_input_date_created') . format_date($row['date_creation'], 'short') . "<br />\n";
-			// [ML] echo 'Last update: ' . format_date($row['date_update'], 'short') . "<br />\n";
-		
+			// [ML] Should not be used echo 'Address: ' . $row['address'] . "<br />\n"; // TRAD
+			echo _Ti('time_input_date_creation') . format_date($row['date_creation'], 'full') . "<br />\n";
+
+			// More fields to add
+
+			echo "</p>\n";
+
+			// Show client contacts (if any)
+			show_all_contacts('org', $row['id_org']);
+
 			if ($edit)
-				echo '<br /><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a><br />'; // TRAD
+				echo '<p><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a></p><br />'; // TRAD
 		
-			echo "<br /></p>\n";
 			echo "</fieldset>\n";
 
 			break;
