@@ -81,7 +81,8 @@ else
 	lcm_page_start("New follow-up");
 
 // Show a bit of background on the case
-echo '<ul style="padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2;">';
+
+echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
 
 // Name of case
 $query = "SELECT title
@@ -180,7 +181,7 @@ echo "</ul>\n";
 			
 			?>
 			</select></td></tr>
-		<tr><td>Description:</td>
+		<tr><td valign="top">Description:</td>
 			<td><textarea name="description" rows="15" cols="40" class="frm_tarea"><?php
 			echo clean_output($fu_data['description']); ?></textarea></td></tr>
 		<tr><td>Sum billed:</td>
