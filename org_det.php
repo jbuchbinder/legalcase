@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.10 2005/01/21 16:35:51 mlutfy Exp $
+	$Id: org_det.php,v 1.11 2005/02/15 08:40:37 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -56,7 +56,8 @@ if ($row = lcm_fetch_array($result)) {
 	//		echo 'Organisation name: ' . $row['name'] . "<br />\n";
 	echo 'Address: ' . $row['address'] . "<br />\n";
 	echo 'Created on: ' . format_date($row['date_creation'], 'short') . "<br />\n";
-	echo 'Last update: ' . format_date($row['date_update'], 'short') . "<br />\n";
+	// [ML] echo 'Last update: ' . format_date($row['date_update'], 'short') . "<br />\n";
+
 	if ($edit)
 		echo '<br /><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a><br />';
 
@@ -69,13 +70,8 @@ if ($row = lcm_fetch_array($result)) {
 	<div class="prefs_column_menu_head"><?php echo _T('org_subtitle_representatives'); ?></div>
 
 		<br />
-		<table class="tbl_usr_dtl">
-		<tr>
-			<th class="heading">Representative(s):</th>
-			<th class="heading">&nbsp;</th>
-		</tr>
-<?php
 
+<?php
 	// Show organisation representative(s)
 	$q = "SELECT cl.id_client, name_first, name_middle, name_last
 			FROM lcm_client_org as clo, lcm_client as cl
@@ -83,16 +79,26 @@ if ($row = lcm_fetch_array($result)) {
 				AND clo.id_client = cl.id_client";
 
 	$result = lcm_query($q);
+	$show_table = false;
+
+	if (lcm_num_rows($result)) {
+		$show_table = true;
+?>
+		<table class="tbl_usr_dtl">
+		<tr>
+			<th class="heading">Representative(s):</th>
+		</tr>
+<?php
+	}
 
 	while ($row = lcm_fetch_array($result)) {
 		echo '<tr><td><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 		echo $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "</a></td>\n<td>";
-		if ($edit)
-			echo '<a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">Edit</a>';
 		echo "</td></tr>\n";
 	}
 
-	echo "</table>";
+	if ($show_table)
+		echo "</table>";
 
 	if ($edit)
 		echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />";
