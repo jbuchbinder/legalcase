@@ -29,8 +29,11 @@ if (count($errors)) {
     header("Location: $HTTP_REFERER");
     exit;
 } else {
-    $fl="date_start=\"$date_start\",date_end='$date_end',type='$type',description='$description'";
-    $fl.=",sumbilled='$sumbilled'";
+    $fl="date_start='" . addslashes($fu_data['date_start']) . "',
+		date_end='" . addslashes($fu_data['date_end']) . "',
+		type='" . $fu_data['type'] . "',
+		description='" . addslashes($fu_data['description']) . ",
+    	sumbilled='" . addslashes($fu_data['sumbilled']);
 
     if ($id_followup>0) {
 		// Check access rights
