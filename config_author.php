@@ -32,11 +32,7 @@ function read_author_data($id_author) {
 
 function show_author_form() {
 	global $author_session;
-
-	$usr = read_author_data($author_session['id_author']);
-	$prefs = ($usr['prefs']) ? unserialize($usr['prefs']) : array();
-
-	// TODO: Show author information
+	global $prefs;
 
 ?>
 <form name="upd_user_profile" method="post" action="config_author.php">
