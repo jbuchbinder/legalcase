@@ -1,15 +1,31 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: lcm_pass.php,v 1.15 2005/03/21 09:52:07 mlutfy Exp $
+*/
+
 include('inc/inc_version.php');
 
 include_lcm('inc_meta');
 include_lcm('inc_presentation');
 include_lcm('inc_session');
-// include_lcm('inc_filters');
-// include_lcm('inc_text'); // what for?
-// include_lcm('inc_mail');
-// include_lcm('inc_access'); // may be limited to only a few parts
-
 
 // Returns a unique username based on what the user proposed
 // For example, if username "joe" exists, it will return "joe1".
@@ -80,10 +96,10 @@ function reset_pass($my_p, $my_password = 0) {
 		echo show_all_errors($errors);
 		
 		echo "<form name='form_newpass' id='form_newpass' action='lcm_pass.php' method='post'>\n";
-		echo "<input type='hidden' name='p' value='" .  htmlspecialchars($my_p) . "'>\n";
+		echo "<input type='hidden' name='p' value='" . htmlspecialchars($my_p) . "' />\n";
 		echo '<fieldset><p><label for="password">' . _T('pass_enter_new_pass') .  _T('typo_column') . "</label><br/>\n";
-		echo "<input type='password' class='fondo' name='password' id='password' size='30' value=''> ";
-		echo '<input type="submit" class="fondl" name="validate" value="' . _T('button_validate') . "\">\n";
+		echo "<input type='password' class='fondo' name='password' id='password' size='30' value='' /> ";
+		echo '<input type="submit" class="fondl" name="validate" value="' . _T('button_validate') . "\" />\n";
 		echo "</fieldset>\n";
 		echo "</p></form>\n";
 
@@ -167,12 +183,12 @@ function print_pass_forgotten_form() {
 	echo "<p>" . _T('pass_info_enter_email') . "</p>\n";
 
 	echo "<form action='lcm_pass.php' name='form_forgotten' id='form_forgotten' method='post'>\n";
-	echo "<div align='right'>\n";
-	echo "<input type='text' class='fondo' name='user_email' value=''>\n";
-	echo "<input type='hidden' name='pass_forgotten' value='yes'>\n";
-	echo "<input type=submit class='fondl' name='validate' "
-		. "value='" . _T('button_validate') . "'>\n";
-	echo "</div>\n</form>\n";
+	echo "<input type='hidden' name='pass_forgotten' value='yes' />\n";
+	echo "<input type='text' class='txt_lmnt' size='40' name='user_email' value='' />\n";
+	echo "<button type='submit' class='simple_form_btn' name='validate'>" . _T('button_validate') . "</button>\n";
+
+	echo "</form>\n";
+
 	echo "<script type=\"text/javascript\"><!--
 			document.form_forgotten.user_email.focus();
 			//--></script>\n";
