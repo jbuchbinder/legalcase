@@ -121,6 +121,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_more_than_three' => '(More than 3 characters)',
 'info_name_of_person' => 'Name',
 'info_no' => 'no',
+'info_not_available' => 'n/a',
 'info_or' => 'or',
 'info_password_confirm' => '(Type your password once again in order to avoid mistakes)',
 'info_technical_problem_database' => 'The connection to the database failed. It is possible that either is it not running or it has refused the login/password. Please consult the message provided below (if any) for more information.',
@@ -167,6 +168,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_warning_update_impossible' => '<b>Warning!</b> Failed to update the SQL database from version @old_version@ to version @version@, maybe due to a permissions problem on the database. Please contact your administrator. A full technical listing of the possible errors is provided below.',
 
 
+// K
+'kw_followups_assignment_title' => 'Assignment',
+'kw_followups_conclusion_title' => 'Conclusion',
+'kw_followups_consultation_title' => 'Consultation',
+'kw_followups_correspondance_title' => 'Correspondance',
+'kw_followups_delay_title' => 'Delay',
+'kw_followups_other_title' => 'Other',
+'kw_followups_suspension_title' => 'Suspension',
+'kw_followups_travel_title' => 'Travel',
+
+
 // L
 'legal_reason' => 'Legal reason',
 'login_access_denied' => 'Access denied',
@@ -185,6 +197,23 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_this_way' => 'You are registered... this way...',
 'login_title_login' => 'Login',
 'login_without_cookie' => 'Identification without cookie',
+
+
+// M
+'menu_admin' => 'Administration',
+'menu_admin_archives' => 'Archives',
+'menu_admin_keywords' => 'Keywords',
+'menu_admin_reports' => 'Reports',
+'menu_admin_siteconf' => 'Site configuration',
+'menu_calendar' => 'Calendar',
+'menu_main' => 'Main menu',
+'menu_main_authors' => 'Authors',
+'menu_main_cases' => 'Cases',
+'menu_main_clients' => 'Clients',
+'menu_main_org' => 'Organisations',
+'menu_profile' => 'Profile',
+'menu_profile_logout' => 'Logout',
+'menu_profile_preferences' => 'My preferences',
 
 
 // N
@@ -227,6 +256,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_warning_not_registered' => '<b>Error:</b> the address <tt>@user_email@</tt> is not registered in this site.',
 'pass_warning_too_short' => '<b>Error:</b> The password must be more than 5 characters.',
 'pass_warning_unknown_cookie' => '<b>Error:</b> this code is unknown.',
+'person_input_gender' => 'Gender:',
+'person_input_gender_female' => 'female',
+'person_input_gender_male' => 'male',
+'person_input_name_first' => 'Surname:',
+'person_input_name_last' => 'Name:',
+'person_input_name_middle' => 'Middle name:',
 'public' => 'Public',
 
 
@@ -296,6 +331,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_forbidden_area' => 'Forbidden area',
 'warning_operation_failed' => 'The operation failed.',
 'warning_sql_connection_failed' => 'Connection to SQL database server failed.',
+'warning_sql_query_failed' => 'Error in SQL database query.',
 'which_case' => 'Which case?',
 'write' => 'Write'
 
