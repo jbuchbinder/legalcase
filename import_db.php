@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.2 2005/02/01 17:34:44 antzi Exp $
+	$Id: import_db.php,v 1.3 2005/02/02 18:49:19 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -131,6 +131,8 @@ function import_database($input_filename) {
 	// Import data into database tables\
 	//
 	
+	// Change backup dir permissions, so MySQL could read from it.
+	chmod($dir,0755);
 	// Open backup dir
 	if (false === ($dh = opendir("$dir/")))
 		die("System error: Could not open directory '$dir'!");
@@ -157,6 +159,9 @@ function import_database($input_filename) {
 		}
 	}
 	closedir($dh);
+
+	// Change backup dir permissions back
+	chmod($dir,0700);
 
 	// Debugging
 	//lcm_query("use lcm");
