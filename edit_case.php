@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.65 2005/03/23 16:38:50 mlutfy Exp $
+	$Id: edit_case.php,v 1.66 2005/03/23 18:35:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -106,6 +106,27 @@ if (!$existing && isset($_REQUEST['attach_client'])) {
 	}
 }
 
+$attach_org = 0;
+
+if (!$existing && isset($_REQUEST['attach_org'])) {
+	$attach_org = intval($_REQUEST['attach_org']);
+
+	if ($attach_org) {
+		// Fetch name of the organisation
+		$query = "SELECT name
+					FROM lcm_org
+					WHERE id_org = " . $attach_org;
+
+		$result = lcm_query($query);
+		if ($info = lcm_fetch_array($result)) {
+			$_SESSION['case_data']['title'] = $info['name'];
+		} else {
+			die("No such organisation #" . $attach_org);
+		}
+	}
+}
+
+
 // Start page and title
 if ($existing) lcm_page_start(_T('title_case_edit'));
 else lcm_page_start(_T('title_case_new'));
@@ -115,17 +136,30 @@ echo "<div style='float: right'>" . lcm_help("case_edit") . "</div>\n";
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
 
+if ($attach_client || $attach_org)
+	show_context_start();
+
 if ($attach_client) {
-	echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
 	$query = "SELECT id_client, name_first, name_middle, name_last
 				FROM lcm_client
 				WHERE id_client = " . $attach_client;
 	$result = lcm_query($query);
 	while ($row = lcm_fetch_array($result))  // should be only once
-		echo '<li style="list-style-type: none;">' . _T('case_input_for_client') . " " . get_person_name($row) . "</li>\n";
+		echo '<li style="list-style-type: none;">' . _Ti('fu_input_involving_clients') . get_person_name($row) . "</li>\n";
 	
-	echo "</ul>\n";
 }
+
+if ($attach_org) {
+	$query = "SELECT id_org, name
+				FROM lcm_org
+				WHERE id_org = " . $attach_org;
+	$result = lcm_query($query);
+	while ($row = lcm_fetch_array($result))  // should be only once
+		echo '<li style="list-style-type: none;">' . _Ti('fu_input_involving_clients') . $row['name'] . "</li>\n";
+}
+
+if ($attach_client || $attach_org)
+	show_context_end();
 
 // Start edit case form
 echo "<form action=\"upd_case.php\" method=\"post\">
@@ -134,6 +168,9 @@ echo "<form action=\"upd_case.php\" method=\"post\">
 
 if ($attach_client)
 	echo '<input type="hidden" name="attach_client" value="' . $attach_client . '" />' . "\n";
+
+if ($attach_org)
+	echo '<input type="hidden" name="attach_org" value="' . $attach_org . '" />' . "\n";
 
 if ($_SESSION['case_data']['id_case']) {
 	echo "\t<tr><td>" . _T('case_input_id') . "</td><td>" . $_SESSION['case_data']['id_case']

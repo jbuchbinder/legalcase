@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.36 2005/03/22 22:44:46 antzi Exp $
+	$Id: upd_case.php,v 1.37 2005/03/23 18:35:50 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -154,6 +154,14 @@ if (count($_SESSION['errors'])) {
 	if ($_SESSION['case_data']['attach_client']) {
 		header("Location: add_client.php?case=$id_case"
 			. "&clients[]=" .  $_SESSION['case_data']['attach_client'] 
+			. "&ref_sel_client=" . rawurlencode($send_to));
+		exit;
+	}
+
+	// Send to add_org if any org to attach
+	if ($_SESSION['case_data']['attach_org']) {
+		header("Location: add_org.php?case=$id_case"
+			. "&orgs[]=" .  $_SESSION['case_data']['attach_org'] 
 			. "&ref_sel_client=" . rawurlencode($send_to));
 		exit;
 	}

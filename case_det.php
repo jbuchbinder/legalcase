@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.120 2005/03/22 16:50:09 mlutfy Exp $
+	$Id: case_det.php,v 1.121 2005/03/23 18:35:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -578,6 +578,9 @@ if ($case > 0) {
 				break;
 		}
 	} else die(_T('error_no_such_case'));
+
+	$_SESSION['errors'] = array();
+	$_SESSION['case_data'] = array();
 
 	lcm_page_end();
 } else {
