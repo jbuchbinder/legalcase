@@ -62,7 +62,7 @@ function auth() {
 	// Fetch identification data from authentication session
 	if ($cookie_session = $HTTP_COOKIE_VARS['lcm_session']) {
 		if (verifier_session($cookie_session)) {
-			if ($author_session['status'] == 'admin' OR $author_session['status'] == '1comite') {
+			if ($author_session['status'] == 'admin' OR $author_session['status'] == 'normal') {
 				$auth_login = $author_session['username'];
 				$auth_pass_ok = true;
 				$auth_can_disconnect = true;
@@ -137,9 +137,9 @@ function auth() {
 	// [ML] Again, not sure how this is used, but we can ignore it for now
 	// TODO (note: nouveau == new)
 	if ($connect_status == 'nouveau') {
-		$query = "UPDATE lcm_author SET status = '1comite' WHERE id_author = $connect_id_auteur";
-		$result = spip_query($query);
-		$connect_status = '1comite';
+		$query = "UPDATE lcm_author SET status = 'normal' WHERE id_author = $connect_id_auteur";
+		$result = lcm_query($query);
+		$connect_status = 'normal';
 	}
 
 	return true;
