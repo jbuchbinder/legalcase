@@ -38,9 +38,9 @@ function show_config_form($panel) {
 	}
 
 	echo "<ul>\n";
-	echo "<li><a href='config_site.php?panel=general'>" . _T('siteconf_subtitle_general_info') . "</a>" . $html_general . "</li>\n";
-	echo "<li><a href='config_site.php?panel=collab'>" . _T('siteconf_subtitle_collab_work') . "</a>" . $html_collab . "</li>\n";
-	echo "<li><a href='config_site.php?panel=policy'>" .  _T('siteconf_subtitle_policy') . "</a>" . $html_policy . "</li>\n";
+	echo "<li><a href='config_site.php?panel=general' class='content_link'>" . _T('siteconf_subtitle_general_info') . "</a>" . $html_general . "</li>\n";
+	echo "<li><a href='config_site.php?panel=collab' class='content_link'>" . _T('siteconf_subtitle_collab_work') . "</a>" . $html_collab . "</li>\n";
+	echo "<li><a href='config_site.php?panel=policy' class='content_link'>" .  _T('siteconf_subtitle_policy') . "</a>" . $html_policy . "</li>\n";
 	echo "</ul>\n";
 
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
@@ -85,22 +85,22 @@ function show_config_form_general() {
 	// XXX fix css, this was just a test
 	echo "<p class='prefs_column_menu_head'><b><label for='site_name'>" . _T('siteconf_input_site_name') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_site_name') . "</small></p>\n";
-	echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40'/></p>\n";
+	echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
 
 	echo "<p class='prefs_column_menu_head'><b><label for='site_desc'>" . _T('siteconf_input_site_desc') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_site_desc') . "</small></p>\n";
-	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40'/></p>\n";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40' class='search_form_txt' /></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
 	echo "<p><b><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></b></p>\n";
-	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40'/></p>\n";
+	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40' class='search_form_txt' /></p>\n";
 
 	echo "<p><b><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_admin_email') . "</small></p>\n";
-	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40'/></p>\n";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40' class='search_form_txt' /></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
@@ -111,8 +111,8 @@ function show_config_form_general() {
 	echo "<p><b><label for='currency'>" . _T('siteconf_input_currency') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_currency') . "</small></p>\n";
 	echo "<p><small>" . _T('siteconf_warning_currency') . "</small></p>\n";
-	echo "<p align='center'><input type='text' id='currency' name='currency' value='$currency' size='5'/></p>\n";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='center'><input type='text' id='currency' name='currency' value='$currency' size='5' class='search_form_txt' /></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 }
 
@@ -247,7 +247,7 @@ function show_config_form_collab() {
 
 	echo "</ul>\n";
 	echo "</td>\n</tr>\n</table>\n";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 }
 
 function get_yes_no($name, $value = '') {
@@ -300,7 +300,7 @@ function show_config_form_policy() {
 		. "</li>\n";
 	echo "</ul>\n";
 
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	// ** CASES
@@ -323,7 +323,7 @@ function show_config_form_policy() {
 		. "</li>\n";
 	echo "</ul>\n";
 
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	// ** FOLLOW-UPS
@@ -340,7 +340,7 @@ function show_config_form_policy() {
 		. "</li>\n";
 	echo "</ul>\n";
 
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 }
