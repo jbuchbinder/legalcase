@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.1 2005/02/22 09:46:32 antzi Exp $
+	$Id: listapps.php,v 1.2 2005/02/22 23:04:54 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -30,25 +30,87 @@ $q = "SELECT lcm_app.*
 	WHERE lcm_author_app.id_app=lcm_app.id_app
 		AND lcm_author_app.id_author=" . $GLOBALS['author_session']['id_author'];
 $result = lcm_query($q);
-if (lcm_num_rows($result)) {
-	echo "<table>\n";
+
+// Get the number of rows in the result
+$number_of_rows = lcm_num_rows($result);
+if ($number_of_rows) {
+	echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 	echo "\t<tr>";
-	echo '<th>Start time</th>';
-	echo '<th>End time</th>';
-	echo '<th>Type</th>';
-	echo '<th>Title</th>';
-	echo '<th>Reminder</th>';
+	echo '<th class="heading">Start time</th>';
+	echo '<th class="heading">End time</th>';
+	echo '<th class="heading">Type</th>';
+	echo '<th class="heading">Title</th>';
+	echo '<th class="heading">Reminder</th>';
 	echo "</tr>\n";
-	while ($row = lcm_fetch_array($result)) {
+
+	// Check for correct start position of the list
+	$list_pos = 0;
+	
+	if (isset($_REQUEST['list_pos']))
+		$list_pos = $_REQUEST['list_pos'];
+	
+	if ($list_pos>=$number_of_rows) $list_pos = 0;
+	
+	// Position to the page info start
+	if ($list_pos>0)
+		if (!lcm_data_seek($result,$list_pos))
+			die("Error seeking position $list_pos in the result");
+	
+	// Show page of the list
+	for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 		echo "\t<tr>";
-		echo '<td>' . $row['start_time'] . '</td>';
-		echo '<td>' . $row['end_time'] . '</td>';
-		echo '<td>' . $row['type'] . '</td>';
-		echo '<td>' . $row['title'] . '</td>';
-		echo '<td>' . $row['reminder'] . '</td>';
+		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['start_time'] . '</td>';
+		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['end_time'] . '</td>';
+		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['type'] . '</td>';
+		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['title'] . '</td>';
+		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['reminder'] . '</td>';
 		echo "</tr>\n";
 	}
-	echo '</table>';
+	
+	echo "</table>\n\n";
+
+	if ($number_of_rows>$prefs['page_rows']) {
+		echo '<table border="0" align="center" width="99%" class="page_numbers">
+	<tr><td align="left" width="15%">';
+
+		// Show link to previous page
+		if ($list_pos>0) {
+			echo '<a href="listcases.php?list_pos=';
+			echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
+			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+			echo '" class="content_link">< Prev</a> ';
+		}
+
+		echo "</td>\n\t\t<td align='center' width='70%'>";
+
+		// Show page numbers with direct links
+		$list_pages = ceil($number_of_rows / $prefs['page_rows']);
+		if ($list_pages>1) {
+			echo 'Go to page: ';
+			for ($i=0 ; $i<$list_pages ; $i++) {
+				if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
+				else {
+					echo '<a href="listcases.php?list_pos=' . ($i*$prefs['page_rows']);
+					if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+					echo '" class="content_link">' . ($i+1) . '</a> ';
+				}
+			}
+		}
+		
+		echo "</td>\n\t\t<td align='right' width='15%'>";
+		
+		// Show link to next page
+		$next_pos = $list_pos + $prefs['page_rows'];
+		if ($next_pos<$number_of_rows) {
+			echo "<a href=\"listcases.php?list_pos=$next_pos";
+			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+			echo '" class="content_link">Next ></a>';
+		}
+		
+		echo "</td>\n\t</tr>\n</table>\n";
+	}
+
+	echo '<br /><a href="edit_app.php?app=0" class="create_new_lnk">New appointment</a>';
 }
 
 lcm_page_end();
