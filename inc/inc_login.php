@@ -210,7 +210,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "\t<input type='password' name='session_password' class='forml' value=\"\" size='40' />\n";
 		echo "\t<input type='hidden' name='essai_login' value='oui' />\n";
 
-		echo "\t<br />&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='session_remember' value='oui' id='session_remember'$rester_checked /> ";
+		echo "\t<br />&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='session_remember' value='yes' id='session_remember'$rester_checked /> ";
 		echo "\t<label for='session_remember'>" . _T('login_remain_logged_on') . "</label>";
 
 		echo "\t<input type='hidden' name='url' value='$url' />\n";
