@@ -104,10 +104,10 @@ function lcm_page_start($title = "", $css_files = "") {
 	// Most of the header/navigation html
 	//
 	
-	echo "<div id='header'><a href='summary.php'>
-		<h1 class='lcm_main_head'>" . $site_name . "</h1>
-		<div class='lcm_slogan'>" . $site_desc . "</div>
-	</a></div>";
+	echo "<div id='header'>
+		<h1 class='lcm_main_head'><a href='summary.php' class='head_ttl_link'>" . $site_name . "</a></h1>
+		<div class='lcm_slogan'><a href='summary.php' class='head_subttl_link'>" . $site_desc . "</a></div>
+	</div>";
 	
 	/*
 	if($prefs['screen'] == "narrow")
