@@ -29,8 +29,12 @@ function read_metas() {
 }
 
 function write_meta($name, $value) {
+	// Escape $value
 	$value = addslashes($value);
+	// Write it into lcm_meta table
 	lcm_query("REPLACE lcm_meta (name, value) VALUES ('$name', '$value')");
+	// Write all meta variables into cache
+	write_metas();
 }
 
 function erase_meta($name) {
@@ -124,7 +128,7 @@ function read_meta_upd($name) {
 			}
 		}
 	}
-	
+
 	$s .= '?'.'>';
 
 	$file_meta_cache = 'inc/data/inc_meta_cache.php';

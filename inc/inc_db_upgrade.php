@@ -10,8 +10,7 @@ include_lcm('inc_db');
 
 function upgrade_db_version ($version, $test = true) {
 	if ($test) {
-		lcm_query("REPLACE lcm_meta (name, value) VALUES ('lcm_db_version', '$version')");
-		$GLOBALS['meta']['lcm_db_version'] = $version;
+		write_meta('lcm_db_version', $version);
 		lcm_log("Upgraded database to version: $version");
 	} else {
 		include_lcm('inc_lang');
