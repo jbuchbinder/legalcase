@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.2 2005/01/26 22:28:39 antzi Exp $
+	$Id: export_db.php,v 1.3 2005/01/26 23:35:35 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -63,8 +63,11 @@ function deldir($dir) {
 }
 
 function export_database($output_filename) {
+	// Clean input data
+	$output_filename = clean_input($output_filename);
 	// Check if file exists
-	if (file_exists("inc/data/db-$output_filename")) {
+	$root = addslashes(getcwd());
+	if (file_exists("$root/inc/data/db-$output_filename")) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
 			lcm_page_start("Warning!");
@@ -78,17 +81,20 @@ function export_database($output_filename) {
 			return;
 		} else {
 			// Delete old backup dir
-			if (!deldir("inc/data/db-$output_filename"))
-				die("System error: Could not erase inc/data/db-$output_filename!");
+			if (!deldir("$root/inc/data/db-$output_filename"))
+				die("System error: Could not erase $root/inc/data/db-$output_filename!");
 		}
 	}
 
 	// Export database
-	if (!mkdir("inc/data/db-$output_filename",0777))
-		die("System error: Could not create inc/data/db-$output_filename!");
-	echo getcwd();
-	if (!chdir("inc/data/db-$output_filename"))
-		die("System error: Could not change dir to 'inc/data/db-$output_filename'");
+	if (!mkdir("$root/inc/data/db-$output_filename",0700))
+		die("System error: Could not create $root/inc/data/db-$output_filename!");
+//	if (!chdir("$root/inc/data/db-$output_filename"))
+//		die("System error: Could not change dir to '$root/inc/data/db-$output_filename'");
+	// Record database version
+	$file = fopen("$root/inc/data/db-$output_filename/db-version",'w');
+	fwrite($file,read_meta('lcm_db_version'));
+	fclose($file);
 
 	// Get the list of tables in the database
 	$q = "SHOW TABLES";
@@ -97,10 +103,14 @@ function export_database($output_filename) {
 		// Backup table structure
 		$q = "SHOW CREATE TABLE " . $row[0];
 		$res = lcm_query($q);
+		$sql = lcm_fetch_row($res);
+		$file = fopen("$root/inc/data/db-$output_filename/" . $row[0] . ".structure",'w');
+		fwrite($file,$sql[1]);
+		fclose($file);
 
 		// Backup data
 		$q = "SELECT * FROM " . $row[0] . "
-				INTO OUTFILE '" . $row[0] . ".$output_filename'
+				INTO OUTFILE '$root/inc/data/db-$output_filename/" . $row[0] . ".data'
 				FIELDS TERMINATED BY ','
 					OPTIONALLY ENCLOSED BY '\"'
 					ESCAPED BY '\\\\'
