@@ -266,3 +266,7 @@ fieldset.conf_info_box {
 small.sm_11 {
 	font-size: 11px;
 }
+
+ul.simple_list li {
+	font-size: 12px;
+}

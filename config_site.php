@@ -26,7 +26,7 @@ include ("inc/inc.php");
 // to track when a currency had which value (silly, but can avoid crisis)
 
 function show_config_form($panel) {
-	echo "<p><img src='images/jimmac/icon_warning.gif' alt='' align='right'
+	echo "<p class='normal_text'><img src='images/jimmac/icon_warning.gif' alt='' align='right'
 		height='48' width='48' />" . _T('siteconf_warning') . "</p>\n";
 
 	if ($panel == 'collab') {
@@ -37,7 +37,7 @@ function show_config_form($panel) {
 		$html_general = " &lt;--";
 	}
 
-	echo "<ul>\n";
+	echo "<ul class=\"simple_list\">\n";
 	echo "<li><a href='config_site.php?panel=general' class='content_link'>" . _T('siteconf_subtitle_general_info') . "</a>" . $html_general . "</li>\n";
 	echo "<li><a href='config_site.php?panel=collab' class='content_link'>" . _T('siteconf_subtitle_collab_work') . "</a>" . $html_collab . "</li>\n";
 	echo "<li><a href='config_site.php?panel=policy' class='content_link'>" .  _T('siteconf_subtitle_policy') . "</a>" . $html_policy . "</li>\n";
