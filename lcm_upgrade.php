@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_upgrade.php,v 1.6 2005/01/17 10:58:19 mlutfy Exp $
+	$Id: lcm_upgrade.php,v 1.7 2005/03/28 08:57:37 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -32,7 +32,7 @@ if (!$current_version) $current_version = 0;
 // test if upgraded necessary
 if ($lcm_db_version <> $current_version) {
 	include_lcm('inc_db_upgrade');
-	lcm_page_start("Database upgrade", "install");
+	lcm_page_start("Database upgrade"); // TRAD
 	
 	echo "\n<!-- Hide possibly confusing error messages: \n";
 	echo "\t** Upgrading from $current_version to $lcm_db_version **\n";
@@ -46,20 +46,20 @@ if ($lcm_db_version <> $current_version) {
 	if ($log) {
 		echo "<div class='box_error'>\n";
 		echo "<p>An error occured while upgrading the database: <br/>$log<br/>
-			<a href='index.php'>Click here to go back to the main page.</a></p>\n";
+			<a href='index.php'>Click here to go back to the main page.</a></p>\n"; // TRAD
 		echo "</div>\n";
 	} else {
 		echo "<div class='box_success'>\n";
 		echo "<p>The database upgrade was a success.
-			<a href='index.php'>Click here to go back to the main page.</a></p>\n";
+			<a href='index.php'>Click here to go back to the main page.</a></p>\n"; // TRAD
 		echo "</div>\n";
 	}
 	
 	lcm_page_end();
 } else {
-	lcm_page_start("No database upgrade needed", "install");
+	lcm_page_start("No database upgrade needed"); // TRAD
 
-	echo "<p><a href='index.php'>Click here to go back to the main page.</a></p>\n";
+	echo "<p><a href='index.php'>Click here to go back to the main page.</a></p>\n"; // TRAD
 
 	lcm_page_end();
 }
