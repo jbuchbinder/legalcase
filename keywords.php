@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.17 2005/03/07 11:38:52 mlutfy Exp $
+	$Id: keywords.php,v 1.18 2005/03/07 13:04:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -92,12 +92,25 @@ function show_keyword_group_id($id_group) {
 	
 	echo '<input type="hidden" name="action" value="update_group" />' . "\n";
 	echo '<input type="hidden" name="id_group" value="' . $id_group . '" />' . "\n";
-	echo '<input type="hidden" name="kwg_type" value="' . $kwg['type'] . '" />' . "\n";
 	
 	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
 	echo "<tr>\n";
 	echo "<td width='30%'>" . _T('keywords_input_type') . "</td>\n";
-	echo "<td>" . $kwg['type'] . "</td>\n";
+	echo "<td>";
+	
+	if ($kwg['type'] == 'system') {
+		echo $kwg['type'];
+	} else {
+		$all_types = array("case", "followup", "client", "org", "author");
+		echo '<select name="kwg_type" id="kwg_type">';
+
+		foreach ($all_types as $t)
+			echo '<option value="' . $t . '">' . $t . '</option>';
+
+		echo "</select>\n";
+	}
+	
+	echo "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>" . _T('keywords_input_policy') . "</td>\n";
 	echo "<td>" . $kwg['policy'] . "</td>\n";
@@ -107,28 +120,14 @@ function show_keyword_group_id($id_group) {
 	echo '<select name="kwg_suggest" class="sel_frm">';
 	echo '<option value=""' . $sel . '>' . "none" . '</option>' . "\n";
 	
-	foreach ($system_kwg[$kwg['name']]['keywords'] as $kw) {
-		$sel = ($kw['name'] == $kwg['suggest'] ? ' selected="selected"' : '');
-		echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>' . "\n";
+	if ($id_group) {
+		foreach ($system_kwg[$kwg['name']]['keywords'] as $kw) {
+			$sel = ($kw['name'] == $kwg['suggest'] ? ' selected="selected"' : '');
+			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>' . "\n";
+		}
 	}
 
 	echo '</select>';
-	echo "</td>\n";
-	echo "</tr><tr>\n";
-
-	// Quantity: relevevant only for user keywords (ex: 'thematics' for cases)
-	if ($kwg['type'] != 'system') {
-		// [ML] Yes, strange UI, but imho it works great (otherwise confusing, I hate checkboxes)
-		$html_quantity = '<select name="kwg_quantity" id="kwg_quantity">'
-			. '<option value="one"' . ($kwg['quantity'] == 'one' ? ' selected="selected"' : '') . '>' . _T('keywords_option_quantity_one') . '</option>'
-			. '<option value="many"' . ($kwg['quantity'] == 'many' ? ' selected="selected"' : '') . '>' . _T('keywords_option_quantity_many') . '</option>'
-			. '</select>';
-	} else {
-		$html_quantity = _T('keywords_option_quantity_' . $kwg['quantity'])
-			. '<input type="hidden" name="kwg_quantity" value="' . $kwg['quantity'] . '" />';
-	}
-	
-	echo '<td colspan="2"><p>' . _T('keywords_info_quantity', array(quantity => $html_quantity)) . "</p>\n";
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 
@@ -152,6 +151,24 @@ function show_keyword_group_id($id_group) {
 	echo $kwg['description'];
 	echo "</textarea>\n";
 	echo "</td>\n";
+	echo "</tr><tr>\n";
+
+	// Quantity: relevevant only for user keywords (ex: 'thematics' for cases)
+	if ($kwg['type'] != 'system') {
+		// [ML] Yes, strange UI, but imho it works great (otherwise confusing, I hate checkboxes)
+		$html_quantity = '<select name="kwg_quantity" id="kwg_quantity">'
+			. '<option value="one"' . ($kwg['quantity'] == 'one' ? ' selected="selected"' : '') . '>' . _T('keywords_option_quantity_one') . '</option>'
+			. '<option value="many"' . ($kwg['quantity'] == 'many' ? ' selected="selected"' : '') . '>' . _T('keywords_option_quantity_many') . '</option>'
+			. '</select>';
+	} else {
+		$html_quantity = _T('keywords_option_quantity_' . $kwg['quantity'])
+			. '<input type="hidden" name="kwg_quantity" value="' . $kwg['quantity'] . '" />';
+	}
+	
+	echo '<td colspan="2">';
+	echo '<p>' . _T('keywords_info_quantity', array(quantity => $html_quantity)) . "</p>\n";
+	echo "</td>\n";
+
 	echo "</tr>\n";
 	echo "</table>\n\n";
 
@@ -240,42 +257,73 @@ function show_keyword_id($id_keyword = 0) {
 //
 function update_keyword_group($id_group) {
 	$kwg_suggest = $_REQUEST['kwg_suggest'];
+	$kwg_name    = $_REQUEST['kwg_name'];
 	$kwg_title   = $_REQUEST['kwg_title'];
 	$kwg_desc    = $_REQUEST['kwg_desc'];
+	$kwg_type    = $_REQUEST['kwg_type'];
 	$kwg_quantity = $_REQUEST['kwg_quantity']; // only for non-system kwg
-	$new_kwg     = false;
+
+	//
+	// Check for errors
+	//
 
 	if (! $id_group) {
-		$new_kwg = true;
-		lcm_panic("update_keyword_group: Feature not ready yet.");
+		if (! clean_input($kwg_name))
+			$_SESSION['errors']['name'] = "The name cannot be empty."; // TRAD
+
+		if (! check_if_kwg_name_unique($kwg_name))
+			$_SESSION['errors']['name'] = "There is already a keyword group using this name."; // TRAD
 	}
 
-	// Get current kwg information (kwg_type, name, etc. cannot be changed)
-	$kwg_info = get_kwg_from_id($id_group);
-	
-	//
-	// Query for kwg update
-	//
-	$fl = " suggest = '" . clean_input($kwg_suggest) . "' ";
-	
-	if ($kwg_title) // cannot be empty
-		$fl .= ", title = '" . clean_input($kwg_title) . "' ";
-	else
-		$_SESSION['errors']['title'] = "The title cannot be empty.";
+	if (! clean_input($kwg_title))
+		$_SESSION['errors']['title'] = "The title cannot be empty"; // TRAD
 
-	if ($kwg_info['type'] != 'system')
-		$fl .= ", quantity = '" . clean_input($kwg_quantity) . "' ";
-	
-	$fl .= ", description = '" . clean_input($kwg_desc) . "' ";
+	if (count($_SESSION['errors'])) {
+		header("Location: " . $GLOBALS['HTTP_REFERER']);
+		exit;
+	}
 
-	$query = "UPDATE lcm_keyword_group
-				SET $fl
-				WHERE id_group = " . $id_group;
+	//
+	// Apply to database
+	//
+
+	if (! $id_group) { // new
+		$query = "INSERT INTO lcm_keyword_group
+					SET type = '" . clean_input($kwg_type) . "',
+						name = '" . clean_input($kwg_name) . "',
+						title = '" . clean_input($kwg_title) . "',
+						description = '" . clean_input($kwg_desc) . "',
+						suggest = '',
+						quantity = '" . clean_input($kwg_quantity) . "',
+						ac_author = 'Y',
+						ac_admin = 'Y'";
+
+		lcm_query($query);
+		$id_group = lcm_insert_id();
+		$kwg_info = get_kwg_from_id($id_group);
+	} else {
+		// Get current kwg information (kwg_type, name, etc. cannot be changed)
+		$kwg_info = get_kwg_from_id($id_group);
+
+		$fl = " suggest = '" . clean_input($kwg_suggest) . "', "
+			. "title = '" . clean_input($kwg_title) . "' ";
 	
-	lcm_query($query);
+		if ($kwg_info['type'] != 'system')
+			$fl .= ", quantity = '" . clean_input($kwg_quantity) . "' ";
+		
+		$fl .= ", description = '" . clean_input($kwg_desc) . "' ";
+	
+		$query = "UPDATE lcm_keyword_group
+					SET $fl
+					WHERE id_group = " . $id_group;
+		
+		lcm_query($query);
+	}
+	
 	write_metas(); // update inc_meta_cache.php
 
-	header("Location: keywords.php?tab=" . $kwg_info['type'] . "#" . $kwg_info['name']);
+	$tab = ($kw_type['system'] == 'system' ? 'system' : 'user');
+	header("Location: keywords.php?tab=" . $tab . "#" . $kwg_info['name']);
 	exit;
 }
 
@@ -288,20 +336,17 @@ function update_keyword($id_keyword) {
 	$kw_desc      = $_REQUEST['kw_desc'];
 	$kw_ac_author = $_REQUEST['kw_ac_author']; // show/hide keyword
 	$kw_idgroup   = intval($_REQUEST['id_group']);
-	$new_keyword  = false;
 
 	//
 	// Check for errors
 	//
 
-	if (! $id_keyword) // new keyword
+	if (! $id_keyword) { // new keyword
+		global $system_kwg;
+
 		if (! $kw_idgroup)
 			lcm_panic("update_keyword: missing or badly formatted id_keyword or id_group");
-		else
-			$new_keyword = true;
-	
-	if ($new_keyword) {
-		global $system_kwg;
+
 		$kwg_info = get_kwg_from_id($kw_idgroup);
 
 		if (! clean_input($kw_name))
@@ -323,7 +368,7 @@ function update_keyword($id_keyword) {
 	// Apply to database
 	//
 
-	if ($new_keyword) {
+	if (! $id_keyword) { // new
 		$query = "INSERT INTO lcm_keyword
 				SET id_group = " . $kw_idgroup . ", 
 					name = '" . clean_input($kw_name) . "',
@@ -353,7 +398,8 @@ function update_keyword($id_keyword) {
 
 	write_metas(); // update inc_meta_cache.php
 
-	header("Location: keywords.php?tab=" . $kw_info['type'] . "#" . $kw_info['kwg_name']);
+	$tab = ($kw_type['system'] == 'system' ? 'system' : 'user');
+	header("Location: keywords.php?tab=" . $tab . "#" . $kw_info['kwg_name']);
 	exit;
 }
 
