@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.40 2005/01/17 09:00:20 mlutfy Exp $
+	$Id: config_author.php,v 1.41 2005/01/18 20:31:56 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -68,8 +68,8 @@ function show_author_form() {
 	$screen_modes = array("wide","narrow");
 	foreach ($screen_modes as $scrm) {
 		$selected_mode = ($scrm == $prefs['screen'] ? " selected='selected'" : '');
-		echo "<option value='" . $scrm . "'" . $selected_mode . ">" 
-			. _T('authorconf_input_screen_' . $scrm) 
+		echo "<option value='" . $scrm . "'" . $selected_mode . ">"
+			. _T('authorconf_input_screen_' . $scrm)
 			. "</option>\n";
 	}
 ?>
@@ -131,6 +131,23 @@ function show_author_form() {
 			<td colspan="2" align="center" valign="middle">
 				<input type="submit" name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
 		</tr>
+	    <tr>
+	    	<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_mode') ?></td>
+			<td align="left" valign="top">
+				<input type="hidden" name="old_mode" id="old_mode" value="<?php echo $prefs['mode'] ?>" />
+				<select name="sel_mode" class="sel_frm">
+<?php
+	$interface_modes = array("simple","extended");
+	foreach ($interface_modes as $ifm) {
+		$selected_mode = ($ifm == $prefs['mode'] ? " selected='selected'" : '');
+		echo "<option value='" . $ifm . "'" . $selected_mode . ">"
+			. _T('authorconf_input_mode_' . $ifm)
+			. "</option>\n";
+	}
+?>
+				</select>
+			</td>
+		</tr>
 	</table>
 </form>
 
@@ -171,16 +188,23 @@ function apply_author_ui_change() {
 	//
 	// Change the type of the screen - wide or narrow
 	//
-	
+
 	if ($sel_screen == $prefs['sel_screen'] && $sel_screen <> $old_screen)
 		array_push($log, "Screen mode set to " . $sel_screen . ", was " . $old_screen . ".");
 
 	//
 	// Change the font size
 	//
-	
+
 	if ($font_size == $prefs['font_size'] && $font_size <> $old_font_size)
 		array_push($log, "Screen mode set to " . $font_size . ", was " . $old_font_size . ".");
+
+	//
+	// Change the interface mode
+	//
+
+	if ($sel_mode == $prefs['mode'] && $sel_mode <> $old_mode)
+		array_push($log, "User interface mode set to $sel_mode, was $old_mode.");
 }
 
 function apply_author_password_change() {
