@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.6 2005/01/28 23:37:05 mlutfy Exp $
+	$Id: keywords.php,v 1.7 2005/02/04 09:58:39 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -33,9 +33,9 @@ function show_all_keywords($type = '') {
 		$type = 'system';
 	
 	lcm_page_start(_T('menu_admin_keywords') . _T('typo_column') . " " . $type);
-
-	echo "<p>Warning: This feature is still in early development. For more
-	information, please consult the <a href='http://www.lcm.ngo-bg.org/article43.html'>analysis
+	echo "<fieldset class='info_box'>\n";
+	echo "<p class='normal_text'><strong>Warning:</strong> This feature is still in early development. For more
+	information, please consult the <a href='http://www.lcm.ngo-bg.org/article43.html' class='content_link'>analysis
 	documentation for keywords</a>.</p>\n";
 
 	$html_system = ($type == 'system' ? '&nbsp;&lt;--' : '');
@@ -43,34 +43,38 @@ function show_all_keywords($type = '') {
 
 	// Mini-menu: system or user keyword groups
 	echo "<ul>";
-	echo '<li><a href="?type=system">System keywords</a>' . $html_system . "</li>\n";
-	echo '<li><a href="?type=user">User keywords</a>' . $html_user . "</li>\n";
+	echo '<li><a href="?type=system" class="content_link">System keywords</a>' . $html_system . "</li>\n";
+	echo '<li><a href="?type=user" class="content_link">User keywords</a>' . $html_user . "</li>\n";
 	echo "</ul>\n\n";
-
+	
+	echo "</fieldset>\n";
+	
 	$kwg_all = get_kwg_all($type);
 
 	foreach ($kwg_all as $kwg) {
 		// tester ac-admin?
-		echo "<ul style='padding: 0.5em; border: 1px solid #cccccc; -moz-border-radius: 10px;'>\n";
-		echo "<li style='list-style-type: none;'><a href='?action=edit&amp;id_group=" . $kwg['id_group'] . "'>" . _T($kwg['title']) . "</a></li>\n";
+		
+		echo "<fieldset class='info_box'>\n";
+		echo "<div class='prefs_column_menu_head'><a href='?action=edit&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>" . _T($kwg['title']) . "</a></div>\n";
 
 		$kw_all = get_keywords_in_group_id($kwg['id_group']);
 
 		if (count($kw_all)) {
-			echo "<ul style='padding: 1em;>";
+			echo "<ul class='wo_blt'>\n";
 
 			foreach ($kw_all as $kw) {
-				echo "<li style='list-style-type: none;'>";
-				echo "<a href='?action=edit&amp;id_keyword=" . $kw['id_keyword'] . "'>". _T($kw['title']) . "</a>";
+				echo "\t<li>";
+				echo "<a href='?action=edit&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T($kw['title']) . "</a>";
 				echo "</li>\n";
 			}
 
 			echo "</ul>\n";
 		}
-
-		echo "</ul>\n";
+		
+		echo "</fieldset>\n";
+		
 	}
-
+	
 	lcm_page_end();
 } 
 
@@ -101,7 +105,7 @@ function show_keyword_group_id($action = 'edit', $id_group) {
 	echo "</tr><tr>\n";
 	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
 	echo "<td>";
-	echo '<select name="kwg_suggest">';
+	echo '<select name="kwg_suggest" class="sel_frm">';
 	
 	foreach ($system_kwg[$kwg['name']]['keywords'] as $kw) {
 		$sel = ($kw['name'] == $kwg['suggest'] ? ' selected="selected"' : '');
@@ -113,11 +117,11 @@ function show_keyword_group_id($action = 'edit', $id_group) {
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "<td colspan='2'>" . _T('keywords_input_title') . "<br />\n";
-	echo "<input type='text' readonly='readonly' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' />\n";
+	echo "<input type='text' readonly='readonly' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
 	echo "</td>\n";
 	echo "<tr></tr>\n";
 	echo "<td colspan='2'>" . _T('keywords_input_description') . "<br />\n";
-	echo "<textarea readonly='readonly' id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft'>";
+	echo "<textarea readonly='readonly' id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
 	echo $kwg['description'];
 	echo "</textarea>\n";
 	echo "</td>\n";
