@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.39 2005/03/28 21:41:14 antzi Exp $
+	$Id: client_det.php,v 1.40 2005/03/29 15:48:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -85,8 +85,9 @@ if ($client > 0) {
 				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_general') . "</div>\n";
 		
 				echo '<p class="normal_text">';
-				echo _T('client_input_id') . ' ' . $row['id_client'] . "<br/>\n";
-				echo _T('person_input_gender') . ' ' . $gender . "<br/>\n";
+				echo _Ti('client_input_id') . $row['id_client'] . "<br/>\n";
+				echo _Ti('person_input_name') . get_person_name($row) . "<br />\n";
+				echo _Ti('person_input_gender') . $gender . "<br/>\n";
 		
 				if (read_meta('client_citizen_number') == 'yes')
 					echo _T('person_input_citizen_number') . ' ' . $row['citizen_number'] . "<br/>\n";
