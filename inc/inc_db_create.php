@@ -3,6 +3,7 @@
 if (defined('_INC_DB_CREATE')) return;
 define('_INC_DB_CREATE', '1');
 
+// [ML] Is this needed?  XXX
 include_lcm('inc_access');
 
 function log_if_not_duplicate_table($errno) {
@@ -77,7 +78,7 @@ function create_database() {
 	// [ML] XXX too many extra fields
 	$query = "CREATE TABLE lcm_author (
 		id_author bigint(21) NOT NULL auto_increment,
-		id_office bigint(21) DEFAULT 1 NOT NULL,
+		id_office bigint(21) DEFAULT 0 NOT NULL,
 		name_first text NOT NULL,
 		name_middle text NOT NULL,
 		name_last text NOT NULL,
