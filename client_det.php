@@ -26,7 +26,7 @@ if ($client>0) {
 		$edit = true;
 
 		// Show client details
-		echo 'Name: ' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "<br>\n";
+		echo '<p class="normal_text">Name: ' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "<br>\n";
 		echo 'Client ID: ' . $row['id_client'] . "<br>\n";
 		echo 'Citizen number: ' . $row['citizen_number'] . "<br>\n";
 		echo 'Address: ' . $row['address'] . "<br>\n";
@@ -35,12 +35,10 @@ if ($client>0) {
 		echo 'Creation date: ' . $row['date_creation'] . "<br>\n";
 		echo 'Last update date: ' . $row['date_update'] . "<br>\n";
 		if ($edit)
-			echo ' [<a href="edit_client.php?client=' . $row['id_client'] . '">Edit client information</a>]';
+			echo ' [<a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link"><strong>Edit client information</strong></a>]';
 
-		?><h4>Organisation(s) represented by this client:</h4>
-
-		<table border>
-		<caption>Organisation(s):</caption>
+		?></p><h3>Organisation(s) represented by this client:</h3>
+		<table border="0" class="tbl_usr_dtl">
 		<?php
 
 		// Show organisation(s)
@@ -53,14 +51,14 @@ if ($client>0) {
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . $row['name'] . "</a></td>\n<td>";
+			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">' . $row['name'] . "</a></td>\n<td>";
 			if ($edit)
-				echo '<a href="edit_org.php?org=' . $row['id_org'] . '">Edit</a>';
+				echo '<a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">Edit</a>';
 			echo "</td></tr>\n";
 		}
 
 		if ($edit)
-			echo "<tr><td><a href=\"sel_org_cli.php?client=$client\">Add organisation(s)</a></td><td></td></tr>";
+			echo "<tr><td><a href=\"sel_org_cli.php?client=$client\" class=\"content_link\">Add organisation(s)</a></td><td></td></tr>";
 
 		?>
 		</table><br>
