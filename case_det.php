@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.90 2005/02/25 22:18:14 antzi Exp $
+	$Id: case_det.php,v 1.91 2005/03/01 08:16:47 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -327,6 +327,9 @@ if ($case > 0) {
 			// Time spent on case by authors
 			//
 			case 3 :
+				// Get the information from database
+/*
+				// List followup authors, which are on the case
 				$q = "SELECT	name_first,
 						name_middle,
 						name_last,
@@ -339,14 +342,50 @@ if ($case > 0) {
 						AND lcm_case_author.id_case=lcm_followup.id_case
 						AND lcm_case_author.id_author=lcm_followup.id_author
 						AND UNIX_TIMESTAMP(lcm_followup.date_end) > 0
-					GROUP BY lcm_case_author.id_case";
+					GROUP BY lcm_case_author.id_author";
+*/
+				// List all followup authors
+				$q = "SELECT	name_first,
+						name_middle,
+						name_last,
+						sum(UNIX_TIMESTAMP(lcm_followup.date_end)-UNIX_TIMESTAMP(lcm_followup.date_start)) as time
+					FROM	lcm_author,
+						lcm_followup
+					WHERE	lcm_followup.id_author=lcm_author.id_author
+						AND lcm_followup.id_case=$case
+						AND UNIX_TIMESTAMP(lcm_followup.date_end) > 0
+					GROUP BY lcm_followup.id_author";
 				$result = lcm_query($q);
+
+				// Show table headers
+				echo '<fieldset class="info_box">';
+				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_times') . '</div>';
+				echo "<p class=\"normal_text\">\n";
+			
+				echo "\n\n\t<table border='0' class='tbl_usr_dtl' width='99%'>";
+				echo "\t\t<tr>";
+				echo "<th class='heading'>" . 'Author' . "</th>";
+				echo "<th class='heading'>" . 'Time spent on the case' . "</th>";
+				echo "</tr>\n";
+
+				// Show table contents & calculate total
+				$total_time = 0;
 				while ($row = lcm_fetch_array($result)) {
+					$total_time += $row['time'];
+					echo "\t\t<tr><td>";
 					echo njoin(array($row['name_first'],$row['name_middle'],$row['name_last']));
-					echo ' - ';
+					echo '</td><td>';
 					echo sprintf('%.2f hours',($row['time'] / 3600));
-					echo "<br />\n";
+					echo "</td></tr>\n";
 				}
+
+				// Show total case hours
+				echo "\t\t<tr><td>" . 'TOTAL:' . "</td><td>";
+				echo sprintf('%.2f hours', ($total_time / 3600));
+				echo "</td></tr>\n";
+
+				// Close table
+				echo "\t</table>\n</p></fieldset>\n";
 				break;
 			//
 			// Case attachments
