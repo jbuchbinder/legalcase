@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.8 2004/12/17 23:16:20 antzi Exp $
+	$Id: set_case_status.php,v 1.9 2004/12/17 23:20:39 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -253,7 +253,7 @@ switch ($status) {
 		$result = lcm_query($q);
 
 		// Set the length of short followup title
-		$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
+		$title_length = (($prefs['screen'] == "wide") ? 25 : 60);
 
 		// Write the <select> options
 		while ($row = lcm_fetch_array($result)) {
