@@ -255,19 +255,26 @@ else if ($step == 4) {
 		$old_lcm_version = 'NONE';
 
 		if ($already_installed) {
-			$query = "SELECT value FROM lcm_meta WHERE name = 'version_lcm'";
+			// Find the current database version
+			$old_lcm_db_version = 0;
+			$query = "SELECT value FROM lcm_meta WHERE name = 'lcm_db_version'";
 			$result = lcm_query_db($query);
 			while ($row = lcm_fetch_array($result))
-				$old_lcm_version = $row['value'];
+				$old_lcm_db_version = $row['value'];
+
+			// Check if upgrade is needed
+			if ($old_lcm_db_version<$lcm_db_version) {
+				// Upgrade the existing database
+				include_lcm('inc_db_upgrade');
+				$upgrade_log  = upgrade_database($old_lcm_db_version);
+			}
+		} else {
+			// Create database from scratch
+			include_lcm('inc_db_create');
+			$install_log .= create_database();
 		}
 
-		include_lcm('inc_db_create');
-		include_lcm('inc_db_upgrade');
 		include_lcm('inc_db_test');
-
-		$install_log .= create_database();
-		$upgrade_log  = upgrade_database();
-
 		// Previous structure test. Not appropriate.
 		// $query = "SELECT COUNT(*) FROM lcm_case";
 		// $result = lcm_query_db($query);
