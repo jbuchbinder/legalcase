@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.169 2005/03/18 09:20:38 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.170 2005/03/18 10:27:43 mlutfy Exp $
 */
 
 //
@@ -297,7 +297,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	if (lcm_num_rows($result)>0) {
 		$events = true;
 		echo "<p class=\"nav_column_text\">
-				<strong>Next appointments</strong><br />\n";
+				<strong>Next appointments</strong><br />\n"; // TRAD
 		echo "						</p>\n";
 		
 		echo "<ul class=\"small_agenda\">\n";
@@ -1066,7 +1066,9 @@ function show_list_end($current_pos = 0, $number_of_rows = 0) {
 		if ($current_pos > $prefs['page_rows'])
 			$link->addVar('list_pos', $current_pos - $prefs['page_rows']);
 
-		echo '<a href="' . $link->getUrl() . '" class="content_link">' . "< Prev" . '</a> '; // TRAD
+		echo '<a href="' . $link->getUrl() . '" class="content_link">'
+			. "&lt; " . _T('listnav_link_previous')
+			. '</a> ';
 	}
 
 	echo "</td>\n";
@@ -1074,7 +1076,7 @@ function show_list_end($current_pos = 0, $number_of_rows = 0) {
 
 	// Page numbers with direct links
 	if ($list_pages > 1) {
-		echo 'Go to page: '; // TRAD
+		echo _T('listnav_link_gotopage') . ' ';
 
 		for ($i = 0; $i < $list_pages; $i++) {
 			if ($i == floor($current_pos / $prefs['page_rows'])) {
@@ -1102,7 +1104,9 @@ function show_list_end($current_pos = 0, $number_of_rows = 0) {
 		$link = new Link();
 		$link->addVar('list_pos', $current_pos_val);
 
-		echo '<a href="' . $link->getUrl() . '" class="content_link">' . "Next >" . '</a>'; // TRAD
+		echo '<a href="' . $link->getUrl() . '" class="content_link">'
+			. _T('listnav_link_next') . " &gt;"
+			. '</a>';
 	}
 
 	echo "</td>\n";
