@@ -39,22 +39,43 @@ if ($step == 6) {
 	include_lcm('inc_access');
 
 	if ($login) {
-		$nom = addslashes($nom);
+		// If the login name already exists, this provides a way to reset
+		// an administrator's account.
+		$name_first  = addslashes($name_first);
+		$name_middle = addslashes($name_middle);
+		$name_last   = addslashes($name_last);
+		$login       = addslashes($login);
+
 		$query = "SELECT id_author FROM lcm_author WHERE username=\"$login\"";
 		$result = lcm_query_db($query);
+
 		unset($id_auteur);
-		while ($row = lcm_fetch_array($result)) $id_auteur = $row['id_auteur'];
+		while ($row = lcm_fetch_array($result)) $id_author = $row['id_author'];
 
 		$mdpass = md5($pass);
-		$htpass = generer_htpass($pass);
+		$htpass = generer_htpass($pass); // generate htpass [ML] not sure what for!
 
-		// [ML] TODO: name_first, name_middle, name_last, email, etc..
+		// Update main author information
 		if ($id_auteur) {
-			$query = "UPDATE lcm_author SET name_first=\"$nom\", username=\"$login\", password=\"$mdpass\", alea_actuel='', alea_futur=FLOOR(32000*RAND()), htpass=\"$htpass\", status=\"admin\" WHERE id_author=$id_auteur";
+			$query = "UPDATE lcm_author 
+						SET name_first = \"$name_first\", 
+							name_middle = \"$name_middle\", 
+							name_last = \"$name_last\", 
+							username = \"$username\", 
+							password = \"$mdpass\", 
+							alea_actuel = '', 
+							alea_futur = FLOOR(32000*RAND()), 
+							htpass = \"$htpass\", 
+							status = \"admin\" 
+					  WHERE id_author = $id_author";
 		} else {
-			$query = "INSERT INTO lcm_author (name_first, username, password, htpass, alea_futur, status) VALUES(\"$nom\",\"$login\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"admin\")";
+			$query = "INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, htpass, alea_futur, status)
+							VALUES(\"$name_first\", \"$name_middle\", \"$name_last\", \"$username\", \"$mdpass\", \"$htpass\", FLOOR(32000*RAND()), \"admin\")";
 		}
 		lcm_query_db($query);
+
+		// Set e-mail for author (if none)
+		// TODO
 
 		// insert email as main system administrator
 		write_meta('email_sysadmin', $email);
@@ -94,47 +115,75 @@ else if ($step == 5) {
 
 	include_config('inc_connect_install');
 
+	// Test if an administrator already exists
+	$query = "SELECT name_first, name_middle, name_last, username
+			  FROM lcm_author
+			  WHERE status = 'admin'";
+
+	$result = lcm_query($query);
+	$number_admins = lcm_num_rows($result);
+
+	echo "<!-- Number of administrators: " . $number_admins . " -->\n";
+
 	echo "<br><font face='Verdana,Arial,Sans,sans-serif' size='3'>"._T('info_informations_personnelles')."</font>";
 	echo "<p>";
 
 	echo "<b>"._T('texte_informations_personnelles_1')."</b>";
 	echo aide ("install5");
-	echo "<p>"._T('texte_informations_personnelles_2')." ";
-	echo _T('info_laisser_champs_vides');
+
+	// [ML: included below] echo "<p>"._T('texte_informations_personnelles_2')." ";
+
+	$trad = "<span style='font-size: 80%;'>[<acronym title='translate!'>T</acronym>]</span>";
+
+	if (! $numrows) {
+		echo ("<p>" . $trad . '(Note: If this is a re-installation and your administrator access is still working, you can leave these fields empty)</p>' . "\n");
+		// echo _T('info_laisser_champs_vides');
+	}
 
 	echo "\n<form action='install.php' method='post'>\n";
 	echo "<input type='hidden' name='step' value='6'>\n";
 
-	echo "<fieldset><label><b>"._T('info_identification_publique')."</b><br></label>";
-	echo "<b>"._T('entree_signature')."</b><br>";
-	echo _T('entree_nom_pseudo_1')."<br>";
-	echo "<input type='text' name='nom' class='formo' value=\"$nom\" size='40'><p>";
+	echo "<fieldset><label><b>". $trad . 'Your contact information ...' . "</b><br></label>\n";
+	echo "<b>". "$trad Name" . "</b><br>\n";
+	echo "<table border='0'>\n";
+	echo "<tr>\n";
+	echo "<td>" . $trad . "First" . "</td>\n";
+	echo "<td>" . $trad . "Middle" . "</td>\n";
+	echo "<td>" . $trad . "Last" . "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td><input type='text' name='name_first' class='formo' value=\"$name_first\" size='20'></td>\n";
+	echo "<td><input type='text' name='name_middle' class='formo' value=\"$name_middle\" size='20'></td>\n";
+	echo "<td><input type='text' name='name_last' class='formo' value=\"$name_last\" size='20'></td>\n";
+	echo "<tr>\n";
+	echo "</table>\n";
 
-	echo "<B>"._T('entree_adresse_email')."</B><BR>";
-	echo "<input type='text' name='email' class='formo' value=\"$email\" size='40'></fieldset><P>\n";
+	echo "<b>"._T('entree_adresse_email')."</b><br>";
+	echo "<input type='text' name='email' class='formo' value=\"$email\" size='40'></fieldset><p>\n";
 
 	echo "<fieldset><label><B>"._T('entree_identifiants_connexion')."</B><BR></label>";
-	echo "<B>"._T('entree_login')."</B><BR>";
-	echo _T('info_plus_trois_car')."<BR>";
-	echo "<input type='text' name='login' class='formo' value=\"$login\" size='40'><P>\n";
+	echo "<b>"._T('entree_login')."</b><br>";
+	echo _T('info_plus_trois_car')."<br>";
+	echo "<input type='text' name='username' class='formo' value=\"$username\" size='40'><p>\n";
 
-	echo "<B>"._T('entree_mot_passe')."</B> <BR>";
-	echo _T('info_plus_cinq_car_2')."<BR>";
-	echo "<input type='password' name='pass' class='formo' value=\"$pass\" size='40'></fieldset><P>\n";
+	echo "<b>"._T('entree_mot_passe')."</b><br>";
+	echo _T('info_plus_cinq_car_2')."<br>";
+	echo "<input type='password' name='pass' class='formo' value=\"$pass\" size='40'></fieldset><p>\n";
 
-	echo "<DIV align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value='"._T('bouton_suivant')." >>'>";
+	echo "<div align='$spip_lang_right'><input type='submit' class='fondl' name='validate' value='"._T('bouton_suivant')." >>'>";
 	echo "</form>";
 	echo "<p>";
 
+	/* [ML] Not used for now
 	if ($flag_ldap AND !$ldap_present) {
 		echo "<div style='border: 1px solid #404040; padding: 10px; text-align: left;'>";
 		echo "<b>"._T('info_authentification_externe')."</b>";
 		echo "<p>"._T('texte_annuaire_ldap_1');
 		echo "<form action='install.php' method='post'>";
 		echo "<input type='hidden' name='step' value='ldap1'>";
-		echo "<DIV align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value=\""._T('bouton_acces_ldap')."\">";
+		echo "<div align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value=\""._T('bouton_acces_ldap')."\">";
 		echo "</form>";
-	}
+	} */
 
 	install_html_end();
 }
