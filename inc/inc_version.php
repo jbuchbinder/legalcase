@@ -744,6 +744,7 @@ $inc_meta_cache = 'inc/data/inc_meta_cache.php';
 if (@file_exists($inc_meta_cache) AND !defined('_INC_META_CACHE')  AND !defined('_INC_META')) {
 	include_data('inc_meta_cache');
 }
+
 // This is used usually at installation, when the inc/data/inc_meta_cache.php
 // is not yet created, and avoids having tons of warnings printed.
 if (!defined('_INC_META_CACHE')) {
@@ -755,7 +756,7 @@ if (!defined('_INC_META_CACHE')) {
 		global $meta_maj;
 		return $meta_maj[$nom];
 	}
-	define("_INC_META_CACHE", "1");
+	define('_INC_META_CACHE', '1');
 }
 
 
