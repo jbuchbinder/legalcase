@@ -102,7 +102,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 // Show link to previous page
 if ($list_pos>0) {
 	echo '<a href="all_cases.php?list_pos=';
-	echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : '0');
+	echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 	echo '">< Prev</a> ';
 }
