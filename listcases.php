@@ -18,14 +18,18 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.37 2005/02/01 13:19:17 mlutfy Exp $
+	$Id: listcases.php,v 1.38 2005/02/07 17:51:09 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
-$q = "SELECT c.id_case, title, status, public, pub_write
+// Read site preferences
+$case_court_archive = read_meta('case_court_archive');
+
+// Select cases of which the current user is author
+$q = "SELECT c.id_case, title, id_court_archive, status, public, pub_write
 		FROM lcm_case as c, lcm_case_author as a
 		WHERE (c.id_case = a.id_case
 			AND a.id_author = " . $GLOBALS['author_session']['id_author'];
@@ -36,8 +40,8 @@ $find_case_string = '';
 if (isset($_REQUEST['find_case_string']))
 	$find_case_string = $_REQUEST['find_case_string'];
 	
-if (strlen($find_case_string)>1) {
-	$q .= " AND (c.title LIKE '%$find_case_string%')";
+if (strlen($find_case_string)>0) {
+	$q .= " AND ( (c.id_case LIKE '%$find_case_string%') OR (c.title LIKE '%$find_case_string%') OR (id_court_archive LIKE '%$find_case_string%') )";
 	lcm_page_start("Cases, containing '$find_case_string':");
 } else {
 	lcm_page_start(_T('title_my_cases'));
@@ -73,7 +77,10 @@ echo "<!-- Page rows:" . $prefs['page_rows'] . "-->\n";
 	<tr>
 		<th class="heading">#</th>
 		<th class="heading">Title</th>
-		<th colspan="3" class="heading">Status</th>
+<?php	if ($case_court_archive == 'yes') {
+?>		<th class="heading">Court archive</th>
+<?php	}
+?>		<th colspan="3" class="heading">Status</th>
 	</tr>
 <?php
 // Process the output of the query
@@ -86,7 +93,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	// Case ID
 	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if ($ac_read) echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
-	echo $row['id_case'];
+	echo highlight_matches($row['id_case'],$find_case_string);
 	if ($ac_read) echo '</a>';
 	echo "</td>\n";
 
@@ -96,6 +103,13 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	echo highlight_matches(clean_output($row['title']),$find_case_string);
 	if (allowed($row['id_case'],'r')) echo '</a>';
 	echo "</td>\n";
+	
+	// Court archive ID
+	if ($case_court_archive == 'yes') {
+		echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+		echo highlight_matches(clean_output($row['id_case_archive']),$find_case_string);
+		echo "</td>\n";
+	}
 	
 	// Status
 	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $row['status'] . "</td>\n";
