@@ -171,19 +171,17 @@ if ($var_lang_lcm) {
 	include_lcm('inc_session');
 	$verif = verifier_visiteur();
 
-	if (changer_langue($var_lang_lcm)) {
+	if (lcm_set_language($var_lang_lcm)) {
 		lcm_setcookie('lcm_lang', $var_lang_lcm, time() + 365 * 24 * 3600);
 
-		// [ML] Strange, if I don't do this, id_auteur stays null,
-		// and I have no idea where the variable should have been initialized
-		$id_auteur = $GLOBALS['author_session']['id_author'];
+		$id_author = $GLOBALS['author_session']['id_author'];
 
 		// Save language preference only if we are installed
 		if (@file_exists('inc/config/inc_connect.php')) {
 			include_lcm('inc_admin');
 
-			if (verifier_action_auteur('var_lang_lcm', $valeur, $id_auteur)) {
-				lcm_query("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_auteur);
+			if (verifier_action_auteur('var_lang_lcm', $valeur, $id_author)) {
+				lcm_query("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_author);
 				$author_session['lang'] = $var_lang_lcm;
 				ajouter_session($author_session, $lcm_session);	// enregistrer dans le fichier de session
 			}
