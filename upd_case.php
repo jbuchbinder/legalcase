@@ -1,9 +1,6 @@
 <?php
-// Connect to the database
-$db=mysql_connect('localhost','lcm','lcmpass');
 
-// Select lcm database
-mysql_select_db('lcm',$db);
+include('inc/inc.php');
 
 //$cl='(id_case,title,id_court_archive,date_creation,date_assignment,legal_reason,alledged_crime,status)';
 //$vl="($id_case,'$title','$id_court_archive','$date_creation','$date_assignment','$legal_reason','$alledged_crime','$status')";
@@ -21,10 +18,11 @@ if ($id_case>0) {
 }
 
 // Do the query
-$result=mysql_query($q,$db);
+$result=mysql_query($q);
 
 // Close connection
-mysql_close($db);
+// mysql_close($db);
 
 header("Location: $referer");
+
 ?>

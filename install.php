@@ -4,61 +4,6 @@ include('inc/inc_version.php');
 include_lcm('inc_presentation');
 include_lcm('inc_db');
 
-//
-// Helper functions
-//
-
-function install_html_start($title = 'AUTO') {
-	global $spip_lang_rtl;
-
-	if ($title=='AUTO')
-		$title=_T('info_installation_legal_case_management');
-
-	if (!$charset = read_meta('charset'))
-		$charset = 'utf-8';
-
-	@Header("Content-Type: text/html; charset=$charset");
-
-	echo "<html><head>
-	<title>$title</title>
-	<meta http-equiv='Expires' content='0'>
-	<meta http-equiv='cache-control' content='no-cache,no-store'>
-	<meta http-equiv='pragma' content='no-cache'>
-	<meta http-equiv='Content-Type' content='text/html; charset=$charset'>
-	<style>
-	<!--
-	a {text-decoration: none; }
-	A:Hover {color:#FF9900; text-decoration: underline;}
-	.forml {width: 100%; background-color: #FFCC66; background-position: center bottom; float: none; color: #000000}
-	.formo {width: 100%; background-color: #FFF0E0; background-position: center bottom; weight: bold; float: none; color: #000000}
-	.fondl {background-color: #FFCC66; background-position: center bottom; float: none; color: #000000}
-	.fondo {background-color: #FFF0E0; background-position: center bottom; float: none; color: #000000}
-	.fondf {background-color: #FFFFFF; border-style: solid ; border-width: 1; border-color: #E86519; color: #E86519}
-	.serif { font-family: Georgia, Garamond, Times New Roman, serif; }
-	-->
-	</style>
-	</head>
-	<body bgcolor='#FFFFFF' text='#000000' link='#E86519' vlink='#6E003A' alink='#FF9900' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0'";
-
-	if ($spip_lang_rtl) echo " dir='rtl'";
-
-	echo "><br><br><br>
-	<center>
-	<table width='450'>
-	<tr><td width='450' class='serif'>
-	<font face='Verdana,Arial,Sans,sans-serif' size='4' color='#970038'><B>$title</b></font>\n<p>";
-}
-
-function install_html_end() {
-	echo '
-	</font>
-	</td></tr></table>
-	</center>
-	</body>
-	</html>
-	';
-}
-
 
 //
 // Main program
