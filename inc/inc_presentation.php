@@ -65,7 +65,28 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	
 	// linking the alternate CSS files with smaller and larger font size
 	
+	//There must be one active font size CSS file
+	switch($prefs['font_size'])
+	{
+		case "small_font":
+		echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_opt_smallfonts.css\" />\n";
+		break;
+		
+		case "large_font":
+		echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_opt_largefonts.css\" />\n";
+		break;
+		
+		case "medium_font":
+		echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_opt_mediumfonts.css\" />\n";
+		break;
+		
+		default:
+		echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_opt_mediumfonts.css\" />\n";
+		break;
+	}
+	
 	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_smallfonts.css\" title=\"small_font\" />\n";
+	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_mediumfonts.css\" title=\"medium_font\" />\n";
 	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_largefonts.css\" title=\"large_font\" />\n";
 	
 	echo "\t<script type=\"text/javascript\" language=\"JavaScript\" src=\"inc/ss_switcher.js\"></script>\n";
@@ -298,7 +319,7 @@ if($prefs['screen'] == "wide") {
 			<p class=\"prefs_column_text\">
 				<ul class=\"font_size_buttons\">
 					<li><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\">A-</a></li>
-					<li><a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('')\">A</a></li>
+					<li><a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('medium_font')\">A</a></li>
 					<li><a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\">A+</a></li>
 				</ul>
 			</p>
@@ -317,7 +338,7 @@ if($prefs['screen'] == "wide") {
 				. $author_session['name_last']
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\" class=\"set_fnt_sz\">&nbsp;A-&nbsp;</a>&nbsp;
-				<a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('')\" class=\"set_fnt_sz\">&nbsp;A&nbsp;&nbsp;</a>&nbsp;
+				<a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('medium_font')\" class=\"set_fnt_sz\">&nbsp;A&nbsp;&nbsp;</a>&nbsp;
 				<a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\" class=\"set_fnt_sz\">&nbsp;A+&nbsp;</a>&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
 			</p>";
 		echo "</div>";
