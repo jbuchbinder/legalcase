@@ -1,6 +1,7 @@
 <?php
 
 include('inc/inc.php');
+include_lcm('inc_filters');
 
 // Start session
 session_start();
@@ -31,9 +32,15 @@ if (count($errors)) {
     header("Location: $HTTP_REFERER");
     exit;
 } else {
-	$cl = "name_first='$name_first',name_middle='$name_middle',name_last='$name_last',";
-    $cl .= "date_creation='$date_creation',date_update='$date_update',citizen_number='$citizen_number',";
-    $cl .= "address='" . addslashes($address) . "',civil_status='$civil_status',income='$income'";
+	$cl = "name_first='" . clean_input($client_data['name_first']) . "',
+		name_middle='" . clean_input($client_data['name_middle']) . "',
+		name_last='" . clean_input($client_data['name_last']) . "',
+		date_creation='" . clean_input($client_data['date_creation']) . "',
+		date_update='" . clean_input($client_data['date_update']) . "',
+		citizen_number='" . clean_input($client_data['citizen_number']) . "',
+		address='" . clean_input($client_data['address']) . "',
+		civil_status='" . clean_input($client_data['civil_status']) . "',
+		income='" . clean_input($client_data['income']) . "'";
 
     if ($id_client>0) {
 		// Prepare query
