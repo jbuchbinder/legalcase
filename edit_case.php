@@ -18,15 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.42 2005/01/12 15:02:22 mlutfy Exp $
+	$Id: edit_case.php,v 1.43 2005/01/13 12:37:30 mlutfy Exp $
 */
+
+session_start();
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
-
-// Initiate session
-session_start();
 
 if (empty($errors)) {
 
@@ -59,7 +58,7 @@ if (empty($errors)) {
 
 		$q = "SELECT *
 			FROM lcm_case
-			WHERE id_case=$case";
+			WHERE id_case = $case";
 
 		$result = lcm_query($q);
 
