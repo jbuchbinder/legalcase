@@ -170,6 +170,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
+'kw_contacts_addressmain_title' => 'Home address',
+'kw_contacts_emailalternate_title' => 'E-mail (alternate)',
+'kw_contacts_emailmain_title' => 'E-mail',
+'kw_contacts_phonehome_title' => 'Phone (home)',
+'kw_contacts_phonemobile_title' => 'Phone (mobile)',
+'kw_contacts_phoneoffice_title' => 'Phone (office)',
 'kw_followups_assignment_title' => 'Assignment',
 'kw_followups_conclusion_title' => 'Conclusion',
 'kw_followups_consultation_title' => 'Consultation',
