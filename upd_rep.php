@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep.php,v 1.5 2005/02/07 12:47:46 mlutfy Exp $
+	$Id: upd_rep.php,v 1.6 2005/02/07 13:06:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -104,7 +104,7 @@ if ($id_report > 0) {
 //header("Location: rep_det.php?rep=$id_report");
 $ref_edit_rep = ($rep_data['ref_edit_rep'] ? $rep_data['ref_edit_rep'] : "rep_det.php?rep=$id_report");
 
-// Proceed accoring to the button type
+// Proceed according to the button type
 switch ($submit) {
 	case 'addnew':
 		header("Location: edit_rep.php?rep=0&ref=$ref_edit_rep");
@@ -112,8 +112,9 @@ switch ($submit) {
 	case 'adddet':
 		header("Location: rep_det.php?rep=$id_report");
 		break;
-	default :
-		header("Location: $ref_edit_rep");
+	default:
+		// [ML] header("Location: $ref_edit_rep");
+		header("Location: rep_det.php?rep=$id_report");
 }
 
 ?>
