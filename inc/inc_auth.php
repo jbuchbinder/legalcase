@@ -58,7 +58,6 @@ function auth() {
 	$auth_pass = "";
 	$auth_pass_ok = false;
 	$auth_can_disconnect = false;
-	$auth_htaccess = false;
 
 	// Fetch identification data from authentication session
 	if ($cookie_session = $HTTP_COOKIE_VARS['lcm_session']) {
