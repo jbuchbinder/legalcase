@@ -80,7 +80,7 @@ a.main_nav_btn:hover {
 	color: #666633;
 }
 
-a.prefs_bold_lnk {
+a.prefs_bold_lnk, a.prefs_normal_lnk {
 	color: #666633;
 }
 
