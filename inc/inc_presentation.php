@@ -30,14 +30,14 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	global $mode;
 	global $connect_status, $connect_toutes_rubriques;
 	
-	$lcm_site_name = entites_html(lire_meta("nom_site"));
+	$lcm_site_name = entites_html(read_meta("nom_site"));
 	$title = textebrut(typo($title));
 
 	// Don't show site name (if none) while installation
 	if (!$lcm_site_name && $title == "AUTO")
 		$lcm_site_name = "LCM";
 
-	if (!$charset = lire_meta('charset'))
+	if (!$charset = read_meta('charset'))
 		$charset = 'utf-8';
 
 	@Header("Expires: 0");

@@ -47,7 +47,7 @@ function texte_backend($texte) {
 	$texte = entites_unicode($texte);
 
 	// Caracteres problematiques en iso-latin 1
-	if (lire_meta('charset') == 'iso-8859-1') {
+	if (read_meta('charset') == 'iso-8859-1') {
 		$texte = str_replace(chr(156), '&#156;', $texte);
 		$texte = str_replace(chr(140), '&#140;', $texte);
 		$texte = str_replace(chr(159), '&#159;', $texte);
@@ -123,7 +123,7 @@ function corriger_caracteres($texte) {
 			chr(194).chr(133) => '...'
 		);
 	}
-	$charset = lire_meta('charset');
+	$charset = read_meta('charset');
 	if (!$trans[$charset]) return $texte;
 	if ($GLOBALS['flag_strtr2']) return strtr($texte, $trans[$charset]);
 	reset($trans[$charset]);
@@ -142,7 +142,7 @@ function PtoBR($texte){
 
 // Majuscules y compris accents, en HTML
 function majuscules($texte) {
-	if (lire_meta('charset') != 'iso-8859-1')
+	if (read_meta('charset') != 'iso-8859-1')
 		return "<span style='text-transform: uppercase'>$texte</span>";
 
 	$suite = htmlentities($texte);
@@ -488,7 +488,7 @@ function centrer($letexte) {
 function filtrer_ical($texte) {
 	include_lcm('inc_charsets');
 	$texte = html2unicode($texte);
-	$texte = unicode2charset(charset2unicode($texte, lire_meta('charset'), 1), 'utf-8');
+	$texte = unicode2charset(charset2unicode($texte, read_meta('charset'), 1), 'utf-8');
 	$texte = ereg_replace("\n", " ", $texte);
 	$texte = ereg_replace(",", "\,", $texte);
 

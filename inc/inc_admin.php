@@ -66,7 +66,7 @@ function _action_auteur($action, $id_auteur, $nom_alea) {
 			if ($row = spip_fetch_array($result))
 				$pass = $row['password'];
 	}
-	$alea = lire_meta($nom_alea);
+	$alea = read_meta($nom_alea);
 	return md5($action.$id_auteur.$pass.$alea);
 }
 

@@ -793,7 +793,7 @@ function _L($text) {
 }
 
 // Main language of the site
-$langue_site = lire_meta('langue_site');
+$langue_site = read_meta('langue_site');
 if (!$langue_site) include_lcm('inc_lang');
 $lcm_lang = $langue_site;
 

@@ -13,14 +13,14 @@ define('_INC_CHARSETS', '1');
 */
 function load_charset ($charset = 'AUTO', $langue_site = 'AUTO') {
 	if ($charset == 'AUTO')
-		$charset = lire_meta('charset');
+		$charset = read_meta('charset');
 	$charset = strtolower($charset);
 
 	if (is_array($GLOBALS['CHARSET'][$charset]))
 		return $charset;
 
 	if ($langue_site == 'AUTO')
-		$langue_site = lire_meta('langue_site');
+		$langue_site = read_meta('langue_site');
 
 	switch ($charset) {
 	case 'utf-8':
@@ -2061,7 +2061,7 @@ function charset2unicode($texte, $charset='AUTO', $forcer = false) {
 	static $trans;
 
 	if ($charset == 'AUTO')
-		$charset = lire_meta('charset');
+		$charset = read_meta('charset');
 	$charset = strtolower($charset);
 
 	switch ($charset) {
@@ -2113,7 +2113,7 @@ function charset2unicode($texte, $charset='AUTO', $forcer = false) {
 function unicode2charset($texte, $charset='AUTO') {
 	static $CHARSET_REVERSE;
 	if ($charset == 'AUTO')
-		$charset=lire_meta('charset');
+		$charset = read_meta('charset');
 	$charset = strtolower($charset);
 
 	switch($charset) {
@@ -2316,7 +2316,7 @@ function javascript_to_binary ($texte) {
 function translitteration($texte, $charset='AUTO', $complexe='') {
 	static $trans;
 	if ($charset == 'AUTO')
-		$charset = lire_meta('charset');
+		$charset = read_meta('charset');
 	$charset = strtolower($charset);
 
 	$table_translit ='translit'.$complexe;

@@ -371,7 +371,7 @@ function typo_fr($letexte) {
 			"&deg;" => "&#176;"
 		);
 		$chars = array(160 => '~', 187 => '&#187;', 171 => '&#171;', 148 => '&#148;', 147 => '&#147;', 176 => '&#176;');
-		$charset = lire_meta('charset');
+		$charset = read_meta('charset');
 		include_lcm('inc_charsets');
 
 		while (list($c, $r) = each($chars)) {
