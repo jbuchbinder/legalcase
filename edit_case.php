@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.62 2005/03/19 14:49:57 mlutfy Exp $
+	$Id: edit_case.php,v 1.63 2005/03/21 12:06:56 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -91,8 +91,6 @@ $attach_client = 0;
 if (!$existing && isset($_REQUEST['attach_client'])) {
 	$attach_client = intval($_REQUEST['attach_client']);
 
-	/* [ML] Better to remove this and show clients in listcase instead
-	   + make 'title' optional.
 	if ($attach_client) {
 		// Fetch name of the client
 		$query = "SELECT name_first, name_middle, name_last
@@ -101,17 +99,11 @@ if (!$existing && isset($_REQUEST['attach_client'])) {
 
 		$result = lcm_query($query);
 		if ($info = lcm_fetch_array($result)) {
-			$_SESSION['case_data']['title'] = $info['name_first'];
-
-			// To avoid showing two spaces if no middle name
-			if ($info['name_middle'])
-				$_SESSION['case_data']['title'] .= ' ' . $info['name_middle'];
-
-			$_SESSION['case_data']['title'] .= ' ' . $info['name_last'];
+			$_SESSION['case_data']['title'] = get_person_name($info);
 		} else {
 			die("No such client #" . $attach_client);
 		}
-	} */
+	}
 }
 
 // Start page and title
