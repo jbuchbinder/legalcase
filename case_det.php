@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.125 2005/03/30 07:32:11 mlutfy Exp $
+	$Id: case_det.php,v 1.126 2005/04/01 11:04:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -293,13 +293,12 @@ if ($case > 0) {
 				$number_of_rows = lcm_num_rows($result);
 				if ($number_of_rows) {
 					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
-					echo "\t<tr>";
+					echo "<tr>\n";
 					echo '<th class="heading">' . _Th('time_input_date_start') . '</th>';
 					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? _('time_input_date_end') : _T('time_input_duration') ) . '</th>';
 					echo '<th class="heading">' . _Th('app_input_type') . '</th>';
 					echo '<th class="heading">' . _Th('app_input_title') . '</th>';
-					echo '<th class="heading">Reminder</th>'; // TRAD
-					// [ML] echo '<th class="heading">Action</th>'; // TRAD
+					echo '<th class="heading">' . _Th('app_input_reminder') . '</th>';
 					echo "</tr>\n";
 				
 					// Check for correct start position of the list
@@ -345,7 +344,7 @@ if ($case > 0) {
 					show_list_end($list_pos, $number_of_rows);
 				}
 
-				echo "<p><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">New appointment</a></p>\n"; // TRAD
+				echo "<p><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">" . _T('app_button_new') . "</a></p>\n";
 
 				echo "</p>\n";
 				echo "</fieldset>\n";
@@ -583,7 +582,8 @@ if ($case > 0) {
 				echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 				echo "</form>\n";
 
-				echo '</fieldset>';
+				echo "</p>\n";
+				echo "</fieldset>\n";
 
 				$_SESSION['errors'] = array();
 				$_SESSION['user_file'] = array();
