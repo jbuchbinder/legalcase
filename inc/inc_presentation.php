@@ -293,6 +293,15 @@ if($prefs['screen'] == "wide") {
 	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
 			</p>
 			</form>
+			<!-- the font size experiment -->
+			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_font-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;Font size</div>
+			<p class=\"prefs_column_text\">
+				<ul class=\"font_size_buttons\">
+					<li><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\">A-</a></li>
+					<li><a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('')\">A</a></li>
+					<li><a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\">A+</a></li>
+				</ul>
+			</p>
 		<!-- End of \"prefs_column\" content -->
 		</div>";
 //end of user screen IF
