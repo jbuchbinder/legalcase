@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.11 2005/01/18 23:09:05 antzi Exp $
+	$Id: sel_client.php,v 1.12 2005/01/18 23:21:08 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -87,18 +87,14 @@ if ($list_pos>0)
 echo '(to be added to case "' . $case_data['title'] . "\")<br />\n";
 
 // Search form
-?>
-<form name="frm_find_client" class="search_form" action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post">
-	Find client:&nbsp;<input type="text" name="find_client_string" size="10" class="search_form_txt"<?php
+echo "<form name='frm_find_client' class='search_form' action='sel_client.php?case=$case' method='post'>";
+echo 'Find client:&nbsp;<input type="text" name="find_client_string" size="10" class="search_form_txt"';
 
 //	if (isset($find_client_string)) echo " value='$find_client_string'";
 	echo " value='$find_client_string'";
 
 ?> />&nbsp;<input type="submit" name="submit" value="Search" class="search_form_btn" />
 </form>
-
-<ul><li>Todo: Search for client + if list too long, show only search.</li>
-<li>Todo: Show case overview.</li></ul>
 
 <form action="add_client.php" method="post">
 	<table border="0" class="tbl_usr_dtl">
@@ -147,10 +143,10 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 // Show link to previous page
 if ($list_pos>0) {
-	echo '<a href="' . $_SERVER['REQUEST_URI'];
-	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
+	echo "<a href='sel_client.php?case=$case";
+	if ($list_pos>$prefs['page_rows']) echo '&amp;list_pos=' . ($list_pos - $prefs['page_rows']);
 	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-	echo '" class="content_link">< Prev</a> ';
+	echo "' class='content_link'>< Prev</a> ";
 }
 
 echo "</td>\n\t\t\t<td align='center' width='70%'>";
@@ -162,9 +158,9 @@ if ($list_pages>1) {
 	for ($i=0 ; $i<$list_pages ; $i++) {
 		if ($i==floor($list_pos / $prefs['page_rows'])) echo '['. ($i+1) . '] ';
 		else {
-			echo '<a href="' . $_SERVER['REQUEST_URI'] . '?list_pos=' . ($i*$prefs['page_rows']);
+			echo "<a href='sel_client.php?case=$case&amp;list_pos=" . ($i*$prefs['page_rows']);
 			if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-			echo '" class="content_link">' . ($i+1) . '</a> ';
+			echo "' class='content_link'>" . ($i+1) . '</a> ';
 		}
 	}
 }
@@ -174,9 +170,9 @@ echo "</td>\n\t\t\t<td align='right' width='15%'>";
 // Show link to next page
 $next_pos = $list_pos + $prefs['page_rows'];
 if ($next_pos<$number_of_rows) {
-	echo '<a href="' . $_SERVER['REQUEST_URI'] . "?list_pos=$next_pos";
+	echo "<a href='sel_client.php?case=$case&amp;list_pos=$next_pos";
 	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-	echo '" class="content_link">Next ></a>';
+	echo "' class='content_link'>Next ></a> ";
 }
 
 echo "</td>\n\t\t</tr>\n\t</table>\n";
