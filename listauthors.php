@@ -73,7 +73,7 @@ if ($list_pos>0)
 <tr><th class='tbl_head'>Name</th><th class='tbl_head'>Status</th><th class='tbl_head'>Action</th></tr>
 <?php
 // Process the output of the query
-for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
+for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show author name
 	echo "<tr><td class='tbl_data'>";
 //	if ( ) echo '<a href=".php?author=' . $row['id_author'] . '">';
@@ -98,18 +98,18 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 // Show link to previous page
 if ($list_pos>0) {
 	echo '<a href="listauthors.php';
-	if ($list_pos>$GLOBALS['list_len']) echo '?list_pos=' . ($list_pos - $GLOBALS['list_len']);
+	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
 	if (strlen($find_author_string)>1) echo "&amp;find_author_string=" . rawurlencode($find_author_string);
 	echo '">< Prev</a> ';
 }
 
 // Show page numbers with direct links
-$list_pages = ceil($number_of_rows / $GLOBALS['list_len']);
+$list_pages = ceil($number_of_rows / $prefs['page_rows']);
 if ($list_pages>1) {
 	for ($i=0 ; $i<$list_pages ; $i++) {
-		if ($i==floor($list_pos / $GLOBALS['list_len'])) echo ($i+1) . ' ';
+		if ($i==floor($list_pos / $prefs['page_rows'])) echo ($i+1) . ' ';
 		else {
-			echo '<a href="listauthors.php?list_pos=' . ($i*$GLOBALS['list_len']);
+			echo '<a href="listauthors.php?list_pos=' . ($i*$prefs['page_rows']);
 			if (strlen($find_author_string)>1) echo "&amp;find_author_string=" . rawurlencode($find_author_string);
 			echo '">' . ($i+1) . '</a> ';
 		}
@@ -117,7 +117,7 @@ if ($list_pages>1) {
 }
 
 // Show link to next page
-$next_pos = $list_pos + $GLOBALS['list_len'];
+$next_pos = $list_pos + $prefs['page_rows'];
 if ($next_pos<$number_of_rows) {
 	echo "<a href=\"listauthors.php?list_pos=$next_pos";
 	if (strlen($find_author_string)>1) echo "&amp;find_author_string=" . rawurlencode($find_author_string);
