@@ -269,6 +269,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'input_email' => '<NEW>E-mail address',
 'input_search_case' => 'Rechercher un dossier:',
 'input_search_client' => 'Rechercher un client:',
+'input_search_org' => 'Rechercher une organisation:',
 'input_search_organisation' => 'Rechercher une organisation:',
 'install_connection_login' => 'Identifiant de la connection',
 'install_connection_password' => 'Mot de passe',
@@ -310,6 +311,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
+'keywords_info_maintenance' => '<NEW>It is possible that, between LCM upgrades, a problem could have occured while updating the system keyword groups. To force the system keywords groups to be updated again, click on the validation button below. This will not affect your existing configuration.',
 'keywords_info_quantity' => '<NEW>Authors can select @quantity@ of this group in a given situation (case, follow-up, etc.).',
 'keywords_input_description' => '<NEW>Description:',
 'keywords_input_for_group' => '<NEW>In keyword group:',
