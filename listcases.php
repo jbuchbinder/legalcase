@@ -1,12 +1,30 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the 
+	Free Software Foundation; either version 2 of the License, or (at your 
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but 
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along 
+	with this program; if not, write to the Free Software Foundation, Inc.,
+    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+*/
+
 // Test settings
 $GLOBALS['list_len'] = 3;
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 
-// Prepare query
 $q = "SELECT lcm_case.id_case,title,public,pub_write
 		FROM lcm_case,lcm_case_author
 		WHERE (lcm_case.id_case=lcm_case_author.id_case
@@ -37,20 +55,20 @@ if ($list_pos>0)
 		die("Error seeking position $list_pos in the result");
 ?>
 
-<table border='1' align='center'>
-<tr><th colspan="3">Case description</th></tr>
+<table border='1' align='center' class='tbl_data'>
+<tr><th colspan="3" class='tbl_head'>Case description</th></tr>
 <?php
 // Process the output of the query
 for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show case title
-	echo '<tr><td>';
+	echo "<tr><td class='tbl_data'>";
 	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '">';
 	echo highlight_matches($row['title'],$find_case_string);
 	if (allowed($row['id_case'],'r')) echo '</a>';
-	echo "</td>\n<td>";
+	echo "</td>\n<td class='tbl_data'>";
 	if (allowed($row['id_case'],'e'))
 		echo '<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a>';
-	echo "</td>\n<td>";
+	echo "</td>\n<td class='tbl_data'>";
 	if (allowed($row['id_case'],'w'))
 		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '">Add followup</a>';
 	echo "</td></tr>\n";
