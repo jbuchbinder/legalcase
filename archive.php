@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.4 2005/02/28 14:09:31 mlutfy Exp $
+	$Id: archive.php,v 1.5 2005/03/13 16:37:24 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -52,6 +52,14 @@ if (strlen($find_case_string) > 1) {
 }
 
 $q .= ")";
+
+// Sort cases by creation date
+$case_order = 'DESC';
+if (isset($_REQUEST['case_order']))
+	if ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'DESC')
+		$case_order = $_REQUEST['case_order'];
+
+$q .= " ORDER BY date_creation " . $case_order;
 
 $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
