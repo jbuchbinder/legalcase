@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.39 2004/12/17 10:27:36 antzi Exp $
+	$Id: edit_case.php,v 1.40 2004/12/17 10:35:50 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -73,7 +73,6 @@ if (empty($errors)) {
 
 	} else {
 		// Set default values for the new case
-		$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
 		$case_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
 		$case_data['public'] = read_meta('case_default_read');
 		$case_data['pub_write'] = read_meta('case_default_write');
