@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.27 2005/03/21 11:22:37 mlutfy Exp $
+	$Id: inc_login.php,v 1.28 2005/03/29 06:36:21 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -114,7 +114,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	// What informations to pass?
 	if ($login) {
 		$status_login = 0; // unknown status
-		$login = addslashes($login);
+		$login = clean_input($login);
 		$query = "SELECT id_author, status, password, prefs, alea_actuel, alea_futur 
 					FROM lcm_author 
 					WHERE username='$login'";
