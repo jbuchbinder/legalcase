@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.7 2004/12/11 16:24:22 antzi Exp $
+	$Id: rep_det.php,v 1.8 2004/12/11 16:32:46 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -120,7 +120,7 @@ if ($rep > 0) {
 					echo "<a href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;order=" . ($column['col_order']-1) . "'>^</a> ";
 				if ($column['col_order'] < $rows)
 					echo "<a href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;order=" . ($column['col_order']+1) . "'>v</a> ";
-				echo "<a href='rem_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "'>(!)Remove</a>";
+				echo "<a href='rem_rep_col.php?rep=$rep&amp;order=" . $column['col_order'] . "'>(!)Remove</a>";
 			}
 			echo "</td>\n";
 			echo "</tr>\n";
