@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.96 2005/03/02 16:49:08 antzi Exp $
+	$Id: case_det.php,v 1.97 2005/03/03 16:07:00 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -130,11 +130,11 @@ if ($case > 0) {
 				echo _T('case_input_legal_reason') . ' ' . clean_output($row['legal_reason']) . "<br>\n";
 				if ($case_alledged_crime == 'yes')
 					echo _T('case_input_alledged_crime') . ' ' . clean_output($row['alledged_crime']) . "<br>\n";
-		
+
 				// Show case status
 				if ($edit) {
 					// Change status form
-					echo "<form action='set_case_status.php' method='GET'>\n";
+					echo "<form action='set_case_status.php' method='get'>\n";
 					echo "\t" . _T('case_input_status') . "&nbsp;";
 					echo "<input type='hidden' name='case' value='$case'>\n";
 					echo "\t<select name='status' class='sel_frm'>\n";
@@ -147,7 +147,28 @@ if ($case > 0) {
 				} else {
 					echo _T('case_input_status') . "&nbsp;" . clean_output($row['status']) . "<br>\n";
 				}
-		
+
+				// Show case stage
+				if ($edit) {
+					// Change stage form
+					echo "<form action='set_case_stage.php' method='get'>\n";
+					echo "\t" . _T('case_input_stage') . "&nbsp;";
+					echo "<input type='hidden' name='case' value='$case'>\n";
+					echo "\t<select name='stage' class='sel_frm'>\n";
+
+					global $system_kwg;
+
+					foreach($system_kwg['stage']['keywords'] as $kw) {
+						$sel = ($kw['name'] == $row['stage'] ? ' selected="selected"' : '');
+						echo "\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
+					}
+					echo "\t</select>\n";
+					echo "\t<button type='submit' name='submit' value='set_stage' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
+					echo "</form>\n";
+				} else {
+					echo _T('case_input_stage') . "&nbsp;" . clean_output($row['stage']) . "<br>\n";
+				}
+
 				echo _T('public') . ': ' . _T('Read') . '=';
 				echo ($row['public'] ? 'Yes' : 'No');
 				echo ', ' . _T('Write') . '=';
