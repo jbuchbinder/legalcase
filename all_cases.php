@@ -83,24 +83,24 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	if (allowed($row['id_case'],'r')) echo '</a>';
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $row['status'];
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if (allowed($row['id_case'],'e'))
+//	if (allowed($row['id_case'],'e'))
 		echo '<a href="edit_case.php?case=' . $row['id_case'] . '" class="content_link">Edit case</a>';
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if (allowed($row['id_case'],'w'))
-		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">Add followup</a>';
+//	if (allowed($row['id_case'],'w'))
+//		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">Add followup</a>';
 	echo "</td></tr>\n";
 }
 
 ?>
 </table>
-<p align='right'><a href="edit_case.php?case=0" class="content_link">Open new case</a></p>
+<!--p align='right'><a href="edit_case.php?case=0" class="content_link">Open new case</a></p-->
 
 <table border='0' align='center' width='99%'>
 	<tr><td align="left"><?php
 
 // Show link to previous page
 if ($list_pos>0) {
-	echo '<a href="listcases.php';
+	echo '<a href="all_cases.php';
 	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 	echo '">< Prev</a> ';
@@ -115,7 +115,7 @@ if ($list_pages>1) {
 	for ($i=0 ; $i<$list_pages ; $i++) {
 		if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
 		else {
-			echo '<a href="listcases.php?list_pos=' . ($i*$prefs['page_rows']);
+			echo '<a href="all_cases.php?list_pos=' . ($i*$prefs['page_rows']);
 			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 			echo '">' . ($i+1) . '</a> ';
 		}
@@ -127,7 +127,7 @@ echo "</td>\n\t\t<td align='right'>";
 // Show link to next page
 $next_pos = $list_pos + $prefs['page_rows'];
 if ($next_pos<$number_of_rows) {
-	echo "<a href=\"listcases.php?list_pos=$next_pos";
+	echo "<a href=\"all_cases.php?list_pos=$next_pos";
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 	echo '">Next ></a>';
 }
