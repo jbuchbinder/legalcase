@@ -19,6 +19,8 @@ function show_config_form() {
 
 	echo "<form action='config_site.php' method='post'>\n";
 
+	echo "<input type='hidden' name='conf_modified' value='yes'/>\n";
+
 	// *** INFO SITE
 	echo "<h3>Information about the site</h3>\n";
 
@@ -95,9 +97,61 @@ function show_config_form() {
 
 	echo "</div>\n";
 
+	echo "<p><input type='submit' name='Validate' id='Validate' value='Validate'/></p>\n";
+
 	echo "</form>\n";
 
 	echo "</div>\n";
+}
+
+function apply_conf_changes() {
+	$log = array();
+
+	global $site_name;
+	global $default_language;
+
+	// Site name
+	if (! empty($site_name)) {
+		$old_name = read_meta('site_name');
+
+		if ($old_name != $site_name) {
+			write_meta('site_name', $site_name);
+			array_push($log, "Name of site set to <tt>$site_name</tt>, was <tt>$old_name</tt>.");
+		}
+	}
+
+	// Default language
+	if (! empty($default_language)) {
+		$old_lang = read_meta('default_language');
+
+		if ($old_lang != $default_language) {
+			write_meta('default_language', $default_language);
+			array_push($log, "Default language set to <tt>" 
+				. translate_language_name($default_language) 
+				. "</tt>, previously was <tt>"
+				. translate_language_name($old_lang) ."</tt>.");
+		}
+	}
+
+	// TODO: admin email
+
+	// TODO: Collab word
+
+	// Show changes on screen
+	if (! empty($log)) {
+		echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
+		echo "<div>Changes made:</div>\n";
+		echo "<ul>";
+
+		foreach ($log as $line) {
+			echo "<li>" . $line . "</li>\n";
+		}
+
+		echo "</ul>\n";
+		echo "</div>\n";
+
+		write_metas();
+	}
 }
 
 lcm_page_start("Site configuration");
@@ -107,7 +161,8 @@ global $author_session;
 if ($author_session['status'] != 'admin') {
 	echo "<p>Warning: Access denied, not admin\n";
 } else {
-	// XXX If any actions, do them here
+	if ($conf_modified)
+		apply_conf_changes();
 
 	// Once ready, show the form
 	show_config_form();
