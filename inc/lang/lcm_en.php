@@ -291,7 +291,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // H
+'help_intro_author_list' => 'List of all users registered in the system. You can click on the user\'s name to view its details. If you are an administrator, you can create new users using the button below.',
 'help_intro_case_list' => 'List of the cases you are working on. You can click on the case title in the list below to view the details page of the chosen case. You can also limit the list of cases to specific criteria using the filters.',
+'help_intro_client_list' => 'List of all clients registered in the system. You can click on the client\'s name to view its details. You can also register a new client using the button below.',
+'help_intro_org_list' => 'List of all organisations registered in the system. You can click on the organisation\'s name to view its details. You can also register a new organisation using the button below.',
 'help_title_about' => 'About ...',
 'help_title_about_contrib' => 'Contributors',
 'help_title_about_license' => 'License and terms of use',
@@ -644,7 +647,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_app_edit' => 'Edit appointment',
 'title_app_new' => 'New appointment',
 'title_archives' => 'Archives',
+'title_author_edit' => 'Edit author:',
 'title_author_list' => 'List of users',
+'title_author_new' => 'New author:',
 'title_authorconf' => 'My preferences',
 'title_case_details' => 'Case details:',
 'title_case_edit' => 'Edit case details',
@@ -661,7 +666,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_kwg_edit' => 'Edit keyword-group',
 'title_kwg_new' => 'New keyword-group',
 'title_my_cases' => 'My cases',
+'title_org_edit' => 'Edit organisation:',
 'title_org_list' => 'List of organisations',
+'title_org_new' => 'New organisation:',
 'title_org_select_client' => '@name_org@: Select representatives...',
 'title_org_view' => 'Organisation:',
 'title_site_configuration' => 'Site configuration',
