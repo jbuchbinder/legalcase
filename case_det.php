@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.85 2005/02/21 15:44:52 makaveev Exp $
+	$Id: case_det.php,v 1.86 2005/02/22 16:00:32 antzi Exp $
 */
 
 include('inc/inc.php');
