@@ -12,14 +12,35 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 '0_maintainer' => 'Mathieu Lutfy (mathieu@bidon.ca)',
 
 
+// A
+'add_client_s' => 'Add client(s)',
+'add_organisation_s' => 'Add organisation(s)',
+'add_user_case' => 'Add user to the case',
+'alledged_crime' => 'Alledged crime',
+'assignment_date' => 'Assignment date',
+
+
 // B
 'button_next' => 'Next',
 'button_reload_page' => 'Reload this page',
 'button_validate' => 'Validate',
 
 
+// C
+'case_clients' => 'Clients in this case',
+'case_details' => 'Case details',
+'case_followups' => 'Follow-ups to this case',
+'case_id' => 'Case ID',
+'case_user_s' => 'Case user(s)',
+'clients' => 'Clients',
+'court_archive_id' => 'Court archive ID',
+'creation_date' => 'Creation date',
+
+
 // D
+'date' => 'Date',
 'date_format' => 'l, dS F Y',
+'description' => 'Description',
 'directories_bad_rights' => 'The following directories do not have write permission',
 'directories_bad_rights_cause' => 'To change this, use your SSH/SFTP client in order to set access permissions for each of these directories. The procedure is detailed in the install guide.',
 'directories_continue' => 'Once you are ready, you can reload this page.',
@@ -30,13 +51,19 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // E
+'edit' => 'Edit',
+'edit_case_information' => 'Edit case information',
 'enter_name_first' => 'First',
 'enter_name_last' => 'Last',
 'enter_name_middle' => 'Middle',
 'error_add_auth_no_rights' => 'You don\'t have permission to add access rights to this case!',
+'error_no_case_specified' => 'No case was specified',
+'error_no_read_permission' => 'You don\'t have permission to view this case!',
+'error_no_such_case' => 'There\'s no such case!',
 
 
 // I
+'info_free_software' => 'Free software <a href=\'http://www.lcm.ngo-bg.org/en\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\'>GPL licence</a>.',
 'info_more_than_five' => '(More than 5 characters)',
 'info_more_than_three' => '(More than 3 characters)',
 'info_name_of_person' => 'Name',
@@ -84,6 +111,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // L
+'legal_reason' => 'Legal reason',
 'login_access_denied' => 'Access denied',
 'login_identifier_unknown' => 'The identifier "@login@" is unknown.',
 'login_info_login' => 'identifier for connection to the site',
@@ -98,12 +126,28 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_without_cookie' => 'Identification without cookie',
 
 
+// N
+'new_followup' => 'New followup',
+
+
+// O
+'organisations' => 'Organisations',
+
+
+// P
+'public' => 'Public',
+
+
+// S
+'status' => 'Status',
+
+
 // T
-'test' => '',
 'title_error' => 'Error',
 'title_software' => 'Legal Case Management System',
 'title_software_article' => 'The Legal Case Management Software',
 'title_technical_message' => 'Technical message',
+'type' => 'Type',
 'typo_column' => ':',
 
 
