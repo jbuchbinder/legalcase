@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.36 2005/01/10 11:49:56 mlutfy Exp $
+	$Id: config_author.php,v 1.37 2005/01/10 16:55:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -118,7 +118,8 @@ function show_author_form() {
 	</table>
 </form>
 
-		  <br />
+		  <!-- [ML] I think that we can remove this for good -->
+		  <!-- br />
 
 <form name="upd_user_profile" method="post" action="config_author.php">
 	<input type="hidden" name="author_password_modified" value="yes"/>
@@ -145,7 +146,7 @@ function show_author_form() {
                 <input name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_change_password'); ?>" /></td>
             </tr>
 			</table>
-</form>
+</form -->
 
 
             <!-- tr>
