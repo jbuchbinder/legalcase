@@ -123,9 +123,9 @@ function lcm_page_start($title = "") {
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\">Main menu</div>
 						<ul id=\"nav_menu_list\">
-							<li><a href=\"listcases.php\">My cases</a></li>
-							<li><a href=\"edit_client.php\">Add Client</a></li>
-							<li><a href=\"edit_case.php\">New Case</a></li>
+							<li><a href=\"listcases.php\" class=\"main_nav_btn\">My cases</a></li>
+							<li><a href=\"edit_client.php\" class=\"main_nav_btn\">Add Client</a></li>
+							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
 							<li>Edit <abbr title=\"User Interface\">UI</abbr> preferences</li>\n";
 	
 	if ($connect_status == 'admin') {
