@@ -55,15 +55,15 @@ function show_author_form() {
             </tr>
             <tr>
               <td align="right" valign="top">First name:</td>
-              <td align="left" valign="top"><input name="usr_fname" type="text" class="search_form_txt" id="usr_fname" size="35" value="<?php echo $usr['name_first']; ?>/></td>
+              <td align="left" valign="top"><input name="usr_fname" type="text" class="search_form_txt" id="usr_fname" size="35" value="<?php echo $usr['name_first']; ?>"/></td>
             </tr>
             <tr>
               <td align="right" valign="top">Middle name:</td>
-              <td align="left" valign="top"><input name="usr_mname" type="text" class="search_form_txt" id="usr_mname" size="35"  value="<?php echo $usr['name_middle']; ?>/></td>
+              <td align="left" valign="top"><input name="usr_mname" type="text" class="search_form_txt" id="usr_mname" size="35"  value="<?php echo $usr['name_middle']; ?>"/></td>
             </tr>
             <tr>
               <td align="right" valign="top">Last name:</td>
-              <td align="left" valign="top"><input name="usr_lname" type="text" class="search_form_txt" id="usr_lname" size="35"  value="<?php echo $usr['name_last']; ?>/></td>
+              <td align="left" valign="top"><input name="usr_lname" type="text" class="search_form_txt" id="usr_lname" size="35"  value="<?php echo $usr['name_last']; ?>"/></td>
             </tr>
             <tr>
               <td align="right" valign="top">Phone #:</td>
@@ -124,7 +124,7 @@ function show_author_form() {
 <?php
 	if ($GLOBALS['all_langs']) {
 		echo "
-			<tr> 
+			<tr>
 				<td align=\"right\" valign=\"top\">Language:</td>
 				<td align=\"left\" valign=\"top\">
 					<input type='hidden' name='old_language' value='" .  $author_session['lang'] . "'/>\n";
