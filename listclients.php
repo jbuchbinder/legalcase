@@ -7,6 +7,10 @@ include_lcm('inc_filters');
 $q = "SELECT id_client,name_first,name_middle,name_last
 		FROM lcm_client";
 
+$find_client_string = '';
+if (isset($_REQUEST['find_client_string']))
+	$find_client_string = $_REQUEST['find_client_string'];
+
 if (strlen($find_client_string)>1) {
 	// Add search criteria
 	$q .= " WHERE ((name_first LIKE '%$find_client_string%')
@@ -24,6 +28,11 @@ $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
+$list_pos = 0;
+
+if (isset($_REQUEST['list_pos']))
+	$list_pos = $_REQUEST['list_pos'];
+
 if ($list_pos>=$number_of_rows) $list_pos = 0;
 
 // Position to the page info start
