@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.40 2005/04/01 16:57:43 antzi Exp $
+	$Id: upd_fu.php,v 1.41 2005/04/04 06:28:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -218,7 +218,8 @@ if ($prefs['time_intervals']=='absolute') {
 }
 
 // title
-if (!(strlen($_SESSION['fu_data']['app_title'])>0)) $_SESSION['errors']['app_title'] = 'Appointment title should not be empty!';	// TRAD
+if (! $_SESSION['fu_data']['app_title'])
+	$_SESSION['errors']['app_title'] = _Ti('app_input_title') . _T('warning_field_mandatory');
 
 //
 // Check if any errors found
@@ -345,7 +346,8 @@ if (count($_SESSION['errors'])) {
 	$result = lcm_query($q);
 
 	// Add followup relation
-	lcm_query("INSERT INTO lcm_
+	// [ML] XXX this was left as-is... is it the same as above query?
+	// lcm_query("INSERT INTO lcm_
 
 // Send user back to add/edit page's referer or (default) to followup detail page
 header('Location: ' . ($_SESSION['fu_data']['ref_edit_fu'] ? $_SESSION['fu_data']['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));

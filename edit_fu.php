@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.82 2005/04/01 16:55:23 antzi Exp $
+	$Id: edit_fu.php,v 1.83 2005/04/04 06:28:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -297,7 +297,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			echo "</td></tr>\n";
 
 			echo "<!-- Appointment title -->\n\t\t<tr><td>";
-			echo _T('app_input_title');
+			echo f_err_star('app_title') . _T('app_input_title');
 			echo "</td><td>";
 			echo '<input type="text" ' . $title_onfocus . $dis . ' name="app_title" size="50" value="';
 			echo clean_output($_SESSION['fu_data']['app_title']) . '" />';
