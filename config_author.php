@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.54 2005/03/01 10:27:53 antzi Exp $
+	$Id: config_author.php,v 1.55 2005/03/18 16:14:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -143,7 +143,7 @@ function show_author_form($tab) {
 	<!-- Submit button -->
 		<tr>
 			<td colspan="2" align="center" valign="middle">
-				<input type="submit" name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
+				<input name="validate" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
 		</tr>
 	</table>
 </form>
@@ -218,7 +218,7 @@ function show_author_form($tab) {
 	<!-- Submit button -->
 		<tr>
 			<td colspan="2" align="center" valign="middle">
-				<input type="submit" name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
+				<input name="validate" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
 		</tr>
 	</table>
 </form>
@@ -356,7 +356,7 @@ if (count($log) > 0) {
 	// referer when the language setting is changed
 	if (isset($_REQUEST['referer'])) {
 		$target = new Link($_REQUEST['referer']);
-		header('Location: ' . $target->getUrl());
+		header('Location: ' . $target->getUrlForHeader());
 		exit;
 	}
 

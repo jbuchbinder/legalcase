@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.110 2005/03/18 10:19:17 mlutfy Exp $
+	$Id: case_det.php,v 1.111 2005/03/18 16:18:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -113,11 +113,11 @@ if ($case > 0) {
 
 				// [ML] Added ID back, since it was requested by users/testers
 				// as a way to cross-reference paper documentation
-				echo "\n" . _T('case_input_id') . " " . $row['id_case'] . "<br>\n";
+				echo "\n" . _T('case_input_id') . " " . $row['id_case'] . "<br />\n";
 		
 				if ($case_court_archive == 'yes')
-					echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br>\n";
-				echo _T('case_input_date_creation') . ' ' . format_date($row['date_creation']) . "<br>\n";
+					echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br />\n";
+				echo _T('case_input_date_creation') . ' ' . format_date($row['date_creation']) . "<br />\n";
 		
 				if ($case_assignment_date == 'yes') {
 					// [ML] Case is assigned/unassigned when authors are added/remove
@@ -142,13 +142,12 @@ if ($case > 0) {
 					echo "\t<select name='status' class='sel_frm'>\n";
 					$statuses = array('draft','open','suspended','closed','merged');
 					foreach ($statuses as $s)
-						echo "\t\t<option" .  (($s == $row['status']) ? '
-						selected' : '') . ">" . _T('case_status_option_' . $s) . "</option>\n";
+						echo "\t\t<option" .  (($s == $row['status']) ? ' selected="selected"' : '') . ">" . _T('case_status_option_' . $s) . "</option>\n";
 					echo "\t</select>\n";
 					echo "\t<button type='submit' name='submit' value='set_status' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 					echo "</form>\n";
 				} else {
-					echo _T('case_input_status') . "&nbsp;" . clean_output($row['status']) . "<br>\n";
+					echo _T('case_input_status') . "&nbsp;" . clean_output($row['status']) . "<br />\n";
 				}
 
 				// Show case stage
@@ -156,7 +155,7 @@ if ($case > 0) {
 					// Change stage form
 					echo "<form action='set_case_stage.php' method='get'>\n";
 					echo "\t" . _T('case_input_stage') . "&nbsp;";
-					echo "<input type='hidden' name='case' value='$case'>\n";
+					echo "<input type='hidden' name='case' value='$case' />\n";
 					echo "\t<select name='stage' class='sel_frm'>\n";
 
 					global $system_kwg;
@@ -169,7 +168,7 @@ if ($case > 0) {
 					echo "\t<button type='submit' name='submit' value='set_stage' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 					echo "</form>\n";
 				} else {
-					echo _T('case_input_stage') . "&nbsp;" . clean_output($row['stage']) . "<br>\n";
+					echo _T('case_input_stage') . "&nbsp;" . clean_output($row['stage']) . "<br />\n";
 				}
 
 				echo _T('public') . ': ' . _T('Read') . '=';
