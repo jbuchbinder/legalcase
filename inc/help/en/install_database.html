@@ -1,0 +1,16 @@
+
+<p class="spip">
+This step consists of entering the necessary information for the connection of LCM to the SQL database server.</p>
+<p class="spip"><li>&nbsp;Database address: this information should be “localhost”, but it could also be your site’s address (“www.mysite.org”) depending on the configuration of the server.</p>
+<p class="spip"><li>&nbsp;Connection login: it is often the same login you use to upload your files by FTP or SSH.</p>
+<p class="spip"><li>&nbsp;Connection password: it is often the same password as the one you use to access your site by FTP or SSH.</p>
+<p class="spip"><strong class="spip">These settings cannot be invented: not knowing them means that your host has not given them to you. Therefore: if you do not have this information at hand you cannot continue.</strong></p>
+<p class="spip"><li>&nbsp;If you are not the server administrator: you must contact him/her directly. Some Internet hosts provide such information in an online guide or require a specific procedure for that.</p>
+<p class="spip"><li>&nbsp;If you are the server administrator: you can create a database for LCM with the following commands:</p>
+<form action="/" method="get"><textarea readonly='readonly' cols='40' rows='3' class='spip_cadre' dir='ltr'>$ mysql -u root
+mysql&gt; create database lcm;
+mysql&gt; grant all on lcm.* to lcm_user@localhost identified by 'somepassword';</textarea></form>
+<p class="spip">In the above example, we create a database named “lcm” and later create a new user named “lcm_user” to whom we give full access to the “lcm” database.</p>
+<p class="spip">Please note that the best way to connect to your database depends on your local server configuration.</p>
+
+
