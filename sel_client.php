@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.8 2005/01/18 22:50:26 antzi Exp $
+	$Id: sel_client.php,v 1.9 2005/01/18 22:55:04 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -104,7 +104,7 @@ if ($list_pos>0)
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show checkbox
 	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] "></td>\n";
+	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] . "></td>\n";
 	// Show client name
 	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo highlight_matches(clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' '
