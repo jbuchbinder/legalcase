@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.60 2005/03/13 17:13:07 mlutfy Exp $
+	$Id: edit_case.php,v 1.61 2005/03/17 15:42:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -118,7 +118,7 @@ if (!$existing && isset($_REQUEST['attach_client'])) {
 if ($existing) lcm_page_start(_T('title_case_edit'));
 else lcm_page_start(_T('title_case_new'));
 
-echo "<div style='float: right'>" . lcm_help("case_edit") . "</div>";
+echo "<div style='float: right'>" . lcm_help("case_edit") . "</div>\n";
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
@@ -136,7 +136,7 @@ if ($attach_client) {
 }
 
 // Start edit case form
-echo "\n<form action=\"upd_case.php\" method=\"post\">
+echo "<form action=\"upd_case.php\" method=\"post\">
 <input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\" />
 <table class=\"tbl_usr_dtl\">\n";
 
@@ -148,55 +148,67 @@ if ($_SESSION['case_data']['id_case']) {
 		. "<input type=\"hidden\" name=\"id_case\" value=\"" .  $_SESSION['case_data']['id_case'] . "\"></td></tr>\n";
 }
 
-//	echo "
-//		<tr><td>" . _T('author_id') . "</td><td>" . $_SESSION['case_data']['id_author'] . "
-//			<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\"></td></tr>";
-	echo "
-		<tr><td>" . f_err_star('title', $_SESSION['errors']) . _T('case_input_title') . "</td>
-			<td><input size=\"35\" name=\"title\" value=\"" . clean_output($_SESSION['case_data']['title']) . "\" class=\"search_form_txt\">";
+	echo '<tr><td><label for="input_title">'
+		. f_err_star('title', $_SESSION['errors']) . _T('case_input_title')
+		. "</label></td>\n";
+	echo '<td><input size="35" name="title" id="input_title" value="'
+		. clean_output($_SESSION['case_data']['title'])
+		. '" class="search_form_txt">';
 	echo "</td></tr>\n";
 	
 	// Court archive ID
-	if ($case_court_archive == 'yes')
-		echo "		<tr><td>" . _T('case_input_court_archive') . "</td>
-			<td><input size=\"35\" name=\"id_court_archive\" value=\"" . clean_output($_SESSION['case_data']['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>\n";
+	if ($case_court_archive == 'yes') {
+		echo '<tr><td><label for="input_id_court_archive">' . _T('case_input_court_archive') . "</label></td>\n";
+		echo '<td><input size="35" name="id_court_archive" id="input_id_court_archive" value="'
+			. clean_output($_SESSION['case_data']['id_court_archive']) 
+			. '" class="search_form_txt"></td></tr>' . "\n";
+	}
 
-// [AG] Assignment date is set only when adding user to the case
-//		<tr><td>" . _T('case_input_date_assignment') . "</td>
-//			<td><input name=\"date_assignment\" value=\"" . clean_output($_SESSION['case_data']['date_assignment']) . "\" class=\"search_form_txt\"></td></tr>
-	
 	// Legal reason
-	echo "		<tr><td>" . _T('case_input_legal_reason') . "</td>
-			<td><input size=\"35\" name=\"legal_reason\" value=\"" . clean_output($_SESSION['case_data']['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>\n";
+	echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
+	echo '<td>';
+	echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
+	echo clean_output($_SESSION['case_data']['legal_reason']);
+	echo "</textarea>";
+	echo "</td>\n";
+	echo "</tr>\n";
 
 	// Alledged crime
-	if ($case_alledged_crime == 'yes')
-		echo "		<tr><td>" . _T('case_input_alledged_crime') . "</td>
-			<td><input size=\"35\" name=\"alledged_crime\" value=\"" .  clean_output($_SESSION['case_data']['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>\n";
+	if ($case_alledged_crime == 'yes') {
+		echo '<tr><td><label for="input_alledged_crime">' . _T('case_input_alledged_crime') . "</label></td>\n";
+		echo '<td>';
+		echo '<textarea name="alledged_crime" id="input_alledged_crime" class="frm_tarea" rows="2" cols="60">';
+		echo clean_output($_SESSION['case_data']['alledged_crime']);
+		echo '</textarea>';
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
 
 	// Case status
-	echo "		<tr><td>" . _T('case_input_status') . "</td>
-			<td>";
-	echo "<select name='status' class='sel_frm'>\n";
+	echo '<tr><td><label for="input_status">' . _T('case_input_status') . "</label></td>\n";
+	echo '<td>';
+	echo '<select name="status" id="input_status" class="sel_frm">' . "\n";
 	$statuses = ($existing ? array('draft','open','suspended','closed','merged') : array('draft','open') );
+
 	foreach ($statuses as $s)
-		echo "\t\t\t\t<option" .  (($s == $_SESSION['case_data']['status']) ? ' selected' : '') . ">$s</option>\n";
-	echo "\t\t\t</select></td>\n";
-	echo "\t\t</tr>\n";
+		echo "<option" .  (($s == $_SESSION['case_data']['status']) ? ' selected' : '') . ">$s</option>\n";
+
+	echo "</select></td>\n";
+	echo "</tr>\n";
 
 	// Case stage
 	global $system_kwg;
 	if (! $_SESSION['case_data']['stage'])
 		$_SESSION['case_data']['stage'] = $system_kwg['stage']['suggest'];
 
-	echo "\t\t<tr><td>" . _T('case_input_stage') . "</td>\n";
-	echo "\t\t\t<td><select name='stage' class='sel_frm'>\n";
+	echo '<tr><td><label for="input_stage">' . _T('case_input_stage') . "</label></td>\n";
+	echo '<td><select name="stage" id="input_stage" class="sel_frm">' . "\n";
 	foreach($system_kwg['stage']['keywords'] as $kw) {
 		$sel = ($kw['name'] == $_SESSION['case_data']['stage'] ? ' selected="selected"' : '');
 		echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
 	}
-	echo "\t\t\t</select></td>\n";
-	echo "\t\t</tr>\n";
+	echo "</select></td>\n";
+	echo "</tr>\n";
 
 	// Public access rights
 	if ($_SESSION['case_data']['admin'] || !read_meta('case_read_always') || !read_meta('case_write_always')) {
@@ -236,7 +248,7 @@ if ($_SESSION['case_data']['id_case']) {
 
 	// Different buttons for edit existing and for new case
 	if ($existing) {
-		echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+		echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
 	} else {
 		// More buttons for 'extended' mode
 		if ($prefs['mode'] == 'extended') {
