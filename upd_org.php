@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_org.php,v 1.7 2005/03/02 14:56:57 antzi Exp $
+	$Id: upd_org.php,v 1.8 2005/03/24 12:03:23 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -29,41 +29,56 @@ $_SESSION['errors'] = array();
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-    $_SESSION['org_data'][$key] = $value;
-$id_org = intval($_POST['id_org']);
+	$_SESSION['org_data'][$key] = $value;
+
+$_SESSION['org_data']['id_org'] = intval($_SESSION['org_data']['id_org']);
+
+$ref_upd_org = 'edit_org.php?org=' . $_SESSION['org_data']['id_org'];
+if ($GLOBALS['HTTP_REFERER'])
+	$ref_upd_org = $GLOBALS['HTTP_REFERER'];
 
 // Check submitted information
-if (!(strlen($_SESSION['org_data']['name'])>0)) { $_SESSION['errors']['name'] = 'Organization should have a name!'; }
-//if (strtotime($_SESSION['org_data']['date_creation'])<0) { $_SESSION['errors']['date_creation']='Invalid creation date!'; }
-//if (strtotime($_SESSION['org_data']['date_update'])<0) { $_SESSION['errors']['date_update']='Invalid update date!'; }
-
-// Add timestamp
-//$_SESSION['org_data']['date_update'] = date('Y-m-d H:i:s'); // now
+if (! $_SESSION['org_data']['name'])
+	$_SESSION['errors']['name'] = _Ti('org_input_name') . _T('warning_field_mandatory'); 
 
 if (count($_SESSION['errors'])) {
 	// Return to edit page
-	header("Location: $HTTP_REFERER");
+	header("Location: " . $ref_upd_org);
 	exit;
-} else {
+}
+
+
 	// Record data in database
 	$ol="name='" . clean_input($_SESSION['org_data']['name']) . "'," .
-//		date_creation='" . clean_input($_SESSION['org_data']['date_creation']) . "',
-//		date_update='" . clean_input($_SESSION['org_data']['date_update']) . "',
 		"address='" . clean_input($_SESSION['org_data']['address']) . "'";
 
-	if ($id_org>0) {
-		// Prepare query
-		$q="UPDATE lcm_org SET date_update=NOW(),$ol WHERE id_org=$id_org";
+	if ($_SESSION['data_org']['id_org'] > 0) {
+		$q = "UPDATE lcm_org SET date_update=NOW(),$ol WHERE id_org = " . $_SESSION['data_org']['id_org'];
+		$result = lcm_query($q);
 	} else {
-		$q="INSERT INTO lcm_org SET id_org=0,date_creation=NOW(),$ol";
+		$q = "INSERT INTO lcm_org SET id_org=0,date_update=NOW(),$ol";
+		$result = lcm_query($q);
+		$_SESSION['data_org']['id_org'] = lcm_insert_id($result);
+
+		// If there is an error (ex: in contacts), we should send back to 'org_det.php?org=XX'
+		// not to 'org_det.php?org=0'.
+		$ref_upd_org = 'edit_org.php?org=' . $_SESSION['org_data']['id_org'];
 	}
 
-	// Do the query
-	if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
-	//echo $q;
 
-	// Send user back to add/edit page's referer
-	header('Location: ' . $_SESSION['org_data']['ref_edit_org']);
+//
+// Contacts
+//
+
+include_lcm('inc_contacts');
+update_contacts_request('org', $_SESSION['org_data']['id_org']);
+
+if (count($_SESSION['errors'])) {
+	header('Location: ' . $ref_upd_org);
+	exit;
 }
+
+// Go to the 'view details' page of the organisation
+header('Location: org_det.php?org=' . $_SESSION['data_org']['id_org']);
 
 ?>
