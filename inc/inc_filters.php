@@ -160,12 +160,6 @@ function texte_backend($texte) {
 	return $texte;
 }
 
-// Enleve le numero des titres numerotes ("1. Titre" -> "Titre")
-function supprimer_numero($texte) {
-	$texte = ereg_replace("^[[:space:]]*[0-9]+[.)".chr(176)."][[:space:]]+", "", $texte);
-	return $texte;
-}
-
 // Suppression basique et brutale de tous les <...>
 function supprimer_tags($texte, $rempl = "") {
 	// super gavant : la regexp ci-dessous plante sous php3, genre boucle infinie !
@@ -192,12 +186,6 @@ function textebrut($texte) {
 	// nettoyer l'apostrophe curly qui pose probleme a certains rss-readers, lecteurs de mail...
 	$texte = str_replace("&#8217;","'",$texte);
 	return $texte;
-}
-
-// Remplace les liens SPIP en liens ouvrant dans une nouvelle fenetre (target=blank)
-function liens_ouvrants ($texte) {
-	return ereg_replace("<a ([^>]*https?://[^>]*class=\"spip_(out|url)\")>",
-		"<a \\1 target=\"_blank\">", $texte);
 }
 
 // Corrige les caracteres degoutants utilises par les Windozeries
@@ -233,47 +221,16 @@ function corriger_caracteres($texte) {
 	return $texte;
 }
 
-// Transformer les sauts de paragraphe en simples passages a la ligne
-function PtoBR($texte){
-	$texte = eregi_replace("</p>", "\n", $texte);
-	$texte = eregi_replace("<p([[:space:]][^>]*)?".">", "<br />", $texte);
-	$texte = ereg_replace("^[[:space:]]*<br />", "", $texte);
-	return $texte;
-}
 
-// Majuscules y compris accents, en HTML
-function majuscules($texte) {
-	if (read_meta('charset') != 'iso-8859-1')
-		return "<span style='text-transform: uppercase'>$texte</span>";
-
-	$suite = htmlentities($texte);
-	$suite = ereg_replace('&amp;', '&', $suite);
-	$suite = ereg_replace('&lt;', '<', $suite);
-	$suite = ereg_replace('&gt;', '>', $suite);
-	$texte = '';
-	if (ereg('^(.*)&([A-Za-z])([a-zA-Z]*);(.*)$', $suite, $regs)) {
-		$texte .= majuscules($regs[1]); // quelle horrible recursion
-		$suite = $regs[4];
-		$carspe = $regs[2];
-		$accent = $regs[3];
-		if (ereg('^(acute|grave|circ|uml|cedil|slash|caron|ring|tilde|elig)$', $accent))
-			$carspe = strtoupper($carspe);
-		if ($accent == 'elig') $accent = 'Elig';
-		$texte .= '&'.$carspe.$accent.';';
-	}
-	$texte .= strtoupper($suite);
-	return $texte;
-}
-
-// "127.4 ko" ou "3.1 Mo"
-function taille_en_octets ($taille) {
-	if ($taille < 1024) {$taille = _T('taille_octets', array('taille' => $taille));}
-	else if ($taille < 1024*1024) {
-		$taille = _T('taille_ko', array('taille' => ((floor($taille / 102.4))/10)));
+// "127.4 kb" or "3.1 Mb"
+function size_in_bytes ($mysize) {
+	if ($mysize < 1024) {$mysize = _T('mysize_octets', array('mysize' => $mysize));}
+	else if ($mysize < 1024*1024) {
+		$mysize = _T('mysize_kb', array('mysize' => ((floor($mysize / 102.4))/10)));
 	} else {
-		$taille = _T('taille_mo', array('taille' => ((floor(($taille / 1024) / 102.4))/10)));
+		$mysize = _T('mysize_mb', array('mysize' => ((floor(($mysize / 1024) / 102.4))/10)));
 	}
-	return $taille;
+	return $mysize;
 }
 
 
@@ -301,26 +258,11 @@ function vider_url($url) {
 		return $url;
 }
 
-// Extraire une date de n'importe quel champ (a completer...)
-function extraire_date($texte) {
-	// format = 2001-08
-	if (ereg("([1-2][0-9]{3})[^0-9]*(0?[1-9]|1[0-2])",$texte,$regs))
-		return $regs[1]."-".$regs[2]."01";
-}
-
 // Maquiller une adresse e-mail
 function antispam($texte) {
 	include_ecrire ("inc_acces.php3");
 	$masque = creer_pass_aleatoire(3);
 	return ereg_replace("@", " $masque ", $texte);
-}
-
-// |sinon{rien} : affiche "rien" si la chaine est vide, affiche la chaine si non vide
-function sinon ($texte, $sinon='') {
-	if ($texte)
-		return $texte;
-	else
-		return $sinon;
 }
 
 
@@ -564,22 +506,6 @@ function aligner($letexte,$justif) {
 		$letexte = "<p class='spip' align='$justif'>" . $letexte . "</p>";
 	}
 	return $letexte;
-}
-
-function justifier($letexte) {
-	return aligner($letexte,'justify');
-}
-
-function aligner_droite($letexte) {
-	return aligner($letexte,'right');
-}
-
-function aligner_gauche($letexte) {
-	return aligner($letexte,'left');
-}
-
-function centrer($letexte) {
-	return aligner($letexte,'center');
 }
 
 //
