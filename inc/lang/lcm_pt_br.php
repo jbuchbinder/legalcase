@@ -94,6 +94,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_organisations' => 'Empresas:',
 'case_input_status' => 'Status:',
 'case_input_title' => 'Título:',
+'case_status_option_closed' => '<NEW>Closed',
+'case_status_option_draft' => '<NEW>Draft',
+'case_status_option_merged' => '<NEW>Merged',
+'case_status_option_open' => '<NEW>Open',
+'case_status_option_suspended' => '<NEW>Suspended',
 'case_subtitle_appointments' => '<NEW>Appointments',
 'case_subtitle_attachments' => '<NEW>Attached documents',
 'case_subtitle_clients' => 'Casos de Clientes',
@@ -204,9 +209,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'edit_case_information' => 'Editar as informações do caso',
 'edit_filter_details' => 'Editar filtros de detalhe',
 'edit_rep_details' => 'Editar detalhe dos relatórios',
-'enter_name_first' => 'Primeiro',
-'enter_name_last' => 'Último',
-'enter_name_middle' => 'Meio',
 'error_add_auth_no_rights' => 'Você não tem permissão para acessar os direitos sobre este caso!',
 'error_no_case_name' => 'O caso deve ter um nome!',
 'error_no_case_specified' => 'O nome do caso não foi especificado',
@@ -233,14 +235,22 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // H
 'help_title_about' => '<NEW>About ...',
+'help_title_about_contrib' => '<NEW>Contributors',
+'help_title_about_license' => '<NEW>License and terms of use',
 'help_title_archives' => '<NEW>Archives',
 'help_title_authors' => '<NEW>Authors',
 'help_title_cases' => '<NEW>Cases',
 'help_title_clients' => '<NEW>Clients',
+'help_title_help' => '<NEW>Legal Case Management Help',
+'help_title_install_database' => '<NEW>The SQL database connection',
+'help_title_install_permissions' => '<NEW>Setting up directory permissions',
+'help_title_install_personal' => '<NEW>Personal information',
 'help_title_installation' => '<NEW>Installation',
 'help_title_keywords' => '<NEW>Keywords',
 'help_title_reports' => '<NEW>Reports',
 'help_title_siteconfig' => '<NEW>Site configuration',
+'help_warning_no_files' => '<NEW>The help files are not installed.',
+'help_warning_no_section' => '<NEW>The requested help section does not exist.',
 
 
 // I
@@ -250,7 +260,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_greetings' => 'Bom Dia',
 'info_more_than_five' => '(Mais de 5 letras)',
 'info_more_than_three' => '(Mais de 3 letras)',
-'info_name_of_person' => 'Nome',
 'info_no' => 'não',
 'info_not_available' => 'n/a',
 'info_or' => 'ou',
@@ -525,7 +534,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_tab_regional' => 'Configurações Regionais',
 'siteconf_warning' => '<b>Atenção!</b> As configurações e modificações desta página influenciam no funcionamento do site.',
 'siteconf_warning_currency' => '<b>Cuidado!</b> Se voc~e modificar a moeda, as informações atuais <strong>não</strong> serão convertidas.',
-'status' => 'Status',
 
 
 // T
