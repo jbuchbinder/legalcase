@@ -70,10 +70,8 @@ function login($cible, $prive = 'prive', $message_login='') {
 	if (!$cible) {
 		if ($GLOBALS['var_url'])
 			$cible = new Link($GLOBALS['var_url']);
-		/* else if ($prive) 
-			$cible = new Link('index.php'); */
 		else 
-			$cible = $clean_link;
+			$cible = new Link('index.php');
 	}
 
 	$cible->delVar('var_erreur');
@@ -90,7 +88,8 @@ function login($cible, $prive = 'prive', $message_login='') {
 	{
 		if ($url != $GLOBALS['clean_link']->getUrl())
 			@Header("Location: $url");
-		echo "<a href='$url'>"._T('login_par_ici')."</a>\n";
+
+		echo "<a href='$url'>"._T('login_this_way')."</a>\n";
 		return;
 	}
 
@@ -203,10 +202,10 @@ function login($cible, $prive = 'prive', $message_login='') {
 			// If javascript is not active, the login is still modifiable
 			// (since the challenge is not used)
 			echo "<noscript>";
-			echo "<div class='box_warning'>";
-			echo _T('login_not_secure') . " <a href=\"" .
-			quote_amp($clean_link->getUrl()) . "\">" .
-			_T('login_link_reload_page') . "</a>.<p /></div>\n";
+			// echo "<div class='box_warning'>";
+			// echo _T('login_not_secure') . " <a href=\"" .
+			// quote_amp($clean_link->getUrl()) . "\">" .
+			// _T('login_link_reload_page') . "</a>.<p /></div>\n";
 		}
 
 		echo "\t<label for='session_login'><b>" . _T('login_login') . _T('typo_column') . "</b> (" . _T('login_info_login').")<br /></label>";
