@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.38 2005/03/24 16:17:28 mlutfy Exp $
+	$Id: upd_case.php,v 1.39 2005/03/24 20:03:51 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -111,8 +111,9 @@ if (count($_SESSION['errors'])) {
 				id_case=$id_case,
 				id_author=$id_author,
 				ac_read=1,
-				ac_write=1,
-				ac_admin=1";
+				ac_write=1";
+		if (read_meta('case_allow_modif') == 'yes')
+			$q .= ", ac_edit=1, ac_admin=1";
 		$result = lcm_query($q);
 
 		// Get author information
