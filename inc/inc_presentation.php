@@ -970,14 +970,32 @@ function show_listcase_start() {
 
 	echo '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
 	echo "<tr>\n";
-	echo '<th class="heading">#</th>';
-	echo '<th class="heading">Title</th>';
+	echo '<th class="heading">' . '#' . '</th>'; // TRAD
 
-	if ($case_court_archive == 'yes') {
-		echo '<th class="heading">Court archive</th>';
-	}
+	// Date creation + order asc/desc
+	$cur_sort_order = 'desc';
+	if (isset($_REQUEST['case_order']) && ($_REQUEST['case_order'] == 'asc' || $_REQUEST['case_order'] == 'asc'))
+		$cur_sort_order = $_REQUEST['case_order'];
+
+	$new_sort_order = ($cur_sort_order == 'desc' ? 'asc' : 'desc');
+	$sort_link = new Link();
+	$sort_link->addVar('case_order', $new_sort_order);
+
+	echo '<th class="heading">';
+	echo '<a href="' . $sort_link->getUrl() . '" class="content_link">' .  "Date creation" . '</a>'; // TRAD
+
+	if ($cur_sort_order == 'asc')
+		echo '<img src="images/lcm/asc_desc_arrow.gif" alt="" />';
+	else
+		echo '<img src="images/lcm/desc_asc_arrow.gif" alt="" />';
+
+	echo '</th>';
+	echo '<th class="heading">' . "Title" . '</th>'; // TRAD
+
+	if ($case_court_archive == 'yes')
+		echo '<th class="heading">' . "Court archive" . '</th>'; // TRAD
 	
-	echo '<th colspan="2" class="heading">Status</th>';
+	echo '<th colspan="2" class="heading">' . "Status" . '</th>'; // TRAD
 	echo "</tr>\n";
 }
 
@@ -994,6 +1012,13 @@ function show_listcase_item($item, $cpt, $custom = '') {
 	echo "<td class='tbl_cont_" . $css . "'>";
 	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
 	echo highlight_matches($item['id_case'],$find_case_string);
+	if ($ac_read) echo '</a>';
+	echo "</td>\n";
+
+	// Date creation
+	echo "<td class='tbl_cont_" . $css . "'>";
+	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
+	echo format_date($item['date_creation'], 'short');
 	if ($ac_read) echo '</a>';
 	echo "</td>\n";
 
