@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.14 2005/01/10 12:51:07 mlutfy Exp $
+	$Id: edit_author.php,v 1.15 2005/01/10 12:58:08 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -187,19 +187,11 @@ else lcm_page_start("New author");
 				</div>
 			</td>
 		</tr>
-		<tr><td colspan="2" align="center" valign="middle">
-			<input name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('button_validate') ?>" /></td>
-		</tr>
-	</table>
-
-	<br />
-
 	<?php
 		//
 		// LOGIN INFO
 		//
 	?>
-	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
 		<tr>
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_connectionidentifiers'); ?></h4></td>
 		</tr>
