@@ -15,8 +15,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // A
 'add_and_go_to_details' => 'Add &amp; go to details',
 'add_and_open_new' => 'Add &amp; open new',
-'add_client_s' => 'Add client(s)',
-'add_organisation_s' => 'Add organisation(s)',
 'add_user_case' => 'Add user to the case',
 'author_id' => 'Author ID',
 'authorconf_button_change_password' => 'Change password',
@@ -60,6 +58,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // C
 'calendar_info_date' => 'Date',
 'calendar_info_time' => 'Time',
+'case_button_add_client' => 'Add a client',
+'case_button_add_org' => 'Add an organisation',
 'case_input_alledged_crime' => 'Alledged crime:',
 'case_input_author' => 'Author:',
 'case_input_authors' => 'Authors:',
