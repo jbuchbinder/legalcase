@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.104 2005/03/13 15:08:29 mlutfy Exp $
+	$Id: case_det.php,v 1.105 2005/03/15 11:56:17 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -318,11 +318,11 @@ if ($case > 0) {
 							) . '</td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['type'] . '</td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. '<a href="app_det.php?app=' . $row['id_app'] . '">' . $row['title'] . '</a></td>';
+							. '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. date('d.m.y H:i',strtotime($row['reminder'])) . '</td>'; // FIXME [ML]
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. '<a href="edit_app.php?app=' . $row['id_app'] . '">' . _T('edit') . '</a></td>';
+							. '<a href="edit_app.php?app=' . $row['id_app'] . '" class="content_link">' . _T('edit') . '</a></td>';
 						echo "</tr>\n";
 					}
 					
