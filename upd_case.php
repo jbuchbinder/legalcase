@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.29 2005/01/25 22:26:03 antzi Exp $
+	$Id: upd_case.php,v 1.30 2005/01/27 18:16:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,7 +26,7 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 // Clear all previous errors
-$_SESSION['errors']=array();
+$_SESSION['errors'] = array();
 
 // Register form data in the session
 //if(!session_is_registered("case_data"))
@@ -37,7 +37,8 @@ foreach($_POST as $key => $value)
     $_SESSION['case_data'][$key]=$value;
 
 // Check case data for validity
-if (!$_SESSION['case_data']['title']) $_SESSION['errors']['title'] = _T('error_no_case_name');
+if (!$_SESSION['case_data']['title'])
+	$_SESSION['errors']['title'] = _T('case_warning_no_case_title');
 
 if (count($_SESSION['errors'])) {
     header("Location: $HTTP_REFERER");
