@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.14 2005/03/24 12:49:38 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.15 2005/03/25 10:37:47 mlutfy Exp $
 */
 
 
@@ -905,21 +905,24 @@ function http_calendrier_agenda ($month, $year, $day_ved, $month_ved, $annee_ved
 		// The calendar itself
 		. http_calendrier_agenda_rv ($year, $month, 
 				sql_calendrier_agenda($month, $year),
-			        'http_jour_clic', array($script, $target),
-			        $day_ved, $month_ved, $annee_ved, 
+		        'http_jour_clic',
+				array($script, $target),
+		        $day_ved, $month_ved, $annee_ved, 
 				$week)
 		. "</div>\n";
 }
 
 // Click function for 'day' item (called by http_calendrier_agenda_rv)
-function http_jour_clic($annee, $mois, $jour, $type, $couleur, $perso)
+function http_jour_clic($annee, $mois, $jour, $type, $couleur, $perso, $class = '')
 {
 	list($script, $target) = $perso;
 
 	return http_href($script . "type=$type&jour=$jour&mois=$mois&annee=$annee$target", 
 			"$jour",
 			'',
-			($couleur ? "color: $couleur" : ''));
+			($couleur ? "color: $couleur" : ''),
+			$class
+			);
 }
 
 // Show monthly calendar in small table
@@ -953,21 +956,19 @@ function http_calendrier_agenda_rv ($annee, $mois, $les_rv, $fclic, $perso='',
 
 	if ($jour_semaine == 0) $jour_semaine=7;
 
+	// Empty boxes at beginning of month
 	for ($i = 1; $i < $jour_semaine; $i++)
-		$ligne .= '<li><a href="#">-</a></li>' . "\n"; // XXX (if not linked, it breaks the layout)
-
-	// [ML] $style1 = "-moz-border-radius-topleft: 10px; -moz-border-radius-bottomleft: 10px;";
-	// [ML] $style7 = "-moz-border-radius-topright: 10px; -moz-border-radius-bottomright: 10px;";
+		$ligne .= '<li>&nbsp;</li>' . "\n";
 
 	for ($j = 1; $j < 32; $j++) {
 		$nom = mktime(1,1,1, $mois, $j, $annee); // current day?
 		$jour_semaine = date("w", $nom); // current week day?
 		if ($jour_semaine==0) $jour_semaine=7;
 
-		if (checkdate($mois,$j,$annee)) {
+		if (checkdate($mois, $j, $annee)) {
 			if ($j == $jour_ved AND $mois == $mois_ved AND $annee == $annee_ved) {
-				// Today
-				$ligne .= "<li>" . $fclic($annee, $mois, $j, "jour", "black", $perso) . "</li>\n";
+				// Currently selected day (not necessarely Today)
+				$ligne .= "<li>" . $fclic($annee, $mois, $j, "jour", "black", $perso, 'today') . "</li>\n";
 			} else if ($semaine AND $nom >= $debut AND $nom <= $fin) {
 				// [ML] I don't really understand this, but it doesnt seem to matter..
 				// [ML] it might be to highlight a given week
@@ -979,29 +980,26 @@ function http_calendrier_agenda_rv ($annee, $mois, $les_rv, $fclic, $perso='',
 					$fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso) .
 					"</td>";
 				*/
-				$ligne .= "<li>" . $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso) . "</li>\n";
+				$ligne .= "<li>" . $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso, 'week_day') . "</li>\n";
 			} else {
 				// All other days, including weekends
+				$css = '';
 
-				/*
 				if ($j == $jour_today AND $mois == $mois_today AND $annee == $annee_today) {
-					$couleur_fond = $couleur_foncee;
-					$couleur = "white";
+					$css = 'today';
 				} else {
 					if ($jour_semaine == 7) {
-						$couleur_fond = "#aaaaaa";
-						$couleur = 'white';
+						// Sunday
 					} else {
-						$couleur_fond = "#ffffff";
-						$couleur = "#aaaaaa";
+						// Week-day
 					}
 
 					if ($les_rv[$j] > 0) {
-						$couleur = "black";
+						$css = 'app_day';
 					}
-				} */
+				}
 
-				$ligne .= "<li>" . $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),$couleur, $perso) . "</li>\n";
+				$ligne .= "<li>" . $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),$couleur, $perso, $css) . "</li>\n";
 			}
 
 			if ($jour_semaine == 7) {
