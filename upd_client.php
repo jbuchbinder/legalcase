@@ -1,9 +1,29 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: upd_client.php,v 1.5 2004/11/23 13:29:00 mlutfy Exp $
+*/
+
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-// Start session
 session_start();
 
 // Register $errors array - just in case
@@ -35,6 +55,7 @@ if (count($errors)) {
 	$cl = "name_first='" . clean_input($client_data['name_first']) . "',
 		name_middle='" . clean_input($client_data['name_middle']) . "',
 		name_last='" . clean_input($client_data['name_last']) . "',
+		gender='" . clean_input($client_data['gender']) . "',
 		citizen_number='" . clean_input($client_data['citizen_number']) . "',
 		address='" . clean_input($client_data['address']) . "',
 		civil_status='" . clean_input($client_data['civil_status']) . "',
@@ -47,9 +68,8 @@ if (count($errors)) {
 		$q = "INSERT INTO lcm_client SET id_client=0,date_creation=NOW(),date_update=NOW(),$cl";
     }
 
-    // Do the query
-    if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
-    //echo $q;
+    if (!($result = lcm_query($q)))
+		die("$q<br>\nError ".lcm_errno().": ".lcm_error());
 
     // Clear the session
     session_destroy();
