@@ -56,9 +56,17 @@ function format_date($timestamp = '') {
 		return date(_T('date_format'));
 }
 
+// Error display function
+// Highlights (outlines) errirs in the form data
+function f_err($fn, $errors)
+{
+    if (isset($errors[$fn]))
+		echo "<font color='red'>$errors[$fn]</font><br>";
+}
+
 
 /* ********************************************************
- * DEPRECATED: The following functions will be removed soon 
+ * DEPRECATED: The following functions will be removed soon
  * ******************************************************** */
 
 // Echappement des entites HTML avec correction des entites "brutes"
