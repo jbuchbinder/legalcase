@@ -616,17 +616,22 @@ class Link {
 	}
 
 	function getAllVars() {
+		$vars = array();
+
 		if (is_array($this->t_var_idx)) {
 			reset($this->t_var_idx);
-			while (list($name, $i) = each($this->t_var_idx)) $vars[$name] = $this->t_vars[--$i];
+			while (list($name, $i) = each($this->t_var_idx))
+				$vars[$name] = $this->t_vars[--$i];
 		}
 		if (is_array($this->vars)) {
 			reset($this->vars);
-			while (list($name, $value) = each($this->vars)) $vars[$name] = $value;
+			while (list($name, $value) = each($this->vars)) 
+				$vars[$name] = $value;
 		}
 		if (is_array($this->s_vars)) {
 			reset($this->s_vars);
-			while (list($name, $value) = each($this->s_vars)) $vars[$name] = $value;
+			while (list($name, $value) = each($this->s_vars))
+				$vars[$name] = $value;
 		}
 		return $vars;
 	}
