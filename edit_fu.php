@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.44 2005/01/21 10:36:40 mlutfy Exp $
+	$Id: edit_fu.php,v 1.45 2005/01/25 21:54:19 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -59,11 +59,6 @@ if (empty($errors)) {
 			}
 		} else die("There's no such follow-up!");
 
-		// Check for access rights
-		$edit = allowed($fu_data['id_case'],'e');
-		if (!($admin || $edit))
-			die("You don't have permission to edit this case's information!");
-
 		// Set the case ID, to which this followup belongs
 		$case = $fu_data['id_case'];
 	} else {
@@ -82,6 +77,12 @@ if (empty($errors)) {
 			die("Add followup to which case?");
 		}
 	}
+
+	// Check for access rights
+	$edit = allowed($fu_data['id_case'],'e');
+	if (!($admin || $edit))
+		die("You don't have permission to edit this case's information!");
+
 }
 
 if (isset($followup))
