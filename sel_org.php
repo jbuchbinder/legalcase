@@ -18,7 +18,7 @@ if ($case>0) {
 		  WHERE id_org NOT IN (0";
 
 	// Process the output of the query
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = lcm_fetch_array($result)) {
 		// Add org in NOT IN list
 		$q .= ',' . $row['id_org'];
 	}
@@ -36,7 +36,7 @@ if ($case>0) {
 			<th></th>
 		</tr>
 <?php
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = lcm_fetch_array($result)) {
 ?>
 		<tr>
 			<td><input type="checkbox" name="orgs[]" value="<?php echo $row['id_org']; ?>"></td>
