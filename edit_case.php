@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.55 2005/02/15 13:37:49 mlutfy Exp $
+	$Id: edit_case.php,v 1.56 2005/03/03 16:11:26 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -161,12 +161,23 @@ if ($_SESSION['case_data']['id_case']) {
 			<td><input name=\"alledged_crime\" value=\"" .  clean_output($_SESSION['case_data']['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>\n";
 
 	// Case status
-	echo"		<tr><td>" . _T('case_input_status') . "</td>
+	echo "		<tr><td>" . _T('case_input_status') . "</td>
 			<td>";
 	echo "<select name='status' class='sel_frm'>\n";
 	$statuses = array('draft','open','suspended','closed','merged');
 	foreach ($statuses as $s)
 		echo "\t\t\t\t<option" .  (($s == $_SESSION['case_data']['status']) ? ' selected' : '') . ">$s</option>\n";
+	echo "\t\t\t</select></td>\n";
+	echo "\t\t</tr>\n";
+
+	// Case stage
+	echo "\t\t<<tr><td>" . _T('case_input_status') . "</td>\n";
+	echo "\t\t\t<td><select name='stage' class='sel_frm'>\n";
+	global $system_kwg;
+	foreach($system_kwg['stage']['keywords'] as $kw) {
+		$sel = ($kw['name'] == $_SESSION['case_data']['stage'] ? ' selected="selected"' : '');
+		echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
+	}
 	echo "\t\t\t</select></td>\n";
 	echo "\t\t</tr>\n";
 
