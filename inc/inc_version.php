@@ -153,7 +153,7 @@ $lcm_version = 0.2;
 $lcm_version_shown = "0.2";
 
 // Current version of LCM database
-$lcm_db_version = 8;
+$lcm_db_version = 9;
 
 // Don't show silly warnings
 // [ML] For now, until the first beta, better to keep them
