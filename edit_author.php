@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.20 2005/01/12 14:34:15 mlutfy Exp $
+	$Id: edit_author.php,v 1.21 2005/01/12 15:08:40 mlutfy Exp $
 */
 
 session_start();
@@ -109,13 +109,13 @@ echo show_all_errors($_SESSION['errors']);
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_personalinfo'); ?></h4></td>
 		</tr>
 
-		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_namefirst'); ?></td>
+		<tr><td align="right" valign="top"><?php echo _T('person_input_name_first'); ?></td>
 			<td align="left" valign="top"><input name="name_first" type="text" class="search_form_txt" id="name_first" size="35" value="<?php echo clean_output($usr['name_first']); ?>"/></td>
 		</tr>
-		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_namemiddle'); ?></td>
+		<tr><td align="right" valign="top"><?php echo _T('person_input_name_middle'); ?></td>
 			<td align="left" valign="top"><input name="name_middle" type="text" class="search_form_txt" id="name_middle" size="35" value="<?php echo clean_output($usr['name_middle']); ?>"/></td>
 		</tr>
-		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_namelast'); ?></td>
+		<tr><td align="right" valign="top"><?php echo _T('person_input_name_last'); ?></td>
 			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
 		</tr>
 <?php
