@@ -26,8 +26,8 @@ if ($client>0) {
 		$edit = true;
 
 		// Show client details
-		echo '<h1>Details for client:</h1>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'];
-		echo "<br>\nClient ID: " . $row['id_client'] . "<br>\n";
+		echo 'Name: ' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "<br>\n";
+		echo 'Client ID: ' . $row['id_client'] . "<br>\n";
 		echo 'Citizen number: ' . $row['citizen_number'] . "<br>\n";
 		echo 'Address: ' . $row['address'] . "<br>\n";
 		echo 'Civil status: ' . $row['civil_status'] . "<br>\n";
@@ -37,7 +37,7 @@ if ($client>0) {
 		if ($edit)
 			echo ' [<a href="edit_client.php?client=' . $row['id_client'] . '">Edit client information</a>]';
 
-		?><h2>Organisation(s) represented by this client:</h2>
+		?><h4>Organisation(s) represented by this client:</h4>
 
 		<table border>
 		<caption>Organisation(s):</caption>
