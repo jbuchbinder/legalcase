@@ -4,6 +4,8 @@ include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
+$case = intval($_GET['case']);
+
 if ($case > 0) {
 	$q="SELECT id_case, title, id_court_archive, FROM_UNIXTIME(date_creation),
 			FROM_UNIXTIME(date_assignment), legal_reason, alledged_crime,
@@ -17,12 +19,12 @@ if ($case > 0) {
 	if ($row = lcm_fetch_array($result)) {
 
 		// Check for access rights
-		if (!($row['public'] || allowed($case,'r'))) {
+		if (!(($GLOBALS['author_session']['status'] = 'admin') || $row['public'] || allowed($case,'r'))) {
 			die(_T('error_no_read_permission'));
 		}
 		$add = allowed($case,'w');
-		$edit = allowed($case,'e');
-		$admin = allowed($case,'a');
+		$edit = ($GLOBALS['author_session']['status'] = 'admin') || allowed($case,'e');
+		$admin = ($GLOBALS['author_session']['status'] = 'admin') || allowed($case,'a');
 
 		// Show case details
 		lcm_page_start(_T('case_details') . ": " . $row['title']);
