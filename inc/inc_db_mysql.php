@@ -45,6 +45,7 @@ function lcm_query_db($query) {
 }
 
 function spip_query_db($query) {
+	lcm_log("use of deprecated function: spip_query_db, use lcm_query_db instead");
 	return lcm_query_db($query);
 }
 
@@ -58,10 +59,12 @@ function lcm_create_table($table, $query) {
 // This includes the "prefix" name for the database tables
 //
 function process_query($query) {
+	// [ML] 'rappel_connection' == 'recall connection' (keep alive)
 	if ($GLOBALS['mysql_rappel_connexion'] AND $db = $GLOBALS['spip_mysql_db'])
 		$db = '`'.$db.'`.';
 
-	// changer les noms des tables ($table_prefix)
+	// change the names of the tables ($table_prefix)
+	// for example, lcm_case may become foo_case
 	if ($GLOBALS['flag_pcre']) {
 		if (preg_match('/\s(VALUES|WHERE)\s/i', $query, $regs)) {
 			$suite = strstr($query, $regs[0]);
@@ -82,11 +85,11 @@ function process_query($query) {
 
 
 //
-// Connexion a la base
+// Connection to the database
 //
 
-function spip_connect_db($host, $port, $login, $pass, $db) {
-	global $spip_mysql_link, $spip_mysql_db;	// pour connexions multiples
+function lcm_connect_db($host, $port, $login, $pass, $db) {
+	global $spip_mysql_link, $spip_mysql_db;	// for multiple connections
 
 	if ($port > 0) $host = "$host:$port";
 	$spip_mysql_link = @mysql_connect($host, $login, $pass);
@@ -94,32 +97,62 @@ function spip_connect_db($host, $port, $login, $pass, $db) {
 	return @mysql_select_db($db);
 }
 
+function spip_connect_db($host, $port, $login, $pass, $db) {
+	lcm_log("use of deprecated function: spip_connect_db, use lcm_connect_db instead");
+	return lcm_connect_db($host, $port, $login, $pass, $db);
+}
+
 
 //
-// Recuperation des resultats
+// Fetch the results
 //
 
-function spip_fetch_array($r) {
+function lcm_fetch_array($r) {
 	if ($r)
 		return mysql_fetch_array($r);
 }
 
-function spip_fetch_object($r) {
+function spip_fetch_array($r) {
+	lcm_log("use of deprecated function: spip_fetch_array, use lcm_fetch_array instead");
+	return lcm_fetch_array($r);
+}
+
+function lcm_fetch_object($r) {
 	if ($r)
 		return mysql_fetch_object($r);
 }
 
-function spip_fetch_row($r) {
+function spip_fetch_object($r) {
+	lcm_log("use of deprecated function: spip_fetch_object, use lcm_fetch_object instead");
+	return lcm_fetch_object($r);
+}
+
+function lcm_fetch_row($r) {
 	if ($r)
 		return mysql_fetch_row($r);
 }
 
-function spip_sql_error() {
+function spip_fetch_row($r) {
+	lcm_log("use of deprecated function: spip_fetch_row, use lcm_fetch_row instead");
+	return lcm_fetch_row($r);
+}
+
+function lcm_sql_error() {
 	return mysql_error();
 }
 
-function spip_sql_errno() {
+function spip_sql_error() {
+	lcm_log("use of deprecated function: spip_sql_error, use lcm_sql_error instead");
+	return lcm_sql_error();
+}
+
+function lcm_sql_errno() {
 	return mysql_errno();
+}
+
+function spip_sql_errno() {
+	lcm_log("use of deprecated function: spip_sql_errno, use lcm_sql_errno instead");
+	return lcm_sql_errno();
 }
 
 function lcm_num_rows($r) {
@@ -128,19 +161,31 @@ function lcm_num_rows($r) {
 }
 
 function spip_num_rows($r) {
+	lcm_log("use of deprecated function: spip_num_rows, use lcm_num_rows instead");
 	return lcm_num_rows($r);
 }
 
-function spip_free_result($r) {
+function lcm_free_result($r) {
 	if ($r)
 		return mysql_free_result($r);
 }
 
-function spip_insert_id() {
+function spip_free_result($r) {
+	lcm_log("use of deprecated function: spip_free_result, use lcm_free_result instead");
+	return lcm_free_result($r);
+}
+
+function lcm_insert_id() {
 	return mysql_insert_id();
 }
 
-// Poser un verrou local a un SPIP donne
+function spip_insert_id() {
+	lcm_log("use of deprecated function: spip_insert_id, use lcm_insert_id instead");
+	return lcm_insert_id();
+}
+
+// Put a local lock on a given LCM installation
+// [ML] we can probably ignore this
 function spip_get_lock($nom, $timeout = 0) {
 	global $spip_mysql_db, $table_prefix;
 	if ($table_prefix) $nom = "$table_prefix:$nom";
