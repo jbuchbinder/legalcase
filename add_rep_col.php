@@ -18,8 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: add_rep_col.php,v 1.4 2005/02/07 13:00:51 mlutfy Exp $
+	$Id: add_rep_col.php,v 1.5 2005/02/07 16:10:34 mlutfy Exp $
 */
+
+// XXX
+// [ML] WARNING: I think this should all go into upd_rep_field.php
+// Since we are having thousands of small .php files!
+// XXX
 
 include('inc/inc.php');
 include_lcm('inc_lang');
