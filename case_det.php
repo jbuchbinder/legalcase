@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.55 2004/12/17 17:54:30 antzi Exp $
+	$Id: case_det.php,v 1.56 2004/12/17 18:05:46 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -92,7 +92,7 @@ if ($case > 0) {
 		echo _T('alledged_crime') . ': ' . clean_output($row['alledged_crime']) . "<br>\n";
 
 		// Change status form
-		echo "<form action='set_case_status.php?case=$case' method='POST'>\n";
+		echo "<form action='set_case_status.php?case=$case' method='GET'>\n";
 		echo _T('status') . ":&nbsp;\n";
 		echo "\t<select name='status'>\n";
 		$statuses = array('open','closed','merged');
