@@ -94,7 +94,7 @@ function show_author_form() {
               <td align="right" valign="top">Rows per page:</td>
               <td align="left" valign="top">
 			  <input name="page_rows" type="text" class="search_form_txt" id="page_rows" size="3" value="<?php
-			  echo $prefs['page_rows']; ?>" />
+			  echo ($prefs['page_rows'] ? $prefs['page_rows'] : 15); ?>" />
 		  	  </td>
             </tr>
             <tr>
