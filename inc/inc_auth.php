@@ -109,11 +109,16 @@ function auth() {
 		// Set the users' preferences
 		$prefs = unserialize($row['prefs']);
 
-		// XXX [ML] if some preferences are absent from $prefs,
-		// we can set them here.
+		//
+		// Default values for some possibly unset preferences
+		//
 
-		if ($prefs['page_rows'] < 1) 
+		if (intval($prefs['page_rows']) < 1) 
 			$prefs['page_rows'] = 15;
+
+		if (! $prefs['theme'])
+			$prefs['theme'] = 'green';
+
 	}
 	else {
 		// This case is a strange possibility: the author is authentified
