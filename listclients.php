@@ -18,13 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.25 2005/03/02 17:30:21 antzi Exp $
+	$Id: listclients.php,v 1.26 2005/03/16 08:03:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-lcm_page_start("List of clients");
+lcm_page_start("List of clients"); // TRAD
 
 // List all clients in the system + search criterion if any
 $q = "SELECT id_client,name_first,name_middle,name_last
@@ -41,9 +41,17 @@ if (strlen($find_client_string)>1) {
 			OR (name_last LIKE '%$find_client_string%'))";
 }
 
-$result = lcm_query($q);
+// Sort clients by first name
+// [ML] I know, problably more logical by last name, but we do not split the columns
+// later we can sort by any column if we need to
+$order_name_first = 'ASC';
+if (isset($_REQUEST['order_name_first']))
+	if ($_REQUEST['order_name_first'] == 'ASC' || $_REQUEST['order_name_first'] == 'DESC')
+		$order_name_first = $_REQUEST['order_name_first'];
 
-// Get the number of rows in the result
+$q .= " ORDER BY name_first " . $order_name_first;
+
+$result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
@@ -60,20 +68,10 @@ if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
 		lcm_panic("Error seeking position $list_pos in the result");
 
-echo '<form name="frm_find_client" class="search_form" action="listclients.php" method="get">' . "\n";
-echo _T('input_search_client') . "&nbsp;";
-echo '<input type="text" name="find_client_string" size="10" class="search_form_txt" value="' .  $find_client_string . '" />';
-echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
-echo "</form>\n";
+show_find_box('client', $find_client_string);
 
 // Output table tags
-?>
-<table border='0' width='99%' class='tbl_usr_dtl'>
-	<tr>
-		<th class='heading'>Client name</th>
-	</tr>
-
-<?php
+show_listclient_start();
 
 for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	echo "<tr>\n";
@@ -82,56 +80,13 @@ for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) 
 	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
 	echo highlight_matches($fullname, $find_client_string);
 	echo "</td>\n";
-
-	// [ML] Better not to allow to edit a client before the user can know exactly who it is
-	// echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"; <a href="edit_client.php?client=<?php echo $row['id_client']; " class="content_link">Edit</a></td>
 	echo "</tr>\n";
 }
 
+show_listclient_end($list_pos, $number_of_rows);
+
 ?>
-
-</table>
-
-<table border='0' align='center' width='99%' class='page_numbers'>
-	<tr><td align="left" width="15%">
-<?php
-
-// Show link to previous page
-if ($list_pos>0) {
-	echo '<a href="listclients.php';
-	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
-	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-	echo '" class="content_link">< Prev</a> ';
-}
-
-echo "</td>\n\t\t<td align='center' width='70%'>";
-
-// Show page numbers with direct links
-$list_pages = ceil($number_of_rows / $prefs['page_rows']);
-if ($list_pages>1) {
-	echo 'Go to page: ';
-	for ($i=0 ; $i<$list_pages ; $i++) {
-		if ($i==floor($list_pos / $prefs['page_rows'])) echo '['. ($i+1) .'] ';
-		else {
-			echo '<a href="listclients.php?list_pos=' . ($i*$prefs['page_rows']);
-			if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-			echo '" class="content_link">' . ($i+1) . '</a> ';
-		}
-	}
-}
-
-echo "</td>\n\t\t<td align='right' width='15%'>";
-
-// Show link to next page
-$next_pos = $list_pos + $prefs['page_rows'];
-if ($next_pos<$number_of_rows) {
-	echo "<a href=\"listclients.php?list_pos=$next_pos";
-	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-	echo '" class="content_link">Next ></a>';
-}
-echo "</td>\n\t</tr>\n</table>\n";
-?>
-<a href="edit_client.php" class="create_new_lnk">Add new client</a>
+<a href="edit_client.php" class="create_new_lnk">Register new client</a> <?php /* TRAD */ ?>
 <br /><br />
 <?php
 lcm_page_end();
