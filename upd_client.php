@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.7 2005/01/18 15:05:46 mlutfy Exp $
+	$Id: upd_client.php,v 1.8 2005/01/19 12:21:48 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -77,6 +77,20 @@ if ($_SESSION['client']['id_client'] > 0) {
 
 	lcm_query($q);
 	$_SESSION['client']['id_client'] = lcm_insert_id();
+
+	//
+	// Attach client to case (Case -> Add Client -> Create new client)
+	//
+	if (isset($_REQUEST['attach_case'])) {
+		$attach_case = intval($_REQUEST['attach_case']);
+
+		if ($attach_case > 0) {
+			$q = "INSERT INTO lcm_case_client_org (id_case, id_client, id_org)
+					VALUES (" . $attach_case . ", " . $_SESSION['client']['id_client'] . ", 0)";
+
+			lcm_query($q);
+		}
+	}
 }
 
 // Go to the 'view details' page of the author

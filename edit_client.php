@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.21 2005/01/18 15:05:47 mlutfy Exp $
+	$Id: edit_client.php,v 1.22 2005/01/19 12:21:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -59,44 +59,50 @@ if ($client > 0) {
 	lcm_page_start(_T('title_client_new'));
 }
 
-echo show_all_errors($_SESSION['errors']);
+if (isset($_SESSION['errors']))
+	echo show_all_errors($_SESSION['errors']);
 
-?>
+echo '<form action="upd_client.php" method="post">' . "\n";
 
-<form action="upd_client.php" method="post">
-	<table class="tbl_usr_dtl">
+if (isset($_REQUEST['attach_case'])) {
+	echo '<input type="hidden" name="attach_case" id="attach_case" value="'
+		. $_REQUEST['attach_case']
+		. '" />' . "\n";
+}
 
-<?php
-	if($client_data['id_client']) {
-		echo "<tr><td>" . _T('client_input_id') . "</td>\n";
-		echo "<td>" . $client_data['id_client']
-			. '<input type="hidden" name="id_client" value="' . $client_data['id_client'] . '"></td></tr>' . "\n";
-	}
+echo '<table class="tbl_usr_dtl">' . "\n";
 
-	echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
-	echo '<td><input name="name_first" value="' . clean_output($client_data['name_first']) . '" class="search_form_txt"></td></tr>' . "\n";
+if($client_data['id_client']) {
+	echo "<tr><td>" . _T('client_input_id') . "</td>\n";
+	echo "<td>" . $client_data['id_client']
+		. '<input type="hidden" name="id_client" value="' . $client_data['id_client'] . '"></td></tr>' . "\n";
+}
 
-	echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
-	echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt"></td></tr>' . "\n";
+echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
+echo '<td><input name="name_first" value="' . clean_output($client_data['name_first']) . '" class="search_form_txt"></td></tr>' . "\n";
 
-	echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
-	echo '<td><input name="name_last" value="' . clean_output($client_data['name_last']) . '" class="search_form_txt"></td></tr>' . "\n";
+echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
+echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt"></td></tr>' . "\n";
 
-	echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
-	echo '<td><select name="gender">' . "\n";
+echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
+echo '<td><input name="name_last" value="' . clean_output($client_data['name_last']) . '" class="search_form_txt"></td></tr>' . "\n";
 
-	$opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
+echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
+echo '<td><select name="gender">' . "\n";
 
-	if ($client_data['gender'] == 'male')
-		$opt_sel_male = 'selected="selected" ';
-	else if ($client_data['gender'] == 'female')
-		$opt_sel_female = 'selected="selected" ';
-	else
-		$opt_sel_unknown = 'selected="selected" ';
+$opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
 
-	echo '<option ' . $opt_sel_unknown . 'value="unknown">' . _T('info_not_available') . "</option>\n";
-	echo '<option ' . $opt_sel_male . 'value="male">' . _T('person_input_gender_male') . "</option>\n";
-	echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_female') . "</option>\n";
+if ($client_data['gender'] == 'male')
+	$opt_sel_male = 'selected="selected" ';
+else if ($client_data['gender'] == 'female')
+	$opt_sel_female = 'selected="selected" ';
+else
+	$opt_sel_unknown = 'selected="selected" ';
+
+echo '<option ' . $opt_sel_unknown . 'value="unknown">' . _T('info_not_available') . "</option>\n";
+echo '<option ' . $opt_sel_male . 'value="male">' . _T('person_input_gender_male') . "</option>\n";
+echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_female') . "</option>\n";
+
 ?>
 				</select>
 			</td></tr>
