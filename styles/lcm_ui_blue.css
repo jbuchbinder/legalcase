@@ -57,7 +57,7 @@ hr.hair_line {
 	color: #fff;
 }
 
-ul#nav_menu_list li {
+ul.nav_menu_list li {
 	border-bottom: 1px solid #036;
 	color: #036;
 }

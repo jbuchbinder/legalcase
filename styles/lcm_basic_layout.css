@@ -148,13 +148,13 @@ hr.hair_line {
 	text-align: left;
 }
 
-ul#nav_menu_list {
+ul.nav_menu_list {
 	list-style-type: none;
 	padding: 0px;
 	margin: 0px;
 }
 
-ul#nav_menu_list li {
+ul.nav_menu_list li {
 	font-size: 11px;
 	margin: 0px;
 	line-height: 2;
