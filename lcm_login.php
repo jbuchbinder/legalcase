@@ -27,7 +27,7 @@ echo "<div align='center'>\n";
 echo "<h3>" . $site_name;
 
 if ($site_desc)
-	echo "<div style='font-size: 80%; font-weight: normal;'>" . $site_desc . "</div>";
+	echo "<br/><span style='font-size: 80%; font-weight: normal;'>" . $site_desc .  "</span>";
 
 echo "</h3>\n";
 echo "<div align='" . $spip_lang_right . "'>" . menu_languages() . "</div>\n";
