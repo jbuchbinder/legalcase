@@ -115,7 +115,12 @@ if ($case > 0) {
 	} else die(_T('error_no_such_case'));
 
 	echo "\n\n<br/>\n";
-	echo "\n<form name='frm_find_fu' class='search_form' action='case_det.php?case=$case' method='post'>Find followup:&nbsp;<input type='text' name='find_fu_string' size='10' class='search_form_txt' value='$find_fu_string' />\n";
+	echo "\n<form name='frm_find_fu' class='search_form' action='case_det.php?case=$case' method='post'>";
+	echo "Find followup:&nbsp;";
+	echo "<input type='text' name='find_fu_string' size='10' class='search_form_txt' value='$find_fu_string' />";
+	echo "&nbsp;";
+	echo "<input type="submit" name="submit" value="Search" class="search_form_btn" />\n";
+	echo "</form>\n";
 
 	echo "\n<table border='0' width='99%' align='center' class='tbl_data'>
 	<caption>" . (strlen($find_fu_string)>1 ? _T('case_followups') : _T('case_followups_containing') . $find_fu_string) . ":</caption>
