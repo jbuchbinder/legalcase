@@ -48,12 +48,12 @@ if ($case > 0) {
 		// Show case details
 		lcm_page_start(_T('case_details') . ": " . $row['title']);
 		
-		echo "<p class='normal_text'>";
+		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>About this case</div><p class='normal_text'>";
 		
-		if ($edit)
-			echo '[<a href="edit_case.php?case=' . $row['id_case'] . '" class="content_link"><strong>' . _T('edit_case_information') . '</strong></a>]<br /><br />';
+		//Edit case link was here!
+		
 		echo "\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
-
+		
 		// Show users, assigned to the case
 		echo _T('case_user_s') . ': ';
 		$q = "SELECT id_case,lcm_author.id_author,name_first,name_middle,name_last
@@ -63,14 +63,21 @@ if ($case > 0) {
 		// Do the query
 		$authors = lcm_query($q);
 		// Show the results
+		
+		//echo "<ul class=\"simple_list\">\n";
+		
 		while ($user = lcm_fetch_array($authors)) {
 			if ($admin) echo '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
 			echo clean_output($user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last']);
 			if ($admin) echo '</a>';
 			echo '; ';
 		}
-		if ($admin) echo '<a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a>';
-		echo "<br>\n";
+		
+		//echo "</ul>";
+		
+		//Add user to the case link was here
+		
+		echo "<br />\n";
 		echo _T('court_archive_id') . ': ' . clean_output($row['id_court_archive']) . "<br>\n";
 		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
 
@@ -89,9 +96,20 @@ if ($case > 0) {
 		echo ', ' . _T('Write') . '=';
 		if ($row['pub_write']) echo 'Yes';
 		else echo 'No';
-		echo "</p>\n";
-
-		echo '<h3>' . _T('case_clients') . ':</h3>';
+		echo "</p><br />\n";
+		
+		if ($edit)
+			echo '&nbsp;<a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a>';
+		
+		if ($admin) echo '&nbsp;<a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a>';
+			
+		echo "<br /><br /></fieldset>";
+		
+		echo "<fieldset class=\"info_box\"><div class=\"prefs_column_menu_head\">" . _T('case_clients') . "</div><p class=\"normal_text\">";
+		
+		//first table
+		echo "<table border=\"0\" width=\"99%\">\n<tr>\n<td align=\"left\" valign=\"top\" width=\"50%\">";
+		
 		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
 		echo "<th class='heading'>" . _T('organisations'). ":</th><th class='heading'>&nbsp;</th>";
 
@@ -113,8 +131,11 @@ if ($case > 0) {
 		
 		if ($add)
 			echo "<br /><a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('add_organisation_s') . "</a><br />";
-
-		echo "<br />\n\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
+		
+		echo "</td>\n<td align=\"left\" valign=\"top\" width=\"50%\">";
+		//second table
+			
+		echo "<table border='0' class='tbl_usr_dtl'>\n";
 		echo "\t\t<th class='heading'>" . _T('clients') . ":</th>\n\t\t<th class='heading'>&nbsp;</th>";
 
 		// Show case client(s)
@@ -138,12 +159,13 @@ if ($case > 0) {
 		if ($add)
 			echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('add_client_s') . "</a><br />\n";
 
-		
+		echo "</td></tr></table>";
 
 	} else die(_T('error_no_such_case'));
 	
+	echo "</p><br /></fieldset>";
 	
-	echo "<h3>" . _T('case_followups') . ":</h3>\n";
+	echo "<fieldset class=\"info_box\"><div class=\"prefs_column_menu_head\">" . _T('case_followups') . "</div><p class=\"normal_text\">\n";
 	echo "\n\n\t\n\t<table border='0' class='tbl_usr_dtl' width='99%'>
 	<tr><th class='heading'>" . _T('date') . "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
 
@@ -172,7 +194,9 @@ if ($case > 0) {
 	
 	if ($add)
 		echo "<br /><a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a><br /><br />\n";
-
+	
+	echo "</p></fieldset>";
+		
 	lcm_page_end();
 } else {
 	lcm_page_start(_T('title_error'));
