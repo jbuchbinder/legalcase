@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.5 2004/12/17 22:12:36 antzi Exp $
+	$Id: set_case_status.php,v 1.6 2004/12/17 22:18:41 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -164,8 +164,8 @@ switch ($status) {
 // Suspend case
 //
 	case 'suspended' :
-		// Check if the case is already suspended
-		if ($row['status'] == 'suspended') {
+		// Check if the case is already suspended or closed
+		if (($row['status'] == 'suspended') || ($row['status'] == 'closed')) {
 			header('Location: ' . $GLOBALS['HTTP_REFERER']);
 			break;
 		}
@@ -218,6 +218,11 @@ switch ($status) {
 // Merge case
 //
 	case 'merged' :
+		// Check if the case is already merged
+		if ($row['status'] == 'merged') {
+			header('Location: ' . $GLOBALS['HTTP_REFERER']);
+			break;
+		}
 		break;
 }
 
