@@ -519,7 +519,8 @@ function install_html_start($title = 'AUTO') {
 
 	@Header("Content-Type: text/html; charset=$charset");
 
-	echo "<html><head>
+	echo "<html>
+<head>
 	<title>$title</title>
 	<meta http-equiv='Expires' content='0'>
 	<meta http-equiv='cache-control' content='no-cache,no-store'>
@@ -537,16 +538,17 @@ function install_html_start($title = 'AUTO') {
 	.serif { font-family: Georgia, Garamond, Times New Roman, serif; }
 	-->
 	</style>
-	</head>
-	<body bgcolor='#FFFFFF' text='#000000' link='#E86519' vlink='#6E003A' alink='#FF9900' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0'";
+</head>
+<body bgcolor='#FFFFFF' text='#000000' link='#E86519' vlink='#6E003A' alink='#FF9900' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0'";
 
 	if ($spip_lang_rtl) echo " dir='rtl'";
 
-	echo "><br><br><br>
+	echo "><br><br>
 	<center>
 	<table width='450'>
 	<tr><td width='450' class='serif'>
-	<font face='Verdana,Arial,Sans,sans-serif' size='4' color='#970038'><B>$title</b></font>\n<p>";
+	<p><font face='Verdana,Arial,Sans,sans-serif' size='4' color='#970038'><b>$title</b></font></p>\n";
+	echo "\n<!-- END install_html_start() -->\n\n";
 }
 
 /*
@@ -554,13 +556,12 @@ function install_html_start($title = 'AUTO') {
  * They are used by install.php and lcm_test_dirs.php
  */
 function install_html_end() {
-	echo '
-	</font>
+	echo "\n<!-- START install_html_start() -->\n";
+	echo "
 	</td></tr></table>
 	</center>
-	</body>
-	</html>
-	';
+</body>
+</html>\n";
 }
 
 
