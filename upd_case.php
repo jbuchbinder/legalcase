@@ -17,6 +17,8 @@
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: upd_case.php,v 1.22 2004/12/17 09:24:43 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -55,8 +57,9 @@ if (count($errors)) {
 			id_court_archive='" . clean_input($case_data['id_court_archive']) . "',";
 //			date_creation='" . $case_data['date_creation'] . "',
 // [AG] Creation date derived from MySQL server to prevent user manipulation
+//			date_assignment='" . clean_input($case_data['date_assignment']) . "',
+// [AG] Assignment date is set only when creating case or adding new user to it
 	$fl .= "
-			date_assignment='" . clean_input($case_data['date_assignment']) . "',
 			legal_reason='" . clean_input($case_data['legal_reason']) . "',
 			alledged_crime='" . clean_input($case_data['alledged_crime']) . "',
 			status='" . clean_input($case_data['status']) . "'";
@@ -65,12 +68,12 @@ if (count($errors)) {
 	$public_access_rights = '';
 	if ($case_data['public'] || read_meta('case_read_always'))
 		$public_access_rights .= "public=1";
-	else 
+	else
 		$public_access_rights .= "public=0";
-		
-	if ($case_data['pub_write'] || read_meta('case_write_always')) 
+
+	if ($case_data['pub_write'] || read_meta('case_write_always'))
 		$public_access_rights .= ", pub_write=1";
-	else 
+	else
 		$public_access_rights .= ", pub_write=0";
 
 	if ($id_case > 0) {
@@ -91,6 +94,28 @@ if (count($errors)) {
 				ac_read=1,
 				ac_write=1,
 				ac_admin=1";
+
+		// Get author information
+		$q = "SELECT *
+				FROM lcm_author
+				WHERE id_author=$id_author";
+		$result = lcm_query($q);
+		$author_data = lcm_fetch_array($result);
+
+		// Add 'assigned' followup to the case
+		$q = "INSERT INTO lcm_followup
+				SET id_followup=0,id_case=$id_case,type='assignment',description='";
+		$q .= $author_data['name_first'];
+		$q .= (($author_data['name_middle']) ? ' ' . $author_data['name_middle'] : '');
+		$q .= (($author_data['name_last']) ? ' ' . $author_data['name_last'] : '');
+		$q .= " assigned to the case',date_start=NOW()";
+		$result = lcm_query($q);
+
+		// Set case date_assigned to NOW()
+		$q = "UPDATE lcm_case
+				SET date_assignment=NOW()
+				WHERE id_case=$id_case";
+		$result = lcm_query($q);
 	}
 
 	// Some advanced ideas for future use
