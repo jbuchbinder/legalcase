@@ -18,6 +18,6 @@ if (($client>0) && ($orgs)) {
 }
 
 //header("Location: $ref_sel_org_cli");
-header("Location: client_det.php?client=$ref_sel_org_cli");
+header("Location: client_det.php?client=$client");
 
 ?>
