@@ -102,7 +102,6 @@ if ($step == 6) {
 			$id_author = $row['id_author'];
 
 		$mdpass = md5($pass);
-		$htpass = generer_htpass($pass); // generate htpass [ML] not sure what for!
 
 		// Update main author information
 		if ($id_author) {
@@ -114,20 +113,39 @@ if ($step == 6) {
 							password = \"$mdpass\", 
 							alea_actuel = '', 
 							alea_futur = FLOOR(32000*RAND()), 
-							htpass = \"$htpass\", 
 							status = \"admin\" 
 					  WHERE id_author = $id_author";
 		} else {
-			$query = "INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, htpass, alea_futur, status)
-							VALUES(\"$name_first\", \"$name_middle\", \"$name_last\", \"$username\", \"$mdpass\", \"$htpass\", FLOOR(32000*RAND()), \"admin\")";
+			$query = "INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, alea_futur, status)
+							VALUES(\"$name_first\", \"$name_middle\", \"$name_last\", \"$username\", \"$mdpass\", FLOOR(32000*RAND()), \"admin\")";
 		}
 
 		lcm_query_db($query);
 
 		// Set e-mail for author (if none)
-		// TODO
+		if ($email) {
+			// Check if it is not already there
+			$email_exists = false;
+			$query = "SELECT value
+						FROM lcm_contact
+						WHERE id_of_person = $id_author 
+							AND type_person = 'author' 
+							AND type_contact = 1"; // EMAIL XXX
+			$result = lcm_query($query);
 
-		// insert email as main system administrator
+			while ($row = lcm_fetch_array($result))
+				if ($row['value'] == $email)
+					$email_exists = true;
+
+			// Insert email if not exist
+			if (! $email_exists) {
+				$query = "INSERT INTO lcm_contact (type_person, id_of_person, type_contact, value)
+							VALUES(\"author\", $id_author, 1, \"" .  addslashes($email) . "\")";
+				lcm_query($query);
+			}
+		}
+
+		// Insert email as main system administrator
 		write_meta('email_sysadmin', $email);
 	} else {
 
@@ -394,7 +412,6 @@ else if ($step == 3) {
 	echo "<!-- " . count($result) . " -->\n";
 
 	if (is_array($result) && ($num = count($result)) > 0) {
-		echo "<b>" . _T('texte_choix_base_2') . "</b><p> " . _T('texte_choix_base_3');
 		echo "<ul>";
 		$listdbtxt = "";
 
