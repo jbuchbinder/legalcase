@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.53 2004/12/17 16:59:16 antzi Exp $
+	$Id: case_det.php,v 1.54 2004/12/17 17:04:50 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -93,13 +93,13 @@ if ($case > 0) {
 
 		// Change status form
 		echo "<form action='set_case_status.php?case=$case' method='POST'>\n";
-		echo _T('status') . ': ';
-		echo "\t<select name='status'>";
+		echo _T('status') . ":&nbsp;\n";
+		echo "\t<select name='status'>\n";
 		$statuses = array('open','closed','merged');
 		foreach ($statuses as $s)
 			echo "\t\t<option" .  (($s == $row['status']) ? ' selected' : '') . ">$s</option>\n";
 		echo "\t</select>\n";
-		echo "\t<input type='submit' name='Set case status'>\n";
+		echo "\t<input type='submit' name='submit' value='Set case status'>\n";
 		echo "</form><br>\n";
 
 		echo _T('public') . ': ' . _T('Read') . '=';
