@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.55 2005/03/22 16:18:40 antzi Exp $
+	$Id: inc_filters.php,v 1.56 2005/03/22 16:34:05 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -225,9 +225,16 @@ function get_person_initials($item) {
 		return '';
 	}
 
-	$ret  = substr($item['name_first'],0,floor(ord($item['name_first']) / 128) + 1);
-	$ret .= substr($item['name_middle'],0,floor(ord($item['name_first']) / 128) + 1);
-	$ret .= substr($item['name_last'],0,floor(ord($item['name_first']) / 128) + 1);
+	if (function_exists("mb_substr")) {
+		$ret .= mb_substr($item['name_first'], 0, 1, "utf-8");
+		$ret .= mb_substr($item['name_middle'], 0, 1, "utf-8");
+		$ret .= mb_substr($item['name_last'], 0, 1, "utf-8");
+	} else {
+		// [ML] Works with Cyrillic (Bulgarian), but not Chinese :-)
+		$ret  = substr($item['name_first'],0,floor(ord($item['name_first']) / 128) + 1);
+		$ret .= substr($item['name_middle'],0,floor(ord($item['name_first']) / 128) + 1);
+		$ret .= substr($item['name_last'],0,floor(ord($item['name_first']) / 128) + 1);
+	}
 
 	return $ret;
 }
