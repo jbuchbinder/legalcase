@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.65 2005/01/13 15:05:42 mlutfy Exp $
+	$Id: case_det.php,v 1.66 2005/01/18 23:46:34 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -26,6 +26,7 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 $case = intval($_GET['case']);
+$fu_order = clean_input($_GET['fu_order']);
 
 if ($case > 0) {
 	$q="SELECT id_case, title, id_court_archive, date_creation, date_assignment,
@@ -195,12 +196,27 @@ if ($case > 0) {
 	echo "<p class=\"normal_text\">\n";
 
 	echo "\n\n\t\n\t<table border='0' class='tbl_usr_dtl' width='99%'>
-	<tr><th class='heading'>" . _T('date') . "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
+		<tr><th class='heading'>";
+	switch ($fu_order) {
+		case 'ASC':
+			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC'>" . _T('date') . '</a> v';
+			break;
+		case 'DESC':
+			echo "<a href='case_det.php?case=$case&amp;fu_order=ASC'>" . _T('date') . '</a> ^';
+			break;
+		default:
+			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC'>" . _T('date') . '</a> v';
+	}
+//	echo _T('date') .
+	echo "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
 
 	// Prepare query
 	$q = "SELECT id_followup,date_start,type,description
 		FROM lcm_followup
 		WHERE id_case=$case";
+
+	// Add ordering
+	if ($fu_order) $q .= " ORDER BY date_start $fu_order";
 
 	// Do the query
 	$result = lcm_query($q);
