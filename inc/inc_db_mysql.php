@@ -39,6 +39,9 @@ function lcm_query_db($query) {
 		echo "&laquo; ".htmlentities($s)." &raquo;<p>";
 	}
 
+	if ($my_debug)
+		lcm_log("QUERY: $query\n", "mysql");
+
 	return $result;
 }
 
