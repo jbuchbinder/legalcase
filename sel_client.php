@@ -5,32 +5,38 @@ lcm_page_start("Select client(s)");
 
 $case = intval($_GET['case']);
 
-if ($case>0) {
-	// Prepare query
-	$q = "SELECT *
-		  FROM lcm_case_client_org
-		  WHERE id_case=$case";
+if (! $case)
+	die("There's no such case!");
 
-	// Do the query
-	$result = lcm_query($q);
+//
+// Show only clients who are not already in the case 
+// Extract the clients on the case, then put them in a "not in" list
+//
+$q = "SELECT *
+		FROM lcm_case_client_org
+		WHERE id_case = $case";
 
-	// Prepare list query
-	$q = "SELECT id_client,name_first,name_middle,name_last
-		  FROM lcm_client
-		  WHERE id_client NOT IN (0";
+$result = lcm_query($q);
 
-	// Process the output of the query
-	while ($row = lcm_fetch_array($result)) {
-		// Add clients to NOT IN list
-		$q .= ',' . $row['id_client'];
-	}
-	$q .= ')';
+$q2 = "SELECT id_client,name_first,name_middle,name_last
+		FROM lcm_client
+		WHERE id_client NOT IN (0";
 
-	// Do the query
-	$result = lcm_query($q);
+// Build "not in" list
+while ($row = lcm_fetch_array($result)) {
+	$q2 .= ',' . $row['id_client'];
+}
+
+$q2 .= ')';
+
+$result = lcm_query($q2);
+
 ?>
+
+<ul><li>Todo: Search for client + if list too long, show only search.</li>
+<li>Todo: Show case overview.</li></ul>
+
 <form action="add_client.php" method="post">
-	<!--h3>List if clients</h3-->
 	<table border="0" class="tbl_usr_dtl">
 
 		<tr>
@@ -51,20 +57,19 @@ if ($case>0) {
 ?>
 		<tr>
 			<td></td>
-			<td><a href="edit_client.php" class="content_link">Add new client</a></td>
-			<td></td>
+<?php
+	echo '<td><a href="edit_client.php?attach_case=' . $case . '" class="content_link">' . 'Create a new client and attach to case' . '</a></td>' . "\n";
+?>
+		<td></td>
 		</tr>
 	</table>
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
 	<input type="hidden" name="ref_sel_client" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
-	<button name="submit" type="submit" value="submit" class="simple_form_btn">Add client(s) to the case</button>
-	<button name="reset" type="reset" value="reset" class="simple_form_btn">Clear selected</button>
+	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button>
 </form>
+
 <?php
 
-} else {
-	die("There's no such case!");
-}
-
 lcm_page_end();
+
 ?>
