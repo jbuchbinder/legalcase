@@ -9,7 +9,7 @@ lcm_page_start("List of cases");
 $q = "SELECT lcm_case.id_case,title,public
 		FROM lcm_case,lcm_case_author
 		WHERE (lcm_case.id_case=lcm_case_author.id_case
-			AND lcm_case_author.id_author=" . $GLOBALS['connect_id_auteur'] . ")";
+			AND lcm_case_author.id_author=" . $GLOBALS['author_session']['id_author'] . ")";
 
 // TODO - add case filter based on user/case status to query
 
