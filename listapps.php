@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.7 2005/03/05 00:00:39 antzi Exp $
+	$Id: listapps.php,v 1.8 2005/03/10 17:42:56 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -70,11 +70,11 @@ if ($number_of_rows) {
 			) . '</td>';
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['type'] . '</td>';
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-			. '<a href="app_det.php?app=' . $row['id_app'] . '">' . $row['title'] . '</a></td>';
+			. '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 			. date('d.m.y H:i',strtotime($row['reminder'])) . '</td>';
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-			. '<a href="edit_app.php?app=' . $row['id_app'] . '">' . _T('edit') . '</a></td>';
+			. '<a href="edit_app.php?app=' . $row['id_app'] . '" class="content_link">' . _T('edit') . '</a></td>';
 		echo "</tr>\n";
 	}
 	
