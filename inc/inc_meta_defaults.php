@@ -23,6 +23,8 @@ function init_default_config() {
 		'site_open_subscription' => 'no',
 		'accepter_inscriptions' => 'non', // OLD
 
+		'site_name' => _T('title_software'),
+
 		// This might not even be a question in the future,
 		// but let's leave it for now.
 		'charset' => 'UTF-8',
