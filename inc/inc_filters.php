@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.24 2005/01/19 12:46:16 mlutfy Exp $
+	$Id: inc_filters.php,v 1.25 2005/01/19 15:10:51 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -53,13 +53,38 @@ function highlight_matches($source, $match) {
 
 // Format the date according to the user's preferences or
 // the localised format
-function format_date($timestamp = '', $format = '') {
-	// TODO: Check if the user specified a format
+function format_date($timestamp = '', $format = 'full') {
+	// XXX [ML] this is an absurd waste and redundant, but
+	// it works well and accepts many formats.. and I am tired.
+	// The most common case anyway, will be to have a date in
+	// format 0000-00-00 HH:MM:DD
 
-	if ($timestamp && ! is_numeric($timestamp)) {
-		// FIXME: reacts strangely when date is 00:00:00 ...
-		// [ML] For now, I cannot reproduce
+	if (! $timestamp)
+		$timestamp = strftime("%Y-%m-%d %H:%M:%S", mktime());
+	
+	if (is_numeric($timestamp))
+		$timestamp = strftime("%Y-%m-%d %H:%M:%S", $timestamp);
+
+	if ($timestamp) {
+		// Reacts strangely when date is 00:00:00
+		if (preg_match('/0000-.*/', $timestamp))
+			return '';
+
+		$dd = recup_date($timestamp);
+		$day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
+
+		$my_date = _T('date_format_full', array(
+							'day_name' => _T('date_wday_' . ($day_of_w + 0)),
+							'month_name' => _T('date_month_' . ($dd[1] + 0)),
+							'day_order' => _T('date_day_' . $dd[2]),
+							'day' => ($dd[2] + 0),
+							'year' => $dd[0]));
+
+		return $my_date;
+
+		/*
 		$newtime = strtotime($timestamp);
+
 		if ($newtime != -1) {
 			lcm_debug("Converted $timestamp to $newtime (" .  date(_T('date_format'), $newtime) . ")");
 			$timestamp = $newtime;
@@ -67,15 +92,22 @@ function format_date($timestamp = '', $format = '') {
 			lcm_log("WARNING: Received strange date format: $timestamp");
 			return '';
 		}
+		*/
+	} else if ($timestamp) {
+		lcm_log(lcm_getbacktrace());
+		lcm_log("numeric time format received");
+
+		return date($format, $timestamp);
+	} else {
+
+
 	}
 
 	if (! $format) 
 		$format = _T('date_format');
 
-	if ($timestamp)
-		return date($format, $timestamp);
-	else
-		return date($format);
+	lcm_log("format date = " . $format);
+
 }
 
 // Error display function
@@ -128,6 +160,35 @@ function lcm_utf8_decode($string) {
 	else
 		return $string;
 }
+
+function recup_date($numdate){
+	if (! $numdate) return '';
+
+	if (ereg('([0-9]{1,2})/([0-9]{1,2})/([0-9]{1,2})', $numdate, $regs)) {
+		$day = $regs[1];
+		$month = $regs[2];
+		$year = $regs[3];
+
+		if ($year < 90){
+			$year = 2000 + $year;
+		} else {
+			$year = 1900 + $year ;
+		}
+	} elseif (ereg('([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})',$numdate, $regs)) {
+		$year = $regs[1];
+		$month = $regs[2];
+		$day = $regs[3];
+	} elseif (ereg('([0-9]{4})-([0-9]{2})', $numdate, $regs)){
+		$year = $regs[1];
+		$month = $regs[2];
+	}
+
+	if ($year > 4000) $year -= 9000;
+	if (substr($day, 0, 1) == '0') $day = substr($day, 1);
+
+	return array($year, $month, $day);
+}
+
 
 /* ********************************************************
  * DEPRECATED: The following functions will be removed soon
@@ -353,33 +414,6 @@ function secondes($numdate) {
 
 function heures_minutes($numdate) {
 	return _T('date_fmt_heures_minutes', array('h'=> heures($numdate), 'm'=> minutes($numdate)));
-}
-
-function recup_date($numdate){
-	if (!$numdate) return '';
-	if (ereg('([0-9]{1,2})/([0-9]{1,2})/([0-9]{1,2})', $numdate, $regs)) {
-		$jour = $regs[1];
-		$mois = $regs[2];
-		$annee = $regs[3];
-		if ($annee < 90){
-			$annee = 2000 + $annee;
-		} else {
-			$annee = 1900 + $annee ;
-		}
-	}
-	elseif (ereg('([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})',$numdate, $regs)) {
-		$annee = $regs[1];
-		$mois = $regs[2];
-		$jour = $regs[3];
-	}
-	elseif (ereg('([0-9]{4})-([0-9]{2})', $numdate, $regs)){
-		$annee = $regs[1];
-		$mois = $regs[2];
-	}
-	if ($annee > 4000) $annee -= 9000;
-	if (substr($jour, 0, 1) == '0') $jour = substr($jour, 1);
-
-	return array($annee, $mois, $jour);
 }
 
 
