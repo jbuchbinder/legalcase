@@ -158,7 +158,8 @@ $system_keyword_groups = array (
 
 function create_groups($keyword_groups) {
 	foreach ($keyword_groups as $skwg) {
-		$q = "INSERT INTO lcm_keyword_group 
+		// Insert keyword group data into database table
+		$q = "INSERT IGNORE INTO lcm_keyword_group 
 				(name, title, description, type, policy, quantity, suggest, ac_admin, ac_author) 
 			VALUES (" 
 				. "'" . addslashes($skwg['name']) . "', "
@@ -172,16 +173,23 @@ function create_groups($keyword_groups) {
 				. "'" . addslashes($skwg['ac_author']) . "')";
 
 		$result = lcm_query($q);
-		$kwg_id = lcm_insert_id();
 
+		// Findout under what ID is this group stored
+		$q = "SELECT id_group,name FROM lcm_keyword_group WHERE name='" . addslashes($skwg['name']) . "'";
+		$result = lcm_query($q);
+		$row = lcm_fetch_array($result);
+		$kwg_id = $row['id_group'];
+
+		// If group is not successfully created or its ID is not found, report error
 		if ($kwg_id < 1) {
 			lcm_log("create_groups: creation of keyword group seems to have failed. Aborting.");
 			lcm_log("-> Query was: " . $q);
 			return;
 		}
 
+		// Insert keywords data into database table
 		foreach ($skwg['keywords'] as $k) {
-			$q = "INSERT INTO lcm_keyword
+			$q = "INSERT IGNORE INTO lcm_keyword
 					(id_group, name, title, description, ac_author)
 				VALUES ("
 					. $kwg_id . ", "
