@@ -210,6 +210,11 @@ function spip_num_rows($r) {
 	return lcm_num_rows($r);
 }
 
+function lcm_data_seek($r,$n) {
+	if ($r)
+		return mysql_data_seek($r,$n);
+}
+
 function lcm_free_result($r) {
 	if ($r)
 		return mysql_free_result($r);

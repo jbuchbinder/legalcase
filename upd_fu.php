@@ -1,6 +1,7 @@
 <?php
 
 include('inc/inc.php');
+include('inc/inc_acc.php');
 
 // Start session
 session_start();

@@ -1,5 +1,8 @@
 <?php
 
+// Test settings
+$GLOBALS['list_len'] = 3;
+
 include('inc/inc.php');
 include_lcm('inc_acc');
 
@@ -40,18 +43,26 @@ if (strlen($find_case_string)>1) {
 
 $q .= ")";
 
-// TODO - add case filter based on user/case status to query
-
 // Do the query
 $result = lcm_query($q);
 
+// Get the number of rows in the result
+$number_of_rows = lcm_num_rows($result);
+
+// Check for correct start position of the list
+if ($list_pos>=$number_of_rows) $list_pos = 0;
+
+// Position to the page info start
+if ($list_pos>0)
+	if (!lcm_data_seek($result,$list_pos))
+		die("Error seeking position $list_pos in the result");
 ?>
 
 <table border='1' align='center'>
 <tr><th colspan="3">Case description</th></tr>
 <?php
 // Process the output of the query
-while ($row = lcm_fetch_array($result)) {
+for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show case title
 	echo '<tr><td>';
 	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '">';
@@ -71,5 +82,33 @@ while ($row = lcm_fetch_array($result)) {
 </table>
 
 <?php
-	lcm_page_end();
+
+// Show link to previous page
+if ($list_pos>0) {
+	echo '<a href="listcases.php';
+	if ($list_pos>$GLOBALS['list_len']) echo '?list_pos=' . ($list_pos - $GLOBALS['list_len']);
+	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+	echo '">< Prev</a> ';
+}
+
+// Show page numbers with direct links
+$list_pages = ceil($number_of_rows / $GLOBALS['list_len']);
+for ($i=0 ; $i<$list_pages ; $i++) {
+	if ($i==floor($list_pos / $GLOBALS['list_len'])) echo ($i+1) . ' ';
+	else {
+		echo '<a href="listcases.php?list_pos=' . ($i*$GLOBALS['list_len']);
+		if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+		echo '">' . ($i+1) . '</a> ';
+	}
+}
+
+// Show link to next page
+$next_pos = $list_pos + $GLOBALS['list_len'];
+if ($next_pos<$number_of_rows) {
+	echo "<a href=\"listcases.php?list_pos=$next_pos";
+	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+	echo '">Next ></a>';
+}
+
+lcm_page_end();
 ?>
