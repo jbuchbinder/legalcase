@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.74 2005/01/24 07:51:41 mlutfy Exp $
+	$Id: case_det.php,v 1.75 2005/01/25 23:08:17 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -71,7 +71,8 @@ if ($case > 0) {
 
 		// Edit case link was here!
 
-		echo "\n" . _T('case_input_id') . " " . $row['id_case'] . "<br>\n";
+		// [AG] Case ID irrelevant to the user
+		//echo "\n" . _T('case_input_id') . " " . $row['id_case'] . "<br>\n";
 
 		// Show users, assigned to the case
 		// TODO: use case_input_authors if many authors
@@ -86,18 +87,19 @@ if ($case > 0) {
 		// Show the results
 		//echo "<ul class=\"simple_list\">\n";
 
+		$q = '';
 		while ($user = lcm_fetch_array($authors)) {
-			if ($admin) echo '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
-			echo clean_output($user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last']);
-			if ($admin) echo '</a>';
-			echo '; ';
+			if ($q) $q .= "; \n";
+			if ($admin) $q .= '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
+			$q .= clean_output($user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last']);
+			if ($admin) $q .= '</a>';
 		}
+		echo "$q<br />\n";
 
 		//echo "</ul>";
 
 		// Add user to the case link was here
 
-		echo "<br />\n";
 		if ($case_court_archive == 'yes')
 			echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br>\n";
 		echo _T('case_input_date_creation') . ' ' . format_date($row['date_creation']) . "<br>\n";
