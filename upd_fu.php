@@ -34,7 +34,7 @@ if (count($errors)) {
 		date_end='" . clean_input($fu_data['date_end']) . "',
 		type='" . clean_input($fu_data['type']) . "',
 		description='" . clean_input($fu_data['description']) . "',
-    	sumbilled='" . clean_input($fu_data['sumbilled']);
+    	sumbilled='" . clean_input($fu_data['sumbilled']) . "'";
 
     if ($id_followup>0) {
 		// Check access rights
