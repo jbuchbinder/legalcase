@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.11 2005/03/28 13:21:59 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.12 2005/03/28 13:56:38 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -156,10 +156,11 @@ function get_keywords_applied_to($type, $id) {
 	
 	$result = lcm_query($query);
 
-	if (lcm_num_rows($result))
-		return lcm_fetch_array($result);
-	else
-		return array();
+	$ret = array();
+	while ($row = lcm_fetch_array($result))
+		array_push($ret, $row);
+	
+	return $ret;
 }
 
 function update_keywords_request($type_obj, $id_obj) {
