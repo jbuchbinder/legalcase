@@ -29,7 +29,7 @@ while ($row = lcm_fetch_array($result)) {
 ?>
 	<tr>
 		<td><a href="org_det.php?org=<?php echo $row['id_org'] . '">';
-		echo highlight_matches($row['name'],$find_org_string);
+		echo highlight_matches(clean_output($row['name']),$find_org_string);
 ?></td>
 		<td><a href="edit_org.php?org=<?php echo $row['id_org']; ?>">Edit</a></td>
 	</tr>
