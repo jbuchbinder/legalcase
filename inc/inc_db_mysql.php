@@ -90,13 +90,28 @@ function process_query($query) {
 // Connection to the database
 //
 
-function lcm_connect_db($host, $port, $login, $pass, $db) {
+function lcm_connect_db($host, $port = 0, $login, $pass, $db) {
 	global $spip_mysql_link, $spip_mysql_db;	// for multiple connections
 
 	if ($port > 0) $host = "$host:$port";
 	$spip_mysql_link = @mysql_connect($host, $login, $pass);
 	$spip_mysql_db = $db;
 	return @mysql_select_db($db);
+}
+
+function lcm_connect_db_test($host, $login, $pass, $port = 0) {
+	unset($link);
+
+	// Non-silent connect, should be shown in <!-- --> anyway
+	if ($port > 0) $host = "$host:$port";
+	$link = mysql_connect($host, $login, $pass, $port);
+
+	if ($link) {
+		mysql_close($link);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 function spip_connect_db($host, $port, $login, $pass, $db) {
