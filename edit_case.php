@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.54 2005/02/08 10:56:41 antzi Exp $
+	$Id: edit_case.php,v 1.55 2005/02/15 13:37:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -86,6 +86,32 @@ if (empty($_SESSION['errors'])) {
 	}
 }
 
+$attach_client = 0;
+
+if (!$existing && isset($_REQUEST['attach_client'])) {
+	$attach_client = intval($_REQUEST['attach_client']);
+
+	if ($attach_client) {
+		// Fetch name of the client
+		$query = "SELECT name_first, name_middle, name_last
+					FROM lcm_client
+					WHERE id_client = " . $attach_client;
+
+		$result = lcm_query($query);
+		if ($info = lcm_fetch_array($result)) {
+			$_SESSION['case_data']['title'] = $info['name_first'];
+
+			// To avoid showing two spaces if no middle name
+			if ($info['name_middle'])
+				$_SESSION['case_data']['title'] .= ' ' . $info['name_middle'];
+
+			$_SESSION['case_data']['title'] .= ' ' . $info['name_last'];
+		} else {
+			die("No such client #" . $attach_client);
+		}
+	}
+}
+
 // Start page and title
 if ($existing) lcm_page_start(_T('title_case_edit'));
 else lcm_page_start(_T('title_case_new'));
@@ -99,6 +125,9 @@ echo show_all_errors($_SESSION['errors']);
 echo "\n<form action=\"upd_case.php\" method=\"post\">
 <table class=\"tbl_usr_dtl\">
 <input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\">\n";
+
+if ($attach_client)
+	echo '<input type="hidden" name="attach_client" value="' . $attach_client . '" />' . "\n";
 
 if ($_SESSION['case_data']['id_case']) {
 	echo "\t<tr><td>" . _T('case_input_id') . "</td><td>" . $_SESSION['case_data']['id_case']

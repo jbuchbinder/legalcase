@@ -3,9 +3,10 @@
 include('inc/inc.php');
 include_lcm('inc_lang');
 
-// Clean the POST values
-$case = intval($_POST['case']);
-foreach ($_POST['clients'] as $key=>$value) $clients[$key] = intval($value);
+// Clean the REQUEST values 
+// [ML] upd_case.php uses Get/Location to add clients from client_det.php
+$case = intval($_REQUEST['case']);
+foreach ($_REQUEST['clients'] as $key=>$value) $clients[$key] = intval($value);
 
 if (($case>0) && ($clients)) {
 	foreach($clients as $client) {

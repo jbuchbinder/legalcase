@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.31 2005/02/08 10:12:13 antzi Exp $
+	$Id: upd_case.php,v 1.32 2005/02/15 13:37:48 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -49,10 +49,6 @@ if (count($_SESSION['errors'])) {
 	//$vl .= "'$date_assignment','$legal_reason','$alledged_crime','$status')";
 	$fl = "title='" . clean_input($_SESSION['case_data']['title']) . "',
 			id_court_archive='" . clean_input($_SESSION['case_data']['id_court_archive']) . "',";
-//			date_creation='" . $_SESSION['case_data']['date_creation'] . "',
-// [AG] Creation date derived from MySQL server to prevent user manipulation
-//			date_assignment='" . clean_input($_SESSION['case_data']['date_assignment']) . "',
-// [AG] Assignment date is set only when creating case or adding new user to it
 	$fl .= "
 			legal_reason='" . clean_input($_SESSION['case_data']['legal_reason']) . "',
 			alledged_crime='" . clean_input($_SESSION['case_data']['alledged_crime']) . "'";
@@ -137,17 +133,31 @@ if (count($_SESSION['errors'])) {
 
 	//header("Location: case_det.php?case=$id_case");
 	$ref_edit_case = ($_SESSION['case_data']['ref_edit_case'] ? $_SESSION['case_data']['ref_edit_case'] : "case_det.php?case=$id_case");
+	$send_to = '';
 
 	// Proceed accoring to the button type
 	switch ($submit) {
 		case 'addnew':
-			header("Location: edit_case.php?case=0&ref=$ref_edit_case");
+			$send_to = "edit_case.php?case=0&ref=$ref_edit_case";
+			// header("Location: edit_case.php?case=0&ref=$ref_edit_case");
 			break;
 		case 'adddet':
-			header("Location: case_det.php?case=$id_case");
+			$send_to = "case_det.php?case=$id_case";
+			// header("Location: case_det.php?case=$id_case");
 			break;
 		default :
-			header("Location: $ref_edit_case");
+			$send_to = $ref_edit_case;
+			// header("Location: $ref_edit_case");
 	}
+
+	// Send to add_client if any client to attach
+	if ($_SESSION['case_data']['attach_client']) {
+		header("Location: add_client.php?case=$id_case"
+			. "&clients[]=" .  $_SESSION['case_data']['attach_client'] 
+			. "&ref_sel_client=" . rawurlencode($send_to));
+		exit;
+	}
+
+	header("Location: " . $send_to);
 }
 ?>
