@@ -18,13 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.21 2005/02/04 10:17:35 makaveev Exp $
+	$Id: listclients.php,v 1.22 2005/02/15 08:24:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-// Prepare query
+lcm_page_start("List of clients");
+
+// List all clients in the system + search criterion if any
 $q = "SELECT id_client,name_first,name_middle,name_last
 		FROM lcm_client";
 
@@ -37,12 +39,8 @@ if (strlen($find_client_string)>1) {
 	$q .= " WHERE ((name_first LIKE '%$find_client_string%')
 			OR (name_middle LIKE '%$find_client_string%')
 			OR (name_last LIKE '%$find_client_string%'))";
-	lcm_page_start("Client(s), containing '$find_client_string':");
-} else {
-	lcm_page_start("List of client(s)");
 }
 
-// Do the query
 $result = lcm_query($q);
 
 // Get the number of rows in the result
@@ -54,31 +52,38 @@ $list_pos = 0;
 if (isset($_REQUEST['list_pos']))
 	$list_pos = $_REQUEST['list_pos'];
 
-if ($list_pos>=$number_of_rows) $list_pos = 0;
+if ($list_pos >= $number_of_rows)
+	$list_pos = 0;
 
 // Position to the page info start
-if ($list_pos>0)
+if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
-		die("Error seeking position $list_pos in the result");
+		lcm_panic("Error seeking position $list_pos in the result");
 
 // Output table tags
 ?>
 <table border='0' width='99%' class='tbl_usr_dtl'>
 	<tr>
 		<th class='heading'>Client name</th>
-		<th class='heading'>&nbsp;</th>
 	</tr>
+
 <?php
-for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'><a href=\"client_det.php?client=" . $row['id_client'] . '" class="content_link">';
+
+for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+	echo "<tr>\n";
+	echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
+	echo '<a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
-	echo highlight_matches($fullname,$find_client_string);
-?></td>
-		<?php echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"; ?><a href="edit_client.php?client=<?php echo $row['id_client']; ?>" class="content_link">Edit</a></td>
-	</tr>
-<?php
+	echo highlight_matches($fullname, $find_client_string);
+	echo "</td>\n";
+
+	// [ML] Better not to allow to edit a client before the user can know exactly who it is
+	// echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"; <a href="edit_client.php?client=<?php echo $row['id_client']; " class="content_link">Edit</a></td>
+	echo "</tr>\n";
 }
+
 ?>
+
 </table>
 
 <table border='0' align='center' width='99%' class='page_numbers'>
