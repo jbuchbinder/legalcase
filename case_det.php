@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.117 2005/03/21 16:23:59 mlutfy Exp $
+	$Id: case_det.php,v 1.118 2005/03/22 14:19:03 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -555,18 +555,23 @@ if ($case > 0) {
 			// Case attachments
 			//
 			case 'attachments' :
+				// Show the errors (if any)
+				echo show_all_errors($_SESSION['errors']);
+
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_attachments') . '</div>';
 				echo "<p class=\"normal_text\">\n";
 
 				// List of attached files
-				show_attachments_list('case', $id_case);
+				show_attachments_list('case', $case);
 
 				// Attach new file form
 				if ($add)
-					show_attachments_upload('case', $id_case);
+					show_attachments_upload('case', $case);
 
 				echo '</fieldset>';
+
+				$_SESSION['errors'] = array();
 
 				break;
 		}
