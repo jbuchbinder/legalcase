@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.27 2005/02/04 21:59:59 antzi Exp $
+	$Id: upd_fu.php,v 1.28 2005/02/07 20:36:13 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -64,10 +64,15 @@ if ($prefs['time_intervals']=='absolute') {
 		$_SESSION['errors']['date_end'] = 'Partial end date!';
 		$fu_data['date_end'] = ($fu_data['end_year'] ? $fu_data['end_year'] : '0000') . '-'
 							. ($fu_data['end_month'] ? $fu_data['end_month'] : '00') . '-'
-							. ($fu_data['end_day'] ? $fu_data['end_day'] : '00') . ' 00:00:00';
+							. ($fu_data['end_day'] ? $fu_data['end_day'] : '00') . ' '
+							. ($fu_data['end_hour'] ? $fu_data['end_hour'] : '00') . ':'
+							. ($fu_data['end_minutes'] ? $fu_data['end_minutes'] : '00') . ':'
+							. ($fu_data['end_seconds'] ? $fu_data['end_seconds'] : '00');
 	} else {
 		// Join fields and check resulting date
-		$unix_date_end = strtotime($fu_data['end_year'] . '-' . $fu_data['end_month'] . '-' . $fu_data['end_day']);
+		$unix_date_end = strtotime($fu_data['end_year'] . '-' . $fu_data['end_month'] . '-' . $fu_data['end_day']
+					. ' ' . $fu_data['end_hour'] . ':' . $fu_data['end_minutes'] . ':'
+					. (isset($fu_data['end_seconds']) ? $fu_data['end_seconds'] : '00'));
 	
 		if ($unix_date_end<0)
 			$_SESSION['errors']['date_end'] = 'Invalid end date!';
