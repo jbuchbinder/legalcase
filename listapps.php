@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.11 2005/03/23 22:18:26 antzi Exp $
+	$Id: listapps.php,v 1.12 2005/03/25 11:23:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -47,8 +47,7 @@ if ($number_of_rows) {
 			array( 'title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ), 'order' => 'no_order'),
 			array( 'title' => _Th('app_input_type'), 'order' => 'no_order'),
 			array( 'title' => _Th('app_input_title'), 'order' => 'no_order'),
-			array( 'title' => 'Reminder', 'order' => 'no_order'),	// TRAD
-			array( 'title' => 'Action', 'order' => 'no_order') );	// TRAD
+			array( 'title' => 'Reminder', 'order' => 'no_order'));	// TRAD
 	show_list_start($headers);
 
 /*	echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
@@ -78,7 +77,8 @@ if ($number_of_rows) {
 	for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 		echo "\t<tr>";
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-			. date('d.m.y H:i',strtotime($row['start_time'])) . '</td>';
+			. format_date($row['start_time'], 'short') . '</td>';
+
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 			. ( ($prefs['time_intervals'] == 'absolute') ?
 				date('d.m.y H:i',strtotime($row['end_time'])) :
@@ -89,9 +89,7 @@ if ($number_of_rows) {
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 			. '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-			. date('d.m.y H:i',strtotime($row['reminder'])) . '</td>';
-		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-			. '<a href="edit_app.php?app=' . $row['id_app'] . '" class="content_link">' . _T('edit') . '</a></td>';
+			. format_date($row['reminder'], 'short') . '</td>';
 		echo "</tr>\n";
 	}
 
