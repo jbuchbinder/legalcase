@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.19 2005/01/19 10:40:53 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.20 2005/03/18 14:33:35 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -26,6 +26,7 @@ if (defined('_INC_AUTH_DB')) return;
 define('_INC_AUTH_DB', '1');
 
 include_lcm('inc_filters');
+include_lcm('inc_session');
 
 class Auth_db {
 	var $nom, $username, $md5pass, $md5next, $alea_futur, $statut;
