@@ -40,7 +40,7 @@ function format_date($timestamp = '') {
 		// FIXME: reacts strangely when date is 00:00:00 ...
 		$newtime = strtotime($timestamp);
 		if ($newtime != -1) {
-			lcm_log("Converted $timestamp to $newtime (" .  date(_T('date_format'), $newtime) . ")");
+			lcm_debug("Converted $timestamp to $newtime (" .  date(_T('date_format'), $newtime) . ")");
 			$timestamp = $newtime;
 		} else {
 			lcm_log("WARNING: Received strange date format: $timestamp");
