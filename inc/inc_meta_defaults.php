@@ -24,6 +24,7 @@ function init_default_config() {
 		'accepter_inscriptions' => 'non', // OLD
 
 		'site_name' => _T('title_software'),
+		'site_description' => _T('title_software_description'),
 
 		// This might not even be a question in the future,
 		// but let's leave it for now.
