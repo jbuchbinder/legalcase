@@ -1840,8 +1840,6 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 	icone_bandeau_principal (_T('icone_aide_ligne'), "javascript:window.open('aide_index.php3?var_lang=$spip_lang', 'aide_spip', 'scrollbars=yes,resizable=yes,width=740,height=580');", "aide-48$spip_lang_rtl.png", "vide", "", "aide_index.php3?var_lang=$spip_lang", "aide-en-ligne", $sous_rubrique);
 
 	echo "</tr></table>\n";
-
-
 	echo "</div>\n";
 	
 	echo "<div style='text-align: $spip_lang_left; width: ".$largeur."px; position: relative; z-index: 2000;'>";
@@ -1863,60 +1861,9 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 		$class = "invisible_au_chargement";
 	}
 
-	if ($connect_status == "admin" AND $connect_toutes_rubriques) {
-		echo "<div class='$class' id='bandeaudocuments' style='position: absolute; $spip_lang_left: ".$decal."px;'><div class='bandeau_sec'><table class='gauche'><tr>\n";
-		//icone_bandeau_secondaire (_T('icone_rubriques'), "naviguer.php3", "rubrique-24.gif", "rubriques", $sous_rubrique);
-
-		$nombre_articles = spip_num_rows(lcm_query("SELECT art.id_article FROM spip_articles AS art, spip_auteurs_articles AS lien WHERE lien.id_auteur = '$connect_id_auteur' AND art.id_article = lien.id_article LIMIT 0,1"));
-		if ($nombre_articles > 0) {
-			icone_bandeau_secondaire (_T('icone_articles'), "articles_page.php3", "article-24.gif", "articles", $sous_rubrique);
-		}
-
-		$activer_breves=lire_meta("activer_breves");
-		if ($activer_breves != "non"){
-			icone_bandeau_secondaire (_T('icone_breves'), "breves.php3", "breve-24.gif", "breves", $sous_rubrique);
-		}
-
-		if ($options == "avancees"){
-			$articles_mots = lire_meta('articles_mots');
-			if ($articles_mots != "non") {
-				icone_bandeau_secondaire (_T('icone_mots_cles'), "mots_tous.php3", "mot-cle-24.gif", "mots", $sous_rubrique);
-			}
-
-			$activer_sites = lire_meta('activer_sites');
-			if ($activer_sites<>'non')
-				icone_bandeau_secondaire (_T('icone_sites_references'), "sites_tous.php3", "site-24.gif", "sites", $sous_rubrique);
-
-			if (@spip_num_rows(lcm_query("SELECT * FROM spip_documents_rubriques LIMIT 0,1")) > 0) {
-				icone_bandeau_secondaire (_T('icone_doc_rubrique'), "documents_liste.php3", "doc-24.gif", "documents", $sous_rubrique);
-			}
-		}
-		echo "</tr></table></div></div>";
-	}
-
-	$decal = $decal + largeur_icone_bandeau_principal(_T('icone_edition_site'));
-
-	
-	if ($connect_status == "admin") {
-		if ($rubrique == "redacteurs") {
-			$class = "visible_au_chargement";
-		} else {
-			$class = "invisible_au_chargement";
-		}
-
-			echo "<div class='$class' id='bandeauredacteurs' style='position: absolute; $spip_lang_left: ".$decal."px;'><div class='bandeau_sec'><table class='gauche'><tr>\n";
-			if ($connect_toutes_rubriques) {
-				icone_bandeau_secondaire (_T('icone_suivi_forums'), "controle_forum.php3", "suivi-forum-24.gif", "forum-controle", $sous_rubrique);
-				icone_bandeau_secondaire (_T('icone_suivi_pettions'), "controle_petition.php3", "petition-24.gif", "suivi-petition", $sous_rubrique);
-			}
-			echo "</tr></table></div></div>";
-	
-	}
-	
-	$decal = $decal + largeur_icone_bandeau_principal(_T('icone_discussions'));
-	
-	$decal = $decal + largeur_icone_bandeau_principal(_T('icone_auteurs'));
-
+	// $decal = $decal + largeur_icone_bandeau_principal(_T('icone_edition_site'));
+	// $decal = $decal + largeur_icone_bandeau_principal(_T('icone_discussions'));
+	// $decal = $decal + largeur_icone_bandeau_principal(_T('icone_auteurs'));
 
 	if ($connect_status == "admin" AND $connect_toutes_rubriques AND lire_meta("activer_statistiques") != 'non') {
 		if ($rubrique == "suivi") {
@@ -1936,26 +1883,6 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 	
 	}
 
-
-	if ($connect_status == 'admin' and $connect_toutes_rubriques) {
-		if ($rubrique == "administration") {
-			$class = "visible_au_chargement";
-		} else {
-			$class = "invisible_au_chargement";
-		}
-			echo "<div class='$class' id='bandeauadministration' style='position: absolute; $spip_lang_left: ".$decal."px;'><div class='bandeau_sec'><table class='gauche'><tr>\n";
-			icone_bandeau_secondaire (_T('icone_gestion_langues'), "config-lang.php3", "langues-24.gif", "langues", $sous_rubrique);
-	
-			bandeau_barre_verticale();
-			if ($options == "avancees") {
-				icone_bandeau_secondaire (_T('icone_maintenance_site'), "admin_tech.php3", "base-24.gif", "base", $sous_rubrique);
-				icone_bandeau_secondaire (_T('onglet_vider_cache'), "admin_vider.php3", "cache-24.gif", "cache", $sous_rubrique);
-			}
-			else {
-				icone_bandeau_secondaire (_T('icone_sauver_site'), "admin_tech.php3", "base-24.gif", "base", $sous_rubrique);
-			}
-			echo "</tr></table></div></div>";
-	}	
 	
 	echo "</div>";
 	echo "</div>\n";
@@ -1970,8 +1897,6 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 	}
 	echo "\n<div style=\"max-height: 40px; width: 100%; border-bottom: solid 1px white;$style\">";
 	echo "<table align='center' cellpadding='0' background='' width='$largeur'><tr width='$largeur'>";
-
-
 
 
 	echo "<td valign='middle' class='bandeau_couleur' style='text-align: $spip_lang_left;'>";
@@ -2030,6 +1955,7 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 
 			// echo "<img src='img_pack/rien.gif' width='10' height='1' />";
 		echo "</td>";
+
 	//
 	// choix de la langue
 	//
@@ -2052,111 +1978,12 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 	echo "<table width='$largeur' cellpadding='0' cellspacing='0'' align='center'><tr><td>";
 	echo "<div style='position: relative; z-index: 1000;'>";
 	
-	
 		echo "<div id='bandeautoutsite' class='bandeau_couleur_sous' style='$spip_lang_left: 0px; width: 170px;'>";
-		echo _T('icone_site_entier');
-		
-		$result_racine = lcm_query("SELECT * FROM spip_rubriques WHERE id_parent=0 ORDER BY titre");
-		$i = spip_num_rows($result_racine);
-		if ($i > 0) {
-			echo "<div>&nbsp;</div>";
-			echo "<div class='bandeau_rubriques' style='z-index: 1;'>";
-			while ($row = lcm_fetch_array($result_racine)) {
-				$id_rubrique = $row["id_rubrique"];
-				$titre_rubrique = supprimer_numero(typo($row["titre"]));
-				
-				bandeau_rubrique ($id_rubrique, $titre_rubrique, $i);
-				
-				$i = $i - 1;
-			}
-			echo "</div>";
-		}
-		
+		echo	 _T('icone_site_entier');
 		echo "</div>";
 	
-	
 		echo "<div id='bandeaunavrapide' class='bandeau_couleur_sous' style='$spip_lang_left: 30px; width: 300px;'>";
-		echo _T('icone_brouteur');
-		
-
-		$vos_articles = lcm_query("SELECT articles.id_article, articles.titre, articles.statut FROM spip_articles AS articles, spip_auteurs_articles AS lien WHERE articles.id_article=lien.id_article ".
-			"AND lien.id_auteur=$connect_id_auteur AND articles.statut='prepa' ORDER BY articles.date DESC LIMIT 0,5");
-		if (spip_num_rows($vos_articles) > 0) {
-			echo "<div>&nbsp;</div>";
-			echo "<div class='bandeau_rubriques' style='z-index: 1;'>";
-			bandeau_titre_boite2(_T('info_en_cours_validation'), "article-24.gif");
-			echo "<div class='plan-articles'>";
-			while($row = lcm_fetch_array($vos_articles)) {
-				$id_article = $row['id_article'];
-				$title = typo($row['titre']);
-				$statut = $row['statut'];
-	
-				echo "<a class='$statut' style='font-size: 10px;' href='articles.php3?id_article=$id_article'>$title</a>";
-			}
-			echo "</div>";
-			echo "</div>";
-		}
-	
-		$vos_articles = lcm_query("SELECT articles.id_article, articles.titre, articles.statut FROM spip_articles AS articles WHERE articles.statut='prop' ".
-			" ORDER BY articles.date DESC LIMIT 0,5");
-		if (spip_num_rows($vos_articles) > 0) {
-			echo "<div>&nbsp;</div>";
-			echo "<div class='bandeau_rubriques' style='z-index: 1;'>";
-			bandeau_titre_boite2(_T('info_articles_proposes'), "article-24.gif");
-			echo "<div class='plan-articles'>";
-			while($row = lcm_fetch_array($vos_articles)) {
-				$id_article = $row['id_article'];
-				$title = typo($row['titre']);
-				$statut = $row['statut'];
-	
-				echo "<a class='$statut' style='font-size: 10px;' href='articles.php3?id_article=$id_article'>$title</a>";
-			}
-			echo "</div>";
-			echo "</div>";
-		}
-			
-		$vos_articles = lcm_query("SELECT * FROM spip_breves WHERE statut='prop' ".
-			" ORDER BY date_heure DESC LIMIT 0,5");
-		if (spip_num_rows($vos_articles) > 0) {
-			echo "<div>&nbsp;</div>";
-			echo "<div class='bandeau_rubriques' style='z-index: 1;'>";
-			bandeau_titre_boite2(_T('info_breves_valider'), "breve-24.gif", "$couleur_foncee", "white");
-			echo "<div class='plan-articles'>";
-			while($row = lcm_fetch_array($vos_articles)) {
-				$id_breve = $row['id_breve'];
-				$title = typo($row['titre']);
-				$statut = $row['statut'];
-	
-				echo "<a class='$statut' style='font-size: 10px;' href='breves_voir.php3?id_breve=$id_breve'>$title</a>";
-			}
-			echo "</div>";
-			echo "</div>";
-		}
-	
-
-		$query = "SELECT id_rubrique FROM spip_rubriques LIMIT 0,1";
-		$result = lcm_query($query);
-	
-		if (spip_num_rows($result) > 0) {
-			$id_rubrique = $GLOBALS['id_rubrique'];
-			if ($id_rubrique > 0) $dans_rub = "&id_rubrique=$id_rubrique";
-		
-			echo "<table><tr>";
-			
-			echo "<td>";
-			icone_horizontale(_T('icone_ecrire_article'), "articles_edit.php3?new=oui$dans_rub", "article-24.gif","creer.gif");
-			echo "</td>";
-			echo "<td>&nbsp;</td>";
-			echo "<td>";
-			$activer_breves = lire_meta("activer_breves");
-			if ($activer_breves != "non") {
-				icone_horizontale(_T('icone_nouvelle_breve'), "breves_edit.php3?new=oui$dans_rub", "breve-24.gif","creer.gif");
-			}
-			echo "</td>";
-			echo "</tr></table>";
-		}
-
-
+		echo 	_T('icone_brouteur');
 		echo "</div>";
 	
 		echo "<div id='bandeaurecherche' class='bandeau_couleur_sous' style='width: 100px; $spip_lang_left: 60px;'>";
@@ -2216,17 +2043,15 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 		echo "</div>";
 
 		echo "<div id='bandeaumessagerie' class='bandeau_couleur_sous' style='$spip_lang_left: 130px; width: 200px;'>";
-		echo _T('icone_messagerie_personnelle');
+			echo _T('icone_messagerie_personnelle');
+			echo "<div>&nbsp;</div>";
 
-		echo "<div>&nbsp;</div>";
-
-		icone_horizontale(_T('lien_nouvea_pense_bete'),"message_edit.php3?new=oui&type=pb", "pense-bete.gif");
-		icone_horizontale(_T('lien_nouveau_message'),"message_edit.php3?new=oui&type=normal", "message.gif");
+			icone_horizontale(_T('lien_nouvea_pense_bete'),"message_edit.php3?new=oui&type=pb", "pense-bete.gif");
+			icone_horizontale(_T('lien_nouveau_message'),"message_edit.php3?new=oui&type=normal", "message.gif");
 		
-		if ($connect_status == "admin") {
-			icone_horizontale(_T('lien_nouvelle_annonce'),"message_edit.php3?new=oui&type=affich", "annonce.gif");
-		}
-
+			if ($connect_status == "admin") {
+				icone_horizontale(_T('lien_nouvelle_annonce'),"message_edit.php3?new=oui&type=affich", "annonce.gif");
+			}
 		echo "</div>";
 	
 		echo "<div id='bandeausynchro' class='bandeau_couleur_sous' style='$spip_lang_left: 160px;'>";
@@ -2236,7 +2061,6 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 		echo "<div id='bandeauinfoperso' class='bandeau_couleur_sous' style='width: 200px; $spip_lang_left: 200px;'>";
 		echo _T('icone_informations_personnelles');
 		echo "</div>";
-	
 	
 		echo "<div id='bandeaudisplay' class='bandeau_couleur_sous' style='$spip_lang_right: 310px; text-align: $spip_lang_right;'>";
 			echo $simple;
