@@ -93,9 +93,11 @@ p.prefs_column_text {
 	color: #036;
 }
 
-a.prefs_bold_lnk {
+a.prefs_bold_lnk, a.prefs_normal_lnk {
 	color: #f60;
 }
+
+
 
 /* Form elements */
 
