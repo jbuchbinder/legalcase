@@ -18,11 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_cli_org.php,v 1.5 2005/03/22 13:36:36 mlutfy Exp $
+	$Id: sel_cli_org.php,v 1.6 2005/03/30 15:59:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
-lcm_page_start("Select representative(s)"); // TRAD
+
+// Get org name
+$q = "SELECT name FROM lcm_org WHERE id_org = $org";
+$row = lcm_fetch_array(lcm_query($q));
+
+lcm_page_start(_T('title_org_select_client', array('name_org' => $row['name'])));
 
 $org = intval($_GET['org']);
 
@@ -80,6 +85,7 @@ if ($list_pos > 0)
 		lcm_panic("Error seeking position $list_pos in the result");
 
 show_find_box('client', $find_client_string, '__self__');
+
 echo '<form action="add_cli_org.php" method="post">' . "\n";
 
 $headers = array();
@@ -100,7 +106,7 @@ for ($i = 0; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ;
 ?>
 		<tr>
 			<td>&nbsp;</td>
-			<td><a href="edit_client.php" class="content_link"><strong><?php echo "Add new person"; /* TRAD */ ?></strong></a></td>
+			<td><a href="edit_client.php" class="content_link"><strong><?php echo _T('client_button_new'); ?></strong></a></td>
 		</tr>
 
 <?php
