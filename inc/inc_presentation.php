@@ -406,6 +406,27 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 	return $ret;
 }
 
+// Returns an array with valid CSS files for themes (lcm_ui_*.css)
+function get_theme_list() {
+	$list = array();
+
+	$handle = opendir("styles");
+	while (($f = readdir($handle)) != '') {
+		if (is_file("styles/" . $f)) {
+			// matches: styles/lcm_ui_foo.css
+			if (preg_match("/lcm_ui_([_a-zA-Z0-9]+)\.css/", $f, $regs)) {
+				// push_array($list, $regs[1]);
+				$list[$regs[1]] = $regs[1];
+			}
+		}
+	}
+
+	ksort($list);
+	reset($list);
+
+	return $list;
+}
+
 
 // ******************************************************************
 // The following functions are not used. Some are kept only as reminders
