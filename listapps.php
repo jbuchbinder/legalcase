@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.6 2005/03/02 17:29:17 antzi Exp $
+	$Id: listapps.php,v 1.7 2005/03/05 00:00:39 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -123,7 +123,7 @@ if ($number_of_rows) {
 
 }
 
-echo '<a href="edit_app.php?app=0" class="create_new_lnk">New appointment</a><br /><br />';
+echo '<br /><a href="edit_app.php?app=0" class="create_new_lnk">New appointment</a><br /><br />';
 
 lcm_page_end();
 
