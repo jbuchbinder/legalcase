@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.7 2005/03/22 23:40:40 antzi Exp $
+	$Id: author_det.php,v 1.8 2005/03/24 14:10:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -43,11 +43,11 @@ if ($author > 0) {
 		// echo "<p>REF = <a href='" . $_REQUEST['ref'] . "'>test</a>\n";
 
 		// Show tabs
-		$groups = array('contacts' => _T('author_tab_contacts'),	// TRAD
-				'cases' => _T('author_tab_cases'),	// TRAD
-				'followups' => _T('author_tab_followups'),	// TRAD
-				'times' => _T('author_tab_times'),	// TRAD
-				'attachments' => _T('author_tab_attachments'));	// TRAD
+		$groups = array('general' => _T('generic_tab_general'),
+				'cases' => _T('generic_tab_cases'),
+				'followups' => _T('generic_tab_followups'),
+				'times' => _T('generic_tab_reports'),
+				'attachments' => _T('generic_tab_documents'));
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'contacts' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
@@ -55,14 +55,24 @@ if ($author > 0) {
 			//
 			// Contacts tab
 			//
-			case 'contacts' :
+			case 'general' :
+				//
+				// Show client general information
+				//
+				echo '<fieldset class="info_box">';
+				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_general') . "</div>\n";
+
+				echo '<p class="normal_text">';
+				echo _Ti('author_input_id') . ' ' . $author_data['id_author'] . "<br/>\n";
+
 				// Show author contacts (if any)
 				$hide_emails = read_meta('hide_emails');
 				$contacts = get_contacts('author', $author);
 
-				$html = '';
+				echo "</p>\n";
+
+				$html = '<div class="prefs_column_menu_head">' . _T('generic_subtitle_contacts') . "</div>\n";
 				$html .= '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
-				$html .= '<tr><th class="heading" colspan="2">' . "Contacts:" . '</th></tr>' . "\n"; // TRAD
 
 				$i = 0;
 				foreach($contacts as $c) {
@@ -90,34 +100,14 @@ if ($author > 0) {
 				if ($i > 0)
 					echo $html;
 
-				/* [ML] 2005-01-17: Redundant with edit-author
-				if (($GLOBALS['author_session']['status'] == 'admin') ||
-					($author == $GLOBALS['author_session']['id_author'])) {
-					// Show "add contact" form
-					echo '<form method="POST" action="add_contact.php">' . "\n";
-					echo "\t<input type='hidden' name='author' value='$author' />\n";
-					// Show author keywords
-					$q = "SELECT lcm_keyword.*
-							FROM lcm_keyword,lcm_keyword_group
-							WHERE ((lcm_keyword.id_group=lcm_keyword_group.id_group)
-								AND (lcm_keyword_group.name='contacts'))";
-					$result = lcm_query($q);
-					echo "\t<select class=\"sel_frm\">\n";
-					while ($row = lcm_fetch_array($result)) {
-						echo "\t\t<option>" . _T($row['title']) . "</option>\n";
-					}
-					echo "\t</select>\n";
-					echo "\t<input type='text' size='40' style='style: 99%' name='value' class='search_form_txt' />";
-					echo "\t<input name='submit' type='submit' class='search_form_btn' id='submit' value='Add contact' />\n";
-					echo "</form>\n";
-				} */
-
 				//
 				// Show 'edit author' button, if allowed
 				//
 				if (($GLOBALS['author_session']['status'] == 'admin') ||
 					($author == $GLOBALS['author_session']['id_author']))
 						echo '<p class="normal_text"><a href="edit_author.php?author=' . $author . "\" class=\"edit_lnk\">Edit author data</a></p>\n"; // TRAD
+
+				echo "</fieldset>\n";
 
 				break;
 			//
@@ -155,7 +145,7 @@ if ($author > 0) {
 
 				if (lcm_num_rows($result)) {
 					echo '<fieldset class="info_box">' . "\n";
-					echo '<div class="prefs_column_menu_head">' . _T('author_subtitle_cases') . "</div>\n";	// TRAD
+					echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_cases') . "</div>\n";
 					show_listcase_start();
 		
 					for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
@@ -174,11 +164,11 @@ if ($author > 0) {
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' 
 					. "<div style='float: right'>" . lcm_help('author_followups') . "</div>"
-					. _T('author_subtitle_followups')	// TRAD
+					. _T('generic_subtitle_followups')
 					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 
-				$headers[0]['title'] = _Th('time_input_date_start');	// TRAD
+				$headers[0]['title'] = _Th('time_input_date_start');
 				$headers[0]['order'] = 'fu_order';
 				$headers[0]['default'] = 'ASC';
 				$headers[1]['title'] = _Th('time_input_length');
@@ -288,7 +278,7 @@ if ($author > 0) {
 
 				// Show table headers
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('author_subtitle_times') . '</div>'; // TRAD
+				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_reports') . '</div>';
 				echo "<p class=\"normal_text\">\n";
 			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
