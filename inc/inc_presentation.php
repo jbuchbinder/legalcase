@@ -25,7 +25,7 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	global $prefs;
 		
 	$lcm_site_name = entites_html(read_meta("site_name"));
-	$title = textebrut(typo($title));
+	$title = textebrut($title);
 
 	// Don't show site name (if none) while installation
 	if (!$lcm_site_name && $title == "AUTO")
