@@ -58,8 +58,9 @@ class Auth_db {
 	}
 
 	function activate() {
+		// not used afaik
 		if ($this->statut == 'nouveau') { // new author
-			lcm_query("UPDATE lcm_author SET status='1comite' WHERE username='".addslashes($this->login)."'");
+			lcm_query("UPDATE lcm_author SET status='normal' WHERE username='".addslashes($this->login)."'");
 		}
 		if ($this->md5next) {
 			include_lcm('inc_session');
