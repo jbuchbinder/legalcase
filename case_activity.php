@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_activity.php,v 1.2 2005/03/21 12:25:52 mlutfy Exp $
+	$Id: case_activity.php,v 1.3 2005/03/21 16:29:47 mlutfy Exp $
 */
 
 include("inc/inc.php");
@@ -50,7 +50,7 @@ if ($case > 0) {
 		echo "<table border=\"1\" width=\"99%\">\n";
 		echo "\t<tr><th>" . _Th('fu_input_date_start') . "</th>";
 		echo "<th>" . _Th( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>"; // TRAD
-		echo "<th>" . _Th('case_input_author') . "</th>"; // TRAD
+		echo "<th>" . _Th('case_input_author') . "</th>";
 		echo "<th>" . _Th('fu_input_type') . "</th>";
 		echo "<th>" . _Th('fu_input_description') . "</th>";
 		echo "</tr>\n";
@@ -92,7 +92,7 @@ if ($case > 0) {
 
 			// Author name
 			echo '<td>';
-			echo njoin(array($row['name_first'],$row['name_middle'],$row['name_last']));
+			echo get_person_name($row);
 			echo '</td>';
 
 			// Type
