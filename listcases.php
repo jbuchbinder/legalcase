@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.38 2005/02/07 17:51:09 antzi Exp $
+	$Id: listcases.php,v 1.39 2005/02/07 17:57:06 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -107,7 +107,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	// Court archive ID
 	if ($case_court_archive == 'yes') {
 		echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-		echo highlight_matches(clean_output($row['id_case_archive']),$find_case_string);
+		echo highlight_matches(clean_output($row['id_court_archive']),$find_case_string);
 		echo "</td>\n";
 	}
 	
