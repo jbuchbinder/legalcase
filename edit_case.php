@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.40 2004/12/17 10:35:50 antzi Exp $
+	$Id: edit_case.php,v 1.41 2004/12/17 11:33:32 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -76,6 +76,7 @@ if (empty($errors)) {
 		$case_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
 		$case_data['public'] = read_meta('case_default_read');
 		$case_data['pub_write'] = read_meta('case_default_write');
+		$case_data['status'] = 'open';
 
 		$admin = true;
 
@@ -108,9 +109,10 @@ else lcm_page_start(_T('new_case'));
 // [AG] Creation date not shown upon ML request
 //		<tr><td>" . _T('creation_date') . ":</td>
 //			<td>" . $case_data['date_creation'] . "</td></tr>
+// [AG] Assignment date is set only when adding user to the case
+//		<tr><td>" . _T('assignment_date') . ":</td>
+//			<td><input name=\"date_assignment\" value=\"" . clean_output($case_data['date_assignment']) . "\" class=\"search_form_txt\"></td></tr>
 	echo "
-			<tr><td>" . _T('assignment_date') . ":</td>
-			<td><input name=\"date_assignment\" value=\"" . clean_output($case_data['date_assignment']) . "\" class=\"search_form_txt\"></td></tr>
 		<tr><td>" . _T('legal_reason') . ":</td>
 			<td><input name=\"legal_reason\" value=\"" . clean_output($case_data['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>
 		<tr><td>" . _T('alledged_crime') . ":</td>
