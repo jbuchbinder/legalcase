@@ -40,17 +40,23 @@ if (count($errors)) {
 			date_assignment='" . clean_input($case_data['date_assignment']) . "',
 			legal_reason='" . clean_input($case_data['legal_reason']) . "',
 			alledged_crime='" . clean_input($case_data['alledged_crime']) . "',
-			status='" . clean_input($case_data['status']) . "',";
-	if ($public) $fl .= "public=1";
-	else $fl .= "public=0";
+			status='" . clean_input($case_data['status']) . "'";
+
+// Put public access rights settings in a separate string
+	$public_access_rights = '';
+	if ($case_data['public'] || read_meta('case_read_always')) $public_access_rights .= "public=1";
+	else $public_access_rights .= "public=0";
+	if ($case_data['pub_write'] || read_meta('case_write_always')) $public_access_rights .= "pub_write=1";
+	else $public_access_rights .= "pub_write=0";
 
 	if ($id_case > 0) {
 		// Check access rights
 		if (!allowed($id_case,'e')) die("You don't have permission to change this case's information!");
-
-		$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
+		// If admin access is allowed, set all fields
+		if (allowed($id_case,'a')) $q = "UPDATE lcm_case SET $fl,$public_access_rights WHERE id_case=$id_case";
+		else $q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
 	} else {
-		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl";
+		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,$public_access_rights";
 		$result = lcm_query($q);
 		$id_case = lcm_insert_id();
 
