@@ -40,76 +40,9 @@ function show_author_form() {
 
 ?>
 <form name="upd_user_profile" method="post" action="config_author.php">
-	<input type="hidden" name="author_modified" value="yes"/>
+	<input type="hidden" name="author_ui_modified" value="yes"/>
 
           <table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
-            <tr>
-              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change
-                  personal data</h4></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Title:</td>
-              <td align="left" valign="top"><select name="usr_title" class="sel_frm" id="usr_title">
-                  <option value="Mr." selected="selected">Mr.</option>
-                  <option value="Mrs.">Mrs.</option>
-                  <option value="Miss">Miss</option>
-                  <option value="Dr.">Dr.</option>
-                  <option value="Prof.">Prof.</option>
-                </select></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">First name:</td>
-              <td align="left" valign="top"><input name="usr_fname" type="text" class="search_form_txt" id="usr_fname" size="35" value="<?php echo clean_output($usr['name_first']); ?>"/></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Middle name:</td>
-              <td align="left" valign="top"><input name="usr_mname" type="text" class="search_form_txt" id="usr_mname" size="35"  value="<?php echo clean_output($usr['name_middle']); ?>"/></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Last name:</td>
-              <td align="left" valign="top"><input name="usr_lname" type="text" class="search_form_txt" id="usr_lname" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Phone #:</td>
-              <td align="left" valign="top"><input name="usr_phonenum" type="text" class="search_form_txt" id="usr_phonenum" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">E-mail:</td>
-              <td align="left" valign="top"><input name="usr_email" type="text" class="search_form_txt" id="usr_email" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">ICQ:</td>
-              <td align="left" valign="top"><input name="usr_icq" type="text" class="search_form_txt" id="usr_icq" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Jabber:</td>
-              <td align="left" valign="top"><input name="usr_jabber" type="text" class="search_form_txt" id="usr_jabber" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Address:</td>
-              <td align="left" valign="top"><textarea name="usr_address" cols="50" rows="5" wrap="VIRTUAL" class="frm_tarea" id="usr_address"></textarea></td>
-            </tr>
-            <tr>
-              <td colspan="2" align="center" valign="middle" class="separate">&nbsp;</td>
-            </tr>
-            <tr>
-              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change password</h4></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Old password:</td>
-              <td align="left" valign="top"><input name="usr_old_passwd" type="password" class="search_form_txt" id="usr_old_passwd" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">New password:</td>
-              <td align="left" valign="top"><input name="usr_new_passwd" type="password" class="search_form_txt" id="usr_new_passwd" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Retype new password:</td>
-              <td align="left" valign="top"><input name="usr_retype_passwd" type="password" class="search_form_txt" id="usr_retype_passwd" size="35" /></td>
-            </tr>
-            <tr>
-              <td colspan="2" align="center" valign="middle" class="separate">&nbsp;</td>
-            </tr>
             <tr>
               <td colspan="2" align="center" valign="middle" class="heading"><h4>Change user interface preferences</h4></td>
             </tr>
@@ -158,20 +91,102 @@ function show_author_form() {
 		  	  </td>
             </tr>
             <tr> 
+              <td colspan="2" align="center" valign="middle"> 
+                <input name="submit" type="submit" class="search_form_btn" id="submit" value="Update Preferences" /></td>
+            </tr>
+		  </table>
+</form>
+
+		  <br />
+
+<form name="upd_user_profile" method="post" action="config_author.php">
+	<input type="hidden" name="author_password_modified" value="yes"/>
+          <table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
+            <tr>
+              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change password</h4></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">Old password:</td>
+              <td align="left" valign="top"><input name="usr_old_passwd" type="password" class="search_form_txt" id="usr_old_passwd" size="35" /></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">New password:</td>
+              <td align="left" valign="top"><input name="usr_new_passwd" type="password" class="search_form_txt" id="usr_new_passwd" size="35" /></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">Retype new password:</td>
+              <td align="left" valign="top"><input name="usr_retype_passwd" type="password" class="search_form_txt" id="usr_retype_passwd" size="35" /></td>
+            </tr>
+            <tr> 
+              <td colspan="2" align="center" valign="middle"> 
+                <input name="submit" type="submit" class="search_form_btn" id="submit" value="Change Password" /></td>
+            </tr>
+			</table>
+</form>
+
+
+            <!-- tr>
+              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change personal data</h4></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">Title:</td>
+              <td align="left" valign="top"><select name="usr_title" class="sel_frm" id="usr_title">
+                  <option value="Mr." selected="selected">Mr.</option>
+                  <option value="Mrs.">Mrs.</option>
+                  <option value="Miss">Miss</option>
+                  <option value="Dr.">Dr.</option>
+                  <option value="Prof.">Prof.</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">First name:</td>
+              <td align="left" valign="top"><input name="usr_fname" type="text" class="search_form_txt" id="usr_fname" size="35" value="<?php echo clean_output($usr['name_first']); ?>"/></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">Middle name:</td>
+              <td align="left" valign="top"><input name="usr_mname" type="text" class="search_form_txt" id="usr_mname" size="35"  value="<?php echo clean_output($usr['name_middle']); ?>"/></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">Last name:</td>
+              <td align="left" valign="top"><input name="usr_lname" type="text" class="search_form_txt" id="usr_lname" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">Phone #:</td>
+              <td align="left" valign="top"><input name="usr_phonenum" type="text" class="search_form_txt" id="usr_phonenum" size="35" /></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">E-mail:</td>
+              <td align="left" valign="top"><input name="usr_email" type="text" class="search_form_txt" id="usr_email" size="35" /></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">ICQ:</td>
+              <td align="left" valign="top"><input name="usr_icq" type="text" class="search_form_txt" id="usr_icq" size="35" /></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">Jabber:</td>
+              <td align="left" valign="top"><input name="usr_jabber" type="text" class="search_form_txt" id="usr_jabber" size="35" /></td>
+            </tr>
+            <tr>
+              <td align="right" valign="top">Address:</td>
+              <td align="left" valign="top"><textarea name="usr_address" cols="50" rows="5" wrap="VIRTUAL" class="frm_tarea" id="usr_address"></textarea></td>
+            </tr>
+            <tr>
+              <td colspan="2" align="center" valign="middle" class="separate">&nbsp;</td>
+            </tr>
+            <tr> 
               <td colspan="2" align="right" valign="top" class="separate">&nbsp;</td>
             </tr>
             <tr> 
               <td colspan="2" align="center" valign="middle"> 
                 <input name="submit" type="submit" class="search_form_btn" id="submit" value="Save changes" /></td>
             </tr>
-          </table>
-</form>
+          </table -->
 <?php
 
 }
 
 // TODO
-function apply_author_changes() {
+function apply_author_ui_change() {
 	global $author_session;
 	global $lcm_session;
 	global $prefs;
@@ -218,10 +233,55 @@ function apply_author_changes() {
 	}
 }
 
+function apply_author_password_change() {
+	global $author_session;
+	global $lcm_session;
+	global $prefs;
+
+	// From the form
+	global $usr_old_passwd;
+	global $usr_new_passwd;
+	global $usr_retype_passwd;
+
+
+	// Show modifications made one finished
+	$log = array();
+
+	//
+	// Change the author's password
+	//
+
+	// TODO:
+	// - verify is new password long enough (> 5)
+	// - verify if two passwords match
+	// - verify if old password matches
+
+
+	//
+	// Show changes on screen
+	//
+	if (! empty($log)) {
+		echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
+		echo "<div>Changes made:</div>\n";
+		echo "<ul>";
+
+		foreach ($log as $line) {
+			echo "<li>" . $line . "</li>\n";
+		}
+
+		echo "</ul>\n";
+		echo "</div>\n";
+	}
+
+}
+
 lcm_page_start("Update profile");
 
-if ($author_modified)
-	apply_author_changes();
+if ($author_ui_modified)
+	apply_author_ui_change();
+
+if ($author_password_modified)
+	apply_author_password_change();
 
 show_author_form();
 lcm_page_end();
