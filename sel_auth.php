@@ -1,7 +1,7 @@
 <?php
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
+include_lcm('inc_acc');
 lcm_page_start("Select users(s)");
 
 if ($case>0) {
@@ -41,7 +41,7 @@ if ($case>0) {
 	?>
 			<tr>
 				<td><input type="checkbox" name="authors[]" value="<?php echo $row['id_author']; ?>"></td>
-				<td><?php echo $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']; ?></td>
+				<td><?php echo clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']); ?></td>
 			</tr>
 	<?php
 		}
