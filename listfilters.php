@@ -60,7 +60,7 @@ if ($list_pos>0)
 
 <table border='0' align='center' class='tbl_usr_dtl' width='99%'>
 	<tr><th class='heading'>Description</th>
-		<th colspan="2" class='heading'>Actions</th>
+		<th class='heading'>Action</th>
 	</tr>
 <?php
 // Process the output of the query
@@ -74,9 +74,6 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (true)
 		echo '<a href="edit_filter.php?filter=' . $row['id_filter'] . '" class="content_link">Edit</a>';
-	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if (true)
-		echo '<a href="run_filter.php?filter=' . $row['id_filter'] . '" class="content_link">Run</a>';
 	echo "</td></tr>\n";
 }
 
