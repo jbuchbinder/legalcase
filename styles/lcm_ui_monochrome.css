@@ -73,6 +73,10 @@ a.main_nav_btn:hover {
 	color: #666;
 }
 
+.mm_agenda a {
+	color: #000;
+}
+
 /* --------------------------------- */
 /* The right column settings */
 /* --------------------------------- */

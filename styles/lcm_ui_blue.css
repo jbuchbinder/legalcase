@@ -78,6 +78,10 @@ a.main_nav_btn:hover {
 	background: url("../images/jimmac/stock_edit-16.png") no-repeat 1px 3px;
 }
 
+.mm_agenda a {
+	color: #fff;
+}
+
 /* --------------------------------- */
 /* The right column settings */
 /* --------------------------------- */

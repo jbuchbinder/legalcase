@@ -71,6 +71,10 @@ a.main_nav_btn:hover {
 	color: #666;
 }
 
+.mm_agenda a {
+	color: #000;
+}
+
 .prefs_column_menu_head {
 	background-color: #d7dabd;
 	color: #666633;
