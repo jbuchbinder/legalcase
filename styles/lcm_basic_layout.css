@@ -80,7 +80,7 @@ body {
 }
 
 #breadcrumb {
-	font-size: 10px;
+	/* font-size: 10px; */
 	border-top: 1px dashed #ccc;
 	border-bottom: 1px dashed #ccc;
 	background-color: #efefef;
@@ -149,7 +149,7 @@ hr.hair_line {
 }
 
 .nav_column_menu_head {
-	font-size: 12px;
+	/* font-size: 12px; */
 	padding: 4px;
 	text-align: left;
 }
@@ -161,14 +161,14 @@ ul.nav_menu_list {
 }
 
 ul.nav_menu_list li {
-	font-size: 11px;
+	/* font-size: 11px; */
 	margin: 0px;
 	line-height: 2;
 }
 
 p.nav_column_text {
 	margin: 4px;
-	font-size: 11px;
+	/* font-size: 11px; */
 	margin-bottom: 10px;
 }
 
@@ -193,7 +193,7 @@ a.main_nav_btn:hover {
 /* --------------------------------- */
 
 .prefs_column_menu_head {
-	font-size: 12px;
+	/* font-size: 12px; */
 	font-weight: bold;
 	padding: 4px;
 	text-align: left;
@@ -201,44 +201,44 @@ a.main_nav_btn:hover {
 
 p.prefs_column_text {
 	margin: 4px;
-	font-size: 11px;
+	/* font-size: 11px; */
 	margin-bottom: 10px;
 }
 
 a.prefs_bold_lnk {
 	font-weight: bold;
 	text-decoration: none;
-	font-size: 10px;
+	/* font-size: 10px; */
 }
 
 a.prefs_normal_lnk {
 	font-weight: normal;
 	text-decoration: underline;
-	font-size: 10px;
+	/* font-size: 10px; */
 }
 
 /* Form elements */
 
 form.search_form {
-	font-size: 11px;
+	/* font-size: 11px; */
 	margin: 4px 4px 10px 4px;
 }
 
 input.search_form_txt {
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 input.search_form_btn, button.simple_form_btn {
-	font-size: 11px;
+	/* font-size: 11px; */
 	font-weight: bold;
 }
 
 textarea.frm_tarea {
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 select.sel_frm {
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 /* ------------------------------- */
@@ -260,26 +260,26 @@ h4 {
 }
 
 table.tbl_data td {
-	font-size: 12px;
+	/* font-size: 12px; */
 	text-align: left;
 	padding: 4px;
 }
 
 td.tbl_head, th.tbl_head {
 	font-weight: bold;
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 table.tbl_usr_dtl td {
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 td.heading, th.heading {
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 p.normal_text {
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 a.content_link {
@@ -290,22 +290,22 @@ fieldset.conf_info_box, fieldset.info_box {
 	margin: 0em 0em 1em 0em;
 	padding: 0.5em;
 	-moz-border-radius: 10px;
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 small.sm_11 {
-	font-size: 11px;
+	/* font-size: 11px; */
 }
 
 ul.simple_list li {
-	font-size: 12px;
+	/* font-size: 12px; */
 }
 
 a.add_lnk {
 	padding: 4px 4px 4px 22px;
 	margin-left: 5px;
 	background: url("../images/jimmac/stock_attach-16.png") no-repeat 2px 4px;
-	font-size: 11px;
+	/* font-size: 11px; */
 	font-weight: bold;
 	text-decoration: none;
 	-moz-border-radius: 5px;
@@ -315,7 +315,7 @@ a.create_new_lnk {
 	padding: 4px 4px 4px 22px;
 	margin-left: 5px;
 	background: url("../images/jimmac/stock_new-16.png") no-repeat 2px 4px;
-	font-size: 11px;
+	/* font-size: 11px; */
 	font-weight: bold;
 	text-decoration: none;
 	-moz-border-radius: 5px;
@@ -325,7 +325,7 @@ a.edit_lnk {
 	padding: 4px 4px 4px 22px;
 	margin-left: 5px;
 	background: url("../images/jimmac/stock_edit-16.png") no-repeat 2px 4px;
-	font-size: 11px;
+	/* font-size: 11px; */
 	font-weight: bold;
 	text-decoration: none;
 	-moz-border-radius: 5px;
@@ -335,7 +335,7 @@ a.run_lnk {
 	padding: 4px 4px 4px 22px;
 	margin-left: 5px;
 	background: url("../images/jimmac/stock_jump-to-16.png") no-repeat 2px 4px;
-	font-size: 11px;
+	/* font-size: 11px; */
 	font-weight: bold;
 	text-decoration: none;
 	-moz-border-radius: 5px;
@@ -345,7 +345,7 @@ a.prefs_myprefs {
 	padding: 2px 4px 2px 20px;
 	margin-left: 1px;
 	background: url("../images/jimmac/stock_preferences-16.png") no-repeat 2px 2px;
-	font-size: 11px;
+	/* font-size: 11px; */
 	font-weight: bold;
 	text-decoration: none;
 }
@@ -354,7 +354,7 @@ a.prefs_logout {
 	padding: 2px 4px 2px 20px;
 	margin-left: 1px;
 	background: url("../images/jimmac/stock_exit-16.png") no-repeat 2px 2px;
-	font-size: 11px;
+	/* font-size: 11px; */
 	font-weight: bold;
 	text-decoration: none;
 }
@@ -371,7 +371,7 @@ a.prefs_logout, a.prefs_myprefs, a.run_lnk, a.edit_lnk, a.create_new_lnk, a.add_
 }
 
 .page_numbers td {
-	font-size: 11px;
+	/* font-size: 11px; */
 }
 
 /* For the Small/Normal/Large Font size list */
@@ -393,7 +393,7 @@ ul.font_size_buttons li a {
 	height: 20px;
 	text-decoration: none;
 	border: 1px solid #000;
-	font-size: 11px;
+	/* font-size: 11px; */
 	color: #000;
 	background-color: #fff;
 	font-weight: bold;
@@ -402,7 +402,7 @@ ul.font_size_buttons li a {
 
 a.set_fnt_sz {
 	text-decoration: none;
-	font-size: 11px;
+	/* font-size: 11px; */
 	color: #000;
 	font-weight: bold;
 	border: 1px solid #000;
