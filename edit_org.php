@@ -18,28 +18,21 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.18 2005/02/04 09:12:21 makaveev Exp $
+	$Id: edit_org.php,v 1.19 2005/03/02 14:56:57 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-// Initiate session
-// [ML] now in inc_auth session_start();
-
 // Initialise variables
 $org = intval($_GET['org']);
 
-if (empty($errors)) {
-    // Clear form data
-    $org_data=array();
-	$org_data['referer'] = $HTTP_REFERER;
+if (empty($_SESSION['errors'])) {
+	// Clear form data
+	$_SESSION['org_data']=array();
+	$_SESSION['org_data']['ref_edit_org'] = $GLOBALS['HTTP_REFERER'];
 
-	if (isset($org)) {
-		// Register org as session variable
-	    if (!session_is_registered("org"))
-			session_register("org");
-
+	if (!empty($org)) {
 		// Prepare query
 		$q="SELECT *
 			FROM lcm_org
@@ -49,15 +42,15 @@ if (empty($errors)) {
 		$result = lcm_query($q);
 
 		// Process the output of the query
-		if ($row = mysql_fetch_array($result)) {
+		if ($row = lcm_fetch_array($result)) {
 			// Get org details
 			foreach($row as $key=>$value) {
-				$org_data[$key]=$value;
+				$_SESSION['org_data'][$key]=$value;
 			}
 		}
 	} else {
 		// Setup default values
-		$org_data['date_creation'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+		//$_SESSION['org_data']['date_creation'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 	}
 }
 
@@ -65,28 +58,33 @@ if ($org)
 	lcm_page_start("Edit organisation details");
 else
 	lcm_page_start("New organisation");
+
+// Show the errors (if any)
+echo show_all_errors($_SESSION['errors']);
+
 ?>
 
 <form action="upd_org.php" method="POST">
 <fieldset class="info_box">
 	<!-- strong>Organisation ID:</strong><br />
-	<?php echo $org_data['id_org']; ?>
-	<input type="hidden" name="id_org" value="<?php echo $org_data['id_org']; ?>"><br /><br / -->
+	<?php echo $_SESSION['org_data']['id_org']; ?><br /><br / -->
+	<input type="hidden" name="id_org" value="<?php echo $_SESSION['org_data']['id_org']; ?>">
 	
 	<strong><?php echo _T('org_input_name'); ?></strong><br />
-	<input name="name" value="<?php echo clean_output($org_data['name']); ?>" class="search_form_txt"><br /><br />
+	<input name="name" value="<?php echo clean_output($_SESSION['org_data']['name']); ?>" class="search_form_txt">
+	<?php echo f_err_star('name',$_SESSION['errors']); ?><br /><br />
 	
 	<!-- strong>Created on:</strong><br />
-	<input name="date_creation" value="<?php echo clean_output($org_data['date_creation']); ?>" class="search_form_txt">
-	<?php echo f_err('date_creation',$errors); ?><br /><br / -->
+	<input name="date_creation" value="<?php echo clean_output($_SESSION['org_data']['date_creation']); ?>" class="search_form_txt">
+	<?php echo f_err_star('date_creation',$_SESSION['errors']); ?><br /><br / -->
 	
 	<!-- strong>Updated on:</strong><br />
-	<input name="date_update" value="<?php echo clean_output($org_data['date_update']); ?>" class="search_form_txt">
-	<?php echo f_err('date_update',$errors); ?><br /><br / -->
+	<input name="date_update" value="<?php echo clean_output($_SESSION['org_data']['date_update']); ?>" class="search_form_txt">
+	<?php echo f_err_star('date_update',$_SESSION['errors']); ?><br /><br / -->
 	<strong>Address:</strong><br />
-	<textarea name="address" cols="50" rows="3" class="frm_tarea"><?php echo clean_output($org_data['address']); ?></textarea><br /><br />
+	<textarea name="address" cols="50" rows="3" class="frm_tarea"><?php echo clean_output($_SESSION['org_data']['address']); ?></textarea><br /><br />
 <?php
-	echo '<input type="hidden" name="ref_edit_org" value="' . $GLOBALS['HTTP_REFERER'] . '">' . "\n";
+	echo '<input type="hidden" name="ref_edit_org" value="' . $_SESSION['org_data']['ref_edit_org'] . '">' . "\n";
 	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . '</button>' . "\n";
 	if ($org && $prefs['mode'] == 'extended')
 		echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>' . "\n";
@@ -95,5 +93,8 @@ else
 </form>
 
 <?php
+	// Clear errors, in case user 'jumps' to other edit page
+	$_SESSION['errors'] = array();
+
 	lcm_page_end();
 ?>
