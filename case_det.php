@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.62 2004/12/21 18:15:15 makaveev Exp $
+	$Id: case_det.php,v 1.63 2005/01/13 13:45:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -51,9 +51,11 @@ if ($case > 0) {
 		
 		echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
 		
-		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>About this case</div><p class='normal_text'>";
+		echo "<fieldset class='info_box'>";
+		echo "<div class='prefs_column_menu_head'>" . _T('case_subtitle_general') . "</div>";
+		echo "<p class='normal_text'>";
 
-		//Edit case link was here!
+		// Edit case link was here!
 
 		echo "\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
 
@@ -81,20 +83,20 @@ if ($case > 0) {
 		//Add user to the case link was here
 
 		echo "<br />\n";
-		echo _T('court_archive_id') . ': ' . clean_output($row['id_court_archive']) . "<br>\n";
-		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
+		echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br>\n";
+		echo _T('case_input_date_creation') . ' ' . format_date($row['date_creation']) . "<br>\n";
 
 		// [ML] FIXME: Not very clear how this should work
 		if ($row['date_assignment'])
-			echo _T('assignment_date') . ': ' .  format_date($row['date_assignment']) . "<br>\n";
+			echo _T('case_input_date_assigned') . ' ' .  format_date($row['date_assignment']) . "<br>\n";
 		else
-			echo _T('assignment_date') . _T('typo_column') . ' ' . "Click to assign (?)<br/>\n";
+			echo _T('case_input_date_assigned') . ' ' . "Click to assign (?)<br/>\n";
 
-		echo _T('legal_reason') . ': ' . clean_output($row['legal_reason']) . "<br>\n";
-		echo _T('alledged_crime') . ': ' . clean_output($row['alledged_crime']) . "<br>\n";
+		echo _T('case_input_legal_reason') . ' ' . clean_output($row['legal_reason']) . "<br>\n";
+		echo _T('case_input_alledged_crime') . ' ' . clean_output($row['alledged_crime']) . "<br>\n";
 
 		// Show case status
-		echo _T('status') . ":&nbsp;\n";
+		echo _T('case_input_status') . "&nbsp;\n";
 		if ($edit) {
 			// Change status form
 			echo "<form action='set_case_status.php' method='GET'>\n";
@@ -104,7 +106,7 @@ if ($case > 0) {
 			foreach ($statuses as $s)
 				echo "\t\t<option" .  (($s == $row['status']) ? ' selected' : '') . ">$s</option>\n";
 			echo "\t</select>\n";
-			echo "\t<button type='submit' name='submit' value='set_status' class='simple_form_btn'>Set case status</button>\n";
+			echo "\t<button type='submit' name='submit' value='set_status' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 			echo "</form>\n";
 		} else {
 			echo clean_output($row['status']) . "<br>\n";
@@ -125,7 +127,9 @@ if ($case > 0) {
 
 		echo "<br /><br /></fieldset>";
 
-		echo "<fieldset class=\"info_box\"><div class=\"prefs_column_menu_head\">" . _T('case_clients') . "</div><p class=\"normal_text\">";
+		echo '<fieldset class="info_box">';
+		echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_clients') . '</div>';
+		echo '<p class="normal_text">';
 		
 		//first table
 		echo "<table border=\"0\" width=\"99%\">\n<tr>\n<td align=\"left\" valign=\"top\" width=\"50%\">";
@@ -185,7 +189,10 @@ if ($case > 0) {
 
 	echo "</p><br /></fieldset>";
 
-	echo "<fieldset class=\"info_box\"><div class=\"prefs_column_menu_head\">" . _T('case_followups') . "</div><p class=\"normal_text\">\n";
+	echo '<fieldset class="info_box">';
+	echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_followups') . '</div>';
+	echo "<p class=\"normal_text\">\n";
+
 	echo "\n\n\t\n\t<table border='0' class='tbl_usr_dtl' width='99%'>
 	<tr><th class='heading'>" . _T('date') . "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
 
