@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.28 2005/03/11 16:56:40 antzi Exp $
+	$Id: client_det.php,v 1.29 2005/03/12 17:53:40 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -59,7 +59,8 @@ if ($client > 0) {
 					'general' => _T('client_tab_general'),
 					'contacts' => _T('client_tab_contacts'),
 					'organisations' => _T('client_tab_organisations'),
-					'cases' => _T('client_tab_cases'));
+					'cases' => _T('client_tab_cases'),
+					'attachments' => _T('client_tab_attachments'));
 
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
@@ -209,6 +210,54 @@ if ($client > 0) {
 					show_listcase_end();
 					echo "</fieldset>\n";
 				}
+
+				break;
+			//
+			// Client attachments
+			//
+			case 'attachments' :
+				echo '<fieldset class="info_box">';
+				echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_attachments') . '</div>';
+				echo "<p class=\"normal_text\">\n";
+
+				// List of attached files
+				$q = "SELECT * FROM lcm_client_attachment WHERE id_client=$client";
+				$result = lcm_query($q);
+				$i = lcm_num_rows($result);
+				if ($i > 0) {
+					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
+					// TRAD ++
+					echo "\t<tr><th class=\"heading\">Filename</th>
+						<th class=\"heading\">Type</th>
+						<th class=\"heading\">Size</th>
+						<th class=\"heading\">Description</th></tr>\n";
+					for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
+						echo "\t<tr>";
+						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
+							. '<a href="view_file.php?type=client&amp;file_id=' . $row['id_attachment']
+							. '" class="content_link">' . $row['filename'] . '</a></td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
+						echo "</tr>\n";
+					}
+					echo "</table><br />\n";
+				}
+
+				// Attach new file form
+				if ($edit) {
+					echo '<div class="prefs_column_menu_head">' . 'Add new document' . '</div>'; // TRAD
+					echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+					echo "<input type=\"hidden\" name=\"client\" value=\"$client\" />\n";
+					echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
+					echo '<strong>Filename:</strong><br /><input type="file" name="filename" size="40" />' . "\n"; // TRAD
+					echo "<br />\n";
+					echo '<strong>Description:</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n"; // TRAD
+					echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
+					echo "</form>\n";
+				}
+
+				echo '</fieldset>';
 
 				break;
 		}
