@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.111 2005/03/18 16:18:45 mlutfy Exp $
+	$Id: case_det.php,v 1.112 2005/03/19 15:48:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -193,12 +193,13 @@ if ($case > 0) {
 				//
 				// Main table for attached organisations and clients
 				//
-				echo '<fieldset class="info_box">';
+				echo '<fieldset class="info_box">' . "\n";
 				echo '<div class="prefs_column_menu_head">'
 					. "<div style='float: right'>" . lcm_help('clients_intro') . "</div>"
 					. _T('case_subtitle_clients') 
-					. '</div>';
-				echo '<p class="normal_text">';
+					. "</div>\n";
+
+				// [ML] did not close + not very logical echo '<p class="normal_text">';
 		
 				//
 				// Show case client(s)
@@ -256,8 +257,8 @@ if ($case > 0) {
 					echo "</table>\n\n";
 		
 				if ($add) {
-					echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
-					echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a><br /><br />";
+					echo "<p><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
+					echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a><br /></p>";
 				}
 		
 				echo "</fieldset>";
