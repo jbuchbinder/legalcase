@@ -22,6 +22,23 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'alledged_crime' => 'Alledged crime',
 'assignment_date' => 'Assignment date',
 'author_id' => 'Author ID',
+'authorconf_button_change_password' => 'Change password',
+'authorconf_button_update_preferences' => 'Update preferences',
+'authorconf_input_language' => 'Language:',
+'authorconf_input_password_confirm' => 'Confirm new password:',
+'authorconf_input_password_current' => 'Current password:',
+'authorconf_input_password_new' => 'New password:',
+'authorconf_input_results_per_page' => 'Results per page:',
+'authorconf_input_screen' => 'Display:',
+'authorconf_input_screen_narrow' => 'Small',
+'authorconf_input_screen_wide' => 'Large',
+'authorconf_input_theme' => 'Interface colour:',
+'authorconf_input_theme_blue' => 'Blue',
+'authorconf_input_theme_green' => 'Green',
+'authorconf_input_theme_monochrome' => 'Monochrome',
+'authorconf_input_theme_orange' => 'Orange',
+'authorconf_subtitle_interface' => 'Interface',
+'authorconf_subtitle_password' => 'Change password',
 
 
 // B
@@ -258,6 +275,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // T
+'title_authorconf' => 'My preferences',
 'title_error' => 'Error',
 'title_site_configuration' => 'Site configuration',
 'title_software' => 'Legal Case Management',
