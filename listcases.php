@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.48 2005/03/23 22:19:59 antzi Exp $
+	$Id: listcases.php,v 1.49 2005/03/31 11:27:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -72,7 +72,7 @@ if ($list_pos >= $number_of_rows)
 // Position to the page info start
 if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
-		lcm_panic("Error seeking position $list_pos in the result");	// TRAD
+		lcm_panic("Error seeking position $list_pos in the result");
 
 // Process the output of the query
 show_listcase_start();
@@ -82,8 +82,8 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 
 show_listcase_end($list_pos, $number_of_rows);
 
-echo '<p><a href="edit_case.php?case=0" class="create_new_lnk">' . 'Open new case' . "</a></p>\n"; // TRAD
-echo '<p><a href="edit_client.php" class="create_new_lnk">' . "Register new client" . "</a></p>\n"; // TRAD
+echo '<p><a href="edit_case.php?case=0" class="create_new_lnk">' . _T('case_button_new') . "</a></p>\n";
+echo '<p><a href="edit_client.php" class="create_new_lnk">' . _T('client_button_new') . "</a></p>\n";
 echo "<br /><br />\n";
 
 lcm_page_end();
