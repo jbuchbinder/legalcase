@@ -133,7 +133,7 @@ if ($case > 0) {
 		echo '<td>' . clean_output($row['type']) . '</td>';
 		if (strlen($row['description'])<30) $short_description = $row['description'];
 		else $short_description = substr($row['description'],0,30) . '...';
-		echo '<td>' . clean_output($row['description']) . '</td>';
+		echo '<td>' . clean_output($short_description) . '</td>';
 		if ($edit)
 			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . '</a></td>';
 		echo "</tr>\n";
