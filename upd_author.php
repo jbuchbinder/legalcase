@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.15 2005/01/17 16:00:16 mlutfy Exp $
+	$Id: upd_author.php,v 1.16 2005/01/18 10:56:11 mlutfy Exp $
 */
 
 // [ML] inc_auth session_start();
@@ -134,6 +134,13 @@ $_SESSION['errors'] = array();
 foreach($_POST as $key => $value)
     $usr[$key] = $value;
 
+//
+// Basic security check: Non-admins can only edit themselves.
+// Admins can edit any author.
+//
+if ($usr['id_author'] != $author_session['id_author'])
+	if ($author_session['status'] != 'admin')
+		die("Only administrators can edit other authors");
 
 //
 // Start SQL query
@@ -164,15 +171,10 @@ if ($author_session['status'] == 'admin')
 	$fl .= ", status = '" . clean_input($usr['status'])      . "'";
 
 if ($usr['id_author'] > 0) {
-	// Check access rights
-	if (($author_session['status'] != 'admin') && ($author_session['id_author'] != $usr['id_author']))
-		die("You don't have permission to change author's information!");
-	else {
-		$q = "UPDATE lcm_author 
-				SET $fl 
-				WHERE id_author = " . $usr['id_author'];
-		$result = lcm_query($q);
-	}
+	$q = "UPDATE lcm_author 
+			SET $fl 
+			WHERE id_author = " . $usr['id_author'];
+	$result = lcm_query($q);
 } else {
 	// Keep form information in session, just in case there is an error
 	// now or later (username/pass).
@@ -210,52 +212,51 @@ if ($usr['username'] != $usr['username_old'] || empty($usr['username_old']))
 
 include_lcm('inc_contacts');
 
+//
+// Update existing contacts
+//
 if (isset($_REQUEST['contact_value'])) {
-	$cpt = 0;
 	$contacts = $_REQUEST['contact_value'];
-	$c_types  = $_REQUEST['contact_type'];
+	$c_ids = $_REQUEST['contact_id'];
+	$c_types = $_REQUEST['contact_type'];
+	$c_delete = $_REQUEST['del_contact'];
 
-	// TODO: update existing information
-	// check for doubles, etc.
-	// complain if no email_main
+	//
+	// Check if the contacts provided are really attached to the author
+	// or else the author can provide a form with false contacts.
+	//
+	$all_contacts = get_contacts('author', $usr['id_author']);
+	for ($cpt = 0; $c_ids[$cpt]; $cpt++) {
+		$valid = false;
 
-	while (isset($contacts[$cpt])) {
-		if ($c_types[$cpt] == 'email_main') {
-			// We have to check more cases for contacts:
-			// - does the author already have this contact type
-			// - update or insert?
-			// - for e-mail: is address unique?
-			if (! is_existing_contact('author', $usr['id_author'], 'email_main', $contacts[$cpt])) { // [AG] Could we use $usr['email_exists'] instead?
-				// Not existing as author email_main yet
-//				if (is_existing_contact('author', 0, 'email_main', $usr['email'])) // $usr['email'] is set only if author has email_main, which conflicts with the previous condition
-				if (is_existing_contact('author', 0, 'email_main', $contacts[$cpt])) {
-					// email exists, and is associated to someone else
-					// [AG] as it's email_main, so we add nothing to preserve its uniqueness
-				} else {
-					// Add e-mail as author contact
-					add_contact('author', $usr['id_author'], 'email', $contacts[$cpt]);
-				}
-			} else {
-				// update
-				lcm_log("update");
-			}
+		foreach ($all_contacts as $c)
+			if ($c['id_contact'] == $c_ids[$cpt])
+				$valid = true;
+
+		if (! $valid)
+			die("Invalid modification of contacts detected.");
+	}
+
+	for ($cpt = 0; $c_ids[$cpt]; $cpt++) {
+		if ($c_delete[$cpt]) {
+			delete_contact($c_ids[$cpt]);
 		} else {
-			// Contact is not primary e-mail address
-			lcm_debug("contact type = " . $c_types[$cpt]);
-			if ($contacts[$cpt]) {
-				// Contact is set to some value
-				if (! is_existing_contact('author', $usr['id_author'], $c_types[$cpt], $contacts[$cpt])) {
-					// New contact, add
-					add_contact('author', $usr['id_author'], $c_types[$cpt], $contacts[$cpt]);
-				} else {
-					// Existing contact, update
-					lcm_log("update " . $c_types[$cpt] . ' to ' . $contacts[$cpt]);
-				}
-			} else {
-				// Empty contact value. Maybe delete the contact?
-			}
+			// Check for doubles, etc. -> the hell with it! [ML] 2005-01-18
+			update_contact($c_ids[$cpt], $contacts[$cpt]);
 		}
+	}
+}
 
+//
+// New contacts
+//
+if (isset($_REQUEST['new_contact_value'])) {
+	$cpt = 0;
+	$new_contacts = $_REQUEST['new_contact_value'];
+	$c_type_names = $_REQUEST['new_contact_type_name'];
+
+	while ($new_contacts[$cpt]) {
+		add_contact('author', $usr['id_author'], $c_type_names[$cpt], $new_contacts[$cpt]);
 		$cpt++;
 	}
 }

@@ -18,30 +18,21 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.23 2005/01/17 16:00:17 mlutfy Exp $
+	$Id: edit_author.php,v 1.24 2005/01/18 10:56:10 mlutfy Exp $
 */
-
-// [ML] inc_auth session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_contacts');
 
 global $author_session;
+$usr = array(); // form data
 $statuses = array('admin', 'normal', 'external', 'trash', 'waiting', 'suspended');
 $author = intval($_GET['author']);
-
-// Clear form data
-$usr = array();
 
 // Set the returning page
 if (isset($ref)) $usr['ref_edit_author'] = $ref;
 else $usr['ref_edit_author'] = $HTTP_REFERER;
-
-// XXX: [ML] deprecated PHP 4.2.0
-// Register case type variable for the session
-if (!session_is_registered("existing"))
-session_register("existing");
 
 // Find out if this is existing or new case
 $existing = ($author > 0);
@@ -54,7 +45,7 @@ if ($existing) {
 	}
 
 	// Get author data
-	$q = "SELECT * FROM lcm_author WHERE id_author=$author";
+	$q = "SELECT * FROM lcm_author WHERE id_author = $author";
 	$result = lcm_query($q);
 	if ($row = lcm_fetch_array($result)) {
 		foreach ($row as $key => $value) {
@@ -145,8 +136,10 @@ echo show_all_errors($_SESSION['errors']);
 		echo '<tr><td align="right" valign="top">' . $title .  "\n";
 		echo '<td align="left" valign="top">';
 	
+		echo '<input name="contact_id[]" id="contact_id_' . $cpt . '" '
+			. 'type="hidden" value="' . $c['id_contact'] . '" />' . "";
 		echo '<input name="contact_type[]" id="contact_type_' . $cpt . '" '
-			. 'type="hidden" value="' . $c['name'] . '" />' . "";
+			. 'type="hidden" value="' . $c['type_contact'] . '" />' . "";
 
 		// [ML] Removed spaces (nbsp) between elements, or it causes the layout
 		// to show on two lines when using a large font.
@@ -154,10 +147,10 @@ echo show_all_errors($_SESSION['errors']);
 			. 'class="search_form_txt" size="35" value="' . clean_output($c['value']) . '"/>';
 		echo f_err('email', $_SESSION['errors']) . "";
 
-		if ($c['name'] != 'email_main')
-			echo "<img src=\"images/jimmac/stock_trash-16.png\" width=\"16\" height=\"16\" alt=\"Delete?\" title=\"Delete?\" />&nbsp;<input type=\"checkbox\" name=\"del_contact[]\" />";
-		else
+		if ($c['name'] == 'email_main')
 			$emailmain_exists = true;
+
+		echo '<label for="id_del_contact' . $cpt . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" /></label>&nbsp;<input type="checkbox" id="id_del_contact' . $cpt . '" name="del_contact[]" />';
 
 		echo "</td>\n</tr>\n";
 		$cpt++;
@@ -183,8 +176,10 @@ echo show_all_errors($_SESSION['errors']);
 				<?php
 					global $system_kwg;
 
-					echo '<select name="contact_type[]" id="contact_type_' . $cpt . '">' . "\n";
+					$cpt = 0;
+					echo '<select name="new_contact_type_name[]" id="contact_type_' . $cpt . '">' . "\n";
 					echo "<option value=''>" . "- select contact type -" . "</option>\n";
+
 					foreach ($system_kwg['contacts']['keywords'] as $contact) {
 						if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main') {
 							// Translate title of contact type only if translation exists
@@ -201,7 +196,7 @@ echo show_all_errors($_SESSION['errors']);
 				?>
 				</div>
 				<div>
-					<input type='text' size='40' style='style: 99%' name='contact_value[]' id='contact_value_$cpt' class='search_form_txt' />
+					<input type='text' size='40' style='style: 99%' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt; ?>' class='search_form_txt' />
 				</div>
 			</td>
 		</tr>
