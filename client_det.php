@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.42 2005/03/30 07:32:10 mlutfy Exp $
+	$Id: client_det.php,v 1.43 2005/04/01 11:10:40 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -113,7 +113,8 @@ if ($client > 0) {
 				show_all_contacts('client', $row['id_client']);
 
 				if ($edit)
-					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "</p><br />\n"; // TRAD
+					echo '<p><a href="edit_client.php?client=' .
+					$row['id_client'] . '" class="edit_lnk">' .  _T('client_button_edit') . '</a>' . "</p><br />\n";
 
 				echo "</fieldset>\n";
 				break;
@@ -153,13 +154,6 @@ if ($client > 0) {
 					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
 					if ( ($GLOBALS['author_session']['status'] == 'admin') )
 						echo '<label for="id_rem_org_' . $row1['id_org'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_org_' . $row1['id_org'] . '" name="rem_orgs[]" value="' . $row1['id_org'] . '" /></td>';	// TRAD
-
-					/* [ML] Not appropriate here
-					echo "<td>";
-					if ($edit)
-						echo '<a href="edit_org.php?org=' . $row1['id_org'] . '" class="content_link">Edit</a>';
-					echo "</td>";
-					*/
 
 					echo "</tr>\n";
 					$i++;
@@ -243,11 +237,10 @@ if ($client > 0) {
 				if ($edit)
 					show_attachments_upload('client', $client);
 
-				echo "</p>\n";
-
 				echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 				echo "</form>\n";
 
+				echo "</p>\n";
 				echo "</fieldset>\n";
 				break;
 		}
@@ -255,7 +248,7 @@ if ($client > 0) {
 		// Show this in all tabs
 		echo '<p>';
 		echo '<a href="edit_case.php?case=0&amp;attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
-		echo "Open new case involving this client"; // TRAD
+		echo _T('case_button_new');
 		echo "</a>";
 		echo "</p>\n";
 				
