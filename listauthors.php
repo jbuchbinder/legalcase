@@ -57,7 +57,17 @@ if ($list_pos>=$number_of_rows) $list_pos = 0;
 if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
+
+// Search form
 ?>
+<form name="frm_find_author" class="search_form" action="listauthor.php" method="post">
+	Find author:&nbsp;<input type="text" name="find_author_string" size="10" class="search_form_txt"<?php
+
+//	if (isset($find_author_string)) echo " value='$find_author_string'";
+	echo " value='$find_author_string'";
+
+?> />&nbsp;<input type="submit" name="submit" value="Search" class="search_form_btn" />
+</form>
 
 <table border='1' align='center' class='tbl_data'>
 <tr><th colspan="3" class='tbl_head'>Author name</th><th class='tbl_head'>Status</th></tr>
