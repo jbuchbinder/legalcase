@@ -20,11 +20,9 @@
 */
 
 include('inc/inc.php');
-lcm_page_start("Update profile");
 
 function show_author_form() {
-
-// TODO: Show author information
+	// TODO: Show author information
 
 ?>
 <form name="upd_user_profile" method="post" action="config_author.php">
@@ -96,11 +94,10 @@ function show_author_form() {
               <td colspan="2" align="center" valign="middle" class="separate">&nbsp;</td>
             </tr>
             <tr>
-              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change 
-                  user interface preferences</h4></td>
+              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change user interface preferences</h4></td>
             </tr>
             <tr> 
-              <td align="right" valign="top">Change theme:</td>
+              <td align="right" valign="top">Theme:</td>
               <td align="left" valign="top"><select name="sel_theme" class="sel_frm" id="sel_theme">
                   <option value="">Default</option>
                   <option value="blue">Blue</option>
@@ -108,16 +105,22 @@ function show_author_form() {
                   <option value="mono">Monochrome</option>
                 </select></td>
             </tr>
+<?php
+	if ($GLOBALS['all_langs']) {
+		echo "
+			<tr> 
+				<td align=\"right\" valign=\"top\">Language:</td>
+				<td align=\"left\" valign=\"top\">
+					<input type='hidden' name='old_language' value='" .  $GLOBALS['lcm_lang'] . "'/>\n";
+
+		echo menu_languages('sel_language');
+		echo "
+				</td>
+			</tr>\n";
+	}
+?>
             <tr> 
-              <td align="right" valign="top">Change language:</td>
-              <td align="left" valign="top"><select name="sel_language" class="sel_frm" id="sel_language">
-                  <option value="eng" selected="selected">English</option>
-                  <option value="bg">Bulgarian</option>
-                  <option value="fr">French</option>
-                </select></td>
-            </tr>
-            <tr> 
-              <td align="right" valign="top">Change font size and font style:</td>
+              <td align="right" valign="top">Font size and font style:</td>
               <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" /> 
                 &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" /> 
                 <br /> <br /> 
@@ -143,19 +146,71 @@ function show_author_form() {
 
 }
 
+// TODO
 function apply_author_changes() {
-	// TODO
+	global $author_session;
+	global $lcm_session;
 
-	// look at config_site.php
+	// From the form
+	global $sel_language;
+	global $old_language;
+
+	$log = array();
+	$all_langs = read_meta('available_languages');
+
+	lcm_log("sel_language = $sel_language");
+
+	if ($sel_language && $sel_language != $old_language) {
+		// This part is very strange. In order to use the language immediately,
+		// inc/inc.php detects $sel_language and updates the session itself.
+		// It is also updated here because I'm paranoid.
+	
+		// validate if the language exists (altough doesn't validate
+		// if the language file is actually present).
+		if (ereg(",$sel_language,", ",$all_langs,")) {
+			// This cookie is redundant with the session cookie, but allows
+			// to kill the session while still remembering the login language.
+			lcm_setcookie('lcm_lang', $sel_language, time() + 365 * 24 * 3600);
+
+			// Update the session info
+			$GLOBAL['author_session']['lang'] = $sel_language;
+			lcm_add_session($author_session, $lcm_session);
+
+			// Update user settings in database
+			$query = "UPDATE lcm_author 
+						SET lang = '" . addslashes($sel_language) . "'
+						WHERE id_author = " . $author_session['id_author'];
+			lcm_query($query);
+
+			array_push($log, "Language set to " .
+				translate_language_name($sel_language) . ", was " .
+				translate_language_name($old_language) . ".");
+		} else {
+			array_push($log, "Specified language is not valid: " .  htmlspecialchars($sel_language) . ".");
+		}
+	}
+
+	// Show changes on screen
+	if (! empty($log)) {
+		echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
+		echo "<div>Changes made:</div>\n";
+		echo "<ul>";
+
+		foreach ($log as $line) {
+			echo "<li>" . $line . "</li>\n";
+		}
+
+		echo "</ul>\n";
+		echo "</div>\n";
+	}
 }
+
+lcm_page_start("Update profile");
 
 if ($author_modified)
 	apply_author_changes();
 
 show_author_form();
+lcm_page_end();
 
-?>
-
-<?php
-	lcm_page_end();
 ?>
