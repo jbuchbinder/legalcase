@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.186 2005/03/24 11:44:02 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.187 2005/03/24 15:30:53 mlutfy Exp $
 */
 
 //
@@ -419,10 +419,8 @@ if($prefs['screen'] == "wide") {
 			<div class=\"prefs_column_menu_head\"><div class=\"sm_profile\">" . _T('menu_profile') . "</div>
 			</div>
 			<p class=\"prefs_column_text\">"
-				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
-				. $author_session['name_first'] . ' '
-				. $author_session['name_middle'] . ' '
-				. $author_session['name_last']
+				. "<a href=\"author_det.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
+				. get_person_name($author_session)
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
 			</p><br />
@@ -478,10 +476,8 @@ if($prefs['screen'] == "wide") {
 	//data from the refs_column - user name, links [My preferences] & [Logout]
 		echo "<div id=\"user_info_box_large_screen\">";
 		echo "<p class=\"prefs_column_text\">"
-				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
-				. $author_session['name_first'] . ' '
-				. $author_session['name_middle'] . ' '
-				. $author_session['name_last']
+				. "<a href=\"author_det.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
+				. get_person_name($author_session)
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\" class=\"set_fnt_sz\">&nbsp;A-&nbsp;</a>&nbsp;
 				<a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('medium_font')\" class=\"set_fnt_sz\">&nbsp;A&nbsp;&nbsp;</a>&nbsp;
