@@ -918,7 +918,7 @@ function lcm_getbacktrace()
 	$s = '';
 	$MAXSTRLEN = 64;
 
-	$s = '<pre align=left>';
+	$s = '<pre align="left">';
 	$traceArr = debug_backtrace();
 	array_shift($traceArr);
 	$tabs = sizeof($traceArr)-1;
