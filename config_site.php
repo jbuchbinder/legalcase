@@ -29,10 +29,18 @@ function show_config_form($panel) {
 	echo "<p><img src='images/jimmac/icon_warning.gif' alt='' align='right'
 		height='48' width='48' />" . _T('siteconf_warning') . "</p>\n";
 
+	if ($panel == 'collab') {
+		$html_collab = " &lt;--";
+	} else if ($panel == 'policy') {
+		$html_policy = " &lt;--";
+	} else {
+		$html_general = " &lt;--";
+	}
+
 	echo "<ul>\n";
-	echo "<li><a href='config_site.php?panel=general'>" . _T('siteconf_subtitle_general_info') . "</a></li>\n";
-	echo "<li><a href='config_site.php?panel=collab'>" . _T('siteconf_subtitle_collab_work') . "</a></li>\n";
-	echo "<li><a href='config_site.php?panel=policy'>" . _T('siteconf_subtitle_policy') . "</a></li>\n";
+	echo "<li><a href='config_site.php?panel=general'>" . _T('siteconf_subtitle_general_info') . "</a>" . $html_general . "</li>\n";
+	echo "<li><a href='config_site.php?panel=collab'>" . _T('siteconf_subtitle_collab_work') . "</a>" . $html_collab . "</li>\n";
+	echo "<li><a href='config_site.php?panel=policy'>" .  _T('siteconf_subtitle_policy') . "</a>" . $html_policy . "</li>\n";
 	echo "</ul>\n";
 
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
@@ -51,9 +59,6 @@ function show_config_form($panel) {
 function show_config_form_general() {
 	global $lcm_lang_right;
 
-	//
-	// *** INFO SITE
-	//
 	$site_name = read_meta('site_name');
 	$site_desc = read_meta('site_description');
 	$site_address = read_meta('site_address');
@@ -123,9 +128,6 @@ function show_config_form_general() {
 function show_config_form_collab() {
 	global $lcm_lang_right;
 
-	// 
-	// *** COLLAB WORK
-	//
 	$case_default_read = read_meta('case_default_read');
 	$case_default_write = read_meta('case_default_write');
 	$case_read_always = read_meta('case_read_always');
@@ -259,24 +261,51 @@ function show_config_form_collab() {
 function show_config_form_policy() {
 	global $lcm_lang_right;
 
-	// 
-	// *** OFFICE POLICY
-	//
-
 	// read_meta() ...
 
 	echo "\t<input type='hidden' name='conf_modified_policy' value='yes'/>\n";
 
-	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
-	echo "<tr>\n";
-	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
-	echo _T('siteconf_subtitle_policy');
-	echo "</h4></td>\n";
-	echo "<tr>\n";
-	echo "<td>";
+	// ** CLIENTS
+	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
+	// XXX fix css, this was just a test
+	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_client_fields') . "</b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_client_fields') . "</small></p>\n";
 
-	echo "</td>\n</tr>\n</table>\n";
+	echo "<ul>";
+	echo "<li> middle name (yes/no)</li>\n";
+	echo "<li> citizen number (yes/no)</li>\n";
+	echo "</ul>\n";
+
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</fieldset>\n";
+
+	// ** CASES
+	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
+	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_case_fields') . "</b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_case_fields') . "</small></p>\n";
+
+	echo "<ul>";
+	echo "<li> Court archive ID (yes/no)</li>\n";
+	echo "<li> Assignment date (yes/no)</li>\n";
+	echo "<li> Alledged crime (yes/no)</li>\n";
+	echo "</ul>\n";
+
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</fieldset>\n";
+
+	// ** FOLLOW-UPS
+	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
+	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_followup_fields') . "</b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_followups_fields') . "</small></p>\n";
+
+	echo "<ul>";
+	echo "<li> Sum billed (yes/no)</li>\n";
+	echo "<li> Allow modifications once follow-ups are submitted (yes/no)</li>\n";
+	echo "</ul>\n";
+
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</fieldset>\n";
+
 }
 
 function apply_conf_changes_general() {
