@@ -9,8 +9,8 @@ include_lcm('inc_filters');
 
 //
 // Initialisation de quelques variables globales
-// (on peut les modifier globalement dans mes_fonctions.php3,
-//  OU individuellement pour chaque type de page dans article.php3,
+// (on peut les modifier globalement dans mes_fonctions.php,
+//  OU individuellement pour chaque type de page dans article.php,
 //  rubrique.php3, etc. cf doc...)
 // Par securite ne pas accepter les variables passees par l'utilisateur
 //
@@ -198,8 +198,9 @@ function echappe_html($letexte, $source, $no_transform=false) {
 	}
 
 	// Gestion du TeX
+	// [ML] likely to be removed
 	if (!(strpos($letexte, "<math>") === false)) {
-		include_ecrire("inc_math.php3");
+		include_lcm('inc_math');
 		$letexte = traiter_math($letexte, $les_echap, $num_echap, $source);
 	}
 
@@ -371,7 +372,7 @@ function typo_fr($letexte) {
 		);
 		$chars = array(160 => '~', 187 => '&#187;', 171 => '&#171;', 148 => '&#148;', 147 => '&#147;', 176 => '&#176;');
 		$charset = lire_meta('charset');
-		include_ecrire('inc_charsets.php3');
+		include_lcm('inc_charsets');
 
 		while (list($c, $r) = each($chars)) {
 			$c = unicode2charset(charset2unicode(chr($c), 'iso-8859-1', 'forcer'));
@@ -447,19 +448,19 @@ function typo_en($letexte) {
 	return $letexte;
 }
 
-// Typographie generale : francaise si la langue est 'cpf', 'fr' ou 'eo',
-// sinon anglaise (minimaliste)
+// General typography: French is the language is 'cpf', 'fr' or 'eo', 
+// else English (minimalist).
 function typo($letexte) {
 	global $spip_lang, $lang_typo;
 
-	// echapper les codes <html>...</html> etc.
+	// escape <html>...</html> code, etc.
 	list($letexte, $les_echap) = echappe_html($letexte, "SOURCETYPO");
 
-	// Appeler la fonction de pre-traitement
+	// Call the function for pre-processing
 	$letexte = spip_avant_typo ($letexte);
 
 	if (!$lang = $lang_typo) {
-		include_ecrire('inc_lang.php3');
+		include_lcm('inc_lang');
 		$lang = lang_typo($spip_lang);
 	}
 
@@ -468,10 +469,10 @@ function typo($letexte) {
 	else
 		$letexte = typo_en($letexte);
 
-	// Appeler la fonction de post-traitement
+	// Call the post-processing function
 	$letexte = spip_apres_typo ($letexte);
 
-	// reintegrer les echappements
+	// reintegrate the escaped text
 	$letexte = echappe_retour($letexte, $les_echap, "SOURCETYPO");
 
 	return $letexte;
@@ -489,12 +490,12 @@ function extraire_lien ($regs) {
 	$lien_interne = false;
 	if (ereg('^[[:space:]]*(art(icle)?|rub(rique)?|br(.ve)?|aut(eur)?|mot|site|doc(ument)?|im(age|g))?[[:space:]]*([[:digit:]]+)(#.*)?[[:space:]]*$', $lien_url, $match)) {
 		// Traitement des liens internes
-		if (@file_exists('inc-urls.php3')) {
-			include_local('inc-urls.php3');
-		} elseif (@file_exists('inc-urls-dist.php3')) {
-			include_local('inc-urls-dist.php3');
+		if (@file_exists('inc-urls.php')) {
+			include_local('inc-urls.php');
+		} elseif (@file_exists('inc-urls-dist.php')) {
+			include_local('inc-urls-dist.php');
 		} else {
-			include_ecrire('inc_urls.php3');
+			include_ecrire('inc_urls.php');
 		}
 
 		$id_lien = $match[8];
@@ -568,7 +569,7 @@ function extraire_lien ($regs) {
 		$lien_url .= $ancre;
 
 		// supprimer les numeros des titres
-		include_ecrire("inc_filtres.php3");
+		include_lcm('inc_filtres');
 		$lien_texte = supprimer_numero($lien_texte);
 	}
 	else if (ereg('^\?(.*)$', $lien_url, $regs)) {
@@ -702,7 +703,7 @@ function traiter_raccourcis($letexte, $les_echap = false, $traiter_les_notes = '
 
 	// Puce
 	if (!$lang_dir) {
-		include_ecrire('inc_lang.php3');
+		include_lcm('inc_lang');
 		$lang_dir = lang_dir($GLOBALS['spip_lang']);
 	}
 	if ($lang_dir == 'rtl' AND $GLOBALS['puce_rtl'])
