@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.12 2005/03/24 08:29:30 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.13 2005/03/24 10:10:55 mlutfy Exp $
 */
 
 
@@ -212,8 +212,9 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 	return (lcm_num_rows($result) > 0);
 }
 
-function print_existing_contact($c, $num) {
-	echo '<tr><td align="right" valign="top">' . _T($c['title']) . "</td>\n";
+function show_existing_contact($c, $num) {
+	// XXX CSS
+	echo '<tr><td align="left" valign="top">' . _Ti($c['title']) . "</td>\n";
 	echo '<td align="left" valign="top">';
 
 	echo '<input name="contact_id[]" id="contact_id_' . $num . '" '
@@ -230,20 +231,112 @@ function print_existing_contact($c, $num) {
 	echo '<label for="id_del_contact' . $num . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" /></label>&nbsp;<input type="checkbox" id="id_del_contact' . $num . '" name="del_contact_' . $c['id_contact'] . '"/>';
 
 	echo "</td>\n</tr>\n\n";
-
 }
 
-// For new specific type of contact, such as 'email_main', 'address_main'
-function print_new_contact($type_kw, $type_name, $num_new) {
-	echo '<tr><td align="right" valign="top">' . _T("kw_contacts_" . $type_kw . "_title") . "\n";
-	echo '<td align="left" valign="top">';
-	echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $num_new . '" '
-		. 'type="hidden" value="' . $type_name . '" />' . "\n";
 
-	echo '<input name="new_contact_value[]" id="new_contact_value_' . $num_new . '" type="text" '
-		. 'class="search_form_txt" size="35" value=""/>&nbsp;';
+
+// For new contact (may be specific 'email_main', etc. or empty for combobox)
+// Should be used in a two column table (ID + Value)
+function show_new_contact($num_new, $type_kw = "__add__", $type_name = "__add__") {
+	echo "<tr>\n";
+
+	// [ML] Temporarely adding this to find silly errors
+	if (! is_numeric($num_new)) {
+		global $lcm_debug;
+		if ($lcm_debug) lcm_panic("error in parameters");
+	}
+
+	// Contact type (either specific or 'Add contact')
+	echo '<td align="left" valign="top">'
+		. f_err_star('new_contact_' . $num_new, $_SESSION['errors']);
+
+	if ($type_kw == "__add__") {
+		echo "Other contact:&nbsp;"; // TRAD
+	} else {
+		echo _Ti("kw_contacts_" . $type_kw . "_title") . "</td>\n";
+	}
+
+	echo '<td align="left" valign="top">';
+
+	if ($type_name == "__add__") {
+		global $system_kwg;
+
+		echo "<div>\n";
+
+		echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $num_new . '" class="sel_frm">' . "\n";
+		echo "<option value=''>" . "- select contact type -" . "</option>\n"; // TRAD
+
+		foreach ($system_kwg['contacts']['keywords'] as $contact)
+			echo "<option value='" . $contact['name'] . "'>" . _T($contact['title']) . "</option>\n";
+
+		echo "</select>\n";
+
+		echo "</div>\n";
+		echo "<div>\n";
+		echo '<input type="text" size="40" name="new_contact_value[]" id="new_contact_value_' . $num_new . '" ';
+					
+		echo ' value="' . $client_data['new_contact_' . $num_new] . '" ';
+						
+		echo 'class="search_form_txt" />' . "\n";
+		echo "</div>\n";
+	} else {
+		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $num_new . '" '
+			. 'type="hidden" value="' . $type_name . '" />' . "\n";
+	
+		echo '<input name="new_contact_value[]" id="new_contact_value_' . $num_new . '" type="text" '
+			. 'class="search_form_txt" size="35" value=""/>&nbsp;';
+	}
 
 	echo "</td>\n</tr>\n\n";
+}
+
+function show_edit_contacts_form($type_person, $id_person) {
+	$cpt = 0;
+	$cpt_new = 0;
+
+	$emailmain_exists = false;
+	$addrmain_exists = false;
+
+	$contacts_emailmain = get_contacts($type_person, $id_person, 'email_main');
+	$contacts_addrmain = get_contacts($type_person, $id_person, 'address_main');
+	$contacts_other = get_contacts($type_person, $id_person, 'email_main,address_main', 'not');
+	
+	// First show the main address
+	foreach ($contacts_addrmain as $contact) {
+		show_existing_contact($contact, $cpt); 
+		$cpt++;
+		$addrmain_exists = true;
+	}
+
+	if (! $addrmain_exists) {
+		show_new_contact($cpt, 'addressmain', 'address_main');
+		$cpt_new++;
+	}
+
+	// Second show the email_main
+	foreach ($contacts_emailmain as $contact) {
+		show_existing_contact($contact, $cpt);
+		$cpt++;
+		$emailmain_exists = true;
+	}
+
+	if (! $emailmain_exists) {
+		show_new_contact($cpt_new, 'emailmain', 'email_main');
+		$cpt_new++;
+	}
+
+	// Show all the rest
+	foreach ($contacts_other as $contact) {
+		show_existing_contact($contact, $cpt);
+		$cpt++;
+	}
+
+	// Show "new contact"
+	show_new_contact($cpt_new);
+	$cpt_new++;
+
+	show_new_contact($cpt_new);
+	$cpt_new++;
 }
 
 ?>
