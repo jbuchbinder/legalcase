@@ -20,9 +20,6 @@ if (empty($errors)) {
     $fu_data=array('referer'=>$HTTP_REFERER);
 
 	if (isset($followup)) {
-		// Check for access rights
-		if (!allowed($case,'e')) die("You don't have permission to edit this case's information!");
-
 		// Register followup as session variable
 	    if (!session_is_registered("followup"))
 			session_register("followup");
@@ -45,7 +42,10 @@ if (empty($errors)) {
 			foreach($row as $key=>$value) {
 				$fu_data[$key]=$value;
 			}
-		}
+		} else die("There's no such follow-up!");
+
+		// Check for access rights
+		if (!allowed($fu_data['id_case'],'e')) die("You don't have permission to edit this case's information!");
 	} else {
 		if ($case>0) {
 			// Check for access rights
