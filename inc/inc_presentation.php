@@ -156,6 +156,7 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"config_site.php\" class=\"main_nav_btn\">Site configuration</a></li>
 							<li><a href=\"archives.php\" class=\"main_nav_btn\">Archives (<abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">not ready yet</abbr>)</a></li>
 							<li><a href=\"reports.php\" class=\"main_nav_btn\">Reports (<abbr title=\"Generate reports on all cases (admin only)\">not ready yet</abbr>)</a></li>
+							<li><a href=\"keywords.php\" class=\"main_nav_btn\">Keywords</a></li>
 						</ul>
 					</div>\n";
 	}
