@@ -20,21 +20,21 @@ function upgrade_version ($version, $test = true) {
 }
 
 function upgrade_database() {
-	global $lcm_version;
+	global $lcm_db_version;
 	$log = "";
 
 	// Read the current version
-	$lcm_version_current = 0.0;
+	$lcm_db_version_current = 0;
 	// $result = lcm_query("SELECT valeur FROM spip_meta WHERE name='version_lcm'");
 	// if ($result) if ($row = spip_fetch_array($result)) $lcm_version_current = (double) $row['valeur'];
-	$lcm_version_current = read_meta('version_lcm');
+	$lcm_db_version_current = read_meta('lcm_db_version');
 	// echo "VERSION = $version \n";
 
 	// If there is no version mentioned in lcm_meta, then it is a new installation
 	// and therefore there is no need to upgrade.
-	if (!$lcm_version_current) {
-		$lcm_version_current = $lcm_version;
-		upgrade_version($lcm_version_current);
+	if (!$lcm_db_version_current) {
+		$lcm_db_version_current = $lcm_db_version;
+		upgrade_version($lcm_db_version_current);
 		return $log;
 	}
 
@@ -58,6 +58,31 @@ function upgrade_database() {
 	// Upgrade the database accordingly to the current version
 	//
 
+	if ($lcm_db_version_current < 2) {
+		lcm_query("ALTER TABLE lcm_case ADD public tinyint(1) DEFAULT '0' NOT NULL");
+		lcm_query("ALTER TABLE lcm_case_author ADD ac_read tinyint(1) DEFAULT '1' NOT NULL,
+												ADD ac_write tinyint(1) DEFAULT '0' NOT NULL,
+												ADD ac_admin tinyint(1) DEFAULT '0' NOT NULL");
+
+		upgrade_version (2);
+	}
+
+	if ($lcm_version_current < 3) {
+		lcm_query("ALTER TABLE lcm_case_author ADD ac_edit tinyint(1) DEFAULT '0' NOT NULL AFTER ac_write");
+		upgrade_version (3);
+	}
+
+	if ($lcm_version_current < 4) {
+		lcm_query("ALTER TABLE lcm_author ALTER id_office SET DEFAULT 0");
+		upgrade_version (4);
+	}
+
+	if ($lcm_version_current < 5) {
+		lcm_query("ALTER TABLE lcm_case ADD pub_write tinyint(1) DEFAULT '0' NOT NULL");
+		upgrade_version (5);
+	}
+
+
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.98) {
 		lcm_query("ALTER TABLE spip_articles ADD maj TIMESTAMP");
@@ -73,15 +98,15 @@ function upgrade_database() {
 		lcm_query("ALTER TABLE spip_auteurs ADD pgp BLOB NOT NULL");
 
 		lcm_query("ALTER TABLE spip_auteurs_articles ADD INDEX id_auteur (id_auteur), ADD INDEX id_article (id_article)");
-	
+
 		lcm_query("ALTER TABLE spip_rubriques ADD maj TIMESTAMP");
 		lcm_query("ALTER TABLE spip_rubriques ADD export VARCHAR(10) DEFAULT 'oui', ADD id_import BIGINT DEFAULT '0'");
-	
+
 		lcm_query("ALTER TABLE spip_breves ADD maj TIMESTAMP");
 		lcm_query("ALTER TABLE spip_breves DROP INDEX id_breve");
 		lcm_query("ALTER TABLE spip_breves DROP INDEX id_breve_2");
 		lcm_query("ALTER TABLE spip_breves ADD INDEX id_rubrique (id_rubrique)");
-	
+
 		lcm_query("ALTER TABLE spip_forum ADD ip VARCHAR(16)");
 		lcm_query("ALTER TABLE spip_forum ADD maj TIMESTAMP");
 		lcm_query("ALTER TABLE spip_forum DROP INDEX id_forum");
@@ -90,7 +115,7 @@ function upgrade_database() {
 	}
 
 	if ($lcm_version_current < 0.99) {
-	
+
 		$query = "SELECT DISTINCT id_article FROM spip_forum WHERE id_article!=0 AND id_parent=0";
 		$result = lcm_query($query);
 		while ($row = spip_fetch_array($result)) {
