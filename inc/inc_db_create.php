@@ -158,6 +158,7 @@ function create_database() {
 		id_author bigint(21) DEFAULT '0' NOT NULL,
 		ac_read tinyint(1) DEFAULT '1' NOT NULL,
 		ac_write tinyint(1) DEFAULT '0' NOT NULL,
+		ac_edit tinyint(1) DEFAULT '0' NOT NULL,
 		ac_admin tinyint(1) DEFAULT '0' NOT NULL,
 		KEY id_case (id_case),
 		KEY id_author (id_author))";

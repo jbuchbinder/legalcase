@@ -32,15 +32,19 @@ if ($case>0) {
 	while ($row = lcm_fetch_array($result)) {
 		echo '		<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "</td>\n";
 		echo '			<td align="center">';
-		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][read]" . '" value="1"';
-		if ($row['read']) echo ' checked';
+		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_read]" . '" value="1"';
+		if ($row['ac_read']) echo ' checked';
 		echo "></td>\n";
 		echo '			<td align="center">';
-		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][write]" . '" value="1"';
-		if ($row['write']) echo ' checked';
+		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_write]" . '" value="1"';
+		if ($row['ac_write']) echo ' checked';
 		echo "></td>\n";
 		echo '			<td align="center">';
-		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][admin]" . '" value="1"';
+		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_edit]" . '" value="1"';
+		if ($row['ac_edit']) echo ' checked';
+		echo "></td>\n";
+		echo '			<td align="center">';
+		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_admin]" . '" value="1"';
 		if ($row['admin']) echo ' checked';
 		echo "></td>\n";
 	}
