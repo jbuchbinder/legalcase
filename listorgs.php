@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.14 2005/03/22 12:30:42 mlutfy Exp $
+	$Id: listorgs.php,v 1.15 2005/03/24 14:23:27 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -78,6 +78,7 @@ for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) 
 	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo '<a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['name']), $find_org_string);
+	echo "</a>\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 }
