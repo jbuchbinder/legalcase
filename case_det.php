@@ -3,8 +3,6 @@
 include('inc/inc.php');
 include('inc/inc_acc.php');
 
-// lcm_page_start("Case details");
-
 if ($case > 0) {
 	$q="SELECT *
 		FROM lcm_case
@@ -17,22 +15,21 @@ if ($case > 0) {
 
 		// Check for access rights
 		if (!($row['public'] || allowed($case,'r'))) {
-			die("You don't have permission to view this case!");
+			die(_T('error_no_read_permission'));
 		}
 		$add = allowed($case,'w');
 		$edit = allowed($case,'e');
 		$admin = allowed($case,'a');
 
 		// Show case details
-		// echo '<h1>Details for case: </h1>' . $row['title'];
-		lcm_page_start("Case details: " . $row['title']);
+		lcm_page_start(_T('case_details') . ": " . $row['title']);
 
 		if ($edit)
-			echo ' [<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case information</a>]';
-		echo "<br>\nCase ID: " . $row['id_case'] . "<br>\n";
+			echo ' [<a href="edit_case.php?case=' . $row['id_case'] . '">' . _T('edit_case_information') . '</a>]';
+		echo "<br>\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
 
 		// Show users, assigned to the case
-		echo 'Case user(s): ';
+		echo _T('case_user_s') . ': ';
 		$q = "SELECT id_case,lcm_author.id_author,name_first,name_middle,name_last
 			FROM lcm_case_author,lcm_author
 			WHERE (id_case=$case
@@ -46,26 +43,24 @@ if ($case > 0) {
 			if ($admin) echo '</a>';
 			echo '; ';
 		}
-		if ($admin) echo '[<a href="sel_auth.php?case=' . $case . '">Add user to the case</a>]';
+		if ($admin) echo '[<a href="sel_auth.php?case=' . $case . '">' . _T('add_user_case') . '</a>]';
 		echo "<br>\n";
-		echo 'Court archive ID: ' . $row['id_court_archive'] . "<br>\n";
-		echo 'Creation date: ' . $row['date_creation'] . "<br>\n";
-		echo 'Assignment date: ' . $row['date_assignment'] . "<br>\n";
-		echo 'Legal reason: ' . $row['legal_reason'] . "<br>\n";
-		echo 'Alledged crime: ' . $row['alledged_crime'] . "<br>\n";
-		echo 'Status: ' . $row['status'] . "<br>\n";
-		echo 'Public: ';
+		echo _T('court_archive_id') . ': ' . $row['id_court_archive'] . "<br>\n";
+		echo _T('creation_date') . ': ' . $row['date_creation'] . "<br>\n";
+		echo _T('assignment_date') . ': ' . $row['date_assignment'] . "<br>\n";
+		echo _T('legal_reason') . ': ' . $row['legal_reason'] . "<br>\n";
+		echo _T('alledged crime') . ': ' . $row['alledged_crime'] . "<br>\n";
+		echo _T('status') . ': ' . $row['status'] . "<br>\n";
+		echo _T('public') . ': ';
 		if ($row['public'])
 			echo 'Yes';
 		else
 			echo 'No';
 		echo "<br>\n";
 
-		?><h3>Clients in this case:</h3>
-
-		<table border='1'>
-		<caption>Organisations:</caption>
-		<?php
+		echo '<h3>' . _T('case_clients') . ':</h3>';
+		echo "\n\t\t<table border='1'>\n";
+		echo '<caption>' . _T('organisations'). ':</caption>';
 
 		// Show case organization(s)
 		$q="SELECT lcm_org.id_org,name
@@ -77,18 +72,15 @@ if ($case > 0) {
 		while ($row = lcm_fetch_array($result)) {
 			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . $row['name'] . "</a></td>\n<td>";
 			if ($edit)
-				echo '<a href="edit_org.php?org=' . $row['id_org'] . '">Edit</a>';
+				echo '<a href="edit_org.php?org=' . $row['id_org'] . '">' _T('edit') . '</a>';
 			echo "</td></tr>\n";
 		}
 
 		if ($add)
-			echo "<tr><td><a href=\"sel_org.php?case=$case\">Add organisation(s)</a></td><td></td></tr>";
+			echo "<tr><td><a href=\"sel_org.php?case=$case\">" . _T('add_organisation_s') . "</a></td><td></td></tr>";
 
-		?></table><br>
-
-		<table border>
-		<caption>Clients:</caption>
-		<?php
+		echo "\t\t</table><br>\n\n\t\t<table border>\n";
+		echo "\t\t<caption>" . _T('clients') . ":</caption>\n";
 
 		// Show case client(s)
 		$q="SELECT lcm_client.id_client,name_first,name_middle,name_last
@@ -100,24 +92,19 @@ if ($case > 0) {
 		while ($row = lcm_fetch_array($result)) {
 			echo '<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last'] . "</td>\n<td>";
 			if ($edit)
-				echo '<a href="edit_client.php?client=' . $row['id_client'] . '">Edit</a>';
+				echo '<a href="edit_client.php?client=' . $row['id_client'] . '">' . _T('edit') . '</a>';
 			echo "</td></tr>\n";
 		}
 		if ($add)
-			echo "<tr><td><a href=\"sel_client.php?case=$case\">Add client(s)</a></td><td></td></tr>";
-		?></table><br>
-		<?php
+			echo "<tr><td><a href=\"sel_client.php?case=$case\">" . _T('add_client_s') . "</a></td><td></td></tr>\n";
 
-	} else die("There's no such case!");
+		echo "\t\t</table><br>\n";
 
-	?>
+	} else die(_T('error_no_such_case'));
 
-	<br/>
-	
-	<table border='1'>
-	<caption>Follow-ups to this case:</caption>
-	<tr><th>Date</th><th>Type</th><th>Description</th><th></th></tr>
-	<?php
+	echo "\n\n\t<br/>\n\n\t<table border='1'>
+	<caption>" . _T('case_followups') . ":</caption>
+	<tr><th>" . _T('date') . "</th><th>" . _T('type') . "</th><th>" . _T('description') . "</th><th></th></tr>\n";
 
 	// Prepare query
 	$q = "SELECT id_followup,date_start,type,description
@@ -136,16 +123,14 @@ if ($case > 0) {
 		echo "</td></tr>\n";
 	}
 	if ($add)
-		echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\">New followup</a></td><td></td></tr>\n";
+		echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\">" . _T('new_followup') . "</a></td><td></td></tr>\n";
 
-	?>
-	</table>
+	echo "\t</table>\n";
 
-	<?php
 	lcm_page_end();
 } else {
-	lcm_page_start("Error");
-	echo "<p>No case was specified</p>\n";
+	lcm_page_start(_T('title_error'));
+	echo "<p>" . _T('error_no_case_specified') . "</p>\n";
 	lcm_page_end();
 }
 
