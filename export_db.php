@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.4 2005/02/01 17:15:28 antzi Exp $
+	$Id: export_db.php,v 1.5 2005/02/01 17:25:49 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -117,7 +117,11 @@ function export_database($output_filename) {
 				LINES TERMINATED BY '\r\n'";
 		$res = lcm_query($q);
 	}
-
+	
+	lcm_page_start("Export finished");
+	echo "Database has been successfully exported. The name of the backup is '$output_filename'.";
+	lcm_page_end();
+	
 }
 
 //
