@@ -58,8 +58,8 @@ function login($cible, $prive = 'prive', $message_login='') {
 	// then tried to put a cookie. If it is not there, it is "cookie failed"
 	// who is there, and it's probably a bookmark on bonjour=oui and not
 	// a cookie failure.
-	if ($GLOBALS['var_echec_cookie'])
-		$echec_cookie = ($GLOBALS['lcm_session'] != 'test_echec_cookie');
+	if ($GLOBALS['var_cookie_failed'])
+		$echec_cookie = ($GLOBALS['lcm_session'] != 'cookie_test_failed');
 
 	global $author_session;
 	global $lcm_session, $PHP_AUTH_USER, $ignore_auth_http;
