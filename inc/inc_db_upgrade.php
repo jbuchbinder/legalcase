@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.39 2005/02/25 02:08:45 antzi Exp $
+	$Id: inc_db_upgrade.php,v 1.40 2005/03/01 10:50:51 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -547,6 +547,13 @@ function upgrade_database($old_db_version) {
 		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_filter_conds (id_filter,id_field,cond_order)");
 
 		upgrade_db_version (23); 
+	}
+
+	if ($lcm_db_version_current < 24) {
+		lcm_query("ALTER TABLE lcm_keyword DROP INDEX idx_kw_name");
+		lcm_query("CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (id_group, name)");
+
+		upgrade_db_version (24); 
 	}
 
 	return $log;

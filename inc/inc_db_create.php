@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.31 2005/02/25 02:08:45 antzi Exp $
+	$Id: inc_db_create.php,v 1.32 2005/03/01 10:50:51 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -209,7 +209,7 @@ function create_database() {
 	$result = lcm_query($query);
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
-	$query = "CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (name)";
+	$query = "CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (id_group, name)";
 	$result = lcm_query($query);
 
 	$query = "CREATE TABLE lcm_keyword_group (
