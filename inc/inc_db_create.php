@@ -284,7 +284,7 @@ function create_database() {
 		id_column bigint(21) NOT NULL auto_increment,
 		id_report bigint(21) NOT NULL default '0',
 		id_field bigint(21) NOT NULL default '0',
-		order bigint(21) NOT NULL default '0',
+		col_order bigint(21) NOT NULL default '0',
 		header varchar(255) NOT NULL default '',
 		sort enum('asc','desc') default NULL,
 		total tinyint(1) NOT NULL default '0',
@@ -292,7 +292,7 @@ function create_database() {
 		PRIMARY KEY  (id_column),
 		KEY id_report (id_report),
 		KEY id_field (id_field),
-		KEY order (order))";
+		KEY col_order (col_order))";
 	$result = lcm_query($query);
 
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
@@ -310,12 +310,12 @@ function create_database() {
 	$query = "CREATE TABLE lcm_filter_conds (
 		id_filter bigint(21) NOT NULL default '0',
 		id_field bigint(21) NOT NULL default '0',
-		order bigint(21) NOT NULL default '0',
+		cond_order bigint(21) NOT NULL default '0',
 		type tinyint(2) NOT NULL default '0',
 		value varchar(255) default NULL,
 		KEY id_filter (id_filter),
 		KEY id_field (id_field),
-		KEY order (order))";
+		KEY cond_order (cond_order))";
 	$result = lcm_query($query);
 
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());

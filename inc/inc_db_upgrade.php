@@ -215,7 +215,7 @@ function upgrade_database($old_db_version) {
 			id_column bigint(21) NOT NULL auto_increment,
 			id_report bigint(21) NOT NULL default '0',
 			id_field bigint(21) NOT NULL default '0',
-			order bigint(21) NOT NULL default '0',
+			col_order bigint(21) NOT NULL default '0',
 			header varchar(255) NOT NULL default '',
 			sort enum('asc','desc') default NULL,
 			total tinyint(1) NOT NULL default '0',
@@ -223,7 +223,7 @@ function upgrade_database($old_db_version) {
 			PRIMARY KEY  (id_column),
 			KEY id_report (id_report),
 			KEY id_field (id_field),
-			KEY order (order))");
+			KEY col_order (col_order))");
 		lcm_query("CREATE TABLE lcm_rep_filters (
 			id_report bigint(21) NOT NULL default '0',
 			id_filter bigint(21) NOT NULL default '0',
@@ -233,12 +233,12 @@ function upgrade_database($old_db_version) {
 		lcm_query("CREATE TABLE lcm_filter_conds (
 			id_filter bigint(21) NOT NULL default '0',
 			id_field bigint(21) NOT NULL default '0',
-			order bigint(21) NOT NULL default '0',
+			cond_order bigint(21) NOT NULL default '0',
 			type tinyint(2) NOT NULL default '0',
 			value varchar(255) default NULL,
 			KEY id_filter (id_filter),
 			KEY id_field (id_field),
-			KEY order (order))");
+			KEY cond_order (cond_order))");
 		upgrade_db_version (13);
 	}
 
@@ -256,7 +256,7 @@ function upgrade_database($old_db_version) {
 		}
 		upgrade_version (0.999);
 	}
-	
+
 	if ($lcm_version_current < 1.414) {
 		// Forum par defaut "en dur" dans les spip_articles
 		// -> non, prio (priori), pos (posteriori), abo (abonnement)
