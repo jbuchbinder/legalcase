@@ -74,7 +74,7 @@ else
 	lcm_page_start("New follow-up");
 
 // Show a bit of background on the case
-echo '<ul style="padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2;>';
+echo '<ul style="padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2;">';
 
 // Name of case
 $query = "SELECT title 
