@@ -164,8 +164,11 @@ function lcm_page_start($title = "") {
 				<div id=\"main_column\">
 				
 					<!-- Start of 'main_column' content -->
-					<h3 class=\"content_head\">". $title ."</h3>";
-	
+					<h3 class=\"content_head\">". $title ."</h3>
+
+					<!-- [ML] Added by matt, who likes to mess up clean CSS -->
+					<div align='left'>
+	";
 }
 
 // Footer of the interface
@@ -204,8 +207,11 @@ function lcm_page_end($credits = '') {
 
 	//[KM] The bottom of a single page
 	//
-	echo "<!-- End of 'main_column' content -->
-</div>
+	echo "
+				</div> <!-- align left -->
+
+				<!-- End of 'main_column' content -->
+				</div>
 			</div>
 		</div>
 <!-- The initial intention was that here can be placed some UI preferences -->
