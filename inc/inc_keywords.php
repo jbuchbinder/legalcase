@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.3 2004/11/16 08:34:25 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.4 2004/11/16 09:58:27 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -53,10 +53,23 @@ function get_kwg_all($type) {
 // get_kwg_from_id: Returns the keyword group associated
 // with the provided ID.
 //
-function get_kwg_from_id($group_id) {
+function get_kwg_from_id($id_group) {
 	$query = "SELECT *
 				FROM lcm_keyword_group
-				WHERE id_group = " . intval($group_id);
+				WHERE id_group = " . intval($id_group);
+	$result = lcm_query($query);
+
+	return lcm_fetch_array($result);
+}
+
+//
+// get_kw_from_id: Returns the keyword associated
+// with the provided ID.
+//
+function get_kw_from_id($id_keyword) {
+	$query = "SELECT *
+				FROM lcm_keyword
+				WHERE id_keyword = " . intval($id_keyword);
 	$result = lcm_query($query);
 
 	return lcm_fetch_array($result);
