@@ -113,11 +113,6 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (8);
 	}
 
-	if ($lcm_db_version_current < 9) {
-		// Add 'gender' field to the clients
-		lcm_query("ALTER TABLE lcm_client ADD gender ENUM('female','male') DEFAULT 'male' NOT NULL AFTER 'address'");
-		upgrade_db_version (9);
-	}
 
 	if ($lcm_db_version_current < 10) {
 		$query = "CREATE TABLE lcm_keyword (
@@ -174,82 +169,15 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (11);
 	}
 
+	// [ML] Was for db version 9, but it had a bug in the query
+	// + added 'unknown' to the ENUM + set as default
+	if ($lcm_db_version_current < 12) {
+		lcm_query("ALTER TABLE lcm_client ADD gender ENUM('female', 'male', 'unknown') DEFAULT 'unknown' NOT NULL");
+		upgrade_db_version (12);
+	}
+
+
 /* [ML] I'm leaving this because it can provide us with interesting ideas
-	if ($lcm_version_current < 0.98) {
-		lcm_query("ALTER TABLE spip_forum DROP INDEX id_forum");
-		lcm_query("ALTER TABLE spip_forum ADD INDEX id_parent (id_parent), ADD INDEX id_rubrique (id_rubrique), ADD INDEX id_article(id_article), ADD INDEX id_breve(id_breve)");
-		upgrade_version (0.98);
-	}
-
-	if ($lcm_version_current < 0.99) {
-
-		$query = "SELECT DISTINCT id_article FROM spip_forum WHERE id_article!=0 AND id_parent=0";
-		$result = lcm_query($query);
-		while ($row = spip_fetch_array($result)) {
-			unset($forums_article);
-			$id_article = $row['id_article'];
-			$query2 = "SELECT id_forum FROM spip_forum WHERE id_article=$id_article";
-			for (;;) {
-				$result2 = lcm_query($query2);
-				unset($forums);
-				while ($row2 = spip_fetch_array($result2)) $forums[] = $row2['id_forum'];
-				if (!$forums) break;
-				$forums = join(',', $forums);
-				$forums_article[] = $forums;
-				$query2 = "SELECT id_forum FROM spip_forum WHERE id_parent IN ($forums)";
-			}
-			$forums_article = join(',', $forums_article);
-			$query3 = "UPDATE spip_forum SET id_article=$id_article WHERE id_forum IN ($forums_article)";
-			lcm_query($query3);
-		}
-	
-		$query = "SELECT DISTINCT id_breve FROM spip_forum WHERE id_breve!=0 AND id_parent=0";
-		$result = lcm_query($query);
-		while ($row = spip_fetch_array($result)) {
-			unset($forums_breve);
-			$id_breve = $row['id_breve'];
-			$query2 = "SELECT id_forum FROM spip_forum WHERE id_breve=$id_breve";
-			for (;;) {
-				$result2 = lcm_query($query2);
-				unset($forums);
-				while ($row2 = spip_fetch_array($result2)) $forums[] = $row2['id_forum'];
-				if (!$forums) break;
-				$forums = join(',', $forums);
-				$forums_breve[] = $forums;
-				$query2 = "SELECT id_forum FROM spip_forum WHERE id_parent IN ($forums)";
-			}
-			$forums_breve = join(',', $forums_breve);
-			$query3 = "UPDATE spip_forum SET id_breve=$id_breve WHERE id_forum IN ($forums_breve)";
-			lcm_query($query3);
-		}
-	
-		$query = "SELECT DISTINCT id_rubrique FROM spip_forum WHERE id_rubrique!=0 AND id_parent=0";
-		$result = lcm_query($query);
-		while ($row = spip_fetch_array($result)) {
-			unset($forums_rubrique);
-			$id_rubrique = $row['id_rubrique'];
-			$query2 = "SELECT id_forum FROM spip_forum WHERE id_rubrique=$id_rubrique";
-			for (;;) {
-				$result2 = lcm_query($query2);
-				unset($forums);
-				while ($row2 = spip_fetch_array($result2)) $forums[] = $row2['id_forum'];
-				if (!$forums) break;
-				$forums = join(',', $forums);
-				$forums_rubrique[] = $forums;
-				$query2 = "SELECT id_forum FROM spip_forum WHERE id_parent IN ($forums)";
-			}
-			$forums_rubrique = join(',', $forums_rubrique);
-			$query3 = "UPDATE spip_forum SET id_rubrique=$id_rubrique WHERE id_forum IN ($forums_rubrique)";
-			lcm_query($query3);
-		}
-		upgrade_version (0.99);
-	}
-
-	if ($lcm_version_current < 0.997) {
-		lcm_query("DROP TABLE spip_index");
-		upgrade_version (0.997);
-	}
-
 	if ($lcm_version_current < 0.999) {
 		global $htsalt;
 		lcm_query("ALTER TABLE spip_auteurs CHANGE pass pass tinyblob NOT NULL");
@@ -285,24 +213,6 @@ function upgrade_database($old_db_version) {
 			ecrire_metas();
 		}
 		upgrade_version (1.418);
-	}
-
-	if ($lcm_version_current < 1.444) {
-		lcm_query("ALTER TABLE spip_syndic ADD moderation VARCHAR(3) NOT NULL");
-		upgrade_version (1.444);
-	}
-
-	if ($lcm_version_current < 1.457) {
-		lcm_query("DROP TABLE spip_visites");
-		lcm_query("DROP TABLE spip_visites_temp");
-		lcm_query("DROP TABLE spip_visites_referers");
-		creer_base(); // crade, a ameliorer :-((
-		upgrade_version (1.457);
-	}
-
-	if ($lcm_version_current < 1.458) {
-		lcm_query("ALTER TABLE spip_auteurs ADD cookie_oubli TINYTEXT NOT NULL");
-		upgrade_version (1.458);
 	}
 
 	if ($lcm_version_current < 1.459) {
