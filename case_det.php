@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.60 2004/12/17 22:13:46 antzi Exp $
+	$Id: case_det.php,v 1.61 2004/12/20 12:44:07 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -102,7 +102,7 @@ if ($case > 0) {
 			foreach ($statuses as $s)
 				echo "\t\t<option" .  (($s == $row['status']) ? ' selected' : '') . ">$s</option>\n";
 			echo "\t</select>\n";
-			echo "\t<input type='submit' value='Set case status'>\n";
+			echo "\t<button type='submit' name='submit' value='set_status' class='simple_form_btn'>Set case status</button>\n";
 			echo "</form>\n";
 		} else {
 			echo clean_output($row['status']) . "<br>\n";
