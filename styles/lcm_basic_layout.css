@@ -393,3 +393,11 @@ ul.font_size_buttons li a {
 	font-weight: bold;
 	text-align: center;
 }
+
+a.set_fnt_sz {
+	text-decoration: none;
+	font-size: 11px;
+	color: #000;
+	font-weight: bold;
+	border: 1px solid #000;
+}
