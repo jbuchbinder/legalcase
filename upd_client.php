@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.13 2005/03/23 16:28:07 mlutfy Exp $
+	$Id: upd_client.php,v 1.14 2005/03/24 12:04:35 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -32,23 +32,29 @@ $_SESSION['client_data'] = array();
 foreach($_POST as $key => $value)
 	$_SESSION['client_data'][$key] = $value;
 
+$_SESSION['client_data']['id_client'] = intval($_SESSION['client_data']['id_client']);
+
+$ref_upd_client = 'edit_client.php?client=' . $_SESSION['client_data']['id_client'];
+if ($GLOBALS['HTTP_REFERER'])
+	$ref_upd_client = $GLOBALS['HTTP_REFERER'];
+
 //
 // Validate form data
 //
 
 if (! $_SESSION['client_data']['name_first'])
-	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . _T('warning_field_mandatory');
+	$_SESSION['errors']['name_first'] = _Ti('person_input_name_first') . _T('warning_field_mandatory');
 
 if (! $_SESSION['client_data']['name_last'])
-	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . _T('warning_field_mandatory');
+	$_SESSION['errors']['name_last'] = _Ti('person_input_name_last') . _T('warning_field_mandatory');
 
 if (! ($_SESSION['client_data']['gender'] == 'unknown'
 		|| $_SESSION['client_data']['gender'] == 'female'
 		|| $_SESSION['client_data']['gender'] == 'male'))
-	$_SESSION['errors']['name_last'] = _T('person_input_gender') . ' ' . 'Incorrect format.';
+	$_SESSION['errors']['name_last'] = _Ti('person_input_gender') . 'Incorrect format.'; // TRAD
 
 if (count($_SESSION['errors'])) {
-    header("Location: $HTTP_REFERER");
+    header("Location: " . $ref_upd_client);
 	exit;
 }
 
@@ -65,7 +71,7 @@ if ($_SESSION['client_data']['id_client'] > 0) {
 	$q = "UPDATE lcm_client
 		SET date_update = NOW(), 
 			$cl 
-		WHERE id_client = $id_client";
+		WHERE id_client = " . $_SESSION['client_data']['id_client'];
 	
 	lcm_query($q);
 } else {
@@ -75,7 +81,12 @@ if ($_SESSION['client_data']['id_client'] > 0) {
 				date_update = NOW(),
 				$cl";
 
-	$_SESSION['client_data']['id_client'] = lcm_insert_id(lcm_query($q));
+	$result = lcm_query($q);
+	$_SESSION['client_data']['id_client'] = lcm_insert_id($result);
+
+	// If there is an error (ex: in contacts), we should send back to 'client_det.php?client=XX'
+	// not to 'client_det.php?client=0'.
+	$ref_upd_client = 'edit_client.php?client=' . $_SESSION['client_data']['id_client'];
 
 	//
 	// Attach client to case (Case -> Add Client -> Create new client)
@@ -106,66 +117,12 @@ if (!empty($_SESSION['client_data']['new_org'])) {
 //
 
 include_lcm('inc_contacts');
+update_contacts_request('client', $_SESSION['client_data']['id_client']);
 
-//
-// Update existing contacts
-//
-if (isset($_REQUEST['contact_value'])) {
-	$contacts = $_REQUEST['contact_value'];
-	$c_ids = $_REQUEST['contact_id'];
-	$c_types = $_REQUEST['contact_type'];
-	// $c_delete = $_REQUEST['del_contact'];
-
-	//
-	// Check if the contacts provided are really attached to the author
-	// or else the author can provide a form with false contacts.
-	//
-	$all_contacts = get_contacts('client', $_SESSION['client_data']['id_client']);
-	for ($cpt = 0; $c_ids[$cpt]; $cpt++) {
-		$valid = false;
-
-		foreach ($all_contacts as $c)
-			if ($c['id_contact'] == $c_ids[$cpt])
-				$valid = true;
-
-		if (! $valid)
-			die("Invalid modification of contacts detected.");
-	}
-
-	for ($cpt = 0; isset($c_ids[$cpt]); $cpt++) {
-		if (isset($_REQUEST['del_contact_' . $c_ids[$cpt]]) && $_REQUEST['del_contact_' . $c_ids[$cpt]]) {
-			delete_contact($c_ids[$cpt]);
-		} else {
-			// Check for doubles, etc. -> the hell with it! [ML] 2005-01-18
-			update_contact($c_ids[$cpt], $contacts[$cpt]);
-		}
-	}
+if (count($_SESSION['errors'])) {
+	header('Location: ' . $ref_upd_client);
+	exit;
 }
-
-//
-// New contacts
-//
-if (isset($_REQUEST['new_contact_value'])) {
-	$cpt = 0;
-	$new_contacts = $_REQUEST['new_contact_value'];
-	$c_type_names = $_REQUEST['new_contact_type_name'];
-
-	while (isset($new_contacts[$cpt])) {
-		// Process only new contacts which have a value
-		if ($new_contacts[$cpt]) {
-			// And make sure that they have a "type of contact"
-			if ($c_type_names[$cpt]) {
-				add_contact('client', $_SESSION['client_data']['id_client'], $c_type_names[$cpt], $new_contacts[$cpt]);
-			} else {
-				$_SESSION['errors']['new_contact_' . $cpt] = "Please specify the type of contact."; // TRAD
-				$_SESSION['client_data']['new_contact_' . $cpt] = $new_contacts[$cpt];
-			}
-		}
-
-		$cpt++;
-	}
-}
-
 
 // Go to the 'view details' page of the author
 header('Location: client_det.php?client=' . $_SESSION['client_data']['id_client']);
