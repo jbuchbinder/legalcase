@@ -86,6 +86,45 @@ function read_meta_upd($name) {
 		}
 		$s .= "\n";
 	}
+
+	// System keywords
+	include_lcm('inc_keywords');
+	$kwg_all = get_kwg_all('system');
+
+	while (list($key0, $val0) = each($kwg_all)) {
+		$name = $key0;
+
+		// Dump every field of the keyword group
+		while (list($key, $val) = each($val0)) {
+			// We filter out numeric keys because lcm_fetch_array()
+			// returns the two types of arrays
+			if (! is_numeric($key)) {
+				$key = addslashes($key);
+				$val = ereg_replace("([\\\\'])", "\\\\1", $val);
+				$s .= "\$GLOBALS['kwg']['$name']['$key'] = '$val';\n";
+			}
+		}
+	}
+
+	reset($kwg_all);
+	foreach ($kwg_all as $kwg) {
+		// Dump every keyword and field of the keyword group
+		$kw_all = get_keywords_in_group_id($kwg['id_group']);
+
+		foreach ($kw_all as $kw) {
+			$kw_name = $kw['name'];
+
+			// Dump every field of the keyword into the kwg
+			while (list($key, $val) = each($kw)) {
+				if (! is_numeric($key)) {
+					$key = addslashes($key);
+					$val = ereg_replace("([\\\\'])", "\\\\1", $val);
+					$s .= "\$GLOBALS['kwg']['" . $kwg['name'] .  "']['keywords']['$kw_name']['$key'] = '$val';\n";
+				}
+			}
+		}
+	}
+	
 	$s .= '?'.'>';
 
 	$file_meta_cache = 'inc/data/inc_meta_cache.php';
