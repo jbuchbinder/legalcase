@@ -123,13 +123,9 @@ function lcm_list_databases($host, $login, $pass, $port = 0) {
 	if ($link) {
 		$result = @mysql_list_dbs();
 
-		if ($result AND (($num = mysql_num_rows($result)) > 0)) {
+		if ($result AND (($num = mysql_num_rows($result)) > 0))
 			for ($i = 0; $i < $num; $i++)
-				// echo "<!-- " . mysql_dbname($result, $i) . " -->\n";
 				array_push($databases, mysql_dbname($result, $i));
-		}
-
-		echo "<!-- ALLO " . $databases[0] . " " . $databases[1]  . " -->\n";
 
 		return $databases;
 	} else {
