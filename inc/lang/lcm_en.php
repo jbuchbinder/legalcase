@@ -125,6 +125,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_month_8' => 'August',
 'date_month_9' => 'September',
 'date_time_format' => 'Y-m-d H:i:s',
+'date_wday_0' => 'Sunday',
 'date_wday_1' => 'Monday',
 'date_wday_2' => 'Tuesday',
 'date_wday_3' => 'Wednesday',
