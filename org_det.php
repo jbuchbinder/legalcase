@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.23 2005/03/30 07:32:11 mlutfy Exp $
+	$Id: org_det.php,v 1.24 2005/03/31 15:08:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -27,8 +27,10 @@ include_lcm('inc_contacts');
 
 $org = (isset($_REQUEST['org']) ? intval($_REQUEST['org']) : 0);
 
-if ($org <= 0)
-	die("Which organisation?");	// TRAD
+if ($org <= 0) {
+	header("Location: listorgs.php");
+	exit;
+}
 
 $q = "SELECT *
 		FROM lcm_org
@@ -37,7 +39,7 @@ $q = "SELECT *
 $result = lcm_query($q);
 
 if ($row = lcm_fetch_array($result)) {
-	lcm_page_start("Organisation: " . $row['name']);	// TRAD
+	lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 
 	/* Saved for future use
 	// Check for access rights
@@ -83,7 +85,9 @@ if ($row = lcm_fetch_array($result)) {
 			show_all_contacts('org', $row['id_org']);
 
 			if ($edit)
-				echo '<p><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a></p><br />'; // TRAD
+				echo '<p><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">'
+					. _T('org_button_edit')
+					. '</a></p><br />';
 		
 			echo "</fieldset>\n";
 
@@ -111,9 +115,10 @@ if ($row = lcm_fetch_array($result)) {
 			if (lcm_num_rows($result)) {
 				$show_table = true;
 		?>
-				<table class="tbl_usr_dtl">
+				<table class="tbl_usr_dtl" width="100%">
 				<tr>
-					<th class="heading"><?php echo "Representative(s):"; /* TRAD */ ?></th>
+					<th class="heading"><?php echo "#"; ?></th>
+					<th class="heading" width="99%"><?php echo _Th('person_input_name'); ?></th>
 					<th class="heading">&nbsp;</th>
 				</tr>
 		<?php
@@ -121,11 +126,15 @@ if ($row = lcm_fetch_array($result)) {
 
 			$i = 0;
 			while ($row = lcm_fetch_array($result)) {
-				echo '<tr><td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '"><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
+				echo "<tr>\n";
+				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['id_client'] . '</td>';
+				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '"><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 				echo get_person_name($row) . "</a></td>";
-				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
+				echo '<td nowrap="nowrap" class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
+
 				if ( ($GLOBALS['author_session']['status'] == 'admin') )
 					echo '<label for="id_rem_cli_' . $row['id_client'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_cli_' . $row['id_client'] . '" name="rem_clients[]" value="' . $row['id_client'] . '" /></td>';	// TRAD
+
 				echo "</tr>\n";
 				$i++;
 			}

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_org_cli.php,v 1.5 2005/03/22 13:45:13 mlutfy Exp $
+	$Id: sel_org_cli.php,v 1.6 2005/03/31 15:08:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -97,7 +97,7 @@ for ($i = 0; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ;
 ?>
 		<tr>
 			<td>&nbsp;</td>
-			<td><a href="edit_org.php" class="content_link"><strong><?php echo "Add new organisation"; /* TRAD */ ?></strong></a></td>
+			<td><a href="edit_org.php" class="content_link"><strong><?php echo _T('org_button_new');  ?></strong></a></td>
 		</tr>
 
 <?php
