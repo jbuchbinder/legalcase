@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.2 2004/12/10 18:35:46 antzi Exp $
+	$Id: author_det.php,v 1.3 2004/12/21 18:16:03 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,7 @@ if ($author>0) {
 
 		if (($GLOBALS['author_session']['status'] == 'admin') ||
 			($author == $GLOBALS['author_session']['id_author']))
-				echo '<a href="edit_author.php?author=' . $author . "\">Edit author data</a>\n";
+				echo '<p class="normal_text"><a href="edit_author.php?author=' . $author . "\" class=\"edit_lnk\">Edit author data</a></p>\n";
 
 		// Show author contacts
 		$q = "SELECT *
@@ -53,7 +53,7 @@ if ($author>0) {
 		$result = lcm_query($q);
 
 		// Show results in table
-		echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'><caption>Contacts:</caption>\n";
+		echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'><tr><th class='heading' colspan='2'>Contacts:</th></tr>\n";
 		$i = 0;
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t<tr>";
@@ -75,13 +75,13 @@ if ($author>0) {
 					WHERE ((lcm_keyword.id_group=lcm_keyword_group.id_group)
 						AND (lcm_keyword_group.name='contacts'))";
 			$result = lcm_query($q);
-			echo "\t<select>\n";
+			echo "\t<select class=\"sel_frm\">\n";
 			while ($row = lcm_fetch_array($result)) {
 				echo "\t\t<option>" . _T($row['title']) . "</option>\n";
 			}
 			echo "\t</select>\n";
-			echo "\t<input type='text' size='40' style='style: 99%' name='value' />\n";
-			echo "\t<input name='submit' type='submit' class='search_form_btn' id='submit' value='Add contact'>\n";
+			echo "\t<input type='text' size='40' style='style: 99%' name='value' class='search_form_txt' />\n";
+			echo "\t<input name='submit' type='submit' class='search_form_btn' id='submit' value='Add contact' />\n";
 			echo "</form>\n";
 		}
 
