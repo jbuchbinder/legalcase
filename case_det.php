@@ -119,7 +119,7 @@ if ($case > 0) {
 	echo "Find followup:&nbsp;";
 	echo "<input type='text' name='find_fu_string' size='10' class='search_form_txt' value='$find_fu_string' />";
 	echo "&nbsp;";
-	echo "<input type="submit" name="submit" value="Search" class="search_form_btn" />\n";
+	echo "<input type='submit' name='submit' value='Search' class='search_form_btn' />\n";
 	echo "</form>\n";
 
 	echo "\n<table border='0' width='99%' align='center' class='tbl_data'>
