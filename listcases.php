@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.49 2005/03/31 11:27:13 mlutfy Exp $
+	$Id: listcases.php,v 1.50 2005/03/31 13:50:58 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -73,6 +73,9 @@ if ($list_pos >= $number_of_rows)
 if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
 		lcm_panic("Error seeking position $list_pos in the result");
+
+// Short help text
+lcm_bubble('case_list');
 
 // Process the output of the query
 show_listcase_start();
