@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.45 2005/03/16 09:43:46 mlutfy Exp $
+	$Id: inc_filters.php,v 1.46 2005/03/17 13:51:30 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -121,6 +121,31 @@ function format_time_interval($time, $hours_only=false, $hours_only_format='%.2f
 			return join(', ',$ret);
 		} else if ($time == 0) return '0';
 	} else return '';
+}
+
+function format_money($money) {
+	// this is very stupid i18n because windows does not have strfmon,
+	// altough we cannot depend on locales on all servers for all languages
+	// so for our small needs, this should be good enough.
+	if (! is_numeric($money))
+		lcm_panic("parameter is not a valid number: " . $money);
+	
+	$seperator_cents    = _T('currency_format_seperator_cents');
+	$seperator_hundreds = _T('currency_format_seperator_hundreds');
+
+	$hundreds = (int) $money;
+	$cents = round(($money - $hundreds) * 100); // only two last digits
+
+	// format as text
+	$str_cents = sprintf('%02u', $cents);
+	$str_hundreds = $hundreds % 1000;
+
+	while ($hundreds > 999) {
+		$hundreds /= 1000;
+		$str_hundreds = ($hundreds % 1000) . $seperator_hundreds . $str_hundreds;
+	}
+
+	return $str_hundreds . $seperator_cents . $str_cents;
 }
 
 // Error display function
