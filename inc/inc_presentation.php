@@ -128,25 +128,33 @@ function lcm_page_start($title = "", $css_files = "") {
 			<div id=\"content\">
 			<!-- This is the navigation column, usually used for menus and brief information -->
 				<div id=\"navigation_menu_column\">
-				<!-- Start of \"navigation_menu_column\" content -->
+				<!-- Start of navigation_menu_column content -->
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\">Main menu</div>
 						<ul id=\"nav_menu_list\">
-							<li><a href=\"listcases.php\" class=\"main_nav_btn\">My cases</a></li>
-							<li><a href=\"edit_client.php\" class=\"main_nav_btn\">Add Client</a></li>
+							<li><a href=\"listcases.php\" class=\"main_nav_btn\">Recent cases</a></li>
 							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
-							<li><a href=\"config_author.php\" class=\"main_nav_btn\">Edit <abbr title=\"User Interface\">UI</abbr> preferences</a></li>\n";
+							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
+							<li><a href=\"edit_client.php\" class=\"main_nav_btn\">New Client</a></li>
+							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>
+							<li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li>\n";
+	echo "
+						</ul>
+					</div>\n";
 
 	if ($connect_status == 'admin') {
-		// TODO: Provide better name
-		echo "\t\t\t\t\t\t\t<li><a href=\"config_site.php\" class=\"main_nav_btn\">Site conf</a></li>\n";
-		echo "\t\t\t\t\t\t\t<li><abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">Archives</abbr></li>\n";
-		echo "\t\t\t\t\t\t\t<li><abbr title=\"Generate reports on all cases (admin only)\">Reports</abbr></li>\n";
+		echo "		
+					<div id=\"nav_menu_box\">
+						<div class=\"nav_column_menu_head\">Administration</div>
+						<ul id=\"nav_menu_list\">
+							<li><a href=\"config_site.php\" class=\"main_nav_btn\">Site configuration</a></li>
+							<li><a href=\"archives.php\" class=\"main_nav_btn\">Archives (<abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">not ready yet</abbr>)</a></li>
+							<li><a href=\"reports.php\" class=\"main_nav_btn\">Reports (<abbr title=\"Generate reports on all cases (admin only)\">not ready yet</abbr>)</a></li>
+						</ul>
+					</div>\n";
 	}
 
 	echo "
-						</ul>
-					</div>
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\">Calendar</div>
 						<p class=\"nav_column_text\">". format_date() ."</p>
@@ -243,7 +251,7 @@ function lcm_page_end($credits = '') {
 				. "<br /><br />
 			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ logout ]</a>
 			</p>
-			<div class=\"prefs_column_menu_head\">Search</div>
+			<div class=\"prefs_column_menu_head\">Search <img height='24' width='24' border='0' src=\"images/lcm/search.gif\" /></div>
 			<p class=\"prefs_column_text\">
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
 			Find case<br />
