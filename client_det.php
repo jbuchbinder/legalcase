@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.33 2005/03/24 14:20:24 mlutfy Exp $
+	$Id: client_det.php,v 1.34 2005/03/24 14:22:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -134,7 +134,7 @@ if ($client > 0) {
 					echo $html;
 
 				if ($edit)
-					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "<br /><br /></p>\n";
+					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "<br /><br /></p>\n"; // TRAD
 
 				echo "</fieldset>\n";
 				break;
@@ -241,7 +241,8 @@ if ($client > 0) {
 				if ($edit)
 					show_attachments_upload('client', $client);
 
-				echo '</fieldset>';
+				echo "</p>\n";
+				echo "</fieldset>\n";
 				break;
 		}
 
