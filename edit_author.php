@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.8 2004/12/10 08:33:11 antzi Exp $
+	$Id: edit_author.php,v 1.9 2004/12/10 17:59:59 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -26,6 +26,8 @@ include_lcm('inc_filters');
 include_lcm('inc_contacts');
 
 session_start();
+
+$author = intval($_GET['author']);
 
 if (empty($errors)) {
 
@@ -59,7 +61,7 @@ if (empty($errors)) {
 		} else  die(_T('error_no_such_user'));
 
 		$type_email = get_contact_type_id('email_main');
-		
+
 		$q = "SELECT value
 				FROM lcm_contact
 				WHERE id_of_person = $author
