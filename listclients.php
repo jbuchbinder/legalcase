@@ -4,6 +4,7 @@
 $GLOBALS['list_len'] = 3;
 
 include('inc/inc.php');
+include_lcm('inc_filters');
 
 // Prepare query
 $q = "SELECT id_client,name_first,name_middle,name_last
