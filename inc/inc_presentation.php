@@ -43,20 +43,17 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 <html xmlns=\"http://www.w3.org/1999/xhtml\">
 <head>
 	<title>". ($lcm_site_name ? $lcm_site_name ." | " : '') . $title ."</title>
-	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n
+	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />
 	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_basic_layout.css\" />\n";
 
 	//
 	// Style sheets
 	//
 
-	// [ML] This alternative allows the user to create custom themes
-	// without touching the PHP code.
-
 	if (@file_exists("styles/lcm_ui_" . $prefs['theme'] . ".css")) {
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_" . $prefs['theme'] . ".css\" />\n";
+		echo "\t" . '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_ui_' . $prefs['theme'] . '.css" />' . "\n";
 	} else {
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
+		echo "\t" . '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_ui_default.css" />' . "\n";
 	}
 	
 	// It is the responsability of the function caller to make sure that
@@ -64,7 +61,7 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	$css_files_array = explode(",", $css_files);
 	foreach ($css_files_array as $f)
 		if ($f)
-			echo "\t<link rel='stylesheet' type='text/css' href='styles/lcm_$f.css' />\n";
+			echo "\t" . '<link rel="stylesheet" type="text/css" href="styles/lcm_' . $f . '.css" />' . "\n";
 	
 	echo "</head>\n";
 
@@ -173,9 +170,6 @@ function lcm_page_start($title = "", $css_files = "") {
 				
 					<!-- Start of 'main_column' content -->
 					<h3 class=\"content_head\">". $title ."</h3>
-
-					<!-- [ML] Added by matt, who likes to mess up clean CSS -->
-					<!-- <div align='left'> -->
 	";
 }
 
@@ -207,8 +201,6 @@ function lcm_page_end($credits = '') {
 	//[KM] The bottom of a single page
 	//
 	echo "
-				<!-- </div> --> <!-- align left -->
-
 				<!-- End of 'main_column' content -->
 				</div>
 			</div>
