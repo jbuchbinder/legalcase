@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.80 2005/03/30 20:30:52 antzi Exp $
+	$Id: edit_fu.php,v 1.81 2005/03/30 21:37:29 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -79,6 +79,11 @@ if (empty($_SESSION['errors'])) {
 		$_SESSION['fu_data']['id_case'] = $case; // Link to the case
 		$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 		$_SESSION['fu_data']['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+
+		// Set appointment start/end/reminder times to current time
+		$_SESSION['fu_data']['app_start_time'] = date('Y-m-d H:i:s');
+		$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s');
+		$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s');
 
 		// Check if the followup is created from appointment
 		$app = intval($_GET['app']);
@@ -239,6 +244,99 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				echo htmlspecialchars($currency);
 				echo "</td></tr>";
 			}
+// Add followup appointment
+		if (!isset($_GET['followup'])) {
+			echo "<!-- Add appointment? -->\n\t\t<tr><td>";
+			echo 'Add consequent appointment?';	// TRAD
+			echo "</td><td>";
+			echo '<input type="checkbox" name="add_appointment" />';
+			echo "</td></tr>\n";
+
+			echo "<!-- Start time -->\n\t\t<tr><td>";
+			echo _T('app_input_date_start');
+			echo "</td><td>";
+			echo get_date_inputs('app_start', $_SESSION['fu_data']['app_start_time'], false);
+			echo ' ' . _T('time_input_time_at') . ' ';
+			echo get_time_inputs('app_start', $_SESSION['fu_data']['app_start_time']);
+			echo f_err_star('app_start_time',$_SESSION['errors']);
+			echo "</td></tr>\n";
+
+			echo "<!-- End time -->\n\t\t<tr><td>";
+			echo (($prefs['time_intervals'] == 'absolute') ? _T('app_input_date_end') : _T('app_input_time_length'));
+			echo "</td><td>";
+			if ($prefs['time_intervals'] == 'absolute') {
+				echo get_date_inputs('app_end', $_SESSION['fu_data']['app_end_time']);
+				echo ' ' . _T('time_input_time_at') . ' ';
+				echo get_time_inputs('app_end', $_SESSION['fu_data']['app_end_time']);
+				echo f_err_star('app_end_time',$_SESSION['errors']);
+			} else {
+				$interval = ( ($_SESSION['fu_data']['app_end_time']!='0000-00-00 00:00:00') ?
+						strtotime($_SESSION['fu_data']['app_end_time']) - strtotime($_SESSION['fu_data']['app_start_time']) : 0);
+			//	echo _T('calendar_info_time') . ' ';
+				echo get_time_interval_inputs('app_delta', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+				echo f_err_star('end_time',$_SESSION['errors']);
+			}
+			echo "</td></tr>\n";
+
+			echo "<!-- Reminder -->\n\t\t<tr><td>";
+			echo (($prefs['time_intervals'] == 'absolute') ? _T('app_input_reminder_time') : _T('app_input_reminder_offset'));
+			echo "</td><td>";
+			if ($prefs['time_intervals'] == 'absolute') {
+				echo get_date_inputs('app_reminder', $_SESSION['fu_data']['app_reminder']);
+				echo ' ' . _T('time_input_time_at') . ' ';
+				echo get_time_inputs('app_reminder', $_SESSION['fu_data']['app_reminder']);
+				echo f_err_star('app_reminder',$_SESSION['errors']);
+			} else {
+				$interval = ( ($_SESSION['fu_data']['app_end_time']!='0000-00-00 00:00:00') ?
+						strtotime($_SESSION['fu_data']['app_start_time']) - strtotime($_SESSION['fu_data']['app_reminder']) : 0);
+			//	echo _T('calendar_info_time') . ' ';
+				echo get_time_interval_inputs('app_reminder_offset', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+				echo " before the start time"; // TRAD
+				echo f_err_star('app_reminder',$_SESSION['errors']);
+			}
+			echo "</td></tr>\n";
+
+			echo "<!-- Appointment title -->\n\t\t<tr><td>";
+			echo _T('app_input_title');
+			echo "</td><td>";
+			echo '<input type="text" ' . $title_onfocus . $dis . ' name="app_title" size="50" value="';
+			echo clean_output($_SESSION['fu_data']['app_title']) . '" />';
+			echo "</td></tr>\n";
+
+			echo "<!-- Appointment type -->\n\t\t<tr><td>";
+			echo _T('app_input_type');
+			echo "</td><td>";
+			echo '<select ' . $dis . ' name="app_type" size="1" class="sel_frm">';
+
+			global $system_kwg;
+
+			if ($_SESSION['fu_app_data']['type'])
+				$default_app = $_SESSION['fu_app_data']['type'];
+			else
+				$default_app = $system_kwg['appointments']['suggest'];
+
+			$opts = array();
+			foreach($system_kwg['appointments']['keywords'] as $kw)
+				$opts[$kw['name']] = _T($kw['title']);
+			asort($opts);
+
+			foreach($opts as $k => $opt) {
+				$sel = ($k == $default_app ? ' selected="selected"' : '');
+				echo "<option value='$k'$sel>$opt</option>\n";
+			}
+
+			echo '</select>';
+			echo "</td></tr>\n";
+
+			echo "<!-- Appointment description -->\n\t\t<tr><td valign=\"top\">";
+			echo _T('app_input_description');
+			echo "</td><td>";
+			echo '<textarea ' . $dis . ' name="app_description" rows="5" cols="40" class="frm_tarea">';
+			echo clean_output($_SESSION['fu_data']['app_description']);
+			echo '</textarea>';
+			echo "</td></tr>\n";
+		}
+
 		echo "	</table>\n";
 
 		if (isset($_SESSION['followup'])) {
