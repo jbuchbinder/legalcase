@@ -79,29 +79,6 @@ if ($installed_db_version <> $lcm_db_version) {
 	exit;
 }
 
-//
-// Management of the global configuration of the site
-// [ML] Why is this done here?
-//
-
-if (!$adresse_site) {
-	$nom_site_spip = read_meta("nom_site");
-	$adresse_site = read_meta("adresse_site");
-}
-if (!$activer_breves){
-	$activer_breves = read_meta("activer_breves");
-	$articles_mots = read_meta("articles_mots");
-}
-
-if (!$activer_statistiques){
-	$activer_statistiques = read_meta("activer_statistiques");
-}
-
-function tester_rubrique_vide($id_rubrique) {
-	lcm_log("Call of deprecated function: tester_rubrique_vide");
-	return true;
-}
-
 
 //
 // Fetch the administration cookie
