@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.19 2005/02/10 08:49:05 makaveev Exp $
+	$Id: rep_det.php,v 1.20 2005/02/10 13:05:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -425,45 +425,79 @@ if (lcm_num_rows($result)) {
 	echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
 	while ($filter = lcm_fetch_array($result)) {
+		echo "<form action='upd_rep_field.php' name='frm_line_additem' method='get'>\n";
+		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+		echo "<input name='update' value='filter' type='hidden' />\n";
+		echo "<input name='id_filter' value='" . $filter['id_filter'] . "' type='hidden' />\n";
 		echo "<tr>\n";
 		echo "<td>" . $filter['field_name'] . "</td>\n";
 
 		// Type of filter
 		echo "<td>";
-		// if (! $filter['type']) {
+		echo "<select name='filter_type'>\n";
+
+		$filters_num = array('none', 'num_eq', 'num_lt', 'num_gt');
+		$filters_date = array('none', 'data_in', 'date_lt', 'date_gt', 'date_year', 'date_month', 'date_week', 'date_day');
+		// $filters_text = array(); TODO
 
 		switch ($filter['filter']) {
 			case 'number':
-				echo "<select name='filter_type'>\n";
-				echo "<option value='num_eq'>" . "Equals" . "</option>\n";
-				echo "<option value='num_lt'>" . "Less than" . "</option>\n";
-				echo "<option value='num_gt'>" . "Greater than" . "</option>\n";
-				echo "</select>\n";
+				foreach ($filters_num as $f) {
+					$sel = ($filter['type'] == $f ? ' selected="selected"' : '');
+					echo "<option value='" . $f . "'" . $sel . ">" . _T('filter_' . $f) . "</option>\n";
+				}
+
 				break;
 			case 'date':
-				echo "<select name='filter_type'>\n";
-				echo "<option value='date_in'>" . "In interval" . "</option>\n";
-				echo "<option value='date_lt'>" . "Before" . "</option>\n";
-				echo "<option value='date_gt'>" . "After" . "</option>\n";
-				echo "<option value='date_year'>" . "In year" . "</option>\n";
-				echo "<option value='date_month'>" . "In month" . "</option>\n";
-				echo "<option value='date_week'>" . "In week" . "</option>\n";
-				echo "<option value='date_day'>" . "In day" . "</option>\n";
-				echo "</select>\n";
+				foreach ($filters_date as $f) {
+					$sel = ($filter['type'] == $f ? ' selected="selected"' : '');
+					echo "<option value='" . $f . "'>" . _T('filter_' . $f) . "</option>\n";
+				}
+
 				break;
 			default:
 				lcm_panic("Internal error: wrong filter type");
 		}
 
+		echo "</select>\n";
+		echo "</td>\n";
 
-		// }
+		// Value for filter
+		echo "<td>";
+
+		switch ($filter['type']) {
+			case 'num_eq':
+			case 'num_lt':
+			case 'num_gt':
+				echo '<input style="width: 99%;" type="text" name="filter_value" value="' . $filter['value'] . '" />';
+				break;
+			case 'date_in':
+
+				break;
+			case 'date_lt':
+			case 'date_lt':
+			case 'date_gt':
+
+				break;
+			case 'text':
+				echo '<input style="width: 99%;" type="text" name="filter_value" value="' . $filter['value'] . '" />';
+				break;
+			default:
+				echo "<!-- no type -->\n";
+		}
 		
+		echo "</td>\n";
+
+		// Button to validate
+		echo "<td>";
+		echo "<button class='simple_form_btn' name='validate_filter_addfield'>" . _T('button_validate') . "</button>\n";
 		echo "</td>\n";
 
 		// Link for "Remove"
 		echo "<td><a href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
-			. "remove=filter" . "&amp;" . "id_filter=" . $filter['id_filter'] . "'>" . "Remove" . "</a></td>\n";
+			. "remove=filter" . "&amp;" . "id_filter=" . $filter['id_filter'] . "'>" . "X" . "</a></td>\n";
 		echo "</tr>\n";
+		echo "</form>\n";
 	}
 
 	echo "</table>\n";

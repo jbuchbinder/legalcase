@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.4 2005/02/09 16:07:56 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.5 2005/02/10 13:05:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -109,6 +109,38 @@ if (isset($_REQUEST['add'])) {
 		$ref_tag = "#filter";
 	}
 
+}
+
+if (isset($_REQUEST['update'])) {
+	$update = $_REQUEST['update']; // = { 'filter' }
+	$id_filter = intval($_REQUEST['id_filter']);
+
+	if (! $id_filter)
+		die ("update field: missing valid 'id_filter'");
+
+	if ($update == 'filter') {
+		$type = clean_input($_REQUEST['filter_type']);
+		$value = clean_input($_REQUEST['filter_value']);
+
+		$fields = array();
+		$flist = "";
+
+		if ($type)
+			array_push($fields, "type = '" . $type . "'");
+
+		if ($value)
+			array_push($fields, "value = '" . $value . "'");
+
+		if (count($fields))
+			$flist = implode(", ", $fields);
+
+		$query = "UPDATE lcm_rep_filter
+						SET " . $flist . "
+						WHERE id_filter = " . $id_filter;
+
+		lcm_query($query);
+		$ref_tag = "#filter";
+	}
 }
 
 if (isset($_REQUEST['select_col_type']) && isset($_REQUEST['select_col_name'])) {
