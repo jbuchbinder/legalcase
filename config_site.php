@@ -33,8 +33,8 @@ function show_config_form($panel) {
 		$html_collab = " &lt;--";
 	else if ($panel == 'policy')
 		$html_policy = " &lt;--";
-	else if ($panel == 'languages')
-		$html_languages = " &lt;--";
+	else if ($panel == 'regional')
+		$html_regional = " &lt;--";
 	else 
 		$html_general = " &lt;--";
 
@@ -42,7 +42,7 @@ function show_config_form($panel) {
 	echo "<li><a href='config_site.php?panel=general' class='content_link'>" . _T('siteconf_subtitle_general_info') . "</a>" . $html_general . "</li>\n";
 	echo "<li><a href='config_site.php?panel=collab' class='content_link'>" . _T('siteconf_subtitle_collab_work') . "</a>" . $html_collab . "</li>\n";
 	echo "<li><a href='config_site.php?panel=policy' class='content_link'>" .  _T('siteconf_subtitle_policy') . "</a>" . $html_policy . "</li>\n";
-	echo "<li><a href='config_site.php?panel=languages' class='content_link'>" . _T('siteconf_subtitle_languages') . "</a>" . $html_languages . "</li>\n";
+	echo "<li><a href='config_site.php?panel=regional' class='content_link'>" . _T('siteconf_subtitle_regional') . "</a>" . $html_regional . "</li>\n";
 	echo "</ul>\n";
 
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
@@ -51,8 +51,8 @@ function show_config_form($panel) {
 		show_config_form_collab();
 	else if ($panel == 'policy')
 		show_config_form_policy();
-	else if ($panel == 'languages')
-		show_config_form_languages();
+	else if ($panel == 'regional')
+		show_config_form_regional();
 	else
 		show_config_form_general();
 
@@ -65,21 +65,10 @@ function show_config_form_general() {
 	$site_name = read_meta('site_name');
 	$site_desc = read_meta('site_description');
 	$site_address = read_meta('site_address');
-	$default_language = read_meta('default_language');
 	$email_sysadmin = read_meta('email_sysadmin');
-	$currency = read_meta('currency');
 
 	if (empty($site_name))
 		$site_name = _T('title_software');
-
-	// If no currency format set, get default format from the 
-	// global language translation files
-	if (empty($currency)) {
-		$current_lang = $GLOBALS['lcm_lang'];
-		$GLOBALS['lcm_lang'] = $default_language;
-		$currency = _T('currency_default_format');
-		$GLOBALS['lcm_lang'] = $current_lang;
-	}
 
 	echo "\t<input type='hidden' name='conf_modified_general' value='yes'/>\n";
 	echo "\t<input type='hidden' name='panel' value='general'/>\n";
@@ -103,18 +92,6 @@ function show_config_form_general() {
 	echo "<div class='prefs_column_menu_head'><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></div>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_admin_email') . "</small></p>\n";
 	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40' class='search_form_txt' /></p>\n";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
-	echo "</fieldset>\n";
-
-	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'>" . _T('siteconf_input_default_lang') . "</div>\n";
-	echo "<p><small class='sm_11'>" . _T('siteconf_info_default_lang') . "</small></p>\n";
-	echo "<p align='center'>" . menu_languages('default_language', $default_language) . "</p>\n";
-
-	echo "<div class='prefs_column_menu_head'><label for='currency'>" . _T('siteconf_input_currency') . "</label></div>\n";
-	echo "<p><small class='sm_11'>" . _T('siteconf_info_currency') . "</small></p>\n";
-	echo "<p><small class='sm_11'>" . _T('siteconf_warning_currency') . "</small></p>\n";
-	echo "<p align='center'><input type='text' id='currency' name='currency' value='$currency' size='5' class='search_form_txt' /></p>\n";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 }
@@ -252,12 +229,37 @@ function show_config_form_collab() {
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 }
 
-function show_config_form_languages() {
-	echo "\t<input type='hidden' name='conf_modified_languages' value='yes'/>\n";
-	echo "\t<input type='hidden' name='panel' value='languages'/>\n";
+function show_config_form_regional() {
+	global $lcm_lang_right;
+
+	$default_language = read_meta('default_language');
+	$currency = read_meta('currency');
+
+	// If no currency format set, get default format from the language translation
+	if (empty($currency)) {
+		$current_lang = $GLOBALS['lcm_lang'];
+		$GLOBALS['lcm_lang'] = $default_language;
+		$currency = _T('currency_default_format');
+		$GLOBALS['lcm_lang'] = $current_lang;
+	}
+
+	echo "\t<input type='hidden' name='conf_modified_regional' value='yes'/>\n";
+	echo "\t<input type='hidden' name='panel' value='regional'/>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'><label for='available_languages'>" . _T('siteconf_input_available_languages') . "</label></div>\n";
+	echo "<div class='prefs_column_menu_head'>" . _T('siteconf_input_default_lang') . "</div>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_default_lang') . "</small></p>\n";
+	echo "<p align='center'>" . menu_languages('default_language', $default_language) . "</p>\n";
+
+	echo "<div class='prefs_column_menu_head'><label for='currency'>" . _T('siteconf_input_currency') . "</label></div>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_currency') . "</small></p>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_warning_currency') . "</small></p>\n";
+	echo "<p align='center'><input type='text' id='currency' name='currency' value='$currency' size='5' class='search_form_txt' /></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</fieldset>\n";
+
+	echo "<fieldset class='conf_info_box'>\n";
+	echo "<div class='prefs_column_menu_head'><label for='available_regional'>" . _T('siteconf_input_available_languages') . "</label></div>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_available_languages') . "</small></p>\n";
 	// echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
 
@@ -302,7 +304,6 @@ function show_config_form_policy() {
 
 	// ** CLIENTS
 	echo "<fieldset class='conf_info_box'>\n";
-	// XXX fix css, this was just a test
 	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_client_fields') . "</b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_client_fields') . "</small></p>\n";
 
@@ -363,12 +364,10 @@ function show_config_form_policy() {
 function apply_conf_changes_general() {
 	$log = array();
 
-	global $site_name;
-	global $site_desc;
-	global $site_address;
-	global $default_language;
-	global $email_sysadmin;
-	global $currency;
+	$site_name = $_REQUEST['site_name'];
+	$site_desc = $_REQUEST['site_desc'];
+	$site_address = $_REQUEST['site_address'];
+	$email_sysadmin = $_REQUEST['email_sysadmin'];
 
 	// Site name
 	if (! empty($site_name)) {
@@ -397,19 +396,6 @@ function apply_conf_changes_general() {
 		array_push($log, "Site Internet or network address set to '<tt>$site_address</tt>', was '<tt>$old_address</tt>'.");
 	}
 
-	// Default language
-	if (! empty($default_language)) {
-		$old_lang = read_meta('default_language');
-
-		if ($old_lang != $default_language) {
-			write_meta('default_language', $default_language);
-			array_push($log, "Default language set to <tt>"
-				. translate_language_name($default_language)
-				. "</tt>, previously was <tt>"
-				. translate_language_name($old_lang) ."</tt>.");
-		}
-	}
-
 	// Administrator e-mail
 	if (! empty($email_sysadmin)) {
 		if ($email_sysadmin != read_meta('email_sysadmin')) {
@@ -426,17 +412,6 @@ function apply_conf_changes_general() {
 		}
 	}
 
-	// Currency
-	if (! empty($currency)) {
-		$old_currency = read_meta('currency');
-
-		if ($currency != $old_currency) {
-			write_meta('currency', $currency);
-			array_push($log, "Currency changed to <tt>$currency</tt>, "
-				. "was <tt>$old_currency</tt>.");
-		}
-	}
-
 	if (! empty($log))
 		write_metas();
 	
@@ -446,11 +421,11 @@ function apply_conf_changes_general() {
 function apply_conf_changes_collab() {
 	$log = array();
 
-	global $case_default_read;
-	global $case_default_write;
-	global $case_read_always;
-	global $case_write_always;
-	global $site_open_subscription;
+	$case_default_read = $_REQUEST['case_default_read'];
+	$case_default_write = $_REQUEST['case_default_write'];
+	$case_read_always = $_REQUEST['case_read_always'];
+	$case_write_always = $_REQUEST['case_write_always'];
+	$site_open_subscription = $_REQUEST['site_open_subscription'];
 
 	// Default read policy
 	if ($case_default_read != read_meta('case_default_read')) {
@@ -518,14 +493,14 @@ function apply_conf_changes_collab() {
 function apply_conf_changes_policy() {
 	$log = array();
 
-	global $client_name_middle;
-	global $client_citizen_number;
-	global $case_court_archive;
-	global $case_assignment_date;
-	global $case_alledged_crime;
-	global $case_allow_modif;
-	global $fu_sum_billed;
-	global $fu_allow_modif;
+	$client_name_middle = $_REQUEST['client_name_middle'];
+	$client_citizen_number = $_REQUEST['client_citizen_number'];
+	$case_court_archive = $_REQUEST['case_court_archive'];
+	$case_assignment_date = $_REQUEST['case_assignment_date'];
+	$case_alledged_crime = $_REQUEST['case_alledged_crime'];
+	$case_allow_modif = $_REQUEST['case_allow_modif'];
+	$fu_sum_billed = $_REQUEST['fu_sum_billed'];
+	$fu_allow_modif = $_REQUEST['fu_allow_modif'];
 
 	// XXX [ML] I did alot of copy-pasting .. had I been a bit smarter,
 	// I would have declared an array in the html form and just do a
@@ -625,12 +600,42 @@ function apply_conf_changes_policy() {
 	return $log;
 }
 
-function apply_conf_changes_languages() {
+function apply_conf_changes_regional() {
 	$log = array();
 
-	// force refresh of lcm_meta->available_languaes
+	$default_language = $_REQUEST['default_language'];
+	$currency = $_REQUEST['currency'];
+
+	// Default language
+	if (! empty($default_language)) {
+		$old_lang = read_meta('default_language');
+
+		if ($old_lang != $default_language) {
+			write_meta('default_language', $default_language);
+			array_push($log, "Default language set to <tt>"
+				. translate_language_name($default_language)
+				. "</tt>, previously was <tt>"
+				. translate_language_name($old_lang) ."</tt>.");
+		}
+	}
+
+	// Currency
+	if (! empty($currency)) {
+		$old_currency = read_meta('currency');
+
+		if ($currency != $old_currency) {
+			write_meta('currency', $currency);
+			array_push($log, "Currency changed to <tt>$currency</tt>, "
+				. "was <tt>$old_currency</tt>.");
+		}
+	}
+
+	// Force refresh of lcm_meta->available_languaes
 	init_languages(true);
 	array_push($log, "Language list refreshed.");
+
+	if (! empty($log))
+		write_metas();
 
 	return $log;
 }
@@ -651,8 +656,8 @@ else if ($conf_modified_collab)
 	$log = apply_conf_changes_collab();
 else if ($conf_modified_policy)
 	$log = apply_conf_changes_policy();
-else if ($conf_modified_languages)
-	$log = apply_conf_changes_languages();
+else if ($conf_modified_regional)
+	$log = apply_conf_changes_regional();
 
 // Once ready, show the form (must be done after changes are
 // applied so that they can be used in the header).
