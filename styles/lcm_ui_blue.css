@@ -67,7 +67,7 @@ p.nav_column_text {
 /* Main column agenda small list */
 
 ul.small_agenda {
-	border-top: 1px dotted #369;
+	/* border-top: 1px dotted #369; */
 }
 
 ul.small_agenda li {

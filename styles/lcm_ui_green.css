@@ -62,7 +62,7 @@ ul.nav_menu_list li {
 /* Main column agenda small list */
 
 ul.small_agenda {
-	border-top: 1px dotted #999;
+	/* border-top: 1px dotted #999; */
 }
 
 ul.small_agenda li {
