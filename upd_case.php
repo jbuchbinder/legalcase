@@ -44,10 +44,15 @@ if (count($errors)) {
 
 // Put public access rights settings in a separate string
 	$public_access_rights = '';
-	if ($case_data['public'] || read_meta('case_read_always')) $public_access_rights .= "public=1";
-	else $public_access_rights .= "public=0";
-	if ($case_data['pub_write'] || read_meta('case_write_always')) $public_access_rights .= "pub_write=1";
-	else $public_access_rights .= "pub_write=0";
+	if ($case_data['public'] || read_meta('case_read_always'))
+		$public_access_rights .= "public=1";
+	else 
+		$public_access_rights .= "public=0";
+		
+	if ($case_data['pub_write'] || read_meta('case_write_always')) 
+		$public_access_rights .= ", pub_write=1";
+	else 
+		$public_access_rights .= ", pub_write=0";
 
 	if ($id_case > 0) {
 		// Check access rights
