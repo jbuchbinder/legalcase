@@ -48,16 +48,16 @@ lcm_page_start("Edit organisation details");
 			<td><?php echo $org_data['id_org']; ?>
 			<input type="hidden" name="id_org" value="<?php echo $org_data['id_org']; ?>"></td></tr>
 		<tr><td>Name:</td>
-			<td><input name="name" value="<?php echo htmlspecialchars($org_data['name']); ?>"></td></tr>
+			<td><input name="name" value="<?php echo clean_output($org_data['name']); ?>"></td></tr>
 		<tr><td>Created on:</td>
-			<td><input name="date_creation" value="<?php echo $org_data['date_creation']; ?>">
+			<td><input name="date_creation" value="<?php echo clean_output($org_data['date_creation']); ?>">
 			<?php echo f_err('date_creation',$errors); ?></td></tr>
 		<tr><td>Updated on:</td>
-			<td><input name="date_update" value="<?php echo $org_data['date_update']; ?>">
+			<td><input name="date_update" value="<?php echo clean_output($org_data['date_update']); ?>">
 			<?php echo f_err('date_update',$errors); ?></td></tr>
 		<tr><td>Address:</td>
 			<td><textarea name="address" cols="50" rows="3"><?php
-			echo htmlspecialchars($org_data['address']); ?></textarea></td></tr>
+			echo clean_output($org_data['address']); ?></textarea></td></tr>
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>
