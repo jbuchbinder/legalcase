@@ -124,13 +124,15 @@ function lcm_page_start($title = "") {
 						<div class=\"nav_column_menu_head\">Main menu</div>
 						<ul id=\"nav_menu_list\">
 							<li><a href=\"listcases.php\">My cases</a></li>
-							<li>Add/Edit Client</li>
-							<li>Add/Edit Case</li>
+							<li><a href=\"edit_client.php\">Add Client</a></li>
+							<li><a href=\"edit_case.php\">New Case</a></li>
 							<li>Edit <abbr title=\"User Interface\">UI</abbr> preferences</li>\n";
 	
 	if ($connect_status == 'admin') {
 		// TODO: Provide better name
 		echo "\t\t\t\t\t\t\t<li><a href=\"config_site.php\">Site conf</a></li>\n";
+		echo "\t\t\t\t\t\t\t<li><abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">Archives</abbr></li>\n";
+		echo "\t\t\t\t\t\t\t<li><abbr title=\"Generate reports on all cases (admin only)\">Reports</abbr></li>\n";
 	}
 							
 	echo "
