@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.5 2004/12/11 11:18:29 antzi Exp $
+	$Id: run_rep.php,v 1.6 2005/01/25 23:49:56 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -31,8 +31,10 @@ $q = "SELECT *
 		FROM lcm_report
 		WHERE id_report=$rep";
 $result = lcm_query($q);
-$row = lcm_fetch_array($result);
-lcm_page_start($row['title']);
+if ($row = lcm_fetch_array($result))
+	lcm_page_start($row['title']);
+else
+	die("There is no such report!");
 
 // Get report columns
 $q = "SELECT lcm_rep_cols.*,lcm_fields.*
@@ -126,41 +128,44 @@ if (in_array('lcm_case',$ta) && in_array('lcm_author',$ta)) {
 // Convert array of table names into string list
 $tl = implode(',',$ta);
 
-// Get report data
-$q = "SELECT $fl\n\tFROM $tl\n\tWHERE ($wl)\n\tORDER BY $sl";
-$result = lcm_query($q);
+if ($fl && $tl && $wl) {
+	// Get report data
+	$q = "SELECT $fl\n\tFROM $tl\n\tWHERE ($wl)";
+	if ($sl) $q .= "\n\tORDER BY $sl";
+	$result = lcm_query($q);
 
-// Diagnostic: show query into HTML
-echo "<!-- query is: '$q' -->\n";
+	// Diagnostic: show query into HTML
+	echo "<!-- query is: '$q' -->\n";
 
-// Show report data
-if (lcm_num_rows($result)>0) {
-	if ($sl_text) echo "Sorted by: $sl_text<br>\n";
-	if ($filter_text) echo "Filters applied: $filter_text<br>\n";
-	echo "<table border='0' class='tbl_usr_dtl'>\n";
-	echo "\t<tr>\n";
-	// Show column headers
-	for ($i=0; $i<mysql_num_fields($result); $i++) {
-		echo "\t\t<th class='heading'>" . mysql_field_name($result,$i) . "</th>\n";
-	}
-	echo "\t</tr>\n";
-	// Show report data rows
-	while ($row = lcm_fetch_array($result)) {
+	// Show report data
+	if (lcm_num_rows($result)>0) {
+		if ($sl_text) echo "Sorted by: $sl_text<br>\n";
+		if ($filter_text) echo "Filters applied: $filter_text<br>\n";
+		echo "<table border='0' class='tbl_usr_dtl'>\n";
 		echo "\t<tr>\n";
-		for ($j=0; $j<$i; $j++) {
-			echo "\t\t<td>" . $row[$j] . "</td>\n";
-			if (isset($totals[$j+1])) $totals[$j+1] += $row[$j];
+		// Show column headers
+		for ($i=0; $i<mysql_num_fields($result); $i++) {
+			echo "\t\t<th class='heading'>" . mysql_field_name($result,$i) . "</th>\n";
 		}
 		echo "\t</tr>\n";
-	}
-	// Show totals (if any)
-	echo "\t<tr>\n";
-	for ($i=0; $i<mysql_num_fields($result); $i++) {
-		echo "\t\t<td>" . ($totals[$i+1] ? '<strong>' . $totals[$i+1] . '</strong>' : '') . "</td>\n";
-	}
-	echo "\t</tr>\n";
+		// Show report data rows
+		while ($row = lcm_fetch_array($result)) {
+			echo "\t<tr>\n";
+			for ($j=0; $j<$i; $j++) {
+				echo "\t\t<td>" . $row[$j] . "</td>\n";
+				if (isset($totals[$j+1])) $totals[$j+1] += $row[$j];
+			}
+			echo "\t</tr>\n";
+		}
+		// Show totals (if any)
+		echo "\t<tr>\n";
+		for ($i=0; $i<mysql_num_fields($result); $i++) {
+			echo "\t\t<td>" . ($totals[$i+1] ? '<strong>' . $totals[$i+1] . '</strong>' : '') . "</td>\n";
+		}
+		echo "\t</tr>\n";
 
-	echo "</table>";
+		echo "</table>";
+	}
 }
 
 lcm_page_end();
