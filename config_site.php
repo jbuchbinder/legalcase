@@ -250,10 +250,37 @@ function show_config_form_collab() {
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
 }
 
+function get_yes_no($name, $value = '') {
+	$ret = '';
+
+	$yes = ($value == 'yes' ? ' selected="selected"' : '');
+	$no = ($value == 'no' ? ' selected="selected"' : '');
+	$other = ($yes || $no ? '' : ' selected="selected"');
+
+	// until we format with tables, better to keep the starting space
+	$ret .= ' <select name="' . $name . '">' . "\n";
+	$ret .= '<option value="yes"' . $yes . '>' . _T('info_yes') . '</option>';
+	$ret .= '<option value="no"' . $no . '>' . _T('info_no') . '</option>';
+
+	if ($other)
+		$ret .= '<option value=""' . $other . '> </option>';
+
+	$ret .= '</select>' . "\n";
+
+	return $ret;
+}
+
 function show_config_form_policy() {
 	global $lcm_lang_right;
 
-	// read_meta() ...
+	$client_name_middle = read_meta('client_name_middle');
+	$client_citizen_number = read_meta('client_citizen_number');
+	$case_court_archive = read_meta('case_court_archive');
+	$case_assignment_date = read_meta('case_assignment_date');
+	$case_alledged_crime = read_meta('case_alledged_crime');
+	$case_allow_modif = read_meta('case_allow_modif');
+	$fu_sum_billed = read_meta('fu_sum_billed');
+	$fu_allow_modif = read_meta('fu_allow_modif');
 
 	echo "\t<input type='hidden' name='conf_modified_policy' value='yes'/>\n";
 	echo "\t<input type='hidden' name='panel' value='policy'/>\n";
@@ -265,8 +292,12 @@ function show_config_form_policy() {
 	echo "<p><small>" . _T('siteconf_info_client_fields') . "</small></p>\n";
 
 	echo "<ul>";
-	echo "<li> middle name (yes/no)</li>\n";
-	echo "<li> citizen number (yes/no)</li>\n";
+	echo "<li> " . _T('siteconf_input_name_middle')
+		. get_yes_no('client_name_middle', $client_name_middle) 
+		. "</li>\n";
+	echo "<li> " . _T('siteconf_input_citizen_number')
+		. get_yes_no('client_citizen_number', $client_citizen_number) 
+		. "</li>\n";
 	echo "</ul>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
@@ -278,11 +309,18 @@ function show_config_form_policy() {
 	echo "<p><small>" . _T('siteconf_info_case_fields') . "</small></p>\n";
 
 	echo "<ul>";
-	echo "<li> Court archive ID (yes/no)</li>\n";
-	echo "<li> Assignment date (yes/no)</li>\n";
-	echo "<li> Alledged crime (yes/no)</li>\n";
-	echo "<li> Allow case information to be modified by their authors once
-	their are created? (yes/no)</li>\n";
+	echo "<li> " . _T('siteconf_input_court_archive') 
+		. get_yes_no('case_court_archive', $case_court_archive)
+		. "</li>\n";
+	echo "<li> " . _T('siteconf_input_assignment_date') 
+		. get_yes_no('case_assignment_date', $case_assignment_date)
+		. "</li>\n";
+	echo "<li> " . _T('siteconf_input_alledged_crime')
+		. get_yes_no('case_alledged_crime', $case_alledged_crime)
+		. "</li>\n";
+	echo "<li> " . _T('siteconf_input_case_allow_modif')
+		. get_yes_no('case_allow_modif', $case_allow_modif)
+		. "</li>\n";
 	echo "</ul>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
@@ -294,8 +332,12 @@ function show_config_form_policy() {
 	echo "<p><small>" . _T('siteconf_info_followups_fields') . "</small></p>\n";
 
 	echo "<ul>";
-	echo "<li> Sum billed (yes/no)</li>\n";
-	echo "<li> Allow modifications once follow-ups are submitted (yes/no)</li>\n";
+	echo "<li>" . _T('siteconf_input_sum_billed')
+		. get_yes_no('fu_sum_billed', $fu_sum_billed)
+		. "</li>\n";
+	echo "<li>" . _T('siteconf_input_fu_allow_modif')
+		. get_yes_no('fu_allow_modif', $fu_allow_modif)
+		. "</li>\n";
 	echo "</ul>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
@@ -312,7 +354,6 @@ function apply_conf_changes_general() {
 	global $default_language;
 	global $email_sysadmin;
 	global $currency;
-
 
 	// Site name
 	if (! empty($site_name)) {
@@ -388,6 +429,8 @@ function apply_conf_changes_general() {
 }
 
 function apply_conf_changes_collab() {
+	$log = array();
+
 	global $case_default_read;
 	global $case_default_write;
 	global $case_read_always;
@@ -458,7 +501,113 @@ function apply_conf_changes_collab() {
 }
 
 function apply_conf_changes_policy() {
+	$log = array();
 
+	global $client_name_middle;
+	global $client_citizen_number;
+	global $case_court_archive;
+	global $case_assignment_date;
+	global $case_alledged_crime;
+	global $case_allow_modif;
+	global $fu_sum_billed;
+	global $fu_allow_modif;
+
+	// XXX [ML] I did alot of copy-pasting .. had I been a bit smarter,
+	// I would have declared an array in the html form and just do a
+	// simple loop over the variables.
+
+	if (!empty($client_name_middle)
+		AND ($client_name_middle == 'yes' OR $client_name_middle == 'no'))
+	{
+		$old_client_name_middle = read_meta('client_name_middle');
+		if ($client_name_middle != $old_client_name_middle) {
+			write_meta('client_name_middle', $client_name_middle);
+			array_push($log, "client_name_middle set to "
+				. $client_name_middle . ", was " . $old_client_name_middle . ".");
+		}
+	}
+
+	if (!empty($client_citizen_number)
+		AND ($client_citizen_number == 'yes' OR $client_citizen_number == 'no'))
+	{
+		$old_client_citizen_number = read_meta('client_citizen_number');
+		if ($client_citizen_number != $old_client_citizen_number) {
+			write_meta('client_citizen_number', $client_citizen_number);
+			array_push($log, "client_citizen_number set to "
+				. $client_citizen_number . ", was " . $old_client_citizen_number . ".");
+		}
+	}
+
+	if (!empty($case_court_archive)
+		AND ($case_court_archive == 'yes' OR $case_court_archive == 'no'))
+	{
+		$old_case_court_archive = read_meta('case_court_archive');
+		if ($case_court_archive != $old_case_court_archive) {
+			write_meta('case_court_archive', $case_court_archive);
+			array_push($log, "case_court_archive set to "
+				. $case_court_archive . ", was " . $old_case_court_archive . ".");
+		}
+	}
+
+	if (!empty($case_assignment_date)
+		AND ($case_assignment_date == 'yes' OR $case_assignment_date == 'no'))
+	{
+		$old_case_assignment_date = read_meta('case_assignment_date');
+		if ($case_assignment_date != $old_case_assignment_date) {
+			write_meta('case_assignment_date', $case_assignment_date);
+			array_push($log, "case_assignment_date set to "
+				. $case_assignment_date . ", was " . $old_case_assignment_date . ".");
+		}
+	}
+
+	if (!empty($case_alledged_crime)
+		AND ($case_alledged_crime == 'yes' OR $case_alledged_crime == 'no'))
+	{
+		$old_case_alledged_crime = read_meta('case_alledged_crime');
+		if ($case_alledged_crime != $old_case_alledged_crime) {
+			write_meta('case_alledged_crime', $case_alledged_crime);
+			array_push($log, "case_alledged_crime set to "
+				. $case_alledged_crime . ", was " . $old_case_alledged_crime . ".");
+		}
+	}
+
+	if (!empty($case_allow_modif)
+		AND ($case_allow_modif == 'yes' OR $case_allow_modif == 'no'))
+	{
+		$old_case_allow_modif = read_meta('case_allow_modif');
+		if ($case_allow_modif != $old_case_allow_modif) {
+			write_meta('case_allow_modif', $case_allow_modif);
+			array_push($log, "case_allow_modif set to "
+				. $case_allow_modif . ", was " . $old_case_allow_modif . ".");
+		}
+	}
+
+	if (!empty($fu_sum_billed)
+		AND ($fu_sum_billed == 'yes' OR $fu_sum_billed == 'no'))
+	{
+		$old_fu_sum_billed = read_meta('fu_sum_billed');
+		if ($fu_sum_billed != $old_fu_sum_billed) {
+			write_meta('fu_sum_billed', $fu_sum_billed);
+			array_push($log, "fu_sum_billed set to "
+				. $fu_sum_billed . ", was " . $old_fu_sum_billed . ".");
+		}
+	}
+
+	if (!empty($fu_allow_modif)
+		AND ($fu_allow_modif == 'yes' OR $fu_allow_modif == 'no'))
+	{
+		$old_fu_allow_modif = read_meta('fu_allow_modif');
+		if ($fu_allow_modif != $old_fu_allow_modif) {
+			write_meta('fu_allow_modif', $fu_allow_modif);
+			array_push($log, "fu_allow_modif set to "
+				. $fu_allow_modif . ", was " . $old_fu_allow_modif . ".");
+		}
+	}
+
+	if (! empty($log))
+		write_metas();
+
+	return $log;
 }
 
 global $author_session;
