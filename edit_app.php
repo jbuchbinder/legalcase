@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.31 2005/03/30 10:13:28 mlutfy Exp $
+	$Id: edit_app.php,v 1.32 2005/03/31 11:22:20 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -137,61 +137,82 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 	<table class="tbl_usr_dtl" width="99%">
 
 		<!-- Start time -->
-		<tr><td><?php echo _T('app_input_date_start'); ?></td>
+		<tr><td><?php echo f_err_star('start_time') . _T('app_input_date_start'); ?></td>
 			<td><?php
 				$name = (($admin || ($edit && $modify)) ? 'start' : '');
 				echo get_date_inputs($name, $_SESSION['app_data']['start_time'], false);
 				echo ' ' . _T('time_input_time_at') . ' ';
 				echo get_time_inputs($name, $_SESSION['app_data']['start_time']);
-				echo f_err_star('start_time',$_SESSION['errors']); ?>
 			</td>
 		</tr>
 
 		<!-- End time -->
-		<tr><td><?php echo (($prefs['time_intervals'] == 'absolute') ? _T('app_input_date_end') : _T('app_input_time_length')); ?></td>
-			<td><?php 
-				if ($prefs['time_intervals'] == 'absolute') {
-					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'end' : '');
-					echo get_date_inputs($name, $_SESSION['app_data']['end_time']);
-					echo ' ';
-					echo _T('time_input_time_at') . ' ';
-					echo get_time_inputs($name, $_SESSION['app_data']['end_time']);
-					echo f_err_star('end_time',$_SESSION['errors']);
-				} else {
-					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'delta' : '');
-					$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
-							strtotime($_SESSION['app_data']['end_time']) - strtotime($_SESSION['app_data']['start_time']) : 0);
-				//	echo _T('calendar_info_time') . ' ';
-					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
-					echo f_err_star('end_time',$_SESSION['errors']);
-				} ?>
-			</td>
+		<tr>
+<?php
+
+	if ($prefs['time_intervals'] == 'absolute') {
+		echo "<td>" . f_err_star('end_time') . _T('app_input_date_end') . "</td>\n";
+		echo "<td>";
+
+		$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'end' : '');
+		echo get_date_inputs($name, $_SESSION['app_data']['end_time']);
+		echo ' ';
+		echo _T('time_input_time_at') . ' ';
+		echo get_time_inputs($name, $_SESSION['app_data']['end_time']);
+
+		echo "</td>\n";
+	} else {
+		echo "<td>" . f_err_star('end_time') . _T('app_input_time_length') . "</td>\n";
+		echo "<td>";
+
+		$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'delta' : '');
+		$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
+				strtotime($_SESSION['app_data']['end_time']) - strtotime($_SESSION['app_data']['start_time']) : 0);
+		echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+
+		echo "</td>\n";
+	}
+
+?>
+
 		</tr>
 
 		<!-- Reminder -->
-		<tr><td><?php echo (($prefs['time_intervals'] == 'absolute') ? _T('app_input_reminder_time') : _T('app_input_reminder_offset')); ?></td>
-			<td><?php 
-				if ($prefs['time_intervals'] == 'absolute') {
-					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'reminder' : '');
-					echo get_date_inputs($name, $_SESSION['app_data']['reminder']);
-					echo ' ';
-					echo _T('time_input_time_at') . ' ';
-					echo get_time_inputs($name, $_SESSION['app_data']['reminder']);
-					echo f_err_star('reminder',$_SESSION['errors']);
-				} else {
-					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'rem_offset' : '');
-					$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
-							strtotime($_SESSION['app_data']['start_time']) - strtotime($_SESSION['app_data']['reminder']) : 0);
-				//	echo _T('calendar_info_time') . ' ';
-					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
-					echo " before the start time"; // TRAD
-					echo f_err_star('reminder',$_SESSION['errors']);
-				} ?>
-			</td>
+		<tr>
+		
+<?php
+	
+	if ($prefs['time_intervals'] == 'absolute') {
+		echo "<td>" . f_err_star('reminder') . _T('app_input_reminder_time') . "</td>\n";
+		echo "<td>";
+
+		$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'reminder' : '');
+		echo get_date_inputs($name, $_SESSION['app_data']['reminder']);
+		echo ' ';
+		echo _T('time_input_time_at') . ' ';
+		echo get_time_inputs($name, $_SESSION['app_data']['reminder']);
+
+		echo "</td>\n";
+	} else {
+		echo "<td>" . f_err_star('reminder') . _T('app_input_reminder_offset') . "</td>\n";
+		echo "<td>";
+
+		$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'rem_offset' : '');
+		$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
+				strtotime($_SESSION['app_data']['start_time']) - strtotime($_SESSION['app_data']['reminder']) : 0);
+		echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+		echo " before the start time"; // TRAD
+		echo f_err_star('reminder',$_SESSION['errors']);
+
+		echo "</td>\n";
+	}
+
+?>
+
 		</tr>
 
 		<!-- Appointment title -->
-		<tr><td valign="top"><?php echo _T('app_input_title'); ?></td>
+		<tr><td valign="top"><?php echo f_err_star('title') . _T('app_input_title'); ?></td>
 			<td><input type="text" <?php echo $title_onfocus . $dis; ?> name="title" size="50" value="<?php
 			echo clean_output($_SESSION['app_data']['title']) . "\" /></td></tr>\n"; ?>
 
@@ -247,9 +268,6 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			ON (lcm_author.id_author=lcm_author_app.id_author AND id_app=" . $_SESSION['app_data']['id_app'] . ")
 			WHERE id_app IS NULL";
 */
-		
-		// [KM]
-		// echo "<br /><br />";
 		
 		$q = "SELECT id_author,name_first,name_middle,name_last
 			FROM lcm_author
