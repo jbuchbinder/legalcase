@@ -60,7 +60,7 @@ if ($list_pos>0)
 <table border='0' align='center' class='tbl_data' width='99%'>
 	<tr><th class='tbl_head'>Description</th>
 		<th class='tbl_head'>Status</th>
-		<th class='tbl_head'>Actions</th>
+		<th colspan="2" class='tbl_head'>Actions</th>
 	</tr>
 <?php
 // Process the output of the query
@@ -85,7 +85,8 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 </table>
 <p align='right'><a href="edit_case.php?case=0">Open new case</a></p>
 
-<?php
+<table border='0' align='center' class='tbl_data' width='99%'>
+	<tr><td align="left"><?php
 
 // Show link to previous page
 if ($list_pos>0) {
@@ -94,6 +95,8 @@ if ($list_pos>0) {
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 	echo '">< Prev</a> ';
 }
+
+echo "</td>\n\t\t<td align='center'>";
 
 // Show page numbers with direct links
 $list_pages = ceil($number_of_rows / $GLOBALS['list_len']);
@@ -108,6 +111,8 @@ if ($list_pages>1) {
 	}
 }
 
+echo "</td>\n\t\t<td align='right'>";
+
 // Show link to next page
 $next_pos = $list_pos + $GLOBALS['list_len'];
 if ($next_pos<$number_of_rows) {
@@ -115,6 +120,8 @@ if ($next_pos<$number_of_rows) {
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 	echo '">Next ></a>';
 }
+
+echo "</td>\n\t</tr>\n</table>\n";
 
 lcm_page_end();
 ?>
