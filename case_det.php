@@ -39,7 +39,7 @@ if ($row = mysql_fetch_assoc($result)) {
 ?>
 <br><table border>
 <caption>Follow-ups to this case:</caption>
-<tr><th>Date</th><th>Type</th><th>Description</th></tr>
+<tr><th>Date</th><th>Type</th><th>Description</th><th></th></tr>
 <?php
 
 // Prepare query
@@ -48,12 +48,13 @@ $q='SELECT id_followup,date_start,type,description FROM lcm_followup WHERE id_ca
 // Do the query
 $result=mysql_query($q,$db);
 
-
 // Process the output of the query
 while ($row = mysql_fetch_assoc($result)) {
 	// Show followup
-	echo '<tr><td>' . $row['date_start'] . '</td><td>' . $row['type'] . '</td><td>' . $row['description'] . '</td><td><a href="edit_fu.php?followup=' . $row['id_followup'] . "\">Edit</a></td></tr>\n";
+	echo '<tr><td>' . $row['date_start'] . '</td><td>' . $row['type'] . '</td><td>' . $row['description'] . '</td>';
+	echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . "\">Edit</a></td></tr>\n";
 }
+echo '<tr><td colspan="3"><a href="edit_fu.php?case=' . $case . "\">New followup</a></td><td></td></tr>\n";
 
 // Close connection
 mysql_close($db);

@@ -15,30 +15,61 @@ $db=mysql_connect('localhost','lcm','lcmpass');
 // Select lcm database
 mysql_select_db('lcm',$db);
 
-// Prepare query
-$q='SELECT * FROM lcm_followup WHERE id_followup=' . $followup;
+$fu_data=array();
 
-// Do the query
-$result=mysql_query($q,$db);
+if (isset($followup)) {
+    // Prepare query
+    $q='SELECT * FROM lcm_followup WHERE id_followup=' . $followup;
+
+    // Do the query
+    $result=mysql_query($q,$db);
+
+    // Process the output of the query
+    if ($row = mysql_fetch_assoc($result)) {
+	// Get followup details
+	foreach($row as $key=>$value) {
+	    $fu_data[$key]=$value;
+	}
+    }
+} else {
+    // Link to the case
+    $fu_data['id_case']=$case;
+    //$fu_data['date_start']='2004-09-16 16:32:37';
+}
 
 $types=array("assignment","suspension","delay","conclusion","consultation","correspondance","travel","other");
-// Process the output of the query
-if ($row = mysql_fetch_assoc($result)) {
-	// Edit followup details
-	?><form><table><caption>Details of follow-up:</caption><?php
-	echo '<tr><td>Start date:' . '</td><td><INPUT value="' . $row['date_start'] . "\"></td><tr>\n";
-	echo '<tr><td>End date:' . '</td><td><INPUT value="' . $row['date_end'] . "\"></td><tr>\n";
-	echo '<tr><td>Type:' . '</td><td><SELECT size="1"><OPTION selected>' . $row['type'] . "</OPTION>\n";
-	foreach($types as $item) {
-	   if ($item != $row['type'])
-	      { echo '<OPTION>' . $item . "</OPTION>\n"; }
-	}
-	echo "</SELECT></td><tr>\n";
-	echo '<tr><td>Description:' . '</td><td><textarea rows="5" cols="30">';
-	echo $row['description'] . "</textarea></td><tr>\n";
-	echo '<tr><td>Sum billed:' . '</td><td><input value="' . $row['sumbilled'] . "\"></td><tr>\n";
-	?></table></form><?php
-} else die("There's no such followup!");
+
+// Edit followup details form
+?>
+<h1>Edit follow-up information:</h1>
+
+<form action="upd_fu.php" method="POST">
+<table><caption>Details of follow-up:</caption>
+<tr><th>Parameter</th><th>Value</th></tr>
+<INPUT type="hidden" name="id_followup" value="<?php echo $fu_data['id_followup']; ?>">
+<INPUT type="hidden" name="id_case" value="<?php echo $fu_data['id_case']; ?>">
+<tr><td>Start date:</td><td><INPUT name="date_start" value="<?php echo $fu_data['date_start']; ?>"></td></tr>
+<tr><td>End date:</td><td><INPUT name="date_end" value="<?php echo $fu_data['date_end']; ?>"></td></tr>
+<tr><td>Type:</td><td><SELECT name="type" size="1"><OPTION selected><?php echo $fu_data['type']; ?></OPTION>
+<?php
+foreach($types as $item) {
+    if ($item != $fu_data['type']) {
+	echo "<OPTION>$item</OPTION>\n";
+    }
+}
+?>
+</SELECT></td></tr>
+<tr><td>Description:</td><td><textarea name="description" rows="5" cols="30">
+<?php echo $fu_data['description']; ?></textarea></td></tr>
+<tr><td>Sum billed:</td><td><input name="sumbilled" value="<?php echo $fu_data['sumbilled']; ?>"></td></tr>
+</table>
+<BUTTON name="submit" type="submit" value="submit">Save</BUTTON>
+<BUTTON name="reset" type="reset">Reset</BUTTON>
+<INPUT type="hidden" name="referer" value="<?php echo $HTTP_REFERER ?>">
+</form>
+
+<?php
+//} else die("There's no such followup!");
 
 // Close connection
 mysql_close($db);
