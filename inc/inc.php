@@ -46,8 +46,8 @@ if ($sel_theme) {
 }
 
 // Set rows per page preference
-if ($page_rows) {
-	$prefs['page_rows'] = $page_rows;
+if (intval($page_rows) > 0) {
+	$prefs['page_rows'] = intval($page_rows);
 	$prefs_mod = true;
 }
 
