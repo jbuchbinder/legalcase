@@ -310,6 +310,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // O
+'org_input_name' => 'Name:',
 'org_subtitle_representatives' => 'Organisation representatives',
 'org_subtitle_view_general' => 'General information',
 
@@ -377,6 +378,18 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_info_self_registration' => 'Can users create themselves a new account (e.g. self-register) on the site?',
 'siteconf_info_site_desc' => 'Often shown under the site name, except on reports.',
 'siteconf_info_site_name' => 'This will be shown when the user logs-in, in generated reports, etc.',
+'siteconf_input_access_read_choice' => 'By default, who can consult the information related to a new case?',
+'siteconf_input_access_read_choice_private' => 'Only authors assigned to a case and administrators can consult its information (for privacy).',
+'siteconf_input_access_read_choice_public' => 'Any author can consult the information related to cases of other authors, even if they are not assigned on the case (for cooperation and transparency).',
+'siteconf_input_access_read_global' => 'Impose the above setting as a site policy?',
+'siteconf_input_access_read_global_no' => 'No, any author assigned on the case (and with "edit" rights) can modify the read access.',
+'siteconf_input_access_read_global_yes' => 'Yes, only administrators can modify the read access.',
+'siteconf_input_access_write_choice' => 'By default, who can contribute information to a new case?',
+'siteconf_input_access_write_choice_private' => 'Only authors assigned to a case and administrators can contribute to it.',
+'siteconf_input_access_write_choice_public' => 'Any author can contribute information to cases of other authors, even if they are not assigned on the case.',
+'siteconf_input_access_write_global' => 'Impose the above setting as a site policy?',
+'siteconf_input_access_write_global_no' => 'No, any author assigned on the case (and with "edit" rights) can modify the write access.',
+'siteconf_input_access_write_global_yes' => 'Yes, only administrators can modify the write access.',
 'siteconf_input_admin_email' => 'E-mail of site administrator:',
 'siteconf_input_alledged_crime' => 'Alledged crime',
 'siteconf_input_assignment_date' => 'Assignment date',
