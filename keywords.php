@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.12 2005/02/18 10:07:17 makaveev Exp $
+	$Id: keywords.php,v 1.13 2005/02/22 21:46:31 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -272,6 +272,8 @@ if (isset($_REQUEST['action'])) {
 			include_lcm('inc_keywords_default');
 			create_groups($system_keyword_groups);
 
+			write_metas();
+			
 			break;
 		default:
 			die("No such action! (" . $_REQUEST['action'] . ")");
