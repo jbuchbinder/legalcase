@@ -50,8 +50,35 @@ h2 {
 	border-left: 1px solid #999;
 }
 
-#hlp_cont p, #hlp_cont div, #hlp_cont ul li {
+/* Real help content styles */
+
+.hlp_data {
+	margin: 5px 0px 0px 15px;
+}
+
+.hlp_data p, .hlp_data div, .hlp_data ul li, .hlp_data li, .hlp_data textarea {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
+}
+
+.hlp_data li {
+	margin-left: 25px;
+	list-style-type: square;
+}
+
+.hlp_data textarea {
+	width: 500px;
+	border: 1px solid #333;
+}
+
+.hlp_data a {
+	color: #f30;
+	text-decoration: underline;
+}
+
+.hlp_data a:hover {
+	color: #f30;
+	text-decoration: none;
 }
 
 /* Help Main Menu  */
@@ -77,7 +104,7 @@ h2 {
 
 #hlp_menu ul.subnav li a:hover, #hlp_menu ul#nav li a:hover {
 	background: #efefef;
-	color: #f60;
+	color: #f30;
 }
 	
 #hlp_menu ul li {
