@@ -195,19 +195,22 @@ function login($cible, $prive = 'prive', $message_login='') {
 				"//--></script>\n";
 		 	echo "<input type='hidden' name='session_login_hidden' value='$login' />";
 
-			// If javascript is not active, the login is still modifiable (since the challenge is not used)
+			// If javascript is not active, the login is still modifiable
+			// (since the challenge is not used)
 			echo "<noscript>";
-			echo "<font face='Georgia, Garamond, Times, serif' size='3'>";
-			echo _T('login_not_secure') . " <a href=\"" . quote_amp($clean_link->getUrl()) . "\">" . _T('login_recharger') . "</a>.<p /></font>\n";
+			echo "<div class='box_warning'>";
+			echo _T('login_not_secure') . " <a href=\"" .
+			quote_amp($clean_link->getUrl()) . "\">" .
+			_T('login_link_reload_page') . "</a>.<p /></div>\n";
 		}
 
-		echo "\t<label><b>" . _T('login_login') . _T('typo_column') . " " . _T('login_info_login')."</b><br /></label>";
-		echo "\t<input type='text' name='session_login' class='forml' value=\"$login\" size='40' />\n";
+		echo "\t<label for='session_login'><b>" . _T('login_login') . _T('typo_column') . "</b> (" . _T('login_info_login').")<br /></label>";
+		echo "\t<input type='text' name='session_login' id='session_login' class='forml' value=\"$login\" size='40' />\n";
 		if ($flag_challenge_md5) echo "</noscript>\n";
 
 		echo "\t<p />\n";
-		echo "\t<label><b>" . _T('login_password') . _T('typo_column') . "</b><br /></label>";
-		echo "\t<input type='password' name='session_password' class='forml' value=\"\" size='40' />\n";
+		echo "\t<label for='session_password'><b>" . _T('login_password') . _T('typo_column') . "</b><br /></label>";
+		echo "\t<input type='password' name='session_password' id='session_password' class='forml' value=\"\" size='40' />\n";
 		echo "\t<input type='hidden' name='essai_login' value='oui' />\n";
 
 		echo "\t<br />&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='session_remember' value='yes' id='session_remember'$rester_checked /> ";
@@ -216,7 +219,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "\t<input type='hidden' name='url' value='$url' />\n";
 		echo "\t<input type='hidden' name='session_password_md5' value='' />\n";
 		echo "\t<input type='hidden' name='next_session_password_md5' value='' />\n";
-		echo "<div align='right'><input type='submit' value='"._T('button_validate')."' /></div>\n";
+		echo "<div align='right'><input class='button_login' type='submit' value='"._T('button_validate')."' /></div>\n";
 		echo "</div>";
 		echo "</form>";
 	} else {
@@ -228,11 +231,11 @@ function login($cible, $prive = 'prive', $message_login='') {
 		if ($erreur)
 			echo "<span style='color:red;'><b>" . _T('login_access_denied') .  _T('typo_column') . " $erreur</b></span><p />";
 			
-		echo "<label><b>" . _T('login_login') . ' (' . _T('login_info_login') . ')' . _T('typo_column') . "</b><br /></label>";
+		echo "<label><b>" . _T('login_login') . '</b> (' . _T('login_info_login') . ')' . _T('typo_column') . "<br /></label>";
 		echo "<input type='text' name='var_login' class='forml' value=\"\" size='40' />\n";
 
 		echo "<input type='hidden' name='var_url' value='$url' />\n";
-		echo "<div align='right'><input type='submit' value='"._T('button_validate')."'/></div>\n";
+		echo "<div align='right'><input class='button_login' type='submit' value='"._T('button_validate')."'/></div>\n";
 		echo "</div>";
 		echo "</form>";
 	}
