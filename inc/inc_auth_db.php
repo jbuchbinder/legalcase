@@ -109,6 +109,12 @@ class Auth_db {
 		else
 			return false;
 	}
+
+	function newlogin($username, $new_username, $author_session) {
+		// TODO TODO
+		lcm_log("newlogin: code me!");
+		return false;
+	}
 }
 
 
