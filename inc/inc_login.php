@@ -181,7 +181,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "<div class='main_login_box' style='text-align:".$GLOBALS["lcm_lang_left"].";'>";
 
 		if ($erreur) 
-			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . _T('typo_column') . " $erreur</b></div><p>";
+			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . " $erreur</b></div><p>";
 
 		if ($flag_challenge_md5) {
 			// If javascript is active, we pass the login in the hidden field
@@ -225,7 +225,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "<div class='main_login_box' style='text-align:" . $GLOBALS["lcm_lang_left"] . ";'>";
 
 		if ($erreur)
-			echo "<span style='color:red;'><b>" . _T('login_access_denied') .  _T('typo_column') . " $erreur</b></span><p />";
+			echo "<span style='color:red;'><b>" . _T('login_access_denied') . " $erreur</b></span><p />";
 			
 		echo "<label><b>" . _T('login_login') . '</b> (' . _T('login_info_login') . ')' . _T('typo_column') . "<br /></label>";
 		echo "<input type='text' name='var_login' class='forml' value=\"\" size='40' />\n";
