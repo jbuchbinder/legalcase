@@ -18,6 +18,11 @@ if (empty($errors)) {
 	if (isset($ref)) $case_data['referer'] = $ref;
 	else $case_data['referer'] = $HTTP_REFERER;
 
+	// Register case type variable for the session
+	if (!session_is_registered("existing"))
+		session_register("existing");
+
+	// Find out if this is existing or new case
 	$existing = ($case > 0);
 
 	if ($existing) {
