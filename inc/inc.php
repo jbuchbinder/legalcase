@@ -81,7 +81,7 @@ $installed_db_version = read_meta('lcm_db_version');
 
 if ($installed_db_version <> $lcm_db_version) {
 	lcm_page_start("Database upgrade", "install");
-	if (!$installed_version)
+	if (! isset($installed_version))
 		$installed_version = "old version";
 
 	echo "<div class='box_warning'>\n";
