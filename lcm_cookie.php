@@ -1,7 +1,8 @@
 <?php
 
-include ("inc/inc_version.php");
-include_lcm ("inc_session");
+include("inc/inc_version.php");
+include_lcm("inc_session");
+include_lcm('inc_filters');
 
 // Determine where we want to fallback after the operation
 if ($_REQUEST['url']) {
