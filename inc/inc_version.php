@@ -38,7 +38,6 @@ function feed_globals($table, $insecure = true, $ignore_variables_contexte = fal
 	global $INSECURE;
 
 	// ignore cookies which could include context information
-	// [ML] To remove?
 	$is_contexte = array('id_parent'=>1, 'id_rubrique'=>1, 'id_article'=>1, 'id_auteur'=>1,
 		'id_breve'=>1, 'id_forum'=>1, 'id_secteur'=>1, 'id_syndic'=>1, 'id_syndic_article'=>1,
 		'id_mot'=>1, 'id_groupe'=>1, 'id_document'=>1, 'date'=>1, 'lang'=>1);
@@ -215,7 +214,7 @@ $flag_gd = $flag_ImageGif || $flag_ImageJpeg || $flag_ImagePng;
 //
 // Apply the cookie prefix
 //
-function spip_setcookie ($name='', $value='', $expire=0, $path='AUTO', $domain='', $secure='') {
+function lcm_setcookie ($name='', $value='', $expire=0, $path='AUTO', $domain='', $secure='') {
 	$name = ereg_replace ('^lcm', $GLOBALS['cookie_prefix'], $name);
 	if ($path == 'AUTO') $path=$GLOBALS['cookie_path'];
 

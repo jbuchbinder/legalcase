@@ -19,7 +19,7 @@ if ($change_session == 'oui') {
 			$auteur_session['ip_change'] = false;
 			$cookie = creer_cookie_session($auteur_session);
 			supprimer_session($lcm_session);
-			spip_setcookie('lcm_session', $cookie);
+			lcm_setcookie('lcm_session', $cookie);
 		}
 		@header('Content-Type: image/gif');
 		@header('Expires: 0');
@@ -48,7 +48,7 @@ if ($logout) {
 	if ($auteur_session['username'] == $logout) {
 		if ($lcm_session) {
 			zap_sessions($auteur_session['id_author'], true);
-			spip_setcookie('lcm_session', $lcm_session, time() - 3600 * 24);
+			lcm_setcookie('lcm_session', $lcm_session, time() - 3600 * 24);
 		}
 		if ($PHP_AUTH_USER AND !$ignore_auth_http) {
 			include_local ("inc-login.php"); // [ML] XXX
@@ -71,7 +71,7 @@ if ($logout) {
 // puis de passer a spip_login qui diagnostiquera l'echec de cookie
 // le cas echeant.
 if ($test_echec_cookie == 'oui') {
-	spip_setcookie('lcm_session', 'test_echec_cookie');
+	lcm_setcookie('lcm_session', 'test_echec_cookie');
 	$link = new Link("lcm_login.php?var_echec_cookie=oui");
 	$link->addVar("var_url", $cible->getUrl());
 	@header("Location: ".$link->getUrl());
@@ -144,20 +144,20 @@ if ($essai_login == 'oui') {
 
 // cookie d'admin ?
 if ($cookie_admin == 'non') {
-	spip_setcookie('lcm_admin', $lcm_admin, time() - 3600 * 24);
+	lcm_setcookie('lcm_admin', $lcm_admin, time() - 3600 * 24);
 	$cible->delVar('var_login');
 	$cible->addVar('var_login', '-1');
 }
 else if ($cookie_admin AND $lcm_admin != $cookie_admin) {
-	spip_setcookie('lcm_admin', $cookie_admin, time() + 3600 * 24 * 14);
+	lcm_setcookie('lcm_admin', $cookie_admin, time() + 3600 * 24 * 14);
 }
 
 // cookie de session ?
 if ($cookie_session) {
 	if ($session_remember == 'oui')
-		spip_setcookie('lcm_session', $cookie_session, time() + 3600 * 24 * 14);
+		lcm_setcookie('lcm_session', $cookie_session, time() + 3600 * 24 * 14);
 	else
-		spip_setcookie('lcm_session', $cookie_session);
+		lcm_setcookie('lcm_session', $cookie_session);
 
 	$prefs = ($row_auteur['prefs']) ? unserialize($row_auteur['prefs']) : array();
 	$prefs['cnx'] = ($session_remember == 'oui') ? 'perma' : '';
@@ -171,7 +171,7 @@ if ($var_lang_lcm) {
 	$verif = verifier_visiteur();
 
 	if (changer_langue($var_lang_lcm)) {
-		spip_setcookie('lcm_lang', $var_lang_lcm, time() + 365 * 24 * 3600);
+		lcm_setcookie('lcm_lang', $var_lang_lcm, time() + 365 * 24 * 3600);
 
 		// [ML] Strange, if I don't do this, id_auteur stays null,
 		// and I have no idea where the variable should have been initialized

@@ -146,7 +146,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		if ($statut_login == -1 OR ($statut_login == 0 AND !$flag_autres_sources)) {
 			$erreur = _T('login_identifiant_inconnu', array('login' => htmlspecialchars($login)));
 			$login = '';
-			@spip_setcookie('lcm_admin', '', time() - 3600);
+			@lcm_setcookie('lcm_admin', '', time() - 3600);
 		}
 	}
 	

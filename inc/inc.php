@@ -49,7 +49,8 @@ if ($prefs_mod) {
 
 if ($set_ecran) {
 	// Set a cookie, since this features depends more on the navigator than on the user
-	// [ML TODO] spip_setcookie('spip_ecran', $set_ecran, time() + 365 * 24 * 3600);
+	// ecran == screen/monitor
+	lcm_setcookie('spip_ecran', $set_ecran, time() + 365 * 24 * 3600);
 	$spip_ecran = $set_ecran;
 }
 if (!$spip_ecran) $spip_ecran = "etroit";
