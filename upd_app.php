@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.13 2005/04/01 16:56:35 antzi Exp $
+	$Id: upd_app.php,v 1.14 2005/04/05 13:13:36 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -182,17 +182,16 @@ if (count($_SESSION['errors'])) {
 		// Add the rest of the fields
 		$q .= ",$fl,date_creation=NOW()";
 
-		if (!($result = lcm_query($q))) 
-			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
+		$result = lcm_query($q);
 
 		$id_app = lcm_insert_id();
 		$_SESSION['app_data']['id_app'] = $id_app;
 
 		// Add relationship with the creator
-		$q = "INSERT INTO lcm_author_app SET id_app=$id_app,id_author=" . $GLOBALS['author_session']['id_author'];
+		lcm_query("INSERT INTO lcm_author_app SET id_app=$id_app,id_author=" . $GLOBALS['author_session']['id_author']);
 
-		if (!($result = lcm_query($q))) 
-			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
+		// Add relationship with the parent followup (if any)
+		lcm_query("INSERT INTO lcm_app_fu SET id_app=$id_app,id_followup=" . $_SESSION['app_data']['id_followup'] . ",relation='parent'");
 
 	}
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.33 2005/04/01 08:12:24 mlutfy Exp $
+	$Id: edit_app.php,v 1.34 2005/04/05 13:13:36 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -68,10 +68,25 @@ if (empty($_SESSION['errors'])) {
 		//$case = $_SESSION['app_data']['id_case'];
 		$modify = ($_SESSION['app_data']['id_author'] == $GLOBALS['author_session']['id_author']);
 	} else {
+		// This is new appointment
 		$_SESSION['app_data']['id_app'] = 0;
-		if ($_GET['case'] > 0) {
+		
+		// New appointment created from case
+		if (!empty($_GET['case'])) {
 			$_SESSION['app_data']['id_case'] = intval($_GET['case']);
 		}
+
+		// New appointment created from followup
+		if (!empty($_GET['followup'])) {
+			$_SESSION['app_data']['id_followup'] = intval($_GET['followup']);
+			if (empty($_SESSION['app_data']['id_case'])) {
+				$result = lcm_query("SELECT id_case FROM lcm_followup WHERE id_followup=" . $_SESSION['app_data']['id_followup']);
+				if ($row = lcm_fetch_array($result))
+					$_SESSION['app_data']['id_case'] = $row['id_case'];
+			}
+		}
+
+
 		$modify = true;
 
 		// Setup default values
@@ -352,6 +367,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 		echo '<input type="hidden" name="id_app" value="' . $_SESSION['app_data']['id_app'] . '" />' . "\n";
 		echo '<input type="hidden" name="id_case" value="' . $_SESSION['app_data']['id_case'] . '" />' . "\n";
+		echo '<input type="hidden" name="id_followup" value="' . $_SESSION['app_data']['id_followup'] . '" />' . "\n";
 
 		// because of XHTML validation...
 		$ref_link = new Link($_SESSION['app_data']['ref_edit_app']);
