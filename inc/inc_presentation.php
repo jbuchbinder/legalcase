@@ -500,7 +500,7 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 
 function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_seconds = false, $table = false) {
 
-	$split_time = recup_heure($time);
+	$split_time = recup_time($time);
 	$default_hour = $split_time[0];
 	$default_minutes = $split_time[1];
 	$default_seconds = $split_time[2];
