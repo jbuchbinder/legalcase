@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.22 2005/03/30 07:32:12 mlutfy Exp $
+	$Id: edit_org.php,v 1.23 2005/03/31 15:22:28 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -56,9 +56,9 @@ if (empty($_SESSION['errors'])) {
 }
 
 if ($org) 
-	lcm_page_start("Edit organisation details"); // TRAD
+	lcm_page_start(_T('title_org_edit'));
 else
-	lcm_page_start("New organisation"); // TRAD
+	lcm_page_start(_T('title_org_new'));
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
@@ -132,11 +132,6 @@ echo '</td>';
 echo "</tr>\n";
 
 show_edit_contacts_form('org', $_SESSION['org_data']['id_org']);
-
-/*
-	<strong>Address:</strong><br />
-	<textarea name="address" cols="50" rows="3" class="frm_tarea"><?php echo clean_output($_SESSION['org_data']['address']); ?></textarea><br /><br />
-*/
 
 echo "</table>\n";
 
