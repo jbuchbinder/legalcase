@@ -156,13 +156,13 @@ td.tbl_cont_light {
 /* Update profile form */
 
 table.tbl_usr_dtl {
-	border-left: 1px dashed #ccc;
-	border-top: 1px dashed #ccc;
+	border-left: 1px solid #ccc;
+	border-top: 1px solid #ccc;
 }
 
-table.tbl_usr_dtl td {
-	border-right: 1px dashed #ccc;
-	border-bottom: 1px dashed #ccc;
+table.tbl_usr_dtl td, table.tbl_usr_dtl th {
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 }
 
 td.heading, th.heading {
@@ -233,4 +233,8 @@ a.prefs_logout {
 
 a.prefs_logout:hover {
 	background-color: #efefef;
+}
+
+fieldset.conf_info_box, fieldset.info_box {
+	border: 1px solid #999;
 }

@@ -160,14 +160,19 @@ td.tbl_cont_light {
 /* Update profile form */
 
 table.tbl_usr_dtl {
-	border-left: 1px dashed #06f;
-	border-top: 1px dashed #06f;
+	border-left: 1px solid #06f;
+	border-top: 1px solid #06f;
 }
 
 table.tbl_usr_dtl td {
-	border-right: 1px dashed #06f;
-	border-bottom: 1px dashed #06f;
+	border-right: 1px solid #06f;
+	border-bottom: 1px solid #06f;
 	color: #333;
+}
+
+table.tbl_usr_dtl th {
+	border-right: 1px solid #06f;
+	border-bottom: 1px solid #06f;
 }
 
 td.heading, th.heading {
@@ -244,4 +249,8 @@ a.prefs_logout {
 a.prefs_logout:hover {
 	background-color: #999;
 	color: #fff;
+}
+
+fieldset.conf_info_box, fieldset.info_box {
+	border: 1px solid #666;
 }

@@ -258,8 +258,8 @@ td.tbl_head, th.tbl_head {
 	font-weight: bold;
 }
 
-table.tbl_usr_dtl td {
-
+table.tbl_usr_dtl td, table.tbl_usr_dtl th{
+	padding: 2px;
 }
 
 td.heading, th.heading {
