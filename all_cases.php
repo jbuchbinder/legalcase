@@ -78,9 +78,11 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	// Show case title
 	echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 
-	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
+//	if (allowed($row['id_case'],'r'))
+		echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['title']),$find_case_string);
-	if (allowed($row['id_case'],'r')) echo '</a>';
+//	if (allowed($row['id_case'],'r'))
+		echo '</a>';
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $row['status'];
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 //	if (allowed($row['id_case'],'e'))
