@@ -1,3 +1,143 @@
-#main_column div,#main_column p,#main_column td,#main_column a,#main_column table,#main_column fieldset,#main_column form,#main_column input,#main_column ul,#main_column li,#main_column h2,#main_column h3,#main_column h4, #main_column select,select.sel_frm {
-	font-size: large;
+#breadcrumb {
+	font-size: 11px;
+}
+
+.nav_column_menu_head {
+	font-size: 12px;
+}
+
+ul.nav_menu_list li {
+	font-size: 11px;
+}
+
+p.nav_column_text {
+	font-size: 11px;
+}
+
+/* Buttons-like effect */
+
+#main_column .prefs_column_menu_head {
+	font-size: 14px;
+}
+
+.prefs_column_menu_head {
+	font-size: 12px;
+}
+
+p.prefs_column_text {
+	font-size: 11px;
+}
+
+a.prefs_bold_lnk {
+	font-size: 10px;
+}
+
+a.prefs_normal_lnk {
+	font-size: 10px;
+}
+
+/* Form elements */
+
+#main_column form.search_form {
+	font-size: 12px;
+}
+
+#main_column input.search_form_txt {
+	font-size: 14px;
+}
+
+#main_column input.search_form_btn, #main_column button.simple_form_btn {
+	font-size: 12px;
+}
+
+#main_column textarea.frm_tarea {
+	font-size: 14px;
+}
+
+#main_column select.sel_frm {
+	font-size: 14px;
+}
+
+form.search_form {
+	font-size: 11px;
+}
+
+input.search_form_txt {
+	font-size: 12px;
+}
+
+input.search_form_btn,button.simple_form_btn {
+	font-size: 11px;
+}
+
+textarea.frm_tarea {
+	font-size: 12px;
+}
+
+select.sel_frm {
+	font-size: 12px;
+}
+
+/* ------------------------------- */
+/* Content column settings */
+/* ------------------------------ */
+
+h3.content_head {
+	/* font-size: 100%; */
+}
+
+h4 {
+	/* font-size: 100%; */
+}
+
+table.tbl_data td {
+	font-size: 14px;
+}
+
+td.tbl_head, th.tbl_head {
+	font-size: 14px;
+}
+
+table.tbl_usr_dtl td {
+	font-size: 14px;
+}
+
+td.heading, th.heading {
+	font-size: 14px;
+}
+
+p.normal_text {
+	font-size: 14px;
+}
+
+fieldset.conf_info_box, fieldset.info_box {
+	font-size: 14px;
+}
+
+small.sm_11 {
+	font-size: 12px;
+}
+
+ul.simple_list li {
+	font-size: 14px;
+}
+
+a.add_lnk,a.create_new_lnk,a.edit_lnk,a.run_lnk {
+	font-size: 12px;
+}
+
+/* Go to page bar */
+
+.page_numbers td {
+	font-size: 12px;
+}
+
+/* For the Small/Normal/Large Font size list */
+
+ul.font_size_buttons li a {
+	font-size: 11px;
+}
+
+a.set_fnt_sz {
+	font-size: 11px;
 }

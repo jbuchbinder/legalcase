@@ -16,6 +16,10 @@ p.nav_column_text {
 
 /* Buttons-like effect */
 
+#main_column .prefs_column_menu_head {
+	font-size: 12px;
+}
+
 .prefs_column_menu_head {
 	font-size: 12px;
 }
@@ -34,6 +38,26 @@ a.prefs_normal_lnk {
 
 /* Form elements */
 
+#main_column form.search_form {
+	font-size: 11px;
+}
+
+#main_column input.search_form_txt {
+	font-size: 12px;
+}
+
+#main_column input.search_form_btn,#main_column button.simple_form_btn {
+	font-size: 11px;
+}
+
+#main_column textarea.frm_tarea {
+	font-size: 12px;
+}
+
+#main_column select.sel_frm {
+	font-size: 12px;
+}
+
 form.search_form {
 	font-size: 11px;
 }
@@ -42,7 +66,7 @@ input.search_form_txt {
 	font-size: 12px;
 }
 
-input.search_form_btn, button.simple_form_btn {
+input.search_form_btn,button.simple_form_btn {
 	font-size: 11px;
 }
 
@@ -98,7 +122,7 @@ ul.simple_list li {
 	font-size: 12px;
 }
 
-a.add_lnk,a.create_new_lnk,a.edit_lnk,a.run_lnk,a.prefs_myprefs,a.prefs_logout {
+a.add_lnk,a.create_new_lnk,a.edit_lnk,a.run_lnk {
 	font-size: 11px;
 }
 
