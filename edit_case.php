@@ -16,6 +16,12 @@ if (empty($errors)) {
 	if (isset($ref)) $case_data['ref_edit_case'] = $ref;
 	else $case_data['ref_edit_case'] = $GLOBALS['HTTP_REFERER'];
 
+	// Register case ID as session variable
+    if (!session_is_registered("case"))
+		session_register("case");
+
+	$case = $_GET['case'];
+
 	// Register case type variable for the session
 	if (!session_is_registered("existing"))
 		session_register("existing");
@@ -32,12 +38,6 @@ if (empty($errors)) {
 			WHERE id_case=$case";
 
 		$result = lcm_query($q);
-
-		// Register case ID as session variable
-	    if (!session_is_registered("case")) {
-			$case = $_GET['case'];
-			session_register("case");
-		}
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach ($row as $key => $value) {
