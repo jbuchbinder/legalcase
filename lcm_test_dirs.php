@@ -23,16 +23,13 @@ function bad_dirs($bad_dirs, $test_dir, $install) {
 	echo "<div class='box_error'>\n";
 	echo "<p>". _T('directories_bad_rights') . _T('typo_column') ."</p>\n";
 	echo "<ul>". $bad_dirs ."</ul>\n";
-	echo "<p>". _T('directories_bad_rights_cause') ."</p>\n";
+	echo "<p>". _T('directories_bad_rights_cause') . lcm_help('install_permissions') . "</p>\n";
 	echo "</div>\n";
-
-	// if ($install)
-	//	echo help ("install0");
 
 	echo "<p>". _T('directories_continue') ."</p>\n";
 
 	echo "<form action='$bad_urls' method='get'>\n";
-	echo "<div align='right'><input type='submit' class='fondl' name='Valider' value='". _T('button_reload_page')."'></div>";
+	echo "<div align='right'><button class='fondl' name='Validate'>". _T('button_reload_page')."</button></div>";
 	echo "</form>";
 
 	install_html_end();
