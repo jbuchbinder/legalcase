@@ -132,7 +132,10 @@ else lcm_page_start(_T('new_case'));
 	<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . '</button>
 	<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n";
 	}
-	echo '	<button name="reset" type="reset" class="simple_form_btn">' . _T('reset') . "</button>\n";
+
+	if ($existing)
+		echo '	<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
+
 	echo '	<input type="hidden" name="ref_edit_case" value="' . $case_data['ref_edit_case'];
 	echo '">
 </form>
