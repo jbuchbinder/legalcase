@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.18 2004/11/24 15:21:48 makaveev Exp $
+	$Id: listauthors.php,v 1.19 2004/12/10 08:33:12 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -69,14 +69,19 @@ if ($list_pos>0)
 <table border='0' width='99%' align='center' class='tbl_usr_dtl'>
 <tr><th class='heading'>Name</th><th class='heading'>Status</th><th class='heading'>Action</th></tr>
 <?php
+
 // Process the output of the query
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show author name
 	echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-//	if ( ) echo '<a href=".php?author=' . $row['id_author'] . '" class="content_link">';
+	if (($GLOBALS['author_session']['status'] == 'admin') ||
+		($row['id_author'] == $GLOBALS['author_session']['id_author']))
+			 echo '<a href=".php?author=' . $row['id_author'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' '
 		. $row['name_last']),$find_author_string);
-//	if ( ) echo '</a>';
+	if (($GLOBALS['author_session']['status'] == 'admin') ||
+		($row['id_author'] == $GLOBALS['author_session']['id_author']))
+			echo '</a>';
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo clean_output($row['status']);
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
@@ -87,7 +92,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 ?>
 </table>
-<br /><a href="edit_author.php?author=0" class="create_new_lnk">Add author</a>
+<br /><a href="edit_author.php?author=0" class="create_new_lnk">Add author</a><br />
 
 <?php
 
