@@ -18,10 +18,11 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: attach_file.php,v 1.2 2005/02/21 14:16:58 antzi Exp $
+	$Id: attach_file.php,v 1.3 2005/02/21 14:31:26 antzi Exp $
 */
 
 include("inc/inc.php");
+include_lcm('inc_filters');
 
 // Get POST values
 $case = intval($_POST['case']);
@@ -35,7 +36,7 @@ if (isset($_FILES['filename'])) {
 	if (is_uploaded_file($filename)) {
 		$file = fopen($filename,"r");
 		$file_contents = fread($file, filesize($filename));
-		$file_contents = addslashes($file_contents);
+		$file_contents = clean_input($file_contents);
 	
 		$q = "INSERT INTO lcm_case_attachment
 			SET	id_case=$case,
