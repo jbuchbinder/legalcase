@@ -70,7 +70,7 @@ if ($list_pos>0)
 </form>
 
 <table border='1' align='center' class='tbl_data'>
-<tr><th class='tbl_head'>Name</th><th class='tbl_head'>Status</th></tr><th class='tbl_head'>Action</th></tr>
+<tr><th class='tbl_head'>Name</th><th class='tbl_head'>Status</th><th class='tbl_head'>Action</th></tr>
 <?php
 // Process the output of the query
 for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
@@ -82,6 +82,7 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 //	if ( ) echo '</a>';
 	echo "</td>\n<td class='tbl_data'>";
 	echo clean_output($row['status']);
+	echo "</td>\n<td class='tbl_data'>";
 	if ($GLOBALS['author_session']['status'] = 'admin')
 		echo '<a href="edit_author.php?author=' . $row['id_author'] . '">Edit</a>';
 	echo "</td></tr>\n";
