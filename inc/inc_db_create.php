@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.26 2005/02/10 14:24:28 antzi Exp $
+	$Id: inc_db_create.php,v 1.27 2005/02/10 16:25:58 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -236,33 +236,52 @@ function create_database() {
 		table_name varchar(255) NOT NULL default '',
 		field_name varchar(255) NOT NULL default '',
 		description varchar(255) NOT NULL default '',
+		filter enum('none','date','number','text') NOT NULL default 'none',
 		enum_type text NOT NULL DEFAULT '',
 		PRIMARY KEY  (id_field))";
 
 	$result = lcm_query($query);
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+		
+	// Just in case
+	lcm_query("DELETE FROM lcm_fields");
 
-	$query = "REPLACE INTO lcm_fields (id_field, table_name, field_name, description, enum_type) VALUES
-			(1, 'lcm_case', 'title', 'Case: Title', ''),
-			(2, 'lcm_case', 'id_court_archive', 'Case: Court archive ID', ''),
-			(3, 'lcm_case', 'date_creation', 'Case: Creation date', ''),
-			(4, 'lcm_case', 'date_assignment', 'Case: Assignment date', ''),
-			(5, 'lcm_case', 'legal_reason', 'Case: Legal reason', ''),
-			(6, 'lcm_case', 'alledged_crime', 'Case: Alleged crime', ''),
-			(7, 'lcm_author', 'name_first', 'Author: First name', ''),
-			(8, 'lcm_author', 'name_middle', 'Author: Middle name', ''),
-			(9, 'lcm_author', 'name_last', 'Author: Last name', ''),
-			(10, 'lcm_author', 'date_creation', 'Author: Date created', ''),
-			(11, 'lcm_author', 'date_update', 'Author: Date updated', ''),
-			(12, 'lcm_case', 'count(*)', 'COUNT(*)', ''),
-			(13, 'lcm_author', 'count(*)', 'COUNT(*)', ''),
-			(14, 'lcm_author', 'id_author', 'Author: ID', ''),
-			(15, 'lcm_case', 'id_case', 'Case: ID', ''),
-			(16, 'lcm_followup', 'type', 'Activities: Type', 'keyword:system_kwg:followups'),
-			(17, 'lcm_followup', 'date_start', 'Activities: Date start', ''),
-			(18, 'lcm_followup', 'date_end', 'Activities: Date end', ''),
-			(19, 'lcm_followup', 'date_end - date_start', 'Activities: Time spent', ''),
-			(20, 'lcm_followup', 'id_followup', 'Activities: ID', '')";
+	$query = "INSERT INTO lcm_fields (table_name, field_name, description, enum_type, filter) VALUES
+				('lcm_case',     'id_case',          'id_case',          '', 'number'),
+				('lcm_case',     'title',            'title',            '', 'text'),
+				('lcm_case',     'id_court_archive', 'id_court_archive', '', 'text'),
+				('lcm_case',     'date_creation',    'date_creation',    '', 'date'),
+				('lcm_case',     'date_assignment',  'date_assignment',  '', 'date'),
+				('lcm_case',     'legal_reason',     'legal_reason',     '', 'none'),
+				('lcm_case',     'alledged_crime',   'alleged_crime',    '', 'none'),
+				('lcm_case',     'count(*)',         'count',            '', 'number'),
+				('lcm_author',   'id_author',        'id_author',        '', 'number'),
+				('lcm_author',   'id_office',        'id_office',        '', 'number'),
+				('lcm_author',   'name_first',       'name_first',       '', 'text'),
+				('lcm_author',   'name_middle',      'name_middle',      '', 'text'),
+				('lcm_author',   'name_last',        'name_last',        '', 'text'),
+				('lcm_author',   'date_creation',    'date_creation',    '', 'date'),
+				('lcm_author',   'status',           'status',           '', 'text'),
+				('lcm_author',   'count(*)',         'count',            '', 'number'),
+				('lcm_client',   'id_client',        'id_client',        '', 'number'),
+				('lcm_client',   'name_first',       'name_first',       '', 'text'),
+				('lcm_client',   'name_middle',      'name_middle',      '', 'text'),
+				('lcm_client',   'name_last',        'name_last',        '', 'text'),
+				('lcm_client',   'date_creation',    'date_creation',    '', 'date'),
+				('lcm_client',   'citizen_number',   'citizen_number',   '', 'text'),
+				('lcm_client',   'civil_status',     'civil_status',     'keyword:system_kwg:civilstatus', 'number'),
+				('lcm_client',   'income',           'income',           'keyword:system_kwg:income', 'number'),
+				('lcm_client',   'gender',           'gender',           'list:female,male,unknown', 'text'),
+				('lcm_followup', 'id_followup',      'id_followup',      '', 'number'),
+				('lcm_followup', 'id_case',          'id_case',          '', 'number'),
+				('lcm_followup', 'id_author',        'id_author',        '', 'number'),
+				('lcm_followup', 'type',             'type',             'keyword:system_kwg:followups', 'number'),
+				('lcm_followup', 'description',      'description',      '', 'none'),
+				('lcm_followup', 'sumbilled',        'sumbilled',        '', 'number'),
+				('lcm_followup', 'date_start',       'date_start',       '', 'date'),
+				('lcm_followup', 'date_end',         'date_end',         '', 'date'),
+				('lcm_followup', 'date_end - date_start', 'time_spent',  '', 'number'),
+				('lcm_followup', 'count(*)',         'count',            '', 'none')";
 
 	$result = lcm_query($query);
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
