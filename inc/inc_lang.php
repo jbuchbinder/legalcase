@@ -83,6 +83,7 @@ function lcm_set_language_from_browser() {
 //
 function traduire_chaine($code, $args) {
 	global $lcm_lang;
+	global $debug;
 
 	// list of modules to process (ex: "module:my_string")
 	$modules = array('lcm');
@@ -120,14 +121,17 @@ function traduire_chaine($code, $args) {
 		}
 	}
 
+	if (empty($text) || $text == '') {
+		lcm_log("Warning: translation string -" . $code . "- has no text");
+		if ($debug)
+			$text = $code;
+	}
+
 	// Insert the variables into the strings
 	if (!$args) return $text;
 	while (list($name, $value) = each($args))
 		$text = str_replace ("@$name@", $value, $text);
 	
-	if (empty($text))
-		lcm_log("Warning: translation string -" . $code . "- has no text");
-
 	return $text;
 }
 
