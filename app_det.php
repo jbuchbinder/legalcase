@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.5 2005/03/09 13:17:05 antzi Exp $
+	$Id: app_det.php,v 1.6 2005/03/09 14:50:45 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -94,9 +94,28 @@ if ($row = lcm_fetch_array($result)) {
 	}
 
 	if ($row['id_case'] > 0) {
-		// Show create followup from appointment
-		echo '<br /><a href="edit_fu.php?case=' . $row['id_case'] . '&amp;app=' . $row['id_app']
-			. "\">Create new followup from this appointment</a><br /><br />\n";
+		echo '<br />';
+		// Show child followup
+		$q = "SELECT lcm_app_fu.id_followup,lcm_followup.description FROM lcm_app_fu,lcm_followup
+			WHERE lcm_app_fu.id_app=" . $row['id_app'] . "
+				AND lcm_app_fu.id_followup=lcm_followup.id_followup
+				AND lcm_app_fu.relation='parent'";
+		$res_fu = lcm_query($q);
+		if (lcm_num_rows($res_fu) > 0) {
+			// Show child followup
+			$fu = lcm_fetch_array($res_fu);
+			$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
+			if (strlen(lcm_utf8_decode($fu['description'])) < $title_length)
+				$short_description = $fu['description'];
+			else
+				$short_description = substr($fu['description'],0,$title_length) . '...';
+			echo 'Followup:' . ' <a href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description;
+		} else {
+			// Show create followup from appointment
+			echo '<br /><a href="edit_fu.php?case=' . $row['id_case'] . '&amp;app=' . $row['id_app']
+				. '">Create new followup from this appointment';
+		}
+		echo "</a><br /><br />\n";
 	}
 
 	echo "</p>";
