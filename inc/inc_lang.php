@@ -95,24 +95,25 @@ function traduire_chaine($code, $args) {
 	}
 
 	// go thgough all the modules until we find our string
+	$text = '';
+
 	while (!$text AND (list(,$module) = each ($modules))) {
 		$var = "i18n_".$module."_".$lcm_lang;
-		if (!$GLOBALS[$var])
+		if (! isset($GLOBALS[$var]))
 			load_language_file($lcm_lang, $module);
 
-		if (!$flag_ecrire) {
-			if (!isset($GLOBALS[$var][$code]))
-				load_language_file($lcm_lang, $module, $code);
+		if (!isset($GLOBALS[$var][$code]))
+			load_language_file($lcm_lang, $module, $code);
 
-			if (isset($GLOBALS[$var][$code]))
-				$cache_lang[$lcm_lang][$code] = 1;
-		}
+		if (isset($GLOBALS[$var][$code]))
+			$cache_lang[$lcm_lang][$code] = 1;
+
 		$text = $GLOBALS[$var][$code];
 	}
 
 	// Languages which are not finished or late  (...)
-	if ($lcm_lang<>'en') {
-		$text = ereg_replace("^<(NEW|MODIF)>","",$text);
+	if ($lcm_lang <> 'en') {
+		$text = ereg_replace("^<(NEW|MODIF)>", "", $text);
 		if (!$text) {
 			$lcm_lang_temp = $lcm_lang;
 			$lcm_lang = 'en';
