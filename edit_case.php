@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.57 2005/03/03 16:28:16 mlutfy Exp $
+	$Id: edit_case.php,v 1.58 2005/03/04 23:48:21 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -73,7 +73,7 @@ if (empty($_SESSION['errors'])) {
 			}
 		}
 
-		$admin = allowed($case,'a');
+		$_SESSION['case_data']['admin'] = allowed($case,'a');
 
 	} else {
 		// Set default values for the new case
@@ -81,7 +81,7 @@ if (empty($_SESSION['errors'])) {
 		$_SESSION['case_data']['pub_write'] = read_meta('case_default_write');
 		$_SESSION['case_data']['status'] = 'draft';
 
-		$admin = true;
+		$_SESSION['case_data']['admin'] = true;
 
 	}
 }
@@ -164,7 +164,7 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "		<tr><td>" . _T('case_input_status') . "</td>
 			<td>";
 	echo "<select name='status' class='sel_frm'>\n";
-	$statuses = array('draft','open','suspended','closed','merged');
+	$statuses = ($existing ? array('draft','open','suspended','closed','merged') : array('draft','open') );
 	foreach ($statuses as $s)
 		echo "\t\t\t\t<option" .  (($s == $_SESSION['case_data']['status']) ? ' selected' : '') . ">$s</option>\n";
 	echo "\t\t\t</select></td>\n";
@@ -182,24 +182,24 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "\t\t</tr>\n";
 
 	// Public access rights
-	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
+	if ($_SESSION['case_data']['admin'] || !read_meta('case_read_always') || !read_meta('case_write_always')) {
 		echo "\t<tr><td>" . _T('public') . "</td>
 			<td>
 				<table>
 				<tr>\n";
 
-		if (!read_meta('case_read_always') || $admin) echo "			<td>" . _T('read') . "</td>\n";
-		if (!read_meta('case_write_always') || $admin) echo "			<td>" . _T('write') . "</td>\n";
+		if (!read_meta('case_read_always') || $_SESSION['case_data']['admin']) echo "			<td>" . _T('read') . "</td>\n";
+		if (!read_meta('case_write_always') || $_SESSION['case_data']['admin']) echo "			<td>" . _T('write') . "</td>\n";
 
 		echo "</tr><tr>\n";
 
-		if (!read_meta('case_read_always') || $admin) {
+		if (!read_meta('case_read_always') || $_SESSION['case_data']['admin']) {
 			echo '			<td><input type="checkbox" name="public" value="yes"';
 			if ($_SESSION['case_data']['public']) echo ' checked="checked"';
 			echo "></td>\n";
 		}
 
-		if (!read_meta('case_write_always') || $admin) {
+		if (!read_meta('case_write_always') || $_SESSION['case_data']['admin']) {
 			echo '			<td><input type="checkbox" name="pub_write" value="yes"';
 			if ($_SESSION['case_data']['pub_write']) echo ' checked="checked"';
 			echo "></td>\n";
@@ -230,11 +230,9 @@ if ($_SESSION['case_data']['id_case']) {
 	// [ML] if ($existing)
 	//	echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
 
-	echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['case_data']['ref_edit_case'];
-	echo '">
-</form>
-
-';
+	echo '<input type="hidden" name="admin" value="' . $_SESSION['case_data']['admin'] . "\" />\n";
+	echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['case_data']['ref_edit_case'] . "\" />\n";
+	echo "</form>\n\n";
 
 	lcm_page_end();
 
