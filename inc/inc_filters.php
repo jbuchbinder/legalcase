@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.59 2005/04/04 14:28:43 mlutfy Exp $
+	$Id: inc_filters.php,v 1.60 2005/04/05 06:16:55 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -297,32 +297,67 @@ function recup_time($numdate) {
 	return array($hours, $minutes, $seconds);
 }
 
-function get_datetime_from_array($source, $prefix, $fallback = '') {
+function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = '') {
+	$has_date = false;
 	$ret = '';
 
 	if ($prefix)
 		$prefix = $prefix . '_';
 
-	if (is_numeric($source[$prefix . 'year']) 
-		&& is_numeric($source[$prefix . 'month'])
-		&& is_numeric($source[$prefix . 'day']))
-	{
-		$ret .= sprintf("%04d", $source[$prefix . 'year']) . '-' 
-			. sprintf("%02d", $source[$prefix . 'month']) . '-'
-			. sprintf("%02d", $source[$prefix . 'day']);
+	if (is_numeric($source[$prefix . 'year'])) {
+		$ret .= sprintf("%04d", $source[$prefix . 'year']) . '-';
+		$has_date = true;
+	} else {
+		$ret .= '0000-';
 	}
 
-	if (is_numeric($source[$prefix . 'hour'])
-		&& is_numeric($source[$prefix . 'minutes'])
-		&& is_numeric($source[$prefix . 'seconds']))
-	{
-		if ($ret)
-			$ret .= " ";
-
-		$ret .= $source[$prefix . 'hour'] . ':' . $source[$prefix . 'minutes'] . ':' . $source[$prefix . 'seconds'];
+	if (is_numeric($source[$prefix . 'month'])) {
+		$ret .= sprintf("%02d", $source[$prefix . 'month']) . '-';
+		$has_date = true;
+	} else {
+		$ret .= '00-';
+	}
+	
+	if (is_numeric($source[$prefix . 'day'])) {
+		$ret .= sprintf("%02d", $source[$prefix . 'day']);
+		$has_date = true;
+	} else {
+		$ret .= '00';
 	}
 
-	if ($ret)
+	$ret .= " ";
+
+	if (is_numeric($source[$prefix . 'hour'])) {
+		$ret .= sprintf("%02d", $source[$prefix . 'hour']) . ':';
+		$has_date = true;
+	} else {
+		if ($type == 'start')
+			$ret .= '00:';
+		else
+			$ret .= '23:';
+	}
+
+	if (is_numeric($source[$prefix . 'minutes'])) {
+		$ret .= sprintf("%02d", $source[$prefix . 'minutes']) . ':';
+		$has_date = true;
+	} else {
+		if ($type == 'start')
+			$ret .= '00:';
+		else
+			$ret .= '59:';
+	}
+	
+	if (is_numeric($source[$prefix . 'seconds'])) {
+		$ret .= sprintf("%02d", $source[$prefix . 'seconds']);
+		$has_date = true;
+	} else {
+		if ($type == 'start')
+			$ret .= '00';
+		else
+			$ret .= '59';
+	}
+
+	if ($has_date)
 		return $ret;
 	else
 		return $fallback;
