@@ -150,10 +150,10 @@ if (@file_exists('inc/my_options.php'))
 $lcm_version = 0.10;
 
 // Current version of LCM shown on screen
-$lcm_version_shown = "0.1 alpha 1 CVS $Name:  $";
+$lcm_version_shown = "0.1";
 
-// Current version of LCM with cvs tags
-if (ereg('Name: v(.*) ','$Name:  $', $regs)) $lcm_version_shown = $regs[1];
+if ($debug)
+	$lcm_version_shown .= " $Date: 2004/10/20 10:25:30 $";
 
 
 // Don't show silly warnings
