@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.11 2005/02/03 09:57:25 mlutfy Exp $
+	$Id: rep_det.php,v 1.12 2005/02/03 11:18:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -27,33 +27,57 @@ include_lcm('inc_conditions');
 
 $rep = intval($_GET['rep']);
 
-if ($rep > 0) {
-	$q="SELECT *
-		FROM lcm_report
-		WHERE id_report=$rep";
+if (! $rep > 0) {
+	lcm_page_start(_T('title_error'));
+	echo "<p>" . 'Error: no report specified' . "</p>\n";
+	lcm_page_end();
+}
 
-	$result = lcm_query($q);
+//
+// Fetch general info on report
+//
 
-	// Process the output of the query
-	if ($row = lcm_fetch_array($result)) {
+$q="SELECT *
+	FROM lcm_report
+	WHERE id_report = $rep";
 
-		// Show report details
-		lcm_page_start("Report details: " . $row['title']);
+$result = lcm_query($q);
 
-		$edit = (($GLOBALS['author_session']['status'] == 'admin') ||
-			($row['id_author'] == $GLOBALS['author_session']['id_author']));
+$row = lcm_fetch_array($result);
 
-		//echo "<p class='normal_text'>";
-		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report details</div><p class='normal_text'>";
+if (! $row) {
+	lcm_page_start(_T('title_error'));
+	echo "<p>The report does not exist (ID = " . $rep . ").</p>";
+	lcm_page_end();
+	exit;
+}
 
-		if ($edit)
-			echo '<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="edit_lnk">Edit this report</a>&nbsp;';
-		echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="run_lnk">Run this report</a><br /><br />';
-//		echo "\nReport ID: " . $row['id_report'] . "<br>\n";
-		echo "Created on: " . $row['date_creation'] . "<br>\n";
-		echo "Last update: " . $row['date_update'] . "<br>\n";
+//
+// Show info on the report
+//
 
-		echo "</p><br /></fieldset>";
+lcm_page_start("Report details: " . $row['title']);
+
+$edit = (($GLOBALS['author_session']['status'] == 'admin') ||
+		($row['id_author'] == $GLOBALS['author_session']['id_author']));
+
+echo "<fieldset class='info_box'>";
+echo "<div class='prefs_column_menu_head'>" . "Report details" . "</div>\n";
+
+if ($row['description'])
+	echo '<p class="normal_text">' . $row['description'] . '</p>' . "\n";
+
+echo "<p class='normal_text'>";
+echo "Created on: " . format_date($row['date_creation']) . "<br/>\n";
+echo "Last update: " . format_date($row['date_update']) . "<br/>\n";
+echo "<br />\n";
+
+if ($edit)
+	echo '<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="edit_lnk">' . "Edit this report" . '</a>&nbsp;';
+
+echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="run_lnk">Run this report</a><br /><br />';
+echo "</p></fieldset>";
+
 //
 //	List the columns in the report
 //
@@ -254,13 +278,6 @@ if ($rep > 0) {
 		
 		echo "</p></fieldset>";
 
-	} // End of check if such report exists in the database
-
 	lcm_page_end();
-} else {
-	lcm_page_start(_T('title_error'));
-	echo "<p>" . 'Error: no report specified' . "</p>\n";
-	lcm_page_end();
-}
 
 ?>
