@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.30 2005/02/09 12:29:16 antzi Exp $
+	$Id: upd_fu.php,v 1.31 2005/02/10 09:12:08 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -45,9 +45,10 @@ foreach($_POST as $key => $value)
 // Convert day, month, year to date
 // Check submitted information
 // date_start
-$unix_date_start = strtotime($_SESSION['fu_data']['start_year'] . '-' . $_SESSION['fu_data']['start_month'] . '-' . $_SESSION['fu_data']['start_day'] . ' ' .
-							 $_SESSION['fu_data']['start_hour'] . ':' . $_SESSION['fu_data']['start_minutes'] . ':' .
-							 (isset($_SESSION['fu_data']['start_seconds']) ? $_SESSION['fu_data']['start_seconds'] : '00'));
+$unix_date_start = strtotime($_SESSION['fu_data']['start_year'] . '-' . $_SESSION['fu_data']['start_month'] . '-' . $_SESSION['fu_data']['start_day'] . ' '
+						. (isset($_SESSION['fu_data']['start_hour']) ? $_SESSION['fu_data']['start_hour'] : '00') . ':'
+						. (isset($_SESSION['fu_data']['start_minutes']) ? $_SESSION['fu_data']['start_minutes'] : '00') . ':'
+						. (isset($_SESSION['fu_data']['start_seconds']) ? $_SESSION['fu_data']['start_seconds'] : '00'));
 
 if ($unix_date_start<0)
 	$_SESSION['errors']['date_start'] = 'Invalid start date!';
