@@ -14,7 +14,18 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // B
 'button_next' => 'Next',
+'button_reload_page' => 'Reload this page',
 'button_validate' => 'Validate',
+
+
+// D
+'directories_bad_rights' => 'The following directories do not have write permission',
+'directories_bad_rights_cause' => 'To change this, use your SSH/SFTP client in order to set access permissions for each of these directories. The procedure is detailed in the install guide.',
+'directories_continue' => 'Once you are ready, you can reload this page.',
+'directories_missing' => 'The following directories have not been found',
+'directories_missing_possible_cause' => 'The possible cause is a bad lower or upper case handling. Please make sure that the lower and upper case letters of these directories match what is displayed above; if they don\'t, rename the directories using your SSH/SFTP client in order to correct the error.',
+'directories_setup_problem' => 'Problem in access permissions',
+'directories_setup_start' => 'Preliminary: Setting up access permissions',
 
 
 // E
