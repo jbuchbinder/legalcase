@@ -16,13 +16,14 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: add_auth.php,v 1.10 2004/12/14 15:17:26 antzi Exp $
+	$Id: add_auth.php,v 1.11 2005/03/03 16:06:24 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
+include_lcm('inc_filters');
 include_lcm('inc_lang');
 
 // Clean input variables
@@ -51,10 +52,9 @@ if ($case>0) {
 
 				// Add 'assigned' followup to the case
 				$q = "INSERT INTO lcm_followup
-						SET id_followup=0,id_case=$case,type='assignment',description='";
-				$q .= $author_data['name_first'];
-				$q .= (($author_data['name_middle']) ? ' ' . $author_data['name_middle'] : '');
-				$q .= (($author_data['name_last']) ? ' ' . $author_data['name_last'] : '');
+						SET id_followup=0,id_case=$case,id_author=" . $GLOBALS['author_session']['id_author']
+						. ",type='assignment',description='";
+				$q .= njoin(array($author_data['name_first'], $author_data['name_middle'], $author_data['name_last']));
 				$q .= " assigned to the case',date_start=NOW()";
 				$result = lcm_query($q);
 
