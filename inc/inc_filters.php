@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.34 2005/03/01 10:19:47 antzi Exp $
+	$Id: inc_filters.php,v 1.35 2005/03/01 10:38:25 antzi Exp $
 */
 
 // Execute this file only once
@@ -93,7 +93,7 @@ function format_date($timestamp = '', $format = 'full') {
 
 // Formats time interval
 function format_time_interval($time, $hours_only=false, $hours_only_format='%.2f') {
-	if (is_int($time) && ($time>0)) {
+	if (is_numeric($time) && ($time>0)) {
 		if ($hours_only) {
 			$days = 0;
 			$hours = $time / 3600;
