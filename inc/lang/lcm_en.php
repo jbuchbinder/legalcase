@@ -33,7 +33,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'enter_name_first' => 'First',
 'enter_name_last' => 'Last',
 'enter_name_middle' => 'Middle',
-'Error' => 'Error',
 'error_add_auth_no_rights' => 'You don\'t have permission to add access rights to this case!',
 
 
@@ -100,8 +99,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // T
+'test' => '',
+'title_error' => 'Error',
 'title_software' => 'Legal Case Management System',
 'title_software_article' => 'The Legal Case Management Software',
+'title_technical_message' => 'Technical message',
 'typo_column' => ':',
 
 
