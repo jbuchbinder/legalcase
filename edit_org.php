@@ -2,13 +2,6 @@
 
 include('inc/inc.php');
 
-// Error display function
-function f_err($fn, $errors)
-{
-    if (isset($errors[$fn]))
-		echo "<font color='red'>$errors[$fn]</font><br>";
-}
-
 // Create empty org data
 $org_data=array();
 

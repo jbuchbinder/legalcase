@@ -1,13 +1,7 @@
 <?php
 
 include('inc/inc.php');
-
-// Error display function
-function f_err($fn, $errors)
-{
-    if (isset($errors[$fn]))
-		echo "<font color='red'>$errors[$fn]</font><br>";
-}
+include_lcm('inc_filters');
 
 // Create empty client data
 $client_data = array();
