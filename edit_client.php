@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.29 2005/02/08 20:10:44 antzi Exp $
+	$Id: edit_client.php,v 1.30 2005/02/08 21:19:37 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -213,7 +213,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 */
 
 	// Show all contacts
-	foreach ($contacts_other as $contact) {
+	foreach ($contacts as $contact) {
 		print_existing_contact($contact, $cpt);
 		$cpt++;
 	}
