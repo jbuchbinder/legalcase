@@ -145,6 +145,7 @@ function show_author_form() {
               <td align="right" valign="top">Font size:</td>
               <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" /> 
                 &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" /> 
+				(not working yet)
                 <!-- [ML:should we remove?] br /> <br /> 
                 <select name="sel_fnt" class="sel_frm" id="sel_fnt">
                   <option value="verdana" selected="selected">Verdana</option>
