@@ -453,7 +453,7 @@ function use_language_of_visitor() {
 	if (!lcm_set_language_from_browser())
 		use_language_of_site();
 
-	if ($GLOBALS['author_session']['lang'])
+	if (isset($GLOBALS['author_session']['lang']))
 		lcm_set_language($GLOBALS['author_session']['lang']);
 
 	if ($cookie_lang = $HTTP_COOKIE_VARS['lcm_lang'])
