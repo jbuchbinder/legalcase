@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.191 2005/03/30 10:56:13 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.192 2005/03/31 08:42:00 makaveev Exp $
 */
 
 //
@@ -292,9 +292,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	// Start agenda box
 	echo '<div class="nav_menu_box">' . "\n";
 		echo '<div class="nav_column_menu_head">';
-			echo '<div class="mm_agenda">';
-			echo '<a href="listapps.php">'. _T('menu_agenda') . '</a>
-				</div>
+			echo '<div class="mm_agenda">'. _T('menu_agenda') . '</div>
 			</div>';
 	$events = false;
 
@@ -359,7 +357,8 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	if (!$events) {
 		echo '<p class="nav_column_text">' . "No activities" . "</p>\n"; // TRAD
 	}
-
+	
+	echo "&nbsp;<a href=\"listapps.php\" title=\"". _T('title_agenda_list') ."\"><img src=\"images/jimmac/stock_show-form-dialog.png\" border=\"0\" width=\"16\" height=\"16\" alt=\"\" /></a>&nbsp;<a href=\"edit_app.php?app=0\" title=\"". _T('app_button_new') ."\"><img src=\"images/jimmac/stock_new-16.png\" border=\"0\" width=\"16\" height=\"16\" alt=\"\" /></a>";
 	// End of nav_menu_box for Agenda
 	echo "</div>\n";
 
