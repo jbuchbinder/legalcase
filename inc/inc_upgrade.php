@@ -30,7 +30,7 @@ function upgrade_database() {
 	// $result = spip_query("SELECT valeur FROM spip_meta WHERE name='version_lcm'");
 	// if ($result) if ($row = spip_fetch_array($result)) $version_installee = (double) $row['valeur'];
 	$version_installee = lire_meta('version_lcm');
-	echo "VERSION = $version \n";
+	// echo "VERSION = $version \n";
 
 	//
 	// Si pas de version mentionnee dans spip_meta, c'est qu'il s'agit d'une nouvelle installation
