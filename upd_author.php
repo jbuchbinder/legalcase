@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.22 2005/03/24 13:42:48 mlutfy Exp $
+	$Id: upd_author.php,v 1.23 2005/04/05 13:30:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -39,6 +39,13 @@ function force_session_restart($id_author) {
 
 function change_password() {
 	global $author_session;
+
+	if ($_SESSION['usr']['status'] != 'admin' 
+		&& $_SESSION['usr']['status'] != 'normal'
+		&& empty($_SESSION['usr']['username']))
+	{
+		return;
+	}
 
 	// FIXME: include auth type according to 'auth_type' field in DB
 	// default on 'db' if field not present/set.
@@ -100,6 +107,13 @@ function change_password() {
 
 function change_username($id_author, $old_username, $new_username) {
 	global $author_session;
+
+	if ($_SESSION['usr']['status'] != 'admin' 
+		&& $_SESSION['usr']['status'] != 'normal'
+		&& empty($_SESSION['usr']['username']))
+	{
+		return;
+	}
 
 	include_lcm('inc_auth_db');
 	$class_auth = 'Auth_db'; // FIXME, take from author_session
@@ -175,13 +189,6 @@ if ($_SESSION['usr']['id_author'] > 0) {
 			WHERE id_author = " . $_SESSION['usr']['id_author'];
 	$result = lcm_query($q);
 } else {
-	// Keep form information in session, just in case there is an error
-	// now or later (username/pass).
-	/* [ML] It is already saved
-	foreach($usr as $key => $value)
-		$_SESSION['usr'][$key] = $value;
-	*/
-
 	if (count($errors)) {
     	header("Location: edit_author.php?author=0");
 		exit;
