@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.83 2005/04/04 06:28:52 mlutfy Exp $
+	$Id: edit_fu.php,v 1.84 2005/04/04 14:12:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -244,14 +244,19 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				echo htmlspecialchars($currency);
 				echo "</td></tr>";
 			}
-// Add followup appointment
-		if (!isset($_GET['followup'])) {
-			echo "<!-- Add appointment? -->\n\t\t<tr><td>";
-			echo 'Add consequent appointment?';	// TRAD
-			echo "</td><td>";
-			echo '<input type="checkbox" name="add_appointment" />';
-			echo "</td></tr>\n";
+		
+		echo "</table>\n\n";
 
+		echo "<!-- Add appointment? -->\n";
+		echo '<p class="normal_text">';
+		echo '<input type="checkbox" name="add_appointment" id="box_new_app" onclick="setvisibility(\'new_app\', \'flip\')"; />';
+		echo '<label for="box_new_app">' . 'Add a future activity for this follow-up.' . '</label>'; // TRAD
+		echo "</p>\n";
+
+		// Add followup appointment
+		if (!isset($_GET['followup'])) {
+			echo '<div id="new_app" style="visibility: hidden;">';
+			echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
 			echo "<!-- Start time -->\n\t\t<tr><td>";
 			echo _T('app_input_date_start');
 			echo "</td><td>";
@@ -291,7 +296,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 						strtotime($_SESSION['fu_data']['app_start_time']) - strtotime($_SESSION['fu_data']['app_reminder']) : 0);
 			//	echo _T('calendar_info_time') . ' ';
 				echo get_time_interval_inputs('app_rem_offset', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
-				echo " before the start time"; // TRAD
+				echo " " . _T('time_info_before_start');
 				echo f_err_star('app_reminder',$_SESSION['errors']);
 			}
 			echo "</td></tr>\n";
@@ -328,19 +333,21 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			echo '</select>';
 			echo "</td></tr>\n";
 
-			echo "<!-- Appointment description -->\n\t\t<tr><td valign=\"top\">";
+			echo "<!-- Appointment description -->\n";
+			echo "<tr><td valign=\"top\">";
 			echo _T('app_input_description');
 			echo "</td><td>";
-			echo '<textarea ' . $dis . ' name="app_description" rows="5" cols="40" class="frm_tarea">';
+			echo '<textarea ' . $dis . ' name="app_description" rows="5" cols="60" class="frm_tarea">';
 			echo clean_output($_SESSION['fu_data']['app_description']);
 			echo '</textarea>';
 			echo "</td></tr>\n";
+			echo "</table>\n";
+			echo "</div>\n";
 		}
 
-		echo "	</table>\n";
+		echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 
 		if (isset($_SESSION['followup'])) {
-			echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 			if ($prefs['mode'] == 'extended')
 				echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
 		} else {
@@ -348,9 +355,8 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			if ($prefs['mode'] == 'extended') {
 				echo '<button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 				echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
-				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n"; }
-			else	// Less buttons in simple mode
-				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n";
+			}
 		}
 	?>
 
