@@ -1,3 +1,3 @@
-#main_column div,#main_column p,#main_column td,#main_column a,#main_column option,#main_column table,#main_column fieldset,#main_column form,#main_column input,#main_column ul,#main_column li,#main_column h2,#main_column h3,#main_column h4, #main_column select {
-	font-size: 100%;
+#main_column div,#main_column p,#main_column td,#main_column a,#main_column table,#main_column fieldset,#main_column form,#main_column input,#main_column ul,#main_column li,#main_column h2,#main_column h3,#main_column h4, #main_column select,select.sel_frm {
+	font-size: large;
 }
