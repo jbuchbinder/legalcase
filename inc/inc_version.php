@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.62 2005/03/21 12:14:45 mlutfy Exp $
+	$Id: inc_version.php,v 1.63 2005/03/21 14:41:32 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -827,6 +827,7 @@ function _Ti($text, $args = '') {
 	if (! preg_match('/:$/', $str))
 		$str .= ':';
 	
+	$str .= '&nbsp;';
 	return $str;
 }
 
