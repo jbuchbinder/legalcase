@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.15 2005/03/04 11:49:54 makaveev Exp $
+	$Id: keywords.php,v 1.16 2005/03/07 11:25:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,6 +57,10 @@ function show_all_keywords($type = '') {
 			}
 
 			echo "</ul>\n";
+
+			echo '<p><a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
+				. 'id_group=' . $kwg['id_group'] . '">'
+				. 'Add a new keyword in this group' . "</a></p>\n";
 		}
 		
 		echo "</fieldset>\n";
@@ -152,29 +156,63 @@ function show_keyword_group_id($id_group) {
 //
 // View the details on a keyword 
 //
-function show_keyword_id($id_keyword) {
-	$kw = get_kw_from_id($id_keyword);
+function show_keyword_id($id_keyword = 0) {
+	if (! $id_keyword) {
 
-	lcm_page_start("Keyword: " . $kw['name']);
+		if (! intval($_REQUEST['id_group']) > 0)
+			lcm_panic("missing valid id_group for new keyword");
+
+		$kwg = get_kwg_from_id($_REQUEST['id_group']);
+
+		$kw['name'] = '';
+		$kw['id_group'] = $kwg['id_group'];
+		$kw['ac_author'] = 'Y';
+		$kw['type'] = $kwg['type'];
+	} else {
+		$kw = get_kw_from_id($id_keyword);
+	}
+
+	if ($kw['name'])
+		lcm_page_start("Keyword:" . " " . $kw['name']); // TRAD
+	else
+		lcm_page_start("Keyword:" . " " . "New keyword"); // TRAD
+
 	echo show_all_errors($_SESSION['errors']);
+
+	if (! $id_keyword) {
+		echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
+		echo '<li style="list-style-type: none;">' . _T('keywords_input_for_group') . " " . _T($kwg['title']) . "</li>\n";
+		echo "</ul>\n";
+	}
 	
 	echo '<fieldset class="info_box">';
 	
 	echo '<form action="keywords.php" method="post">' . "\n";
-	
 	echo '<input type="hidden" name="action" value="update_keyword" />' . "\n";
 	echo '<input type="hidden" name="id_keyword" value="' . $id_keyword . '" />' . "\n";
-	echo '<input type="hidden" name="kwg_type" value="' . $kw['type'] . '" />' . "\n";
+	echo '<input type="hidden" name="id_group" value="' . $kw['id_group'] . '" />' . "\n"; // for new keyword only
+
+	// Name (only for new keywords, must be unique and cannot be changed)
+	if (! $id_keyword) {
+		echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
+			. "(short identifier, unique to this keyword group)" . "<br />\n";
+		echo '<input type="text" id="kw_name" name="kw_name" value="' . $kw['name'] . '" class="search_form_txt" />' . "\n";
+		echo "<br /><br />\n";
+	}
 	
-	echo f_err_star('title', $_SESSION['errors']) ."<strong>". _T('keywords_input_title') . "</strong><br />\n";
+	// Title
+	echo "<strong>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "</strong><br />\n";
 	echo "<input type='text' id='kw_title' name='kw_title' value='" .  $kw['title'] . "' class='search_form_txt' />\n";
-	echo '<br /><br />';
+	echo "<br /><br />\n";
+
+	// Description
 	echo "<strong>" . _T('keywords_input_description') . "</strong><br />\n";
 	echo "<textarea id='kw_desc' name='kw_desc' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
 	echo $kw['description'];
 	echo "</textarea>\n";
 	
-	echo "<p>" . "Can authors use this keyword? (otherwise it will be hidden)<br />" . get_yes_no('kw_ac_author', $kw['ac_author']) . "</p>\n";
+	// Ac_author
+	echo "<p>" . "Can authors use this keyword? (otherwise it will be hidden)<br />" . get_yes_no('kw_ac_author', $kw['ac_author']) . "</p>\n"; // TRAD
 
 	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 	echo "</form>\n";
@@ -234,34 +272,76 @@ function update_keyword_group($id_group) {
 //
 function update_keyword($id_keyword) {
 	$kw_title     = $_REQUEST['kw_title'];
+	$kw_name      = $_REQUEST['kw_name']; // only for new keyword
 	$kw_desc      = $_REQUEST['kw_desc'];
 	$kw_ac_author = $_REQUEST['kw_ac_author']; // show/hide keyword
-	$kwg_type     = $_REQUEST['kwg_type'];
+	$kw_idgroup   = intval($_REQUEST['id_group']);
+	$new_keyword  = false;
 
-	if (! intval($id_keyword) > 0)
-		lcm_panic("update_keyword: missing or badly formatted id_keyword");
-	
-	// Get current info about keyword
-	$kw_info = get_kw_from_id($id_keyword);
+	//
+	// Check for errors
+	//
 
-	$fl = "description = '" . clean_input($kw_desc) . "' ";
+	if (! $id_keyword > 0) // new keyword
+		if (! $kw_idgroup)
+			lcm_panic("update_keyword: missing or badly formatted id_keyword or id_group");
+		else
+			$new_keyword = true;
 	
-	if ($kw_title) // cannot be empty
-		$fl .= ", title = '" . clean_input($kw_title) . "' ";
-	else
-		$_SESSION['errors']['title'] = "The title cannot be empty.";
-	
-	if ($kw_ac_author == 'Y' || $kw_ac_author == 'N')
-		$fl .= ", ac_author = '" . $kw_ac_author . "'";
+	if ($new_keyword) {
+		global $system_kwg;
+		$kwg_info = get_kwg_from_id($kw_idgroup);
 
-	$query = "UPDATE lcm_keyword
-				SET $fl
-				WHERE id_keyword = " . $id_keyword;
+		if (! clean_input($kw_name))
+			$_SESSION['errors']['name'] = "The name cannot be empty."; // TRAD
+
+		if (isset($system_kwg[$kwg_info['name']]['keywords'][$kw_name])) // XXX [ML] what about user keywords?
+			$_SESSION['errors']['name'] = "The name already exists in this group (it must be unique).";
+	}
+
+	if (! clean_input($kw_title))
+		$_SESSION['errors']['title'] = "The title cannot be empty"; // TRAD
+
+	if (count($_SESSION['errors'])) {
+		header("Location: " . $GLOBALS['HTTP_REFERER']);
+		exit;
+	}
+
+	//
+	// Apply to database
+	//
+
+	if ($new_keyword) {
+		$query = "INSERT INTO lcm_keyword
+				SET id_group = " . $kw_idgroup . ", 
+					name = '" . clean_input($kw_name) . "',
+					title = '" . clean_input($kw_title) . "',
+					description = '" . clean_input($kw_desc) . "',
+					ac_author = '" . clean_input($kw_ac_author) . "'";
+
+		lcm_query($query);
+		$id_keyword = lcm_insert_id();
+		$kw_info = get_kw_from_id($id_keyword); // for redirection later
+	} else {
+		// Get current info about keyword (don't trust the user)
+		$kw_info = get_kw_from_id($id_keyword);
 	
-	lcm_query($query);
+		$fl = "description = '" . clean_input($kw_desc) . "', "
+			. "title = '" . clean_input($kw_title) . "' ";
+		
+		if ($kw_ac_author == 'Y' || $kw_ac_author == 'N')
+			$fl .= ", ac_author = '" . $kw_ac_author . "'";
+	
+		$query = "UPDATE lcm_keyword
+					SET $fl
+					WHERE id_keyword = " . $id_keyword;
+		
+		lcm_query($query);
+	}
+
 	write_metas(); // update inc_meta_cache.php
 
-	header("Location: keywords.php?tab=" . $kwg_type . "#" . $kw_info['kwg_name']);
+	header("Location: keywords.php?tab=" . $kw_info['type'] . "#" . $kw_info['kwg_name']);
 	exit;
 }
 
