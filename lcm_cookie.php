@@ -67,9 +67,10 @@ if ($logout) {
 }
 
 
-// en cas de login sur bonjour=oui, on tente de poser un cookie
-// puis de passer a spip_login qui diagnostiquera l'echec de cookie
-// le cas echeant.
+// If the user logins with bonjour=oui (hello=yes), we try to put
+// a cookie and then go to lcm_login.php which will try to make a 
+// diagnostic if necessary.
+// [ML] echec == failure
 if ($test_echec_cookie == 'oui') {
 	lcm_setcookie('lcm_session', 'test_echec_cookie');
 	$link = new Link("lcm_login.php?var_echec_cookie=oui");
@@ -122,8 +123,8 @@ if ($essai_login == 'oui') {
 			$cookie_admin = "@".$auth->login;
 
 		$query = "SELECT * FROM lcm_author WHERE username='".addslashes($auth->login)."'";
-		$result = spip_query($query);
-		if ($row_auteur = spip_fetch_array($result))
+		$result = lcm_query($query);
+		if ($row_auteur = lcm_fetch_array($result))
 			$cookie_session = creer_cookie_session($row_auteur);
 
 		// [ML] if (ereg("ecrire/", $cible->getUrl())) {
@@ -161,7 +162,7 @@ if ($cookie_session) {
 
 	$prefs = ($row_auteur['prefs']) ? unserialize($row_auteur['prefs']) : array();
 	$prefs['cnx'] = ($session_remember == 'oui') ? 'perma' : '';
-	spip_query ("UPDATE lcm_author SET prefs = '".addslashes(serialize($prefs))."' WHERE id_author = ".$row_auteur['id_author']);
+	lcm_query("UPDATE lcm_author SET prefs = '".addslashes(serialize($prefs))."' WHERE id_author = ".$row_auteur['id_author']);
 }
 
 // Change the language of the private area (or login)
@@ -183,7 +184,7 @@ if ($var_lang_lcm) {
 			$cible->addvar('test', '123_' .  $GLOBALS['auteur_session']['id_author'] . '_' . $verif);
 
 			if (verifier_action_auteur('var_lang_lcm', $valeur, $id_auteur)) {
-				spip_query ("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_auteur);
+				lcm_query("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_auteur);
 				$auteur_session['lang'] = $var_lang_lcm;
 				ajouter_session($auteur_session, $lcm_session);	// enregistrer dans le fichier de session
 			}
@@ -195,8 +196,8 @@ if ($var_lang_lcm) {
 }
 
 // Redirection
-// Sous Apache, les cookies avec une redirection fonctionnent
-// Sinon, on fait un refresh HTTP
+// Under Apache, cookies with a redirection work
+// Else, we do a HTTP refresh
 if (ereg("^Apache", $SERVER_SOFTWARE)) {
 	@header("Location: " . $cible->getUrl());
 }
