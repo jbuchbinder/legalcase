@@ -52,6 +52,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_theme_green' => 'Green',
 'authorconf_input_theme_monochrome' => 'Monochrome',
 'authorconf_input_theme_orange' => 'Orange',
+'authorconf_input_time_interval_absolute' => 'Absolute (start time - end time)',
+'authorconf_input_time_interval_relative' => 'Relative (start time + duration)',
+'authorconf_input_time_intervals_notation' => 'Time intervals notation',
+'authorconf_input_time_intervals_notation_floatdays_floathours_minutes' => 'Days, hours, integer minutes (0-59)',
+'authorconf_input_time_intervals_notation_floatdays_hours_minutes' => 'Days, integer hours (0-23), integer minutes (0-59)',
+'authorconf_input_time_intervals_notation_hours_only' => 'Duration in hours only',
 'authorconf_input_ui_level' => 'Navigation type:',
 'authorconf_input_ui_level_extended' => 'Technical',
 'authorconf_input_ui_level_simple' => 'Normal',
@@ -62,6 +68,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_tab_advanced' => 'Advanced',
 'authorconf_tab_interface' => 'Interface',
 'authoredit_input_username' => 'Username:',
+'authoredit_subtitle_connectionidentifiers' => 'System connection identifiers',
 'authoredit_subtitle_personalinfo' => 'Personal information',
 
 
@@ -117,6 +124,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_subtitle_attachments' => 'Attachments',
 'client_subtitle_cases' => 'Cases involving this client',
 'client_subtitle_contacts' => 'Contacts',
+'client_subtitle_organisations' => 'Organisations',
 'client_subtitle_view_general' => 'General information',
 'client_tab_attachments' => 'Attachments',
 'client_tab_cases' => 'Cases',
@@ -370,6 +378,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw_stage_pre-trial_title' => 'Pre-trial',
 'kw_stage_second_appeal_title' => 'Second appeal',
 'kw_stage_trial_title' => 'Trial',
+'kwg_appointments_title' => 'Appointments',
 'kwg_civilstatus_title' => 'Civil status',
 'kwg_contacts_title' => 'Contact keywords',
 'kwg_followups_title' => 'Followup keywords',
@@ -391,7 +400,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_password_confirm' => 'Confirm password',
 'login_password_forgotten' => 'Password forgotten?',
 'login_password_incorrect' => 'Incorrect login or password.',
-'login_prefer_no_cookie' => '<b>If you prefer to refuse the cookies</b>, there is another connection method (less secure) at your disposal:',
 'login_register' => 'Register with the site',
 'login_remain_logged_on' => 'Remain logged-on for a few days',
 'login_this_way' => 'You are registered... this way...',
@@ -400,10 +408,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_warning_connection_failed' => 'Connnection failed.',
 'login_warning_connection_failed1' => 'You identified yourself with the identifier <b>@username@</b>, but it does not exist in the database (anymore). It is possible that a database backup was recently imported into the system and that your username has changed.',
 'login_warning_connection_failed2' => 'Please try to reconnect.',
+'login_warning_cookie' => 'Your Web browser did not accept the cookie which is required in order to login.',
 'login_warning_password_change_failed' => 'Failed to change the username:',
 'login_warning_password_dont_match' => 'The passwords do not match.',
 'login_warning_too_short' => 'The username must be at least 3 characters.',
-'login_without_cookie' => 'Identification without cookie',
 
 
 // M
@@ -540,6 +548,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_sum_billed' => 'Sum billed',
 'siteconf_subtitle_case_fields' => 'Cases',
 'siteconf_subtitle_client_fields' => 'Clients and authors',
+'siteconf_subtitle_collab_work' => 'Collaborative work',
 'siteconf_subtitle_followup_fields' => 'Follow-ups',
 'siteconf_subtitle_info_sharing' => 'Information sharing',
 'siteconf_subtitle_refresh_lang' => 'Refresh the list of available languages',
@@ -556,6 +565,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // T
+'title_app_edit' => 'Edit appointment',
+'title_app_new' => 'New appointment',
 'title_archives' => 'Archives',
 'title_authorconf' => 'My preferences',
 'title_case_details' => 'Case details:',
