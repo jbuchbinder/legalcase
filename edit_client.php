@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.26 2005/02/08 18:16:10 antzi Exp $
+	$Id: edit_client.php,v 1.27 2005/02/08 19:38:22 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -143,7 +143,9 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	$contacts_emailmain = get_contacts('client', $client_data['id_client'], 'email_main');
 	$contacts_addrmain = get_contacts('client', $client_data['id_client'], 'address_main');
 	$contacts_other = get_contacts('client', $client_data['id_client'], 'email_main,address_main', 'not');
+	$contacts = get_contacts('client', $client_data['id_client']);
 
+/*
 	function print_existing_contact($c, $num) {
 		echo '<tr><td align="right" valign="top">' . _T($c['title']) . "\n";
 		echo '<td align="left" valign="top">';
@@ -177,7 +179,8 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 		
 		echo "</td>\n</tr>\n\n";
 	}
-
+*/
+	
 	// First show the main address
 	foreach ($contacts_addrmain as $contact) {
 		print_existing_contact($contact, $cpt); 
