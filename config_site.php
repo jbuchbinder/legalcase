@@ -35,8 +35,8 @@ function show_config_form() {
 	if (empty($site_name))
 		$site_name = _T('title_software');
 	
-	if (empty($site_desc))
-		$site_desc = _T('title_software_description');
+	# if (empty($site_desc))
+	#	$site_desc = _T('title_software_description');
 
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
 	echo "\t<input type='hidden' name='conf_modified' value='yes'/>\n";
@@ -171,15 +171,12 @@ function apply_conf_changes() {
 		}
 	}
 
-	// Site description
-	if (! empty($site_desc)) {
-		$old_desc = read_meta('site_description');
-		if (! $old_desc) $old_desc = _T('title_software_description');
+	// Site description (may be empty)
+	$old_desc = read_meta('site_description');
 
-		if ($old_desc != $site_desc) {
-			write_meta('site_description', $site_desc);
-			array_push($log, "Description of site set to <tt>$site_desc</tt>, was <tt>$old_desc</tt>.");
-		}
+	if ($old_desc != $site_desc) {
+		write_meta('site_description', $site_desc);
+		array_push($log, "Description of site set to <tt>$site_desc</tt>, was <tt>$old_desc</tt>.");
 	}
 
 	// Default language
