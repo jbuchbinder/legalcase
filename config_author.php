@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.51 2005/02/24 15:17:25 mlutfy Exp $
+	$Id: config_author.php,v 1.52 2005/02/24 15:51:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -47,7 +47,7 @@ function show_author_form($tab) {
 		//
 		// User interface
 		//
-		case 0 : ?>
+		case 'interface' : ?>
 <form name="upd_user_profile" method="post" action="config_author.php">
 	<input type="hidden" name="author_ui_modified" value="yes"/>
 	<input type="hidden" name="referer" value="<?php echo $http_ref; ?>" />
@@ -152,7 +152,7 @@ function show_author_form($tab) {
 		//
 		// Advanced settings
 		//
-		case 1 : ?>
+		case 'advanced' : ?>
 <form name="upd_user_profile" method="post" action="config_author.php">
 	<input type="hidden" name="tab" value="1" />
 	<input type="hidden" name="author_advanced_settings_modified" value="yes"/>
@@ -363,8 +363,10 @@ if (count($log) > 0) {
 	lcm_page_start(_T('title_authorconf'));
 	
 	// Show tabs
-	$groups = array('interface','advanced');
-	$tab = ( isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 0 );
+	$groups = array('interface' => _T('authorconf_tab_interface'),
+					'advanced' => _T('authorconf_tab_advanced'));
+
+	$tab = (isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'interface' );
 	//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 	show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME'] . "?ref=" . ( isset($_GET['ref']) ? clean_input($_GET['ref']) : $_SERVER['HTTP_REFERER']) );
 	
