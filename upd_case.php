@@ -32,7 +32,7 @@ if (count($errors)) {
 	//$cl = '(id_case,title,id_court_archive,date_creation,date_assignment,legal_reason,alledged_crime,status)';
 	//$vl = "($id_case,'$title','$id_court_archive','$date_creation',";
 	//$vl .= "'$date_assignment','$legal_reason','$alledged_crime','$status')";
-	$fl = "title='" . clean($case_data['title']) . "',
+	$fl = "title='" . clean_input($case_data['title']) . "',
 			id_court_archive='" . clean_input($case_data['id_court_archive']) . "',";
 //			date_creation='" . $case_data['date_creation'] . "',
 // [AG] Creation date derived from MySQL server to prevent user manipulation
