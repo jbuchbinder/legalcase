@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.4 2004/12/10 18:13:15 antzi Exp $
+	$Id: upd_author.php,v 1.5 2004/12/10 21:40:39 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -96,10 +96,14 @@ if (isset($_REQUEST['contact_value'])) {
 			// - does the author already have this contact type
 			// - update or insert?
 			// - for e-mail: is address unique?
-			if (! is_existing_contact('author', $usr['id_author'], 'email', $contacts[$cpt])) {
-				if (is_existing_contact('author', 0, 'email', $usr['email'])) {
+			if (! is_existing_contact('author', $usr['id_author'], 'email_main', $contacts[$cpt])) { // [AG] Could we use $usr['email_exists'] instead?
+				// Not existing as author email_main yet
+//				if (is_existing_contact('author', 0, 'email_main', $usr['email'])) { // $usr['email'] is set only if author has email_main, which conflicts with the previous condition
+				if (is_existing_contact('author', 0, 'email_main', $contacts[$cpt])) {
 					// email exists, and is associated to someone else
+					// [AG] as it's email_main, so we add nothing to preserve its uniqueness
 				} else {
+					// Add e-mail as author contact
 					add_contact('author', $usr['id_author'], 'email', $contacts[$cpt]);
 				}
 			} else {
