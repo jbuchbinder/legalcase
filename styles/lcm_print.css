@@ -80,6 +80,7 @@ body {
 #footer a {
 	text-decoration: none;
 	border: 0px;
+	font-size: 11px;
 }
 
 #user_info_box_large_screen {
@@ -531,10 +532,11 @@ h2.hlp_h2 {
 }
 
 #footer {
+	display: none;
 	border-top: 1px solid #ccc;
 	/* background-color: #efefef; */
 	text-align: center;
-	color: #333;
+	color: #666;
 	line-height: 1.5;
 	margin-top: 10px;
 }
