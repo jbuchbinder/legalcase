@@ -391,7 +391,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 		$target = $lien->getUrl();
 
 		if ($connect_id_auteur)
-			$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
+			$post = "lcm_cookie.php?id_author=$connect_id_auteur&amp;valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
 		else
 			$post = "lcm_cookie.php";
 
@@ -408,7 +408,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 		$postcomplet = new Link($post);
 		if ($target) $postcomplet->addvar('url', $target);
 
-		$ret .= "\n<select name='$select_name' $style onchange=\"document.location.href='".$postcomplet->geturl()."&$select_name='+this.options[this.selectedIndex].value\">\n";
+		$ret .= "\n<select name='$select_name' $style onchange=\"document.location.href='".$postcomplet->geturl()."&amp;$select_name='+this.options[this.selectedIndex].value\">\n";
 	} else {
 		// XXX TODO FIXME
 		// rename class 'forml' to 'form_lang' and adjust CSS
