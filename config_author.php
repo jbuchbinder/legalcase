@@ -226,8 +226,10 @@ function apply_author_ui_change() {
 	// Change rows per page preference
 	//
 
-	if ($page_rows)
+	if ($page_rows) {
 		$prefs['page_rows'] = $page_rows;
+		$prefs_mod = true;
+	}
 
 	//
 	// Show changes on screen
