@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: merge_case.php,v 1.3 2005/02/07 21:04:24 antzi Exp $
+	$Id: merge_case.php,v 1.4 2005/02/07 21:07:26 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -139,7 +139,7 @@ $result = lcm_query($q);
 // Update old case status to 'merged'
 //
 $q = "UPDATE lcm_case SET status='merged' WHERE id_case=$case";
-$result = lcm_query($q)
+$result = lcm_query($q);
 
 // Clear the session
 // [ML] why? session_destroy();
