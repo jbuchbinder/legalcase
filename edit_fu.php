@@ -1,11 +1,16 @@
 <?php
 
+include('inc/inc.php');
+lcm_page_start("Edit follow-up");
+
 // Error display function
 function f_err($fn, $errors)
 {
     if (isset($errors[$fn]))
-		echo "<font color=RED>$errors[$fn]</font><br>";
+		echo "<font color='red'>$errors[$fn]</font><br>";
 }
+
+$fu_data=array();
 
 // Initiate session
 session_start();
@@ -19,45 +24,34 @@ if (empty($errors)) {
 	    if (!session_is_registered("followup"))
 			session_register("followup");
 
-		// Connect to the database
-		$db=mysql_connect('localhost','lcm','lcmpass');
-
-		// Select lcm database
-		mysql_select_db('lcm',$db);
-
 		// Prepare query
 		$q='SELECT * FROM lcm_followup WHERE id_followup=' . $followup;
 
 		// Do the query
-		$result=mysql_query($q,$db);
+		$result = lcm_query($q);
 
 		// Process the output of the query
+		// [ML] XXX mysql_fetch_assoc is MySQL 4.x, can't we do without?
 		if ($row = mysql_fetch_assoc($result)) {
 			// Get followup details
 			foreach($row as $key=>$value) {
 				$fu_data[$key]=$value;
 			}
 		}
-
-		// Close connection
-		mysql_close($db);
 	} else {
 		// Setup default values
-		$fu_data['id_case']=$case; // Link to the case
-		$fu_data['date_start']=date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+		$fu_data['id_case'] = $case; // Link to the case
+		$fu_data['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 	}
 }
 
 $types=array("assignment","suspension","delay","conclusion","consultation","correspondance","travel","other");
 
 // Edit followup details form
+
+lcm_page_start("Follow-up details");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-  <title>Follow-up details</title>
-</head>
-<body>
 
 <h1>Edit follow-up information:</h1>
 
@@ -87,5 +81,6 @@ foreach($types as $item) {
 <INPUT type="hidden" name="referer" value="<?php echo $fu_data['referer']; ?>">
 </form>
 
-</body>
-</html>
+<?php
+	lcm_page_end();
+?>

@@ -14,7 +14,7 @@ if ($case>0) {
 	$result = lcm_query($q);
 
 	// Process the output of the query
-	if ($row = lcm_fetch_assoc($result)) {
+	if ($row = mysql_fetch_assoc($result)) {
 		// Get case details
 		foreach ($row as $key => $value) {
 			$case_data[$key] = $value;

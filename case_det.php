@@ -10,7 +10,7 @@ $q='SELECT * FROM lcm_case WHERE id_case=' . $case;
 $result = lcm_query($q);
 
 // Process the output of the query
-if ($row = lcm_fetch_assoc($result)) {
+if ($row = mysql_fetch_assoc($result)) {
 	// Show case details
 	echo '<h1>Details for case: </h1>' . $row['title'];
 	echo ' [<a href="edit_case.php?case=' . $row['id_case'] . "\">Edit case information</a>]<br>\n";
@@ -37,7 +37,7 @@ $q = 'SELECT id_followup,date_start,type,description FROM lcm_followup WHERE id_
 $result = lcm_query($q);
 
 // Process the output of the query
-while ($row = lcm_fetch_assoc($result)) {
+while ($row = mysql_fetch_assoc($result)) {
 	// Show followup
 	echo '<tr><td>' . $row['date_start'] . '</td><td>' . $row['type'] . '</td><td>' . $row['description'] . '</td>';
 	echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . "\">Edit</a></td></tr>\n";
