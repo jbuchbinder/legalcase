@@ -18,10 +18,10 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.13 2005/01/11 16:12:08 mlutfy Exp $
+	$Id: upd_author.php,v 1.14 2005/01/17 14:09:50 mlutfy Exp $
 */
 
-session_start();
+// [ML] inc_auth session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
@@ -127,18 +127,11 @@ function change_username($id_author, $old_username, $new_username) {
 		return;
 	}
 
-	if (! $auth->is_newusername_allowed($id_author, $old_username, $author_session)) {
-		// TODO: use $auth->error ?
-		$_SESSION['errors']['username'] = "You are not allowed to change the username.";
-		return;
-	}
-
 	// Change the username
 	$ok = $auth->newusername($id_author, $old_username, $new_username, $author_session);
 
 	if (! $ok) {
-		// TODO return error: $this->get_error() ? generic error?
-		lcm_log("new username failed 001");
+		lcm_log("New username failed: " . $auth->error);
 		$_SESSION['errors']['username'] = "Failed to change the username: " . $auth->error;
 
 		return;
@@ -167,11 +160,28 @@ foreach($_POST as $key => $value)
 // - do not allow status change to users
 // - make first & last name mandatory
 
-$fl = "name_first   = '" . clean_input($usr['name_first'])  . "',"
-	. "name_middle  = '" . clean_input($usr['name_middle']) . "',"
-	. "name_last    = '" . clean_input($usr['name_last'])   . "',"
-	. "status       = '" . clean_input($usr['status'])      . "',"
-	. "date_update  = NOW()";
+$fl = 'date_update = NOW()';
+
+// First name must have at least one character
+if (strlen(utf8_decode($usr['name_first'])) < 1) {
+	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . 'Must be at least 1 character';
+} else {
+	$fl .= ", name_first = '" . clean_input($usr['name_first'])  . "'";
+}
+
+// Middle name can be empty
+$fl .= ", name_middle = '" . clean_input($usr['name_middle']) . "'";
+
+// Last name must have at least one character
+if (strlen(utf8_decode($usr['name_last'])) < 1) {
+	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . 'Must be at least 1 character';
+} else {
+	$fl .= ", name_first = '" . clean_input($usr['name_first'])  . "'";
+}
+
+// Author status can only be changed by admins
+if ($author_session['status'] == 'admin')
+	$fl .= ", status = '" . clean_input($usr['status'])      . "'";
 
 if ($usr['id_author'] > 0) {
 	// Check access rights
@@ -184,7 +194,7 @@ if ($usr['id_author'] > 0) {
 		$result = lcm_query($q);
 	}
 } else {
-	$q = "INSERT INTO lcm_author SET date_creation = NOW(),$fl";
+	$q = "INSERT INTO lcm_author SET date_creation = NOW(), $fl";
 	$result = lcm_query($q);
 	$usr['id_author'] = lcm_insert_id();
 }
