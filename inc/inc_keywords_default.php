@@ -8,7 +8,7 @@ include_lcm('inc_keywords');
 global $system_keyword_groups;
 
 $system_keyword_groups = array (
-	array(
+	"followups" => array(
 		"name" => "followups",
 		"title" => "kwg_followups_title",
 		"description" => "kwg_followups_description",
@@ -62,7 +62,7 @@ $system_keyword_groups = array (
 		)
 	),
 	
-	array(
+	"contacts" => array(
 		"name" => "contacts",
 		"title" => "kwg_contacts_title",
 		"description" => "kwg_contacts_description",
@@ -146,8 +146,8 @@ function create_groups($keyword_groups) {
 	}
 }
 
-echo "KWG = $system_keyword_groups";
-print_r($system_keyword_groups);
+//echo "KWG = $system_keyword_groups";
+//print_r($system_keyword_groups);
 
 ?>
 
