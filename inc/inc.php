@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.33 2004/11/16 13:34:15 mlutfy Exp $
+	$Id: inc.php,v 1.34 2004/12/02 21:12:52 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -35,7 +35,7 @@ include_lcm('inc_text');
 include_lcm('inc_filters');
 // include_lcm('inc_calendar'); [ML] not used
 
-if (!@file_exists('data/inc_meta_cache.php'))
+if (! @file_exists('inc/data/inc_meta_cache.php'))
 	write_metas();
 
 //
@@ -98,7 +98,9 @@ if ($prefs_mod) {
 // Database version management
 //
 
-write_metas();
+// [ML] Not required, there was a bug in line 25 of inc.php
+// write_metas();
+
 $installed_db_version = read_meta('lcm_db_version');
 
 if ($installed_db_version <> $lcm_db_version) {
