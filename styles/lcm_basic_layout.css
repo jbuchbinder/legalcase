@@ -14,7 +14,7 @@ body {
 /* ============================================================ */
 
 #header {
-	height: 83px;
+	/* height: 85px; */
 	text-align: left;
 	clear: both;
 }
@@ -138,9 +138,8 @@ ul.tabs_list li a {
 /* ================================================== */
 
 a.balance_link {
-	position: absolute;
-	top: 5px;
-	left: 5px;
+	float: left;
+	margin-top: 8px;
 	width: 85px;
 	height: 80px;
 	display: block;
