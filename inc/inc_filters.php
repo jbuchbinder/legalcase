@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.56 2005/03/22 16:34:05 mlutfy Exp $
+	$Id: inc_filters.php,v 1.57 2005/03/23 14:13:33 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -52,7 +52,8 @@ function highlight_matches($source, $match) {
 
 
 // Format the date according to the user's preferences or
-// the localised format
+// the localised format (format ex: datetime_{full,short},
+// date_{full,short}, time_short).
 function format_date($timestamp = '', $format = 'full') {
 	// XXX [ML] this is an absurd waste and redundant, but
 	// it works well and accepts many formats.. and I am tired.
@@ -80,7 +81,11 @@ function format_date($timestamp = '', $format = 'full') {
 	if ($format == 'short' && ereg('[0-9]{2}([0-9]{2})', $dd[0], $regs))
 		$dd[0] = $regs[1];
 
-	$my_date = _T('date_format_' . $format, array(
+	// [ML] Important for backwards compatiblity in code
+	if ($format == 'short' || $format == 'full')
+		$format = 'datetime_' . $format;
+
+	$my_date = _T('format_' . $format, array(
 				'day_name' => _T('date_wday_' . ($day_of_w + 0)),
 				'month_name' => _T('date_month_' . ($dd[1] + 0)),
 				'month_short' => _T('date_month_short_' .($dd[1] + 0)),
@@ -92,6 +97,10 @@ function format_date($timestamp = '', $format = 'full') {
 				'mins' => $tt[1]));
 
 	return $my_date;
+}
+
+function format_time($timestamp = '', $format = 'short') {
+	return format_date($timestamp, 'time_' . $format);
 }
 
 // Formats time interval
