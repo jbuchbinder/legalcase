@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.36 2005/01/25 11:22:57 mlutfy Exp $
+	$Id: install.php,v 1.37 2005/03/07 16:16:27 mlutfy Exp $
 */
 
 
@@ -486,26 +486,27 @@ else if ($step == 2) {
 
 	if (! $error && $link) {
 		echo "<div class='box_success'>\n";
-		echo "\t<b>" . _T('install_connection_succeeded') . "</b>\n";
+		echo "<strong>" . _T('install_connection_succeeded') . "</strong>\n";
 		echo "</div>\n";
-		echo "<p>" . _T('install_next_step') . "</p>";
 
-		echo "<form action='install.php' method='post'>";
-		echo "\t<input type='hidden' name='step' value='3'>";
-		echo "\t<input type='hidden' name='db_address'  value=\"$db_address\" size='40'>";
-		echo "\t<input type='hidden' name='db_login' value=\"$db_login\">";
-		echo "\t<input type='hidden' name='db_password' value=\"$db_password\"><P>";
+		echo "<p>" . _T('install_next_step') . "</p>\n";
 
-		echo "\t<div align='$lcm_lang_right'>"
+		echo '<form action="install.php" method="post">' . "\n";
+		echo '<input type="hidden" name="step" value="3" />' . "\n";
+		echo '<input type="hidden" name="db_address" value="' . $db_address . '" />' . "\n";
+		echo '<input type="hidden" name="db_login" value="' . $db_login . '" />' . "\n";
+		echo '<input type="hidden" name="db_password" value="' . $db_password .'" />' . "\n";
+
+		echo "<div align='$lcm_lang_right'>"
 			. "<button type='submit' name='Next'>" . _T('button_next')." >></button>"
-			. "</div>";
-		echo "</form>";
+			. "</div>\n";
+		echo "</form>\n";
 	} else {
 		echo "<div class='box_error'>\n";
-		echo "\t<b>"._T('warning_sql_connection_failed') . "</b>\n";
-		echo "\t<p><code>" . $error . "</code></p>\n";
-		echo "\t<p>"._T('install_info_go_back_verify_data') . "\n";
-		echo "\t<p><small>" .  _T('install_info_sql_connection_failed') .  "</small></p>\n";
+		echo "<strong>" . _T('warning_sql_connection_failed') . "</strong>\n";
+		echo "<p><code>" . $error . "</code></p>\n";
+		echo "<p>"._T('install_info_go_back_verify_data') . ' ' . lcm_help('install_connection') . "</p>\n";
+		echo "<p><small>" .  _T('install_info_sql_connection_failed') .  "</small></p>\n";
 		echo "</div>\n\n";
 	}
 
@@ -518,9 +519,7 @@ else if ($step == 1) {
 	echo "<h3><small>" . _T('install_step_one') . _T('typo_column') .  "</small> "
 		.  _T('install_title_sql_connection') . "</h3>\n";
 
-	echo "<p>" . _T('install_info_sql_connection') . "</p>\n";
-
-	// [ML] TODO echo help("install1");
+	echo "<p>" . _T('install_info_sql_connection') . " " . lcm_help("install_database") . "</p>\n";
 
 	$db_address = 'localhost';
 	$db_login = '';
@@ -540,26 +539,27 @@ else if ($step == 1) {
 	}
 
 	echo "<form action='install.php' method='post'>\n";
-	echo "\t<input type='hidden' name='step' value='2'>\n";
-	echo "\t<fieldset>\n";
-	echo "\t\t<div><label for='db_address'><b>" .  _T('install_database_address') . "</b></label></div>\n";
-	echo "\t\t<div style='font-size: 85%;'>" . _T('install_info_database_address') . "</div>\n";
-	echo "\t\t<input type='text' id='db_address' name='db_address' value=\"$db_address\" size='40'>\n";
-	echo "\t</fieldset><p>\n";
+	echo "<input type='hidden' name='step' value='2'>\n";
 
-	echo "\t<fieldset>\n";
-	echo "\t\t<div><label for='db_login'><b>" .  _T('install_connection_login') . "</b></div></label>\n";
-	echo "\t\t<div style='font-size: 85%;'>(" . _T('install_info_connection_login') . ")</div>\n";
-	echo "\t\t<input type='text' id='db_login' name='db_login' value=\"$db_login\" size='40'>\n";
-	echo "\t</fieldset><p>";
+	echo "<fieldset>\n";
+	echo "<div><label for='db_address'><strong>" . _T('install_database_address') . "</strong></label></div>\n";
+	echo "<div style='font-size: 85%;'>" . _T('install_info_database_address') . "</div>\n";
+	echo "<input type='text' id='db_address' name='db_address' value=\"$db_address\" size='40'>\n";
+	echo "</fieldset><p>\n";
 
-	echo "\t<fieldset>\n";
-	echo "\t\t<div><label for='db_password'><b>" .  _T('install_connection_password') . "</b></div></label>\n";
-	echo "\t\t<div style='font-size: 85%;'>(" . _T('install_info_connection_password') . ")</div>\n";
-	echo "\t\t<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40'>\n";
-	echo "\t</fieldset><p>";
+	echo "<fieldset>\n";
+	echo "<div><label for='db_login'><strong>" . _T('install_connection_login') . "</strong></div></label>\n";
+	echo "<div style='font-size: 85%;'>(" . _T('install_info_connection_login') . ")</div>\n";
+	echo "<input type='text' id='db_login' name='db_login' value=\"$db_login\" size='40'>\n";
+	echo "</fieldset><p>";
 
-	echo "\t<div align='$lcm_lang_right'>"
+	echo "<fieldset>\n";
+	echo "<div><label for='db_password'><strong>" . _T('install_connection_password') . "</strong></div></label>\n";
+	echo "<div style='font-size: 85%;'>(" . _T('install_info_connection_password') . ")</div>\n";
+	echo "<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40'>\n";
+	echo "</fieldset><p>";
+
+	echo "<div align='$lcm_lang_right'>"
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>"
 		. "</div>";
 	echo "</form>";
@@ -585,7 +585,13 @@ else if (!$step) {
 			</div>
 		</td></tr>
 		<tr><td align='center' valign='top'>
-			<p id='license'>" . _T('info_free_software') . "</p>
+			<p id='license'>";
+
+	echo _T('info_free_software', 
+			array(
+				'distributed' => '<a href="http://www.lcm.ngo-bg.org/" class="prefs_normal_lnk">' . _T('info_free_software1') . '</a>',
+				'license' => lcm_help_string('about', _T('info_free_software2'), 'license')))
+			. "</p>
 		</td></tr>\n";
 	echo "</table>\n";
 	echo "</div>\n";
