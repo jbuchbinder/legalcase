@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.39 2005/01/19 09:14:40 mlutfy Exp $
+	$Id: edit_fu.php,v 1.40 2005/01/20 22:00:14 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -150,6 +150,9 @@ if ($numrows > 0)
 
 echo "</ul>\n";
 
+// Show the errors (if any)
+echo show_all_errors($_SESSION['errors']);
+
 ?>
 
 <form action="upd_fu.php" method="POST">
@@ -166,7 +169,7 @@ echo "</ul>\n";
 		<tr><td>Type:</td>
 			<td><select name="type" size="1">
 			<?php
-			
+
 			global $system_kwg;
 
 			if ($fu_data['type'])
@@ -178,7 +181,7 @@ echo "</ul>\n";
 				$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
 				echo "<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
 			}
-			
+
 			?>
 			</select></td></tr>
 		<tr><td valign="top">Description:</td>
