@@ -9,26 +9,30 @@ function bad_dirs($bad_dirs, $test_dir, $install) {
 	install_html_start();
 
 	if ($install) {
-		$titre = _T('dirs_preliminaire');
-		$continue = _T('dirs_commencer');
+		$titre = _T('directories_setup_start');
 	} else
-		$titre = _T('dirs_probleme_droits');
+		$titre = _T('directories_setup_problem');
 
-	$bad_url = "spip_test_dirs.php3";
-	if ($test_dir) $bad_url .= '?test_dir='.$test_dir;
+	$bad_url = "lcm_test_dirs.php";
+	if ($test_dir) 
+		$bad_url .= '?test_dir=' . $test_dir;
 
-	echo "<font face=\"Verdana,Arial,Helvetica,sans-serif\" SIZE='3'>$titre</font>\n<p>";
-	echo "<div align='right'>". menu_languages('var_lang_lcm')."</div><p>";
+	echo "<h3>". $titre ."</h3>\n";
+	echo "<div align='right'>". menu_languages('var_lang_lcm') ."</div>\n";
 
-	echo _T('dirs_repertoires_suivants', array('bad_dirs' => $bad_dirs));
-	echo "<b>". _T('login_recharger')." $continue.";
+	echo "<div class='box_error'>\n";
+	echo "<p>". _T('directories_bad_rights') . _T('typo_column') ."</p>\n";
+	echo "<ul>". $bad_dirs ."</ul>\n";
+	echo "<p>". _T('directories_bad_rights_cause') ."</p>\n";
+	echo "</div>\n";
 
-	if ($install)
-		echo aide ("install0");
-	echo "<p>";
+	// if ($install)
+	//	echo help ("install0");
+
+	echo "<p>". _T('directories_continue') ."</p>\n";
 
 	echo "<form action='$bad_urls' method='get'>\n";
-	echo "<div align='right'><input type='submit' class='fondl' name='Valider' value='". _T('login_recharger')."'></div>";
+	echo "<div align='right'><input type='submit' class='fondl' name='Valider' value='". _T('button_reload_page')."'></div>";
 	echo "</form>";
 
 	install_html_end();
@@ -38,25 +42,29 @@ function bad_dirs($bad_dirs, $test_dir, $install) {
 function absent_dirs($bad_dirs, $test_dir) {
 	install_html_start();
 
-	$titre = _T('dirs_preliminaire');
-	$continue = _T('dirs_commencer');
+	$titre = _T('directories_setup_start');
 
-	$bad_url = "spip_test_dirs.php3";
-	if ($test_dir) $bad_url .= '?test_dir='.$test_dir;
+	$bad_url = "lcm_test_dirs.php";
+	if ($test_dir)
+		$bad_url .= '?test_dir='. $test_dir;
 
-	echo "<FONT FACE=\"Verdana,Arial,Helvetica,sans-serif\" SIZE=3>$titre</FONT>\n<p>";
-	echo "<div align='right'>". menu_languages('var_lang_lcm')."</div><p>";
+	echo "<h3>". $titre ."</h3>\n";
+	echo "<div align='right'>". menu_languages('var_lang_lcm') ."</div>\n";
 
-	echo _T('dirs_repertoires_absents', array('bad_dirs' => $bad_dirs));
-	echo "<B>". _T('login_recharger')." $continue.";
+	echo "<div class='box_error'>\n";
+	echo "<p>". _T('directories_missing') . _T('typo_column') ."</p>\n";
+	echo "<ul>". $bad_dirs ."</ul>\n";
+	echo "<p>". _T('directories_missing_possible_cause') ."</p>\n";
+	echo "</div>\n";
 
-	if ($install)
-		echo aide ("install0");
-	echo "<p>";
+	// if ($install)
+	//	echo aide ("install0");
 
-	echo "<FORM ACTION='$bad_urls' METHOD='GET'>\n";
-	echo "<DIV align='right'><INPUT TYPE='submit' CLASS='fondl' NAME='Valider' VALUE='". _T('login_recharger')."'></DIV>";
-	echo "</FORM>";
+	echo "<p>". _T('directories_continue') ."</p>\n";
+
+	echo "<form action='$bad_urls' method='get'>\n";
+	echo "<div align='right'><input type='submit' class='fondl' name='Valider' value='". _T('button_reload_page')."'></div>";
+	echo "</form>";
 
 	install_html_end();
 }
@@ -86,10 +94,10 @@ else {
 	$test_dirs = array("log", "inc/config", "inc/data");
 }
 
-unset($bad_dirs);
-unset($absent_dirs);
+$bad_dirs = array();
+$absent_dirs = array();
 
-while (list(, $my_dir) = each($test_dirs)) {
+foreach ($test_dirs as $my_dir) {
 	if (!test_write($my_dir)) {
 		@umask(0);
 		if (@file_exists($my_dir)) {
@@ -100,21 +108,19 @@ while (list(, $my_dir) = each($test_dirs)) {
 			if (!test_write($my_dir))
 				@chmod($my_dir, 0755);
 			if (!test_write($my_dir))
-				$bad_dirs[] = "<li>".$my_dir;
+				array_push($bad_dirs, "<li>". $my_dir ."</li>\n");
 		} else
-			$absent_dirs[] = "<li>".$my_dir;
+			array_push($absent_dirs, "<li>". $my_dir ."</li>\n");
 	}
 }
 
-if ($bad_dirs) {
+if (!empty($bad_dirs)) {
 	$bad_dirs = join(" ", $bad_dirs);
 	bad_dirs($bad_dirs, $test_dir, $install);
-}
-else if ($absent_dirs) {
+} else if (!empty($absent_dirs)) {
 	$absent_dirs = join(" ", $absent_dirs);
 	absent_dirs($absent_dirs, $test_dir);
-}
-else {
+} else {
 	if ($install)
 		header("Location: ./install.php?step=1");
 	else
