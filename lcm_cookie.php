@@ -3,20 +3,13 @@
 include ("inc/inc_version.php");
 include_lcm ("inc_session");
 
-// determiner ou l'on veut retomber
+// Determine where we want to fallback after the operation
 if ($url)
 	$cible = new Link($url);
 else
-	$cible = new Link('index.php'); // XXX [ML]
+	$cible = new Link('/');
 
-// cas particulier, logout dans l'espace public
-if ($logout_public) {
-    $logout = $logout_public;
-	if (!$url)
-		$url = 'index.php';
-}
-
-// rejoue le cookie pour renouveler lcm_session
+// Replay the cookie to renew lcm_session
 if ($change_session == 'oui') {
 	if (verifier_session($lcm_session)) {
 		// Attention : seul celui qui a le bon IP a le droit de rejouer,
@@ -39,19 +32,20 @@ if ($change_session == 'oui') {
 }
 
 
-// tentative de connexion en auth_http
+// Attemp to connect via auth_http
+// [ML] TODO
 if ($essai_auth_http AND !$ignore_auth_http) {
 	include_local ("inc-login.php3");
 	auth_http($cible, $essai_auth_http);
 	exit;
 }
 
-// tentative de logout
+// Attempt to logout
 if ($logout) {
 	include_lcm('inc_session');
 	verifier_visiteur();
-	if ($auteur_session['login'] == $logout) {
-		// [ML] NOT USED spip_query("UPDATE lcm_author SET en_ligne = DATE_SUB(NOW(),INTERVAL 6 MINUTE) WHERE id_author = ".$auteur_session['id_author']);
+
+	if ($auteur_session['username'] == $logout) {
 		if ($lcm_session) {
 			zap_sessions($auteur_session['id_author'], true);
 			spip_setcookie('lcm_session', $lcm_session, time() - 3600 * 24);
@@ -63,8 +57,10 @@ if ($logout) {
 		unset ($auteur_session);
 	}
 
+	$test = 'yes=' . $auteur_session['login'];
+
 	if (!$url)
-		@Header("Location: ./lcm_login.php");
+		@Header("Location: ./lcm_login.php" . '?' . $test);
 	else
 		@Header("Location: $url");
 	exit;
