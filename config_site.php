@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.33 2005/02/16 00:15:33 antzi Exp $
+	$Id: config_site.php,v 1.34 2005/02/16 00:24:47 antzi Exp $
 */
 
 include ("inc/inc.php");
@@ -27,7 +27,7 @@ include ("inc/inc.php");
 // For example, if currency changed many times, it will allow
 // to track when a currency had which value (silly, but can avoid crisis)
 
-function show_config_form($panel) {
+function show_config_form() {
 	echo "<p class='normal_text'><img src='images/jimmac/icon_warning.gif' alt='' align='right'
 		height='48' width='48' />" . _T('siteconf_warning') . "</p>\n";
 
@@ -57,8 +57,10 @@ function show_config_form($panel) {
 	//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 	show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
 
-	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
+	echo "<form name='upd_site_profile' method='post' action='" . $_SERVER['REQUEST_URI'] . "'>\n";
 /*
+	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
+
 	if ($panel == 'collab')
 		show_config_form_collab();
 	else if ($panel == 'policy')
@@ -602,7 +604,7 @@ if (! empty($log)) {
 	echo "</div>\n";
 }
 
-show_config_form($panel);
+show_config_form();
 lcm_page_end();
 
 
