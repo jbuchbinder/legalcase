@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.183 2005/03/23 10:57:08 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.184 2005/03/23 14:15:18 mlutfy Exp $
 */
 
 //
@@ -1252,7 +1252,7 @@ function show_listcase_item($item, $cpt, $custom = '') {
 	// Date creation
 	echo "<td class='tbl_cont_" . $css . "'>";
 	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
-	echo format_date($item['date_creation'], 'short');
+	echo format_date($item['date_creation'], 'date_short');
 	if ($ac_read) echo '</a>';
 	echo "</td>\n";
 
