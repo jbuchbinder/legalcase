@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.11 2005/02/15 08:40:37 mlutfy Exp $
+	$Id: org_det.php,v 1.12 2005/03/15 04:33:21 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -47,63 +47,177 @@ if ($row = lcm_fetch_array($result)) {
 	*/
 	$edit = true;
 
-	// Show organisation details
-	echo '<fieldset class="info_box">';
-	echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_view_general') . "</div>\n";
-	echo '<p class="normal_text">';
+	// Show tabs
+	$groups = array(
+				'general' => _T('org_tab_general'),
+				'representatives' => _T('org_tab_representatives'),
+				'cases' => _T('org_tab_cases'),
+				'attachments' => _T('org_tab_attachments'));
 
-	//		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
-	//		echo 'Organisation name: ' . $row['name'] . "<br />\n";
-	echo 'Address: ' . $row['address'] . "<br />\n";
-	echo 'Created on: ' . format_date($row['date_creation'], 'short') . "<br />\n";
-	// [ML] echo 'Last update: ' . format_date($row['date_update'], 'short') . "<br />\n";
+	$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
+	show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
-	if ($edit)
-		echo '<br /><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a><br />';
+	switch ($tab) {
+		//
+		// Show organisation general information
+		//
+		case 'general':
+			echo '<fieldset class="info_box">';
+			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_view_general') . "</div>\n";
+			echo '<p class="normal_text">';
+		
+			//		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
+			//		echo 'Organisation name: ' . $row['name'] . "<br />\n";
+			echo 'Address: ' . $row['address'] . "<br />\n";
+			echo 'Created on: ' . format_date($row['date_creation'], 'short') . "<br />\n";
+			// [ML] echo 'Last update: ' . format_date($row['date_update'], 'short') . "<br />\n";
+		
+			if ($edit)
+				echo '<br /><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a><br />';
+		
+			echo "<br /></p>\n";
+			echo "</fieldset>\n";
 
-	?>
-	
-	<br /></p>
-	</fieldset>
+			break;
 
-	<fieldset class="info_box">
-	<div class="prefs_column_menu_head"><?php echo _T('org_subtitle_representatives'); ?></div>
+		//
+		// Show organisation representatives
+		//
+		case 'representatives' :
+			echo '<fieldset class="info_box">';
+			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_representatives') . "</div><br />\n";
 
-		<br />
+			// Show organisation representative(s)
+			$q = "SELECT cl.id_client, name_first, name_middle, name_last
+					FROM lcm_client_org as clo, lcm_client as cl
+					WHERE id_org = $org 
+						AND clo.id_client = cl.id_client";
+		
+			$result = lcm_query($q);
+			$show_table = false;
+		
+			if (lcm_num_rows($result)) {
+				$show_table = true;
+		?>
+				<table class="tbl_usr_dtl">
+				<tr>
+					<th class="heading">Representative(s):</th>
+				</tr>
+		<?php
+			}
+		
+			while ($row = lcm_fetch_array($result)) {
+				echo '<tr><td><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
+				echo get_person_name($row) . "</a></td></tr>\n";
+			}
+		
+			if ($show_table)
+				echo "</table>";
+		
+			if ($edit)
+				echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />";
+		
+			echo "<br /></fieldset>";
 
-<?php
-	// Show organisation representative(s)
-	$q = "SELECT cl.id_client, name_first, name_middle, name_last
-			FROM lcm_client_org as clo, lcm_client as cl
-			WHERE id_org = $org 
-				AND clo.id_client = cl.id_client";
+			break;
 
-	$result = lcm_query($q);
-	$show_table = false;
+		//
+		// Show recent cases
+		//
+		case 'cases':
 
-	if (lcm_num_rows($result)) {
-		$show_table = true;
-?>
-		<table class="tbl_usr_dtl">
-		<tr>
-			<th class="heading">Representative(s):</th>
-		</tr>
-<?php
+			$q = "SELECT clo.id_case, c.title, c.date_creation, c.id_court_archive, c.status
+					FROM lcm_case_client_org as clo, lcm_case as c
+					WHERE id_org = $org
+					AND clo.id_case = c.id_case ";
+
+			// Sort cases by creation date
+			$case_order = 'DESC';
+			if (isset($_REQUEST['case_order']))
+				if ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'DESC')
+					$case_order = $_REQUEST['case_order'];
+
+			$q .= " ORDER BY c.date_creation " . $case_order;
+
+			$result = lcm_query($q);
+			$number_of_rows = lcm_num_rows($result);
+			$list_pos = 0;
+
+			if (isset($_REQUEST['list_pos']))
+				$list_pos = $_REQUEST['list_pos'];
+
+			if ($list_pos >= $number_of_rows)
+				$list_pos = 0;
+
+			// Position to the page info start
+			if ($list_pos > 0)
+				if (!lcm_data_seek($result,$list_pos))
+					lcm_panic("Error seeking position $list_pos in the result");
+
+			if (lcm_num_rows($result)) {
+				echo '<fieldset class="info_box">' . "\n";
+				echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_cases') . "</div>\n";
+				show_listcase_start();
+
+				for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
+					show_listcase_item($row1, $cpt);
+				}
+
+				show_listcase_end($list_pos, $number_of_rows);
+				echo "</fieldset>\n";
+			}
+
+			break;
+		//
+		// Organisation attachments
+		//
+		case 'attachments' :
+			echo '<fieldset class="info_box">';
+			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_attachments') . '</div>';
+			echo "<p class=\"normal_text\">\n";
+
+			// List of attached files
+			$q = "SELECT * FROM lcm_org_attachment WHERE id_org=$org";
+			$result = lcm_query($q);
+			$i = lcm_num_rows($result);
+			if ($i > 0) {
+				echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
+				// TRAD ++
+				echo "\t<tr><th class=\"heading\">Filename</th>
+					<th class=\"heading\">Type</th>
+					<th class=\"heading\">Size</th>
+					<th class=\"heading\">Description</th></tr>\n";
+				for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
+					echo "\t<tr>";
+					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
+						. '<a href="view_file.php?type=org&amp;file_id=' . $row['id_attachment']
+						. '" class="content_link">' . $row['filename'] . '</a></td>';
+					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
+					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
+					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
+					echo "</tr>\n";
+				}
+				echo "</table><br />\n";
+			}
+
+			// Attach new file form
+			if ($edit) {
+				echo '<div class="prefs_column_menu_head">' . 'Add new document' . '</div>'; // TRAD
+				echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+				echo "<input type=\"hidden\" name=\"org\" value=\"$org\" />\n";
+				echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
+				echo '<strong>Filename:</strong><br /><input type="file" name="filename" size="40" />' . "\n"; // TRAD
+				echo "<br />\n";
+				echo '<strong>Description:</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n"; // TRAD
+				echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
+				echo "</form>\n";
+			}
+
+			echo '</fieldset>';
+
+			break;
+
 	}
-
-	while ($row = lcm_fetch_array($result)) {
-		echo '<tr><td><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
-		echo $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "</a></td>\n<td>";
-		echo "</td></tr>\n";
-	}
-
-	if ($show_table)
-		echo "</table>";
-
-	if ($edit)
-		echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />";
-
-	echo "<br /></fieldset>";
 
 } else die("There's no such organisation!");
 
