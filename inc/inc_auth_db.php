@@ -37,11 +37,6 @@ class Auth_db {
 		return false;
 	}
 
-	function verifier_challenge_md5($username, $current_mdpass, $future_mdpass) {
-		lcm_log("use of deprecated function: verifier_challenge_md5, use validate_md5_challenge instead");
-		return validate_md5_challenge($username, $current_mdpass, $future_mdpass);
-	}
-
 	// Check the non-encrypted password (no javascript support)
 	function verifier($login, $pass) {
 		// Do not allow empty passwords
@@ -52,7 +47,7 @@ class Auth_db {
 		if ($row = lcm_fetch_array($result)) {
 			$md5pass = md5($row['alea_actuel'] . $pass);
 			$md5next = md5($row['alea_futur'] . $pass);
-			return $this->verifier_challenge_md5($login, $md5pass, $md5next);
+			return $this->validate_md5_challenge($login, $md5pass, $md5next);
 		}
 		return false;
 	}
@@ -79,7 +74,7 @@ class Auth_db {
 
 	function activer() {
 		lcm_log("use of deprecated function: activer, use activate instead");
-		return activate();
+		return this->activate();
 	}
 }
 
