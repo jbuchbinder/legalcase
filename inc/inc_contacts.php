@@ -1,5 +1,27 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: inc_contacts.php,v 1.12 2005/03/24 08:29:30 mlutfy Exp $
+*/
+
+
 // Execute only once
 if (defined('_INC_CONTACTS')) return;
 define('_INC_CONTACTS', '1');
@@ -9,8 +31,20 @@ function get_contact_type_id($name) {
 
 	if (array_key_exists($name, $system_kwg['contacts']['keywords']))
 		return $system_kwg['contacts']['keywords'][$name]['id_keyword'];
-	else
-		lcm_panic("get_contact_type_id: keyword $name does not exist");
+	else {
+		// Attempt to make it more error resistant because there seems
+		// to be cases where a 'write_metas()' may have failed.
+		$query = "SELECT id_keyword FROM lcm_keyword WHERE name = '" . clean_input($name) . "'";
+		$result = lcm_query($query);
+		if ($row = lcm_fetch_array($result)) {
+			lcm_log("get_contact_type_id: there was a meta problem, I called write_meta() again");
+			lcm_log("get_contact_type_id: .. you may want to check the permissions to inc/data/ directory");
+			write_metas();
+			return $row['id_keyword'];
+		}
+	}
+
+	lcm_panic("get_contact_type_id: keyword $name does not exist");
 }
 
 // type_person should be of the enum in the database (author, client, org, ..)
