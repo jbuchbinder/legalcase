@@ -18,17 +18,17 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.14 2004/12/10 10:18:30 antzi Exp $
+	$Id: edit_org.php,v 1.15 2004/12/10 10:34:15 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-// Initialise variables
-$org = intval($_GET['org']);
-
 // Initiate session
 session_start();
+
+// Initialise variables
+$org = intval($_GET['org']);
 
 if (empty($errors)) {
     // Clear form data

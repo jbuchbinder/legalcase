@@ -18,15 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.18 2004/12/10 10:17:56 antzi Exp $
+	$Id: edit_client.php,v 1.19 2004/12/10 10:34:15 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-$client = intval($_GET['client']); // To be sure that we get exaclty the GET value
-
 session_start();
+
+$client = intval($_GET['client']); // To be sure that we get exaclty the GET value
 
 if (empty($errors)) {
     // Clear form data
