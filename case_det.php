@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.52 2004/12/17 12:13:34 antzi Exp $
+	$Id: case_det.php,v 1.53 2004/12/17 16:59:16 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -90,7 +90,18 @@ if ($case > 0) {
 
 		echo _T('legal_reason') . ': ' . clean_output($row['legal_reason']) . "<br>\n";
 		echo _T('alledged_crime') . ': ' . clean_output($row['alledged_crime']) . "<br>\n";
-		echo _T('status') . ': ' . clean_output($row['status']) . "<br>\n";
+
+		// Change status form
+		echo "<form action='set_case_status.php?case=$case' method='POST'>\n";
+		echo _T('status') . ': ';
+		echo "\t<select name='status'>";
+		$statuses = array('open','closed','merged');
+		foreach ($statuses as $s)
+			echo "\t\t<option" .  (($s == $row['status']) ? ' selected' : '') . ">$s</option>\n";
+		echo "\t</select>\n";
+		echo "\t<input type='submit' name='Set case status'>\n";
+		echo "</form><br>\n";
+
 		echo _T('public') . ': ' . _T('Read') . '=';
 		if ($row['public']) echo 'Yes';
 		else echo 'No';
