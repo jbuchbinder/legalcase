@@ -24,12 +24,12 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	global $connect_status;
 	global $prefs;
 		
-	$lcm_site_name = entites_html(read_meta("site_name"));
+	$lcm_site_name = clean_input(_T(read_meta('site_name')));
 	$title = textebrut($title);
 
 	// Don't show site name (if none) while installation
 	if (!$lcm_site_name && $title == "AUTO")
-		$lcm_site_name = "LCM";
+		$lcm_site_name = _T('title_software');
 
 	if (!$charset = read_meta('charset'))
 		$charset = 'utf-8';
@@ -42,7 +42,7 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 <html xmlns=\"http://www.w3.org/1999/xhtml\">
 <head>
-	<title>". ($lcm_site_name ? $lcm_site_name ." | " : '') . $title ."</title>
+	<title>". ($lcm_site_name ? $lcm_site_name . " | " : '') . $title ."</title>
 	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />
 	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_basic_layout.css\" />\n";
 
@@ -117,16 +117,14 @@ function lcm_page_start($title = "", $css_files = "") {
 	lcm_html_start($title, $css_files);
 
 	//
-	// Title and description of the site
+	// Title (mandatory) and description (may be empty) of the site
 	//
 
-	$site_name = read_meta('site_name');
+	$site_name = _T(read_meta('site_name'));
 	if (!$site_name)
 		$site_name = _T('title_software');
 
-	$site_desc = read_meta('site_description');
-	if (!$site_desc)
-		$site_desc = _T('title_software_description');
+	$site_desc = _T(read_meta('site_description'));
 	
 	//
 	// Most of the header/navigation html
