@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.13 2005/03/30 07:43:16 mlutfy Exp $
+	$Id: author_det.php,v 1.14 2005/04/04 08:26:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -37,7 +37,7 @@ if ($author > 0) {
 	if ($author_data = lcm_fetch_array($result)) {
 		// Start the page
 		$fullname = get_person_name($author_data);
-		lcm_page_start("Author details: $fullname"); // TRAD
+		lcm_page_start(_T('title_author_view') . ' ' . $fullname);
 
 		// [ML] for future use? Would not be bad to have a link: "Go back to: <a..>ref_name</a>"
 		// echo "<p>REF = <a href='" . $_REQUEST['ref'] . "'>test</a>\n";
@@ -78,7 +78,8 @@ if ($author > 0) {
 				//
 				if (($GLOBALS['author_session']['status'] == 'admin') ||
 					($author == $GLOBALS['author_session']['id_author']))
-						echo '<p class="normal_text"><a href="edit_author.php?author=' . $author . "\" class=\"edit_lnk\">Edit author data</a></p>\n"; // TRAD
+						echo '<p class="normal_text"><a href="edit_author.php?author=' . $author . '" class="edit_lnk">'
+							. _T('authoredit_button_edit') . "</a></p>\n";
 
 				echo "</fieldset>\n";
 
@@ -114,7 +115,7 @@ if ($author > 0) {
 				// Position to the page info start
 				if ($list_pos > 0)
 					if (!lcm_data_seek($result,$list_pos))
-						lcm_panic("Error seeking position $list_pos in the result");	// TRAD
+						lcm_panic("Error seeking position $list_pos in the result");
 
 				if (lcm_num_rows($result)) {
 					echo '<fieldset class="info_box">' . "\n";
@@ -177,7 +178,7 @@ if ($author > 0) {
 				// Position to the page info start
 				if ($list_pos > 0)
 					if (!lcm_data_seek($result,$list_pos))
-						lcm_panic("Error seeking position $list_pos in the result");	// TRAD
+						lcm_panic("Error seeking position $list_pos in the result");
 			
 				// Set the length of short followup title
 				$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
@@ -260,7 +261,7 @@ if ($author > 0) {
 			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 				echo "<tr>\n";
-				echo "<th class='heading'>" . _Th('author_input_case') . "</th>\n";	// TRAD
+				echo "<th class='heading'>" . _Th('author_input_case') . "</th>\n";
 				echo "<th class='heading' width='1%' nowrap='nowrap'>" . 'Time spent' . ' (' . 'hrs' . ")</th>\n"; // TRAD
 
 				$total_time = 0;
