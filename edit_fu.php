@@ -30,6 +30,8 @@ if (empty($errors)) {
     // Clear form data
     $fu_data = array('ref_edit_fu'=>$HTTP_REFERER);
 
+	if (isset($_GET['followup'])) $followup=intval($_GET['followup']);
+
 	if (isset($followup)) {
 		// Register followup as session variable
 	    if (!session_is_registered("followup"))
