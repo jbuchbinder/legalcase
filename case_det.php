@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.106 2005/03/16 10:44:39 mlutfy Exp $
+	$Id: case_det.php,v 1.107 2005/03/17 14:18:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -501,17 +501,14 @@ if ($case > 0) {
 					GROUP BY lcm_case_author.id_author";
 */
 				// List all followup authors
-				$q = "SELECT	name_first,
-						name_middle,
-						name_last,
-						sum(IF(UNIX_TIMESTAMP(lcm_followup.date_end) > 0,
-							UNIX_TIMESTAMP(lcm_followup.date_end)-UNIX_TIMESTAMP(lcm_followup.date_start),
-							0)) as time
-					FROM	lcm_author,
-						lcm_followup
-					WHERE	lcm_followup.id_author=lcm_author.id_author
-						AND lcm_followup.id_case=$case
-					GROUP BY lcm_followup.id_author";
+				$q = "SELECT
+						name_first, name_middle, name_last,
+						sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0,
+							UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time,
+						sum(sumbilled) as sumbilled
+					FROM  lcm_author as a, lcm_followup as fu
+					WHERE fu.id_author = a.id_author AND fu.id_case = $case
+					GROUP BY fu.id_author";
 				$result = lcm_query($q);
 
 				// Show table headers
@@ -519,27 +516,56 @@ if ($case > 0) {
 				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_times') . '</div>';
 				echo "<p class=\"normal_text\">\n";
 			
-				echo "\n\n\t<table border='0' class='tbl_usr_dtl' width='99%'>";
-				echo "\t\t<tr>";
-				echo "<th class='heading'>" . 'Author' . "</th>"; // TRAD
-				echo "<th class='heading'>" . 'Time spent on the case' . "</th>"; // TRAD
+				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+				echo "<tr>\n";
+				echo "<th class='heading'>" . 'Author' . "</th>\n"; // TRAD
+				echo "<th class='heading'>" . 'Time spent' . "</th>\n"; // TRAD
+
+				$total_time = 0;
+				$total_sum_billed = 0.0;
+				$meta_sum_billed = read_meta('fu_sum_billed');
+
+				if ($meta_sum_billed == 'yes')
+					echo "<th class='heading'>" . 'Sum billed' . "</th>\n"; // TRAD
+
 				echo "</tr>\n";
 
 				// Show table contents & calculate total
-				$total_time = 0;
 				while ($row = lcm_fetch_array($result)) {
+					echo "<!-- Total = " . $total_sum_billed . " - row = " . $row['sumbilled'] . " -->\n";
+
 					$total_time += $row['time'];
-					echo "\t\t<tr><td>";
-					echo njoin(array($row['name_first'],$row['name_middle'],$row['name_last']));
+					$total_sum_billed += $row['sumbilled'];
+
+					echo "<tr><td>";
+					echo get_person_name($row);
 					echo '</td><td>';
 					echo format_time_interval($row['time'],($prefs['time_intervals_notation'] == 'hours_only'));
-					echo "</td></tr>\n";
+					echo "</td>\n";
+
+					if ($meta_sum_billed == 'yes') {
+						echo "<td>";
+						echo format_money($row['sumbilled']);
+						echo "</td>\n";
+					}
+					
+					echo "</tr>\n";
 				}
 
 				// Show total case hours
-				echo "\t\t<tr><td><strong>" . 'TOTAL:' . "</strong></td><td><strong>";
+				echo "<tr>\n";
+				echo "<td><strong>" . 'TOTAL:' . "</strong></td>\n"; // TRAD
+				echo "<td><strong>";
 				echo format_time_interval($total_time,($prefs['time_intervals_notation'] == 'hours_only'));
-				echo "</strong></td></tr>\n";
+				echo "</strong></td>\n";
+
+				if ($meta_sum_billed == 'yes') {
+					echo "<td><strong>";
+					echo format_money($total_sum_billed);
+					echo "</strong></td>\n";
+				}
+				
+				echo "</tr>\n";
 
 				echo "\t</table>\n</p></fieldset>\n";
 				break;
