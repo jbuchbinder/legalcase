@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.21 2005/02/10 14:39:00 mlutfy Exp $
+	$Id: rep_det.php,v 1.22 2005/02/10 15:33:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -58,7 +58,8 @@ if (! $rep_info) {
 
 $q = "SELECT f.table_name
 		FROM lcm_fields as f, lcm_rep_col as c
-		WHERE f.id_field = c.id_field";
+		WHERE f.id_field = c.id_field
+		AND c.id_report = " . $rep;
 
 $result = lcm_query($q);
 $tmp_info = lcm_fetch_array($result);
@@ -348,7 +349,7 @@ if ($edit) {
 echo "</fieldset>\n";
 
 //
-// [ML] Experimental filters
+// Report filters
 //
 
 echo '<a name="filter"></a>' . "\n";
@@ -469,30 +470,45 @@ if (lcm_num_rows($result)) {
 // List all available fields in selected tables for report
 $query = "SELECT *
 			FROM lcm_fields
-			WHERE (table_name = 'lcm_" . $rep_info['line_src_name'] . "'
-			 OR table_name = '" /* lcm_" . */ . $rep_info['col_src_name'] . "')
-			AND filter != 'none'";
+			WHERE ";
 
-echo "<!-- QUERY: $query -->\n";
+$sources = array();
 
-$result = lcm_query($query);
+if ($rep_info['line_src_name'])
+	array_push($sources, "'lcm_" . $rep_info['line_src_name'] .  "'");
 
-if (lcm_num_rows($result)) {
-	echo "<form action='upd_rep_field.php' name='frm_line_additem' method='get'>\n";
-	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-	echo "<input name='add' value='filter' type='hidden' />\n";
+if ($rep_info['col_src_name'])
+	array_push($sources, "'" /* lcm_" . */ . $rep_info['col_src_name'] . "'");
 
-	echo "<p class='normal_text'>" . "Add a filter based on this field:" . " ";
-	echo "<select name='id_field'>\n";
+// List only filters if table were selected as sources (line/col)
+if (count($sources)) {
+	$query .= " table_name IN ( " . implode(" , ", $sources) . " ) AND ";
 
-	while ($row = lcm_fetch_array($result)) {
-		echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
+	$query .= " filter != 'none'";
+
+	echo "<!-- QUERY: $query -->\n";
+
+	$result = lcm_query($query);
+
+	if (lcm_num_rows($result)) {
+		echo "<form action='upd_rep_field.php' name='frm_line_additem' method='get'>\n";
+		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+		echo "<input name='add' value='filter' type='hidden' />\n";
+
+		echo "<p class='normal_text'>" . "Add a filter based on this field:" . " ";
+		echo "<select name='id_field'>\n";
+
+		while ($row = lcm_fetch_array($result)) {
+			echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
+		}
+
+		echo "</select>\n";
+		echo "<button class='simple_form_btn' name='validate_filter_addfield'>" . _T('button_validate') . "</button>\n";
+		echo "</p>\n";
+		echo "</form>\n";
 	}
-		
-	echo "</select>\n";
-	echo "<button class='simple_form_btn' name='validate_filter_addfield'>" . _T('button_validate') . "</button>\n";
-	echo "</p>\n";
-	echo "</form>\n";
+} else {
+	echo "<p>To apply filters, first select the source tables for report line and columns.</p>";
 }
 
 echo "</fieldset>\n";
