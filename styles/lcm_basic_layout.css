@@ -557,6 +557,12 @@ h2.hlp_h2 {
 	background-color: #efefef;
 }
 
+/* [ML] Temporarely added because it makes the menu too long */
+/* (But this way Krasi can experiment without changing the PHP :-) */
+#hlp_menu li ul {
+	display: none;
+}
+
 #hlp_cont {
 	margin-left: 3px;
 	height: 380px;
@@ -564,3 +570,4 @@ h2.hlp_h2 {
 	border-left: 1px solid #333;
 	padding: 0px 15px 15px 15px;
 }
+
