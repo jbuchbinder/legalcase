@@ -67,7 +67,8 @@ else lcm_page_start(_T('new_case'));
 		<tr><td>" . _T('author_id') . ":</td><td>" . $case_data['id_author'] . "
 			<input type=\"hidden\" name=\"id_author\" value=\"" . $case_data['id_author'] . "\"></td></tr>
 		<tr><td>" . _T('case_title') . ":</td>
-			<td><input name=\"title\" value=\"" . htmlspecialchars($case_data['title']) . "\">" . f_err('title',$errors) . "</td></tr>
+			<td><input name=\"title\" value=\"" . htmlspecialchars($case_data['title']) . "\">";
+	echo f_err('title',$errors) . "</td></tr>
 		<tr><td>" . _T('court_archive_id') . ":</td>
 			<td><input name=\"id_court_archive\" value=\"" . htmlspecialchars($case_data['id_court_archive']) . "\"></td></tr>";
 // [AG] Creation date not shown upon ML request
