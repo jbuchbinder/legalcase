@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.19 2005/03/11 16:04:51 antzi Exp $
+	$Id: edit_app.php,v 1.20 2005/03/18 23:11:56 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -145,8 +145,7 @@ if ($_SESSION['app_data']['id_case']>0) {
 	foreach ($all_clients as $client) {
 		if ($client['id_client']) {
 			echo '<a href="client_det.php?client=' . $client['id_client'] . '" class="content_link">'
-				. $client['name_first'] . ' ' . $client['name_middle'] . ' ' . $client['name_last']
-				. '</a>';
+				. get_person_name($client) . '</a>';
 	
 			if (++$current < $numrows)
 				echo ", ";
