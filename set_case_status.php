@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.3 2004/12/17 18:25:00 antzi Exp $
+	$Id: set_case_status.php,v 1.4 2004/12/17 21:38:38 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -48,7 +48,12 @@ switch ($status) {
 // Close case
 //
 	case 'closed' :
-		// Start page
+		// Check if the case is already closed
+		if ($row['status'] == 'closed') {
+			header('Location: ' . $GLOBALS['HTTP_REFERER']);
+			break;
+		}
+		// Start the page
 		lcm_page_start("New follow-up");
 		// Set defaults
 		$type = 'conclusion';
