@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.9 2005/02/17 07:40:12 antzi Exp $
+	$Id: keywords.php,v 1.10 2005/02/17 14:54:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -29,19 +29,9 @@ include_lcm('inc_keywords');
 // client, org, author).
 //
 function show_all_keywords($type = '') {
-/*	if (! $type)
+	if (! $type)
 		$type = 'system';
 	
-	$html_system = ($type == 'system' ? '&nbsp;&lt;--' : '');
-	$html_user   = ($type == 'user' ? '&nbsp;&lt;--' : '');
-
-	// Mini-menu: system or user keyword groups
-	echo "<ul>";
-	echo '<li><a href="?type=system" class="content_link">System keywords</a>' . $html_system . "</li>\n";
-	echo '<li><a href="?type=user" class="content_link">User keywords</a>' . $html_user . "</li>\n";
-	echo "</ul>\n\n";
-	
-*/
 	$kwg_all = get_kwg_all($type);
 
 	foreach ($kwg_all as $kwg) {
@@ -188,7 +178,7 @@ echo "</fieldset>\n";
 
 // Show tabs
 //show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
-show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
+show_tabs($groups, $tab, $_SERVER['SCRIPT_NAME']);
 
 // Show tab contents
 switch ($tab) {
