@@ -32,14 +32,14 @@ $value = clean_input($_POST['value']);
 if (($filter>0) && ($field)) {
 	// Change order of the columns to be left behind the new one
 	$q = "UPDATE lcm_filter_conds
-			SET lcm_filter_conds.order=lcm_filter_conds.order+1
+			SET cond_order=cond_order+1
 			WHERE (id_filter=$filter
-				AND lcm_filter_conds.order>=$order)";
+				AND cond_order>=$order)";
 	$result = lcm_query($q);
 
 	// Insert new column info
 	$q = "INSERT INTO lcm_filter_conds
-			SET id_filter=$filter,lcm_filter_conds.order=$order,id_field=$field,type=$cond,value='$value'";
+			SET id_filter=$filter,cond_order=$order,id_field=$field,type=$cond,value='$value'";
 	$result = lcm_query($q);
 }
 

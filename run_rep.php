@@ -37,7 +37,7 @@ $q = "SELECT lcm_rep_cols.*,lcm_fields.*
 		FROM lcm_rep_cols,lcm_fields
 		WHERE (id_report=$rep
 			AND lcm_rep_cols.id_field=lcm_fields.id_field)
-		ORDER BY lcm_rep_cols.order";
+		ORDER BY lcm_rep_cols.col_order";
 $result = lcm_query($q);
 
 // Process report column data to prepare SQL query
@@ -56,7 +56,7 @@ while ($row = lcm_fetch_array($result)) {
 		$sl_text .= ( $sl_text ? ', "' : '"' ) . $row['description'] . '"';
 	}
 	if ($row['total']) {
-		$totals[$row['order']] = 0;
+		$totals[$row['col_order']] = 0;
 	}
 }
 
@@ -77,7 +77,7 @@ while ($filter = lcm_fetch_array($result)) {
 			FROM lcm_filter_conds,lcm_fields
 			WHERE (lcm_filter_conds.id_filter=" . $filter['id_filter'] . "
 				AND lcm_filter_conds.id_field=lcm_fields.id_field)
-			ORDER BY lcm_filter_conds.order";
+			ORDER BY lcm_filter_conds.cond_order";
 	$res_cond = lcm_query($q);
 
 	// Process conditions

@@ -62,13 +62,13 @@ if ($filter > 0) {
 			FROM lcm_filter_conds,lcm_fields
 			WHERE (id_filter=$filter
 				AND lcm_filter_conds.id_field=lcm_fields.id_field)
-			ORDER BY 'order'";
+			ORDER BY 'cond_order'";
 		// Do the query
 		$conds = lcm_query($q);
 		// Show the results
 		while ($condition = lcm_fetch_array($conds)) {
 			// Order
-			echo '<tr><td>' . $condition['order'] . '</td>';
+			echo '<tr><td>' . $condition['cond_order'] . '</td>';
 			// Field description
 			echo '<td>';
 			if (true) echo '<a href="edit_filter_cond.php?filter=' . $filter . '&amp;cond=' . $condition['id_condition'] . '" class="content_link">';
@@ -79,7 +79,7 @@ if ($filter > 0) {
 			echo '<td>' . $GLOBALS['condition_types'][$condition['type']] . '</td>';
 			echo '<td>' . $condition['value'] . '</td>';
 			echo "</tr>\n";
-			$last_order = $condition['order']+1;
+			$last_order = $condition['cond_order']+1;
 		}
 		echo "\t\t</table><br>\n";
 
