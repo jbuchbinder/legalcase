@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along 
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.40 2005/02/10 19:14:37 antzi Exp $
+	$Id: listcases.php,v 1.41 2005/02/20 22:03:31 antzi Exp $
 */
 
 include('inc/inc.php');
