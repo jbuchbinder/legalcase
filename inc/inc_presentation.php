@@ -682,27 +682,25 @@ function get_time_interval_inputs($name = 'select', $time, $table = false) {
 	if ($table)
 		$ret .= "<tr>\n"
 			. "<td><!-- " . _T('select_time_days') . "<br/ -->\n";
-	$ret .= "<input $dis name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
+	$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
+	$ret .= " d, ";
 			
+	if ($table)
+		$ret .= "</td>\n";
+
 	// Hour
 	if ($table)
-		$ret .= "<tr>\n"
-			. "<td><!-- " . _T('select_time_hour') . "<br/ -->\n";
+		$ret .= "<td><!-- " . _T('select_time_hour') . "<br/ -->\n";
 
 	$ret .= "<select $dis name=\"" . $name . "_hour\" id=\"" . $name . "_hour\" align=\"right\">\n";
 
 	for ($i = 0; $i < 24; $i++) {
 		$default = ($i == $default_hour ? ' selected="selected"' : '');
-		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">";
-		if ($hours24) {
-			$ret .= $i;
-		} else {
-			$ret .= gmdate('g a',($i * 3600));
-		}
-		$ret .= "</option>\n";
+		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">$i</option>\n";
 	}
 
 	$ret .= "</select>";
+	$ret .= " h, ";
 
 	if ($table)
 		$ret .= "</td>\n";
@@ -710,7 +708,7 @@ function get_time_interval_inputs($name = 'select', $time, $table = false) {
 	// Minutes
 	if ($table)
 		$ret .= "<td><!-- " . _T('select_time_minutes') . "<br/ -->\n";
-	$ret .= ":<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
+	$ret .= "<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
 
 	for ($i = 0; $i < 60; $i += 5) {
 		$default = ($i == $default_minutes ? ' selected="selected"' : '');
@@ -718,6 +716,7 @@ function get_time_interval_inputs($name = 'select', $time, $table = false) {
 	}
 
 	$ret .= "</select>";
+	$ret .= " m";
 
 	if ($table)
 		$ret .= "</td>\n"
