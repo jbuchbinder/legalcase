@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.42 2005/02/28 11:38:30 mlutfy Exp $
+	$Id: listcases.php,v 1.43 2005/03/01 21:30:05 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -81,7 +81,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 	$action = '';
 
 	if (allowed($item['id_case'],'w'))
-		$action = '<a href=""edit_fu.php?case=' . $row['id_case'] . '" class="content_link">'
+		$action = '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">'
 			. "Add followup"
 			. '</a>';
 
