@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.19 2005/03/30 08:23:08 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.20 2005/04/04 06:31:47 mlutfy Exp $
 */
 
 
@@ -774,7 +774,7 @@ function http_calendrier_clics($year, $month, $day, $clic, $script)
 	return http_href("$script?type=jour&jour=$day&mois=$month&annee=$year", $clic)
 		. '&nbsp;<a href="edit_app.php?time=' . rawurlencode("$year-$month-$day") . '">'
 		. '<img src="images/jimmac/stock_edit-16.png" border="0" width="16" '
-		. 'height="16" alt="' . "Create new appointment" . '" title="' . "Create new appointment" . '" />'  // TRAD
+		. 'height="16" alt="' . _T('app_button_new') . '" title="' . _T('app_button_new') . '" />'
 		. '</a>';
 }
 
@@ -1440,12 +1440,12 @@ function http_calendrier_jour($jour,$mois,$annee,$large = "wide", $partie_cal, $
 	}
 	else {
 	  if ($large == "wide")
-			$my_header = "<div align='center' style='padding: 5px;'>" .
-			'<a class="content_link" href="edit_app.php?time=' . rawurlencode("$annee-$mois-$jour") . '">' 
+			$my_header = "<div align='center' style='padding: 5px;'>"
+			. '<a class="content_link" href="edit_app.php?time=' . rawurlencode("$annee-$mois-$jour") . '">' 
 			. '<img src="images/jimmac/stock_edit-16.png" border="0" width="16" '
-			. 'height="16" alt="' . "Create new appointment" . '" title="' . "Create new appointment" . '" />'
-			. 'Create new appointment</a>' . /* TRAD */
-			"</div>\n";
+			. 'height="16" alt="' . _T('app_button_new') . '" title="' . _T('app_button_new') . '" />'
+			. _T('app_button_new') . '</a>'
+			. "</div>\n";
 		else
 			$my_header = '';
 	}
