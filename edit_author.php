@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.9 2004/12/10 17:59:59 antzi Exp $
+	$Id: edit_author.php,v 1.10 2004/12/10 21:42:01 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -89,7 +89,7 @@ else lcm_page_start("New author");
 <form name="edit_author" method="post" action="upd_author.php">
 	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
 		<input name="id_author" type="hidden" id="id_author" value="<?php echo $usr['id_author']; ?>"/>
-		<input name="email_exists" type="hidden" id="email_exitst" value="<?php echo $usr['email_exists']; ?>"/>
+		<input name="email_exists" type="hidden" id="email_exists" value="<?php echo $usr['email_exists']; ?>"/>
 		<input name="ref_edit_author" type="hidden" id="ref_edit_author" value="<?php echo $usr['ref_edit_author']; ?>"/>
 		<tr><td align="right" valign="top">Username:</td>
 			<td align="left" valign="top"><input name="username" type="text" class="search_form_txt" id="username" size="35" value="<?php echo clean_output($usr['username']); ?>"/></td>
