@@ -585,6 +585,7 @@ if (! empty($log)) {
 
 	foreach ($log as $line) {
 		echo "<li>" . $line . "</li>\n";
+		lcm_log('Author ' . $author_session['id_author'] . ': ' . $line,'config');
 	}
 
 	echo "</ul>\n";
