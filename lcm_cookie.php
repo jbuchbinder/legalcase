@@ -50,17 +50,11 @@ if ($logout) {
 			zap_sessions($author_session['id_author'], true);
 			lcm_setcookie('lcm_session', $lcm_session, time() - 3600 * 24);
 		}
-		if ($PHP_AUTH_USER AND !$ignore_auth_http) {
-			include_local ("inc-login.php"); // [ML] XXX
-			auth_http($cible, 'logout');
-		}
 		unset ($author_session);
 	}
 
-	$test = 'yes=' . $author_session['login'];
-
 	if (!$url)
-		@Header("Location: ./lcm_login.php" . '?' . $test);
+		@Header("Location: ./lcm_login.php");
 	else
 		@Header("Location: $url");
 	exit;
@@ -82,7 +76,7 @@ if ($cookie_test_failed == 'yes') {
 // Attempt to login
 unset ($cookie_session);
 if ($essai_login == 'oui') {
-	// Recuperer le login en champ hidden
+	// Get the username stored in a hidden field
 	if ($session_login_hidden AND !$session_login)
 		$session_login = $session_login_hidden;
 
@@ -106,9 +100,9 @@ if ($essai_login == 'oui') {
 		$classe_auth = 'Auth_'.$nom_auth;
 		$auth = new $classe_auth;
 		if ($auth->init()) {
-			// Essayer les mots de passe md5
-			$ok = $auth->verifier_challenge_md5($login, $session_password_md5, $next_session_password_md5);
-			// Sinon essayer avec le mot de passe en clair
+			// Try with the md5 password
+			$ok = $auth->validate_md5_challenge($login, $session_password_md5, $next_session_password_md5);
+			// If failed, try as cleartext
 			if (!$ok && $session_password) $ok = $auth->verifier($login, $session_password);
 		}
 		if ($ok) break;
@@ -142,7 +136,7 @@ if ($essai_login == 'oui') {
 
 // Set an administrative cookie?
 // [ML] Not very useful I think
-if ($cookie_admin == 'non') {
+if ($cookie_admin == 'no') {
 	lcm_setcookie('lcm_admin', $lcm_admin, time() - 3600 * 24);
 	$cible->delVar('var_login');
 	$cible->addVar('var_login', '-1');
