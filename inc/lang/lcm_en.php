@@ -89,6 +89,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_organisations' => 'Organisations:',
 'case_input_status' => 'Status:',
 'case_input_title' => 'Title:',
+'case_status_option_closed' => 'Closed',
+'case_status_option_draft' => 'Draft',
+'case_status_option_merged' => 'Merged',
+'case_status_option_open' => 'Open',
+'case_status_option_suspended' => 'Suspended',
 'case_subtitle_appointments' => 'Appointments',
 'case_subtitle_attachments' => 'Attached documents',
 'case_subtitle_clients' => 'Case clients',
@@ -524,7 +529,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_tab_regional' => 'Regional settings',
 'siteconf_warning' => '<b>Caution!</b> The settings on this page have a global impact which may influence the functionning of the site.',
 'siteconf_warning_currency' => '<b>Warning!</b> If you change the currency, the current information entered will <strong>not</strong> be converted.',
-'status' => 'Status',
 
 
 // T
