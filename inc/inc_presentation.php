@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.178 2005/03/22 13:17:16 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.179 2005/03/22 15:23:44 antzi Exp $
 */
 
 //
@@ -1442,7 +1442,7 @@ function show_attachments_list($type, $id_type) {
 	}
 }
 
-function show_attachments_upload($type, $id_type) {
+function show_attachments_upload($type, $id_type, $filename='', $description='') {
 	if (! ($type == 'case' || $type == 'client' || $type == 'org')) 
 		lcm_panic("unknown type -" . $type . "-");
 
@@ -1453,10 +1453,10 @@ function show_attachments_upload($type, $id_type) {
 	echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
 
 	echo '<strong>' . _Ti('file_input_name') . "</strong><br />";
-	echo '<input type="file" name="filename" size="40" />' . "<br />\n";
+	echo '<input type="file" name="filename" size="40" value="' . $filename . '" />' . "<br />\n";
 
 	echo '<strong>' . _Ti('file_input_description') . "</strong><br />\n";
-	echo '<input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n";
+	echo '<input type="text" name="description" class="search_form_txt" value="' . $description . '" />&nbsp;' . "\n";
 	echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 	echo "</form>\n";
 }
