@@ -51,6 +51,9 @@ if ($list_pos>=$number_of_rows) $list_pos = 0;
 if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
+
+// Debuging code
+echo "<!-- Page rows:" . $prefs['page_rows'] . "-->\n";
 ?>
 
 <!-- [ML:FIXME] I'm not sure about the CSS classes -->
