@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.11 2005/03/18 15:01:32 mlutfy Exp $
+	$Id: upd_client.php,v 1.12 2005/03/19 00:19:16 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -75,8 +75,7 @@ if ($_SESSION['client']['id_client'] > 0) {
 				date_update = NOW(),
 				$cl";
 
-	lcm_query($q);
-	$_SESSION['client']['id_client'] = lcm_insert_id();
+	$_SESSION['client']['id_client'] = lcm_insert_id(lcm_query($q));
 
 	//
 	// Attach client to case (Case -> Add Client -> Create new client)
@@ -91,6 +90,15 @@ if ($_SESSION['client']['id_client'] > 0) {
 			lcm_query($q);
 		}
 	}
+}
+
+//
+// Add organisation
+//
+if (!empty($_SESSION['client']['new_org'])) {
+	$q = "REPLACE INTO lcm_client_org
+		VALUES (" . $_SESSION['client']['id_client'] . ',' . $_SESSION['client']['new_org'] . ")";
+	$result = lcm_query($q);
 }
 
 //
