@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.9 2004/11/24 15:21:48 makaveev Exp $
+	$Id: client_det.php,v 1.10 2004/11/26 12:16:09 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -57,7 +57,7 @@ if ($client>0) {
 
 		// Show client details
 		lcm_page_start("Client: " . $row['name_first'] . ' ' .  $row['name_middle'] . ' ' . $row['name_last']);
-		echo '<p class="normal_text">';
+		echo '<fieldset class="info_box"><div class="prefs_column_menu_head">About this client</div><p class="normal_text">';
 		echo 'Client ID: ' . $row['id_client'] . "<br/>\n";
 		echo 'Gender: ' . $gender . "<br/>\n";
 		echo 'Citizen number: ' . $row['citizen_number'] . "<br/>\n";
@@ -69,12 +69,14 @@ if ($client>0) {
 		echo "</p>\n";
 
 		if ($edit)
-			echo '<p class="normal_text">[<a href="edit_client.php?client=' . $row['id_client'] .  '" class="content_link"><strong>Edit client information</strong></a>]</p>' . "\n";
-
+			echo '<a href="edit_client.php?client=' . $row['id_client'] .  '" class="edit_lnk">Edit client information</a><br />' . "\n";
+		
+		echo "<br /></fieldset>";
+			
 		?>
 		
-		<h3>Organisation(s) represented by this client:</h3>
-		<table border="0" class="tbl_usr_dtl">
+		<fieldset class="info_box"><div class="prefs_column_menu_head">Organisation(s) represented by this client</div>
+		<br /><table border="0" class="tbl_usr_dtl">
 		    <tr>
 			<th class="heading">Organisation name</th>
 			<th class="heading">&nbsp;</th>
@@ -102,7 +104,7 @@ if ($client>0) {
 		if ($edit)
 			echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">Add organisation(s)</a><br />";
 
-		
+		echo "<br /></fieldset>";
 
 	} else die("There's no such client!");
 } else die("Which client?");
