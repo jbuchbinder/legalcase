@@ -16,7 +16,7 @@ function create_database() {
 	// - DONE lcm_author
 	// - DONE lcm_client 
 	// - DONE lcm_org
-	// + TODO lcm_client_org
+	// - DONE lcm_client_org
 	// + TODO lcm_courtfinal 
 	// + TODO lcm_appelation 
 	// + TODO lcm_keyword 
