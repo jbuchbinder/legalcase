@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.41 2005/01/21 00:52:20 antzi Exp $
+	$Id: edit_fu.php,v 1.42 2005/01/21 03:06:06 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -27,6 +27,12 @@ include_lcm('inc_filters');
 
 // Initiate session
 // [ML] now in inc_auth session_start();
+
+// Read the policy settings
+$fu_sum_billed = read_meta('fu_sum_billed');
+$fu_allow_modif = read_meta('fu_allow_modif');
+$modify = ($fu_allow_modif == 'yes');
+$admin = ($GLOBALS['author_session']['status']=='admin');
 
 if (empty($errors)) {
     // Clear form data
@@ -53,7 +59,8 @@ if (empty($errors)) {
 		} else die("There's no such follow-up!");
 
 		// Check for access rights
-		if (!(($GLOBALS['author_session']['status'] == 'admin') || allowed($fu_data['id_case'],'e')))
+		$edit = allowed($fu_data['id_case'],'e');
+		if (!($admin || $edit))
 			die("You don't have permission to edit this case's information!");
 
 		// Set the case ID, to which this followup belongs
@@ -153,23 +160,30 @@ echo "</ul>\n";
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
 
+// Disable inputs when edit is not allowed for the field
+$dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 ?>
 
 <form action="upd_fu.php" method="POST">
 	<table class="tbl_usr_dtl" width="99%">
 		<tr><td>Start:</td>
-			<td>Date <?php echo get_date_inputs('start', $fu_data['date_start'], false); ?>
-				Time <?php echo get_time_inputs('start', $fu_data['date_start']); ?><?php
-			echo f_err_star('date_start',$errors);?>
+			<td>Date <?php $name = (($admin || ($edit && $modify)) ? 'start' : '');
+				echo get_date_inputs($name, $fu_data['date_start'], false);
+				echo "\n				Time ";
+				echo get_time_inputs($name, $fu_data['date_start']);
+				echo f_err_star('date_start',$errors); ?>
 			</td>
 		</tr>
 		<tr><td>End:</td>
-			<td>Date <?php echo get_date_inputs('end', $fu_data['date_end']); ?>
-				Time <?php echo get_time_inputs('end', $fu_data['date_end']); ?><?php
-			echo f_err_star('date_end',$errors); ?>
+			<td>Date <?php $name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
+				echo get_date_inputs($name, $fu_data['date_end']);
+				echo "\n				Time ";
+				echo get_time_inputs($name, $fu_data['date_end']);
+				echo f_err_star('date_end',$errors); ?>
+			</td>
 		</tr>
 		<tr><td>Type:</td>
-			<td><select name="type" size="1">
+			<td><select <?php echo $dis; ?> name="type" size="1">
 			<?php
 
 			global $system_kwg;
@@ -187,12 +201,14 @@ echo show_all_errors($_SESSION['errors']);
 			?>
 			</select></td></tr>
 		<tr><td valign="top">Description:</td>
-			<td><textarea name="description" rows="15" cols="40" class="frm_tarea"><?php
-			echo clean_output($fu_data['description']); ?></textarea></td></tr>
-		<tr><td>Sum billed:</td>
-			<td><input name="sumbilled" value="<?php echo
+			<td><textarea <?php echo $dis; ?> name="description" rows="15" cols="40" class="frm_tarea"><?php
+			echo clean_output($fu_data['description']) . "</textarea></td></tr>\n";
+// Sum billed field
+			if ($fu_sum_billed == "yes") {
+?>		<tr><td>Sum billed:</td>
+			<td><input <?php echo $dis; ?> name="sumbilled" value="<?php echo
 			clean_output($fu_data['sumbilled']); ?>" class="search_form_txt" size='10' />
-			<?php 
+			<?php
 				// [ML] If we do this we may as well make a function
 				// out of it, but not sure where to place it :-)
 				// This code is also in config_site.php
@@ -203,11 +219,11 @@ echo show_all_errors($_SESSION['errors']);
 					$currency = _T('currency_default_format');
 					$GLOBALS['lang'] = $current_lang;
 				}
-			
+
 				echo htmlspecialchars($currency);
-			?>
-			</td></tr>
-	</table>
+				echo "			</td></tr>";
+			}
+?>	</table>
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
 
 	<?php
