@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.189 2005/03/29 15:37:10 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.190 2005/03/29 15:39:17 mlutfy Exp $
 */
 
 //
@@ -1088,15 +1088,15 @@ function show_list_start($headers = array()) {
 		
 			echo '<a href="' . $sort_link->getUrl() . '" class="content_link">';
 			echo $h['title'];
-			echo "</a>";
 		
 			if ($cur_sort_order == 'ASC')
-				echo '<img src="images/lcm/asc_desc_arrow.gif" alt="" />';
+				echo '<img src="images/lcm/asc_desc_arrow.gif" alt="" border="0" />';
 			else if ($cur_sort_order == 'DESC')
-				echo '<img src="images/lcm/desc_asc_arrow.gif" alt="" />';
+				echo '<img src="images/lcm/desc_asc_arrow.gif" alt="" border="0" />';
 			else
-				echo '<img src="images/lcm/sort_arrow.gif" alt="" />';
-		
+				echo '<img src="images/lcm/sort_arrow.gif" alt="" border="0" />';
+
+			echo "</a>";
 		} else {
 			echo $h['title'];
 		}
