@@ -18,65 +18,68 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.6 2005/01/13 15:04:06 mlutfy Exp $
+	$Id: upd_client.php,v 1.7 2005/01/18 15:05:46 mlutfy Exp $
 */
-
-session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-// Register $errors array - just in case
-if (!session_is_registered("errors"))
-    session_register("errors");
-
 // Clear all previous errors
-$errors=array();
-
-// Register form data in the session
-if(!session_is_registered("client_data"))
-    session_register("client_data");
+$_SESSION['errors'] = array();
+$_SESSION['client'] = array();
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-    $client_data[$key] = $value;
+	$_SESSION['client'][$key] = $value;
 
-// Check submitted information
-if (strtotime($client_data['date_creation']) < 0) { $errors['date_creation'] = 'Invalid creation date!'; }
-//if (strtotime($client_data['date_update']) < 0) { $errors['date_update'] = 'Invalid update date!'; }
+//
+// Validate form data
+//
 
-// Add timestamp
-$client_data['date_update'] = date('Y-m-d H:i:s'); // now
+if (! $_SESSION['client']['name_first'])
+	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . 'Mandatory field.';
 
-if (count($errors)) {
+if (! $_SESSION['client']['name_last'])
+	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . 'Mandatory field.';
+
+if (! ($_SESSION['client']['gender'] == 'unknown'
+		|| $_SESSION['client']['gender'] == 'female'
+		|| $_SESSION['client']['gender'] == 'male'))
+	$_SESSION['errors']['name_last'] = _T('person_input_gender') . ' ' . 'Incorrect format.';
+
+if (count($_SESSION['errors'])) {
     header("Location: $HTTP_REFERER");
-    exit;
-} else {
-	$cl = "name_first='" . clean_input($client_data['name_first']) . "',
-		name_middle='" . clean_input($client_data['name_middle']) . "',
-		name_last='" . clean_input($client_data['name_last']) . "',
-		gender='" . clean_input($client_data['gender']) . "',
-		citizen_number='" . clean_input($client_data['citizen_number']) . "',
-		address='" . clean_input($client_data['address']) . "',
-		civil_status='" . clean_input($client_data['civil_status']) . "',
-		income='" . clean_input($client_data['income']) . "'";
-
-    if ($id_client>0) {
-		// Prepare query
-		$q = "UPDATE lcm_client SET date_update=NOW(),$cl WHERE id_client=$id_client";
-    } else {
-		$q = "INSERT INTO lcm_client SET id_client=0,date_creation=NOW(),date_update=NOW(),$cl";
-    }
-
-    if (!($result = lcm_query($q)))
-		die("$q<br>\nError ".lcm_errno().": ".lcm_error());
-
-    // Clear the session
-	// FIXME [ML] does this make sense, if we want to show errors afterwards?
-	// session_destroy();
-
-    // Send user back to add/edit page's referer
-    header('Location: ' . $client_data['ref_edit_client']);
+	exit;
 }
+
+$cl = "name_first = '" . clean_input($_SESSION['client']['name_first']) . "',
+	name_middle = '" . clean_input($_SESSION['client']['name_middle']) . "',
+	name_last = '" . clean_input($_SESSION['client']['name_last']) . "',
+	gender = '" . clean_input($_SESSION['client']['gender']) . "',
+	citizen_number = '" . clean_input($_SESSION['client']['citizen_number']) . "',
+	address = '" . clean_input($_SESSION['client']['address']) . "',
+	civil_status = '" . clean_input($_SESSION['client']['civil_status']) . "',
+	income = '" . clean_input($_SESSION['client']['income']) . "'";
+
+if ($_SESSION['client']['id_client'] > 0) {
+	$q = "UPDATE lcm_client
+		SET date_update = NOW(), 
+			$cl 
+		WHERE id_client = $id_client";
+	
+	lcm_query($q);
+} else {
+	$q = "INSERT INTO lcm_client
+			SET id_client = 0,
+				date_creation = NOW(),
+				date_update = NOW(),
+				$cl";
+
+	lcm_query($q);
+	$_SESSION['client']['id_client'] = lcm_insert_id();
+}
+
+// Go to the 'view details' page of the author
+header('Location: client_det.php?client=' . $_SESSION['client']['id_client']);
 
 ?>

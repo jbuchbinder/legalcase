@@ -18,28 +18,23 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.20 2005/01/13 15:04:06 mlutfy Exp $
+	$Id: edit_client.php,v 1.21 2005/01/18 15:05:47 mlutfy Exp $
 */
-
-session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
 $client = intval($_GET['client']);
 
-if (empty($errors)) {
-    // Clear form data
+if (empty($_SESSION['errors'])) {
     $client_data = array();
 	$client_data['referer'] = $HTTP_REFERER;
 
-	if ($client>0) {
-		// Register client as session variable
-		// XXX remove/fix this
-	    if (!session_is_registered("client"))
-			session_register("client");
+	if ($client > 0) {
+		$q = 'SELECT * 
+				FROM lcm_client 
+				WHERE id_client=' . $client;
 
-		$q = 'SELECT * FROM lcm_client WHERE id_client=' . $client;
 		$result = lcm_query($q);
 
 		if ($row = lcm_fetch_array($result)) {
@@ -47,15 +42,15 @@ if (empty($errors)) {
 				$client_data[$key] = $value;
 			}
 		}
-	} else {
-		// XXX FIXME [ML] what for?
-		// Setup default values
-		$client_data['date_creation'] = date('Y-m-d H:i:s'); // now
-		$client_data['date_update'] = date('Y-m-d H:i:s'); // now
 	}
+} else {
+	// Fetch previously submitted values, if any
+	if (isset($_SESSION['client']))
+		foreach($_SESSION['client'] as $key => $value)
+			$client_data[$key] = $value;
 }
 
-if ($client>0) {
+if ($client > 0) {
 	lcm_page_start(_T('title_client_edit')
 		. $client_data['name_first'] . ' '
 		. $client_data['name_middle'] . ' '
@@ -64,26 +59,32 @@ if ($client>0) {
 	lcm_page_start(_T('title_client_new'));
 }
 
+echo show_all_errors($_SESSION['errors']);
+
 ?>
 
 <form action="upd_client.php" method="post">
 	<table class="tbl_usr_dtl">
+
 <?php
 	if($client_data['id_client']) {
-		echo "<tr><td>Client ID:</td>\n";
+		echo "<tr><td>" . _T('client_input_id') . "</td>\n";
 		echo "<td>" . $client_data['id_client']
 			. '<input type="hidden" name="id_client" value="' . $client_data['id_client'] . '"></td></tr>' . "\n";
 	}
-?>
-		<tr><td><?php echo _T('person_input_name_first') ?></td>
-			<td><input name="name_first" value="<?php echo clean_output($client_data['name_first']); ?>" class="search_form_txt"></td></tr>
-		<tr><td><?php echo _T('person_input_name_middle') ?></td>
-			<td><input name="name_middle" value="<?php echo clean_output($client_data['name_middle']); ?>" class="search_form_txt"></td></tr>
-		<tr><td><?php echo _T('person_input_name_last') ?></td>
-			<td><input name="name_last" value="<?php echo clean_output($client_data['name_last']); ?>" class="search_form_txt"></td></tr>
-		<tr><td><?php echo _T('person_input_gender') ?></td>
-			<td><select name="gender">
-<?php
+
+	echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
+	echo '<td><input name="name_first" value="' . clean_output($client_data['name_first']) . '" class="search_form_txt"></td></tr>' . "\n";
+
+	echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
+	echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt"></td></tr>' . "\n";
+
+	echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
+	echo '<td><input name="name_last" value="' . clean_output($client_data['name_last']) . '" class="search_form_txt"></td></tr>' . "\n";
+
+	echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
+	echo '<td><select name="gender">' . "\n";
+
 	$opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
 
 	if ($client_data['gender'] == 'male')
@@ -117,5 +118,8 @@ if ($client>0) {
 
 <?php
 	lcm_page_end();
-	session_destroy();
+
+	// Reset error messages
+	$_SESSION['errors'] = array();
+	$_SESSION['client'] = array();
 ?>
