@@ -123,7 +123,7 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
 							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">Organisations</a></li>
 							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>";
-							if($prefs['screen'] == "wide") {
+							if($prefs['screen'] == "narrow") {
 								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li>\n";
 							}
 	echo "
@@ -216,7 +216,7 @@ function lcm_page_end($credits = '') {
 <!-- but I think it will be much better to put the search boxes -->
 <!-- The right and the left column can be very long, so, we can put here a lot of additional information, some tiny help hints and so -->";
 //Checking for "wide/narrow" user screen
-if($prefs['screen'] == "narrow")
+if($prefs['screen'] == "wide")
 {
 		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
