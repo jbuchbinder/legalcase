@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.37 2005/03/02 08:40:03 antzi Exp $
+	$Id: inc_filters.php,v 1.38 2005/03/03 16:24:41 makaveev Exp $
 */
 
 // Execute this file only once
@@ -129,7 +129,7 @@ function f_err_star($fn, $errors) {
 }
 
 function show_all_errors($all_errors) {
-	$ret = "<ul>";
+	$ret = "<ul class=\"err_list\">";
 
 	if (! count($all_errors))
 		return "";
