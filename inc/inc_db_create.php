@@ -47,7 +47,7 @@ function create_database() {
 	// + TODO lcm_courtfinal
 	// + TODO lcm_appelation
 	// + DONE lcm_keyword
-	// + TODO lcm_keyword_group
+	// + DONE lcm_keyword_group
 	// + TODO lcm_client_keyword
 	// + TODO lcm_case_keyword
 	// - DONE lcm_case_client_org
