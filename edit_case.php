@@ -28,8 +28,7 @@ if ($existing) {
 	lcm_page_start("New case");
 
 	// Set default values for the new case
-	// $case_data['id_author'] = $author_session['id_author'];
-	$case_data['id_author'] = $connect_id_auteur;
+	$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
 	$case_data['date_creation'] = date('Y-m-d H:i:s');
 }
 
@@ -62,12 +61,15 @@ if ($existing) {
 			if ($case_data['public']) echo ' checked'; ?>></td></tr>
 	</table>
 <?php
+
+// Different buttons for edit existing and for new case
 	if ($existing) { ?>
 	<button name="submit" type="submit" value="submit">Save</button>
 <?php
 	} else { ?>
 	<button name="submit" type="submit" value="add">Add</button>
 	<button name="submit" type="submit" value="addnew">Add & open new</button>
+	<button name="submit" type="submit" value="adddet">Add & go to details</button>
 <?php
 	} ?>
 	<button name="reset" type="reset">Reset</button>

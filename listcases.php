@@ -38,7 +38,7 @@ while ($row = lcm_fetch_array($result)) {
 }
 
 ?>
-<tr><td colspan="2"><a href="edit_case.php?case=0">Open new case</a></td></tr>
+<tr><td colspan="3"><a href="edit_case.php?case=0">Open new case</a></td></tr>
 </table>
 
 <?php

@@ -46,9 +46,16 @@ $result = lcm_query($q);
 // [AG] In each case the return page will be different.
 
 //header("Location: case_det.php?case=$id_case");
-if ($submit==='addnew')
-	header("Location: edit_case.php?case=0&ref=$ref_edit_case");
-else
-	header("Location: $ref_edit_case");
 
+// Proceed accoring to the button type
+switch ($submit) {
+	case 'addnew':
+		header("Location: edit_case.php?case=0&ref=$ref_edit_case");
+		break;
+	case 'adddet':
+		header("Location: case_det.php?case=$id_case");
+		break;
+	default :
+		header("Location: $ref_edit_case");
+}
 ?>
