@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.10 2005/01/11 13:25:57 mlutfy Exp $
+	$Id: upd_author.php,v 1.11 2005/01/11 14:52:32 mlutfy Exp $
 */
 
 session_start();
@@ -43,6 +43,13 @@ function change_password($usr) {
 			system administrator.";
 		return;
 	}
+	
+	// Is user allowed to change the password?
+	if (! $auth->is_newpass_allowed($usr['username'], $author_session)) {
+		// TODO: use $auth->error ?
+		$_SESSION['errors']['password_generic'] = "You are not allowed to change the password.";
+		return;
+	}
 
 	// Confirm current password only if user is not admin
 	// (this also applies to the creation of new authors, only admins can do that)
@@ -61,28 +68,69 @@ function change_password($usr) {
 			$valid_oldpass = $auth->validate_pass_cleartext($usr['username'], $usr['usr_old_passwd']);
 		}
 
-		if ($valid_oldpass) {
-			$valid_newpass = $auth->newpass($usr['username'], $usr['usr_new_passwd'], $author_session);
-
-			if (! $valid_newpass) {
-				// TODO return error: $this->get_error() ? generic error?
-				lcm_log("new pass failed 001");
-				$_SESSION['errors']['password_generic'] = "Failed to change the
-					password (internal error). Please contact your local system 
-					administrator.";
-			}
-		} else {
-			lcm_log("pass change: could not validate current password");
+		if (! $valid_oldpass) {
 			$_SESSION['errors']['password_current'] = "Bad password";
+			return;
 		}
 	}
 
-	// Do the password + confirm match?
-	if ($usr['usr_new_passwd'] == $usr['usr_retype_passwd']) {
-		$result = $auth->newpass($usr['username'], $usr['usr_new_passwd'], $author_session);
-		lcm_log("pass change: result = " . $result);
-	} else {
+	// Confirm matching passwords
+	if ($usr['usr_new_passwd'] != $usr['usr_retype_passwd']) {
 		$_SESSION['errors']['password_confirm'] = "The passwords do not match.";
+		return;
+	}
+
+	// Change the password
+	$ok = $auth->newpass($usr['username'], $usr['usr_new_passwd'], $author_session);
+
+	if (! $ok) {
+		// TODO return error: $this->get_error() ? generic error?
+		lcm_log("new pass failed 001");
+		$_SESSION['errors']['password_generic'] = "Failed to change the
+			password (internal error). Please contact your local system 
+			administrator.";
+
+		return;
+	}
+}
+
+function change_username($old_username, $new_username) {
+	global $author_session;
+
+	if (! $new_username) {
+		$_SESSION['errors']['username'] = "Username cannot be empty";
+		return;
+	}
+
+	include_lcm('inc_auth_db');
+	$class_auth = 'Auth_db'; // FIXME, take from author_session
+	$auth = new $class_db;
+
+	if (! $auth->init()) {
+		lcm_log("username change: failed auth init, signal 'internal error'.");
+		$_SESSION['errors']['password_generic'] = "Failed to
+			initialize authentication mecanism. Please contact your local
+			system administrator.";
+		return;
+	}
+
+	if (! $auth->is_newusername_allowed($old_username, $author_session)) {
+		// TODO: use $auth->error ?
+		$_SESSION['errors']['username'] = "You are not allowed to change the username.";
+		return;
+	}
+
+	// Change the username
+	$ok = $auth->newusername($old_username, $new_username, $author_session);
+
+	if (! $ok) {
+		// TODO return error: $this->get_error() ? generic error?
+		lcm_log("new username failed 001");
+		$_SESSION['errors']['username_generic'] = "Failed to change the
+			username (internal error). Please contact your local system 
+			administrator.";
+
+		return;
 	}
 }
 
@@ -108,6 +156,12 @@ foreach($_POST as $key => $value)
 if ($usr['usr_new_passwd'])
 	change_password($usr);
 
+//
+// Change username
+//
+
+if ($usr['username'] != $usr['username_old'])
+	change_username($usr['username']);
 
 //
 // No errors, update database
@@ -115,11 +169,9 @@ if ($usr['usr_new_passwd'])
 
 // FIXME: 
 // - do not allow status change to users
-// - do not allow username change to users (is_newusername_allowed())
 // - make first & last name mandatory
 
-$fl = "id_author=" . $usr['id_author'] . ",username='" . clean_input($usr['username']) . "'"
-. ",name_first='" . clean_input($usr['name_first']) . "'"
+$fl = "name_first='" . clean_input($usr['name_first']) . "'"
 . ",name_middle='" . clean_input($usr['name_middle']) . "'"
 . ",name_last='" . clean_input($usr['name_last']) . "'"
 . ",status='" . clean_input($usr['status']) . "'"
