@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.10 2005/03/21 14:49:58 mlutfy Exp $
+	$Id: listapps.php,v 1.11 2005/03/23 22:18:26 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -29,12 +29,29 @@ $q = "SELECT lcm_app.*
 	FROM lcm_author_app,lcm_app
 	WHERE lcm_author_app.id_app=lcm_app.id_app
 		AND lcm_author_app.id_author=" . $GLOBALS['author_session']['id_author'];
+
+// Sort agenda by date/time of the appointments
+$order = 'DESC';
+if (isset($_REQUEST['order']))
+	if ($_REQUEST['order'] == 'ASC' || $_REQUEST['order'] == 'DESC')
+		$order = $_REQUEST['order'];
+
+$q .= " ORDER BY start_time " . $order;
+
 $result = lcm_query($q);
 
 // Get the number of rows in the result
 $number_of_rows = lcm_num_rows($result);
 if ($number_of_rows) {
-	echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
+	$headers = array( array( 'title' => _Th('time_input_date_start'), 'order' => 'order', 'default' => 'DESC'),
+			array( 'title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ), 'order' => 'no_order'),
+			array( 'title' => _Th('app_input_type'), 'order' => 'no_order'),
+			array( 'title' => _Th('app_input_title'), 'order' => 'no_order'),
+			array( 'title' => 'Reminder', 'order' => 'no_order'),	// TRAD
+			array( 'title' => 'Action', 'order' => 'no_order') );	// TRAD
+	show_list_start($headers);
+
+/*	echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 	echo "\t<tr>";
 	echo '<th class="heading">' . _Th('time_input_date_start') . '</th>';
 	echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ) . '</th>';
@@ -43,7 +60,7 @@ if ($number_of_rows) {
 	echo '<th class="heading">Reminder</th>'; // TRAD 
 	echo '<th class="heading">Action</th>'; // TRAD
 	echo "</tr>\n";
-
+*/
 	// Check for correct start position of the list
 	$list_pos = 0;
 	
@@ -55,7 +72,7 @@ if ($number_of_rows) {
 	// Position to the page info start
 	if ($list_pos>0)
 		if (!lcm_data_seek($result,$list_pos))
-			lcm_panic("Error seeking position $list_pos in the result");
+			lcm_panic("Error seeking position $list_pos in the result");	// TRAD
 	
 	// Show page of the list
 	for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
