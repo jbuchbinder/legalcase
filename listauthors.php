@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.26 2005/03/23 10:56:04 mlutfy Exp $
+	$Id: listauthors.php,v 1.27 2005/03/31 11:37:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -70,7 +70,7 @@ if ($list_pos>=$number_of_rows) $list_pos = 0;
 // Position to the page info start
 if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
-		die("Error seeking position $list_pos in the result");
+		lcm_panic("Error seeking position $list_pos in the result");
 
 // Search form
 show_find_box('author', $find_author_string);
@@ -87,35 +87,27 @@ show_list_start($headers);
 
 // Process the output of the query
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	// Show author name
+	// Author name
 	echo "<tr>\n";
 	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo '<a href="author_det.php?author=' . $row['id_author'] . '" class="content_link">';
 	echo highlight_matches(get_person_name($row), $find_author_string);
 	echo "</a></td>\n";
 
-	// Show author status
+	// Author status
 	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo clean_output($row['status']);
 	echo "</td>\n";
-
-	// Show author action(s)
-	/* [ML]
-	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if (($GLOBALS['author_session']['status'] == 'admin') ||
-		($row['id_author'] == $GLOBALS['author_session']['id_author']))
-			echo '<a href="edit_author.php?author=' . $row['id_author'] . '" class="content_link">Edit</a>';
-	echo "</td>\n";
-	*/
 
 	echo "</tr>\n";
 }
 
 show_list_end($list_pos, $number_of_rows);
 
-// Show add auhor button
+// New author button
 if ($GLOBALS['author_session']['status'] == 'admin')
-	echo '<p><a href="edit_author.php?author=0" class="create_new_lnk">Add author</a></p>'; // TRAD
+	echo '<p><a href="edit_author.php?author=0" class="create_new_lnk">'. _T('authoredit_button_new') . "</a></p>\n";
 
 lcm_page_end();
+
 ?>
