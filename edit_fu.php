@@ -1,6 +1,7 @@
 <?php
 
 include('inc/inc.php');
+include('inc/inc_acc.php');
 
 // Error display function
 function f_err($fn, $errors)
@@ -19,6 +20,9 @@ if (empty($errors)) {
     $fu_data=array('referer'=>$HTTP_REFERER);
 
 	if (isset($followup)) {
+		// Check for access rights
+		if (!allowed($case,'e')) die("You don't have permission to edit this case's information!");
+
 		// Register followup as session variable
 	    if (!session_is_registered("followup"))
 			session_register("followup");
@@ -36,16 +40,21 @@ if (empty($errors)) {
 		// [AG] mysql_fetch_aray does the same and is available in PHP 3.
 		// [AG] no requirement for MySQL version in PHP manual though.
 		// [AG] TODO check if suplying MYSQL_ASSOC speeds the function up.
-		if ($row = mysql_fetch_array($result)) {
+		if ($row = lcm_fetch_array($result)) {
 			// Get followup details
 			foreach($row as $key=>$value) {
 				$fu_data[$key]=$value;
 			}
 		}
 	} else {
-		// Setup default values
-		$fu_data['id_case'] = $case; // Link to the case
-		$fu_data['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+		if ($case>0) {
+			// Check for access rights
+			if (!allowed($case,'w')) die("You don't have permission to add information to this case!");
+
+			// Setup default values
+			$fu_data['id_case'] = $case; // Link to the case
+			$fu_data['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+		} else die("Add followup to which case?");
 	}
 }
 
