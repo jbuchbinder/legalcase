@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.13 2005/02/22 21:46:31 antzi Exp $
+	$Id: keywords.php,v 1.14 2005/03/03 16:16:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -38,6 +38,7 @@ function show_all_keywords($type = '') {
 		// test ac-admin?
 		$suggest = $kwg['suggest'];
 		
+		echo '<a name="' . $kwg['name'] . '"></a>' . "\n";
 		echo "<fieldset class='info_box'>\n";
 		echo "<div class='prefs_column_menu_head'><a href='?action=edit_group&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>" . _T($kwg['title']) . "</a></div>\n";
 
@@ -50,6 +51,7 @@ function show_all_keywords($type = '') {
 				echo "\t<li>";
 				if ($suggest == $kw['name']) echo "<b>";
 				echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T($kw['title']) . "</a>";
+				if ($kw['ac_author'] != 'Y') echo " (hidden) ";
 				if ($suggest == $kw['name']) echo "</b>";
 				echo "</li>\n";
 			}
@@ -89,14 +91,11 @@ function show_keyword_group_id($id_group) {
 	
 	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
 	echo "<tr>\n";
-	echo "<td>" . _T('keywords_input_type') . "</td>\n";
+	echo "<td width='30%'>" . _T('keywords_input_type') . "</td>\n";
 	echo "<td>" . $kwg['type'] . "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>" . _T('keywords_input_policy') . "</td>\n";
 	echo "<td>" . $kwg['policy'] . "</td>\n";
-	echo "</tr><tr>\n";
-	echo "<td>" . _T('keywords_input_quantity') . "</td>\n";
-	echo "<td>" . $kwg['quantity'] . "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
 	echo "<td>";
@@ -110,11 +109,27 @@ function show_keyword_group_id($id_group) {
 
 	echo '</select>';
 	echo "</td>\n";
-	echo "</tr>\n";
-	echo "<tr>\n";
+	echo "</tr><tr>\n";
+
+	// Quantity: relevevant only for user keywords (ex: 'thematics' for cases)
+	if ($kwg['type'] != 'system') {
+		// [ML] Yes, strange UI, but imho it works great (otherwise confusing, I hate checkboxes)
+		$html_quantity = '<select name="kwg_quantity" id="kwg_quantity">'
+			. '<option value="one"' . ($kwg['quantity'] == 'one' ? ' selected="selected"' : '') . '>' . _T('keywords_option_quantity_one') . '</option>'
+			. '<option value="many"' . ($kwg['quantity'] == 'many' ? ' selected="selected"' : '') . '>' . _T('keywords_option_quantity_many') . '</option>'
+			. '</select>';
+	} else {
+		$html_quantity = _T('keywords_option_quantity_' . $kwg['quantity'])
+			. '<input type="hidden" name="kwg_quantity" value="' . $kwg['quantity'] . '" />';
+	}
+	
+	echo '<td colspan="2"><p>' . _T('keywords_info_quantity', array(quantity => $html_quantity)) . "</p>\n";
+	echo "</td>\n";
+	echo "</tr><tr>\n";
 	echo "<td colspan='2'>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "<br />\n";
 	echo "<input type='text' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
 	echo "</td>\n";
+	echo "</tr>\n";
 	echo "<tr></tr>\n";
 	echo "<td colspan='2'>" . _T('keywords_input_description') . "<br />\n";
 	echo "<textarea id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
@@ -164,6 +179,8 @@ function show_keyword_id($id_keyword) {
 	echo "</tr>\n";
 	echo "</table>\n\n";
 
+	echo "<p>" . "Can authors use this keyword? (otherwise it will be hidden)" . get_yes_no('kw_ac_author', $kw['ac_author']) . "</p>\n";
+
 	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 	echo "</form>\n";
 
@@ -181,17 +198,26 @@ function update_keyword_group($id_group) {
 	$kwg_suggest = $_REQUEST['kwg_suggest'];
 	$kwg_title   = $_REQUEST['kwg_title'];
 	$kwg_desc    = $_REQUEST['kwg_desc'];
-	$kwg_type    = $_REQUEST['kwg_type'];
+	$kwg_quantity = $_REQUEST['kwg_quantity']; // only for non-system kwg
 
 	if (! intval($id_group) > 0)
 		lcm_panic("update_keyword_group: missing or badly formatted id_group");
+
+	// Get current kwg information (kwg_type, name, etc. cannot be changed)
+	$kwg_info = get_kwg_from_id($id_group);
 	
+	//
+	// Query for kwg update
+	//
 	$fl = " suggest = '" . clean_input($kwg_suggest) . "' ";
 	
 	if ($kwg_title) // cannot be empty
 		$fl .= ", title = '" . clean_input($kwg_title) . "' ";
 	else
 		$_SESSION['errors']['title'] = "The title cannot be empty.";
+
+	if ($kwg_info['type'] != 'system')
+		$fl .= ", quantity = '" . clean_input($kwg_quantity) . "' ";
 	
 	$fl .= ", description = '" . clean_input($kwg_desc) . "' ";
 
@@ -202,7 +228,7 @@ function update_keyword_group($id_group) {
 	lcm_query($query);
 	write_metas(); // update inc_meta_cache.php
 
-	header("Location: keywords.php?tab=" . $kwg_type);
+	header("Location: keywords.php?tab=" . $kwg_info['type'] . "#" . $kwg_info['name']);
 	exit;
 }
 
@@ -210,19 +236,26 @@ function update_keyword_group($id_group) {
 // Update the information on a keyword
 //
 function update_keyword($id_keyword) {
-	$kw_title   = $_REQUEST['kw_title'];
-	$kw_desc    = $_REQUEST['kw_desc'];
-	$kwg_type   = $_REQUEST['kwg_type'];
+	$kw_title     = $_REQUEST['kw_title'];
+	$kw_desc      = $_REQUEST['kw_desc'];
+	$kw_ac_author = $_REQUEST['kw_ac_author']; // show/hide keyword
+	$kwg_type     = $_REQUEST['kwg_type'];
 
 	if (! intval($id_keyword) > 0)
 		lcm_panic("update_keyword: missing or badly formatted id_keyword");
 	
+	// Get current info about keyword
+	$kw_info = get_kw_from_id($id_keyword);
+
 	$fl = "description = '" . clean_input($kw_desc) . "' ";
 	
 	if ($kw_title) // cannot be empty
 		$fl .= ", title = '" . clean_input($kw_title) . "' ";
 	else
 		$_SESSION['errors']['title'] = "The title cannot be empty.";
+	
+	if ($kw_ac_author == 'Y' || $kw_ac_author == 'N')
+		$fl .= ", ac_author = '" . $kw_ac_author . "'";
 
 	$query = "UPDATE lcm_keyword
 				SET $fl
@@ -231,7 +264,7 @@ function update_keyword($id_keyword) {
 	lcm_query($query);
 	write_metas(); // update inc_meta_cache.php
 
-	header("Location: keywords.php?tab=" . $kwg_type);
+	header("Location: keywords.php?tab=" . $kwg_type . "#" . $kw_info['kwg_name']);
 	exit;
 }
 
@@ -287,13 +320,6 @@ $tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'system' );
 // Start page
 //lcm_page_start(_T('menu_admin_keywords') . _T('typo_column') . " " . $groups[$tab]);
 lcm_page_start(_T('menu_admin_keywords'));
-
-// Show warning message
-echo "<fieldset class='info_box'>\n";
-echo "<p class='normal_text'><strong>Warning:</strong> This feature is still in early development. For more
-information, please consult the <a href='http://www.lcm.ngo-bg.org/article43.html' class='content_link'>analysis
-documentation for keywords</a>.</p>\n";
-echo "</fieldset>\n";
 
 // Show tabs
 //show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
