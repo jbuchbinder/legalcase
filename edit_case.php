@@ -3,32 +3,31 @@
 include('inc/inc.php');
 include('inc/inc_acc.php');
 
-lcm_page_start("Edit case details");
+$case_data = array();
 
-// Create empty case data
-$case_data=array();
+if ($case > 0) {
+	lcm_page_start("Edit case details");
 
-if ($case>0) {
 	// Check access rights
 	if (!allowed($case,'e')) die("You don't have permission to edit this case!");
 
-	// Prepare query
 	$q = "SELECT *
 		  FROM lcm_case
 		  WHERE id_case=$case";
 
-	// Do the query
 	$result = lcm_query($q);
 
-	// Process the output of the query
 	if ($row = lcm_fetch_array($result)) {
-		// Get case details
 		foreach ($row as $key => $value) {
 			$case_data[$key] = $value;
 		}
 	}
 } else {
-	$case_data['id_author'] = $GLOBALS['connect_id_auteur'];
+	global $author_session;
+
+	lcm_page_start("New case");
+
+	$case_data['id_author'] = $author_session['id_author'];
 	$case_data['date_creation'] = date('Y-m-d H:i:s');
 }
 
@@ -60,6 +59,7 @@ if ($case>0) {
 			<td><input type="checkbox" name="public" value="yes"<?php
 			if ($case_data['public']) echo ' checked'; ?>></td></tr>
 	</table>
+
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>
 	<input type="hidden" name="date_creation" value="<?php echo $case_data['date_creation']; ?>">
