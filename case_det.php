@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.71 2005/01/21 03:42:09 antzi Exp $
+	$Id: case_det.php,v 1.72 2005/01/21 10:24:49 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -235,13 +235,13 @@ if ($case > 0) {
 		<tr><th class='heading'>";
 	switch ($fu_order) {
 		case 'ASC':
-			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC'>" . _T('date') . '</a> v';
+			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> v';
 			break;
 		case 'DESC':
-			echo "<a href='case_det.php?case=$case&amp;fu_order=ASC'>" . _T('date') . '</a> ^';
+			echo "<a href='case_det.php?case=$case&amp;fu_order=ASC' class='content_link'>" . _T('date') . '</a> ^';
 			break;
 		default:
-			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC'>" . _T('date') . '</a> v';
+			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> v';
 	}
 //	echo _T('date') .
 	echo "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
@@ -267,7 +267,7 @@ if ($case > 0) {
 		echo '<td>' . clean_output($row['type']) . '</td>';
 		if (strlen($row['description'])<$title_length) $short_description = $row['description'];
 		else $short_description = substr($row['description'],0,$title_length) . '...';
-		echo '<td><a href="fu_det.php?followup=' . $row['id_followup'] . '">' . clean_output($short_description) . '</a></td>';
+		echo '<td><a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a></td>';
 		if ($edit)
 			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '" class="content_link">' . _T('Edit') . '</a></td>';
 		echo "</tr>\n";
