@@ -149,7 +149,7 @@ function lcm_page_start($title = "", $css_files = "") {
 					</div>
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\">Calendar</div>
-						<p class=\"nav_column_text\">". date(_T('date_format')) ."</p>
+						<p class=\"nav_column_text\">". format_date() ."</p>
 					</div>
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\">Next 7 meetings</div>
