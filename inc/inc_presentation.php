@@ -668,7 +668,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 function get_time_interval_inputs($name = 'select', $time, $table = false) {
 	$days = (int) ($time / 86400);
 	$hours = (int) ($time / 3600);
-	$minutes = (int) ($time / 60);
+	$minutes = (int) round($time / 300) * 5;
 	
 	// If name is empty, disable fields
 	$dis = (($name) ? '' : 'disabled');
