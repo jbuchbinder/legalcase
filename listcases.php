@@ -6,27 +6,6 @@ $GLOBALS['list_len'] = 3;
 include('inc/inc.php');
 include_lcm('inc_acc');
 
-function highlight_matches($source,$match) {
-	// Initialize variables
-	$model = strtolower($source);
-	$match = strtolower($match);
-	$p = 0;
-	$result = '';
-	$ml = strlen($match);
-	if ($ml>0) {
-		$i = strpos($model,$match);
-
-		// Cycle each match
-		while (!($i === false)) {
-			$result .= (substr($source,$p,$i-$p) . '<b>' . substr($source,$i,$ml) . '</b>');
-			$p = $i + $ml;
-			$i = strpos($model,$match,$p);
-		}
-	}
-	$result .= substr($source,$p,strlen($source)-$p);
-	return $result;
-}
-
 // Prepare query
 $q = "SELECT lcm_case.id_case,title,public,pub_write
 		FROM lcm_case,lcm_case_author

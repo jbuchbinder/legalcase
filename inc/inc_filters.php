@@ -237,6 +237,29 @@ function sinon ($texte, $sinon='') {
 		return $sinon;
 }
 
+// Makes $match substring of $source in bold
+function highlight_matches($source,$match) {
+	// Initialize variables
+	$model = strtolower($source);
+	$match = strtolower($match);
+	$p = 0;
+	$result = '';
+	$ml = strlen($match);
+	if ($ml>0) {
+		$i = strpos($model,$match);
+
+		// Cycle each match
+		while (!($i === false)) {
+			$result .= (substr($source,$p,$i-$p) . '<b>' . substr($source,$i,$ml) . '</b>');
+			$p = $i + $ml;
+			$i = strpos($model,$match,$p);
+		}
+	}
+	$result .= substr($source,$p,strlen($source)-$p);
+	return $result;
+}
+
+
 
 //
 // Date, heure, saisons
