@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.38 2005/03/25 13:38:55 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.39 2005/03/28 11:24:13 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -257,8 +257,10 @@ function create_database() {
 
 	$query = "CREATE TABLE lcm_keyword_case (
 			id_entry bigint(21) NOT NULL auto_increment,
+			id_keyword bigint(21) NOT NULL default '0',
 			id_case bigint(21) NOT NULL default '0',
 			PRIMARY KEY (id_entry),
+			KEY id_keyword (id_keyword),
 			KEY id_case (id_case))";
 	
 	$result = lcm_query($query);
@@ -269,6 +271,7 @@ function create_database() {
 			id_keyword bigint(21) NOT NULL default '0',
 			id_client bigint(21) NOT NULL default '0',
 			PRIMARY KEY (id_entry),
+			KEY id_keyword (id_keyword),
 			KEY id_client (id_client))";
 	
 	$result = lcm_query($query);
@@ -279,6 +282,7 @@ function create_database() {
 			id_keyword bigint(21) NOT NULL default '0',
 			id_org bigint(21) NOT NULL default '0',
 			PRIMARY KEY (id_entry),
+			KEY id_keyword (id_keyword),
 			KEY id_org (id_org))";
 
 	$result = lcm_query($query);

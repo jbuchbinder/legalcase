@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.47 2005/03/25 13:33:03 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.48 2005/03/28 11:24:13 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -687,6 +687,17 @@ function upgrade_database($old_db_version) {
 	}
 
 	if ($lcm_db_version_current < 30) {
+		lcm_query("ALTER TABLE lcm_keyword_group
+			CHANGE type type ENUM('system','case','followup','client','org','client_org','author')");
+
+		// in version 29, the id_entry + key was missing
+		lcm_query("ALTER TABLE lcm_keyword_case
+			ADD id_keyword bigint(21) NOT NULL default '0' AFTER id_entry,
+			ADD KEY id_keyword (id_keyword)");
+
+		lcm_query("ALTER TABLE lcm_keyword_client ADD KEY id_keyword (id_keyword)");
+		lcm_query("ALTER TABLE lcm_keyword_org ADD KEY id_keyword (id_keyword)");
+	
 		// [ML] If no one complained, uncomment the following:
 		// lcm_query("ALTER TABLE lcm_client DROP address");
 		// lcm_query("ALTER TABLE lcm_org DROP address");
