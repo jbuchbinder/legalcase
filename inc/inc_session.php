@@ -116,7 +116,7 @@ function supprimer_session($id_session) {
 //
 function creer_cookie_session($auteur) {
 	if ($id_author = $auteur['id_author']) {
-		$id_session = $id_author.'_'.md5(creer_uniqid());
+		$id_session = $id_author.'_'.md5(create_uniq_id());
 		$auteur['hash_env'] = hash_env();
 		ajouter_session($auteur, $id_session);
 		return $id_session;
@@ -126,7 +126,7 @@ function creer_cookie_session($auteur) {
 //
 // Create a random identifier
 //
-function creer_uniqid() {
+function create_uniq_id() {
 	static $seeded;
 
 	if (!$seeded) {
@@ -142,6 +142,11 @@ function creer_uniqid() {
 		return uniqid($s, 1);
 	else
 		return uniqid($s);
+}
+
+function creer_uniqid() {
+	lcm_log("Call to deprecated function creer_uniqid(), use create_uniq_id() instead");
+	return create_uniq_id();
 }
 
 
