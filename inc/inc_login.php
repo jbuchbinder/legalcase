@@ -8,7 +8,6 @@ include_lcm('inc_meta');
 include_lcm('inc_session');
 include_lcm('inc_filters');
 include_lcm('inc_text');
-// include_local ('inc-formulaires');
 
 // Management of HTTP authentication
 function auth_http($cible, $essai_auth_http) {
@@ -186,7 +185,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 				this.session_password.value = \"\"; }'";
 
 		echo ">\n";
-		echo "<div style='border: 1px solid #000000; padding: 10px; text-align:".$GLOBALS["spip_lang_left"].";'>";
+		echo "<div style='border: 1px solid #000000; padding: 10px; text-align:".$GLOBALS["lcm_lang_left"].";'>";
 
 		if ($erreur) 
 			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . _T('typo_column') . " $erreur</b></div><p>";
@@ -230,7 +229,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		// Ask only for the login/username
 		$action = quote_amp($action);
 		echo "<form name='form_login' action='$action' method='post'>\n";
-		echo "<div style='border: 1px solid #000000; padding: 10px; text-align:" . $GLOBALS["spip_lang_left"] . ";'>";
+		echo "<div style='border: 1px solid #000000; padding: 10px; text-align:" . $GLOBALS["lcm_lang_left"] . ";'>";
 
 		if ($erreur)
 			echo "<span style='color:red;'><b>" . _T('login_access_denied') .  _T('typo_column') . " $erreur</b></span><p />";

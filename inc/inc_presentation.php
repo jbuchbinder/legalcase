@@ -19,7 +19,7 @@ use_language_of_visitor();
 // Presentation of the interface, headers and "<head></head>".
 // XXX You may want to use lcm_page_start() instead.
 function lcm_html_start($title = "AUTO", $css_files = "") {
-	global $spip_lang_rtl, $spip_lang_left;
+	global $lcm_lang_rtl, $lcm_lang_left;
 	global $mode;
 	global $connect_status;
 	global $prefs;
@@ -65,14 +65,8 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	
 	echo "</head>\n";
 
-	// We do not support arabic/hebrew/farsi at the moment
-	/*
-	if ($spip_lang_rtl)
-		echo " dir='rtl'";
-	echo ">";
-	*/
-	
-	echo "<body>\n";
+	// right-to-left (Arabic, Hebrew, Farsi, etc. -- even if not supported at the moment)
+	echo '<body' . ($lcm_lang_rtl ? ' dir="rtl"' : '') . ">\n";
 }
 
 function lcm_page_start($title = "", $css_files = "") {
@@ -84,7 +78,7 @@ function lcm_page_start($title = "", $css_files = "") {
 	global $connect_status;
 	global $auth_can_disconnect, $connect_login;
 	global $options, $spip_display, $spip_ecran;
-	global $spip_lang, $spip_lang_rtl, $spip_lang_left, $spip_lang_right;
+	global $lcm_lang, $lcm_lang_rtl, $lcm_lang_left, $lcm_lang_right;
 	global $clean_link;
 
 	// Clean the global link (i.e. remove actions passed in the URL)
@@ -297,7 +291,7 @@ function lcm_page_end($credits = '') {
  * They are used by install.php and lcm_test_dirs.php
  */
 function install_html_start($title = 'AUTO', $css_files = "") {
-	global $spip_lang_rtl;
+	global $lcm_lang_rtl;
 
 	if ($title == 'AUTO')
 		$title = _T('install_title_installation_start');
