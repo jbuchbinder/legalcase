@@ -74,13 +74,15 @@ function create_database() {
 	$query = "CREATE TABLE lcm_followup (
 		id_followup bigint(21) NOT NULL auto_increment,
 		id_case bigint(21) DEFAULT '0' NOT NULL,
+		id_author bigint(21) DEFAULT '0' NOT NULL,
 		date_start datetime NOT NULL,
 		date_end datetime NOT NULL,
 		type ENUM('assignment', 'suspension', 'resumption', 'delay', 'conclusion', 'reopening', 'merge', 'consultation', 'correspondance', 'travel', 'other') NOT NULL,
 		description text NOT NULL,
 		sumbilled decimal(19,4) NOT NULL,
 		PRIMARY KEY (id_followup),
-		KEY id_case (id_case))";
+		KEY id_case (id_case),
+		KEY id_author (id_author))";
 	$result = lcm_query($query);
 
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());

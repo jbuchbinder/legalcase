@@ -157,7 +157,7 @@ $lcm_version = 0.40;
 $lcm_version_shown = "0.4.0";
 
 // Current version of LCM database
-$lcm_db_version = 15;
+$lcm_db_version = 16;
 
 // Error reporting
 // error_reporting(E_ALL); // [ML] recommended for debug

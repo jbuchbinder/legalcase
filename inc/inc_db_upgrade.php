@@ -275,6 +275,12 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (15);
 	}
 
+	if ($lcm_db_version_current < 16) {
+		lcm_query("ALTER TABLE `lcm`.`lcm_followup` ADD id_author bigint(21) DEFAULT '0' NOT NULL AFTER id_case");
+		lcm_query("ALTER TABLE `lcm`.`lcm_followup` ADD INDEX id_author (id_author)");
+		upgrade_db_version (16);
+	}
+
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.999) {
 		global $htsalt;
