@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.33 2005/03/23 22:44:06 antzi Exp $
+	$Id: edit_author.php,v 1.34 2005/03/24 10:16:56 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -85,8 +85,8 @@ if (isset($_SESSION['usr']))
 		$usr[$key] = $value;
 
 // Start the page with the proper title
-if ($existing) lcm_page_start("Edit author");	// TRAD
-else lcm_page_start("New author");	// TRAD
+if ($existing) lcm_page_start("Edit author"); // TRAD
+else lcm_page_start("New author"); // TRAD
 
 echo show_all_errors($_SESSION['errors']);
 
@@ -131,105 +131,18 @@ echo show_all_errors($_SESSION['errors']);
 	// Contacts (e-mail, phones, etc.)
 	//
 
-	$cpt = 0;
-	$cpt_new = 0;
+	echo "<tr>\n";
+	echo '<td colspan="2" align="center" valign="middle" class="heading">';
+	echo '<h4>' . _T('client_subtitle_contacts') . '</h4>';
+	echo '</td>';
+	echo "</tr>\n";
 
-	$emailmain_exists = false;
-	$addrmain_exists = false;
+	show_edit_contacts_form('author', $usr['id_author']);
 
-	$contacts_emailmain = get_contacts('author', $usr['id_author'], 'email_main');
-	$contacts_addrmain = get_contacts('author', $usr['id_author'], 'address_main');
-	$contacts_other = get_contacts('author', $usr['id_author'], 'email_main,address_main', 'not');
+	//
+	// LOGIN INFO
+	//
 
-/*
-	// For new specific type of contact, such as 'email_main', 'address_main'
-	function print_new_contact($type_kw, $type_name, $num_new) {
-		echo '<tr><td align="right" valign="top">' . _T("kw_contacts_" . $type_kw . "_title") . "\n";
-		echo '<td align="left" valign="top">';
-		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $num_new . '" '
-			. 'type="hidden" value="' . $type_name . '" />' . "\n";
-
-		echo '<input name="new_contact_value[]" id="new_contact_value_' . $num_new . '" type="text" '
-			. 'class="search_form_txt" size="35" value=""/>&nbsp;';
-		
-		echo "</td>\n</tr>\n\n";
-	}
-*/
-	
-	// First show the main address
-	foreach ($contacts_addrmain as $contact) {
-		print_existing_contact($contact, $cpt); 
-		$cpt++;
-		$addrmain_exists = true;
-	}
-
-	if (! $addrmain_exists) {
-		print_new_contact('addressmain', 'address_main', $cpt_new);
-		$cpt_new++;
-	}
-
-	// Second show the email_main
-	foreach ($contacts_emailmain as $contact) {
-		print_existing_contact($contact, $cpt);
-		$cpt++;
-		$emailmain_exists = true;
-	}
-
-	if (! $emailmain_exists) {
-		print_new_contact('emailmain', 'email_main', $cpt_new);
-		$cpt_new++;
-	}
-
-	// Show all the rest
-	foreach ($contacts_other as $contact) {
-		print_existing_contact($contact, $cpt);
-		$cpt++;
-	}
-
-	// Show "new contact"
-?>
-		<tr>
-			<td align="right" valign="top">
-			
-			<?php
-				echo f_err_star('new_contact_' . $cpt_new, $_SESSION['errors']);
-				echo "Other contact";
-			?>
-			
-			</td>
-			<td align="left" valign="top">
-				<div>
-				<?php
-					global $system_kwg;
-
-					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '" class="sel_frm">' . "\n";
-					echo "<option value=''>" . "- select contact type -" . "</option>\n";
-
-					foreach ($system_kwg['contacts']['keywords'] as $contact) {
-						if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main') {
-							echo "<option value='" . $contact['name'] . "'>" . _T($contact['title']) . "</option>\n";
-						}
-					}
-					echo "</select>\n";
-
-				?>
-				</div>
-				<div>
-					<input type='text' size='40' style='style: 99%' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt_new; ?>' 
-					
-					<?php 
-						echo ' value="' . $_SESSION['usr']['new_contact_' . $cpt_new] . '" ';
-						$cpt_new++;
-					?>
-						
-					class='search_form_txt' />
-				</div>
-			</td>
-		</tr>
-	<?php
-		//
-		// LOGIN INFO
-		//
 	?>
 		<tr>
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_connectionidentifiers'); ?></h4></td>
