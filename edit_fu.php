@@ -123,14 +123,18 @@ foreach ($all_clients as $client) {
 		echo '<a href="client_det.php?client=' . $client['id_client'] . '">'
 			. $client['name_first'] . ' ' . $client['name_middle'] . ' ' . $client['name_last']
 			. '</a>';
+
+		if (++$current < $numrows) 
+			echo ", ";
 	} else if ($client['id_org']) {
 		echo '<a href="org_det.php?org=' . $client['id_org'] . '">'
 			. $client['name']
 			. '</a>';
+
+		if (++$current < $numrows)
+			echo ", ";
 	}
 
-	if (++$current < $numrows)
-		echo ", ";
 }
 
 if ($numrows > 0)
