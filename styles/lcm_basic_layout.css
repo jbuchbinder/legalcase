@@ -208,7 +208,7 @@ p.nav_column_text {
 	margin-bottom: 10px;
 }
 
-/* Buttons-like effect */
+/* --- [ Buttons-like effect ] --- */
 
 a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
 	text-decoration: none;
@@ -222,6 +222,47 @@ a.main_nav_btn:hover {
 	display: block;
 	padding-left: 22px;
 	background: url("../images/lcm/main_nav_sq_over.gif") no-repeat 3px 3px;
+}
+
+/* --- [ Heading of the main menu ] --- */
+
+.mm_agenda {
+	padding-left: 20px;
+	background: url("../images/jimmac/stock_reminder-16.png") no-repeat 0px 0px;
+}
+
+.mm_agenda a {
+	text-decoration: none;
+}
+
+.mm_calendar {
+	padding-left: 20px;
+	background: url("../images/jimmac/stock_insert_table-16.png") no-repeat 0px 0px;
+}
+
+.mm_admin {
+	padding-left: 20px;
+	background: url("../images/jimmac/stock_menu_properties.png") no-repeat 0px 0px;
+}
+
+.mm_main_menu {
+	padding-left: 20px;
+	background: url("../images/jimmac/stock_home-16.png") no-repeat 0px 0px;
+}
+
+.sm_profile {
+	padding-left: 20px;
+	background: url("../images/jimmac/stock_exec-16.png") no-repeat 0px 0px;
+}
+
+.sm_search {
+	padding-left: 20px;
+	background: url("../images/jimmac/stock_search-16.png") no-repeat 0px 0px;
+}
+
+.sm_font_size {
+	padding-left: 20px;
+	background: url("../images/jimmac/stock_font-16.png") no-repeat 0px 0px;
 }
 
 /* --------------------------------- */

@@ -161,8 +161,9 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 				<div id=\"navigation_menu_column\">
 				<!-- Start of navigation_menu_column content -->
 					<div class=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;"
+						<div class=\"nav_column_menu_head\"><div class=\"mm_main_menu\">"
 							. _T('menu_main') . "</div>
+							</div>
 						<ul class=\"nav_menu_list\">
 							<li><a href=\"listcases.php\" class=\"main_nav_btn\">" . _T('menu_main_cases') . "</a></li>
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">" . _T('menu_main_clients') . "</a></li>
@@ -180,7 +181,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	if ($connect_status == 'admin') {
 		echo "		
 					<div class=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_admin') . "</div>
+						<div class=\"nav_column_menu_head\"><div class=\"mm_admin\">" . _T('menu_admin') . "</div></div>
 						<ul class=\"nav_menu_list\">
 							<li><a href=\"config_site.php\" class=\"main_nav_btn\">" . _T('menu_admin_siteconf') . "</a></li>
 							<li><a href=\"archive.php\" class=\"main_nav_btn\">" .  _T('menu_admin_archives') . " <abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\"></abbr></a></li>
@@ -196,15 +197,19 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	// Show today's date
 	echo "\n";
 	echo "<div class=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_insert_table-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_calendar') . "</div>
+						<div class=\"nav_column_menu_head\">
+							<div class=\"mm_calendar\">" . _T('menu_calendar') . "</div>
+						</div>
 						<p class=\"nav_column_text\">". format_date() ."</p>
 					</div>\n";
 	
 	// Start agenda box
 	echo '<div class="nav_menu_box">' . "\n";
-	echo '<div class="nav_column_menu_head">';
-	echo '<a href="listapps.php">';
-	echo '<img src="images/jimmac/stock_reminder-16.png" width="16" height="16" alt="" />&nbsp;' . _T('menu_agenda') . "</a></div>\n";
+		echo '<div class="nav_column_menu_head">';
+			echo '<div class="mm_agenda">';
+			echo '<a href="listapps.php">'. _T('menu_agenda') . '</a>
+				</div>
+			</div>';
 
 	// Show appointments for today
 	$q = "SELECT lcm_app.id_app,start_time,type,title
@@ -313,7 +318,8 @@ function lcm_page_end($credits = '') {
 if($prefs['screen'] == "wide") {
 		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
-			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_exec-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_profile') . "</div>
+			<div class=\"prefs_column_menu_head\"><div class=\"sm_profile\">" . _T('menu_profile') . "</div>
+			</div>
 			<p class=\"prefs_column_text\">"
 				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
 				. $author_session['name_first'] . ' '
@@ -322,7 +328,8 @@ if($prefs['screen'] == "wide") {
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
 			</p><br />
-			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_search') . "</div>
+			<div class=\"prefs_column_menu_head\"><div class=\"sm_search\">" . _T('menu_search') . "</div>
+			</div>
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
 			<p class=\"prefs_column_text\">
 			" . _T('input_search_case') . "<br />
@@ -357,7 +364,8 @@ if($prefs['screen'] == "wide") {
 			</p>
 			</form><br />
 			<!-- the font size experiment -->
-			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_font-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;Font size</div>
+			<div class=\"prefs_column_menu_head\"><div class=\"sm_font_size\">Font size</div>
+			</div>
 			<p class=\"prefs_column_text\">
 				<ul class=\"font_size_buttons\">
 					<li><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\">A-</a></li>
@@ -393,7 +401,7 @@ if($prefs['screen'] == "wide") {
 if($prefs['screen'] == "narrow")
 {
 	echo '<div id="footer_narrow">
-	<div class="prefs_column_menu_head">' .  _T('menu_search') . "</div>
+	<div class="prefs_column_menu_head"><div class="sm_search">' .  _T('menu_search') . "</div></div>
 	<p class=\"prefs_column_text\">
 	<table border=\"0\" align=\"center\" width=\"100%\">
 		<tr>
