@@ -1,6 +1,5 @@
 <?php
 
-//
 // Execute this file only once
 if (defined('_INC_META')) return;
 define('_INC_META', '1');
@@ -10,7 +9,6 @@ define('_INC_META', '1');
 // do without. Bad usage of inc_meta can cause strange bugs
 // in the installation and in inc_lang.php
 // ********
-
 
 function read_metas() {
 	global $meta, $meta_upd;
@@ -26,32 +24,15 @@ function read_metas() {
 	}
 }
 
-// old function for read_metas
-function lire_metas() {
-	lcm_log("use of deprecated function: lire_metas, use read_metas instead");
-	return read_metas();
-}
-
 function write_meta($name, $value) {
 	$value = addslashes($value);
 	lcm_query("REPLACE lcm_meta (name, value) VALUES ('$name', '$value')");
-}
-
-// old function for write_meta
-function ecrire_meta($name, $value) {
-	lcm_log("use of deprecated function: ecrire_meta, use write_meta instead");
-	return write_meta($name, $value);
 }
 
 function erase_meta($name) {
 	lcm_query("DELETE FROM lcm_meta WHERE name='$name'");
 }
 
-// old function for delete_meta
-function effacer_meta($name) {
-	lcm_log("use of deprecated function: effacer_meta, use erase_meta instead");
-	erase_meta($name);
-}
 
 //
 // Update the cache file for the meta informations
@@ -123,11 +104,6 @@ function lire_meta_maj($name) {
 		if ($connect_status == 'admin')
 			echo "<h4 font color='red'>"._T('texte_inc_meta_1')." <a href='lcm_test_dirs.php'>"._T('texte_inc_meta_2')."</a> "._T('texte_inc_meta_3')."&nbsp;</h4>\n";
 	}
-}
-
-// old deprecated function, to remove soon
-function ecrire_metas() {
-	return write_metas();
 }
 
 read_metas();
