@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: move_rep_col.php,v 1.1 2004/12/11 17:16:41 antzi Exp $
+	$Id: move_rep_col.php,v 1.2 2004/12/14 13:14:02 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -51,7 +51,7 @@ if (($rep>0) && ($old) && ($new) && ($old!=$new)) {
 	$q = "UPDATE lcm_rep_cols
 			SET col_order=$new
 			WHERE id_report=$rep
-			AND id_column=$order";
+			AND id_column=$col";
 	$result = lcm_query($q);
 
 }
