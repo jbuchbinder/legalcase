@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_filter.php,v 1.3 2004/12/11 11:18:29 antzi Exp $
+	$Id: upd_filter.php,v 1.4 2005/01/12 00:30:13 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -74,25 +74,12 @@ if (count($errors)) {
 		// If admin access is allowed, set all fields
 		if (true) $q = "UPDATE lcm_filter SET $fl WHERE id_filter=$id_filter";
 		else $q = "UPDATE lcm_filter SET $fl WHERE id_filter=$id_filter";
+		$result = lcm_query($q);
 	} else {
 		$q = "INSERT INTO lcm_filter SET id_filter=0,date_creation=NOW(),$fl";
 		$result = lcm_query($q);
 		$id_filter = lcm_insert_id();
-
-		// Insert new case_author relation
-		//$q = "INSERT INTO lcm_case_author SET
-		//		id_case=$id_case,
-		//		id_author=$id_author,
-		//		ac_read=1,
-		//		ac_write=1,
-		//		ac_admin=1";
 	}
-
-	// Some advanced ideas for future use
-	//$q="INSERT INTO lcm_case SET id_case=$id_case,$fl ON DUPLICATE KEY UPDATE $fl";
-	//$q="INSERT INTO lcm_case $cl VALUES $vl ON DUPLICATE KEY UPDATE $fl";
-
-	$result = lcm_query($q);
 
     // Clear the session
     session_destroy();
