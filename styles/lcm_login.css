@@ -1,0 +1,28 @@
+.button_login {
+	background-color: #ffcc66;
+	color: #000000;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+	background-color: #ffffff;
+	color: #e86519;
+}
+
+a:hover {
+	text-decoration: underline;
+	background-color: #ffffff;
+	color: #ff9900;
+}
+
+/* This should be placed in some global CSS file */
+.box_warning {
+	border: 2px solid #ffff00;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
