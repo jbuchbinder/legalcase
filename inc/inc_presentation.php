@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.195 2005/03/31 14:32:55 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.196 2005/04/01 11:17:18 mlutfy Exp $
 */
 
 //
@@ -312,7 +312,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 			. "&amp;jour=" . $today['mday']
 			. "&amp;mois=" . $today['mon']
 			. "&amp;annee=" . $today['year'] . '">'
-			. _Th('calendar_button_now') . "</a></strong><br />\n"; // TRAD
+			. _Th('calendar_button_now') . "</a></strong><br />\n";
 		echo "</p>\n";
 		echo "<ul class=\"small_agenda\">\n";
 		while ($row=lcm_fetch_array($result)) {
@@ -336,23 +336,20 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 
 	if (lcm_num_rows($result)>0) {
 		$events = true;
-		echo "<p class=\"nav_column_text\">
-				<strong>Next activities</strong><br />\n"; // TRAD
-		echo "						</p>\n";
+		echo "<p class=\"nav_column_text\">\n";
+		echo "<strong>" . _T('calendar_button_nextapps') . "</strong><br />\n";
+		echo "</p>\n";
 		
 		echo "<ul class=\"small_agenda\">\n";
 		while ($row=lcm_fetch_array($result)) {
-			echo "							<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
+			echo "<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
 				. format_date($row['start_time'],'short') . " - " . $row['title'] . "</a></li>\n";
 		}
 		echo "</ul>\n";
-		//					8:30 - Meeting with Mr. Johnson<br /><br />
-		//					10:00 - At the court
-		//echo "						</p>\n";
 	}
 
 	if (!$events) {
-		echo '<p class="nav_column_text">' . "No activities" . "</p>\n"; // TRAD
+		echo '<p class="nav_column_text">' . _T('calendar_info_noacts') . "</p>\n";
 	}
 	
 	echo "&nbsp;<a href=\"listapps.php\" title=\"". _T('title_agenda_list') ."\"><img src=\"images/jimmac/stock_show-form-dialog.png\" border=\"0\" width=\"16\" height=\"16\" alt=\"\" /></a>&nbsp;<a href=\"edit_app.php?app=0\" title=\"". _T('app_button_new') ."\"><img src=\"images/jimmac/stock_new-16.png\" border=\"0\" width=\"16\" height=\"16\" alt=\"\" /></a>";
@@ -1060,7 +1057,7 @@ function get_list_pos(&$result) {
 	// Position to the page info start
 	if ($list_pos > 0)
 		if (!lcm_data_seek($result, $list_pos))
-			lcm_panic("Error seeking position $list_pos in the result"); // TRAD
+			lcm_panic("Error seeking position $list_pos in the result");
 	
 	return $list_pos;
 }
@@ -1455,7 +1452,7 @@ function show_attachments_upload($type, $id_type, $filename='', $description='')
 	if (! ($type == 'case' || $type == 'client' || $type == 'org')) 
 		lcm_panic("unknown type -" . $type . "-");
 
-	echo '<div class="prefs_column_menu_head">' . 'Add new document' . "</div>\n"; // TRAD
+	echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_document_add') . "</div>\n";
 
 //	echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
 //	echo '<input type="hidden" name="' . $type . '" value="' . $id_type . '" />' . "\n";
