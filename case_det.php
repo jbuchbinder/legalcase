@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.118 2005/03/22 14:19:03 antzi Exp $
+	$Id: case_det.php,v 1.119 2005/03/22 15:21:18 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -567,11 +567,12 @@ if ($case > 0) {
 
 				// Attach new file form
 				if ($add)
-					show_attachments_upload('case', $case);
+					show_attachments_upload('case', $case, $_SESSION['user_file']['name'], $_SESSION['user_file']['description']);
 
 				echo '</fieldset>';
 
 				$_SESSION['errors'] = array();
+				$_SESSION['user_file'] = array();
 
 				break;
 		}
