@@ -132,7 +132,7 @@ $champs_extra_proposes = false;
 
 // Should we ignore authentication by auth http/remove user?
 // This allows to have a LCM under .htaccess (ignore_remote_user),
-// but also to work on crazy disfonctional servers who block 
+// but also to work on crazy disfonctional servers who block
 // PHP_AUTH_USER=root (ignore_auth_http) -- [ML] Not sure what this
 // is for.
 $ignore_auth_http = false;
@@ -154,7 +154,7 @@ $lcm_version = 0.21;
 $lcm_version_shown = "0.2.1";
 
 // Current version of LCM database
-$lcm_db_version = 13;
+$lcm_db_version = 14;
 
 // Error reporting
 // error_reporting(E_ALL); // [ML] recommended for debug
