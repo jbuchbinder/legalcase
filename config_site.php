@@ -160,8 +160,8 @@ function show_config_form() {
 	echo "<p>Can users create themselves a new account (e.g. self-register) on the site?</p>\n";
 	echo "<ul>";
 
-	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_1' value='open'";
-	if ($site_open_subscription == 'open') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_1' value='yes'";
+	if ($site_open_subscription == 'yes') echo " checked";
 	echo "><label for='site_open_subscription_1'>Yes, without moderation.</label></input></li>\n";
 
 	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_2' value='moderated'";
@@ -279,7 +279,7 @@ function apply_conf_changes() {
 	// Self-registration
 	$old_site_open_subscription = read_meta('site_open_subscription');
 	if ($site_open_subscription != $old_site_open_subscription) {
-		if ($site_open_subscription == 'open' || $site_open_subscription == 'moderated' || $site_open_subscription == 'no') {
+		if ($site_open_subscription == 'yes' || $site_open_subscription == 'moderated' || $site_open_subscription == 'no') {
 			write_meta('site_open_subscription', $site_open_subscription);
 			array_push($log, "New author self-registration changed to "
 				. "'$site_open_subscription', was '$old_site_open_subscription'.");
