@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.105 2005/03/15 11:56:17 makaveev Exp $
+	$Id: case_det.php,v 1.106 2005/03/16 10:44:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -179,11 +179,11 @@ if ($case > 0) {
 				echo "</p><br /><br />\n";
 		
 				if ($edit && $modify)
-					echo '&nbsp;<a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a>';
+					echo '<p><a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a></p>';
 		
-				if ($admin) echo '&nbsp;<a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a>';
+				if ($admin) echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
 		
-				echo "<br /><br />\n";
+				echo "<br />\n";
 				echo "</fieldset>\n";
 
 				break;
