@@ -13,23 +13,33 @@ class Auth_db {
 	}
 
 	// Check the encrypted password (javascript)
-	function verifier_challenge_md5($login, $mdpass_actuel, $mdpass_futur) {
+	function validate_md5_challenge($username, $current_mdpass, $future_mdpass) {
 		// Do not allow empty passwords
-		if ($mdpass_actuel == '') return false;
+		if ($current_mdpass == '') return false;
 
-		$query = "SELECT * FROM lcm_author WHERE username='".addslashes($login)."' AND password='".addslashes($mdpass_actuel)."' AND status<>'5poubelle'";
+		$query = "SELECT *
+			FROM lcm_author 
+			WHERE username = '".addslashes($username)."' 
+				AND password = '".addslashes($current_mdpass)."' 
+				AND status <> 'trash'";
 		$result = lcm_query($query);
 
 		if ($row = lcm_fetch_array($result)) {
 			$this->nom = $row['nom'];
 			$this->login = $row['username'];
-			$this->email = $row['email'];
+			$this->email = $row['email']; // FIXME
 			$this->statut = $row['status'];
-			$this->md5pass = $mdpass_actuel;
-			$this->md5next = $mdpass_futur;
+			$this->md5pass = $current_mdpass;
+			$this->md5next = $future_mdpass;
 			return true;
 		}
+
 		return false;
+	}
+
+	function verifier_challenge_md5($username, $current_mdpass, $future_mdpass) {
+		lcm_log("use of deprecated function: verifier_challenge_md5, use validate_md5_challenge instead");
+		return validate_md5_challenge($username, $current_mdpass, $future_mdpass);
 	}
 
 	// Check the non-encrypted password (no javascript support)
