@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.11 2005/02/17 17:12:36 mlutfy Exp $
+	$Id: keywords.php,v 1.12 2005/02/18 10:07:17 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -305,7 +305,7 @@ switch ($tab) {
 		break;
 	case 'maint' :
 		echo '<form method="post" action="' . $_SERVER['REQUEST_URI'] . "\">\n";
-		echo "\t<button type=\"submit\" name=\"action\" value=\"refresh\">Refresh default keywords</button>\n";
+		echo "\t<button type=\"submit\" name=\"action\" value=\"refresh\" class=\"simple_form_btn\">Refresh default keywords</button>\n";
 		echo "</form>\n";
 }
 
