@@ -35,7 +35,7 @@ function fichier_session($id_session, $alea) {
 }
 
 //
-// Ajouter une session pour l'auteur specifie
+// Add a session for the specified author
 //
 function ajouter_session($auteur, $id_session) {
 	$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere'));
@@ -59,10 +59,10 @@ function ajouter_session($auteur, $id_session) {
 }
 
 //
-// Verifier et inclure une session
+// Verify/check and include a session file
 //
 function verifier_session($id_session) {
-	// Tester avec alea courant
+	// Test with the current alea
 	$ok = false;
 	if ($id_session) {
 		$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere'));
@@ -71,7 +71,7 @@ function verifier_session($id_session) {
 			$ok = true;
 		}
 		else {
-			// Sinon, tester avec alea precedent
+			// Else, check with the previous alea
 			$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere_ancien'));
 			if (@file_exists($fichier_session)) {
 				// Renouveler la session (avec l'alea courant)
@@ -83,7 +83,7 @@ function verifier_session($id_session) {
 		}
 	}
 
-	// marquer la session comme "ip-change" si le cas se presente
+	// if necessary, mark the session as 'ip-change'
 	if ($ok AND (hash_env() != $GLOBALS['auteur_session']['hash_env']) AND !$GLOBALS['auteur_session']['ip_change']) {
 		$GLOBALS['auteur_session']['ip_change'] = true;
 		ajouter_session($GLOBALS['auteur_session'], $id_session);
@@ -93,7 +93,7 @@ function verifier_session($id_session) {
 }
 
 //
-// Supprimer une session
+// Delete a session
 //
 function supprimer_session($id_session) {
 	$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere'));
@@ -107,7 +107,7 @@ function supprimer_session($id_session) {
 }
 
 //
-// Creer une session et retourne le cookie correspondant (a poser)
+// Create a session and return the associated cookie
 //
 function creer_cookie_session($auteur) {
 	if ($id_author = $auteur['id_author']) {
@@ -119,7 +119,7 @@ function creer_cookie_session($auteur) {
 }
 
 //
-// Creer un identifiant aleatoire
+// Create a random identifier
 //
 function creer_uniqid() {
 	static $seeded;
@@ -174,9 +174,8 @@ function zap_sessions ($id_author, $zap) {
 	return $zap_num;
 }
 
-//
-// reconnaitre un utilisateur authentifie en php_auth
-//
+// Recognize a user authentified with php_auth
+// [ML] I think we can scrap this
 function verifier_php_auth() {
 	global $PHP_AUTH_USER, $PHP_AUTH_PW, $ignore_auth_http;
 	if ($PHP_AUTH_USER && $PHP_AUTH_PW && !$ignore_auth_http) {
@@ -201,9 +200,8 @@ function verifier_php_auth() {
 	}
 }
 
-//
-// entete php_auth
-//
+// php_auth header
+// [ML] I think we can scrap this
 function ask_php_auth($text_failure) {
 	@Header("WWW-Authenticate: Basic realm=\"espace prive\"");
 	@Header("HTTP/1.0 401 Unauthorized");
@@ -211,15 +209,12 @@ function ask_php_auth($text_failure) {
 	exit;
 }
 
-//
-// verifie si on a un cookie de session ou un auth_php correct
-// et charge ses valeurs dans $GLOBALS['auteur_session']
-//
+// Verify if we have a correct session cookie and load
+// the values in $GLOBALS['auteur_session'] (author)
 function verifier_visiteur() {
 	if (verifier_session($GLOBALS['HTTP_COOKIE_VARS']['lcm_session']))
 		return true;
-	if (verifier_php_auth())
-		return true;
+
 	return false;
 }
 
