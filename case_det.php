@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.107 2005/03/17 14:18:17 mlutfy Exp $
+	$Id: case_det.php,v 1.108 2005/03/17 15:56:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -519,14 +519,16 @@ if ($case > 0) {
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 				echo "<tr>\n";
 				echo "<th class='heading'>" . 'Author' . "</th>\n"; // TRAD
-				echo "<th class='heading'>" . 'Time spent' . "</th>\n"; // TRAD
+				echo "<th class='heading' width='1%' nowrap='nowrap'>" . 'Time spent' . ' (' . 'hrs' . ")</th>\n"; // TRAD
 
 				$total_time = 0;
 				$total_sum_billed = 0.0;
 				$meta_sum_billed = read_meta('fu_sum_billed');
 
-				if ($meta_sum_billed == 'yes')
-					echo "<th class='heading'>" . 'Sum billed' . "</th>\n"; // TRAD
+				if ($meta_sum_billed == 'yes') {
+					$currency = read_meta('currency');
+					echo "<th class='heading' width='1%' nowrap='nowrap'>" . 'Sum billed' . ' (' . $currency . ")</th>\n"; // TRAD
+				}
 
 				echo "</tr>\n";
 
@@ -539,12 +541,12 @@ if ($case > 0) {
 
 					echo "<tr><td>";
 					echo get_person_name($row);
-					echo '</td><td>';
+					echo '</td><td align="right">';
 					echo format_time_interval($row['time'],($prefs['time_intervals_notation'] == 'hours_only'));
 					echo "</td>\n";
 
 					if ($meta_sum_billed == 'yes') {
-						echo "<td>";
+						echo '<td align="right">';
 						echo format_money($row['sumbilled']);
 						echo "</td>\n";
 					}
@@ -555,12 +557,12 @@ if ($case > 0) {
 				// Show total case hours
 				echo "<tr>\n";
 				echo "<td><strong>" . 'TOTAL:' . "</strong></td>\n"; // TRAD
-				echo "<td><strong>";
+				echo "<td align='right'><strong>";
 				echo format_time_interval($total_time,($prefs['time_intervals_notation'] == 'hours_only'));
 				echo "</strong></td>\n";
 
 				if ($meta_sum_billed == 'yes') {
-					echo "<td><strong>";
+					echo '<td align="right"><strong>';
 					echo format_money($total_sum_billed);
 					echo "</strong></td>\n";
 				}
