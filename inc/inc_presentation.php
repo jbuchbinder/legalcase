@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.168 2005/03/18 05:07:16 antzi Exp $
+	$Id: inc_presentation.php,v 1.169 2005/03/18 09:20:38 mlutfy Exp $
 */
 
 //
@@ -420,7 +420,7 @@ if($prefs['screen'] == "wide") {
 			</p>
 			</form><br />
 			<!-- the font size experiment -->
-			<div class=\"prefs_column_menu_head\"><div class=\"sm_font_size\">Font size</div>
+			<div class=\"prefs_column_menu_head\"><div class=\"sm_font_size\">" . _T('menu_fontsize') . "</div>
 			</div>
 				<ul class=\"font_size_buttons\">
 					<li><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\">A-</a></li>
@@ -1229,6 +1229,89 @@ function show_find_box($type, $string) {
 	echo '<input type="text" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' .  $string . '" />';
 	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
 	echo "</form>\n";
+}
+
+function show_context_start() {
+	echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
+}
+
+function show_context_case_title($id_case) {
+	if (! (is_numeric($id_case) && $id_case > 0)) {
+		lcm_log("Warning: show_context_casename, id_case not a number > 0: $id_case");
+		return;
+	}
+
+	$query = "SELECT title FROM lcm_case WHERE id_case = $id_case";
+	$result = lcm_query($query);
+
+	while ($row = lcm_fetch_array($result))  // should be only once
+		echo '<li style="list-style-type: none;">' 
+			. _T('fu_input_for_case')
+			. " <a href='case_det.php?case=$id_case' class='content_link'>" . $row['title'] . "</a>"
+			. "</li>\n";
+}
+
+function show_context_case_involving($id_case) {
+	if (! (is_numeric($id_case) && $id_case > 0)) {
+		lcm_log("Warning: show_context_casename, id_case not a number > 0: $id_case");
+		return;
+	}
+
+	$query = "SELECT cl.id_client, name_first, name_middle, name_last
+				FROM lcm_case_client_org as cco, lcm_client as cl
+				WHERE cco.id_case = $id_case
+				  AND cco.id_client = cl.id_client";
+	
+	$result = lcm_query($query);
+	$numrows = lcm_num_rows($result);
+
+	$current = 0;
+	$all_clients = array();
+	
+	while ($all_clients[] = lcm_fetch_array($result));
+	
+	$query = "SELECT org.name, cco.id_client, org.id_org
+				FROM lcm_case_client_org as cco, lcm_org as org
+				WHERE cco.id_case = $id_case
+				  AND cco.id_org = org.id_org";
+	
+	$result = lcm_query($query);
+	$numrows += lcm_num_rows($result);
+	
+	// TODO: It would be nice to have the name of the contact for that
+	// organisation, if any, but then again, not the end of the world.
+	// (altough I we make a library of common functions, it will defenitely
+	// be a good thing to have)
+	while ($all_clients[] = lcm_fetch_array($result));
+	
+	if ($numrows > 0)
+		echo '<li style="list-style-type: none;">' . _T('fu_input_involving_clients') . " ";
+	
+	foreach ($all_clients as $client) {
+		if ($client['id_client']) {
+			echo '<a href="client_det.php?client=' . $client['id_client'] . '" class="content_link">'
+				. njoin(array($client['name_first'],$client['name_middle'],$client['name_last']))
+				. '</a>';
+	
+			if (++$current < $numrows)
+				echo ", ";
+		} else if ($client['id_org']) {
+			echo '<a href="org_det.php?org=' . $client['id_org'] . '" class="content_link">'
+				. $client['name']
+				. '</a>';
+	
+			if (++$current < $numrows)
+				echo ", ";
+		}
+	
+	}
+	
+	if ($numrows > 0)
+		echo "</li>\n";
+}
+
+function show_context_end() {
+	echo "</ul>\n";
 }
 
 ?>
