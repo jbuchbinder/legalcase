@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.115 2005/03/21 12:53:59 mlutfy Exp $
+	$Id: case_det.php,v 1.116 2005/03/21 12:56:22 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -566,7 +566,7 @@ if ($case > 0) {
 				if ($i > 0) {
 					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 					// TRAD ++
-					echo "\t<tr><th class=\"heading\">" . _Th('file_input_name') "</th>
+					echo "\t<tr><th class=\"heading\">" . _Th('file_input_name') . "</th>
 						<th class=\"heading\">" . _Th('file_input_type') . "</th>
 						<th class=\"heading\">" . _Th('file_input_size') . "</th>
 						<th class=\"heading\">" . _Th('file_input_description') . "</th></tr>\n";
