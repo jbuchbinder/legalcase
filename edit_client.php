@@ -18,11 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.24 2005/02/07 22:57:41 antzi Exp $
+	$Id: edit_client.php,v 1.25 2005/02/08 17:31:22 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
+include_lcm('inc_contacts');
 
 // Get input value(s)
 $client = intval($_GET['client']);
@@ -75,7 +76,7 @@ if (isset($_REQUEST['attach_case'])) {
 		. '" />' . "\n";
 }
 
-echo '<table class="tbl_usr_dtl">' . "\n";
+echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 
 if($client_data['id_client']) {
 	echo "<tr><td>" . _T('client_input_id') . "</td>\n";
@@ -125,6 +126,128 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 			<td><input name="civil_status" value="<?php echo clean_output($client_data['civil_status']); ?>" class="search_form_txt"></td></tr>
 		<tr><td><?php echo _T('person_input_income'); ?></td>
 			<td><input name="income" value="<?php echo clean_output($client_data['income']); ?>" class="search_form_txt"></td></tr>
+		<tr>
+			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('clientedit_subtitle_connectionidentifiers'); ?></h4></td>
+		</tr>
+<?php
+	//
+	// Contacts (e-mail, phones, etc.)
+	//
+
+	$cpt = 0;
+	$cpt_new = 0;
+
+	$emailmain_exists = false;
+	$addrmain_exists = false;
+
+	$contacts_emailmain = get_contacts('client', $client_data['id_client'], 'email_main');
+	$contacts_addrmain = get_contacts('client', $client_data['id_client'], 'address_main');
+	$contacts_other = get_contacts('client', $client_data['id_client'], 'email_main,address_main', 'not');
+
+	function print_existing_contact($c, $num) {
+		echo '<tr><td align="right" valign="top">' . _T($c['title']) . "\n";
+		echo '<td align="left" valign="top">';
+	
+		echo '<input name="contact_id[]" id="contact_id_' . $num . '" '
+			. 'type="hidden" value="' . $c['id_contact'] . '" />' . "";
+		echo '<input name="contact_type[]" id="contact_type_' . $num . '" '
+			. 'type="hidden" value="' . $c['type_contact'] . '" />' . "";
+
+		// [ML] Removed spaces (nbsp) between elements, or it causes the layout
+		// to show on two lines when using a large font.
+		echo '<input name="contact_value[]" id="contact_value_' . $num . '" type="text" '
+			. 'class="search_form_txt" size="35" value="' . clean_output($c['value']) . '"/>';
+		echo f_err('email', $_SESSION['errors']) . "";
+
+		echo '<label for="id_del_contact' . $num . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" /></label>&nbsp;<input type="checkbox" id="id_del_contact' . $num . '" name="del_contact_' . $c['id_contact'] . '"/>';
+
+		echo "</td>\n</tr>\n\n";
+
+	}
+
+	// For new specific type of contact, such as 'email_main', 'address_main'
+	function print_new_contact($type_kw, $type_name, $num_new) {
+		echo '<tr><td align="right" valign="top">' . _T("kw_contacts_" . $type_kw . "_title") . "\n";
+		echo '<td align="left" valign="top">';
+		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $num_new . '" '
+			. 'type="hidden" value="' . $type_name . '" />' . "\n";
+
+		echo '<input name="new_contact_value[]" id="new_contact_value_' . $num_new . '" type="text" '
+			. 'class="search_form_txt" size="35" value=""/>&nbsp;';
+		
+		echo "</td>\n</tr>\n\n";
+	}
+
+	// First show the main address
+	foreach ($contacts_addrmain as $contact) {
+		print_existing_contact($contact, $cpt); 
+		$cpt++;
+		$addrmain_exists = true;
+	}
+
+	if (! $addrmain_exists) {
+		print_new_contact('addressmain', 'address_main', $cpt_new);
+		$cpt_new++;
+	}
+
+	// Second show the email_main
+	foreach ($contacts_emailmain as $contact) {
+		print_existing_contact($contact, $cpt);
+		$cpt++;
+		$emailmain_exists = true;
+	}
+
+	if (! $emailmain_exists) {
+		print_new_contact('emailmain', 'email_main', $cpt_new);
+		$cpt_new++;
+	}
+
+	// Show all the rest
+	foreach ($contacts_other as $contact) {
+		print_existing_contact($contact, $cpt);
+		$cpt++;
+	}
+
+	// Show "new contact"
+?>
+		<tr>
+			<td align="right" valign="top">
+			
+			<?php
+				echo f_err_star('new_contact_' . $cpt_new, $_SESSION['errors']);
+				echo "Other contact";
+			?>
+			
+			</td>
+			<td align="left" valign="top">
+				<div>
+				<?php
+					global $system_kwg;
+
+					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '">' . "\n";
+					echo "<option value=''>" . "- select contact type -" . "</option>\n";
+
+					foreach ($system_kwg['contacts']['keywords'] as $contact) {
+						if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main') {
+							echo "<option value='" . $contact['name'] . "'>" . _T($contact['title']) . "</option>\n";
+						}
+					}
+					echo "</select>\n";
+
+				?>
+				</div>
+				<div>
+					<input type='text' size='40' style='style: 99%' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt_new; ?>' 
+					
+					<?php 
+						echo ' value="' . $_SESSION['client_data']['new_contact_' . $cpt_new] . '" ';
+						$cpt_new++;
+					?>
+						
+					class='search_form_txt' />
+				</div>
+			</td>
+		</tr>
 	</table>
 
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
