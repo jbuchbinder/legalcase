@@ -126,7 +126,14 @@ function lcm_page_start($title = "") {
 							<li><a href=\"listcases.php\">My cases</a></li>
 							<li>Add/Edit Client</li>
 							<li>Add/Edit Case</li>
-							<li>Edit <abbr title=\"User Interface\">UI</abbr> preferences</li>
+							<li>Edit <abbr title=\"User Interface\">UI</abbr> preferences</li>\n";
+	
+	if ($connect_status == 'admin') {
+		// TODO: Provide better name
+		echo "\t\t\t\t\t\t\t<li><a href=\"config_site.php\">Site conf</a></li>\n";
+	}
+							
+	echo "
 						</ul>
 					</div>
 					<div id=\"nav_menu_box\">
