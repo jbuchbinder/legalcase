@@ -18,24 +18,61 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_help.php,v 1.2 2005/02/01 17:11:35 mlutfy Exp $
+	$Id: lcm_help.php,v 1.3 2005/02/02 09:29:40 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
 $code = $_REQUEST['code'];
+$error_section = false;
 
-if ($code)
+function include_help($code, $try_langs) {
+	$ok = false;
+
+	foreach ($try_langs as $lang) {
+		$file = "inc/help/" . $lang . "/" . $code . ".html";
+
+		if (@file_exists($file)) {
+			$ok = true;
+			include($file);
+			return $ok;
+		} else {
+			echo "\n<!-- Failed to include '$file'. -->\n";
+		}
+	}
+
+	return $ok;
+}
+
+if ($code) {
+	// code should be short word, ex: installation, case_edit, ...
+	$code = preg_replace("/[^_a-z]/", "", $code);
 	$page_title = _T('help_title_' . $code);
-else
+
+	if ($page_title == 'help_title_' . $code)
+		$error_section = true;
+} else {
 	$page_title = _T('title_software');
+}
 
 help_page_start($page_title);
 
 if ($code) {
-	// Include the help page
-	echo '<p>Todo: Include help for ' . $page_title . '.</p>';
+	global $lcm_lang;
+	$lang_site = read_meta('default_language');
 
+	// Sometimes the help might not be translated in every
+	// language. We will try first the language of the user,
+	// then the default site language, then we fallback on English.
+	$try_langs = array($lcm_lang, $lang_site, 'en');
+	$ok = include_help($code, $try_langs);
+	
+	if (! $ok) {
+		if ($error_section)
+			echo "<p>" . $code . ": The requested help section does not exist.";
+		else
+			echo "<p>The help files are not installed.</p>\n";
+	}
 } else {
 	// Show LCM logo
 	echo '<div align="center">';
