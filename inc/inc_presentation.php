@@ -196,25 +196,25 @@ function lcm_page_start($title = "", $css_files = "") {
 						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_insert_table-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_calendar') . "</div>
 						<p class=\"nav_column_text\">". format_date() ."</p>
 					</div>
+					<div class=\"nav_menu_box\">
+					<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_reminder-16.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_agenda') . "</div>
 					<!-- [ML] Keeping this so that testers see what features
 					to expect, but I put the opacity low to insist that it is
 					not ready. Who knows whether it works in MSIE. -->
-					<div class=\"nav_menu_box\" style='-moz-opacity: 0.45; filter: alpha(opacity=45);'>
-						<div class=\"nav_column_menu_head\">Next 7 meetings (demo)</div>
-						<p style='font-size: 70%;'><b>This feature is not ready yet.</b></p>
+					<div style='-moz-opacity: 0.45; filter: alpha(opacity=45);'>
 						<p class=\"nav_column_text\">
-						<strong>Today</strong><br />
-						9:30 - Meeting with Mr. Smith<br /><br />
-						11:00 - At the court
+							<strong>Today</strong><br />
+							9:30 - Meeting with Mr. Smith<br /><br />
+							11:00 - At the court
 						</p>
 						<hr class=\"hair_line\" />
 						<p class=\"nav_column_text\">
-						<strong>Tomorrow (28.09.2004)</strong><br />
-						8:30 - Meeting with Mr. Johnson<br /><br />
-						10:00 - At the court
+							<strong>Tomorrow (28.09.2004)</strong><br />
+							8:30 - Meeting with Mr. Johnson<br /><br />
+							10:00 - At the court
 						</p>
 					</div>
-					<br /><br />
+					</div>
 				<!-- End of \"navigation_menu_column\" content -->
 				</div>
 
