@@ -43,6 +43,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_subtitle_advanced' => '<NEW>Advanced features',
 'authorconf_subtitle_interface' => 'Интерфейс',
 'authorconf_subtitle_password' => 'Промяна на парола',
+'authorconf_tab_advanced' => '<NEW>Advanced',
+'authorconf_tab_interface' => '<NEW>Interface',
 'authoredit_input_username' => 'Идентификатор:',
 'authoredit_subtitle_personalinfo' => 'Лични данни',
 
@@ -329,7 +331,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_clients' => 'Клиенти',
 'menu_main_org' => 'Организации',
 'menu_profile' => 'Профил',
-'menu_profile_logout' => 'Изход от системата',
+'menu_profile_logout' => 'Изход',
 'menu_profile_preferences' => 'Моите настройки',
 'menu_search' => 'Търсене',
 
