@@ -45,6 +45,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'button_next' => 'По-нататък',
 'button_reload_page' => 'Презареждане на страницата',
 'button_reset' => 'Изчистване',
+'button_search' => 'Търсене',
 'button_validate' => 'Изпращане',
 
 
@@ -200,11 +201,20 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // M
+'menu_admin' => '<NEW>Administration',
+'menu_admin_archives' => 'Архиви',
+'menu_admin_keywords' => '<NEW>Keywords',
+'menu_admin_reports' => '<NEW>Reports',
+'menu_admin_siteconf' => '<NEW>Site configuration',
+'menu_calendar' => '<NEW>Calendar',
 'menu_main' => '<NEW>Main menu',
-'menu_main_authors' => '<NEW>Authors',
+'menu_main_authors' => 'Автори',
 'menu_main_cases' => '<NEW>Cases',
 'menu_main_clients' => 'Клиенти',
 'menu_main_org' => '<NEW>Organisations',
+'menu_profile' => '<NEW>Profile',
+'menu_profile_logout' => '<NEW>Logout',
+'menu_profile_preferences' => '<NEW>My preferences',
 
 
 // N

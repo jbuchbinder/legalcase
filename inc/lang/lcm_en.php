@@ -45,6 +45,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'button_next' => 'Next',
 'button_reload_page' => 'Reload this page',
 'button_reset' => 'Reset',
+'button_search' => 'Search',
 'button_validate' => 'Validate',
 
 

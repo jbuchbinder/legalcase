@@ -22,12 +22,30 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'alledged_crime' => '<NEW>Alledged crime',
 'assignment_date' => '<NEW>Assignment date',
 'author_id' => '<NEW>Author ID',
+'authorconf_button_change_password' => '<NEW>Change password',
+'authorconf_button_update_preferences' => '<NEW>Update preferences',
+'authorconf_input_language' => '<NEW>Language:',
+'authorconf_input_password_confirm' => '<NEW>Confirm new password:',
+'authorconf_input_password_current' => '<NEW>Current password:',
+'authorconf_input_password_new' => '<NEW>New password:',
+'authorconf_input_results_per_page' => '<NEW>Results per page:',
+'authorconf_input_screen' => '<NEW>Display:',
+'authorconf_input_screen_narrow' => '<NEW>Small',
+'authorconf_input_screen_wide' => '<NEW>Large',
+'authorconf_input_theme' => '<NEW>Interface colour:',
+'authorconf_input_theme_blue' => '<NEW>Blue',
+'authorconf_input_theme_green' => '<NEW>Green',
+'authorconf_input_theme_monochrome' => '<NEW>Monochrome',
+'authorconf_input_theme_orange' => '<NEW>Orange',
+'authorconf_subtitle_interface' => '<NEW>Interface',
+'authorconf_subtitle_password' => '<NEW>Change password',
 
 
 // B
 'button_next' => 'Suivant',
 'button_reload_page' => 'Recharcher cette page',
 'button_reset' => '<NEW>Reset',
+'button_search' => 'Rechercher',
 'button_validate' => 'Valider',
 
 
@@ -104,6 +122,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_more_than_three' => '<NEW>(More than 3 characters)',
 'info_name_of_person' => '<NEW>Name',
 'info_no' => 'non',
+'info_not_available' => '<NEW>n/a',
 'info_or' => '<NEW>or',
 'info_password_confirm' => '<NEW>(Type your password once again in order to avoid mistakes)',
 'info_technical_problem_database' => '<NEW>The connection to the database failed. It is possible that either is it not running or it has refused the login/password. Please consult the message provided below (if any) for more information.',
@@ -150,6 +169,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_warning_update_impossible' => '<NEW><b>Warning!</b> Failed to update the SQL database from version @old_version@ to version @version@, maybe due to a permissions problem on the database. Please contact your administrator. A full technical listing of the possible errors is provided below.',
 
 
+// K
+'kw_followups_assignment_title' => '<NEW>Assignment',
+'kw_followups_conclusion_title' => '<NEW>Conclusion',
+'kw_followups_consultation_title' => '<NEW>Consultation',
+'kw_followups_correspondance_title' => '<NEW>Correspondance',
+'kw_followups_delay_title' => '<NEW>Delay',
+'kw_followups_other_title' => '<NEW>Other',
+'kw_followups_suspension_title' => '<NEW>Suspension',
+'kw_followups_travel_title' => '<NEW>Travel',
+
+
 // L
 'legal_reason' => '<NEW>Legal reason',
 'login_access_denied' => '<NEW>Access denied',
@@ -168,6 +198,23 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_this_way' => '<NEW>You are registered... this way...',
 'login_title_login' => '<NEW>Login',
 'login_without_cookie' => '<NEW>Identification without cookie',
+
+
+// M
+'menu_admin' => '<NEW>Administration',
+'menu_admin_archives' => '<NEW>Archives',
+'menu_admin_keywords' => '<NEW>Keywords',
+'menu_admin_reports' => '<NEW>Reports',
+'menu_admin_siteconf' => '<NEW>Site configuration',
+'menu_calendar' => '<NEW>Calendar',
+'menu_main' => '<NEW>Main menu',
+'menu_main_authors' => '<NEW>Authors',
+'menu_main_cases' => '<NEW>Cases',
+'menu_main_clients' => '<NEW>Clients',
+'menu_main_org' => '<NEW>Organisations',
+'menu_profile' => '<NEW>Profile',
+'menu_profile_logout' => '<NEW>Logout',
+'menu_profile_preferences' => '<NEW>My preferences',
 
 
 // N
@@ -210,6 +257,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_warning_not_registered' => '<NEW><b>Error:</b> the address <tt>@user_email@</tt> is not registered in this site.',
 'pass_warning_too_short' => '<NEW><b>Error:</b> The password must be more than 5 characters.',
 'pass_warning_unknown_cookie' => '<NEW><b>Error:</b> this code is unknown.',
+'person_input_gender' => '<NEW>Gender:',
+'person_input_gender_female' => '<NEW>female',
+'person_input_gender_male' => '<NEW>male',
+'person_input_name_first' => '<NEW>Surname:',
+'person_input_name_last' => '<NEW>Name:',
+'person_input_name_middle' => '<NEW>Middle name:',
 'public' => '<NEW>Public',
 
 
@@ -258,6 +311,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // T
+'title_authorconf' => '<NEW>My preferences',
 'title_error' => '<NEW>Error',
 'title_site_configuration' => '<NEW>Site configuration',
 'title_software' => '<NEW>Legal Case Management',
@@ -266,7 +320,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_technical_message' => '<NEW>Technical message',
 'title_technical_problem' => '<NEW>Technical problem',
 'type' => '<NEW>Type',
-'typo_column' => '<NEW>:',
+'typo_column' => '~:',
 
 
 // V
@@ -278,6 +332,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_forbidden_area' => '<NEW>Forbidden area',
 'warning_operation_failed' => '<NEW>The operation failed.',
 'warning_sql_connection_failed' => '<NEW>Connection to SQL database server failed.',
+'warning_sql_query_failed' => '<NEW>Error in SQL database query.',
 'which_case' => '<NEW>Which case?',
 'write' => '<NEW>Write'
 
