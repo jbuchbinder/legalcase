@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.40 2005/03/29 15:48:15 mlutfy Exp $
+	$Id: client_det.php,v 1.41 2005/03/29 17:55:50 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -119,12 +119,16 @@ if ($client > 0) {
 				//
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_associated_org') . "</div>\n";
-		
+
+				echo '<form action="add_org_cli.php" method="post">' . "\n";
+				echo '<input type="hidden" name="client" value="' . $client . '" />' . "\n";
+				
 				echo '
 				<br /><table border="0" class="tbl_usr_dtl" width="100%">
 				<tr>
 					<th class="heading">&nbsp;</th>
 					<th class="heading">' . _Th('org_input_name') . '</th>
+					<th class="heading">&nbsp;</th>
 				</tr>';
 		
 				//
@@ -136,11 +140,15 @@ if ($client > 0) {
 							AND lcm_client_org.id_org=lcm_org.id_org";
 		
 				$result = lcm_query($q);
-		
+
+				$i = 0;
 				while ($row1 = lcm_fetch_array($result)) {
 					echo "<tr>\n";
-					echo '<td width="25" align="center"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
-					echo '<td><a style="display: block;" href="org_det.php?org=' . $row1['id_org'] .  '" class="content_link">' . $row1['name'] . "</a></td>\n";
+					echo '<td width="25" align="center" class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
+					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '"><a style="display: block;" href="org_det.php?org=' . $row1['id_org'] .  '" class="content_link">' . $row1['name'] . "</a></td>\n";
+					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
+					if ( ($GLOBALS['author_session']['status'] == 'admin') )
+						echo '<label for="id_rem_org_' . $row1['id_org'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_org_' . $row1['id_org'] . '" name="rem_orgs[]" value="' . $row1['id_org'] . '" /></td>';	// TRAD
 
 					/* [ML] Not appropriate here
 					echo "<td>";
@@ -150,13 +158,17 @@ if ($client > 0) {
 					*/
 
 					echo "</tr>\n";
+					$i++;
 				}
 				
 				echo "</table>";
 		
 				if ($edit)
 					echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">Add organisation(s)</a><br />";
-		
+
+				echo '<input type="submit" name="submit" value="' . 'Remove organization(s)' . '" class="search_form_btn" />' . "\n";	// TRAD
+				echo "</form>\n";
+
 				echo "<br /></fieldset>";
 				
 				break;

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.21 2005/03/29 14:04:25 mlutfy Exp $
+	$Id: org_det.php,v 1.22 2005/03/29 17:56:27 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -96,6 +96,9 @@ if ($row = lcm_fetch_array($result)) {
 			echo '<fieldset class="info_box">';
 			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_representatives') . "</div><br />\n";
 
+			echo '<form action="add_cli_org.php" method="post">' . "\n";
+			echo '<input type="hidden" name="org" value="' . $org . '" />' . "\n";
+
 			// Show organisation representative(s)
 			$q = "SELECT cl.id_client, name_first, name_middle, name_last
 					FROM lcm_client_org as clo, lcm_client as cl
@@ -111,13 +114,20 @@ if ($row = lcm_fetch_array($result)) {
 				<table class="tbl_usr_dtl">
 				<tr>
 					<th class="heading"><?php echo "Representative(s):"; /* TRAD */ ?></th>
+					<th class="heading">&nbsp;</th>
 				</tr>
 		<?php
 			}
-		
+
+			$i = 0;
 			while ($row = lcm_fetch_array($result)) {
-				echo '<tr><td><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
-				echo get_person_name($row) . "</a></td></tr>\n";
+				echo '<tr><td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '"><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
+				echo get_person_name($row) . "</a></td>";
+				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
+				if ( ($GLOBALS['author_session']['status'] == 'admin') )
+					echo '<label for="id_rem_cli_' . $row['id_client'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_cli_' . $row['id_client'] . '" name="rem_clients[]" value="' . $row['id_client'] . '" /></td>';	// TRAD
+				echo "</tr>\n";
+				$i++;
 			}
 		
 			if ($show_table)
@@ -125,7 +135,10 @@ if ($row = lcm_fetch_array($result)) {
 		
 			if ($edit)
 				echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />"; // TRAD
-		
+
+			echo '<input type="submit" name="submit" value="' . 'Remove representative(s)' . '" class="search_form_btn" />' . "\n";	// TRAD
+			echo "</form>\n";
+
 			echo "<br /></fieldset>";
 
 			break;
