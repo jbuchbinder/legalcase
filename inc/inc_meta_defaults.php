@@ -35,11 +35,11 @@ function init_default_config() {
 		// ** Collaborative work **
 		// Is case information (read) public/private?
 		// If public, anyone can view the case/follow-up information
-		'case_default_read' => 'public',
+		'case_default_read' => 'yes',
 
 		// Is case participation (write) public/private?
 		// If public, anyone can add follow-up information
-		'case_default_write' => 'private',
+		'case_default_write' => 'no',
 
 		// Is the policy systematically enforced? (yes/no)
 		// If 'no' the user will be allowed to choose how others
