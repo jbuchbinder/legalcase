@@ -35,8 +35,8 @@ function lcm_query_db($query) {
 	}
 
 	if ($my_debug AND $s = mysql_error()) {
-		echo _T('info_erreur_requete') . " " . htmlentities($query) . "<br>";
-		echo "&laquo; ".htmlentities($s)." &raquo;<p>";
+		echo _T('warning_sql_query_failed') . "<br />\n" . htmlentities($query) . "<br />\n";
+		echo "&laquo; " . htmlentities($s) . " &raquo;<p>";
 	}
 
 	if ($my_debug)
