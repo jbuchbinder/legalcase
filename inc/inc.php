@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.36 2005/01/18 21:18:04 antzi Exp $
+	$Id: inc.php,v 1.37 2005/01/19 09:42:25 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -41,10 +41,9 @@ if (! @file_exists('inc/data/inc_meta_cache.php'))
 //
 // Preferences for presentation
 // Can be done from any screen, but for now most is in config_author.php
+// The presence of author_ui_modified assumed that all other form variables are set.
 //
 if (isset($_REQUEST['author_ui_modified'])) {
-// [AG] This means that author UI preferences form was submitted
-
 	// Set prefs_mod to true if prefs need to be saved in DB
 	$prefs_mod = false;
 
@@ -63,7 +62,6 @@ if (isset($_REQUEST['author_ui_modified'])) {
 	}
 
 	// Set UI theme
-//	if (isset($_REQUEST['sel_theme'])) {	// [AG] $_REQUEST['sel_theme'] is always set
 	if ($_REQUEST['sel_theme'] != $_REQUEST['old_theme']) {	// Value is changed
 		// XSS risk: Theme names can only be alpha-numeric, "-" and "_"
 		$sel_theme = preg_replace("/[^-_a-zA-Z0-9]/", '', $_REQUEST['sel_theme']);
@@ -75,7 +73,6 @@ if (isset($_REQUEST['author_ui_modified'])) {
 	}
 
 	// Set wide/narrow screen mode preference
-//	if (isset($sel_screen)) {	// [AG] 1. We have to use superglobals 2. It's always set
 	if ($_REQUEST['sel_screen'] != $_REQUEST['old_screen']) {	// Value is changed
 		if ($_REQUEST['sel_screen'] == 'narrow' || $_REQUEST['sel_screen'] == 'wide') {
 			$prefs['screen'] = $_REQUEST['sel_screen'];
@@ -92,15 +89,12 @@ if (isset($_REQUEST['author_ui_modified'])) {
 	}
 
 	// Set rows per page preference
-//	if (isset($_REQUEST['page_rows'])) {	[AG] It's always set
-		if (intval($_REQUEST['page_rows']) > 0) {
-			$prefs['page_rows'] = intval($_REQUEST['page_rows']);
-			$prefs_mod = true;
-		}
-//	}
+	if (intval($_REQUEST['page_rows']) > 0) {
+		$prefs['page_rows'] = intval($_REQUEST['page_rows']);
+		$prefs_mod = true;
+	}
 
 	// Set font size
-//	if (isset($_REQUEST['font_size'])) { [AG] It's always set
 	if ($_REQUEST['font_size'] != $_REQUEST['old_font_size']) {
 		if ($font_size == 'small_font' || $font_size == 'medium_font' || $font_size == 'large_font') {
 			$prefs['font_size'] = $font_size;
