@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.35 2005/03/24 14:45:53 mlutfy Exp $
+	$Id: client_det.php,v 1.36 2005/03/24 15:16:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -114,9 +114,9 @@ if ($client > 0) {
 				echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_associated_org') . "</div>\n";
 		
 				echo '
-				<br /><table border="0" class="tbl_usr_dtl">
+				<br /><table border="0" class="tbl_usr_dtl" width="100%">
 				<tr>
-					<th class="heading">Organisation name</th>
+					<th class="heading">' . "Organisation name" . /* TRAD */ '</th>
 					<th class="heading">&nbsp;</th>
 				</tr>';
 		

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.9 2005/03/24 14:47:51 mlutfy Exp $
+	$Id: author_det.php,v 1.10 2005/03/24 15:16:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -145,7 +145,7 @@ if ($author > 0) {
 
 				if (lcm_num_rows($result)) {
 					echo '<fieldset class="info_box">' . "\n";
-					echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_cases') . "</div>\n";
+					echo '<div class="prefs_column_menu_head">' . _T('author_subtitle_cases') . "</div>\n";
 					show_listcase_start();
 		
 					for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
@@ -164,7 +164,7 @@ if ($author > 0) {
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' 
 					. "<div style='float: right'>" . lcm_help('author_followups') . "</div>"
-					. _T('generic_subtitle_followups')
+					. _T('author_subtitle_followups')
 					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 
@@ -278,7 +278,7 @@ if ($author > 0) {
 
 				// Show table headers
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_reports') . '</div>';
+				echo '<div class="prefs_column_menu_head">' . _T('author_subtitle_reports') . '</div>';
 				echo "<p class=\"normal_text\">\n";
 			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
