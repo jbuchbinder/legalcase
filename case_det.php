@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.130 2005/04/05 09:10:30 antzi Exp $
+	$Id: case_det.php,v 1.131 2005/04/05 10:35:55 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -289,7 +289,7 @@ if ($case > 0) {
 					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 					echo "<tr>\n";
 					echo '<th class="heading">' . _Th('time_input_date_start') . '</th>';
-					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? _('time_input_date_end') : _T('time_input_duration') ) . '</th>';
+					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? _T('time_input_date_end') : _T('time_input_duration') ) . '</th>';
 					echo '<th class="heading">' . _Th('app_input_type') . '</th>';
 					echo '<th class="heading">' . _Th('app_input_title') . '</th>';
 					echo '<th class="heading">' . _Th('app_input_reminder') . '</th>';
