@@ -908,11 +908,13 @@ function show_listcase_start() {
 		echo '<th class="heading">Court archive</th>';
 	}
 	
-	echo '<th colspan="3" class="heading">Status</th>';
+	echo '<th colspan="2" class="heading">Status</th>';
 	echo "</tr>\n";
 }
 
 function show_listcase_item($item, $cpt, $custom = '') {
+	$case_court_archive = read_meta('case_court_archive');
+
 	$ac_read = allowed($item['id_case'],'r');
 	$ac_edit = allowed($item['id_case'], 'e');
 	$css = ($cpt %2 ? "dark" : "light");
