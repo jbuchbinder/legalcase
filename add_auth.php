@@ -1,7 +1,7 @@
 <?php
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
+include_lcm('inc_acc');
 include_lcm('inc_lang');
 
 if ($case>0) {
