@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.3 2005/03/06 13:47:25 antzi Exp $
+	$Id: app_det.php,v 1.4 2005/03/06 22:43:51 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -37,13 +37,26 @@ $result = lcm_query($q);
 if ($row = lcm_fetch_array($result)) {
 	lcm_page_start('Appointment details:' . $row['title']);
 
-	echo "Start time: " . $row['start_time'] . "<br />\n";
-	echo "End time: " . $row['end_time'] . "<br />\n";
-	echo "Reminder: " . $row['reminder'] . "<br />\n";
+	echo '<fieldset class="info_box">';
+//	echo '<div class="prefs_column_menu_head">' . _T('app_subtitle_general') . '</div>';
+	echo "<p class=\"normal_text\">\n";
+	
+	echo "Start time: " . format_date($row['start_time'],'short') . "<br />\n";
+	$end_time = vider_date($row['end_time']);
+	$reminder = vider_date($row['reminder']);
+	if ($prefs['time_intervals'] == 'absolute') {
+		echo "End time: " . $row['end_time'] . "<br />\n";
+		echo "Reminder: " . $row['reminder'] . "<br />\n";
+	} else {
+		$duration = ($end_time ? strtotime($row['end_time']) - strtotime($row['start_time']) : 0);
+		echo "Duration: " . format_time_interval($duration,($prefs['time_intervals_notation'] == 'hours_only')) . "<br />\n";
+		$reminder_offset = ($reminder ? strtotime($row['start_time']) - strtotime($row['reminder']) : 0);
+		echo "Reminder: " . format_time_interval($duration,($prefs['time_intervals_notation'] == 'hours_only')) . " before start time<br />\n";
+	}
 	echo "Type: " . $row['type'] . "<br />\n";
 	echo "Title: " . $row['title'] . "<br />\n";
 	echo "Description: " . $row['description'] . "<br />\n";
-	echo "Created by: " . join(' ',array($row['name_first'],$row['name_middle'],$row['name_last'])) . "<br />\n";
+	echo "Created by: " . njoin(array($row['name_first'],$row['name_middle'],$row['name_last'])) . "<br />\n";
 	if ($row['case_title']) echo "In connection with: " . $row['case_title'] , "<br />\n";
 
 	// Show appointment participants
@@ -56,7 +69,7 @@ if ($row = lcm_fetch_array($result)) {
 		echo "Participants: ";
 		$participants = array();
 		while ($author = lcm_fetch_array($res_author)) {
-			$participants[] = join(' ',array($author['name_first'],$author['name_middle'],$author['name_last']));
+			$participants[] = njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
 		}
 		echo join(', ',$participants);
 		echo "<br />\n";
@@ -74,11 +87,14 @@ if ($row = lcm_fetch_array($result)) {
 		echo "Clients: ";
 		$clients = array();
 		while ($client = lcm_fetch_array($res_client))
-			$clients[] = join(' ',array($client['name_first'],$client['name_middle'],$client['name_last']))
+			$clients[] = njoin(array($client['name_first'],$client['name_middle'],$client['name_last']))
 				. ( ($client['id_org'] > 0) ? " of " . $client['name'] : '');
 		echo join(', ',$clients);
 		echo "<br />\n";
 	}
+
+	echo "</p>";
+	echo "</fieldset>\n";
 
 	lcm_page_end();
 } else die("There is no such appointment!");
