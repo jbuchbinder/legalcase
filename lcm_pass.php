@@ -99,6 +99,7 @@ function reset_pass($my_p, $my_password) {
 // Send a cookie by e-mail which will later allow the user to
 // reset his/her password.
 function send_cookie_by_email($my_email) {
+	global $system_kwg;
 	include_lcm('inc_mail');
 
 	install_html_start(_T('pass_title_forgotten_password'), 'login');
@@ -116,7 +117,7 @@ function send_cookie_by_email($my_email) {
 			WHERE c.id_of_person = a.id_author
 			and type_person = 'author' 
 			and value ='$my_email' 
-			and type_contact = 1");
+			and type_contact = " . $system_kwg['contacts']['keywords']['email_main']['id_keyword']);
 	
 	$row = lcm_fetch_array($res);
 
@@ -179,6 +180,8 @@ function print_pass_forgotten_form() {
 }
 
 function send_registration_by_email($email, $username, $name_first, $name_last) {
+	global $system_kwg;
+
 	install_html_start(_T('pass_title_register'), 'login');
 
 	if (!$email) {
@@ -194,7 +197,7 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 		WHERE c.id_of_person = a.id_author
 		AND value=\"" . addslashes($email) . "\"
 		AND type_person = 'author'
-		AND type_contact = 1"; // XXX
+		AND type_contact = " . $system_kwg['contacts']['keywords']['email_main']['id_keyword']; // XXX
 
 	$result = lcm_query($query);
 
@@ -232,7 +235,7 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 
 	// Add e-mail to lcm_contact
 	lcm_query("INSERT INTO lcm_contact (type_person, type_contact, id_of_person, value)
-			VALUES ('author', 1, $id_author, '" .  addslashes($email) . "')");
+			VALUES ('author', " . $system_kwg['contacts']['keywords']['email_main']['id_keyword'] . ", $id_author, '" .  addslashes($email) . "')");
 
 	// Prepare the e-mail to send to the user
 	$site_name = read_meta('site_name');
