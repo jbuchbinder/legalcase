@@ -41,11 +41,11 @@ if ($list_pos>0)
 <?php
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo "<a href=\"client_det.php?client=" . $row['id_client'] . '">';
+	echo '<a href="client_det.php?client=' . $row['id_client'] . '">';
 	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
 	echo highlight_matches($fullname,$find_client_string);
-	echo "</td>\n\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo '<a href="edit_client.php?client=' . $row['id_client'] . ">Edit</a></td>\n\t</tr>\n";
+	echo "</a></td>\n\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo '<a href="edit_client.php?client=' . $row['id_client'] . "\">Edit</a></td>\n\t</tr>\n";
 }
 
 echo '</table>
