@@ -67,9 +67,6 @@ function format_date($timestamp = '', $format = '') {
 		}
 	}
 
-	if ($timestamp == 0)
-		return '';
-
 	if (! $format) 
 		$format = _T('date_format');
 
