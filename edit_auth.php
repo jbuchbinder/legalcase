@@ -3,24 +3,20 @@
 include('inc/inc.php');
 include('inc/inc_acc.php');
 
-lcm_page_start("Edit authors rights");
-
-if ($case>0) {
+if ($case > 0) {
 	if (allowed($case,'a')) {
-		// Prepare query
 		$q = "SELECT *
 			FROM lcm_case_author,lcm_author
 			WHERE (id_case=$case
 				AND lcm_case_author.id_author=lcm_author.id_author";
-		if ($author>0)
+		if ($author > 0)
 			$q .= " AND lcm_author.id_author=$author";
 		$q .= ')';
 
-		// Do the query
 		$result = lcm_query($q);
 
+		lcm_page_start("Edit author's rights on case $case");
 	?>
-	<h1>Edit access rights for case <?php echo $case; ?></h1>
 	<form action="upd_auth.php" method="POST">
 		<table border><caption>Access rights</caption>
 			<tr><th align="center">User</th>
@@ -61,9 +57,8 @@ if ($case>0) {
 		<input type="hidden" name="ref_edit_auth" value="<?php echo $HTTP_REFERER; ?>">
 	</form>
 	<?php
-
+		lcm_page_end();
 	} else die("You don't have permission to edit this case's access rights!");
 } else die("Which case?");
 
-	lcm_page_end();
 ?>
