@@ -52,17 +52,19 @@ function close_login() {
 function login($cible, $prive = 'prive', $message_login='') {
 	$pass_popup ='href="lcm_pass.php" target="lcm_pass" onclick="' .  "javascript:window.open('lcm_pass.php', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
 
-	$login = $GLOBALS['var_login'];
 	$erreur = '';
-	$essai_auth_http = $GLOBALS['var_essai_auth_http'];
-	$logout = $GLOBALS['var_logout'];
+	$login = (isset($GLOBALS['var_login']) ? $GLOBALS['var_login'] : '');
+	$essai_auth_http = (isset($GLOBALS['var_essai_auth_http']) ? $GLOBALS['var_essai_auth_http'] : '');
+	$logout = (isset($GLOBALS['var_logout']) ? $GLOBALS['var_logout'] : '');
 
 	// If the cookie fails, inc_auth tried to redirect to lcm_cookie who
 	// then tried to put a cookie. If it is not there, it is "cookie failed"
 	// who is there, and it's probably a bookmark on bonjour=oui and not
 	// a cookie failure.
-	if ($GLOBALS['var_cookie_failed'])
+	if (isset($GLOBALS['var_cookie_failed']))
 		$cookie_failed = ($GLOBALS['lcm_session'] != 'cookie_test_failed');
+	else
+		$cookie_failed = "";
 
 	global $author_session;
 	global $lcm_session, $PHP_AUTH_USER, $ignore_auth_http;
@@ -96,7 +98,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		return;
 	}
 
-	if ($GLOBALS['var_erreur'] == 'pass')
+	if (isset($GLOBALS['var_erreur']) && $GLOBALS['var_erreur'] == 'pass')
 		$erreur = _T('login_password_incorrect');
 
 	// The login is memorized in the cookie for a possible future admin login
@@ -107,7 +109,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		$login = '';
 
 	// other sources for authentication
-	$flag_autres_sources = $GLOBALS['ldap_present'];
+	$flag_autres_sources = (isset($GLOBALS['ldap_present']) ? $GLOBALS['ldap_present'] : '');
 
 	// What informations to pass?
 	if ($login) {
