@@ -16,7 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along 
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: config_site.php,v 1.31 2005/01/25 17:34:54 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -115,12 +117,12 @@ function show_config_form_collab() {
 	echo "<ul>";
 	// If case_default_read == 'yes' (public)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_1' value='yes'";
-	if ($case_default_read) echo ' checked="checked"';
+	if ($case_default_read == 'yes') echo ' checked="checked"';
 	echo "><label for='case_default_read_1'>" .  _T('siteconf_input_access_read_choice_public') . "</label></input></li>\n";
 
 	// If case_default_read != 'yes' (private)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_2' value=''";
-	if (!$case_default_read) echo ' checked="checked"';
+	if ($case_default_read == 'no') echo ' checked="checked"';
 	echo "><label for='case_default_read_2'>" . _T('siteconf_input_access_read_choice_private') . "</label></input></li>\n";
 	echo "</ul>\n";
 
@@ -130,12 +132,12 @@ function show_config_form_collab() {
 	echo "<ul>";
 	// Anyone can change the setting (case_read_always != yes)
 	echo '<li style="list-style-type: none;"><input type="radio" name="case_read_always" id="case_read_always_2" value=""';
-	if (!$case_read_always) echo ' checked="checked"';
+	if ($case_read_always == 'no') echo ' checked="checked"';
 	echo '><label for="case_read_always_2">' . _T('siteconf_input_access_read_global_no') . "</label></input></li>\n";
 
 	// Only the admin can change the setting (case_read_always == yes)
 	echo '<li style="list-style-type: none;"><input type="radio" name="case_read_always" id="case_read_always_1" value="yes"';
-	if ($case_read_always) echo ' checked="checked"';
+	if ($case_read_always == 'yes') echo ' checked="checked"';
 	echo '><label for="case_read_always_1">' . _T('siteconf_input_access_read_global_yes') . "</label></input></li>\n";
 	echo "</ul>\n";
 
@@ -147,12 +149,12 @@ function show_config_form_collab() {
 	echo "<ul>";
 	// If by default write set to public (case_default_write == 'yes')
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_1' value='yes'";
-	if ($case_default_write) echo ' checked="checked"';
+	if ($case_default_write == 'yes') echo ' checked="checked"';
 	echo '><label for="case_default_write_1">' . _T('siteconf_input_access_write_choice_public') . "</label></input></li>\n";
 
 	// If by default write not set to public (case_default_write != 'yes')
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_2' value=''";
-	if (!$case_default_write) echo ' checked="checked"';
+	if ($case_default_write == 'no') echo ' checked="checked"';
 	echo '><label for="case_default_write_2">' . _T('siteconf_input_access_write_choice_private') . "</label></input></li>\n";
 	echo "</ul>\n";
 
@@ -162,12 +164,12 @@ function show_config_form_collab() {
 	echo "<ul>";
 	// Anyone can change the setting (case_write_always != yes)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_2' value=''";
-	if (!$case_write_always) echo ' checked="checked"';
+	if ($case_write_always == 'no') echo ' checked="checked"';
 	echo '><label for="case_write_always_2">' . _T('siteconf_input_access_write_global_no') . "</label></input></li>\n";
 
 	// Only the admin can change the setting (case_write_always == yes)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value='yes'";
-	if ($case_write_always) echo ' checked="checked"';
+	if ($case_write_always == 'yes') echo ' checked="checked"';
 	echo '><label for="case_write_always_1">' . _T('siteconf_input_access_write_global_yes') . "</label></input></li>\n";
 	echo "</ul>\n";
 	echo "</fieldset>";
@@ -403,18 +405,18 @@ function apply_conf_changes_general() {
 function apply_conf_changes_collab() {
 	$log = array();
 
-	$case_default_read = $_REQUEST['case_default_read'];
-	$case_default_write = $_REQUEST['case_default_write'];
-	$case_read_always = $_REQUEST['case_read_always'];
-	$case_write_always = $_REQUEST['case_write_always'];
-	$site_open_subscription = $_REQUEST['site_open_subscription'];
+	$case_default_read  = ($_REQUEST['case_default_read'] == 'yes' ? 'yes' : 'no');
+	$case_default_write = ($_REQUEST['case_default_write'] == 'yes' ? 'yes' : 'no');
+	$case_read_always   = ($_REQUEST['case_read_always'] == 'yes' ? 'yes' : 'no');
+	$case_write_always  = ($_REQUEST['case_write_always'] == 'yes' ? 'yes' : 'no');
+	$site_open_subscription = $_REQUEST['site_open_subscription']; // validate later
 
 	// Default read policy
 	if ($case_default_read != read_meta('case_default_read')) {
-		write_meta('case_default_read', ($case_default_read ? 'yes' : ''));
+		write_meta('case_default_read', $case_default_read);
 
 		$entry = "Read access to cases set to '<tt>";
-		if ($case_default_read) $entry .= "public";
+		if ($case_default_read == 'yes') $entry .= "public";
 		else $entry .= "restricted";
 		$entry .= "</tt>'";
 		array_push($log, $entry);
@@ -422,10 +424,10 @@ function apply_conf_changes_collab() {
 
 	// Default write policy
 	if ($case_default_write != read_meta('case_default_write')) {
-		write_meta('case_default_write', ($case_default_write ? 'yes' : ''));
+		write_meta('case_default_write', $case_default_write);
 
 		$entry = "Write access to cases set to '<tt>";
-		if ($case_default_write) $entry .= "public";
+		if ($case_default_write == 'yes') $entry .= "public";
 		else $entry .= "restricted";
 		$entry .= "</tt>'";
 		array_push($log, $entry);
@@ -433,10 +435,10 @@ function apply_conf_changes_collab() {
 
 	// Read policy access
 	if ($case_read_always != read_meta('case_read_always')) {
-		write_meta('case_read_always', ($case_read_always ? 'yes' : ''));
+		write_meta('case_read_always', $case_read_always);
 
 		$entry = "Read access policy can by changed by <tt>";
-		if ($case_read_always) $entry .= "admin only";
+		if ($case_read_always == 'yes') $entry .= "admin only";
 		else $entry .= "everybody";
 		$entry .= "</tt>";
 		array_push($log, $entry);
@@ -444,10 +446,10 @@ function apply_conf_changes_collab() {
 
 	// Write policy access
 	if ($case_write_always != read_meta('case_write_always')) {
-		write_meta('case_write_always', ($case_write_always ? 'yes' : ''));
+		write_meta('case_write_always', $case_write_always);
 
 		$entry = "Write access policy can be changed by <tt>";
-		if ($case_write_always) $entry .= "admin only";
+		if ($case_write_always == 'yes') $entry .= "admin only";
 		else $entry .= "everybody";
 		$entry .= "</tt>";
 		array_push($log, $entry);
