@@ -365,6 +365,8 @@ function lang_dselect ($rien='') {
 function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = '', $herit = '') {
 	global $couleur_foncee, $couleur_claire, $connect_id_auteur;
 
+	$ret = '';
+
 	if ($default == '')
 		$default = $GLOBALS['lcm_lang'];
 
@@ -374,7 +376,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 		// the languages, instead, the function parameters should be changed.
 		$select_name = 'var_lang_lcm';
 	} else {
-		$langues = explode(',', read_meta('langues_multilingue'));
+		$langues = explode(',', read_meta('available_languages'));
 	}
 
 	// We do not offer a choice if there is only one language installed
@@ -386,32 +388,39 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 
 	$lien = $GLOBALS['clean_link'];
 
+	/*
 	if ($select_name == 'changer_lang') {
 		$lien->delvar('changer_lang');
 		$lien->delvar('url');
 		$post = $lien->getUrl();
 		$target = '';
 	} else {
+	*/
+	if ($select_name == 'var_lang_lcm') {
 		include_lcm('inc_admin');
 		$target = $lien->getUrl();
 		$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
+
+		$ret = "<form action='$post' method='post' style='margin:0px; padding:0px;'>";
+
+		if ($target)
+			$ret .= "<input type='hidden' name='url' value='$target'>";
+
+		if ($text)
+			$ret .= $text;
+
+		$style = "class='forml' style='vertical-align: top; max-height: 24px; margin-bottom: 5px; width: 120px;'";
+		// $style = "class='verdana1' style='background-color: $couleur_foncee; max-height: 24px; border: 1px solid white; color: white; width: 100px;'";
+
+		$postcomplet = new Link($post);
+		if ($target) $postcomplet->addvar('url', $target);
+
+		$ret .= "\n<select name='$select_name' $style onChange=\"document.location.href='".$postcomplet->geturl()."&$select_name='+this.options[this.selectedIndex].value\">\n";
+	} else {
+		// XXX TODO FIXME
+		// rename class 'forml' to 'form_lang' and adjust CSS
+		$ret .= "\n<select class='forml' name='$select_name'>\n";
 	}
-
-	$ret = "<form action='$post' method='post' style='margin:0px; padding:0px;'>";
-
-	if ($target)
-		$ret .= "<input type='hidden' name='url' value='$target'>";
-
-	if ($text)
-		$ret .= $text;
-
-	$style = "class='forml' style='vertical-align: top; max-height: 24px; margin-bottom: 5px; width: 120px;'";
-	// $style = "class='verdana1' style='background-color: $couleur_foncee; max-height: 24px; border: 1px solid white; color: white; width: 100px;'";
-
-	$postcomplet = new Link($post);
-	if ($target) $postcomplet->addvar('url', $target);
-
-	$ret .= "\n<select name='$select_name' $style onChange=\"document.location.href='".$postcomplet->geturl()."&$select_name='+this.options[this.selectedIndex].value\">\n";
 
 	sort($langues);
 	while (list(, $l) = each ($langues)) {
@@ -427,8 +436,12 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 		else $ret .= "<option class='maj-debut' value='$l'$selected>".translate_language_name($l)."</option>\n";
 	}
 	$ret .= "</select>\n";
-	$ret .= "<noscript><INPUT TYPE='submit' NAME='Valider' VALUE='&gt;&gt;' class='spip_bouton' $style></noscript>";
-	$ret .= "</form>";
+
+	if ($select_name == 'var_lang_lcm') {
+		$ret .= "<noscript><INPUT TYPE='submit' NAME='Valider' VALUE='&gt;&gt;' class='spip_bouton' $style></noscript>";
+		$ret .= "</form>";
+	} 
+
 	return $ret;
 }
 
