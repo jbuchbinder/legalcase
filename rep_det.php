@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.20 2005/02/10 13:05:57 mlutfy Exp $
+	$Id: rep_det.php,v 1.21 2005/02/10 14:39:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -100,7 +100,7 @@ echo "</p></fieldset>";
 
 echo '<a name="line"></a>' . "\n";
 echo "<fieldset class='info_box'>";
-echo "<div class='prefs_column_menu_head'>" . "Matrix line" . "</div>\n";
+echo "<div class='prefs_column_menu_head'>" . "Report line information" . "</div>\n";
 
 // Extract source type, if any
 if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
@@ -133,7 +133,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	} else {
 		// Allow to change the source table
 		echo ' <a href="upd_rep_field.php?rep=' . $rep_info['id_report'] 
-				. '&amp;unselect_line=1">' . "Remove" . '</a>';
+				. '&amp;unselect_line=1" class="content_link">' . "Remove" . '</a>';
 		echo "</p>\n";
 	}
 
@@ -257,11 +257,12 @@ echo "</fieldset>\n";
 			echo '<td>';
 			if ($edit) {
 				if ($column['col_order'] > 1)
-					echo "<a href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;old=" . $column['col_order'] . "&amp;new=" . ($column['col_order']-1) . "'>^</a> ";
+					echo "<a class='content_link' href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;old=" . $column['col_order'] . "&amp;new=" . ($column['col_order']-1) . "'>^</a> ";
 				if ($column['col_order'] < $rows)
-					echo "<a href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;old=" . $column['col_order'] . "&amp;new=" . ($column['col_order']+1) . "'>v</a> ";
+					echo "<a class='content_link' href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;old=" . $column['col_order'] . "&amp;new=" . ($column['col_order']+1) . "'>v</a> ";
 				echo "<a href='upd_rep_field.php?rep=$rep" . "&amp;" 
-						. "remove=column" . "&amp;" . "id_column=" . $column['id_column'] . "'>Remove</a>";
+						. "remove=column" . "&amp;" . "id_column=" . $column['id_column'] . "' "
+						. "class='content_link'>" . "X" . "</a>";
 			}
 			echo "</td>\n";
 			echo "</tr>\n";
@@ -272,138 +273,79 @@ echo "</fieldset>\n";
 //
 //	Display add new column form
 //
-		if ($edit) {
-			echo "<form action='add_rep_col.php' method='POST'>\n";
-			echo "\t<input type='hidden' name='rep' value='$rep' />\n";
-			echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
-			// Get column order
-			echo "\t\t<tr><th class='heading'>Position</th><td>\n";
-			echo "\t\t\t<select name='order' class='sel_frm'>\n";
-			$i = 1;
-			while ($i<$last_order) {
-				echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n";
-				$i++;
-			}
-			echo "\t\t\t\t<option selected label='Add at the end' value='$i'>Add at the end</option>\n";
-			echo "\t\t\t</select>\n";
-//			echo "<input type='text' name='order' value='$last_order' size='2' />";
-			echo "\t\t</td></tr>\n";
+if ($edit) {
+	echo "<form action='add_rep_col.php' method='POST'>\n";
+	echo "\t<input type='hidden' name='rep' value='$rep' />\n";
+	echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
-			// Get column header
-			echo "\t\t<tr><th class='heading'>Header</th>\n";
-			echo "\t\t\t<td><input type='text' name='header' class='search_form_txt' /></td></tr>\n";
+	// Get column order
+	echo "\t\t<tr><th class='heading'>Position</th><td>\n";
+	echo "\t\t\t<select name='order' class='sel_frm'>\n";
 
-			// Get field from list
-			echo "\t\t<tr><th class='heading'>Contents</th>\n";
-			echo "\t\t\t<td><select name='field' class='sel_frm'>\n";
-			echo "\t\t\t\t<option selected disabled label='' value=''>-- Select column content from the list --</option>";
-			$q = "SELECT * FROM lcm_fields ORDER BY table_name,description";
-			$fields = lcm_query($q);
-			$table = '';
-			while ($field = lcm_fetch_array($fields)) {
-				if ($field['table_name']!=$table) {
-					if (!$table) echo "\t\t\t\t</optgroup>\n";
-					$table = $field['table_name'];
-					echo "\t\t\t\t<optgroup label='$table'>\n";
-				}
-//				echo "<option label='" . $field['description'] . "' value='" . $field['id_field'] . "'>" . $field['description'] . "</option>\n";
-				echo "\t\t\t\t\t<option value='" . $field['id_field'] . "'>" . $field['description'] . "</option>\n";
+	$i = 1;
+	while ($i<$last_order) {
+		echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n";
+		$i++;
+	}
 
-			}
-			if ($table) echo "\t\t\t\t</optgroup>\n";
-			echo "\t\t\t</select></td>\n";
-			echo "\t\t</tr>\n";
+	echo "\t\t\t\t<option selected label='Add at the end' value='$i'>Add at the end</option>\n";
+	echo "\t\t\t</select>\n";
+	//			echo "<input type='text' name='order' value='$last_order' size='2' />";
+	echo "\t\t</td></tr>\n";
 
-			// Get grouping setting
-			echo "\t\t<tr><th class='heading'>Grouping</th>\n";
-			echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
-			echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
-			echo "\t\t\t\t<option label='Count' value='COUNT'>COUNT</option>\n";
-			echo "\t\t\t\t<option label='Sum' value='SUM'>SUM</option>\n";
-			echo "\t\t\t</select></td>\n";
-			echo "\t\t</tr>";
+	// Get column header
+	echo "\t\t<tr><th class='heading'>Header</th>\n";
+	echo "\t\t\t<td><input type='text' name='header' class='search_form_txt' /></td></tr>\n";
 
-			// Get sort setting
-			echo "\t\t<tr><th class='heading'>Sorting</th>\n";
-			echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
-			echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
-			echo "\t\t\t\t<option label='Ascending' value='asc'>Ascending</option>\n";
-			echo "\t\t\t\t<option label='Descending' value='desc'>Descending</option>\n";
-			echo "\t\t\t</select></td>\n";
-			echo "\t\t</tr>";
+	// Get field from list
+	echo "\t\t<tr><th class='heading'>Contents</th>\n";
+	echo "\t\t\t<td><select name='field' class='sel_frm'>\n";
+	echo "\t\t\t\t<option selected disabled label='' value=''>-- Select column content from the list --</option>";
 
-			echo "\t</table>\n";
-			echo "\t<br /><button type='submit' class='simple_form_btn'>Add column</button>\n";
-			echo "</form>\n";
+	$q = "SELECT * FROM lcm_fields ORDER BY table_name,description";
+	$fields = lcm_query($q);
+	$table = '';
+
+	while ($field = lcm_fetch_array($fields)) {
+		if ($field['table_name']!=$table) {
+			if (!$table) echo "\t\t\t\t</optgroup>\n";
+			$table = $field['table_name'];
+			echo "\t\t\t\t<optgroup label='$table'>\n";
 		}
-		echo "<br />\n";
+		//				echo "<option label='" . $field['description'] . "' value='" . $field['id_field'] . "'>" . $field['description'] . "</option>\n";
+		echo "\t\t\t\t\t<option value='" . $field['id_field'] . "'>" . $field['description'] . "</option>\n";
 
-//
-//	List the filters on the report data
-//		
-		echo "</p></fieldset>";
+	}
 
-		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report filters</div><p class='normal_text'>";
-		//echo '<h3>Report filters:</h3>';
-		echo "\n\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-		echo "\t\t<tr><th class='heading'>Description</th></tr>\n";
+	if ($table) echo "\t\t\t\t</optgroup>\n";
+	echo "\t\t\t</select></td>\n";
+	echo "\t\t</tr>\n";
 
-		// Show filters included in this report
-		$q = "SELECT rf.*, f.title
-			FROM lcm_rep_filters as rf, lcm_filter as f
-			WHERE id_report = $rep
-				AND rf.id_filter = f.id_filter";
+	// Get grouping setting
+	echo "\t\t<tr><th class='heading'>Grouping</th>\n";
+	echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
+	echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
+	echo "\t\t\t\t<option label='Count' value='COUNT'>COUNT</option>\n";
+	echo "\t\t\t\t<option label='Sum' value='SUM'>SUM</option>\n";
+	echo "\t\t\t</select></td>\n";
+	echo "\t\t</tr>";
 
-		$fltrs = lcm_query($q);
+	// Get sort setting
+	echo "\t\t<tr><th class='heading'>Sorting</th>\n";
+	echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
+	echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
+	echo "\t\t\t\t<option label='Ascending' value='asc'>Ascending</option>\n";
+	echo "\t\t\t\t<option label='Descending' value='desc'>Descending</option>\n";
+	echo "\t\t\t</select></td>\n";
+	echo "\t\t</tr>";
 
-		while ($filter = lcm_fetch_array($fltrs)) {
-			echo "\t\t<tr><td>";
-			if (true) echo '<a href="filter_det.php?filter=' . $filter['id_filter'] . '" class="content_link">';
-			echo clean_output($filter['title']);
-			if (true) echo '</a>';
-			echo "</td>\n";
-			echo "</tr>\n";
-		}
-		echo "\t</table><br>\n";
+	echo "\t</table>\n";
+	echo "\t<br /><button type='submit' class='simple_form_btn'>Add column</button>\n";
+	echo "</form>\n";
+}
 
-//
-//	Display add new filter form
-//
-		if (true) {
-			echo "<form action='add_rep_filter.php' method='POST'>\n";
-			echo "\t<input type='hidden' name='rep' value='$rep' />\n";
-			echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-
-			// Get filter from list
-			echo "\t\t<tr><th class='heading'>Filter</th>\n";
-			echo "\t\t\t<td><select name='filter' class='sel_frm'>\n";
-			echo "\t\t\t\t<option selected disabled label='' value=''>-- Select filter from the list --</option>\n";
-			$q = "SELECT * FROM lcm_filter ORDER BY title";
-			$filters = lcm_query($q);
-//			$table = '';
-			while ($filter = lcm_fetch_array($filters)) {
-//				if ($filter['table_name']!=$table) {
-//					if (!$table) echo "\t\t\t\t</optgroup>\n";
-//					$table = $field['table_name'];
-//					echo "\t\t\t\t<optgroup label='$table'>\n";
-//				}
-//				echo "<option label='" . $field['description'] . "' value='" . $field['id_field'] . "'>" . $field['description'] . "</option>\n";
-				echo "\t\t\t\t<option value=" . $filter['id_filter'] . ">" . $filter['title'] . "</option>\n";
-
-			}
-//			if ($table) echo "\t\t\t\t</optgroup>\n";
-			echo "\t\t\t</select></td>\n";
-			echo "\t\t</tr>\n";
-
-			echo "\t</table>\n";
-			echo "\t<br /><button type='submit' class='simple_form_btn'>Add filter</button>\n";
-			echo "</form>\n";
-		}
-		echo "<br />\n";
-		
-		echo "</p></fieldset>";
-
+echo "</fieldset>\n";
 
 //
 // [ML] Experimental filters
@@ -411,7 +353,7 @@ echo "</fieldset>\n";
 
 echo '<a name="filter"></a>' . "\n";
 echo "<fieldset class='info_box'>";
-echo "<div class='prefs_column_menu_head'>" . "Report experimental filters" . "</div>\n";
+echo "<div class='prefs_column_menu_head'>" . "Report filters" . "</div>\n";
 
 // List filters attached to this report
 $query = "SELECT *
@@ -436,27 +378,18 @@ if (lcm_num_rows($result)) {
 		echo "<td>";
 		echo "<select name='filter_type'>\n";
 
-		$filters_num = array('none', 'num_eq', 'num_lt', 'num_gt');
-		$filters_date = array('none', 'data_in', 'date_lt', 'date_gt', 'date_year', 'date_month', 'date_week', 'date_day');
-		// $filters_text = array(); TODO
+		$all_filters = array(
+			'number' => array('none', 'num_eq', 'num_lt', 'num_le', 'num_gt', 'num_ge'),
+			'date' => array('none', 'data_in', 'date_lt', 'date_le', 'date_gt', 'date_ge', 'date_year', 'date_month', 'date_week', 'date_day'),
+			'text' => array('none', 'text_eq')
+		);
 
-		switch ($filter['filter']) {
-			case 'number':
-				foreach ($filters_num as $f) {
-					$sel = ($filter['type'] == $f ? ' selected="selected"' : '');
-					echo "<option value='" . $f . "'" . $sel . ">" . _T('filter_' . $f) . "</option>\n";
-				}
+		if (! $all_filters[$filter['filter']])
+			lcm_panic("Internal error: wrong filter type");
 
-				break;
-			case 'date':
-				foreach ($filters_date as $f) {
-					$sel = ($filter['type'] == $f ? ' selected="selected"' : '');
-					echo "<option value='" . $f . "'>" . _T('filter_' . $f) . "</option>\n";
-				}
-
-				break;
-			default:
-				lcm_panic("Internal error: wrong filter type");
+		foreach ($all_filters[$filter['filter']] as $f) {
+			$sel = ($filter['type'] == $f ? ' selected="selected"' : '');
+			echo "<option value='" . $f . "'" . $sel . ">" . _T('filter_' . $f) . "</option>\n";
 		}
 
 		echo "</select>\n";
@@ -467,19 +400,48 @@ if (lcm_num_rows($result)) {
 
 		switch ($filter['type']) {
 			case 'num_eq':
+				if ($filter['field_name'] == 'id_author') {
+					// XXX make this a function
+					$q = "SELECT * FROM lcm_author WHERE status IN ('admin', 'normal', 'external')";
+					$result_author = lcm_query($q);
+
+					echo "<select name='filter_value'>\n";
+					echo "<option value=''>-- select from list--</option>\n";
+
+					while ($author = lcm_fetch_array($result_author)) {
+						$sel = ($filter['value'] == $author['id_author'] ? ' selected="selected"' : '');
+						echo "<option value='" . $author['id_author'] . "'" . $sel . ">" . $author['name_first'] . " " . $author['name_middle'] . " " . $author['name_last'] . "</option>\n";
+					}
+
+					echo "</select>\n";
+					break;
+				}
 			case 'num_lt':
 			case 'num_gt':
 				echo '<input style="width: 99%;" type="text" name="filter_value" value="' . $filter['value'] . '" />';
 				break;
-			case 'date_in':
 
+			case 'date_in':
+				// TODO
 				break;
 			case 'date_lt':
 			case 'date_lt':
 			case 'date_gt':
-
+				// TODO
 				break;
-			case 'text':
+			case 'date_year':
+				// TODO
+				break;
+			case 'date_month':
+				// TODO
+				break;
+			case 'date_week':
+				// TODO
+				break;
+			case 'date_day':
+				// TODO
+				break;
+			case 'text_eq':
 				echo '<input style="width: 99%;" type="text" name="filter_value" value="' . $filter['value'] . '" />';
 				break;
 			default:
@@ -494,7 +456,7 @@ if (lcm_num_rows($result)) {
 		echo "</td>\n";
 
 		// Link for "Remove"
-		echo "<td><a href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
+		echo "<td><a class='content_link' href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
 			. "remove=filter" . "&amp;" . "id_filter=" . $filter['id_filter'] . "'>" . "X" . "</a></td>\n";
 		echo "</tr>\n";
 		echo "</form>\n";
@@ -520,7 +482,7 @@ if (lcm_num_rows($result)) {
 	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
 	echo "<input name='add' value='filter' type='hidden' />\n";
 
-	echo "<p class='normal_text'>Filter based on this field: ";
+	echo "<p class='normal_text'>" . "Add a filter based on this field:" . " ";
 	echo "<select name='id_field'>\n";
 
 	while ($row = lcm_fetch_array($result)) {
