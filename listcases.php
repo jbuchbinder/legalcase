@@ -29,6 +29,11 @@ $q = "SELECT lcm_case.id_case,title,status,public,pub_write
 			AND lcm_case_author.id_author=" . $GLOBALS['author_session']['id_author'];
 
 // Add search criteria if any
+$find_case_string = '';
+
+if (isset($_REQUEST['find_case_string']))
+	$find_case_string = $_REQUEST['find_case_string'];
+	
 if (strlen($find_case_string)>1) {
 	$q .= " AND (lcm_case.title LIKE '%$find_case_string%')";
 	lcm_page_start("Cases, containing '$find_case_string':");
