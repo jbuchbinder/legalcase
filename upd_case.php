@@ -46,6 +46,9 @@ $result = lcm_query($q);
 // [AG] In each case the return page will be different.
 
 //header("Location: case_det.php?case=$id_case");
-header("Location: $ref_edit_case");
+if ($submit==='addnew')
+	header("Location: edit_case.php?case=0&ref=$ref_edit_case");
+else
+	header("Location: $ref_edit_case");
 
 ?>

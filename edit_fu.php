@@ -88,8 +88,8 @@ lcm_page_start("Edit follow-up");
 			} ?>
 			</select></td></tr>
 		<tr><td>Description:</td>
-			<td><textarea name="description" rows="5" cols="30">
-			<?php echo $fu_data['description']; ?></textarea></td></tr>
+			<td><textarea name="description" rows="5" cols="30"><?php
+			echo $fu_data['description']; ?></textarea></td></tr>
 		<tr><td>Sum billed:</td>
 			<td><input name="sumbilled" value="<?php echo $fu_data['sumbilled']; ?>"></td></tr>
 	</table>

@@ -19,7 +19,7 @@ $result = lcm_query($q);
 ?>
 
 <table border='1' align='center'>
-<tr><th colspan="2">Case description</th></tr>
+<tr><th colspan="3">Case description</th></tr>
 <?php
 // Process the output of the query
 while ($row = lcm_fetch_array($result)) {
@@ -31,6 +31,9 @@ while ($row = lcm_fetch_array($result)) {
 	echo '<td>';
 	if (allowed($row['id_case'],'e'))
 		echo '<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a>';
+	echo "</td>\n<td>";
+	if (allowed($row['id_case'],'w'))
+		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '">Add followup</a>';
 	echo "</td></tr>\n";
 }
 

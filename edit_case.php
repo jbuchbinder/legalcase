@@ -25,11 +25,11 @@ if ($existing) {
 		}
 	}
 } else {
-	global $author_session;
-
 	lcm_page_start("New case");
 
-	$case_data['id_author'] = $author_session['id_author'];
+	// Set default values for the new case
+	// $case_data['id_author'] = $author_session['id_author'];
+	$case_data['id_author'] = $connect_id_auteur;
 	$case_data['date_creation'] = date('Y-m-d H:i:s');
 }
 
@@ -72,7 +72,9 @@ if ($existing) {
 	} ?>
 	<button name="reset" type="reset">Reset</button>
 	<input type="hidden" name="date_creation" value="<?php echo $case_data['date_creation']; ?>">
-	<input type="hidden" name="ref_edit_case" value="<?php echo $HTTP_REFERER ?>">
+	<input type="hidden" name="ref_edit_case" value="<?php
+	if ($ref) echo $ref;
+	else echo $HTTP_REFERER; ?>">
 </form>
 
 <?php
