@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.6 2005/03/10 18:02:11 antzi Exp $
+	$Id: upd_app.php,v 1.7 2005/03/11 14:30:33 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -116,7 +116,7 @@ if ($prefs['time_intervals']=='absolute') {
 }
 
 // title
-if (!(strlen($_SESSION['title'])>0)) $_SESSION['errors']['title'] = 'Appointment title should not be empty!';
+if (!(strlen($_SESSION['app_data']['title'])>0)) $_SESSION['errors']['title'] = 'Appointment title should not be empty!';
 
 //
 // Check if errors found
