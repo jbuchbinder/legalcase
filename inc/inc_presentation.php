@@ -193,6 +193,8 @@ function lcm_page_end($credits = '') {
 	global $connect_id_auteur;
 	global $auth_can_disconnect, $connect_login;
 
+	global $author_session;
+
 	///
 	// Insert FOOTER stuff here
 	// Ignore the rest after this for now.
@@ -210,7 +212,11 @@ function lcm_page_end($credits = '') {
 		<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
 			<div class=\"prefs_column_menu_head\">Profile</div>
-			<p class=\"prefs_column_text\"><strong>Name:</strong> Krasimir Makaveev<br /><br />
+			<p class=\"prefs_column_text\"><strong>Name: </strong>"
+				. $author_session['name_first'] . ' ' 
+				. $author_session['name_middle'] . ' '
+				. $author_session['name_last'] 
+				. "<br /><br />
 			<a href=\"#\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"#\" class=\"prefs_bold_lnk\">[ logout ]</a>
 			</p>
 			<div class=\"prefs_column_menu_head\">Search</div>
