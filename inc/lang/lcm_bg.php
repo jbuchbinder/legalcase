@@ -9,7 +9,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 '0_URL' => 'http://www.lcm.ngo-bg.org',
 '0_language' => 'български [bg]',
 '0_list' => 'legalcase-devel@lists.sourceforge.net',
-'0_maintainer' => 'Матю Лютфи (mathieu@bidon.ca)',
+'0_maintainer' => 'Александър Шопов (legalcase-devel@lists.sf.net)',
 
 
 // A
@@ -121,6 +121,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_more_than_three' => '(Поне 4 символа)',
 'info_name_of_person' => 'Име',
 'info_no' => 'не',
+'info_not_available' => '<NEW>n/a',
 'info_or' => 'или',
 'info_password_confirm' => '(Напишете паролата си отново, за да се избегнат грешки)',
 'info_technical_problem_database' => 'Неуспех при осъществяване на връзка с база данни. Възможно е базата да не работи или да е отказала достъп. Ако отдолу има съобщение, в него ще има повече информация.',
@@ -167,6 +168,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_warning_update_impossible' => '<b>Предупреждение!</b> Неуспех при обновяване на базата данни от версия @old_version@ към версия @version@. Най-вероятната причина е проблем с правата на достъп. Свържете се с администратора. Отдолу е дадено пълно техническо описание на възможните грешки.',
 
 
+// K
+'kw_followups_assignment_title' => '<NEW>Assignment',
+'kw_followups_conclusion_title' => '<NEW>Conclusion',
+'kw_followups_consultation_title' => '<NEW>Consultation',
+'kw_followups_correspondance_title' => '<NEW>Correspondance',
+'kw_followups_delay_title' => '<NEW>Delay',
+'kw_followups_other_title' => '<NEW>Other',
+'kw_followups_suspension_title' => '<NEW>Suspension',
+'kw_followups_travel_title' => '<NEW>Travel',
+
+
 // L
 'legal_reason' => 'Юридическо основание',
 'login_access_denied' => 'Достъпът е отказан.',
@@ -185,6 +197,14 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_this_way' => 'Регистрацията е успешна... сега насам...',
 'login_title_login' => 'Потребителско име',
 'login_without_cookie' => 'Идентификация без бисквитка',
+
+
+// M
+'menu_main' => '<NEW>Main menu',
+'menu_main_authors' => '<NEW>Authors',
+'menu_main_cases' => '<NEW>Cases',
+'menu_main_clients' => 'Клиенти',
+'menu_main_org' => '<NEW>Organisations',
 
 
 // N
@@ -227,6 +247,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_warning_not_registered' => '<b>Грешка:</b> адресът <tt>@user_email@</tt> не е регистриран на този сайт',
 'pass_warning_too_short' => '<b>Грешка:</b> Паролата трябва да е поне 6 символа.',
 'pass_warning_unknown_cookie' => '<b>Грешка:</b> този код е непознат.',
+'person_input_gender' => '<NEW>Gender:',
+'person_input_gender_female' => '<NEW>female',
+'person_input_gender_male' => '<NEW>male',
+'person_input_name_first' => '<NEW>Surname:',
+'person_input_name_last' => '<NEW>Name:',
+'person_input_name_middle' => '<NEW>Middle name:',
 'public' => 'публично',
 
 
