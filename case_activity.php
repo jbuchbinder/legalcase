@@ -18,11 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_activity.php,v 1.1 2005/03/10 16:47:46 antzi Exp $
+	$Id: case_activity.php,v 1.2 2005/03/21 12:25:52 mlutfy Exp $
 */
 
 include("inc/inc.php");
 include_lcm("inc_filters");
+
+lcm_html_start('Case activities'); // TRAD
+
+echo "<div align='left'>\n";
 
 // Read parameters
 $case = intval($_GET['case']);
@@ -37,21 +41,20 @@ if ($case > 0) {
 
 	// Process the output of the query
 	if ($row = lcm_fetch_array($result)) {
-		echo "List of activities\n";
-		echo "for case '" . $row['title'] . "'\n";
+		echo "List of activities\n"; // TRAD
+		echo "for case '" . $row['title'] . "'\n";  // TRAD
 
 		// Some case information could be printed here
 
 		// Print table with activities
 		echo "<table border=\"1\" width=\"99%\">\n";
-		echo "\t<tr><th>" . _T('date_start') ."</th>";
-		echo "<th>" . 'Author' . "</th>"; // TRAD
-		echo "<th>" . _T( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>";
-		echo "<th>" . _T('type') . "</th>";
-		echo "<th>" . _T('description') . "</th>";
+		echo "\t<tr><th>" . _Th('fu_input_date_start') . "</th>";
+		echo "<th>" . _Th( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>"; // TRAD
+		echo "<th>" . _Th('case_input_author') . "</th>"; // TRAD
+		echo "<th>" . _Th('fu_input_type') . "</th>";
+		echo "<th>" . _Th('fu_input_description') . "</th>";
 		echo "</tr>\n";
 
-		// Prepare query
 		$q = "SELECT	lcm_followup.id_followup,
 				lcm_followup.date_start,
 				lcm_followup.date_end,
@@ -76,11 +79,6 @@ if ($case > 0) {
 			// Start date
 			echo '<tr><td>' . format_date($row['date_start'], 'short') . '</td>';
 
-			// Author name
-			echo '<td>';
-			echo njoin(array($row['name_first'],$row['name_middle'],$row['name_last']));
-			echo '</td>';
-
 			// Time
 			echo '<td>';
 			$fu_date_end = vider_date($row['date_end']);
@@ -90,6 +88,11 @@ if ($case > 0) {
 				$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
 				echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
 			}
+			echo '</td>';
+
+			// Author name
+			echo '<td>';
+			echo njoin(array($row['name_first'],$row['name_middle'],$row['name_last']));
 			echo '</td>';
 
 			// Type
@@ -107,5 +110,8 @@ if ($case > 0) {
 } else {
 	echo "<p>" . _T('error_no_case_specified') . "</p>\n";
 }
+
+echo "</div>\n"; // align
+lcm_html_end();
 
 ?>
