@@ -87,7 +87,7 @@ function verifier_session($id_session) {
 				// Renouveler la session (avec l'alea courant)
 				include($session_file);
 				supprimer_session($id_session);
-				ajouter_session($GLOBALS['author_session'], $id_session);
+				lcm_add_session($GLOBALS['author_session'], $id_session);
 				$ok = true;
 			}
 		}
@@ -96,7 +96,7 @@ function verifier_session($id_session) {
 	// if necessary, mark the session as 'ip-change'
 	if ($ok AND (hash_env() != $GLOBALS['author_session']['hash_env']) AND !$GLOBALS['author_session']['ip_change']) {
 		$GLOBALS['author_session']['ip_change'] = true;
-		ajouter_session($GLOBALS['author_session'], $id_session);
+		lcm_add_session($GLOBALS['author_session'], $id_session);
 	}
 
 	return $ok;
@@ -128,7 +128,7 @@ function creer_cookie_session($auteur) {
 	if ($id_author = $auteur['id_author']) {
 		$id_session = $id_author.'_'.md5(create_uniq_id());
 		$auteur['hash_env'] = hash_env();
-		ajouter_session($auteur, $id_session);
+		lcm_add_session($auteur, $id_session);
 		return $id_session;
 	}
 }
