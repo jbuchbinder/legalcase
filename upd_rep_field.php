@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.2 2005/02/07 15:34:42 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.3 2005/02/07 16:06:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -53,7 +53,94 @@ if (isset($_REQUEST['remove'])) {
 	
 		lcm_query($query);
 	}
+
 }
+
+if (isset($_REQUEST['add'])) {
+	$add = $_REQUEST['add']; // = { 'column', 'line' }
+
+	if ($add == 'column') {
+		$id_field = intval($_REQUEST['id_field']);
+		$order = intval($_REQUEST['order']);
+		$header = clean_input($_REQUEST['header']);
+		$sort = clean_input($_REQUEST['sort']);
+	
+		if (! $id_field)
+			die ("add column: missing valid 'id_field'");
+
+		// TODO: Add "position"
+
+		$query = "INSERT INTO lcm_rep_col
+				SET id_report = $rep,
+					id_field = $id_field,
+					col_order = $order,
+					header = '$header',
+					sort = '$sort'";
+	
+		lcm_query($query);
+	} else if ($add == 'line') {
+		$id_field = intval($_REQUEST['id_field']);
+		// $order = intval($_REQUEST['order']);
+		// $header = clean_input($_REQUEST['header']);
+		// $sort = clean_input($_REQUEST['sort']);
+	
+		if (! $id_field)
+			die ("add column: missing valid 'id_field'");
+
+		// TODO: Add "position"
+
+		$query = "INSERT INTO lcm_rep_line
+				SET id_report = $rep,
+					id_field = $id_field";
+		// TODO: Add sort_type, col_order, total, ...
+	
+		lcm_query($query);
+	}
+
+}
+
+if (isset($_REQUEST['select_col_type']) && isset($_REQUEST['select_col_name'])) {
+	// Update only if not already set, or it will create mess
+	// if (! ($rep_info['col_src_type'] && $rep_info['col_src_name'])) {
+		$query = "UPDATE lcm_report
+					SET col_src_type = '" . clean_input($_REQUEST['select_col_type']) . "',
+						col_src_name = '" . clean_input($_REQUEST['select_col_name']) .  "'";
+
+		lcm_query($query);
+	// }
+
+}
+
+if (isset($_REQUEST['select_line_type']) && isset($_REQUEST['select_line_name'])) {
+	// Update only if not already set, or it will create mess
+	// if (! ($rep_info['line_src_type'] && $rep_info['line_src_name'])) {
+		$query = "UPDATE lcm_report
+					SET line_src_type = '" . clean_input($_REQUEST['select_line_type']) . "',
+						line_src_name = '" . clean_input($_REQUEST['select_line_name']) . "'";
+
+		lcm_query($query);
+	// }
+
+}
+
+if (isset($_REQUEST['unselect_col'])) {
+	$query = "UPDATE lcm_report
+			SET col_src_type = '',
+				col_src_name = ''
+			WHERE id_report = " . $rep;
+	
+	lcm_query($query);
+}
+
+if (isset($_REQUEST['unselect_line'])) {
+	$query = "UPDATE lcm_report
+			SET line_src_type = '',
+				line_src_name = ''
+			WHERE id_report = " . $rep;
+	
+	lcm_query($query);
+}
+
 
 /*
 if (($rep>0) && ($order)) {

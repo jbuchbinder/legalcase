@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.16 2005/02/07 15:08:26 mlutfy Exp $
+	$Id: rep_det.php,v 1.17 2005/02/07 16:06:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -51,69 +51,6 @@ if (! $rep_info) {
 	exit;
 }
 
-//
-// Update matrix line type/name, if requested
-//
-if (isset($_REQUEST['matrix_line_type']) && isset($_REQUEST['matrix_line_name'])) {
-	// Update only if not already set, or it will create mess
-	if (! ($rep_info['line_src_type'] && $rep_info['line_src_name'])) {
-		$query = "UPDATE lcm_report
-					SET line_src_type = '" . $_REQUEST['matrix_line_type'] . "',
-						line_src_name = '" . $_REQUEST['matrix_line_name'] .  "'";
-
-		lcm_query($query);
-
-		// Refresh lcm_report info
-		$q = "SELECT *
-				FROM lcm_report
-				WHERE id_report = $rep";
-
-		$result = lcm_query($q);
-		$rep_info = lcm_fetch_array($result);
-	}
-}
-
-//
-// Remove matrix line type/name
-//
-if (isset($_REQUEST['del_line_src_type'])) {
-	$query = "UPDATE lcm_report
-			SET line_src_type = '',
-				line_src_name = ''
-			WHERE id_report = " . $rep_info['id_report'];
-	
-	lcm_query($query);
-
-	// Refresh lcm_report info
-	$q = "SELECT *
-			FROM lcm_report
-			WHERE id_report = $rep";
-
-	$result = lcm_query($q);
-	$rep_info = lcm_fetch_array($result);
-}
-
-//
-// Add matrix line type/name, if requested
-//
-if (isset($_REQUEST['matrix_line_additem'])) {
-	$query = "INSERT INTO lcm_rep_line (id_report, id_field, sort_type, col_order) "
-			. "VALUES (" . $rep_info['id_report'] . ", " 
-			. 	$_REQUEST['matrix_line_additem'] . ", 'none', '0')";
-	
-	lcm_query($query);
-}
-
-//
-// Remove matrix line type/name, if requested
-//
-if (isset($_REQUEST['matrix_line_delitem'])) {
-	$query = "DELETE FROM lcm_rep_line
-				WHERE id_report = " . $rep_info['id_report'] . "
-					AND id_line = " . $_REQUEST['matrix_line_delitem'];
-	
-	lcm_query($query);
-}
 
 //
 // Show info on the report
@@ -148,6 +85,7 @@ echo "</p></fieldset>";
 // Matrix line
 //
 
+echo '<a name="line"></a>' . "\n";
 echo "<fieldset class='info_box'>";
 echo "<div class='prefs_column_menu_head'>" . "Matrix line" . "</div>\n";
 
@@ -172,7 +110,8 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 		while ($line = lcm_fetch_array($result_lines)) {
 			echo "<tr>\n";
 			echo "<td>" . $line['description'] . "</td>\n";
-			echo "<td><a href='rep_det.php?rep=" . $rep_info['id_report'] . "&amp;matrix_line_delitem=" . $line['id_line'] . "'>" . "Remove" . "</a></td>\n";
+			echo "<td><a href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
+				. "remove=line" . "&amp;" . "id_line=" . $line['id_line'] . "'>" . "Remove" . "</a></td>\n";
 			echo "</tr>\n";
 			array_push($my_fields, $line['id_field']);
 		}
@@ -180,8 +119,8 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 		echo "</table>\n";
 	} else {
 		// Allow to change the source table
-		echo ' <a href="rep_det.php?rep=' . $rep_info['id_report'] 
-				. "&amp;del_line_src_type=" . $rep_info['line_src_name'] . '">Remove</a>';
+		echo ' <a href="upd_rep_field.php?rep=' . $rep_info['id_report'] 
+				. '&amp;unselect_line=1">' . "Remove" . '</a>';
 		echo "</p>\n";
 	}
 
@@ -194,33 +133,35 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	$result = lcm_query($query);
 
 	if (lcm_num_rows($result)) {
-		echo "<form action='rep_det.php' name='frm_line_additem' method='get'>\n";
+		echo "<form action='upd_rep_field.php' name='frm_line_additem' method='get'>\n";
 		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+		echo "<input name='add' value='line' type='hidden' />\n";
+
 		echo "<p class='normal_text'>Add an item: ";
-		echo "<select name='matrix_line_additem'>";
+		echo "<select name='id_field'>";
 
 		while ($row = lcm_fetch_array($result)) {
 			echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
 		}
 		
 		echo "</select>\n";
-		echo "<button name='validate_line_additem'>" . _T('button_validate') . "</button>\n";
+		echo "<button class='simple_form_btn' name='validate_line_additem'>" . _T('button_validate') . "</button>\n";
 		echo "</p>\n";
 		echo "</form>\n";
 	}
 } else {
-	echo "<form action='rep_det.php' name='frm_line_source' method='get'>\n";
+	echo "<form action='upd_rep_field.php' name='frm_line_source' method='post'>\n";
 	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
 	echo "<p class='normal_text'>Select source: ";
-	echo "<input name='matrix_line_type' value='table' type='hidden' />\n";
-	echo "<select name='matrix_line_name'>
+	echo "<input name='select_line_type' value='table' type='hidden' />\n";
+	echo "<select name='select_line_name'>
 			<option value='author'>Author</option>
 			<option value='case'>Case</option>
 			<option value='client'>Client</option>
 			<option value='followup'>Follow-up</option>
 		</select>\n";
 
-	echo "<button name='validate_line_source'>" . _T('button_validate') . "</button>\n";
+	echo "<button class='simple_form_btn' name='validate_line_source'>" . _T('button_validate') . "</button>\n";
 	echo "</p>\n";
 	echo "</form>\n";
 }
@@ -230,6 +171,7 @@ echo "</fieldset>\n";
 //
 //	List the columns in the report
 //
+		echo '<a name="column"></a>' . "\n";
 		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report columns</div><p class='normal_text'>";
 		//echo '<h3>Report columns:</h3>';
 		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
@@ -299,7 +241,8 @@ echo "</fieldset>\n";
 					echo "<a href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;old=" . $column['col_order'] . "&amp;new=" . ($column['col_order']-1) . "'>^</a> ";
 				if ($column['col_order'] < $rows)
 					echo "<a href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;old=" . $column['col_order'] . "&amp;new=" . ($column['col_order']+1) . "'>v</a> ";
-				echo "<a href='rem_rep_col.php?rep=$rep&amp;order=" . $column['col_order'] . "'>(!)Remove</a>";
+				echo "<a href='upd_rep_field.php?rep=$rep" . "&amp;" 
+						. "remove=column" . "&amp;" . "id_column=" . $column['id_column'] . "'>Remove</a>";
 			}
 			echo "</td>\n";
 			echo "</tr>\n";
