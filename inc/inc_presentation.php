@@ -368,7 +368,7 @@ if($prefs['screen'] == "wide") {
 			</form>
 			<form name=\"frm_find_client\" class=\"search_form\" action=\"listorgs.php\" method=\"post\">
 			<p class=\"prefs_column_text\">
-			" . _T('input_search_organisation') . "<br />
+			" . _T('input_search_org') . "<br />
 			<input type=\"text\" name=\"find_org_string\" size=\"10\" class=\"search_form_txt\"";
 
 	if (isset($find_org_string))
@@ -1049,6 +1049,27 @@ function show_listcase_item($item, $cpt, $custom = '') {
 
 function show_listcase_end() {
 	echo "</table>\n";
+}
+
+function show_find_box($type, $string) {
+	// the joy of patching around
+	switch ($type) {
+		case 'case':
+		case 'client':
+			$action = 'list' . $type . 's.php';
+			break;
+		case 'org':
+			$action = 'listorgs.php';
+			break;
+		default:
+			lcm_panic("invalid type: $type");
+	}
+
+	echo '<form name="frm_find_' . $type . '" class="search_form" action="' . $action . '" method="get">' . "\n";
+	echo _T('input_search_' . $type) . "&nbsp;";
+	echo '<input type="text" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' .  $string . '" />';
+	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
+	echo "</form>\n";
 }
 
 ?>
