@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.34 2005/03/01 09:31:07 mlutfy Exp $
+	$Id: edit_client.php,v 1.35 2005/03/01 10:47:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -31,6 +31,8 @@ $client = intval($_GET['client']);
 // Get site preferences
 $client_name_middle = read_meta('client_name_middle');
 $client_citizen_number = read_meta('client_citizen_number');
+$client_civil_status = read_meta('client_civil_status');
+$client_income = read_meta('client_income');
 
 if (empty($_SESSION['errors'])) {
 	$client_data = array();
@@ -134,18 +136,44 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	echo '<td>' .  _T('person_input_address') . '</td>';
 	echo '<td><textarea name="address" rows="3" class="frm_tarea">' . clean_output($client_data['address']) . '</textarea></td>';
 	echo "</tr>\n";
+
+	global $system_kwg;
 	
 	if ($client_civil_status == 'yes') {
 		echo "<tr>\n";
 		echo '<td>' . _T('person_input_civil_status') . '</td>';
-		echo '<td><input name="civil_status" value="' . clean_output($client_data['civil_status']) . '" class="search_form_txt"></td>';
+		echo '<td>';
+		echo '<select name="civil_status">';
+
+		if (! $client_data['civil_status'])
+			$client_data['civil_status'] = $system_kwg['civilstatus']['suggest'];
+
+		foreach($system_kwg['civilstatus']['keywords'] as $kw) {
+			$sel = ($client_data['civil_status'] == $kw['name'] ? ' selected="selected"' : '');
+			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
+		}
+
+		echo '</select>';
+		echo '</td>';
 		echo "</tr>\n";
 	}
 
 	if ($client_income == 'yes') {
 		echo "<tr>\n";
 		echo '<td>' . _T('person_input_income') . '</td>';
-		echo '<td><input name="income" value="' . clean_output($client_data['income']) . '" class="search_form_txt"></td>';
+		echo '<td>';
+		echo '<select name="civil_status">';
+		
+		if (! $client_data['income'])
+			$client_data['income'] = $system_kwg['income']['suggest'];
+
+		foreach($system_kwg['income']['keywords'] as $kw) {
+			$sel = ($client_data['income'] == $kw['name'] ? ' selected="selected"' : '');
+			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
+		}
+		
+		echo '</select>';
+		echo '</td>';
 		echo "</tr>\n";
 	}
 
