@@ -139,17 +139,19 @@ function upgrade_database($old_db_version) {
 		$query = "CREATE TABLE lcm_keyword (
 			id_keyword bigint(21) NOT NULL auto_increment,
 			id_group bigint(21) NOT NULL DEFAULT 0,
-			name text NOT NULL DEFAULT '',
+			name VARCHAR(255) NOT NULL,
 			title text NOT NULL DEFAULT '',
 			description text NOT NULL DEFAULT '',
 			ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
 			PRIMARY KEY (id_keyword))";
-		
+		$result = lcm_query($query);
+
+		$query = "CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (name)";
 		$result = lcm_query($query);
 
 		$query = "CREATE TABLE lcm_keyword_group (
 			id_group bigint(21) NOT NULL auto_increment,
-			name text NOT NULL,
+			name VARCHAR(255) NOT NULL,
 			title text NOT NULL DEFAULT '',
 			description text NOT NULL DEFAULT '',
 			type ENUM('case', 'followup', 'client', 'org', 'author'),
@@ -159,7 +161,9 @@ function upgrade_database($old_db_version) {
 			ac_admin ENUM('Y', 'N') DEFAULT 'Y',
 			ac_author ENUM('Y', 'N') DEFAULT 'Y',
 			PRIMARY KEY (id_group))";
-	
+		$result = lcm_query($query);
+
+		$query = "CREATE UNIQUE INDEX idx_kwg_name ON lcm_keyword_group (name)";
 		$result = lcm_query($query);
 
 		global $system_keyword_groups;
