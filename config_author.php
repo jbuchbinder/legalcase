@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.56 2005/03/24 13:04:50 mlutfy Exp $
+	$Id: config_author.php,v 1.57 2005/03/31 05:50:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -159,7 +159,7 @@ function show_author_form($tab) {
 <form name="upd_user_profile" method="post" action="config_author.php">
 	<input type="hidden" name="tab" value="1" />
 	<input type="hidden" name="author_advanced_settings_modified" value="yes"/>
-	<input type="hidden" name="referer" value="<?php echo $http_ref_link; ?>" />
+	<input type="hidden" name="referer" value="<?php echo $http_ref_link->getUrl(); ?>" />
 
 	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
 		<tr>
