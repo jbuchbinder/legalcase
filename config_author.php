@@ -285,13 +285,13 @@ function show_changes() {
 	}
 }
 
-if ($author_ui_modified)
+if (isset($_POST['author_ui_modified']))
 	apply_author_ui_change();
 
-if ($author_password_modified)
+if (isset($_POST['$author_password_modified']))
 	apply_author_password_change();
 
-if ($author_ui_modified || $author_password_modified) {
+if (isset($_POST['author_ui_modified']) || isset($_POST['author_password_modified'])) {
 	if ($referer) {
 		header('Location: ' . $referer);
 //		header('Retry-After: 30');
