@@ -161,19 +161,19 @@ function apply_conf_changes() {
 	if ($case_default_read != read_meta('case_default_read')) {
 		write_meta('case_default_read',$case_default_read);
 		$entry = "Read access to cases set to '<tt>";
-		if ($case_default_read=='true') $entry .= "public access";
-		else $entry .= "restricted access";
-		$entry .= "</tt>";
+		if ($case_default_read=='true') $entry .= "public";
+		else $entry .= "restricted";
+		$entry .= "</tt>'";
 		array_push($log, $entry);
 	}
 
 	// Default write policy
 	if ($case_default_write != read_meta('case_default_write')) {
 		write_meta('case_default_write',$case_default_write);
-		$entry = "Write access to cases set to <tt>";
-		if ($case_default_write=='true') $entry .= "public access";
-		else $entry .= "restricted access";
-		$entry .= "</tt>";
+		$entry = "Write access to cases set to '<tt>";
+		if ($case_default_write=='true') $entry .= "public";
+		else $entry .= "restricted";
+		$entry .= "</tt>'";
 		array_push($log, $entry);
 	}
 
