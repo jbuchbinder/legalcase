@@ -81,36 +81,36 @@ function show_config_form_general() {
 	echo "\t<input type='hidden' name='conf_modified_general' value='yes'/>\n";
 	echo "\t<input type='hidden' name='panel' value='general'/>\n";
 
-	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
+	echo "<fieldset class='conf_info_box'>\n";
 	// XXX fix css, this was just a test
-	echo "<p class='prefs_column_menu_head'><b><label for='site_name'>" . _T('siteconf_input_site_name') . "</label></b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_site_name') . "</small></p>\n";
+	echo "<div class='prefs_column_menu_head'><label for='site_name'>" . _T('siteconf_input_site_name') . "</label></div>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_site_name') . "</small></p>\n";
 	echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
 
-	echo "<p class='prefs_column_menu_head'><b><label for='site_desc'>" . _T('siteconf_input_site_desc') . "</label></b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_site_desc') . "</small></p>\n";
+	echo "<div class='prefs_column_menu_head'><label for='site_desc'>" . _T('siteconf_input_site_desc') . "</label></div>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_site_desc') . "</small></p>\n";
 	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40' class='search_form_txt' /></p>\n";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
-	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
-	echo "<p><b><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></b></p>\n";
+	echo "<fieldset class='conf_info_box'>\n";
+	echo "<div class='prefs_column_menu_head'><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></div>\n";
 	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40' class='search_form_txt' /></p>\n";
 
-	echo "<p><b><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_admin_email') . "</small></p>\n";
+	echo "<div class='prefs_column_menu_head'><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></div>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_admin_email') . "</small></p>\n";
 	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40' class='search_form_txt' /></p>\n";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
-	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
-	echo "<p><b>" . _T('siteconf_input_default_lang') . "</b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_default_lang') . "</small></p>\n";
+	echo "<fieldset class='conf_info_box'>\n";
+	echo "<div class='prefs_column_menu_head'>" . _T('siteconf_input_default_lang') . "</div>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_default_lang') . "</small></p>\n";
 	echo "<p align='center'>" . menu_languages('default_language', $default_language) . "</p>\n";
 
-	echo "<p><b><label for='currency'>" . _T('siteconf_input_currency') . "</label></b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_currency') . "</small></p>\n";
-	echo "<p><small>" . _T('siteconf_warning_currency') . "</small></p>\n";
+	echo "<div class='prefs_column_menu_head'><label for='currency'>" . _T('siteconf_input_currency') . "</label></div>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_currency') . "</small></p>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_warning_currency') . "</small></p>\n";
 	echo "<p align='center'><input type='text' id='currency' name='currency' value='$currency' size='5' class='search_form_txt' /></p>\n";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
@@ -126,22 +126,18 @@ function show_config_form_collab() {
 
 	echo "\t<input type='hidden' name='conf_modified_collab' value='yes'/>\n";
 	echo "\t<input type='hidden' name='panel' value='collab'/>\n";
-
-	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
-	echo "<tr>\n";
-	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
-	echo _T('siteconf_subtitle_collab_work');
-	echo "</h4></td>\n";
-	echo "<tr>\n";
-	echo "<td>";
-
-	echo "<p><small>This only applies to new cases. Wording of this page needs fixing.</small></p>\n";
+	
+	echo "<fieldset class='conf_info_box'>\n";
+	
+	echo "<div class=\"prefs_column_menu_head\">". _T('siteconf_subtitle_collab_work') ."</div>";
+	
+	echo "<p><small class=\"sm_11\">This only applies to new cases. Wording of this page needs fixing.</small></p>\n";
 
 	// READ ACCESS
 	echo "<p><b>Read access to cases</b></p>\n";
 
 	echo "<p>Who can view case information?<br>
-		<small>(Cases usually have one or many authors specifically assigned to them. It is assumed that assigned authors can consult the case and it's follow-ups, but what about authors who are not assigned to the case?)</small></p>\n";
+		<small class=\"sm_11\">(Cases usually have one or many authors specifically assigned to them. It is assumed that assigned authors can consult the case and it's follow-ups, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
 	// If by default read set to public (case_default_read == yes)
@@ -159,7 +155,7 @@ function show_config_form_collab() {
 	echo "<p><b>Read access global policy</b></p>\n";
 
 	echo "<p>Who can change the read access to a case?<br>
-		<small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
+		<small class=\"sm_11\">(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
 	// Anyone can change the setting (case_read_always != yes)
@@ -180,7 +176,7 @@ function show_config_form_collab() {
 	echo "<p><b>Write access to cases</b></p>\n";
 
 	echo "<p>Who can write information in the cases?<br>
-		<small>(Cases usually have one or many authors specifically assigned to them. It is assumed that only assigned authors can add follow-up information to the case, but what about authors who are not assigned to the case?)</small></p>\n";
+		<small class=\"sm_11\">(Cases usually have one or many authors specifically assigned to them. It is assumed that only assigned authors can add follow-up information to the case, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
 	// If by default write set to public (case_default_write == 'yes')
@@ -198,7 +194,7 @@ function show_config_form_collab() {
 	echo "<p><b>Write access global policy</b></p>\n";
 
 	echo "<p>Who can change the write access to a case?<br>
-		<small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
+		<small class=\"sm_11\">(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
 	// Anyone can change the setting (case_write_always != yes)
@@ -211,20 +207,22 @@ function show_config_form_collab() {
 	if ($case_write_always) echo " checked";
 	echo "><label for='case_write_always_1'>Site administrators only.</label></input></li>\n";
 	echo "</ul>\n";
-	echo "</td>\n</tr>\n</table>\n";
-
+	//echo "</td>\n</tr>\n</table>\n";
+	echo "</fieldset>";
 	//
 	// *** SELF-REGISTRATION
 	//
 	$site_open_subscription = read_meta('site_open_subscription');
-
-	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
-	echo "<tr>\n";
-	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
-	echo _T('siteconf_subtitle_self_registration');
-	echo "</h4></td>\n";
-	echo "<tr>\n";
-	echo "<td>";
+	
+	echo "<fieldset class='conf_info_box'>\n";
+	
+	//echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
+	//echo "<tr>\n";
+	//echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
+	echo "<div class=\"prefs_column_menu_head\">". _T('siteconf_subtitle_self_registration') ."</div>";
+	//echo "</h4></td>\n";
+	//echo "<tr>\n";
+	//echo "<td>";
 
 	echo "<p>" . _T('siteconf_info_self_registration') . "</p>\n";
 	echo "<ul>";
@@ -246,7 +244,8 @@ function show_config_form_collab() {
 	echo "><label for='site_open_subscription_3'>" . _T('siteconf_input_selfreg_no') . "</label></input></li>\n";
 
 	echo "</ul>\n";
-	echo "</td>\n</tr>\n</table>\n";
+	//echo "</td>\n</tr>\n</table>\n";
+	echo "</fieldset>";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 }
 
@@ -258,7 +257,7 @@ function get_yes_no($name, $value = '') {
 	$other = ($yes || $no ? '' : ' selected="selected"');
 
 	// until we format with tables, better to keep the starting space
-	$ret .= ' <select name="' . $name . '">' . "\n";
+	$ret .= ' <select name="' . $name . '" class="sel_frm">' . "\n";
 	$ret .= '<option value="yes"' . $yes . '>' . _T('info_yes') . '</option>';
 	$ret .= '<option value="no"' . $no . '>' . _T('info_no') . '</option>';
 
@@ -286,59 +285,59 @@ function show_config_form_policy() {
 	echo "\t<input type='hidden' name='panel' value='policy'/>\n";
 
 	// ** CLIENTS
-	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
+	echo "<fieldset class='conf_info_box'>\n";
 	// XXX fix css, this was just a test
 	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_client_fields') . "</b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_client_fields') . "</small></p>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_client_fields') . "</small></p>\n";
 
-	echo "<ul>";
-	echo "<li> " . _T('siteconf_input_name_middle')
+	echo "<table width=\"350\" class=\"tbl_usr_dtl\">";
+	echo "<tr><td width=\"300\">" . _T('siteconf_input_name_middle') ."</td><td>"
 		. get_yes_no('client_name_middle', $client_name_middle) 
-		. "</li>\n";
-	echo "<li> " . _T('siteconf_input_citizen_number')
+		. "</td></tr>\n";
+	echo "<tr><td>" . _T('siteconf_input_citizen_number') ."</td><td>"
 		. get_yes_no('client_citizen_number', $client_citizen_number) 
-		. "</li>\n";
-	echo "</ul>\n";
+		. "</tr>\n";
+	echo "</table>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	// ** CASES
-	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
+	echo "<fieldset class='conf_info_box'>\n";
 	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_case_fields') . "</b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_case_fields') . "</small></p>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_case_fields') . "</small></p>\n";
 
-	echo "<ul>";
-	echo "<li> " . _T('siteconf_input_court_archive') 
+	echo "<table width=\"350\" class=\"tbl_usr_dtl\">";
+	echo "<tr><td width=\"300\">" . _T('siteconf_input_court_archive') ."</td><td>"
 		. get_yes_no('case_court_archive', $case_court_archive)
-		. "</li>\n";
-	echo "<li> " . _T('siteconf_input_assignment_date') 
+		. "</td></tr>\n";
+	echo "<tr><td>" . _T('siteconf_input_assignment_date') ."</td><td>"
 		. get_yes_no('case_assignment_date', $case_assignment_date)
-		. "</li>\n";
-	echo "<li> " . _T('siteconf_input_alledged_crime')
+		. "</td></tr>\n";
+	echo "<tr><td> " . _T('siteconf_input_alledged_crime') ."</td><td>"
 		. get_yes_no('case_alledged_crime', $case_alledged_crime)
-		. "</li>\n";
-	echo "<li> " . _T('siteconf_input_case_allow_modif')
+		. "</td></tr>\n";
+	echo "<tr><td>" . _T('siteconf_input_case_allow_modif') ."</td><td>"
 		. get_yes_no('case_allow_modif', $case_allow_modif)
-		. "</li>\n";
-	echo "</ul>\n";
+		. "</td></tr>\n";
+	echo "</table>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	// ** FOLLOW-UPS
-	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
+	echo "<fieldset class='conf_info_box'>\n";
 	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_followup_fields') . "</b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_followups_fields') . "</small></p>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_followups_fields') . "</small></p>\n";
 
-	echo "<ul>";
-	echo "<li>" . _T('siteconf_input_sum_billed')
+	echo "<table width=\"350\" class=\"tbl_usr_dtl\">";
+	echo "<tr><td width=\"300\">" . _T('siteconf_input_sum_billed') ."</td><td>"
 		. get_yes_no('fu_sum_billed', $fu_sum_billed)
-		. "</li>\n";
-	echo "<li>" . _T('siteconf_input_fu_allow_modif')
+		. "</td></tr>\n";
+	echo "<tr><td>" . _T('siteconf_input_fu_allow_modif') ."</td><td>"
 		. get_yes_no('fu_allow_modif', $fu_allow_modif)
-		. "</li>\n";
-	echo "</ul>\n";
+		. "</td></tr>\n";
+	echo "</table>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
