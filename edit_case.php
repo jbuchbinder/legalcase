@@ -18,10 +18,8 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.48 2005/01/19 00:33:24 antzi Exp $
+	$Id: edit_case.php,v 1.49 2005/01/19 09:13:07 mlutfy Exp $
 */
-
-//session_start();
 
 include('inc/inc.php');
 include_lcm('inc_acc');
@@ -179,5 +177,7 @@ if ($_SESSION['case_data']['id_case']) {
 ';
 
 	lcm_page_end();
-//	session_destroy();
+
+	// Reset error messages
+	$_SESSION['errors'] = array();
 ?>
