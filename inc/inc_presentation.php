@@ -43,13 +43,37 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 <html xmlns=\"http://www.w3.org/1999/xhtml\">
 <head>
 	<title>". ($lcm_site_name ? $lcm_site_name ." | " : '') . $title ."</title>
-	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n";
+	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n
+	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_basic_layout.css\" />\n";
 
 	//
 	// Style sheets
 	//
 
+	//[KM] This is my suggestion of the problem with style switcher
+	//There is one file for the layout and others for the themes
+	
+	switch($prefs['theme'])
+	{
+	    case "blue":
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" />\n";
+	    break;
+	    
+	    case "orange":
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" />\n";
+	    break;
+	    
+	    case "monochrome":
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" />\n";
+	    break;
+	    
+	    default:
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
+	    break;
+	}
+	
 	// This is very temporary, it should be automatic and allow custom CSS
+	/*
 	if (! $prefs['theme']) {
 		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_ui_default.css\" />\n";
 		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
@@ -61,6 +85,7 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 		echo "<link rel=\"" . ($prefs['theme'] == 'orange' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
 		echo "<link rel=\"" . ($prefs['theme'] == 'monochrome' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
 	}
+	*/
 
 	// It is the responsability of the function caller to make sure that
 	// the filename does not cause problems...
