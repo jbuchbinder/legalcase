@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.190 2005/03/29 15:39:17 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.191 2005/03/30 10:56:13 mlutfy Exp $
 */
 
 //
@@ -310,17 +310,20 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 
 	if (lcm_num_rows($result) > 0) {
 		$events = true;
-		echo "<p class=\"nav_column_text\">
-					<strong>Today</strong><br />\n";
+		$today = getdate(time());
+		
+		echo "<p class=\"nav_column_text\">\n"
+			. '<strong><a class="content_link" href="calendar.php?type=jour'
+			. "&amp;jour=" . $today['mday']
+			. "&amp;mois=" . $today['mon']
+			. "&amp;annee=" . $today['year'] . '">'
+			. _Th('calendar_button_now') . "</a></strong><br />\n"; // TRAD
 		echo "</p>\n";
 		echo "<ul class=\"small_agenda\">\n";
 		while ($row=lcm_fetch_array($result)) {
 			echo "<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
 				. heures($row['start_time']) . ':' . minutes($row['start_time']) . " - " . $row['title'] . "</a></li>\n";
 		}
-		//					9:30 - Meeting with Mr. Smith<br /><br />
-		//					11:00 - At the court
-		//echo "</p>\n";
 		echo "</ul>\n";
 		echo "<hr class=\"hair_line\" />\n";
 	}
@@ -339,7 +342,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	if (lcm_num_rows($result)>0) {
 		$events = true;
 		echo "<p class=\"nav_column_text\">
-				<strong>Next appointments</strong><br />\n"; // TRAD
+				<strong>Next activities</strong><br />\n"; // TRAD
 		echo "						</p>\n";
 		
 		echo "<ul class=\"small_agenda\">\n";
@@ -354,7 +357,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	}
 
 	if (!$events) {
-		echo '<p class="nav_column_text">' . "No events" . "</p>\n";
+		echo '<p class="nav_column_text">' . "No activities" . "</p>\n"; // TRAD
 	}
 
 	// End of nav_menu_box for Agenda
