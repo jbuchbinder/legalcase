@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.42 2005/01/21 03:06:06 antzi Exp $
+	$Id: edit_fu.php,v 1.43 2005/01/21 10:14:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -76,6 +76,7 @@ if (empty($errors)) {
 			// Setup default values
 			$fu_data['id_case'] = $case; // Link to the case
 			$fu_data['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+			$fu_data['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 		} else {
 			die("Add followup to which case?");
 		}
@@ -166,23 +167,25 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 <form action="upd_fu.php" method="POST">
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td>Start:</td>
-			<td>Date <?php $name = (($admin || ($edit && $modify)) ? 'start' : '');
+		<tr><td><?php echo _T('fu_input_date_start'); ?></td>
+			<td><?php echo _T('calendar_info_date');  
+				$name = (($admin || ($edit && $modify)) ? 'start' : '');
 				echo get_date_inputs($name, $fu_data['date_start'], false);
-				echo "\n				Time ";
+				echo ' ' . _T('calendar_info_time') . ' ';
 				echo get_time_inputs($name, $fu_data['date_start']);
 				echo f_err_star('date_start',$errors); ?>
 			</td>
 		</tr>
-		<tr><td>End:</td>
-			<td>Date <?php $name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
+		<tr><td><?php echo _T('fu_input_date_end'); ?></td>
+			<td><?php echo _T('calendar_info_date'); 
+				$name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
 				echo get_date_inputs($name, $fu_data['date_end']);
-				echo "\n				Time ";
+				echo ' ' . _T('calendar_info_time') . ' ';
 				echo get_time_inputs($name, $fu_data['date_end']);
 				echo f_err_star('date_end',$errors); ?>
 			</td>
 		</tr>
-		<tr><td>Type:</td>
+		<tr><td><?php echo _T('fu_input_type'); ?></td>
 			<td><select <?php echo $dis; ?> name="type" size="1">
 			<?php
 
@@ -200,12 +203,12 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 			?>
 			</select></td></tr>
-		<tr><td valign="top">Description:</td>
+		<tr><td valign="top"><?php echo _T('fu_input_description'); ?></td>
 			<td><textarea <?php echo $dis; ?> name="description" rows="15" cols="40" class="frm_tarea"><?php
 			echo clean_output($fu_data['description']) . "</textarea></td></tr>\n";
 // Sum billed field
 			if ($fu_sum_billed == "yes") {
-?>		<tr><td>Sum billed:</td>
+?>		<tr><td><?php echo _T('fu_input_sum_billed'); ?></td>
 			<td><input <?php echo $dis; ?> name="sumbilled" value="<?php echo
 			clean_output($fu_data['sumbilled']); ?>" class="search_form_txt" size='10' />
 			<?php
@@ -221,13 +224,13 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				}
 
 				echo htmlspecialchars($currency);
-				echo "			</td></tr>";
+				echo "</td></tr>";
 			}
 ?>	</table>
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
 
 	<?php
-		if ($followup)
+		if ($followup && $prefs['mode'] == 'extended')
 			echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>'
 	?>
 
