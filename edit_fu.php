@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.78 2005/03/25 08:11:33 mlutfy Exp $
+	$Id: edit_fu.php,v 1.79 2005/03/30 09:37:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -66,75 +66,83 @@ if (empty($_SESSION['errors'])) {
 		$case = $_SESSION['fu_data']['id_case'];
 	} else {
 		unset($_SESSION['followup']);
-		if ($_GET['case'] > 0) {
-			$case = intval($_GET['case']);
+		$case = intval($_GET['case']);
 
-			// Check for access rights
-			if (!allowed($case,'w'))
-				die("You don't have permission to add information to this case!");
+		if (! ($case > 0))
+			lcm_panic("Edit follow-up: invalid 'case id': " . $_GET['case']);
 
-			// Setup default values
-			$_SESSION['fu_data']['id_case'] = $case; // Link to the case
-			$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
-			$_SESSION['fu_data']['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+		// Check for access rights
+		if (!allowed($case,'w'))
+			lcm_panic("You don't have permission to add information to this case");
 
-			// Check if the followup is created from appointment
-			$app = intval($_GET['app']);
-			if (! empty($app)) {
-				$q = "SELECT * FROM lcm_app WHERE id_app=$app";
-				$result = lcm_query($q);
-				if ($row = lcm_fetch_array($result)) {
-					$_SESSION['fu_data']['description'] = 'Following the ' . _T(get_kw_title($row['type']))	// TRAD
-						. ' (' . $row['title'] . ') from ' . str_replace('&nbsp;', ' ', format_date($row['start_time'])); // TRAD
-					
-					// Show appointment participants
-					$participants = array();
-					$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
-						FROM lcm_author_app, lcm_author
-						WHERE (id_app=$app AND lcm_author_app.id_author=lcm_author.id_author)";
-					$res_author = lcm_query($q);
-					if (lcm_num_rows($res_author)>0) {
-						while ($author = lcm_fetch_array($res_author)) {
-							$participants[] = get_person_name($author);
-						}
-					}
-					
-					// Show appointment clients
-					$q = "SELECT lcm_app_client_org.*,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
-						FROM lcm_app_client_org, lcm_client
-						LEFT JOIN  lcm_org ON lcm_app_client_org.id_org=lcm_org.id_org
-						WHERE (id_app=$app AND lcm_app_client_org.id_client=lcm_client.id_client)";
-					$res_client = lcm_query($q);
-					if (lcm_num_rows($res_client)>0) {
-						while ($client = lcm_fetch_array($res_client))
-							$participants[] = get_person_name($client)
-								. ( ($client['id_org'] > 0) ? " of " . $client['name'] : ''); // TRAD
-					}
+		// Setup default values
+		$_SESSION['fu_data']['id_case'] = $case; // Link to the case
+		$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+		$_SESSION['fu_data']['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 
-					$_SESSION['fu_data']['description'] .= ' involving ' . join(', ',$participants); // TRAD
+		// Check if the followup is created from appointment
+		$app = intval($_GET['app']);
+		if (! empty($app)) {
+			$q = "SELECT * FROM lcm_app WHERE id_app=$app";
+			$result = lcm_query($q);
 
-					// Add separator
-					$_SESSION['fu_data']['description'] .= "\n--=+=--\n";
+			if (! ($row = lcm_fetch_array($result)))
+				lcm_panic("There's no such appointment (app = $app)");
 
-					// Set start and end times of the followup from the appointment
-					$_SESSION['fu_data']['date_start'] = $row['start_time'];
-					$_SESSION['fu_data']['date_end']   = $row['end_time'];
-
-					// Save appointment ID as session variable
-					$_SESSION['fu_data']['id_app'] = $app;
-				} else {
-					die("There's no such appointment!");
+			// Get participant author(s)
+			$participants = array();
+			$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
+				FROM lcm_author_app, lcm_author
+				WHERE (id_app=$app AND lcm_author_app.id_author=lcm_author.id_author)";
+			$res_author = lcm_query($q);
+			if (lcm_num_rows($res_author)>0) {
+				while ($author = lcm_fetch_array($res_author)) {
+					$participants[] = get_person_name($author);
 				}
 			}
-		} else {
-			die("Add followup to which case?");
+
+			// Get appointment client(s)
+			$q = "SELECT lcm_app_client_org.*,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
+				FROM lcm_app_client_org, lcm_client
+				LEFT JOIN  lcm_org ON lcm_app_client_org.id_org=lcm_org.id_org
+				WHERE (id_app=$app AND lcm_app_client_org.id_client=lcm_client.id_client)";
+
+			$res_client = lcm_query($q);
+
+			if (lcm_num_rows($res_client)>0) {
+				while ($client = lcm_fetch_array($res_client))
+					$participants[] = get_person_name($client)
+						. ( ($client['id_org'] > 0) ? " of " . $client['name'] : ''); // TRAD
+			}
+
+			// First i18n attempt..
+			$_SESSION['fu_data']['description'] = _T('fu_info_after_event', array(
+						'title' => _Ti(get_kw_title($row['type'])) . $row['title'],
+						'date' => format_date($row['start_time']),
+						'participants' => join(', ', $participants)));
+
+			$_SESSION['fu_data']['description'] = str_replace('&nbsp;', ' ', $_SESSION['fu_data']['description']);
+
+			/*
+			   $_SESSION['fu_data']['description'] = 'Following the ' . _T(get_kw_title($row['type']))	
+			   . ' (' . $row['title'] . ') from ' . str_replace('&nbsp;', ' ', format_date($row['start_time']));
+
+			   $_SESSION['fu_data']['description'] .= ' involving ' . join(', ', $participants);
+			 */
+
+			// Set start and end times of the followup from the appointment
+			$_SESSION['fu_data']['date_start'] = $row['start_time'];
+			$_SESSION['fu_data']['date_end']   = $row['end_time'];
+
+			// Save appointment ID as session variable
+			$_SESSION['fu_data']['id_app'] = $app;
 		}
 	}
 
 	// Check for access rights
 	$edit = allowed($_SESSION['fu_data']['id_case'],'e');
 	if (!($admin || $edit))
-		die("You don't have permission to edit this case's information!");
+		lcm_panic("You don't have permission to edit this case's information");
 
 }
 
@@ -204,7 +212,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			?>
 			</select></td></tr>
 		<tr><td valign="top"><?php echo f_err_star('description') . _T('fu_input_description'); ?></td>
-			<td><textarea <?php echo $dis; ?> name="description" rows="15" cols="40" class="frm_tarea"><?php
+			<td><textarea <?php echo $dis; ?> name="description" rows="15" cols="60" class="frm_tarea"><?php
 			echo clean_output($_SESSION['fu_data']['description']) . "</textarea></td></tr>\n";
 // Sum billed field
 			if ($fu_sum_billed == "yes") {
