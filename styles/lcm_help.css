@@ -1,0 +1,108 @@
+/* -------------------- */
+/* Help pages styles */
+/* -------------------- */
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	margin: 5px;
+	padding: 0px;
+	text-align: center;
+}
+
+h1.hlp_h1 {
+	text-align: left;
+	border-bottom: 1px solid #333;
+	margin: 0;
+	padding: 5px 0px 5px 0px;
+	color: #333;
+}
+
+h2.hlp_h2 {
+	text-align: left;
+	margin: 0;
+	padding: 5px;
+}
+
+#hlp_big_box {
+	text-align: left;
+	border-bottom: 1px solid #333;
+}
+
+#hlp_menu {
+	float: left;
+	text-align: left;
+	font-size: 11px;
+	margin: 0;
+	padding: 0;
+}
+
+/* [ML] Temporarely added because it makes the menu too long */
+/* (But this way Krasi can experiment without changing the PHP :-) */
+#hlp_menu li ul {
+	display: none;
+}
+
+#hlp_cont {
+	margin-left: 3px;
+	height: 380px;
+	overflow: auto;
+	border-left: 1px solid #333;
+	padding: 0px 15px 15px 15px;
+}
+
+/* Help main menu... */
+
+ul#hlp_nav, ul.hlp_subnav {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	width: 160px;
+	border-bottom: 1px solid #ccc;
+}
+
+ul#hlp_nav li, ul.hlp_subnav li {
+	position: relative;
+	font-size: 11px;
+	text-align: left;
+}
+	
+li ul.hlp_subnav {
+	position: absolute;
+	left: 159px;
+	top: 0;
+	display: none;
+}
+	
+ul#hlp_nav li a, ul.hlp_subnav li a {
+	display: block;
+	text-decoration: none;
+	color: #000;
+	background: #fff;
+	padding: 5px;
+	border: 1px solid #ccc;
+	border-bottom: 0;
+}
+	
+ul#hlp_nav li a:hover, ul.hlp_subnav li a:hover {
+	background: #efefef;
+	color: #333;
+}
+	
+	
+/* Fix IE. Hide from IE Mac \*/
+* html ul#hlp_nav li { float: left; }
+* html ul.hlp_subnav li { float: left; }
+* html ul#hlp_nav li a { height: 1%; }
+* html ul.hlp_subnav li a { height: 1%; }
+/* End */
+
+/*
+li:hover ul#hlp_nav, li.over ul#hlp_nav
+{ 
+	display: block;
+}
+*/
+
+li:hover ul.hlp_subnav, li.over ul.hlp_subnav
+{ 
+	display: block;
+}
