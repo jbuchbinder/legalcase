@@ -239,7 +239,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // I
-'info_free_software' => 'Free software <a href=\'http://www.lcm.ngo-bg.org/en\' class=\'prefs_normal_lnk\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\' class=\'prefs_normal_lnk\'>GPL licence</a>.',
+'info_free_software' => 'Free software @distributed@ under the @license@.',
+'info_free_software1' => 'distributed',
+'info_free_software2' => 'GPL license',
 'info_greetings' => 'Good day',
 'info_more_than_five' => '(More than 5 characters)',
 'info_more_than_three' => '(More than 3 characters)',
@@ -298,6 +300,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // K
 'keywords_info_quantity' => 'Authors can select @quantity@ of this group in a given situation (case, follow-up, etc.).',
 'keywords_input_description' => 'Description:',
+'keywords_input_for_group' => 'In keyword group:',
 'keywords_input_name' => 'Name:',
 'keywords_input_policy' => 'Policy:',
 'keywords_input_suggest' => 'Default choice:',
