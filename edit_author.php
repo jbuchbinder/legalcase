@@ -18,74 +18,72 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.22 2005/01/17 09:19:00 mlutfy Exp $
+	$Id: edit_author.php,v 1.23 2005/01/17 16:00:17 mlutfy Exp $
 */
 
-session_start();
+// [ML] inc_auth session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_contacts');
 
 global $author_session;
+$statuses = array('admin', 'normal', 'external', 'trash', 'waiting', 'suspended');
 $author = intval($_GET['author']);
 
-// TODO/FIXME: [ML] $usr variable was passed in $_SESSION, ...
-// bad for password.
+// Clear form data
+$usr = array();
 
-// if (empty($_SESSION['errors'])) {
-    // Clear form data
-    $usr = array();
+// Set the returning page
+if (isset($ref)) $usr['ref_edit_author'] = $ref;
+else $usr['ref_edit_author'] = $HTTP_REFERER;
 
-	// Set the returning page
-	if (isset($ref)) $usr['ref_edit_author'] = $ref;
-	else $usr['ref_edit_author'] = $HTTP_REFERER;
+// XXX: [ML] deprecated PHP 4.2.0
+// Register case type variable for the session
+if (!session_is_registered("existing"))
+session_register("existing");
 
-	// XXX: [ML] deprecated PHP 4.2.0
-	// Register case type variable for the session
-	if (!session_is_registered("existing"))
-		session_register("existing");
+// Find out if this is existing or new case
+$existing = ($author > 0);
 
-	// Find out if this is existing or new case
-	$existing = ($author > 0);
-
-	if ($existing) {
-		// Check if user is permitted to edit this author's data
-		if (($author_session['status'] != 'admin') &&
+if ($existing) {
+	// Check if user is permitted to edit this author's data
+	if (($author_session['status'] != 'admin') &&
 			($author != $author_session['id_author'])) {
-			die("You don't have the right to edit this author's details");
-		}
-
-		// Get author data
-		$q = "SELECT * FROM lcm_author WHERE id_author=$author";
-		$result = lcm_query($q);
-		if ($row = lcm_fetch_array($result)) {
-			foreach ($row as $key => $value) {
-				$usr[$key] = $value;
-			}
-		} else
-			die(_T('error_no_such_user'));
-
-		$type_email = get_contact_type_id('email_main');
-
-		$q = "SELECT value
-				FROM lcm_contact
-				WHERE id_of_person = $author
-					AND type_person = 'author'
-					AND type_contact = " . $type_email;
-		$result = lcm_query($q);
-		if ($contact = lcm_fetch_array($result)) {
-			$usr['email'] = $contact['value'];
-			$usr['email_exists'] = 'yes';
-		}
-	} else {
-		$usr['id_author'] = 0;
-		$usr['email'] = '';
-		$usr['status'] = 'normal';
+		die("You don't have the right to edit this author's details");
 	}
-// }
 
-$statuses = array('admin', 'normal', 'external', 'trash', 'waiting', 'suspended');
+	// Get author data
+	$q = "SELECT * FROM lcm_author WHERE id_author=$author";
+	$result = lcm_query($q);
+	if ($row = lcm_fetch_array($result)) {
+		foreach ($row as $key => $value) {
+			$usr[$key] = $value;
+		}
+	} else
+		die(_T('error_no_such_user'));
+
+	$type_email = get_contact_type_id('email_main');
+
+	$q = "SELECT value
+		FROM lcm_contact
+		WHERE id_of_person = $author
+			AND type_person = 'author'
+			AND type_contact = " . $type_email;
+	$result = lcm_query($q);
+	if ($contact = lcm_fetch_array($result)) {
+		$usr['email'] = $contact['value'];
+		$usr['email_exists'] = 'yes';
+	}
+} else {
+	$usr['id_author'] = 0;
+	$usr['email'] = '';
+	$usr['status'] = 'normal';
+}
+
+// Fetch values that caused errors to show them with the error message
+foreach($_SESSION['usr'] as $key => $value)
+	$usr[$key] = $value;
 
 // Start the page with the proper title
 if ($existing) lcm_page_start("Edit author");
@@ -109,13 +107,23 @@ echo show_all_errors($_SESSION['errors']);
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_personalinfo'); ?></h4></td>
 		</tr>
 
-		<tr><td align="right" valign="top"><?php echo _T('person_input_name_first'); ?></td>
+		<tr><td align="right" valign="top"><?php echo f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first'); ?></td>
 			<td align="left" valign="top"><input name="name_first" type="text" class="search_form_txt" id="name_first" size="35" value="<?php echo clean_output($usr['name_first']); ?>"/></td>
 		</tr>
+
+		<?php
+			// Middle name can be desactivated, but show anyway if there is one
+			if (! $usr['name_middle'] && read_meta('client_name_middle') == 'yes') {
+		?>
+
 		<tr><td align="right" valign="top"><?php echo _T('person_input_name_middle'); ?></td>
 			<td align="left" valign="top"><input name="name_middle" type="text" class="search_form_txt" id="name_middle" size="35" value="<?php echo clean_output($usr['name_middle']); ?>"/></td>
 		</tr>
-		<tr><td align="right" valign="top"><?php echo _T('person_input_name_last'); ?></td>
+
+		<?php
+			}
+		?>
+		<tr><td align="right" valign="top"><?php echo f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last'); ?></td>
 			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
 		</tr>
 <?php
@@ -144,7 +152,7 @@ echo show_all_errors($_SESSION['errors']);
 		// to show on two lines when using a large font.
 		echo '<input name="contact_value[]" id="contact_value_' . $cpt . '" type="text" '
 			. 'class="search_form_txt" size="35" value="' . clean_output($c['value']) . '"/>';
-		echo f_err('email', $errors) . "";
+		echo f_err('email', $_SESSION['errors']) . "";
 
 		if ($c['name'] != 'email_main')
 			echo "<img src=\"images/jimmac/stock_trash-16.png\" width=\"16\" height=\"16\" alt=\"Delete?\" title=\"Delete?\" />&nbsp;<input type=\"checkbox\" name=\"del_contact[]\" />";
@@ -217,17 +225,19 @@ echo show_all_errors($_SESSION['errors']);
 			$auth = new $class_auth;
 
 			if (! $auth->init()) {
-				// XXX: make error ?
-				lcm_log("ERROR: failed to initialize auth method");
+				echo "<p><b>ERROR: failed to initialize auth method: " . $auth->error . "</b></p>\n";
+				lcm_log("ERROR: failed to initialize auth method: " . $auth->error);
 			}
 
 			// Some authentication methods might not allow the username to be 
 			// changed. Also, it is generally better not to allow users to
 			// change their username. Show the fields only if it is possible.
 			echo '<input name="username_old" type="hidden" id="username_old" value="' . clean_output($usr['username']) .'"/>';
+			echo "\n";
 
 			if ($auth->is_newusername_allowed($usr['id_author'], $usr['username'], $author_session)) {
-				echo '<input name="username" type="text" class="search_form_txt" id="username" size="35" value="' . clean_output($usr['username']) .'"/>';
+				echo '<input name="username" type="text" class="search_form_txt" id="username" size="35" value="'
+					. ($usr['username'] == '0' ? '' : clean_output($usr['username'])) .'"/>';
 			} else {
 				echo '<input type="hidden" name="username" value="' . clean_output($usr['username']) . '"/>';
 				echo $usr['username'];
@@ -296,7 +306,8 @@ echo show_all_errors($_SESSION['errors']);
 
 lcm_page_end();
 
-// Destroy session data (e.g error messages)
-session_destroy();
+// Reset error messages
+$_SESSION['errors'] = array();
+$_SESSION['usr'] = array();
 
 ?>

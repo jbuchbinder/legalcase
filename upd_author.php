@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.14 2005/01/17 14:09:50 mlutfy Exp $
+	$Id: upd_author.php,v 1.15 2005/01/17 16:00:16 mlutfy Exp $
 */
 
 // [ML] inc_auth session_start();
@@ -50,17 +50,14 @@ function change_password($usr) {
 	$auth = new $class_auth;
 
 	if (! $auth->init()) {
-		lcm_log("pass change: failed auth init, signal 'internal error'.");
-		$_SESSION['errors']['password_generic'] = "Failed to
-			initialize authentication mecanism. Please contact your local
-			system administrator.";
+		lcm_log("pass change: failed auth init: " . $auth->error);
+		$_SESSION['errors']['password_generic'] = $auth->error;
 		return;
 	}
 	
 	// Is user allowed to change the password?
 	if (! $auth->is_newpass_allowed($usr['id_author'], $usr['username'], $author_session)) {
-		// TODO: use $auth->error ?
-		$_SESSION['errors']['password_generic'] = "You are not allowed to change the password.";
+		$_SESSION['errors']['password_generic'] = $auth->error;
 		return;
 	}
 
@@ -82,7 +79,7 @@ function change_password($usr) {
 		}
 
 		if (! $valid_oldpass) {
-			$_SESSION['errors']['password_current'] = "Bad password";
+			$_SESSION['errors']['password_current'] = _T('pass_warning_incorrect');
 			return;
 		}
 	}
@@ -97,12 +94,8 @@ function change_password($usr) {
 	$ok = $auth->newpass($usr['id_author'], $usr['username'], $usr['usr_new_passwd'], $author_session);
 
 	if (! $ok) {
-		// TODO return error: $this->get_error() ? generic error?
-		lcm_log("new pass failed 001");
-		$_SESSION['errors']['password_generic'] = "Failed to change the
-			password (internal error). Please contact your local system 
-			administrator.";
-
+		lcm_log("New pass failed: " . $auth->error);
+		$_SESSION['errors']['password_confirm'] = $auth->error;
 		return;
 	}
 }
@@ -110,20 +103,13 @@ function change_password($usr) {
 function change_username($id_author, $old_username, $new_username) {
 	global $author_session;
 
-	if (! $new_username) {
-		$_SESSION['errors']['username'] = "Username cannot be empty";
-		return;
-	}
-
 	include_lcm('inc_auth_db');
 	$class_auth = 'Auth_db'; // FIXME, take from author_session
 	$auth = new $class_auth;
 
 	if (! $auth->init()) {
 		lcm_log("username change: failed auth init, signal 'internal error'.");
-		$_SESSION['errors']['password_generic'] = "Failed to
-			initialize authentication mecanism. Please contact your local
-			system administrator.";
+		$_SESSION['errors']['password_generic'] = $auth->error;
 		return;
 	}
 
@@ -133,6 +119,7 @@ function change_username($id_author, $old_username, $new_username) {
 	if (! $ok) {
 		lcm_log("New username failed: " . $auth->error);
 		$_SESSION['errors']['username'] = "Failed to change the username: " . $auth->error;
+		$_SESSION['usr']['username'] = $new_username;
 
 		return;
 	}
@@ -143,28 +130,20 @@ function change_username($id_author, $old_username, $new_username) {
 // Clear all previous errors
 $_SESSION['errors'] = array();
 
-// [ML] deprecated function call PHP 4.2.0 
-// cf: http://www.php.net/session_register
-/*
-// Register form data in the session
-if(!session_is_registered("usr"))
-    session_register("usr");
-*/
-
 // Get form data from POST fields
 foreach($_POST as $key => $value)
     $usr[$key] = $value;
 
 
-// FIXME: 
-// - do not allow status change to users
-// - make first & last name mandatory
-
+//
+// Start SQL query
+//
 $fl = 'date_update = NOW()';
 
 // First name must have at least one character
 if (strlen(utf8_decode($usr['name_first'])) < 1) {
 	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . 'Must be at least 1 character';
+	$_SESSION['usr']['name_first'] = $usr['name_first'];
 } else {
 	$fl .= ", name_first = '" . clean_input($usr['name_first'])  . "'";
 }
@@ -175,8 +154,9 @@ $fl .= ", name_middle = '" . clean_input($usr['name_middle']) . "'";
 // Last name must have at least one character
 if (strlen(utf8_decode($usr['name_last'])) < 1) {
 	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . 'Must be at least 1 character';
+	$_SESSION['usr']['name_last'] = $usr['name_last'];
 } else {
-	$fl .= ", name_first = '" . clean_input($usr['name_first'])  . "'";
+	$fl .= ", name_last = '" . clean_input($usr['name_last'])  . "'";
 }
 
 // Author status can only be changed by admins
@@ -194,23 +174,34 @@ if ($usr['id_author'] > 0) {
 		$result = lcm_query($q);
 	}
 } else {
+	// Keep form information in session, just in case there is an error
+	// now or later (username/pass).
+	foreach($usr as $key => $value)
+		$_SESSION['usr'][$key] = $value;
+
+	if (count($errors)) {
+		header("Location: $HTTP_REFERER");
+		exit;
+	}
+
 	$q = "INSERT INTO lcm_author SET date_creation = NOW(), $fl";
 	$result = lcm_query($q);
 	$usr['id_author'] = lcm_insert_id();
+	$_SESSION['usr']['id_author'] = $usr['id_author'];
 }
 
 //
 // Change password (if requested)
 //
 
-if ($usr['usr_new_passwd'])
+if ($usr['usr_new_passwd'] || empty($usr['username_old']))
 	change_password($usr);
 
 //
 // Change username
 //
 
-if ($usr['username'] != $usr['username_old'])
+if ($usr['username'] != $usr['username_old'] || empty($usr['username_old']))
 	change_username($usr['id_author'], $usr['username_old'], $usr['username']);
 
 //
@@ -270,8 +261,10 @@ if (isset($_REQUEST['contact_value'])) {
 }
 
 // There were errors, send user back to form
+// Note: Important to send back to edit_author, not HTTP_REFERER, because
+// if we are creating a new author, we must send to 'edit', not 'new'.
 if (count($_SESSION['errors'])) {
-    header("Location: $HTTP_REFERER");
+    header("Location: edit_author.php?author=" . $usr['id_author']);
     exit;
 }
 
