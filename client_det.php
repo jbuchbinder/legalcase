@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.6 2004/11/23 12:53:03 mlutfy Exp $
+	$Id: client_det.php,v 1.7 2004/11/23 13:27:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -48,7 +48,7 @@ if ($client>0) {
 		$edit = true;
 
 		if ($row['gender'] == 'male' || $row['gender'] == 'female')
-			$gender = _T('person_gender_' . $row['gender']);
+			$gender = _T('person_input_gender_' . $row['gender']);
 		else
 			$gender = _T('info_not_available');
 
