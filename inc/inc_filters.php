@@ -6,15 +6,41 @@ if (defined('_INC_FILTRES')) return;
 define('_INC_FILTRES', '1');
 
 
+// Makes $match substring of $source in bold
+function highlight_matches($source, $match) {
+	// Initialize variables
+	$model = strtolower($source);
+	$match = strtolower($match);
+	$p = 0;
+	$result = '';
+	$ml = strlen($match);
+
+	if ($ml > 0) {
+		$i = strpos($model, $match);
+
+		// Cycle each match
+		while (!($i === false)) {
+			$result .= (substr($source, $p, $i - $p) . '<b>' . substr($source, $i, $ml) . '</b>');
+			$p = $i + $ml;
+			$i = strpos($model, $match, $p);
+		}
+	}
+
+	$result .= substr($source, $p, strlen($source) - $p);
+	return $result;
+}
 
 
+// Format the date according to the user's preferences or
+// the localised format
+function format_date($timestamp = '') {
+	// TODO: Check if the user specified a format
 
-
-
-
-
-
-
+	if ($timestamp)
+		return date(_T('date_format'), $timestamp);
+	else
+		return date(_T('date_format'));
+}
 
 
 /* ********************************************************
@@ -236,29 +262,6 @@ function sinon ($texte, $sinon='') {
 	else
 		return $sinon;
 }
-
-// Makes $match substring of $source in bold
-function highlight_matches($source,$match) {
-	// Initialize variables
-	$model = strtolower($source);
-	$match = strtolower($match);
-	$p = 0;
-	$result = '';
-	$ml = strlen($match);
-	if ($ml>0) {
-		$i = strpos($model,$match);
-
-		// Cycle each match
-		while (!($i === false)) {
-			$result .= (substr($source,$p,$i-$p) . '<b>' . substr($source,$i,$ml) . '</b>');
-			$p = $i + $ml;
-			$i = strpos($model,$match,$p);
-		}
-	}
-	$result .= substr($source,$p,strlen($source)-$p);
-	return $result;
-}
-
 
 
 //
