@@ -111,6 +111,9 @@ function auth() {
 
 		// XXX [ML] if some preferences are absent from $prefs,
 		// we can set them here.
+
+		if (! $prefs_rows) 
+			$prefs['page_rows'] = 10;
 	}
 	else {
 		// This case is a strange possibility: the author is authentified
