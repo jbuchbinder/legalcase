@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.179 2005/03/22 15:23:44 antzi Exp $
+	$Id: inc_presentation.php,v 1.180 2005/03/22 16:25:35 mlutfy Exp $
 */
 
 //
@@ -274,30 +274,18 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	// Show today's date
 	echo "\n";
 	echo "<div class=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\">
-							<div class=\"mm_calendar\">" . _T('menu_calendar') . "</div>
-						</div>
-						<p class=\"nav_column_text\">";
-//	echo format_date();
+			<div class=\"nav_column_menu_head\">
+				<div class=\"mm_calendar\">" . _T('menu_calendar') . "</div>
+			</div>";
+
 	// Show calendar
 	include_lcm('inc_calendar');
-/*	$q = "SELECT lcm_app.*
-			FROM lcm_app, lcm_author_app as a
-			WHERE (a.id_author=" . $GLOBALS['author_session']['id_author'] . "
-				AND lcm_app.id_app=a.id_app)";
-
-	$result = lcm_query($q);
-
-	if (lcm_num_rows($result) > 0) {
-		$events = array();
-		while ($row=lcm_fetch_array($result)) {
-			$events[] = $row;
-		}
-		echo lcm_http_calendrier_ics($events,'20050222');
-	} */
 	$now = date('Y-m-d');
+
+	echo "<table><tr><td>\n"; // Temporary? [ML]
 	echo http_calendrier_agenda(mois($now), annee($now), jour($now), mois($now), annee($now), false, 'calendar.php');
-	echo "</p>";
+	echo "</table>\n";
+
 	echo "
 					</div>\n";
 	
