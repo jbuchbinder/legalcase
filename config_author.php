@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.42 2005/01/18 20:42:53 antzi Exp $
+	$Id: config_author.php,v 1.43 2005/01/19 09:27:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -36,10 +36,13 @@ function show_author_form() {
 	global $author_session;
 	global $prefs;
 
+	// Referer not always set (bookmark, reload, etc.)
+	$http_ref = (isset($GLOBALS['HTTP_REFERER']) ? $GLOBALS['HTTP_REFERER'] : '');
+
 ?>
 <form name="upd_user_profile" method="post" action="config_author.php">
 	<input type="hidden" name="author_ui_modified" value="yes"/>
-	<input type="hidden" name="referer" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>"/>
+	<input type="hidden" name="referer" value="<?php echo $http_ref; ?>" />
 
 	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
 		<tr>
