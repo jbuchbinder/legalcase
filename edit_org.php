@@ -61,8 +61,8 @@ lcm_page_start("Edit organisation details");
 			<td><textarea name="address" cols="50" rows="3" class="frm_tarea"><?php
 			echo clean_output($org_data['address']); ?></textarea></td></tr>
 	</table>
-	<button name="submit" type="submit" value="submit">Save</button>
-	<button name="reset" type="reset">Reset</button>
+	<button name="submit" type="submit" value="submit" class="simple_form_btn">Save</button>
+	<button name="reset" type="reset" class="simple_form_btn">Reset</button>
 	<input type="hidden" name="ref_edit_org" value="<?php echo $HTTP_REFERER ?>">
 </form>
 
