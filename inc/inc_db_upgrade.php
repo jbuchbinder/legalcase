@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.38 2005/02/20 22:29:08 antzi Exp $
+	$Id: inc_db_upgrade.php,v 1.39 2005/02/25 02:08:45 antzi Exp $
 */
 
 // Execute this file only once
@@ -498,6 +498,55 @@ function upgrade_database($old_db_version) {
 			  FULLTEXT KEY description (description))");
 
 		upgrade_db_version (22);
+	}
+
+	if ($lcm_db_version_current < 23) {
+		// Clear duplicated table lines
+		$tables = array('lcm_app_client_org' => 'id_app,id_client,id_org',
+				'lcm_app_fu' => 'id_app,id_followup',
+				'lcm_author_app' => 'id_author,id_app',
+				'lcm_case_client_org' => 'id_case,id_client,id_org',
+				'lcm_case_author' => 'id_case,id_author',
+				'lcm_client_org' => 'id_client,id_org',
+				'lcm_rep_filters' => 'id_report,id_filter',
+				'lcm_filter_conds' => 'id_filter,id_field,cond_order'
+				);
+		foreach ($tables as $k => $v) {
+			$result = lcm_query("SELECT DISTINCT $v,count(*) as copies FROM $k GROUP BY $v");
+			while ($row = lcm_fetch_array($result)) {
+				if ($row['copies'] > 1) {
+					$w = '';
+					foreach ($row as $rk => $rv) {
+						if ((!is_int($rk)) && ($rk != 'copies')) $w .= ($w ? ' AND ' : '') . "$rk=$rv";
+					}
+					$q = "DELETE FROM $k WHERE $w LIMIT " . ($row['copies']-1);
+					lcm_query($q);
+				}
+			}
+			lcm_query("OPTIMIZE TABLE $k");
+		}
+
+		// Create unique indexes
+		lcm_query("ALTER TABLE lcm_app_client_org DROP INDEX id_app");
+		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_app_client_org (id_app,id_client,id_org)");
+		
+		lcm_query("ALTER TABLE lcm_app_fu DROP INDEX id_app");
+		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_app_fu (id_app,id_followup)");
+
+		lcm_query("ALTER TABLE lcm_author_app DROP INDEX id_author");
+		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_author_app (id_author,id_app)");
+
+		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_case_client_org (id_case,id_client,id_org)");
+
+		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_case_author (id_case,id_author)");
+
+		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_client_org (id_client,id_org)");
+
+		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_rep_filters (id_report,id_filter)");
+
+		lcm_query("CREATE UNIQUE INDEX uniq ON lcm_filter_conds (id_filter,id_field,cond_order)");
+
+		upgrade_db_version (23); 
 	}
 
 	return $log;

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.30 2005/02/20 22:29:08 antzi Exp $
+	$Id: inc_db_create.php,v 1.31 2005/02/25 02:08:45 antzi Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -348,7 +348,7 @@ function create_database() {
 		id_app bigint(21) NOT NULL default '0',
 		id_client bigint(21) NOT NULL default '0',
 		id_org bigint(21) NOT NULL default '0',
-		KEY id_app (id_app,id_client,id_org))";
+		UNIQUE KEY uniq (id_app,id_client,id_org))";
 
 	$result = lcm_query($query);
 
@@ -358,7 +358,7 @@ function create_database() {
 		id_app bigint(21) NOT NULL default '0',
 		id_followup bigint(21) NOT NULL default '0',
 		relation enum('parent','child') NOT NULL default 'parent',
-		KEY id_app (id_app,id_followup))";
+		UNIQUE KEY uniq (id_app,id_followup))";
 
 	$result = lcm_query($query);
 
@@ -367,7 +367,7 @@ function create_database() {
 	$query = "CREATE TABLE lcm_author_app (
 		id_author bigint(21) NOT NULL default '0',
 		id_app bigint(21) NOT NULL default '0',
-		KEY id_author (id_author,id_app))";
+		UNIQUE KEY uniq (id_author,id_app))";
 
 	$result = lcm_query($query);
 
@@ -377,6 +377,7 @@ function create_database() {
 		id_case bigint(21) DEFAULT '0' NOT NULL,
 		id_client bigint(21) DEFAULT '0' NOT NULL,
 		id_org bigint(21) DEFAULT '0' NOT NULL,
+		UNIQUE KEY uniq (id_case,id_client,id_org),
 		KEY id_case (id_case),
 		KEY id_client (id_client),
 		KEY id_org (id_org))";
@@ -391,6 +392,7 @@ function create_database() {
 		ac_write tinyint(1) DEFAULT '0' NOT NULL,
 		ac_edit tinyint(1) DEFAULT '0' NOT NULL,
 		ac_admin tinyint(1) DEFAULT '0' NOT NULL,
+		UNIQUE KEY uniq (id_case,id_author),
 		KEY id_case (id_case),
 		KEY id_author (id_author))";
 	$result = lcm_query($query);
@@ -400,6 +402,7 @@ function create_database() {
 	$query = "CREATE TABLE lcm_client_org (
 		id_client bigint(21) DEFAULT '0' NOT NULL,
 		id_org bigint(21) DEFAULT '0' NOT NULL,
+		UNIQUE KEY uniq (id_client,id_org),
 		KEY id_client (id_client),
 		KEY id_org (id_org))";
 	$result = lcm_query($query);
@@ -442,6 +445,7 @@ function create_database() {
 		id_report bigint(21) NOT NULL default '0',
 		id_filter bigint(21) NOT NULL default '0',
 		type enum('AND','OR') NOT NULL default 'AND',
+		UNIQUE KEY uniq (id_report,id_filter),
 		KEY id_report (id_report),
 		KEY id_filter (id_filter))";
 	$result = lcm_query($query);
@@ -454,6 +458,7 @@ function create_database() {
 		cond_order bigint(21) NOT NULL default '0',
 		type tinyint(2) NOT NULL default '0',
 		value varchar(255) default NULL,
+		UNIQUE KEY uniq (id_filter,id_field,cond_order),
 		KEY id_filter (id_filter),
 		KEY id_field (id_field),
 		KEY cond_order (cond_order))";
