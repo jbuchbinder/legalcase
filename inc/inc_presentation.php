@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.180 2005/03/22 16:25:35 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.181 2005/03/22 23:51:51 antzi Exp $
 */
 
 //
@@ -1225,6 +1225,7 @@ function show_listcase_start() {
 }
 
 function show_listcase_item($item, $cpt, $custom = '') {
+	include('inc/inc_acc.php');
 	$case_court_archive = read_meta('case_court_archive');
 
 	$ac_read = allowed($item['id_case'],'r');
