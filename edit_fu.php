@@ -21,13 +21,11 @@ $q='SELECT * FROM lcm_followup WHERE id_followup=' . $followup;
 // Do the query
 $result=mysql_query($q,$db);
 
-?><form><?php
-
 $types=array("assignment","suspension","delay","conclusion","consultation","correspondance","travel","other");
 // Process the output of the query
 if ($row = mysql_fetch_assoc($result)) {
 	// Edit followup details
-	?><table><caption>Details of follow-up:</caption><?php
+	?><form><table><caption>Details of follow-up:</caption><?php
 	echo '<tr><td>Start date:' . '</td><td><INPUT value="' . $row['date_start'] . "\"></td><tr>\n";
 	echo '<tr><td>End date:' . '</td><td><INPUT value="' . $row['date_end'] . "\"></td><tr>\n";
 	echo '<tr><td>Type:' . '</td><td><SELECT size="1"><OPTION selected>' . $row['type'] . "</OPTION>\n";
@@ -39,12 +37,11 @@ if ($row = mysql_fetch_assoc($result)) {
 	echo '<tr><td>Description:' . '</td><td><textarea rows="5" cols="30">';
 	echo $row['description'] . "</textarea></td><tr>\n";
 	echo '<tr><td>Sum billed:' . '</td><td><input value="' . $row['sumbilled'] . "\"></td><tr>\n";
-	?></table><?php
+	?></table></form><?php
 } else die("There's no such followup!");
 
 // Close connection
 mysql_close($db);
 ?>
-</form>
 </body>
 </html>

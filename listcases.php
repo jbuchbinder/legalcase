@@ -25,20 +25,20 @@ $result=mysql_query($q,$db);
 
 ?>
 <h1>List of cases</h1>
-<table>
-<tr><th>Case description</th></tr>
-<tr><td>
+<table border>
+<tr><th colspan="2">Case description</th></tr>
 <?php
 // Process the output of the query
 while ($row = mysql_fetch_assoc($result)) {
 	// Show case title
-	echo '<tr><td><a href="case_det.php?case=' . $row['id_case'] . '">'. $row['title'] . '</a><td><tr>';
-	echo "\n";
+	echo '<tr><td><a href="case_det.php?case=' . $row['id_case'] . '">'. $row['title'] . "</a></td>\n";
+	echo '<td><a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a></td></tr>' . "\n";
 }
 
 // Close connection
 mysql_close($db);
 ?>
+<tr><td colspan="2"><a href="edit_case.php?case=0">Open new case</a></td></tr>
 </table>
 </body>
 </html>

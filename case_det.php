@@ -24,7 +24,8 @@ $result=mysql_query($q,$db);
 // Process the output of the query
 if ($row = mysql_fetch_assoc($result)) {
 	// Show case details
-	echo '<h1>Details for case: </h1>'. $row['title'] . "<br>\n";
+	echo '<h1>Details for case: </h1>' . $row['title'];
+	echo ' [<a href="edit_case.php?case=' . $row['id_case'] . "\">Edit case information</a>]<br>\n";
 	echo 'Case ID: ' . $row['id_case'] . "<br>\n";
 	echo 'Court archive ID: ' . $row['id_court_archive'] . "<br>\n";
 	echo 'Creation date: ' . $row['date_creation'] . "<br>\n";
@@ -38,7 +39,7 @@ if ($row = mysql_fetch_assoc($result)) {
 ?>
 <br><table border>
 <caption>Follow-ups to this case:</caption>
-<tr><th>Date</th><th>Type</th><th>Description</th><tr>
+<tr><th>Date</th><th>Type</th><th>Description</th></tr>
 <?php
 
 // Prepare query
