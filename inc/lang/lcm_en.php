@@ -13,11 +13,15 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // A
+'add' => 'Add',
+'add_and_go_to_details' => 'Add &amp; go to details',
+'add_and_open_new' => 'Add &amp; open new',
 'add_client_s' => 'Add client(s)',
 'add_organisation_s' => 'Add organisation(s)',
 'add_user_case' => 'Add user to the case',
 'alledged_crime' => 'Alledged crime',
 'assignment_date' => 'Assignment date',
+'author_id' => 'Author ID',
 
 
 // B
@@ -31,6 +35,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_details' => 'Case details',
 'case_followups' => 'Follow-ups to this case',
 'case_id' => 'Case ID',
+'case_status' => 'Case status',
+'case_title' => 'Case title',
 'case_user_s' => 'Case user(s)',
 'clients' => 'Clients',
 'court_archive_id' => 'Court archive ID',
@@ -40,6 +46,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // D
 'date' => 'Date',
 'date_format' => 'l, dS F Y',
+'date_time_format' => 'Y-m-d H:i:s',
 'description' => 'Description',
 'directories_bad_rights' => 'The following directories do not have write permission',
 'directories_bad_rights_cause' => 'To change this, use your SSH/SFTP client in order to set access permissions for each of these directories. The procedure is detailed in the install guide.',
@@ -52,12 +59,14 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // E
 'edit' => 'Edit',
+'edit_case_details' => 'Edit case details',
 'edit_case_information' => 'Edit case information',
 'enter_name_first' => 'First',
 'enter_name_last' => 'Last',
 'enter_name_middle' => 'Middle',
 'error_add_auth_no_rights' => 'You don\'t have permission to add access rights to this case!',
 'error_no_case_specified' => 'No case was specified',
+'error_no_edit_permission' => 'You don\'t have permission to edit this case!',
 'error_no_read_permission' => 'You don\'t have permission to view this case!',
 'error_no_such_case' => 'There\'s no such case!',
 
@@ -127,6 +136,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // N
+'new_case' => 'New case',
 'new_followup' => 'New followup',
 
 
@@ -135,10 +145,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // P
+'parameter' => 'Parameter',
 'public' => 'Public',
 
 
+// R
+'read' => 'Read',
+'reset' => 'Reset',
+
+
 // S
+'save' => 'Save',
 'status' => 'Status',
 
 
@@ -151,12 +168,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'typo_column' => ':',
 
 
+// V
+'value' => 'Value',
+
+
 // W
 'warning_already_installed' => 'is already installed.',
 'warning_forbidden_area' => 'Forbidden area',
 'warning_operation_failed' => 'The operation failed.',
 'warning_sql_connection_failed' => 'Connection to SQL database server failed.',
-'which_case' => 'Which case?'
+'which_case' => 'Which case?',
+'write' => 'Write'
 
 );
 
