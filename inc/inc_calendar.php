@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.11 2005/03/22 11:54:43 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.12 2005/03/22 16:24:18 mlutfy Exp $
 */
 
 
@@ -484,8 +484,12 @@ function http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre)
 	//
 	// Show calendars for previous, current and next month
 	//
-	$gadget .= "</td>\n</tr>\n"
-		. "<tr>\n<td valign='top' width='33%'>"
+	$gadget .= "</td>\n</tr>\n</table>\n";
+
+	// [ML] I had a problem centering the name of month, so I removed the 'width="100%"'
+	// but I know it's still ugly now, so if you have any ideas, feel free to fix :-)
+	$gadget .= "<table cellpadding='0' cellspacing='5' border='0'align='center'>\n";
+	$gadget .= "<tr>\n<td valign='top' width='33%'>"
 		// previous month
 		. http_calendrier_agenda($mois-1, $annee, $jour, $mois, $annee, $GLOBALS['afficher_bandeau_calendrier_semaine'], $script,$ancre) 
 		. "</td>\n<td valign='top' width='33%'>"
@@ -494,9 +498,9 @@ function http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre)
 		. "</td>\n<td valign='top' width='33%'>"
 		// next month
 		. http_calendrier_agenda($mois+1, $annee, $jour, $mois, $annee, $GLOBALS['afficher_bandeau_calendrier_semaine'], $script,$ancre) 
-		. "</td>"
-		. "</tr>"
-		. "\n<tr><td colspan='3' style='text-align:right;'>";
+		. "</td>\n"
+		. "</tr>\n</table>\n"
+		. "<table cellpadding='0' cellspacing='5' border='0' width='98%'><tr><td colspan='3' style='text-align:right;'>";
 
 	for ($i=$mois+2; $i <= 12; $i++) {
 		$gadget .= http_href($script. "mois=$i&annee=$annee$ancre",
@@ -872,113 +876,127 @@ function http_calendrier_agenda ($month, $year, $day_ved, $month_ved, $annee_ved
 		$year++;
 	}
 
-	return "<div style='text-align: center; padding: 5px;'>"
+	return "<div style='width: 100%; text-align: center; padding: 2px; font-size: 10px;'>"
+		// Month title
+		. "<div style='padding-bottom: 5px;'>"
 		. http_href($script . "mois=$month&annee=$year$target",
-		       "<b style='font-size: 10px;'>" . affdate_mois_annee("$year-$month-1") . "</b>",
+				affdate_mois_annee("$year-$month-1"),
 		       '',
 		       'color: black;')
-		. "<table width='98%' cellspacing='0' cellpadding='0'>"
+		. "</div>\n"
+		// The calendar itself
 		. http_calendrier_agenda_rv ($year, $month, 
 				sql_calendrier_agenda($month, $year),
 			        'http_jour_clic', array($script, $target),
 			        $day_ved, $month_ved, $annee_ved, 
 				$week)
-		. "</table>"
-		. "</div>";
+		. "</div>\n";
 }
 
+// Click function for 'day' item (called by http_calendrier_agenda_rv)
 function http_jour_clic($annee, $mois, $jour, $type, $couleur, $perso)
 {
+	list($script, $target) = $perso;
 
-  list($script, $ancre) = $perso;
-
-  return http_href($script . "type=$type&jour=$jour&mois=$mois&annee=$annee$ancre", 
-		   "<b>$jour</b>",
-		   '',
-		   "color: $couleur");
+	return http_href($script . "type=$type&jour=$jour&mois=$mois&annee=$annee$target", 
+			"$jour",
+			'',
+			($couleur ? "color: $couleur" : ''));
 }
 
-// Afficher un mois sous forme de petit tableau
 // Show monthly calendar in small table
-
 function http_calendrier_agenda_rv ($annee, $mois, $les_rv, $fclic, $perso='',
-				    $jour_ved='', $mois_ved='', $annee_ved='',
-				    $semaine='') {
-	global $couleur_foncee;
+				    $jour_ved='', $mois_ved='', $annee_ved='', $semaine='')
+{
+	$couleur_foncee = 'dedede'; // CSS
 
-	// Former une date correcte (par exemple: $mois=13; $annee=2003)
+	// Form a correct date (for example: $mois=13; $annee=2003)
 	$date_test = date("Y-m-d", mktime(0,0,0,$mois, 1, $annee));
 	$mois = mois($date_test);
 	$annee = annee($date_test);
 
-	if ($semaine) 
-	{
+	if ($semaine) {
 		$jour_semaine_valide = date("w",mktime(1,1,1,$mois_ved,$jour_ved,$annee_ved));
 		if ($jour_semaine_valide==0) $jour_semaine_valide=7;
 		$debut = mktime(1,1,1,$mois_ved,$jour_ved-$jour_semaine_valide+1,$annee_ved);
 		$fin = mktime(1,1,1,$mois_ved,$jour_ved-$jour_semaine_valide+7,$annee_ved);
-	} else { $debut = $fin = '';}
+	} else {
+		$debut = $fin = '';
+	}
 	
-	$today=getdate(time());
+	$today = getdate(time());
 	$jour_today = $today["mday"];
 	$mois_today = $today["mon"];
 	$annee_today = $today["year"];
 
 	$total = '';
-	$ligne = '';
+	$ligne = '<ul class="list_events">';
 	$jour_semaine = date("w", mktime(1,1,1,$mois,1,$annee));
-	if ($jour_semaine==0) $jour_semaine=7;
-	for ($i=1;$i<$jour_semaine;$i++) $ligne .= "\n\t<td></td>";
-	$style1 = "-moz-border-radius-topleft: 10px; -moz-border-radius-bottomleft: 10px;";
-	$style7 = "-moz-border-radius-topright: 10px; -moz-border-radius-bottomright: 10px;";
-	for ($j=1; $j<32; $j++) {
-		$nom = mktime(1,1,1,$mois,$j,$annee);
-		$jour_semaine = date("w",$nom);
+
+	if ($jour_semaine == 0) $jour_semaine=7;
+
+	for ($i = 1; $i < $jour_semaine; $i++)
+		$ligne .= '<li><a href="#">-</a></li>'; // XXX (if not linked, it breaks the layout)
+
+	// [ML] $style1 = "-moz-border-radius-topleft: 10px; -moz-border-radius-bottomleft: 10px;";
+	// [ML] $style7 = "-moz-border-radius-topright: 10px; -moz-border-radius-bottomright: 10px;";
+
+	for ($j = 1; $j < 32; $j++) {
+		$nom = mktime(1,1,1, $mois, $j, $annee); // current day?
+		$jour_semaine = date("w", $nom); // current week day?
 		if ($jour_semaine==0) $jour_semaine=7;
 
-		if (checkdate($mois,$j,$annee)){
-		  if ($j == $jour_ved AND $mois == $mois_ved AND $annee == $annee_ved) {
-		    $ligne .= "\n\t<td style='font-size: 11px; margin: 1px; padding: 2px; background-color: white; border: 1px solid $couleur_foncee; text-align: center; -moz-border-radius: 5px;'>" .
-		      $fclic($annee,$mois, $j,"jour","black", $perso) .
-		      "</td>";
-		  } else if ($semaine AND $nom >= $debut AND $nom <= $fin) {
-		    $ligne .= "\n\t<td style='font-size: 11px; margin: 0px; padding: 3px; background-color: white; text-align: center; " .
-		      (($jour_semaine==1) ? 
-		       $style1 :
-		       (($jour_semaine==7) ?
-			$style7 : '')) .
-		      "'>" .
-		      $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso) .
-		      "</td>";
-		  } else {
-		    if ($j == $jour_today AND $mois == $mois_today AND $annee == $annee_today) {
-			$couleur_fond = $couleur_foncee;
-			$couleur = "white";
-		    } else {
-			if ($jour_semaine == 7) {
-				$couleur_fond = "#aaaaaa";
-				$couleur = 'white';
+		if (checkdate($mois,$j,$annee)) {
+			if ($j == $jour_ved AND $mois == $mois_ved AND $annee == $annee_ved) {
+				// Today
+				$ligne .= "<li>" . $fclic($annee, $mois, $j, "jour", "black", $perso) . "</li>\n";
+			} else if ($semaine AND $nom >= $debut AND $nom <= $fin) {
+				// [ML] I don't really understand this, but it doesnt seem to matter..
+				// [ML] it might be to highlight a given week
+
+				/*
+				$ligne .= "\n\t<td style='font-size: 11px; margin: 0px; padding: 3px; background-color: white; text-align: center; " .
+					(($jour_semaine==1) ?  $style1 : (($jour_semaine==7) ?  $style7 : '')) .
+					"'>" .
+					$fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso) .
+					"</td>";
+				*/
+				$ligne .= "<li>" . $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso) . "</li>\n";
 			} else {
-				$couleur_fond = "#ffffff";
-				$couleur = "#aaaaaa";
+				// All other days, including weekends
+
+				/*
+				if ($j == $jour_today AND $mois == $mois_today AND $annee == $annee_today) {
+					$couleur_fond = $couleur_foncee;
+					$couleur = "white";
+				} else {
+					if ($jour_semaine == 7) {
+						$couleur_fond = "#aaaaaa";
+						$couleur = 'white';
+					} else {
+						$couleur_fond = "#ffffff";
+						$couleur = "#aaaaaa";
+					}
+
+					if ($les_rv[$j] > 0) {
+						$couleur = "black";
+					}
+				} */
+
+				$ligne .= "<li>" . $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),$couleur, $perso) . "</li>\n";
 			}
-			if ($les_rv[$j] > 0) {
-				$couleur = "black";
+
+			if ($jour_semaine == 7) {
+				$total .= $ligne;
+				$ligne = '';
 			}
-		    }
-		    $ligne .= "\n\t<td><div style='font-size: 11px; margin-left: 1px; margin-top: 1px; padding: 2px; background-color: $couleur_fond; text-align: center; -moz-border-radius: 5px;'>" .
-		      $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),$couleur, $perso) .
-		      "</div></td>";
-		  }
-		  if ($jour_semaine==7) 
-		    {
-		      $total .= "\n<tr>$ligne\n</tr>";
-		      $ligne = '';
-		    }
 		}
 	}
-	return $total . (!$ligne ? '' : "\n<tr>$ligne\n</tr>");
 
+	if ($ligne) $total .= $ligne;
+	$total .= "</ul>\n";
+
+	return $total;
 }
 
 function http_calendrier_image_et_typo($evenements)
