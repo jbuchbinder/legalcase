@@ -31,8 +31,10 @@ if (count($errors)) {
     header("Location: $HTTP_REFERER");
     exit;
 } else {
-	$ol="name='" . addslashes($name) . "',date_creation='$date_creation',date_update='$date_update',";
-    $ol.="address='" . addslashes($address) . "'";
+	$ol="name='" . clean_input($org_data['name']) . "',
+		date_creation='" . clean_input($org_data['date_creation']) . "',
+		date_update='" . clean_input($org_data['date_update']) . "',
+		address='" . clean_input($org_data['address']) . "'";
 
     if ($id_org>0) {
 		// Prepare query
