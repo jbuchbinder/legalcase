@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.18 2005/01/19 10:35:39 mlutfy Exp $
+	$Id: upd_author.php,v 1.19 2005/01/20 14:02:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -217,7 +217,7 @@ if (isset($_REQUEST['contact_value'])) {
 	$contacts = $_REQUEST['contact_value'];
 	$c_ids = $_REQUEST['contact_id'];
 	$c_types = $_REQUEST['contact_type'];
-	$c_delete = $_REQUEST['del_contact'];
+	// $c_delete = $_REQUEST['del_contact'];
 
 	//
 	// Check if the contacts provided are really attached to the author
@@ -235,8 +235,8 @@ if (isset($_REQUEST['contact_value'])) {
 			die("Invalid modification of contacts detected.");
 	}
 
-	for ($cpt = 0; $c_ids[$cpt]; $cpt++) {
-		if ($c_delete[$cpt]) {
+	for ($cpt = 0; isset($c_ids[$cpt]); $cpt++) {
+		if (isset($_REQUEST['del_contact_' . $c_ids[$cpt]]) && $_REQUEST['del_contact_' . $c_ids[$cpt]]) {
 			delete_contact($c_ids[$cpt]);
 		} else {
 			// Check for doubles, etc. -> the hell with it! [ML] 2005-01-18
@@ -253,8 +253,18 @@ if (isset($_REQUEST['new_contact_value'])) {
 	$new_contacts = $_REQUEST['new_contact_value'];
 	$c_type_names = $_REQUEST['new_contact_type_name'];
 
-	while ($new_contacts[$cpt]) {
-		add_contact('author', $usr['id_author'], $c_type_names[$cpt], $new_contacts[$cpt]);
+	while (isset($new_contacts[$cpt])) {
+		// Process only new contacts which have a value
+		if ($new_contacts[$cpt]) {
+			// And make sure that they have a "type of contact"
+			if ($c_type_names[$cpt]) {
+				add_contact('author', $usr['id_author'], $c_type_names[$cpt], $new_contacts[$cpt]);
+			} else {
+				$_SESSION['errors']['new_contact_' . $cpt] = "Please specify the type of contact.";
+				$_SESSION['usr']['new_contact_' . $cpt] = $new_contacts[$cpt];
+			}
+		}
+
 		$cpt++;
 	}
 }

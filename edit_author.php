@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.25 2005/01/18 12:45:54 mlutfy Exp $
+	$Id: edit_author.php,v 1.26 2005/01/20 14:02:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -125,81 +125,116 @@ echo show_all_errors($_SESSION['errors']);
 	//
 
 	$cpt = 0;
+	$cpt_new = 0;
+
 	$emailmain_exists = false;
-	$contacts = get_contacts('author', $usr['id_author']);
+	$addrmain_exists = false;
 
-	foreach ($contacts as $c) {
-		// Translate title of contact type only if translation exists
-		$title = _T($c['title']);
-		if ($title == $c['title'])
-			$title = $c['title'];
+	$contacts_emailmain = get_contacts('author', $usr['id_author'], 'email_main');
+	$contacts_addrmain = get_contacts('author', $usr['id_author'], 'address_main');
+	$contacts_other = get_contacts('author', $usr['id_author'], 'email_main,address_main', 'not');
 
-		echo '<tr><td align="right" valign="top">' . $title .  "\n";
+	function print_existing_contact($c, $num) {
+		echo '<tr><td align="right" valign="top">' . _T($c['title']) . "\n";
 		echo '<td align="left" valign="top">';
 	
-		echo '<input name="contact_id[]" id="contact_id_' . $cpt . '" '
+		echo '<input name="contact_id[]" id="contact_id_' . $num . '" '
 			. 'type="hidden" value="' . $c['id_contact'] . '" />' . "";
-		echo '<input name="contact_type[]" id="contact_type_' . $cpt . '" '
+		echo '<input name="contact_type[]" id="contact_type_' . $num . '" '
 			. 'type="hidden" value="' . $c['type_contact'] . '" />' . "";
 
 		// [ML] Removed spaces (nbsp) between elements, or it causes the layout
 		// to show on two lines when using a large font.
-		echo '<input name="contact_value[]" id="contact_value_' . $cpt . '" type="text" '
+		echo '<input name="contact_value[]" id="contact_value_' . $num . '" type="text" '
 			. 'class="search_form_txt" size="35" value="' . clean_output($c['value']) . '"/>';
 		echo f_err('email', $_SESSION['errors']) . "";
 
-		if ($c['name'] == 'email_main')
-			$emailmain_exists = true;
+		echo '<label for="id_del_contact' . $num . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" /></label>&nbsp;<input type="checkbox" id="id_del_contact' . $num . '" name="del_contact_' . $c['id_contact'] . '"/>';
 
-		echo '<label for="id_del_contact' . $cpt . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" /></label>&nbsp;<input type="checkbox" id="id_del_contact' . $cpt . '" name="del_contact[]" />';
+		echo "</td>\n</tr>\n\n";
 
-		echo "</td>\n</tr>\n";
-		$cpt++;
 	}
 
-	$cpt = 0;
-
-	if (! $emailmain_exists) {
-		echo '<tr><td align="right" valign="top">' . _T("kw_contacts_emailmain_title") . "\n";
+	// For new specific type of contact, such as 'email_main', 'address_main'
+	function print_new_contact($type_kw, $type_name, $num_new) {
+		echo '<tr><td align="right" valign="top">' . _T("kw_contacts_" . $type_kw . "_title") . "\n";
 		echo '<td align="left" valign="top">';
-		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $cpt . '" '
-			. 'type="hidden" value="email_main" />' . "\n";
+		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $num_new . '" '
+			. 'type="hidden" value="' . $type_name . '" />' . "\n";
 
-		echo '<input name="new_contact_value[]" id="new_contact_value_' . $cpt . '" type="text" '
+		echo '<input name="new_contact_value[]" id="new_contact_value_' . $num_new . '" type="text" '
 			. 'class="search_form_txt" size="35" value=""/>&nbsp;';
 		
-		echo "</td>\n</tr>\n";
+		echo "</td>\n</tr>\n\n";
+	}
+
+	// First show the main address
+	foreach ($contacts_addrmain as $contact) {
+		print_existing_contact($contact, $cpt); 
+		$cpt++;
+		$addrmain_exists = true;
+	}
+
+	if (! $addrmain_exists) {
+		print_new_contact('addressmain', 'address_main', $cpt_new);
+		$cpt_new++;
+	}
+
+	// Second show the email_main
+	foreach ($contacts_emailmain as $contact) {
+		print_existing_contact($contact, $cpt);
+		$cpt++;
+		$emailmain_exists = true;
+	}
+
+	if (! $emailmain_exists) {
+		print_new_contact('emailmain', 'email_main', $cpt_new);
+		$cpt_new++;
+	}
+
+	// Show all the rest
+	foreach ($contacts_other as $contact) {
+		print_existing_contact($contact, $cpt);
 		$cpt++;
 	}
+
+	// Show "new contact"
 ?>
 		<tr>
-			<td align="right" valign="top">Other contact:<br />(optionnal)</td>
+			<td align="right" valign="top">
+			
+			<?php
+				echo f_err_star('new_contact_' . $cpt_new, $_SESSION['errors']);
+				echo "Other contact";
+			?>
+			
+			</td>
 			<td align="left" valign="top">
 				<div>
 				<?php
 					global $system_kwg;
 
-					$cpt = 0;
-					echo '<select name="new_contact_type_name[]" id="contact_type_' . $cpt . '">' . "\n";
+					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '">' . "\n";
 					echo "<option value=''>" . "- select contact type -" . "</option>\n";
 
 					foreach ($system_kwg['contacts']['keywords'] as $contact) {
 						if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main') {
-							// Translate title of contact type only if translation exists
-							$title = _T($contact['title']);
-							if ($title == $contact['title'])
-								$title = $contact['title'];
-
-							echo "<option value='" . $contact['name'] . "'>" .  $title . "</option>\n";
+							echo "<option value='" . $contact['name'] . "'>" . _T($contact['title']) . "</option>\n";
 						}
 					}
 					echo "</select>\n";
 
-					$cpt++;
 				?>
 				</div>
 				<div>
-					<input type='text' size='40' style='style: 99%' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt; ?>' class='search_form_txt' />
+					<input type='text' size='40' style='style: 99%' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt_new; ?>' 
+					
+					<?php 
+						echo ' value="' . $_SESSION['usr']['new_contact_' . $cpt_new] . '" ';
+						$cpt_new++;
+					?>
+						
+					class='search_form_txt' />
 				</div>
 			</td>
 		</tr>
