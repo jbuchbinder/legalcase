@@ -14,7 +14,7 @@ function read_metas() {
 	global $meta, $meta_upd;
 	global $db_ok;
 
-	if (! defined($db_ok)) return; // no inc_connect.php
+	if (! isset($db_ok)) return; // no inc_connect.php
 	if (! $db_ok) return; // database connection failed
 
 	$meta = '';
