@@ -1,5 +1,5 @@
 <?php
 
-include ("summary.php");
+include ("listcases.php");
 
 ?>
