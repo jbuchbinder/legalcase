@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.22 2005/01/19 12:21:49 mlutfy Exp $
+	$Id: edit_client.php,v 1.23 2005/01/21 15:48:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -107,7 +107,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 				</select>
 			</td></tr>
 		<tr><td>Created on:</td>
-			<td><?php echo clean_output(date(_T('date_format_short'),strtotime($client_data['date_creation']))); ?></td></tr>
+			<td><?php echo format_date($client_data['date_creation'], 'short'); ?></td></tr>
 		<tr><td><?php echo _T('person_input_citizen_number'); ?></td>
 			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>" class="search_form_txt"></td></tr>
 		<tr><td><?php echo _T('person_input_address'); ?></td>
