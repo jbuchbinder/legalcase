@@ -67,13 +67,13 @@ if ($logout) {
 }
 
 
-// If the user logins with bonjour=oui (hello=yes), we try to put
-// a cookie and then go to lcm_login.php which will try to make a 
-// diagnostic if necessary.
+// If the user logins with privet=yes (privet: greetings), we try to
+// put a cookie and then go to lcm_login.php which will try to make 
+// a diagnostic if necessary.
 // [ML] echec == failure
-if ($test_echec_cookie == 'oui') {
-	lcm_setcookie('lcm_session', 'test_echec_cookie');
-	$link = new Link("lcm_login.php?var_echec_cookie=oui");
+if ($cookie_test_failed == 'yes') {
+	lcm_setcookie('lcm_session', 'cookie_test_failed');
+	$link = new Link("lcm_login.php?var_cookie_failed=yes");
 	$link->addVar("var_url", $cible->getUrl());
 	@header("Location: ".$link->getUrl());
 	exit;
@@ -127,7 +127,7 @@ if ($essai_login == 'oui') {
 		if ($row_author = lcm_fetch_array($result))
 			$cookie_session = creer_cookie_session($row_author);
 
-		$cible->addVar('bonjour','oui');
+		$cible->addVar('privet','yes');
 	} else {
 		$cible = new Link("lcm_login.php");
 
