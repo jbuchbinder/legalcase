@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.93 2005/03/01 09:31:55 antzi Exp $
+	$Id: case_det.php,v 1.94 2005/03/01 10:39:18 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -68,6 +68,7 @@ if ($case > 0) {
 		// Show tabs
 		$groups = array('general' => _T('case_tab_general'),
 				'clients' => _T('case_tab_clients'),
+				'appointments' => _T('case_tab_appointments'),
 				'followups' => _T('case_tab_followups'),
 				'times' => _T('case_tab_times'),
 				'attachments' => _T('case_tab_attachments'));
@@ -246,6 +247,105 @@ if ($case > 0) {
 				
 				break;
 			//
+			// Case appointments
+			//
+			case 'appointments' :
+				echo '<fieldset class="info_box">';
+				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_appointments') . '</div>';
+				echo "<p class=\"normal_text\">\n";
+			
+				echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+				echo "\t\t<tr><th class='heading'>";
+				switch ($fu_order) {
+					case 'ASC':
+						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=appointments' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
+						break;
+					case 'DESC':
+						echo "<a href='case_det.php?case=$case&amp;fu_order=ASC&amp;tab=appointments' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
+						break;
+					default:
+						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=appointments' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
+				}
+			//	echo _T('date') .
+				echo "</th>";
+				echo "<th class='heading'>" . 'Author' . "</th>";
+				echo "<th class='heading'>"
+					. _T( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>";
+				echo "<th class='heading'>" . _T('type') . "</th>";
+				echo "<th class='heading'>" . _T('description') . "</th>";
+				echo "<th class='heading'>&nbsp;</th></tr>\n";
+			
+				// Prepare query
+				$q = "SELECT	lcm_followup.id_followup,
+						lcm_followup.date_start,
+						lcm_followup.date_end,
+						lcm_followup.type,
+						lcm_followup.description,
+						lcm_author.name_first,
+						lcm_author.name_middle,
+						lcm_author.name_last
+					FROM lcm_followup, lcm_author
+					WHERE id_case=$case AND lcm_followup.id_author=lcm_author.id_author";
+			
+				// Add ordering
+				if ($fu_order) $q .= " ORDER BY date_start $fu_order";
+			
+				// Do the query
+				$result = lcm_query($q);
+			
+				// Set the length of short followup title
+				$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
+			
+				// Process the output of the query
+				while ($row = lcm_fetch_array($result)) {
+					echo "\t\t";
+					
+					// Start date
+					echo '<tr><td>' . format_date($row['date_start'], 'short') . '</td>';
+					
+					// Author initials
+					echo '<td>';
+					echo substr($row['name_first'],0,1);
+					echo substr($row['name_middle'],0,1);
+					echo substr($row['name_last'],0,1);
+					echo '</td>';
+					
+					// Time
+					echo '<td>';
+					$fu_date_end = vider_date($row['date_end']);
+					if ($prefs['time_intervals'] == 'absolute') {
+						if ($fu_date_end) echo format_date($row['date_end'],'short');
+					} else {
+						$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
+						echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
+					}
+					echo '</td>';
+
+					// Type
+					echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
+			
+					// Description
+					if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
+						$short_description = $row['description'];
+					else
+						$short_description = substr($row['description'],0,$title_length) . '...';
+			
+					echo '<td><a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a></td>';
+			
+					if ($edit)
+						echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '" class="content_link">' . _T('Edit') . '</a></td>';
+					echo "</tr>\n";
+				}
+			
+				echo "\t</table>\n";
+			
+				if ($add)
+					echo "<br /><a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a><br /><br />\n";
+			
+				echo "</p></fieldset>";
+				
+				break;
+			//
 			// Case followups
 			//
 			case 'followups' :
@@ -257,13 +357,13 @@ if ($case > 0) {
 				echo "\t\t<tr><th class='heading'>";
 				switch ($fu_order) {
 					case 'ASC':
-						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=followups' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 						break;
 					case 'DESC':
-						echo "<a href='case_det.php?case=$case&amp;fu_order=ASC&amp;tab=2' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=ASC&amp;tab=followups' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
 						break;
 					default:
-						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=followups' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 				}
 			//	echo _T('date') .
 				echo "</th>";
@@ -396,13 +496,13 @@ if ($case > 0) {
 					echo "\t\t<tr><td>";
 					echo njoin(array($row['name_first'],$row['name_middle'],$row['name_last']));
 					echo '</td><td>';
-					echo sprintf('%.2f hours',($row['time'] / 3600));
+					echo format_time_interval($row['time'],($prefs['time_intervals_notation'] == 'hours_only'));
 					echo "</td></tr>\n";
 				}
 
 				// Show total case hours
 				echo "\t\t<tr><td>" . 'TOTAL:' . "</td><td>";
-				echo sprintf('%.2f hours', ($total_time / 3600));
+				echo format_time_interval($total_time,($prefs['time_intervals_notation'] == 'hours_only'));
 				echo "</td></tr>\n";
 
 				// Close table
