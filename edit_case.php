@@ -69,10 +69,12 @@ else lcm_page_start(_T('new_case'));
 		<tr><td>" . _T('case_title') . ":</td>
 			<td><input name=\"title\" value=\"" . htmlspecialchars($case_data['title']) . "\">" . f_err('title',$errors) . "</td></tr>
 		<tr><td>" . _T('court_archive_id') . ":</td>
-			<td><input name=\"id_court_archive\" value=\"" . htmlspecialchars($case_data['id_court_archive']) . "\"></td></tr>
-		<tr><td>" . _T('creation_date') . ":</td>
-			<td>" . $case_data['date_creation'] . "</td></tr>
-		<tr><td>" . _T('assignment_date') . ":</td>
+			<td><input name=\"id_court_archive\" value=\"" . htmlspecialchars($case_data['id_court_archive']) . "\"></td></tr>";
+// [AG] Creation date not shown upon ML request
+//		<tr><td>" . _T('creation_date') . ":</td>
+//			<td>" . $case_data['date_creation'] . "</td></tr>
+	echo "
+			<tr><td>" . _T('assignment_date') . ":</td>
 			<td><input name=\"date_assignment\" value=\"" . $case_data['date_assignment'] . "\"></td></tr>
 		<tr><td>" . _T('legal_reason') . ":</td>
 			<td><input name=\"legal_reason\" value=\"" . htmlspecialchars($case_data['legal_reason']) . "\"></td></tr>
