@@ -17,7 +17,7 @@ if (@file_exists('inc/config/inc_connect.php')) {
 }
 
 //
-// Usual installation steps
+// Main installation steps
 //
 
 if ($step == 6) {
@@ -36,9 +36,9 @@ if ($step == 6) {
 	if ($login) {
 		$nom = addslashes($nom);
 		$query = "SELECT id_author FROM lcm_author WHERE username=\"$login\"";
-		$result = spip_query_db($query);
+		$result = lcm_query_db($query);
 		unset($id_auteur);
-		while ($row = spip_fetch_array($result)) $id_auteur = $row['id_auteur'];
+		while ($row = lcm_fetch_array($result)) $id_auteur = $row['id_auteur'];
 
 		$mdpass = md5($pass);
 		$htpass = generer_htpass($pass);
@@ -49,7 +49,7 @@ if ($step == 6) {
 		} else {
 			$query = "INSERT INTO lcm_author (name_first, username, password, htpass, alea_futur, status) VALUES(\"$nom\",\"$login\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"admin\")";
 		}
-		spip_query_db($query);
+		lcm_query_db($query);
 
 		// insert email as main system administrator
 		ecrire_meta('email_sysadmin', $email);
@@ -153,8 +153,8 @@ else if ($step == 4) {
 	mysql_select_db("$sel_db");
 
 	// Test if the software was already installed
-	@spip_query_db("SELECT COUNT(*) FROM lcm_meta");
-	$deja_installe = !spip_sql_errno();
+	@lcm_query_db("SELECT COUNT(*) FROM lcm_meta");
+	$already_installed = !lcm_sql_errno();
 
 	include_lcm('inc_dbmgnt');
 	include_lcm('inc_upgrade');
@@ -167,12 +167,12 @@ else if ($step == 4) {
 
 	/*
 	$query = "SELECT COUNT(*) FROM lcm_case";
-	$result = spip_query_db($query);
-	$result_ok = (spip_num_rows($result) > 0);
-	if (!$deja_installe) {
+	$result = lcm_query_db($query);
+	$result_ok = (lcm_num_rows($result) > 0);
+	if (!$already_installed) {
 		$query = "INSERT lcm_meta (nom, valeur) VALUES ('nouvelle_install', 'oui')";
-		spip_query_db($query);
-		$result_ok = !spip_sql_errno();
+		lcm_query_db($query);
+		$result_ok = !lcm_sql_errno();
 	}
 	*/
 	$result_ok = 1;
@@ -186,8 +186,8 @@ else if ($step == 4) {
 		$conn .= "define('_CONFIG_INC_CONNECT', '1');\n";
 		$conn .= "\$GLOBALS['lcm_connect_version'] = 0.1;\n";
 		$conn .= "include_lcm('inc_db');\n";
-		$conn .= "@spip_connect_db('$adresse_db','','$login_db','$pass_db','$sel_db');\n";
-		$conn .= "\$GLOBALS['db_ok'] = !!@spip_num_rows(@spip_query_db('SELECT COUNT(*) FROM lcm_meta'));\n";
+		$conn .= "@lcm_connect_db('$adresse_db','','$login_db','$pass_db','$sel_db');\n";
+		$conn .= "\$GLOBALS['db_ok'] = !!@lcm_num_rows(@lcm_query_db('SELECT COUNT(*) FROM lcm_meta'));\n";
 		$conn .= '?'.'>';
 		$myFile = fopen('inc/config/inc_connect_install.php', 'wb');
 		fputs($myFile, $conn);
@@ -322,14 +322,14 @@ else if ($step == 1) {
 	$login_db = $login_hebergeur;
 	$pass_db = '';
 
-	// Recuperer les anciennes donnees pour plus de facilite (si presentes)
+	// Fetch the previous configuration data to make things easier (if possible)
 	if (@file_exists('inc/config/inc_connect_install.php')) {
 		$s = @join('', @file('inc/config/inc_connect_install.php'));
 		if (ereg("mysql_connect\([\"'](.*)[\"'],[\"'](.*)[\"'],[\"'](.*)[\"']\)", $s, $regs)) {
 			$adresse_db = $regs[1];
 			$login_db = $regs[2];
 		}
-		else if (ereg("spip_connect_db\('(.*)','(.*)','(.*)','(.*)','(.*)'\)", $s, $regs)) {
+		else if (ereg("lcm_connect_db\('(.*)','(.*)','(.*)','(.*)','(.*)'\)", $s, $regs)) {
 			$adresse_db = $regs[1];
 			if ($port_db = $regs[2]) $adresse_db .= ':'.$port_db;
 			$login_db = $regs[3];
