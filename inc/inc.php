@@ -12,9 +12,6 @@ include_lcm('inc_auth');
 include_lcm('inc_presentation');
 include_lcm('inc_text');
 include_lcm('inc_filters');
-// [ML] include_lcm("inc_urls");
-// [ML] include_lcm("inc_layer");
-// [ML] include_lcm("inc_rubriques");
 include_lcm('inc_calendar');
 
 if (!@file_exists('data/inc_meta_cache.php'))
@@ -25,10 +22,24 @@ if (!@file_exists('data/inc_meta_cache.php'))
 // Preferences for presentation
 //
 
-if ($lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'] AND $lang <> $author_session['lang'] AND changer_langue($lang)) {
-	spip_query ("UPDATE lcm_author SET lang = '".addslashes($lang)."' WHERE id_author  = $connect_id_auteur");
+lcm_log("1- lang = " . $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang']);
+lcm_log("2- session = " . $author_session['lang']);
+
+// [ML] This is very important (but dirty hack) to change the language
+// from config_author.php, without passing by lcm_cookie.php
+if ($sel_language)
+	$lang = $sel_language;
+else
+	$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
+
+// if ($lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'] AND $lang <> $author_session['lang'] AND lcm_set_language($lang)) {
+if ($lang AND $lang <> $author_session['lang'] AND lcm_set_language($lang)) {
+	lcm_query("UPDATE lcm_author SET lang = '".addslashes($lang)."' WHERE id_author  = $connect_id_auteur");
 	$author_session['lang'] = $lang;
-	ajouter_session($author_session, $lcm_session);
+	lcm_add_session($author_session, $lcm_session);
+	lcm_log("session re-saved");
+} else {
+	lcm_log("session NOT touched");
 }
 
 if ($set_couleur) {
@@ -42,9 +53,6 @@ if ($set_disp) {
 if ($set_options == 'avancees' OR $set_options == 'basiques') {
 	$prefs['options'] = $set_options;
 	$prefs_mod = true;
-}
-if ($prefs_mod) {
-	// [ML TODO] spip_query ("UPDATE spip_auteurs SET prefs = '".addslashes(serialize($prefs))."' WHERE id_auteur = $connect_id_auteur");
 }
 
 if ($set_ecran) {
@@ -111,59 +119,6 @@ $couleur_foncee = $couleurs_spip[$choix_couleur]['couleur_foncee'];
 $couleur_claire = $couleurs_spip[$choix_couleur]['couleur_claire'];
 $couleur_lien = $couleurs_spip[$choix_couleur]['couleur_lien'];
 $couleur_lien_off = $couleurs_spip[$choix_couleur]['couleur_lien_off'];
-
-/*
-switch ($prefs['couleur']) {
-	case 6:
-		/// Yellow
-		$couleur_foncee="#9DBA00";
-		$couleur_claire="#C5E41C";
-		$couleur_lien="#657701";
-		$couleur_lien_off="#A6C113";
-		break;
-	case 1:
-		/// Some sort of violet
-		$couleur_foncee="#eb68b3";
-		$couleur_claire="#ffa9e6";
-		$couleur_lien="#E95503";
-		$couleur_lien_off="#8F004D";
-		break;
-	case 2:
-		/// Orange
-		$couleur_foncee="#fa9a00";
-		$couleur_claire="#ffc000";
-		$couleur_lien="#81A0C1";
-		$couleur_lien_off="#FF5B00";
-		break;
-	case 3:
-		/// Salmon
-		$couleur_foncee="#CDA261";
-		$couleur_claire="#FFDDAA";
-		$couleur_lien="#5E0283";
-		$couleur_lien_off="#472854";
-		break;
-	case 4:
-		/// Light blue
-		$couleur_foncee="#5da7c5";
-		$couleur_claire="#97d2e1";
-		$couleur_lien="#869100";
-		$couleur_lien_off="#5B55A0";
-		break;
-	case 5:
-		/// Grey
-		$couleur_foncee="#727D87";
-		$couleur_claire="#C0CAD4";
-		$couleur_lien="#854270";
-		$couleur_lien_off="#666666";
-		break;
-	default:
-		/// Yellow
-		$couleur_foncee="#9DBA00";
-		$couleur_claire="#C5E41C";
-		$couleur_lien="#657701";
-		$couleur_lien_off="#A6C113";
-}
-*/
 
 
 //
