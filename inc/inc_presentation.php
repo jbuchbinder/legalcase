@@ -135,11 +135,11 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listcases.php\" class=\"main_nav_btn\">My cases</a></li>
 							<li><a href=\"edit_client.php\" class=\"main_nav_btn\">Add Client</a></li>
 							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
-							<li>Edit <abbr title=\"User Interface\">UI</abbr> preferences</li>\n";
+							<li><a href=\"config_author.php\" class=\"main_nav_btn\">Edit <abbr title=\"User Interface\">UI</abbr> preferences</a></li>\n";
 
 	if ($connect_status == 'admin') {
 		// TODO: Provide better name
-		echo "\t\t\t\t\t\t\t<li><a href=\"config_site.php\">Site conf</a></li>\n";
+		echo "\t\t\t\t\t\t\t<li><a href=\"config_site.php\" class=\"main_nav_btn\">Site conf</a></li>\n";
 		echo "\t\t\t\t\t\t\t<li><abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">Archives</abbr></li>\n";
 		echo "\t\t\t\t\t\t\t<li><abbr title=\"Generate reports on all cases (admin only)\">Reports</abbr></li>\n";
 	}
