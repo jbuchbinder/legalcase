@@ -853,7 +853,10 @@ function show_tabs($tab_list, $selected, $url_base) {
 			echo "\t<li><a href=\"$url_base?";
 			if (count($params)>0) echo join('&amp;',$params) . '&amp;';
 			echo 'tab=' . $key . "\">";
-		} else echo "\t<li class=\"active\">";
+		} else {
+			echo "\t<li class=\"active\">";
+		}
+
 		echo $tab;
 		if ($key != $selected) echo "</a>";
 		echo "</li>\n";
@@ -891,6 +894,65 @@ function show_tabs_links($tab_list, $selected='', $sel_link=false) {
 	echo "</ul>";
 	echo "</div>";
 	echo "\n\n";
+}
+
+function show_listcase_start() {
+	$case_court_archive = read_meta('case_court_archive');
+
+	echo '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
+	echo "<tr>\n";
+	echo '<th class="heading">#</th>';
+	echo '<th class="heading">Title</th>';
+
+	if ($case_court_archive == 'yes') {
+		echo '<th class="heading">Court archive</th>';
+	}
+	
+	echo '<th colspan="3" class="heading">Status</th>';
+	echo "</tr>\n";
+}
+
+function show_listcase_item($item, $cpt, $custom = '') {
+	$ac_read = allowed($item['id_case'],'r');
+	$ac_edit = allowed($item['id_case'], 'e');
+	$css = ($cpt %2 ? "dark" : "light");
+
+	echo "<tr>\n";
+
+	// Case ID
+	echo "<td class='tbl_cont_" . $css . "'>";
+	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
+	echo highlight_matches($item['id_case'],$find_case_string);
+	if ($ac_read) echo '</a>';
+	echo "</td>\n";
+
+	// Title
+	echo "<td class='tbl_cont_" . $css . "'>";
+	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
+	echo highlight_matches(clean_output($item['title']),$find_case_string);
+	if (allowed($item['id_case'],'r')) echo '</a>';
+	echo "</td>\n";
+	
+	// Court archive ID
+	if ($case_court_archive == 'yes') {
+		echo "<td class='tbl_cont_" . $css . "'>";
+		echo highlight_matches(clean_output($item['id_court_archive']),$find_case_string);
+		echo "</td>\n";
+	}
+	
+	// Status
+	echo "<td class='tbl_cont_" . $css . "'>" . $item['status'] . "</td>\n";
+	
+	// Actions / custom html
+	echo "<td class='tbl_cont_" . $css . "'>";
+	echo $custom;
+	echo "</td>\n";
+
+	echo "</tr>\n";
+}
+
+function show_listcase_end() {
+	echo "</table>\n";
 }
 
 ?>
