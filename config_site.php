@@ -18,62 +18,28 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.34 2005/02/16 00:24:47 antzi Exp $
+	$Id: config_site.php,v 1.35 2005/02/24 14:14:26 mlutfy Exp $
 */
 
 include ("inc/inc.php");
-
-// TODO: We should keep a log of modifications
-// For example, if currency changed many times, it will allow
-// to track when a currency had which value (silly, but can avoid crisis)
 
 function show_config_form() {
 	echo "<p class='normal_text'><img src='images/jimmac/icon_warning.gif' alt='' align='right'
 		height='48' width='48' />" . _T('siteconf_warning') . "</p>\n";
 
-/*
-	if ($panel == 'collab')
-		$html_collab = " &lt;--";
-	else if ($panel == 'policy')
-		$html_policy = " &lt;--";
-	else if ($panel == 'regional')
-		$html_regional = " &lt;--";
-	else 
-		$html_general = " &lt;--";
-
-	echo '<ul class="simple_list">' . "\n";
-	echo "<li><a href='config_site.php?panel=general' class='content_link'>" . _T('siteconf_subtitle_general_info') . "</a>" . $html_general . "</li>\n";
-	echo "<li><a href='config_site.php?panel=collab' class='content_link'>" . _T('siteconf_subtitle_collab_work') . "</a>" . $html_collab . "</li>\n";
-	echo "<li><a href='config_site.php?panel=policy' class='content_link'>" .  _T('siteconf_subtitle_policy') . "</a>" . $html_policy . "</li>\n";
-	echo "<li><a href='config_site.php?panel=regional' class='content_link'>" . _T('siteconf_subtitle_regional') . "</a>" . $html_regional . "</li>\n";
-	echo "</ul>\n";
-*/
 	// Show tabs
-	$groups = array('general' => _T('siteconf_subtitle_general_info'),
-			'collab' => _T('siteconf_subtitle_collab_work'),
-			'policy' => _T('siteconf_subtitle_policy'),
-			'regional' => _T('siteconf_subtitle_regional'));
+	$groups = array('general' => _T('siteconf_tab_general'),
+			'collab' => _T('siteconf_tab_collab_work'),
+			'policy' => _T('siteconf_tab_policy'),
+			'regional' => _T('siteconf_tab_regional'));
 	$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 	//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 	show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
 
 	echo "<form name='upd_site_profile' method='post' action='" . $_SERVER['REQUEST_URI'] . "'>\n";
-/*
-	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
+	// echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
 
-	if ($panel == 'collab')
-		show_config_form_collab();
-	else if ($panel == 'policy')
-		show_config_form_policy();
-	else if ($panel == 'regional')
-		show_config_form_regional();
-	else
-		show_config_form_general();
-*/
 	switch ($tab) {
-		case 'general' :
-			show_config_form_general();
-			break;
 		case 'collab' :
 			show_config_form_collab();
 			break;
@@ -83,6 +49,9 @@ function show_config_form() {
 		case 'regional' :
 			show_config_form_regional();
 			break;
+		default:
+			// case: 'general'
+			show_config_form_general();
 	}
 	
 	echo "</form>\n";
@@ -99,25 +68,29 @@ function show_config_form_general() {
 	if (empty($site_name))
 		$site_name = _T('title_software');
 
-	echo "\t<input type='hidden' name='conf_modified_general' value='yes'/>\n";
-	echo "\t<input type='hidden' name='panel' value='general'/>\n";
+	echo '<input type="hidden" name="conf_modified_general" value="yes" />' . "\n";
+	echo '<input type="hidden" name="panel" value="general" />' . "\n";
 
-	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'><label for='site_name'>" . _T('siteconf_input_site_name') . "</label></div>\n";
+	echo '<fieldset class="conf_info_box">' . "\n";
+	echo '<div class="prefs_column_menu_head">' . _T('siteconf_subtitle_site_identification') . "</div>\n";
+	
+	echo '<p><b><label for="site_name">' . _T('siteconf_input_site_name') . "</label></b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_site_name') . "</small></p>\n";
 	echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
 
-	echo "<div class='prefs_column_menu_head'><label for='site_desc'>" . _T('siteconf_input_site_desc') . "</label></div>\n";
+	echo "<p><b><label for='site_desc'>" . _T('siteconf_input_site_desc') .  "</label></b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_site_desc') . "</small></p>\n";
 	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40' class='search_form_txt' /></p>\n";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate1' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></div>\n";
+	echo "<div class='prefs_column_menu_head'>" . _T('siteconf_subtitle_site_contacts') . "</div>\n";
+
+	echo "<p><b><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></b></p>\n";
 	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40' class='search_form_txt' /></p>\n";
 
-	echo "<div class='prefs_column_menu_head'><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></div>\n";
+	echo "<p><b><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_admin_email') . "</small></p>\n";
 	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40' class='search_form_txt' /></p>\n";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate2' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
@@ -252,20 +225,21 @@ function show_config_form_regional() {
 	echo "\t<input type='hidden' name='panel' value='regional'/>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'>" . _T('siteconf_input_default_lang') . "</div>\n";
+	echo "<div class='prefs_column_menu_head'>" . _T('siteconf_subtitle_regional') . "</div>\n";
+
+	echo "<p><b>" . _T('siteconf_input_default_lang') . "</b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_default_lang') . "</small></p>\n";
 	echo "<p align='center'>" . menu_languages('default_language', $default_language) . "</p>\n";
 
-	echo "<div class='prefs_column_menu_head'><label for='currency'>" . _T('siteconf_input_currency') . "</label></div>\n";
-	echo "<p><small class='sm_11'>" . _T('siteconf_info_currency') . "</small></p>\n";
-	echo "<p><small class='sm_11'>" . _T('siteconf_warning_currency') . "</small></p>\n";
+	echo "<p><b><label for='currency'>" . _T('siteconf_input_currency') . "</label></b></p>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_currency') . ' ' .  _T('siteconf_warning_currency') . "</small></p>\n";
 	echo "<p align='center'><input type='text' id='currency' name='currency' value='$currency' size='5' class='search_form_txt' /></p>\n";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate4' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'><label for='available_regional'>" . _T('siteconf_input_available_languages') . "</label></div>\n";
-	echo "<p><small class='sm_11'>" . _T('siteconf_info_available_languages') . "</small></p>\n";
+	echo "<div class='prefs_column_menu_head'><label for='available_regional'>" . _T('siteconf_subtitle_refresh_lang') . "</label></div>\n";
+	echo "<p>" . _T('siteconf_info_available_languages') . "</p>\n";
 	// echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate5' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
