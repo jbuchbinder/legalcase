@@ -350,33 +350,37 @@ if($prefs['screen'] == "wide") {
 
 if($prefs['screen'] == "narrow")
 {
-	echo "<div id=\"footer\">
-	<div class=\"prefs_column_menu_head\">Search</div>
+	echo '<div id="footer">
+	<div class="prefs_column_menu_head">' .  _T('menu_search') . "</div>
 	<p class=\"prefs_column_text\">
 	<table border=\"0\" align=\"center\" width=\"100%\">
 		<tr>
 			<td align=\"left\" valign=\"top\">
+
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
-			Find case<br />
-			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\"";
-	if (isset($find_case_string)) echo " value='$find_case_string'";
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			" . _T('input_search_case') . '<br />
+			<input type="text" name="find_case_string" size="10" class="search_form_txt"';
+	if (isset($find_case_string)) echo ' value="' . $find_case_string . '"';
+	echo ' />&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . "\" class=\"search_form_btn\" />
 			</form>
+
 			</td>
 			<td align=\"left\" valign=\"top\">
+
 			<form name=\"frm_find_client\" class=\"search_form\" action=\"listclients.php\" method=\"post\">
-			Find client<br />
+			" . _T('input_search_client') . "<br />
 			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\"";
 	if (isset($find_client_string)) echo " value='$find_client_string'";
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
 			</form>
+
 			</td>
 			<td align=\"left\" valign=\"top\">
 			<form name=\"frm_find_client\" class=\"search_form\" action=\"listorgs.php\" method=\"post\">
-			Find organisation<br />
+			" . _T('input_search_organisation') . "<br />
 			<input type=\"text\" name=\"find_org_string\" size=\"10\" class=\"search_form_txt\"";
 	if (isset($find_org_string)) echo " value='$find_org_string'";
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
 			</form>
 			</td>
 		</tr>
