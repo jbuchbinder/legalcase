@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.12 2005/03/23 10:27:42 mlutfy Exp $
+	$Id: app_det.php,v 1.13 2005/04/01 16:50:43 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -104,21 +104,37 @@ if ($row = lcm_fetch_array($result)) {
 
 	if ($row['id_case'] > 0) {
 //		echo '<br />';
-		// Show child followup
+		// Show parent followup
 		$q = "SELECT lcm_app_fu.id_followup,lcm_followup.description FROM lcm_app_fu,lcm_followup
 			WHERE lcm_app_fu.id_app=" . $row['id_app'] . "
 				AND lcm_app_fu.id_followup=lcm_followup.id_followup
 				AND lcm_app_fu.relation='parent'";
 		$res_fu = lcm_query($q);
 		if (lcm_num_rows($res_fu) > 0) {
-			// Show child followup
+			// Show parent followup title
 			$fu = lcm_fetch_array($res_fu);
 			$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
 			if (strlen(lcm_utf8_decode($fu['description'])) < $title_length)
 				$short_description = $fu['description'];
 			else
 				$short_description = substr($fu['description'],0,$title_length) . '...';
-			echo '<br />Followup:' . ' <a href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description; // TRAD
+			echo '<br />Consequent to:' . ' <a href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description . "</a><br />\n"; // TRAD
+		}
+		// Show child followup
+		$q = "SELECT lcm_app_fu.id_followup,lcm_followup.description FROM lcm_app_fu,lcm_followup
+			WHERE lcm_app_fu.id_app=" . $row['id_app'] . "
+				AND lcm_app_fu.id_followup=lcm_followup.id_followup
+				AND lcm_app_fu.relation='child'";
+		$res_fu = lcm_query($q);
+		if (lcm_num_rows($res_fu) > 0) {
+			// Show child followup title
+			$fu = lcm_fetch_array($res_fu);
+			$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
+			if (strlen(lcm_utf8_decode($fu['description'])) < $title_length)
+				$short_description = $fu['description'];
+			else
+				$short_description = substr($fu['description'],0,$title_length) . '...';
+			echo '<br />Resulting followup:' . ' <a href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description; // TRAD
 		} else {
 			// Show create followup from appointment
 			echo '<br /><a href="edit_fu.php?case=' . $row['id_case'] . '&amp;app=' . $row['id_app']
