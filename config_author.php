@@ -22,9 +22,14 @@
 include('inc/inc.php');
 lcm_page_start("Update profile");
 
-?>
+function show_author_form() {
 
-<form name="upd_user_profile" method="post" action="lcm_upd_user_profile.php">
+// TODO: Show author information
+
+?>
+<form name="upd_user_profile" method="post" action="config_author.php">
+	<input type="hidden" name="author_modified" value="yes"/>
+
           <table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
             <tr> 
               <td colspan="2" align="center" valign="middle" class="heading"><h4>Change 
@@ -134,6 +139,23 @@ lcm_page_start("Update profile");
             </tr>
           </table>
 </form>
+<?php
+
+}
+
+function apply_author_changes() {
+	// TODO
+
+	// look at config_site.php
+}
+
+if ($author_modified)
+	apply_author_changes();
+
+show_author_form();
+
+?>
+
 <?php
 	lcm_page_end();
 ?>
