@@ -5,6 +5,8 @@ define('_INC_DBMGNT', '1');
 
 include_lcm('inc_access');
 
+// For details on the various fields, see:
+// http://www.lcm.ngo-bg.org/article2.html
 
 function create_database() {
 	//
@@ -36,7 +38,7 @@ function create_database() {
 		legal_reason text NOT NULL,
 		alledged_crime text NOT NULL,
 		status text NOT NULL,
-		public tinyint(1) default '0' NOT NULL,	// Is the case publicaly available to all users?
+		public tinyint(1) default '0' NOT NULL,
 		PRIMARY KEY (id_case))";
 	$result = lcm_query($query);
 
