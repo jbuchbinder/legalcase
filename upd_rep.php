@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep.php,v 1.3 2005/01/19 09:14:40 mlutfy Exp $
+	$Id: upd_rep.php,v 1.4 2005/01/25 22:29:57 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -99,17 +99,18 @@ if (count($errors)) {
 	// session_destroy();
 
 	//header("Location: rep_det.php?rep=$id_report");
+	$ref_edit_rep = ($rep_data['ref_edit_rep'] ? $rep_data['ref_edit_rep'] : "rep_det.php?rep=$id_report");
 
 	// Proceed accoring to the button type
 	switch ($submit) {
 		case 'addnew':
-			header("Location: edit_rep.php?rep=0&ref=" . $rep_data['ref_edit_rep']);
+			header("Location: edit_rep.php?rep=0&ref=$ref_edit_rep");
 			break;
 		case 'adddet':
-			header("Location: case_rep.php?rep=$id_report");
+			header("Location: rep_det.php?rep=$id_report");
 			break;
 		default :
-			header("Location: " . $rep_data['ref_edit_rep']);
+			header("Location: $ref_edit_rep");
 	}
 }
 ?>
