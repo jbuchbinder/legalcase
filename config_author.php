@@ -22,6 +22,9 @@
 include('inc/inc.php');
 
 function show_author_form() {
+	global $author_session;
+	global $prefs;
+
 	// TODO: Show author information
 
 ?>
@@ -75,8 +78,7 @@ function show_author_form() {
               <td colspan="2" align="center" valign="middle" class="separate">&nbsp;</td>
             </tr>
             <tr> 
-              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change 
-                  password</h4></td>
+              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change password</h4></td>
             </tr>
             <tr>
               <td align="right" valign="top">Old password:</td>
@@ -98,11 +100,14 @@ function show_author_form() {
             </tr>
             <tr> 
               <td align="right" valign="top">Theme:</td>
-              <td align="left" valign="top"><select name="sel_theme" class="sel_frm" id="sel_theme">
+              <td align="left" valign="top">
+			  	<input type="hidden" name="old_theme" id="old_theme" value="<?php echo $prefs['theme'] ?>" />
+				<!-- TODO: make a function for this to list all lcm_ui*.css -->
+			  	<select name="sel_theme" class="sel_frm" id="sel_theme">
                   <option value="">Default</option>
                   <option value="blue">Blue</option>
                   <option value="orange">Orange</option>
-                  <option value="mono">Monochrome</option>
+                  <option value="monochrome">Monochrome</option>
                 </select></td>
             </tr>
 <?php
@@ -111,7 +116,7 @@ function show_author_form() {
 			<tr> 
 				<td align=\"right\" valign=\"top\">Language:</td>
 				<td align=\"left\" valign=\"top\">
-					<input type='hidden' name='old_language' value='" .  $GLOBALS['lcm_lang'] . "'/>\n";
+					<input type='hidden' name='old_language' value='" .  $author_session['lang'] . "'/>\n";
 
 		echo menu_languages('sel_language');
 		echo "
@@ -150,47 +155,36 @@ function show_author_form() {
 function apply_author_changes() {
 	global $author_session;
 	global $lcm_session;
+	global $prefs;
 
 	// From the form
-	global $sel_language;
-	global $old_language;
+	global $sel_language, $old_language;
+	global $sel_theme, $old_theme;
 
+	// Show modifications made one finished
 	$log = array();
-	$all_langs = read_meta('available_languages');
-
-	lcm_log("sel_language = $sel_language");
-
-	if ($sel_language && $sel_language != $old_language) {
-		// This part is very strange. In order to use the language immediately,
-		// inc/inc.php detects $sel_language and updates the session itself.
-		// It is also updated here because I'm paranoid.
 	
-		// validate if the language exists (altough doesn't validate
-		// if the language file is actually present).
-		if (ereg(",$sel_language,", ",$all_langs,")) {
-			// This cookie is redundant with the session cookie, but allows
-			// to kill the session while still remembering the login language.
-			lcm_setcookie('lcm_lang', $sel_language, time() + 365 * 24 * 3600);
+	//
+	// Change the user's language (done in inc.php, we only log the result)
+	//
 
-			// Update the session info
-			$GLOBAL['author_session']['lang'] = $sel_language;
-			lcm_add_session($author_session, $lcm_session);
-
-			// Update user settings in database
-			$query = "UPDATE lcm_author 
-						SET lang = '" . addslashes($sel_language) . "'
-						WHERE id_author = " . $author_session['id_author'];
-			lcm_query($query);
-
-			array_push($log, "Language set to " .
-				translate_language_name($sel_language) . ", was " .
-				translate_language_name($old_language) . ".");
-		} else {
-			array_push($log, "Specified language is not valid: " .  htmlspecialchars($sel_language) . ".");
-		}
+	if ($sel_language == $author_session['lang'] && $sel_language <> $old_language) {
+		array_push($log, "Language set to " .
+			translate_language_name($sel_language) . ", was " .
+			translate_language_name($old_language) . ".");
 	}
 
+	//
+	// Change the user's UI colors (done in inc.php, we only log the result)
+	//
+
+	if ($sel_theme == $prefs['theme'] && $sel_theme <> $old_theme)
+		array_push($log, "Theme set to " . $sel_theme . ", was " . $old_theme . ".");
+
+
+	//
 	// Show changes on screen
+	//
 	if (! empty($log)) {
 		echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
 		echo "<div>Changes made:</div>\n";
