@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.45 2005/01/26 10:40:30 mlutfy Exp $
+	$Id: config_author.php,v 1.46 2005/02/01 11:11:43 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -131,17 +131,20 @@ function show_author_form() {
 					echo $prefs['page_rows']; ?>" />
 			</td>
 		</tr>
+		<tr>
+			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authorconf_subtitle_advanced'); ?></h4></td>
+		</tr>
 	    <tr>
-	    	<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_mode') ?></td>
+	    	<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_ui_level') ?></td>
 			<td align="left" valign="top">
 				<input type="hidden" name="old_mode" id="old_mode" value="<?php echo $prefs['mode'] ?>" />
 				<select name="sel_mode" class="sel_frm">
 <?php
-	$interface_modes = array("simple","extended");
+	$interface_modes = array("normal", "technical");
 	foreach ($interface_modes as $ifm) {
 		$selected_mode = ($ifm == $prefs['mode'] ? " selected='selected'" : '');
 		echo "<option value='" . $ifm . "'" . $selected_mode . ">"
-			. _T('authorconf_input_mode_' . $ifm)
+			. _T('authorconf_input_ui_level_' . $ifm)
 			. "</option>\n";
 	}
 ?>
