@@ -16,13 +16,12 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.12 2005/01/18 23:21:08 antzi Exp $
+	$Id: sel_client.php,v 1.13 2005/02/01 14:50:23 mlutfy Exp $
 */
 
 include('inc/inc.php');
-//lcm_page_start("Select client(s)");
 
 $case = intval($_GET['case']);
 
@@ -30,7 +29,7 @@ if (! $case)
 	die("There's no such case!");
 
 // Get case data
-$q = "SELECT title
+$q = "SELECT id_case, title
 		FROM lcm_case
 		WHERE id_case=$case";
 $result = lcm_query($q);
@@ -63,14 +62,13 @@ if (strlen($find_client_string)>1) {
 	$q2 .= " AND ((name_first LIKE '%$find_client_string%')"
 		. " OR (name_middle LIKE '%$find_client_string%')"
 		. " OR (name_last LIKE '%$find_client_string%'))";
-	lcm_page_start("Select client(s) from these, containing '$find_client_string':");
-} else {
-	lcm_page_start("Select client(s)");
 }
 
-$q2 .= ")";
 
+$q2 .= ")";
 $result = lcm_query($q2);
+
+lcm_page_start("Select client(s) for case: #" . $case_data['id_case'] . " " . $case_data['title']);
 
 // Get the number of rows in the result
 $number_of_rows = lcm_num_rows($result);
@@ -83,48 +81,33 @@ if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
 
-// Show case overview
-echo '(to be added to case "' . $case_data['title'] . "\")<br />\n";
-
 // Search form
 echo "<form name='frm_find_client' class='search_form' action='sel_client.php?case=$case' method='post'>";
-echo 'Find client:&nbsp;<input type="text" name="find_client_string" size="10" class="search_form_txt"';
+echo _T('input_search_client') . '&nbsp;<input type="text" name="find_client_string" size="10" class="search_form_txt"';
 
 //	if (isset($find_client_string)) echo " value='$find_client_string'";
 	echo " value='$find_client_string'";
 
-?> />&nbsp;<input type="submit" name="submit" value="Search" class="search_form_btn" />
+?> />&nbsp;<input type="submit" name="submit" value="<?php echo _T('button_search'); ?>" class="search_form_btn" />
 </form>
 
 <form action="add_client.php" method="post">
-	<table border="0" class="tbl_usr_dtl">
-
-		<tr>
-			<th class="heading">&nbsp;</th>
-			<th class="heading" width="350">Client name</th>
-			<th class="heading">Action</th>
-		</tr>
+	<table border="0" class="tbl_usr_dtl" width="99%">
 <?php
 
 // Process the output of the query
-for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show checkbox
 	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] . "'></td>\n";
+
 	// Show client name
 	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo '<a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' '
 		. $row['name_last']),$find_author_string);
+	echo "</a>";
 	echo "</td>\n";
-	// Show client edit link
-	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo '<a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">Edit</a>';
-	echo "</td>\n";
-
-//	if (($GLOBALS['author_session']['status'] == 'admin') ||
-//		($row['id_author'] == $GLOBALS['author_session']['id_author']))
-//			echo '<a href="edit_author.php?author=' . $row['id_author'] . '" class="content_link">Edit</a>';
-
 	echo "\t</tr>\n";
 }
 
