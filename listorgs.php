@@ -18,52 +18,42 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.10 2005/03/02 17:29:17 antzi Exp $
+	$Id: listorgs.php,v 1.11 2005/03/14 08:09:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
-lcm_page_start("List of organisations");
+lcm_page_start("List of organisations"); // TRAD
+show_find_box('org', $find_org_string);
 
 // List all organisations in the system + search criterion if any
 $q = "SELECT id_org,name
 		FROM lcm_org";
 
-if (strlen($find_org_string) > 1) {
-	// Add search criteria
+if (strlen($find_org_string) > 1)
 	$q .= " WHERE (name LIKE '%$find_org_string%')";
-}
 
-// Do the query
 $result = lcm_query($q);
 
-echo '<form name="frm_find_org" class="search_form" action="listorgs.php" method="get">' . "\n";
-echo _T('input_search_organisation') . "&nbsp;";
-echo '<input type="text" name="find_org_string" size="10" class="search_form_txt" value="' .  $find_org_string . '" />';
-echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
-echo "</form>\n";
-
 // Output table tags
-?>
-<table class="tbl_usr_dtl" width="99%" border="0">
-	<tr>
-		<th class="heading">Organisation name</th>
-	</tr>
-<?php
+echo '<table class="tbl_usr_dtl" width="99%" border="0">' . "\n";
+echo "<tr>\n";
+echo "<th class='heading'>" . "Organisation name" . "</th>\n"; // TRAD
+echo "</tr>\n";
 
 for($cnt = 0; $row = lcm_fetch_array($result); $cnt++) {
 	echo "<tr>\n";
 	echo "<td class='tbl_cont_" . ($cnt % 2 ? "dark" : "light") . "'>";
 	echo '<a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
-	echo highlight_matches(clean_output($row['name']),$find_org_string);
+	echo highlight_matches(clean_output($row['name']), $find_org_string);
 	echo "</td>\n";
 	echo "</tr>\n";
 }
 
-?>
-</table>
-<a href="edit_org.php" class="create_new_lnk">Add new organisation</a>
-<br /><br />
-<?php
+echo "</table>\n";
+echo '<p><a href="edit_org.php" class="create_new_lnk">' . "Register new organisation" . "</a></p>\n"; // TRAD
+echo "<br />\n";
+
 lcm_page_end();
+
 ?>
