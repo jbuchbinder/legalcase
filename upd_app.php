@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.7 2005/03/11 14:30:33 antzi Exp $
+	$Id: upd_app.php,v 1.8 2005/03/24 16:39:15 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -158,6 +158,7 @@ if (count($_SESSION['errors'])) {
 			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
 
 		$id_app = lcm_insert_id();
+		$_SESSION['app_data']['id_app'] = $id_app;
 
 		// Add relationship with the creator
 		$q = "INSERT INTO lcm_author_app SET id_app=$id_app,id_author=" . $GLOBALS['author_session']['id_author'];
@@ -186,7 +187,14 @@ if (count($_SESSION['errors'])) {
 
 	// Check if author or client/organisation was added
 	if (!empty($_SESSION['errors'])) {
-		header('Location: ' . $_SERVER['HTTP_REFERER'] );
+//		header('Location: ' . $_SERVER['HTTP_REFERER'] );
+		$ref_url = parse_url($_SERVER['HTTP_REFERER']);
+		parse_str($ref_url['query'],$params);
+		$params['app'] = $id_app;
+		foreach ($params as $k => $v) {
+			$params[$k] = $k . '=' . urlencode($v);
+		}
+		header('Location: edit_app.php?' . join('&',$params) );
 		exit;
 	}
 	
