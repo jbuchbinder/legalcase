@@ -271,10 +271,10 @@ if ($author_password_modified)
 	apply_author_password_change();
 
 if ($author_ui_modified || $author_password_modified) {
-	header('Retry-After: 10');
 	header('Location: ' . $referer);
+	header('Retry-After: 30');
 	show_changes();
-	exit;
+//	exit;
 }
 
 lcm_page_start("Update profile");
