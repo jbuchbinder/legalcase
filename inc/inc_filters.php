@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.58 2005/04/04 13:11:41 mlutfy Exp $
+	$Id: inc_filters.php,v 1.59 2005/04/04 14:28:43 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -927,14 +927,6 @@ function quote_amp ($text) {
 	$text = str_replace("&amp;", "&", $text);
 	$text = str_replace("&", "&amp;", $text);
 	return $text;
-}
-
-
-function http_script($script, $src = '', $noscript = '') {
-	return '<script type="text/javascript"' . ($src ? ' src="$src"' : '') . ">"   
-		. ($script ? "<!--\n$script\n//-->" : '')
-		. "</script>\n"
-		. (!$noscript ? '' : "<noscript>\n\t$noscript\n</noscript>\n");
 }
 
 
