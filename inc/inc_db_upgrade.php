@@ -1,5 +1,26 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: inc_db_upgrade.php,v 1.32 2005/01/26 20:55:16 mlutfy Exp $
+*/
+
 // Execute this file only once
 if (defined("_INC_DB_UPGRADE")) return;
 define("_INC_DB_UPGRADE", "1");
@@ -258,6 +279,7 @@ function upgrade_database($old_db_version) {
 			KEY id_report (id_report),
 			KEY id_field (id_field),
 			KEY col_order (col_order))");
+
 		lcm_query("CREATE TABLE lcm_filter_conds (
 			id_filter bigint(21) NOT NULL default '0',
 			id_field bigint(21) NOT NULL default '0',
@@ -270,173 +292,14 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (14);
 	}
 
-	if ($lcm_db_version_current < 15) {
-		lcm_query("ALTER TABLE `lcm`.`lcm_followup` CHANGE `type` `type` ENUM('assignment','suspension','resumption','delay','conclusion','reopening','merge','consultation','correspondance','travel','other') DEFAULT 'assignment' NOT NULL");
-		upgrade_db_version (15);
-	}
+	// [ML] 15 + 16 had bugs, corrected below
 
-	if ($lcm_db_version_current < 16) {
-		lcm_query("ALTER TABLE `lcm`.`lcm_followup` ADD id_author bigint(21) DEFAULT '0' NOT NULL AFTER id_case");
-		lcm_query("ALTER TABLE `lcm`.`lcm_followup` ADD INDEX id_author (id_author)");
-		upgrade_db_version (16);
+	if ($lcm_db_version_current < 17) {
+		lcm_query("ALTER TABLE lcm_followup CHANGE type type ENUM('assignment','suspension','resumption','delay','conclusion','reopening','merge','consultation','correspondance','travel','other') DEFAULT 'assignment' NOT NULL");
+		lcm_query("ALTER TABLE lcm_followup ADD id_author bigint(21) DEFAULT '0' NOT NULL AFTER id_case");
+		lcm_query("ALTER TABLE lcm_followup ADD INDEX id_author (id_author)");
+		upgrade_db_version (17);
 	}
-
-/* [ML] I'm leaving this because it can provide us with interesting ideas
-	if ($lcm_version_current < 0.999) {
-		global $htsalt;
-		lcm_query("ALTER TABLE spip_auteurs CHANGE pass pass tinyblob NOT NULL");
-		lcm_query("ALTER TABLE spip_auteurs ADD htpass tinyblob NOT NULL");
-		$query = "SELECT id_auteur, pass FROM spip_auteurs WHERE pass!=''";
-		$result = lcm_query($query);
-		while (list($id_auteur, $pass) = spip_fetch_array($result)) {
-			$htpass = generer_htpass($pass);
-			$pass = md5($pass);
-			lcm_query("UPDATE spip_auteurs SET pass='$pass', htpass='$htpass' WHERE id_auteur=$id_auteur");
-		}
-		upgrade_version (0.999);
-	}
-
-	if ($lcm_version_current < 1.414) {
-		// Forum par defaut "en dur" dans les spip_articles
-		// -> non, prio (priori), pos (posteriori), abo (abonnement)
-		include_ecrire ("inc_meta.php3");
-		$accepter_forum = substr(read_meta("forums_publics"),0,3) ;
-		$query = "ALTER TABLE spip_articles CHANGE accepter_forum accepter_forum CHAR(3) NOT NULL";
-		$result = lcm_query($query);
-		$query = "UPDATE spip_articles SET accepter_forum='$accepter_forum' WHERE accepter_forum != 'non'";
-		$result = lcm_query($query);
-		upgrade_version (1.414);
-	}
-
-	if ($lcm_version_current < 1.418) {
-		$query = "SELECT * FROM spip_auteurs WHERE statut = 'admin' AND email != '' ORDER BY id_auteur LIMIT 0,1";
-		$result = lcm_query($query);
-		if ($webmaster = spip_fetch_array($result)) {
-			include_ecrire("inc_meta.php3");
-			ecrire_meta('email_webmaster', $webmaster['email']);
-			ecrire_metas();
-		}
-		upgrade_version (1.418);
-	}
-
-	if ($lcm_version_current < 1.459) {
-		$result = lcm_query("SELECT type FROM spip_mots GROUP BY type");
-		while ($row = spip_fetch_array($result)) {
-			$type = addslashes($row['type']);
-			$res = lcm_query("SELECT * FROM spip_groupes_mots
-				WHERE titre='$type'");
-			if (spip_num_rows($res) == 0) {
-				lcm_query("INSERT IGNORE INTO spip_groupes_mots
-					(titre, unseul, obligatoire, articles, breves, rubriques, syndic, admin, 1comite, 6forum)
-					VALUES ('$type', 'non', 'non', 'oui', 'oui', 'non', 'oui', 'oui', 'oui', 'non')");
-				if ($id_groupe = spip_insert_id())
-					lcm_query("UPDATE spip_mots SET id_groupe = '$id_groupe' WHERE type='$type'");
-			}
-		}
-		lcm_query("UPDATE spip_articles SET popularite=0");
-		upgrade_version (1.459);
-	}
-
-	if ($lcm_version_current < 1.460) {
-		// remettre les mots dans les groupes dupliques par erreur
-		// dans la precedente version du paragraphe de maj 1.459
-		// et supprimer ceux-ci
-		$result = lcm_query("SELECT * FROM spip_groupes_mots ORDER BY id_groupe");
-		while ($row = spip_fetch_array($result)) {
-			$titre = addslashes($row['titre']);
-			if (! $vu[$titre] ) {
-				$vu[$titre] = true;
-				$id_groupe = $row['id_groupe'];
-				lcm_query ("UPDATE spip_mots SET id_groupe=$id_groupe WHERE type='$titre'");
-				lcm_query ("DELETE FROM spip_groupes_mots WHERE titre='$titre' AND id_groupe<>$id_groupe");
-			}
-		}
-		upgrade_version (1.460);
-	}
-
-	if ($lcm_version_current < 1.462) {
-		lcm_query("UPDATE spip_types_documents SET inclus='embed' WHERE inclus!='non' AND extension IN ".
-			"('aiff', 'asf', 'avi', 'mid', 'mov', 'mp3', 'mpg', 'ogg', 'qt', 'ra', 'ram', 'rm', 'swf', 'wav', 'wmv')");
-		upgrade_version (1.462);
-	}
-
-	if ($lcm_version_current < 1.463) {
-		lcm_query("ALTER TABLE spip_articles CHANGE popularite popularite DOUBLE");
-		lcm_query("ALTER TABLE spip_visites_temp ADD maj TIMESTAMP");
-		lcm_query("ALTER TABLE spip_referers_temp ADD maj TIMESTAMP");
-		upgrade_version (1.463);
-	}
-
-	// l'upgrade < 1.462 ci-dessus etait fausse, d'ou correctif
-	if (($lcm_version_current < 1.464) AND ($lcm_version_current >= 1.462)) {
-		$res = lcm_query("SELECT id_type, extension FROM spip_types_documents WHERE id_type NOT IN (1,2,3)");
-		while ($row = spip_fetch_array($res)) {
-			$extension = $row['extension'];
-			$id_type = $row['id_type'];
-			lcm_query("UPDATE spip_documents SET id_type=$id_type
-				WHERE fichier like '%.$extension'");
-		}
-		upgrade_version (1.464);
-	}
-
-	if ($lcm_version_current < 1.604) {
-		lcm_query("ALTER TABLE spip_auteurs ADD lang VARCHAR(10) DEFAULT '' NOT NULL");
-		$u = lcm_query("SELECT * FROM spip_auteurs WHERE prefs LIKE '%spip_lang%'");
-		while ($row = spip_fetch_array($u)) {
-			$prefs = unserialize($row['prefs']);
-			$l = $prefs['spip_lang'];
-			unset ($prefs['spip_lang']);
-			lcm_query ("UPDATE spip_auteurs SET lang='".addslashes($l)."',
-				prefs='".addslashes(serialize($prefs))."'
-				WHERE id_auteur=".$row['id_auteur']);
-		}
-		upgrade_version (1.604, lcm_query("SELECT lang FROM spip_auteurs"));
-	}
-
-	if ($lcm_version_current < 1.702) {
-		lcm_query("ALTER TABLE spip_articles ADD extra longblob NULL");
-		lcm_query("ALTER TABLE spip_auteurs ADD extra longblob NULL");
-		lcm_query("ALTER TABLE spip_breves ADD extra longblob NULL");
-		lcm_query("ALTER TABLE spip_rubriques ADD extra longblob NULL");
-		lcm_query("ALTER TABLE spip_mots ADD extra longblob NULL");
-
-		// recuperer les eventuels 'supplement' installes en 1.701
-		if ($lcm_version_current == 1.701) {
-			lcm_query ("UPDATE spip_articles SET extra = supplement");
-			lcm_query ("ALTER TABLE spip_articles DROP supplement");
-			lcm_query ("UPDATE spip_auteurs SET extra = supplement");
-			lcm_query ("ALTER TABLE spip_auteurs DROP supplement");
-			lcm_query ("UPDATE spip_breves SET extra = supplement");
-			lcm_query ("ALTER TABLE spip_breves DROP supplement");
-			lcm_query ("UPDATE spip_rubriques SET extra = supplement");
-			lcm_query ("ALTER TABLE spip_rubriques DROP supplement");
-			lcm_query ("UPDATE spip_mots SET extra = supplement");
-			lcm_query ("ALTER TABLE spip_mots DROP supplement");
-		}
-		upgrade_version (1.702,
-			lcm_query("SELECT extra FROM spip_articles")
-			&& lcm_query("SELECT extra FROM spip_auteurs")
-			&& lcm_query("SELECT extra FROM spip_breves")
-			&& lcm_query("SELECT extra FROM spip_rubriques")
-			&& lcm_query("SELECT extra FROM spip_mots")
-			);
-	}
-
-	if ($lcm_version_current < 1.734) {
-		// integrer nouvelles tables auxiliaires du compilateur ESJ
-		creer_base();
-		upgrade_version(1.734);
-	}
-
-	if ($lcm_version_current < 1.801) {
-		lcm_query("ALTER TABLE spip_rubriques
-			ADD statut_tmp VARCHAR(10) NOT NULL,
-			ADD date_tmp datetime DEFAULT '0000-00-00 00:00:00' NOT NULL");
-		include_ecrire('inc_rubriques.php3');
-		calculer_rubriques();
-		upgrade_version(1.801);
-	}
-*/
 
 	return $log;
 }
