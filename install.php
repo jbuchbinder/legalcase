@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.39 2005/03/08 08:17:54 mlutfy Exp $
+	$Id: install.php,v 1.40 2005/03/10 17:02:35 makaveev Exp $
 */
 
 
@@ -173,7 +173,7 @@ if ($step == 6) {
 
 	echo "<form action='index.php' method='post'>\n";
 	echo "<div align='$lcm_lang_right'>"
-		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>"
+		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
 
@@ -200,16 +200,16 @@ else if ($step == 5) {
 
 	echo "<!-- Number of administrators: " . $number_admins . " -->\n";
 
-	echo "<p>" . _T('install_info_new_account_1') . ' ' . lcm_help('install_personal') . "</p>\n";
+	echo "<p class=\"simple_text\">" . _T('install_info_new_account_1') . ' ' . lcm_help('install_personal') . "</p>\n";
 
 	if ($numrows)
-		echo "<p>" . _T('install_info_new_account_2') . "</p>\n";
+		echo "<p class=\"simple_text\">" . _T('install_info_new_account_2') . "</p>\n";
 
 	echo "\n<form action='install.php' method='post'>\n";
 	echo "<input type='hidden' name='step' value='6' />\n";
 
 	// Your contact information
-	echo "<fieldset>\n";
+	echo "<fieldset class=\"fs_box\">\n";
 	echo "<div><b><label>". _T('info_your_contact_information') . "</label></b><br />\n";
 
 	// [ML] Altough not most problematic, could be better. But if someone
@@ -217,24 +217,24 @@ else if ($step == 5) {
 	echo "<table border='0'><tr>\n";
 	echo "<td>
 			<strong><label for='name_first'>" . _T('person_input_name_first') . "</label></strong><br />
-			<input type='text' id='name_first' name='name_first' value='$name_first' size='20' />
+			<input type='text' id='name_first' name='name_first' value='$name_first' size='20' class='txt_lmnt' />
 		</td>\n";
 	echo "<td>
 			<strong><label for='name_last'>" . _T('person_input_name_last') . "</label></strong><br />
-			<input type='text' id='name_last' name='name_last' value='$name_last' size='20' />
+			<input type='text' id='name_last' name='name_last' value='$name_last' size='20' class='txt_lmnt' />
 		</td>\n";
 	echo "</tr></table>\n\n";
 
 	echo "<div><b><label for='email'>" . _T('input_email') . "</label></b><br />\n";
-	echo "<input type='text' id='email' name='email' value=\"$email\" size='40' /></div>\n";
+	echo "<input type='text' id='email' name='email' value=\"$email\" size='40' class='txt_lmnt' /></div>\n";
 	echo "</fieldset>\n\n";
 
 	// Identifiers
-	echo "<fieldset>\n";
+	echo "<br /><fieldset class=\"fs_box\">\n";
 	echo "<div><b>" . _T('input_connection_identifiers') . "</b><br />\n";
 	echo "<b><label for='username'>" . _T('login_login') . "</label></b><br />\n";
 	echo "<small>" . _T('info_more_than_three') . "</small><br />\n";
-	echo "<input type='text' id='username' name='username' value='$username' size='40' /></div>\n";
+	echo "<input type='text' id='username' name='username' value='$username' size='40' class='txt_lmnt' /></div>\n";
 
 	// TODO XXX
 	// - Confirm the password?
@@ -242,11 +242,11 @@ else if ($step == 5) {
 
 	echo "<div><b><label for='pass'>" . _T('login_password') . "</label></b><br />\n";
 	echo "<small>" . _T('info_more_than_five')."</small><br />\n";
-	echo "<input type='password' id='pass' name='pass' value='$pass' size='40' /></div>\n";
+	echo "<input type='password' id='pass' name='pass' value='$pass' size='40' class='txt_lmnt' /></div>\n";
 	echo "</fieldset>\n\n";
 
-	echo "<div align='$lcm_lang_right'>"
-		. "<button type='submit' name='validate'>" . _T('button_next') . " >></button>"
+	echo "<br /><div align='$lcm_lang_right'>"
+		. "<button type='submit' name='validate'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 
 	echo "</form>";
@@ -392,7 +392,7 @@ else if ($step == 4) {
 		echo "<form action='install.php' method='post'>\n";
 		echo "\t<input type='hidden' name='step' value='5' />\n";
 		echo "\t<div align='$lcm_lang_right'>"
-			. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>"
+			. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 			. "</div>\n";
 		echo "</form>\n\n";
 	}
@@ -416,13 +416,13 @@ else if ($step == 3) {
 
 	$result = lcm_list_databases($db_address, $db_login, $db_password);
 
-	echo "<fieldset>\n";
+	echo "<fieldset class='fs_box'>\n";
 	echo "<p><b><label>" . _T('install_select_database') . "</label></b></p>";
 
 	echo "<!-- " . count($result) . " -->\n";
 
 	if (is_array($result) && ($num = count($result)) > 0) {
-		echo "<ul>";
+		echo "<ul class=\"simple_list\">";
 		$listdbtxt = "";
 
 		for ($i = 0; $i < $num; $i++) {
@@ -450,7 +450,7 @@ else if ($step == 3) {
 
 		if ($db_login) {
 			echo _T('install_warning_no_databases_3');
-			echo "<ul>";
+			echo "<ul class=\"simple_list\">";
 			echo "<li><input name=\"db_choice\" value=\"" . $db_login . "\" type='radio' id='stand' checked='checked' />";
 			echo "<label for='stand'>" . $db_login . "</label><br />\n";
 			echo "</li></ul>";
@@ -459,18 +459,18 @@ else if ($step == 3) {
 		}
 	}
 
-	echo "<ul>";
+	echo "<ul class=\"simple_list\">";
 	echo "<li><input name='db_choice' value='new_lcm' type='radio' id='new_db'";
 	if (!$checked) echo " checked='checked'";
 	echo " />";
 	
 	echo "<label for='new_db'>" . _T('install_create_new_database') . "</label><br />\n";
-	echo "<input type='text' name='table_new' value='lcm' size='20' /></li>\n";
+	echo "<input type='text' name='table_new' value='lcm' size='20' class='txt_lmnt' /></li>\n";
 	echo "</ul>\n";
 	echo "</fieldset>\n";
 
-	echo "<div align='$lcm_lang_right'>"
-		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>"
+	echo "<br /><div align='$lcm_lang_right'>"
+		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
 
@@ -502,7 +502,7 @@ else if ($step == 2) {
 		echo '<input type="hidden" name="db_password" value="' . $db_password .'" />' . "\n";
 
 		echo "<div align='$lcm_lang_right'>"
-			. "<button type='submit' name='Next'>" . _T('button_next')." >></button>"
+			. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 			. "</div>\n";
 		echo "</form>\n";
 	} else {
@@ -523,7 +523,7 @@ else if ($step == 1) {
 	echo "<h3><small>" . _T('install_step_one') . "</small> "
 		. _T('install_title_sql_connection') . "</h3>\n";
 
-	echo "<p>" . _T('install_info_sql_connection') . " " . lcm_help("install_database") . "</p>\n";
+	echo "<p class='simple_text'>" . _T('install_info_sql_connection') . " " . lcm_help("install_database") . "</p>\n";
 
 	$db_address = 'localhost';
 	$db_login = '';
@@ -545,26 +545,26 @@ else if ($step == 1) {
 	echo "<form action='install.php' method='post'>\n";
 	echo "<input type='hidden' name='step' value='2'>\n";
 
-	echo "<fieldset>\n";
+	echo "<fieldset class='fs_box'>\n";
 	echo "<div><label for='db_address'><strong>" . _T('install_database_address') . "</strong></label></div>\n";
-	echo "<div style='font-size: 85%;'>" . _T('install_info_database_address') . "</div>\n";
-	echo "<input type='text' id='db_address' name='db_address' value=\"$db_address\" size='40'>\n";
+	echo "<div>" . _T('install_info_database_address') . "</div>\n";
+	echo "<input type='text' id='db_address' name='db_address' value=\"$db_address\" size='40' class='txt_lmnt'>\n";
 	echo "</fieldset><p>\n";
 
-	echo "<fieldset>\n";
+	echo "<fieldset class='fs_box'>\n";
 	echo "<div><label for='db_login'><strong>" . _T('install_connection_login') . "</strong></div></label>\n";
-	echo "<div style='font-size: 85%;'>(" . _T('install_info_connection_login') . ")</div>\n";
-	echo "<input type='text' id='db_login' name='db_login' value=\"$db_login\" size='40'>\n";
+	echo "<div>(" . _T('install_info_connection_login') . ")</div>\n";
+	echo "<input type='text' id='db_login' name='db_login' value=\"$db_login\" size='40' class='txt_lmnt'>\n";
 	echo "</fieldset><p>";
 
-	echo "<fieldset>\n";
+	echo "<fieldset class='fs_box'>\n";
 	echo "<div><label for='db_password'><strong>" . _T('install_connection_password') . "</strong></div></label>\n";
-	echo "<div style='font-size: 85%;'>(" . _T('install_info_connection_password') . ")</div>\n";
-	echo "<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40'>\n";
+	echo "<div>(" . _T('install_info_connection_password') . ")</div>\n";
+	echo "<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40' class='txt_lmnt'>\n";
 	echo "</fieldset><p>";
 
 	echo "<div align='$lcm_lang_right'>"
-		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>"
+		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>";
 	echo "</form>";
 
@@ -600,14 +600,14 @@ else if (!$step) {
 	echo "</table>\n";
 	echo "</div>\n";
 
-	echo "<p>" . _T('install_select_language') . "</p>\n";
+	echo "<p class=\"simple_text\">" . _T('install_select_language') . "</p>\n";
 
 	echo "<div align='center'><p>" . $menu_lang . "</p></div>\n";
 
 	echo "<form action='install.php' method='get'>\n";
 	echo "\t<input type='hidden' name='step' value='dirs'>\n";
 	echo "\t<div align='$lcm_lang_right'>"
-		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>"
+		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>";
 	echo "</form>";
 
