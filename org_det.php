@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.15 2005/03/23 18:45:58 mlutfy Exp $
+	$Id: org_det.php,v 1.16 2005/03/23 22:24:43 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -27,7 +27,7 @@ include('inc/inc_acc.php');
 $org = (isset($_REQUEST['org']) ? intval($_REQUEST['org']) : 0);
 
 if ($org <= 0)
-	die("Which organisation?");
+	die("Which organisation?");	// TRAD
 
 $q = "SELECT *
 		FROM lcm_org
@@ -36,7 +36,7 @@ $q = "SELECT *
 $result = lcm_query($q);
 
 if ($row = lcm_fetch_array($result)) {
-	lcm_page_start("Organisation: " . $row['name']);
+	lcm_page_start("Organisation: " . $row['name']);	// TRAD
 
 	/* Saved for future use
 	// Check for access rights
