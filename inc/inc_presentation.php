@@ -91,6 +91,8 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_mediumfonts.css\" title=\"medium_font\" />\n";
 	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_largefonts.css\" title=\"large_font\" />\n";
 	
+	echo "<link rel=\"shortcut icon\" type=\"image/ico\" href=\"images/lcm/favicon.ico\" />\n";
+	
 	echo "\t<script type=\"text/javascript\" language=\"JavaScript\" src=\"inc/ss_switcher.js\"></script>\n";
 				
 	echo "</head>\n";
