@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.33 2005/03/03 16:10:53 antzi Exp $
+	$Id: upd_case.php,v 1.34 2005/03/03 16:29:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -38,7 +38,7 @@ foreach($_POST as $key => $value)
 
 // Check case data for validity
 if (!$_SESSION['case_data']['title'])
-	$_SESSION['errors']['title'] = _T('case_warning_no_case_title');
+	$_SESSION['errors']['title'] = _T('case_warning_no_title');
 
 if (count($_SESSION['errors'])) {
     header("Location: $HTTP_REFERER");
