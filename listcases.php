@@ -24,6 +24,7 @@ $GLOBALS['list_len'] = 3;
 
 include('inc/inc.php');
 include_lcm('inc_acc');
+include_lcm('inc_filters');
 
 $q = "SELECT lcm_case.id_case,title,public,pub_write
 		FROM lcm_case,lcm_case_author
@@ -63,7 +64,7 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 	// Show case title
 	echo "<tr><td class='tbl_data'>";
 	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '">';
-	echo highlight_matches($row['title'],$find_case_string);
+	echo clean_output(highlight_matches($row['title'],$find_case_string));
 	if (allowed($row['id_case'],'r')) echo '</a>';
 	echo "</td>\n<td class='tbl_data'>";
 	if (allowed($row['id_case'],'e'))
