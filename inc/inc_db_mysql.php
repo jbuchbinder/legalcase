@@ -114,9 +114,28 @@ function lcm_connect_db_test($host, $login, $pass, $port = 0) {
 	}
 }
 
-function spip_connect_db($host, $port, $login, $pass, $db) {
-	lcm_log("use of deprecated function: spip_connect_db, use lcm_connect_db instead");
-	return lcm_connect_db($host, $port, $login, $pass, $db);
+function lcm_list_databases($host, $login, $pass, $port = 0) {
+	$databases = array();
+
+	if ($port > 0) $host = "$host:$port";
+	$link = @mysql_connect($host, $login, $pass, $port);
+
+	if ($link) {
+		$result = @mysql_list_dbs();
+
+		if ($result AND (($num = mysql_num_rows($result)) > 0)) {
+			for ($i = 0; $i < $num; $i++)
+				// echo "<!-- " . mysql_dbname($result, $i) . " -->\n";
+				array_push($databases, mysql_dbname($result, $i));
+		}
+
+		echo "<!-- ALLO " . $databases[0] . " " . $databases[1]  . " -->\n";
+
+		return $databases;
+	} else {
+		echo "<!-- NO LINK -->\n";
+		return NULL;
+	}
 }
 
 
