@@ -13,6 +13,9 @@ define('_INC_META', '1');
 function read_metas() {
 	global $meta, $meta_upd;
 
+	if (! $GLOBALS['db_ok'])
+		return;
+
 	$meta = '';
 	$meta_upd = '';
 	$query = 'SELECT name, value, upd FROM lcm_meta';
