@@ -85,7 +85,7 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 </table>
 <p align='right'><a href="edit_case.php?case=0">Open new case</a></p>
 
-<table border='0' align='center' class='tbl_data' width='99%'>
+<table border='0' align='center' width='99%'>
 	<tr><td align="left"><?php
 
 // Show link to previous page
@@ -101,8 +101,9 @@ echo "</td>\n\t\t<td align='center'>";
 // Show page numbers with direct links
 $list_pages = ceil($number_of_rows / $GLOBALS['list_len']);
 if ($list_pages>1) {
+	echo 'Go to page: ';
 	for ($i=0 ; $i<$list_pages ; $i++) {
-		if ($i==floor($list_pos / $GLOBALS['list_len'])) echo ($i+1) . ' ';
+		if ($i==floor($list_pos / $GLOBALS['list_len'])) echo '[' . ($i+1) . '] ';
 		else {
 			echo '<a href="listcases.php?list_pos=' . ($i*$GLOBALS['list_len']);
 			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
