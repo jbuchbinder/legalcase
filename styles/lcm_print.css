@@ -335,7 +335,7 @@ p.normal_text {
 fieldset.conf_info_box, fieldset.info_box {
 	margin: 0em 0em 1em 0em;
 	padding: 0.5em;
-	-moz-border-radius: 10px;
+	/* -moz-border-radius: 10px; */
 	line-height: 1.5;
 }
 
@@ -516,15 +516,15 @@ h2.hlp_h2 {
 /* ================================ */
 
 #header {
-	background: url("../images/lcm/lcm_logo_mono.png") no-repeat left;
+	/* background: url("../images/lcm/lcm_logo_mono.png") no-repeat left; */
 }
 
 #wrapper_wide {
-	background: url("../images/lcm/right_back_mono.gif") repeat-y right;
+	/* background: url("../images/lcm/right_back_mono.gif") repeat-y right; */
 }
 
 #container_wide {
-	background: url("../images/lcm/right_back_mono.gif") repeat-y right;
+	/* background: url("../images/lcm/right_back_mono.gif") repeat-y right; */
 }
 
 #prefs_column {
@@ -662,7 +662,7 @@ ul.tabs_list li.active {
 }
 
 ul.tabs_list li a {
-	background: url("../images/lcm/mono_tabs_back_inactive.gif") repeat-x bottom;
+	/* background: url("../images/lcm/mono_tabs_back_inactive.gif") repeat-x bottom; */
 }
 
 ul.tabs_list li, ul.tabs_list li.active, ul.tabs_list li a {
