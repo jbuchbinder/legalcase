@@ -29,29 +29,32 @@ function show_config_form($panel) {
 	echo "<p class='normal_text'><img src='images/jimmac/icon_warning.gif' alt='' align='right'
 		height='48' width='48' />" . _T('siteconf_warning') . "</p>\n";
 
-	if ($panel == 'collab') {
+	if ($panel == 'collab')
 		$html_collab = " &lt;--";
-	} else if ($panel == 'policy') {
+	else if ($panel == 'policy')
 		$html_policy = " &lt;--";
-	} else {
+	else if ($panel == 'languages')
+		$html_languages = " &lt;--";
+	else 
 		$html_general = " &lt;--";
-	}
 
-	echo "<ul class=\"simple_list\">\n";
+	echo '<ul class="simple_list">' . "\n";
 	echo "<li><a href='config_site.php?panel=general' class='content_link'>" . _T('siteconf_subtitle_general_info') . "</a>" . $html_general . "</li>\n";
 	echo "<li><a href='config_site.php?panel=collab' class='content_link'>" . _T('siteconf_subtitle_collab_work') . "</a>" . $html_collab . "</li>\n";
 	echo "<li><a href='config_site.php?panel=policy' class='content_link'>" .  _T('siteconf_subtitle_policy') . "</a>" . $html_policy . "</li>\n";
+	echo "<li><a href='config_site.php?panel=languages' class='content_link'>" . _T('siteconf_subtitle_languages') . "</a>" . $html_languages . "</li>\n";
 	echo "</ul>\n";
 
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
 
-	if ($panel == 'collab') {
+	if ($panel == 'collab')
 		show_config_form_collab();
-	} else if ($panel == 'policy') {
+	else if ($panel == 'policy')
 		show_config_form_policy();
-	} else {
+	else if ($panel == 'languages')
+		show_config_form_languages();
+	else
 		show_config_form_general();
-	}
 
 	echo "</form>\n";
 }
@@ -247,6 +250,19 @@ function show_config_form_collab() {
 	//echo "</td>\n</tr>\n</table>\n";
 	echo "</fieldset>";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+}
+
+function show_config_form_languages() {
+	echo "\t<input type='hidden' name='conf_modified_languages' value='yes'/>\n";
+	echo "\t<input type='hidden' name='panel' value='languages'/>\n";
+
+	echo "<fieldset class='conf_info_box'>\n";
+	echo "<div class='prefs_column_menu_head'><label for='available_languages'>" . _T('siteconf_input_available_languages') . "</label></div>\n";
+	echo "<p><small class='sm_11'>" . _T('siteconf_info_available_languages') . "</small></p>\n";
+	// echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
+
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</fieldset>\n";
 }
 
 function get_yes_no($name, $value = '') {
@@ -609,41 +625,55 @@ function apply_conf_changes_policy() {
 	return $log;
 }
 
+function apply_conf_changes_languages() {
+	$log = array();
+
+	// force refresh of lcm_meta->available_languaes
+	init_languages(true);
+	array_push($log, "Language list refreshed.");
+
+	return $log;
+}
+
 global $author_session;
 
+// Restrict page to administrators
 if ($author_session['status'] != 'admin') {
 	lcm_page_start("Site configuration");
 	echo "<p>Warning: Access denied, not admin.\n";
 	lcm_page_end();
-} else {
-	if ($conf_modified_general)
-		$log = apply_conf_changes_general();
-	else if ($conf_modified_collab)
-		$log = apply_conf_changes_collab();
-	else if ($conf_modified_policy)
-		$log = apply_conf_changes_policy();
+	exit;
+}
 
-	// Once ready, show the form (must be done after changes are
-	// applied so that they can be used in the header).
-	lcm_page_start(_T('title_site_configuration'));
+if ($conf_modified_general)
+	$log = apply_conf_changes_general();
+else if ($conf_modified_collab)
+	$log = apply_conf_changes_collab();
+else if ($conf_modified_policy)
+	$log = apply_conf_changes_policy();
+else if ($conf_modified_languages)
+	$log = apply_conf_changes_languages();
 
-	// Show changes on screen
-	if (! empty($log)) {
-		echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
-		echo "<div>Changes made:</div>\n";
-		echo "<ul>";
+// Once ready, show the form (must be done after changes are
+// applied so that they can be used in the header).
+lcm_page_start(_T('title_site_configuration'));
 
-		foreach ($log as $line) {
-			echo "<li>" . $line . "</li>\n";
-		}
+// Show changes on screen
+if (! empty($log)) {
+	echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
+	echo "<div>Changes made:</div>\n";
+	echo "<ul>";
 
-		echo "</ul>\n";
-		echo "</div>\n";
+	foreach ($log as $line) {
+		echo "<li>" . $line . "</li>\n";
 	}
 
-	show_config_form($panel);
-	lcm_page_end();
+	echo "</ul>\n";
+	echo "</div>\n";
 }
+
+show_config_form($panel);
+lcm_page_end();
 
 
 ?>
