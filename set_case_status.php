@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.17 2005/02/10 09:15:44 antzi Exp $
+	$Id: set_case_status.php,v 1.18 2005/02/10 10:04:11 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,7 @@ $fu_sum_billed = read_meta('fu_sum_billed');
 // Check if there are no errors - new followup
 if (! count($_SESSION['errors'])) {
 	// Clear followup data
-	$_SESSION['fu-data'] = array();
+	$_SESSION['fu_data'] = array();
 }
 
 // Get case details
