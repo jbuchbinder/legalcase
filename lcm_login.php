@@ -10,7 +10,7 @@ include('inc/inc_version.php');
 include_lcm('inc_presentation');
 include_lcm('inc_login');
 
-lcm_html_start(_T('login_acces_prive'));
+lcm_html_start(_T('login_acces_prive'), 'login');
 
 global $spip_lang_right;
 
