@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.73 2005/01/21 15:54:36 mlutfy Exp $
+	$Id: case_det.php,v 1.74 2005/01/24 07:51:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -264,7 +264,7 @@ if ($case > 0) {
 	while ($row = lcm_fetch_array($result)) {
 		// Show followup
 		echo '<tr><td>' . format_date($row['date_start'], 'short') . '</td>';
-		echo '<td>' . clean_output($row['type']) . '</td>';
+		echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
 
 		if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
 			$short_description = $row['description'];
