@@ -1,25 +1,52 @@
 <?php
 
-include('inc/inc.php');
-include_lcm('inc_lang');
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
 
-// Clean the REQUEST values 
-// [ML] upd_case.php uses Get/Location to add clients from client_det.php
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: add_client.php,v 1.6 2005/03/18 09:46:44 mlutfy Exp $
+*/
+
+include('inc/inc.php');
+
 $case = intval($_REQUEST['case']);
-foreach ($_REQUEST['clients'] as $key=>$value) $clients[$key] = intval($value);
+
+$destination = "case_det.php?case=$case";
+if (isset($_REQUEST['ref_sel_client']) && $_REQUEST['ref_sel_client'])
+	$destination = $ref_sel_client;
+
+// Test whether clients were selected
+if (! isset($_REQUEST['clients'])) {
+	header("Location: " . $destination);
+	exit;
+}
+
+foreach ($_REQUEST['clients'] as $key=>$value) 
+	$clients[$key] = intval($value);
 
 if (($case>0) && ($clients)) {
 	foreach($clients as $client) {
-		// Prepare query
 		$q="INSERT INTO lcm_case_client_org
 			SET id_case=$case,id_client=$client";
 
-		// Do the query
-		if (!($result = lcm_query($q))) die("$q<br>\n" . _T('title_error') . " " . lcm_errno() . ": " . lcm_error());
+		$result = lcm_query($q);
 	}
 }
 
-//header("Location: $ref_sel_client");
-header("Location: case_det.php?case=$case");
+header("Location: " . $destination);
 
 ?>
