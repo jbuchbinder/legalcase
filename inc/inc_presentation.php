@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.167 2005/03/18 04:54:09 antzi Exp $
+	$Id: inc_presentation.php,v 1.168 2005/03/18 05:07:16 antzi Exp $
 */
 
 //
@@ -242,7 +242,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 		echo lcm_http_calendrier_ics($events,'20050222');
 	} */
 	$now = date('Y-m-d');
-	echo http_calendrier_agenda(mois($now), annee($now), jour($now), mois($now), annee($now));
+	echo http_calendrier_agenda(mois($now), annee($now), jour($now), mois($now), annee($now), false, 'calendar.php');
 	echo "</p>";
 	echo "
 					</div>\n";
