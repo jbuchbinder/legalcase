@@ -50,9 +50,18 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	// Style sheets
 	//
 
+	// [ML] This alternative allows the user to create custom themes
+	// without touching the PHP code.
+
+	if (@file_exists("styles/lcm_ui_" . $prefs['theme'] . ".css")) {
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_" . $prefs['theme'] . ".css\" />\n";
+	} else {
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
+	}
+	
 	//[KM] This is my suggestion of the problem with style switcher
 	//There is one file for the layout and others for the themes
-	
+	/*
 	switch($prefs['theme'])
 	{
 	    case "blue":
@@ -70,22 +79,7 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	    default:
 	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
 	    break;
-	}
-	
-	// This is very temporary, it should be automatic and allow custom CSS
-	/*
-	if (! $prefs['theme']) {
-		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_ui_default.css\" />\n";
-		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
-		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
-		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
-	} else {
-		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_ui_default.css\" title=\"Default\" />\n";
-		echo "<link rel=\"" . ($prefs['theme'] == 'blue' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
-		echo "<link rel=\"" . ($prefs['theme'] == 'orange' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
-		echo "<link rel=\"" . ($prefs['theme'] == 'monochrome' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
-	}
-	*/
+	} */
 
 	// It is the responsability of the function caller to make sure that
 	// the filename does not cause problems...
