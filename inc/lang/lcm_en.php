@@ -43,7 +43,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_subtitle_interface' => 'Interface',
 'authorconf_subtitle_password' => 'Change password',
 'authoredit_input_username' => 'Username:',
-'authoredit_subtitle_connectionidentifiers' => 'Connection identifiers',
 'authoredit_subtitle_personalinfo' => 'Personal information',
 
 
@@ -60,7 +59,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'calendar_info_time' => 'Time',
 'case_button_add_client' => 'Add a client',
 'case_button_add_org' => 'Add an organisation',
-'case_input_alledged_crime' => 'Alledged crime:',
+'case_input_alledged_crime' => 'Alleged crime:',
 'case_input_author' => 'Author:',
 'case_input_authors' => 'Authors:',
 'case_input_clients' => 'Clients:',
@@ -78,6 +77,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_warning_no_title' => 'Please enter a case title.',
 'client_input_id' => 'Client ID:',
 'client_subtitle_associated_org' => 'Related organisations',
+'client_subtitle_cases' => 'Cases involving this client',
+'client_subtitle_contacts' => 'Contacts',
 'client_subtitle_view_general' => 'General information',
 'creation_date' => 'Creation date',
 'currency_default_format' => '€',
@@ -175,6 +176,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'error_no_case_specified' => 'No case was specified',
 'error_no_edit_permission' => 'You don\'t have permission to edit this case!',
 'error_no_read_permission' => 'You don\'t have permission to view this case!',
+'error_no_rep_name' => 'Report should have a title!',
 'error_no_such_case' => 'There\'s no such case!',
 'error_no_such_user' => 'There is no such user in the database. How did you get in?',
 
@@ -269,14 +271,20 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw_contacts_phonehome_title' => 'Phone (home)',
 'kw_contacts_phonemobile_title' => 'Phone (mobile)',
 'kw_contacts_phoneoffice_title' => 'Phone (office)',
+'kw_followups__title' => '-',
 'kw_followups_assignment_title' => 'Assignment',
 'kw_followups_conclusion_title' => 'Conclusion',
 'kw_followups_consultation_title' => 'Consultation',
 'kw_followups_correspondance_title' => 'Correspondance',
 'kw_followups_delay_title' => 'Delay',
+'kw_followups_merge_title' => 'Merge',
 'kw_followups_other_title' => 'Other',
+'kw_followups_reopening_title' => 'Reopening',
+'kw_followups_resumption_title' => 'Resumption',
 'kw_followups_suspension_title' => 'Suspension',
 'kw_followups_travel_title' => 'Travel',
+'kwg_contacts_title' => 'Contact keywords',
+'kwg_followups_title' => 'Followup keywords',
 
 
 // L
@@ -306,7 +314,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // M
 'menu_admin' => 'Administration',
 'menu_admin_archives' => 'Archives',
+'menu_admin_export_db' => 'Export DB',
 'menu_admin_filters' => 'Filters',
+'menu_admin_import_db' => 'Import DB',
 'menu_admin_keywords' => 'Keywords',
 'menu_admin_reports' => 'Reports',
 'menu_admin_siteconf' => 'Site configuration',
@@ -411,7 +421,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_access_write_global_no' => 'No, any author assigned on the case (and with "edit" rights) can modify the write access.',
 'siteconf_input_access_write_global_yes' => 'Yes, only administrators can modify the write access.',
 'siteconf_input_admin_email' => 'E-mail of site administrator:',
-'siteconf_input_alledged_crime' => 'Alledged crime',
+'siteconf_input_alledged_crime' => 'Alleged crime',
 'siteconf_input_assignment_date' => 'Assignment date',
 'siteconf_input_available_languages' => 'Refresh the list of available languages:',
 'siteconf_input_case_allow_modif' => 'Allow case information to be modified by their authors once their are created?',
