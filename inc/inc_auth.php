@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.25 2005/02/04 21:20:16 antzi Exp $
+	$Id: inc_auth.php,v 1.26 2005/03/23 16:56:23 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -144,8 +144,10 @@ function auth() {
 		if (! isset($prefs['mode']) || ! $prefs['mode'])
 			$prefs['mode'] = 'simple';
 
-		if (! isset($prefs['time_intervals']) || ! $prefs['time_intervals'])
+		if (! isset($prefs['time_intervals']) || ! $prefs['time_intervals']) {
 			$prefs['time_intervals'] = 'relative';
+			$prefs['time_intervals_notation'] = 'hours_only';
+		}
 	}
 	else {
 		// This case is a strange possibility: the author is authentified
