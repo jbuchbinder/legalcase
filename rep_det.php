@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.15 2005/02/07 12:50:20 mlutfy Exp $
+	$Id: rep_det.php,v 1.16 2005/02/07 15:08:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -132,7 +132,10 @@ if ($rep_info['description'])
 
 echo "<p class='normal_text'>";
 echo "Created on: " . format_date($rep_info['date_creation']) . "<br/>\n";
-echo "Last update: " . format_date($rep_info['date_update']) . "<br/>\n";
+
+if ($rep_info['date_creation'] != $rep_info['date_update'])
+	echo "Last update: " . format_date($rep_info['date_update']) . "<br/>\n";
+
 echo "<br />\n";
 
 if ($edit)
