@@ -5,7 +5,7 @@ include_lcm('inc_presentation');
 include_lcm('inc_meta');
 include_lcm('inc_auth');
 
-$current_version = lire_meta('lcm_db_version');
+$current_version = read_meta('lcm_db_version');
 if (!$current_version) $current_version = 0;
 
 // test if upgraded necessary

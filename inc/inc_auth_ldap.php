@@ -118,7 +118,7 @@ class Auth_ldap {
 		$login = addslashes($this->login);
 		$email = addslashes($this->email);
 		$bio = addslashes($this->bio);
-		$statut = lire_meta("ldap_statut_import");
+		$statut = read_meta("ldap_statut_import");
 
 		if (!$statut) return false;
 

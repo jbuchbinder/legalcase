@@ -154,7 +154,7 @@ function http_calendrier_tout($mois, $annee, $premier_jour, $dernier_jour)
 		$largeur_table = 730;
 	}
 
-/*	$fclic = ((lire_meta("activer_messagerie") == "oui") AND 
+/*	$fclic = ((read_meta("activer_messagerie") == "oui") AND 
 		($GLOBALS["connect_activer_messagerie"] != "non"))?
 		'http_calendrier_clics' : 
 		'http_calendrier_sans_clics';*/
