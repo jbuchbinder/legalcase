@@ -366,13 +366,11 @@ if($prefs['screen'] == "wide") {
 			<!-- the font size experiment -->
 			<div class=\"prefs_column_menu_head\"><div class=\"sm_font_size\">Font size</div>
 			</div>
-			<p class=\"prefs_column_text\">
 				<ul class=\"font_size_buttons\">
 					<li><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\">A-</a></li>
 					<li><a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('medium_font')\">A</a></li>
 					<li><a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\">A+</a></li>
 				</ul>
-			</p>
 		<!-- End of \"prefs_column\" content -->
 		</div>";
 //end of user screen IF
@@ -402,7 +400,6 @@ if($prefs['screen'] == "narrow")
 {
 	echo '<div id="footer_narrow">
 	<div class="prefs_column_menu_head"><div class="sm_search">' .  _T('menu_search') . "</div></div>
-	<p class=\"prefs_column_text\">
 	<table border=\"0\" align=\"center\" width=\"100%\">
 		<tr>
 			<td align=\"left\" valign=\"top\">
@@ -435,7 +432,6 @@ if($prefs['screen'] == "narrow")
 			</td>
 		</tr>
 	</table>
-			</p>
 	</div><br />";
 }
 	echo "<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ". _T('info_free_software') ."</div>\n";
