@@ -704,7 +704,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 	return $ret;
 }
 
-function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $table = false) {
+function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $select_hours = true, $table = false) {
 
 	if ($hours_only) {
 		$days = 0;
@@ -740,9 +740,9 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	}
 
 	// Hour
-	if ($hours_only) {
+	if ($hours_only || !$select_hours) {
 		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
-		$ret .= " hours\n";
+		$ret .= ($hours_only ? " hours\n" : " h, ");
 	} else {
 		if ($table)
 			$ret .= "<td>\n"
