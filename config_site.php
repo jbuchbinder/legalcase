@@ -21,13 +21,35 @@
 
 include ("inc/inc.php");
 
-function show_config_form() {
+// TODO: We should keep a log of modifications
+// For example, if currency changed many times, it will allow
+// to track when a currency had which value (silly, but can avoid crisis)
+
+function show_config_form($panel) {
 	echo "<p><img src='images/jimmac/icon_warning.gif' alt='' align='right'
 		height='48' width='48' />" . _T('siteconf_warning') . "</p>\n";
 
-	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
-	echo "\t<input type='hidden' name='conf_modified' value='yes'/>\n";
+	echo "<ul>\n";
+	echo "<li><a href='config_site.php?panel=general'>" . _T('siteconf_subtitle_general_info') . "</a></li>\n";
+	echo "<li><a href='config_site.php?panel=collab'>" . _T('siteconf_subtitle_collab_work') . "</a></li>\n";
+	echo "<li><a href='config_site.php?panel=policy'>" . _T('siteconf_subtitle_policy') . "</a></li>\n";
+	echo "</ul>\n";
 
+	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
+
+	if ($panel == 'collab') {
+		show_config_form_collab();
+	} else if ($panel == 'policy') {
+		show_config_form_policy();
+	} else {
+		show_config_form_general();
+	}
+
+	echo "<p><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</form>\n";
+}
+
+function show_config_form_general() {
 	//
 	// *** INFO SITE
 	//
@@ -36,9 +58,21 @@ function show_config_form() {
 	$site_address = read_meta('site_address');
 	$default_language = read_meta('default_language');
 	$email_sysadmin = read_meta('email_sysadmin');
+	$currency = read_meta('currency');
 
 	if (empty($site_name))
 		$site_name = _T('title_software');
+
+	// If no currency format set, get default format from the 
+	// global language translation files
+	if (empty($currency)) {
+		$current_lang = $GLOBALS['lcm_lang'];
+		$GLOBALS['lcm_lang'] = $default_language;
+		$currency = _T('currency_default_format');
+		$GLOBALS['lcm_lang'] = $current_lang;
+	}
+
+	echo "\t<input type='hidden' name='conf_modified_general' value='yes'/>\n";
 
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
@@ -48,26 +82,34 @@ function show_config_form() {
 	echo "<tr>\n";
 	echo "<td>";
 
-	echo "<p><b>" . _T('siteconf_input_site_name') . "</b></p>\n";
+	echo "<p><b><label for='site_name'>" . _T('siteconf_input_site_name') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_site_name') . "</small></p>\n";
 	echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40'/></p>\n";
 
-	echo "<p><b>" . _T('siteconf_input_site_desc') . "</b></p>\n";
+	echo "<p><b><label for='site_desc'>" . _T('siteconf_input_site_desc') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_site_desc') . "</small></p>\n";
 	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40'/></p>\n";
 
-	echo "<p><b>" . _T('siteconf_input_site_address') . "</b></p>\n";
+	echo "<p><b><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></b></p>\n";
 	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40'/></p>\n";
+
+	echo "<p><b><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_admin_email') . "</small></p>\n";
+	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40'/></p>\n";
 
 	echo "<p><b>" . _T('siteconf_input_default_lang') . "</b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_default_lang') . "</small></p>\n";
-	echo "<p>" . menu_languages('default_language', $default_language) . "\n";
+	echo "<p>" . menu_languages('default_language', $default_language) . "</p>\n";
 
-	echo "<p><b>" . _T('siteconf_input_admin_email') . "</b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_admin_email') . "</small></p>\n";
-	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40'/></p>\n";
+	echo "<p><b><label for='currency'>" . _T('siteconf_input_currency') . "</label></b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_currency') . "</small></p>\n";
+	echo "<p><small>" . _T('siteconf_warning_currency') . "</small></p>\n";
+	echo "<p><input type='text' id='currency' name='currency' value='$currency' size='5'/></p>\n";
 	echo "</td>\n</tr>\n</table>\n";
 
+}
+
+function show_config_form_collab() {
 	// 
 	// *** COLLAB WORK
 	//
@@ -75,6 +117,8 @@ function show_config_form() {
 	$case_default_write = read_meta('case_default_write');
 	$case_read_always = read_meta('case_read_always');
 	$case_write_always = read_meta('case_write_always');
+
+	echo "\t<input type='hidden' name='conf_modified_collab' value='yes'/>\n";
 
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
@@ -90,7 +134,7 @@ function show_config_form() {
 	echo "<p><b>Read access to cases</b></p>\n";
 
 	echo "<p>Who can view case information?<br>
-<small>(Cases usually have one or many authors specifically assigned to them. It is assumed that assigned authors can consult the case and it's follow-ups, but what about authors who are not assigned to the case?)</small></p>\n";
+		<small>(Cases usually have one or many authors specifically assigned to them. It is assumed that assigned authors can consult the case and it's follow-ups, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
 	// If by default read set to public (case_default_read == yes)
@@ -108,7 +152,7 @@ function show_config_form() {
 	echo "<p><b>Read access global policy</b></p>\n";
 
 	echo "<p>Who can change the read access to a case?<br>
-<small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
+		<small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
 	// Anyone can change the setting (case_read_always != yes)
@@ -129,7 +173,7 @@ function show_config_form() {
 	echo "<p><b>Write access to cases</b></p>\n";
 
 	echo "<p>Who can write information in the cases?<br>
-<small>(Cases usually have one or many authors specifically assigned to them. It is assumed that only assigned authors can add follow-up information to the case, but what about authors who are not assigned to the case?)</small></p>\n";
+		<small>(Cases usually have one or many authors specifically assigned to them. It is assumed that only assigned authors can add follow-up information to the case, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
 	// If by default write set to public (case_default_write == 'yes')
@@ -147,7 +191,7 @@ function show_config_form() {
 	echo "<p><b>Write access global policy</b></p>\n";
 
 	echo "<p>Who can change the write access to a case?<br>
-<small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
+		<small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
 	// Anyone can change the setting (case_write_always != yes)
@@ -196,13 +240,29 @@ function show_config_form() {
 
 	echo "</ul>\n";
 	echo "</td>\n</tr>\n</table>\n";
-
-	echo "<p><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
-
-	echo "</form>\n";
 }
 
-function apply_conf_changes() {
+function show_config_form_policy() {
+	// 
+	// *** OFFICE POLICY
+	//
+
+	// read_meta() ...
+
+	echo "\t<input type='hidden' name='conf_modified_policy' value='yes'/>\n";
+
+	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
+	echo "<tr>\n";
+	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
+	echo _T('siteconf_subtitle_policy');
+	echo "</h4></td>\n";
+	echo "<tr>\n";
+	echo "<td>";
+
+	echo "</td>\n</tr>\n</table>\n";
+}
+
+function apply_conf_changes_general() {
 	$log = array();
 
 	global $site_name;
@@ -210,11 +270,8 @@ function apply_conf_changes() {
 	global $site_address;
 	global $default_language;
 	global $email_sysadmin;
-	global $case_default_read;
-	global $case_default_write;
-	global $case_read_always;
-	global $case_write_always;
-	global $site_open_subscription;
+	global $currency;
+
 
 	// Site name
 	if (! empty($site_name)) {
@@ -272,6 +329,30 @@ function apply_conf_changes() {
 		}
 	}
 
+	// Currency
+	if (! empty($currency)) {
+		$old_currency = read_meta('currency');
+
+		if ($currency != $old_currency) {
+			write_meta('currency', $currency);
+			array_push($log, "Currency changed to <tt>$currency</tt>, "
+				. "was <tt>$old_currency</tt>.");
+		}
+	}
+
+	if (! empty($log))
+		write_metas();
+	
+	return $log;
+}
+
+function apply_conf_changes_collab() {
+	global $case_default_read;
+	global $case_default_write;
+	global $case_read_always;
+	global $case_write_always;
+	global $site_open_subscription;
+
 	// Default read policy
 	if ($case_default_read != read_meta('case_default_read')) {
 		write_meta('case_default_read', ($case_default_read ? 'yes' : ''));
@@ -319,7 +400,10 @@ function apply_conf_changes() {
 	// Self-registration
 	$old_site_open_subscription = read_meta('site_open_subscription');
 	if ($site_open_subscription != $old_site_open_subscription) {
-		if ($site_open_subscription == 'yes' || $site_open_subscription == 'moderated' || $site_open_subscription == 'no') {
+		if ($site_open_subscription == 'yes' || 
+			$site_open_subscription == 'moderated' || 
+			$site_open_subscription == 'no') 
+		{
 			write_meta('site_open_subscription', $site_open_subscription);
 			array_push($log, "New author self-registration changed to "
 				. "'$site_open_subscription', was '$old_site_open_subscription'.");
@@ -328,9 +412,14 @@ function apply_conf_changes() {
 
 	if (! empty($log))
 		write_metas();
-	
+
 	return $log;
 }
+
+function apply_conf_changes_policy() {
+
+}
+
 
 global $author_session;
 
@@ -339,8 +428,12 @@ if ($author_session['status'] != 'admin') {
 	echo "<p>Warning: Access denied, not admin.\n";
 	lcm_page_end();
 } else {
-	if ($conf_modified)
-		$log = apply_conf_changes();
+	if ($conf_modified_general)
+		$log = apply_conf_changes_general();
+	else if ($conf_modified_collab)
+		$log = apply_conf_changes_collab();
+	else if ($conf_modified_policy)
+		$log = apply_conf_changes_policy();
 
 	// Once ready, show the form (must be done after changes are
 	// applied so that they can be used in the header).
@@ -360,7 +453,7 @@ if ($author_session['status'] != 'admin') {
 		echo "</div>\n";
 	}
 
-	show_config_form();
+	show_config_form($_GET['panel']);
 	lcm_page_end();
 }
 
