@@ -18,21 +18,22 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.26 2005/03/16 08:03:11 mlutfy Exp $
+	$Id: listclients.php,v 1.27 2005/03/16 08:16:01 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
+$find_client_string = '';
+if (isset($_REQUEST['find_client_string']))
+	$find_client_string = $_REQUEST['find_client_string'];
+
 lcm_page_start("List of clients"); // TRAD
+show_find_box('client', $find_client_string);
 
 // List all clients in the system + search criterion if any
 $q = "SELECT id_client,name_first,name_middle,name_last
 		FROM lcm_client";
-
-$find_client_string = '';
-if (isset($_REQUEST['find_client_string']))
-	$find_client_string = $_REQUEST['find_client_string'];
 
 if (strlen($find_client_string)>1) {
 	// Add search criteria
@@ -67,8 +68,6 @@ if ($list_pos >= $number_of_rows)
 if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
 		lcm_panic("Error seeking position $list_pos in the result");
-
-show_find_box('client', $find_client_string);
 
 // Output table tags
 show_listclient_start();
