@@ -27,6 +27,7 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	global $spip_lang_rtl, $spip_lang_left;
 	global $mode;
 	global $connect_status;
+	global $prefs;
 	
 	$lcm_site_name = entites_html(read_meta("site_name"));
 	$title = textebrut(typo($title));
@@ -43,10 +44,6 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	@Header("Pragma: no-cache");
 	@Header("Content-Type: text/html; charset=$charset");
 	
-	//[KM] Here begins XHTML code
-	//My opinion is to use XHTML 1.0 Transitional because it supports simultaneously
-	//HTML code style and XHTML code style. Some kind of universal version.
-	
 	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 <html xmlns=\"http://www.w3.org/1999/xhtml\">
 <head>
@@ -57,16 +54,25 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	// Style sheets
 	//
 
-	echo "<link rel=\"stylesheet\" href=\"styles/lcm_ui_default.css\" type=\"text/css\" />\n";
-	echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
-	echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
-	echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
+	// This is very temporary, it should be automatic and allow custom CSS
+	if (! $prefs['theme']) {
+		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_ui_default.css\" />\n";
+		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
+		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
+		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
+	} else {
+		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_ui_default.css\" title=\"Default\" />\n";
+		echo "<link rel=\"" . ($prefs['theme'] == 'blue' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
+		echo "<link rel=\"" . ($prefs['theme'] == 'orange' ? '' : 'alternative ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
+		echo "<link rel=\"" . ($prefs['theme'] == 'monochrome' ? '' : 'alternative ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
+	}
 
 	// It is the responsability of the function caller to make sure that
 	// the filename does not cause problems...
 	$css_files_array = explode(",", $css_files);
 	foreach ($css_files_array as $f)
-		echo "\t<link rel='stylesheet' href='styles/lcm_$f.css' type='text/css' />\n";
+		if ($f)
+			echo "\t<link rel='stylesheet' type='text/css' href='styles/lcm_$f.css' />\n";
 	
 	echo "</head>\n";
 
