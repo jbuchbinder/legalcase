@@ -43,6 +43,7 @@ function create_database() {
 	// - DONE lcm_client
 	// - DONE lcm_org
 	// - DONE lcm_client_org
+	// + DONE lcm_contact
 	// + TODO lcm_courtfinal
 	// + TODO lcm_appelation
 	// + TODO lcm_keyword
@@ -144,6 +145,16 @@ function create_database() {
 
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
+	$query = "CREATE TABLE lcm_contact (
+		id_contact bigint(21) NOT NULL auto_increment,
+		type_person ENUM('author', 'client', 'org') DEFAULT 'author' NOT NULL,
+		id_of_person bigint(21) DEFAULT '0' NOT NULL,
+		value text NOT NULL,
+		type_contact tinyint(2) DEFAULT 0 NOT NULL,
+		PRIMARY KEY id_contact (id_contact))";
+	$result = lcm_query($query);
+
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	//
 	// Relations

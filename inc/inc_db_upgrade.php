@@ -89,12 +89,22 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (6);
 	}
 
-	// Ahem.. the previous version was a mistake
 	if ($lcm_db_version_current < 7) {
-		lcm_query("ALTER TABLE lcm_author ALTER cookie_recall tinytext NOT NULL");
+		// Ahem.. the previous version was a mistake
+		lcm_query("ALTER TABLE lcm_author DROP cookie_recall");
+		lcm_query("ALTER TABLE lcm_author ADD cookie_recall tinytext NOT NULL");
+
+		// For author/client/org contact book
+		lcm_query("CREATE TABLE lcm_contact (
+			id_contact bigint(21) NOT NULL auto_increment,
+			type_person ENUM('author', 'client', 'org') DEFAULT 'author' NOT NULL,
+			id_of_person bigint(21) DEFAULT '0' NOT NULL,
+			value text NOT NULL,
+			type_contact tinyint(2) DEFAULT 0 NOT NULL,
+			PRIMARY KEY id_contact (id_contact))");
+
 		upgrade_db_version (7);
 	}
-
 
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.98) {
