@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.15 2005/03/25 10:37:47 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.16 2005/03/25 12:44:06 mlutfy Exp $
 */
 
 
@@ -501,6 +501,8 @@ function http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre)
 	//
 	// Show calendars for previous, current and next month
 	//
+
+	$show_week = ($_REQUEST['type'] == 'semaine' ? true : false);
 	$gadget .= "</td>\n</tr>\n</table>\n";
 
 	// [ML] I had a problem centering the name of month, so I removed the 'width="100%"'
@@ -508,13 +510,13 @@ function http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre)
 	$gadget .= "<table cellpadding='0' cellspacing='5' border='0' align='center'>\n";
 	$gadget .= "<tr>\n<td valign='top' width='33%'>"
 		// previous month
-		. http_calendrier_agenda($mois-1, $annee, $jour, $mois, $annee, $GLOBALS['afficher_bandeau_calendrier_semaine'], $script,$ancre) 
+		. http_calendrier_agenda($mois-1, $annee, $jour, $mois, $annee, $show_week, $script,$ancre) 
 		. "</td>\n<td valign='top' width='33%'>"
 		// current month
-		. http_calendrier_agenda($mois, $annee, $jour, $mois, $annee, $GLOBALS['afficher_bandeau_calendrier_semaine'], $script,$ancre) 
+		. http_calendrier_agenda($mois, $annee, $jour, $mois, $annee, $show_week, $script,$ancre) 
 		. "</td>\n<td valign='top' width='33%'>"
 		// next month
-		. http_calendrier_agenda($mois+1, $annee, $jour, $mois, $annee, $GLOBALS['afficher_bandeau_calendrier_semaine'], $script,$ancre) 
+		. http_calendrier_agenda($mois+1, $annee, $jour, $mois, $annee, $show_week, $script,$ancre) 
 		. "</td>\n"
 		. "</tr>\n</table>\n"
 		. "<table cellpadding='0' cellspacing='5' border='0' width='98%'><tr><td colspan='3' style='text-align:right;'>";
@@ -929,8 +931,6 @@ function http_jour_clic($annee, $mois, $jour, $type, $couleur, $perso, $class = 
 function http_calendrier_agenda_rv ($annee, $mois, $les_rv, $fclic, $perso='',
 				    $jour_ved='', $mois_ved='', $annee_ved='', $semaine='')
 {
-	$couleur_foncee = '#555555'; // NOT USED
-
 	// Form a correct date (for example: $mois=13; $annee=2003)
 	$date_test = date("Y-m-d", mktime(0,0,0,$mois, 1, $annee));
 	$mois = mois($date_test);
@@ -968,19 +968,10 @@ function http_calendrier_agenda_rv ($annee, $mois, $les_rv, $fclic, $perso='',
 		if (checkdate($mois, $j, $annee)) {
 			if ($j == $jour_ved AND $mois == $mois_ved AND $annee == $annee_ved) {
 				// Currently selected day (not necessarely Today)
-				$ligne .= "<li>" . $fclic($annee, $mois, $j, "jour", "black", $perso, 'today') . "</li>\n";
+				$ligne .= "<li>" . $fclic($annee, $mois, $j, "jour", "black", $perso, 'sel_day') . "</li>\n";
 			} else if ($semaine AND $nom >= $debut AND $nom <= $fin) {
-				// [ML] I don't really understand this, but it doesnt seem to matter..
-				// [ML] it might be to highlight a given week
-
-				/*
-				$ligne .= "\n\t<td style='font-size: 11px; margin: 0px; padding: 3px; background-color: white; text-align: center; " .
-					(($jour_semaine==1) ?  $style1 : (($jour_semaine==7) ?  $style7 : '')) .
-					"'>" .
-					$fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso) .
-					"</td>";
-				*/
-				$ligne .= "<li>" . $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso, 'week_day') . "</li>\n";
+				// Highlights a given week
+				$ligne .= "<li>" . $fclic($annee,$mois, $j,($semaine ? 'semaine' : 'jour'),"black", $perso, 'sel_week') . "</li>\n";
 			} else {
 				// All other days, including weekends
 				$css = '';
