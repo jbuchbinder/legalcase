@@ -97,6 +97,7 @@ function create_database() {
 		lang VARCHAR(10) DEFAULT '' NOT NULL,
 		prefs tinytext NOT NULL,
 		status ENUM('admin', 'normal', 'external') DEFAULT 'normal' NOT NULL,
+		cookie_recall tinytext NOT NULL,
 
 		low_sec tinytext NOT NULL,
 		maj TIMESTAMP,
@@ -106,7 +107,6 @@ function create_database() {
 		messagerie VARCHAR(3) NOT NULL,
 		alea_actuel tinytext NOT NULL,
 		alea_futur tinytext NOT NULL,
-		cookie_oubli tinytext NOT NULL,
 		extra longblob NULL,
 
 		PRIMARY KEY (id_author),

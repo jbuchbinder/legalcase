@@ -89,6 +89,12 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (6);
 	}
 
+	// Ahem.. the previous version was a mistake
+	if ($lcm_db_version_current < 7) {
+		lcm_query("ALTER TABLE lcm_author ALTER cookie_recall tinytext NOT NULL");
+		upgrade_db_version (7);
+	}
+
 
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.98) {
