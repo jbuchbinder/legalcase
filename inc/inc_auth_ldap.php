@@ -10,7 +10,7 @@ class Auth_ldap {
 	var $nom, $login, $email, $pass, $statut, $bio;
 
 	function init() {
-		// Verifier la presence de LDAP
+		// Check for LDAP presence
 		if (!$GLOBALS['ldap_present']) return false;
 		return spip_connect_ldap();
 	}
@@ -22,21 +22,21 @@ class Auth_ldap {
 	function verifier($login, $pass) {
 		global $ldap_link, $ldap_base;
 
-		// Securite, au cas ou le serveur LDAP est tres laxiste
+		// security, in case the LDAP server is very easy going
 		if (!$login || !$pass) return false;
 
-		// Attributs testes pour egalite avec le login
+		// Tested attributes for login
 		$atts = array('uid', 'login', 'userid', 'cn', 'sn');
-		$login_search = ereg_replace("[^-@._[:space:][:alnum:]]", "", $login); // securite
+		$login_search = ereg_replace("[^-@._[:space:][:alnum:]]", "", $login); // security
 
-		// Tenter une recherche pour essayer de retrouver le DN
+		// First try to find the DN
 		reset($atts);
 		while (list(, $att) = each($atts)) {
 			$filter = "$att=$login_search";
 			$result = @ldap_search($ldap_link, $ldap_base, $filter, array("dn"));
 			$info = @ldap_get_entries($ldap_link, $result);
-			// Ne pas accepter les resultats si plus d'une entree
-			// (on veut un attribut unique)
+			// Don't accept the results if there is more than one entry
+			// (we want a unique attribute)
 			if (is_array($info) AND $info['count'] == 1) {
 				$dn = $info[0]['dn'];
 				if (@ldap_bind($ldap_link, $dn, $pass)) {
@@ -47,7 +47,7 @@ class Auth_ldap {
 			}
 		}
 
-		// Si echec, essayer de deviner le DN
+		// If failed, try to guess the DN
 		reset($atts);
 		while (list(, $att) = each($atts)) {
 			$dn = "$att=$login_search, $ldap_base";
@@ -60,17 +60,17 @@ class Auth_ldap {
 		return false;
 	}
 
-	function lire() {
+	function lire() { // read
 		global $ldap_link, $ldap_base, $flag_utf8_decode;
 		$this->nom = $this->email = $this->pass = $this->statut = '';
 
 		if (!$this->login) return false;
 
-		// Si l'auteur existe dans la base, y recuperer les infos
+		// If the author exists in the database, fetch his infos
 		$query = "SELECT * FROM spip_auteurs WHERE login='".addslashes($this->login)."' AND source='ldap'";
-		$result = spip_query($query);
+		$result = lcm_query($query);
 
-		if ($row = spip_fetch_array($result)) {
+		if ($row = lcm_fetch_array($result)) {
 			$this->nom = $row['nom'];
 			$this->email = $row['email'];
 			$this->statut = $row['statut'];
@@ -78,10 +78,10 @@ class Auth_ldap {
 			return true;
 		}
 
-		// Lire les infos sur l'auteur depuis LDAP
+		// Read the info on the author from LDAP
 		$result = @ldap_read($ldap_link, $this->user_dn, "objectClass=*", array("uid", "cn", "mail", "description"));
 		
-		// Si l'utilisateur ne peut lire ses infos, se reconnecter avec le compte principal
+		// If the user cannot read his informations, reconnect with the main account
 		if (!$result) {
 			if (spip_connect_ldap())
 				$result = @ldap_read($ldap_link, $this->user_dn, "objectClass=*", array("uid", "cn", "mail", "description"));
@@ -90,7 +90,7 @@ class Auth_ldap {
 		}
 		if (!$result) return false;
 
-		// Recuperer les donnees de l'auteur
+		// Fetch the author's data
 		$info = @ldap_get_entries($ldap_link, $result);
 		if (!is_array($info)) return false;
 		for ($i = 0; $i < $info["count"]; $i++) {
@@ -103,7 +103,7 @@ class Auth_ldap {
 			}
 		}
 
-		// Convertir depuis UTF-8 (jeu de caracteres par defaut)
+		// Convert from UTF-8 (default encoding)
 		if ($flag_utf8_decode) {
 			$this->nom = utf8_decode($this->nom);
 			$this->email = utf8_decode($this->email);
@@ -113,7 +113,7 @@ class Auth_ldap {
 		return true;
 	}
 
-	function activer() {
+	function activate() {
 		$nom = addslashes($this->nom);
 		$login = addslashes($this->login);
 		$email = addslashes($this->email);
@@ -122,14 +122,21 @@ class Auth_ldap {
 
 		if (!$statut) return false;
 
-		// Si l'auteur n'existe pas, l'inserer avec le statut par defaut (defini a l'install)
-		$query = "SELECT id_auteur FROM spip_auteurs WHERE login='$login'";
-		$result = spip_query($query);
-		if (spip_num_rows($result)) return false;
+		// If the author does not exist, insert with the default status (defined at installation)
+		// [ML] lcm-ification not tested XXX
+		$query = "SELECT id_author FROM lcm_author WHERE username='$login'";
+		$result = lcm_query($query);
+		if (lcm_num_rows($result)) return false;
 
-		$query = "INSERT IGNORE INTO spip_auteurs (source, nom, login, email, bio, statut, pass) ".
+		// XXX
+		$query = "INSERT IGNORE INTO lcm_author (source, name, username, email, bio, status, pass) ".
 			"VALUES ('ldap', '$nom', '$login', '$email', '$bio', '$statut', '')";
-		return spip_query($query);
+		return lcm_query($query);
+	}
+
+	function activer() {
+		lcm_log("use of deprecated function: activer, use activate instead");
+		return activate();
 	}
 }
 
