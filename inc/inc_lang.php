@@ -418,7 +418,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 	sort($languages);
 	while (list(, $l) = each ($languages)) {
 		if ($l == $default) {
-			$selected = ' selected';
+			$selected = ' selected="selected"';
 		} else {
 			$selected = '';
 		}
