@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.11 2005/03/24 15:26:15 mlutfy Exp $
+	$Id: author_det.php,v 1.12 2005/03/24 16:28:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -53,7 +53,7 @@ if ($author > 0) {
 
 		switch ($tab) {
 			//
-			// Contacts tab
+			// General tab
 			//
 			case 'general' :
 				//
@@ -63,42 +63,14 @@ if ($author > 0) {
 				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_general') . "</div>\n";
 
 				echo '<p class="normal_text">';
-				echo _Ti('author_input_id') . ' ' . $author_data['id_author'] . "<br/>\n";
-
-				// Show author contacts (if any)
-				$hide_emails = read_meta('hide_emails');
-				$contacts = get_contacts('author', $author);
+				echo _Ti('authoredit_input_id') . $author_data['id_author'] . "<br />\n";
+				echo _Ti('authoredit_input_status') . _T('authoredit_input_status_' . $author_data['status']) . "<br />\n";
 
 				echo "</p>\n";
+				
+				// Show author contacts (if any)
+				show_all_contacts('author', $author_data['id_author']);
 
-				$html = '<div class="prefs_column_menu_head">' . _T('generic_subtitle_contacts') . "</div>\n";
-				$html .= '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
-
-				$i = 0;
-				foreach($contacts as $c) {
-					// Check if the contact is an e-mail
-					if (strpos($c['name'],'email') === 0) {
-						if (! ($hide_emails == 'yes' && $author_session['status'] != 'admin')) {
-							$html .= "\t<tr>";
-							$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>";
-							$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-							$html .= '<a href="mailto:' . $c['value'] . '">' . $c['value'] . '</a></td>';
-							$html .= "</tr>\n";
-							$i++;
-						}
-					} else {
-						$html .= "\t<tr>";
-						$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>";
-						$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $c['value'] . "</td>";
-						$html .= "</tr>\n";
-						$i++;
-					}
-				}
-
-				$html .= "</table><br />\n";
-
-				if ($i > 0)
-					echo $html;
 
 				//
 				// Show 'edit author' button, if allowed
