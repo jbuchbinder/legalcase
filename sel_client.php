@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.10 2005/01/18 23:04:07 antzi Exp $
+	$Id: sel_client.php,v 1.11 2005/01/18 23:09:05 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -29,14 +29,14 @@ $case = intval($_GET['case']);
 if (! $case)
 	die("There's no such case!");
 
-// Show case overview
+// Get case data
 $q = "SELECT title
 		FROM lcm_case
 		WHERE id_case=$case";
 $result = lcm_query($q);
 
-if ($case_data = lcm_fetch_array($result))
-	echo 'to be added to case "' . $case_data['title'] . "<br />\n";
+$case_data = lcm_fetch_array($result);
+
 //
 // Show only clients who are not already in the case
 // Extract the clients on the case, then put them in a "not in" list
@@ -70,7 +70,6 @@ if (strlen($find_client_string)>1) {
 
 $q2 .= ")";
 
-
 $result = lcm_query($q2);
 
 // Get the number of rows in the result
@@ -83,6 +82,9 @@ if ($list_pos>=$number_of_rows) $list_pos = 0;
 if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
+
+// Show case overview
+echo '(to be added to case "' . $case_data['title'] . "\")<br />\n";
 
 // Search form
 ?>
