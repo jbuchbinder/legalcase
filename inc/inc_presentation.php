@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.177 2005/03/22 12:15:53 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.178 2005/03/22 13:17:16 mlutfy Exp $
 */
 
 //
@@ -1060,7 +1060,8 @@ function show_tabs_links($tab_list, $selected='', $sel_link=false) {
 	echo "\n\n";
 }
 
-function get_list_pos($result) {
+// XXX this does not work
+function get_list_pos(&$result) {
 	$list_pos = 0;
 	
 	if (isset($_REQUEST['list_pos']))
@@ -1302,13 +1303,23 @@ function show_find_box($type, $string, $dest = '') {
 			lcm_panic("invalid type: $type");
 	}
 
-	if ($dest)
-		$action = $dest;
+	if ($dest) {
+		if ($dest == '__self__') {
+			$link_dest = new Link();
+			$link_dest->delVar('find_' . $type . '_string');
+			$link_dest->delVar('submit');
+			echo $link_dest->getForm('get', '', '', 'search_form');
+		} else {
+			$action = $dest;
+		}
+	} else {
+		echo '<form name="frm_find_' . $type . '" class="search_form" action="' . $action . '" method="get">' . "\n";
+	}
 
-	echo '<form name="frm_find_' . $type . '" class="search_form" action="' . $action . '" method="get">' . "\n";
 	echo _T('input_search_' . $type) . "&nbsp;";
 	echo '<input type="text" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' .  $string . '" />';
 	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
+
 	echo "</form>\n";
 }
 
