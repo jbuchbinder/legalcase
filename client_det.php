@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.37 2005/03/28 07:41:45 mlutfy Exp $
+	$Id: client_det.php,v 1.38 2005/03/28 07:48:08 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -122,8 +122,8 @@ if ($client > 0) {
 				echo '
 				<br /><table border="0" class="tbl_usr_dtl" width="100%">
 				<tr>
-					<th class="heading">' . "Organisation name" . /* TRAD */ '</th>
 					<th class="heading">&nbsp;</th>
+					<th class="heading">' . _Th('org_input_name') . '</th>
 				</tr>';
 		
 				//
@@ -137,10 +137,18 @@ if ($client > 0) {
 				$result = lcm_query($q);
 		
 				while ($row1 = lcm_fetch_array($result)) {
-					echo '<tr><td><a href="org_det.php?org=' . $row1['id_org'] . '" class="content_link">' . $row1['name'] . "</a></td>\n<td>";
+					echo "<tr>\n";
+					echo '<td width="25" align="center"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
+					echo '<td><a style="display: block;" href="org_det.php?org=' . $row1['id_org'] .  '" class="content_link">' . $row1['name'] . "</a></td>\n";
+
+					/* [ML] Not appropriate here
+					echo "<td>";
 					if ($edit)
 						echo '<a href="edit_org.php?org=' . $row1['id_org'] . '" class="content_link">Edit</a>';
-					echo "</td></tr>\n";
+					echo "</td>";
+					*/
+
+					echo "</tr>\n";
 				}
 				
 				echo "</table>";
