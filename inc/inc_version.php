@@ -647,7 +647,7 @@ class Link {
 			$first = true;
 			reset($vars);
 			while (list($name, $value) = each($vars)) {
-				$query .= (($query) ? '&' : '?').$name.'='.urlencode($value);
+				$query .= (($query) ? '&amp;' : '?').$name.'='.urlencode($value);
 			}
 		}
 		if (is_array($this->arrays)) {
@@ -655,7 +655,7 @@ class Link {
 			while (list($name, $table) = each($this->arrays)) {
 				reset($table);
 				while (list(, $value) = each($table)) {
-					$query .= (($query) ? '&' : '?').$name.'[]='.urlencode($value);
+					$query .= (($query) ? '&amp;' : '?').$name.'[]='.urlencode($value);
 				}
 			}
 		}
