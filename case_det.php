@@ -4,7 +4,9 @@ include('inc/inc.php');
 include('inc/inc_acc.php');
 
 if ($case > 0) {
-	$q="SELECT *
+	$q="SELECT id_case, title, id_court_archive, FROM_UNIXTIME(date_creation),
+			FROM_UNIXTIME(date_assignment), legal_reason, alledged_crime, 
+			status, public, pub_write
 		FROM lcm_case
 		WHERE id_case=$case";
 
@@ -46,10 +48,16 @@ if ($case > 0) {
 		if ($admin) echo '[<a href="sel_auth.php?case=' . $case . '">' . _T('add_user_case') . '</a>]';
 		echo "<br>\n";
 		echo _T('court_archive_id') . ': ' . $row['id_court_archive'] . "<br>\n";
-		echo _T('creation_date') . ': ' . $row['date_creation'] . "<br>\n";
-		echo _T('assignment_date') . ': ' . $row['date_assignment'] . "<br>\n";
+		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
+
+		// [ML] FIXME: Not very clear how this should work
+		if ($row['date_assignment'])
+			echo _T('assignment_date') . ': ' .  format_date($row['date_assignment']) . "<br>\n";
+		else
+			echo _T('assignment_date') . _T('typo_column') . ' ' . "Click to assign (?)<br/>\n";
+
 		echo _T('legal_reason') . ': ' . $row['legal_reason'] . "<br>\n";
-		echo _T('alledged crime') . ': ' . $row['alledged_crime'] . "<br>\n";
+		echo _T('alledged_crime') . ': ' . $row['alledged_crime'] . "<br>\n";
 		echo _T('status') . ': ' . $row['status'] . "<br>\n";
 		echo _T('public') . ': ';
 		if ($row['public'])
