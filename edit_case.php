@@ -1,43 +1,57 @@
 <?php
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
+include_lcm('inc_acc');
+include_lcm('inc_filters');
 
 $case_data = array();
 
-$existing = ($case > 0);
+// Initiate session
+session_start();
 
-if ($existing) {
-	lcm_page_start(_T('edit_case_details'));
+if (empty($errors)) {
 
-	// Check access rights
-	if (!allowed($case,'e')) die(_T('error_no_edit_permission'));
+    // Clear form data
+    $case_data = array('referer'=>$HTTP_REFERER);
 
-	$q = "SELECT *
-		  FROM lcm_case
-		  WHERE id_case=$case";
+	$existing = ($case > 0);
 
-	$result = lcm_query($q);
+	if ($existing) {
+		lcm_page_start(_T('edit_case_details'));
 
-	if ($row = lcm_fetch_array($result)) {
-		foreach ($row as $key => $value) {
-			$case_data[$key] = $value;
+		// Check access rights
+		if (!allowed($case,'e')) die(_T('error_no_edit_permission'));
+
+		$q = "SELECT *
+			FROM lcm_case
+			WHERE id_case=$case";
+
+		$result = lcm_query($q);
+
+		// Register case ID as session variable
+	    if (!session_is_registered("case"))
+			session_register("case");
+
+		if ($row = lcm_fetch_array($result)) {
+			foreach ($row as $key => $value) {
+				$case_data[$key] = $value;
+			}
 		}
+
+		$admin = allowed($case,'a');
+
+	} else {
+		lcm_page_start(_T('new_case'));
+
+		// Set default values for the new case
+		$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
+		$case_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
+		$case_data['public'] = read_meta('case_default_read');
+		$case_data['pub_write'] = read_meta('case_default_write');
+
+		$admin = true;
+
 	}
-
-	$admin = allowed($case,'a');
-
-} else {
-	lcm_page_start(_T('new_case'));
-
-	// Set default values for the new case
-	$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
-	$case_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
-	$case_data['public'] = read_meta('case_default_read');
-	$case_data['pub_write'] = read_meta('case_default_write');
-
-	$admin = true;
-
 }
 
 	echo "\n<form action=\"upd_case.php\" method=\"POST\">
