@@ -128,6 +128,9 @@ select.sel_frm {
 
 h3.content_head {
 	color: #369;
+	border-top: 1px solid #9cf;
+	border-bottom: 1px solid #9cf;
+	background-color: #def;
 }
 
 h4 {

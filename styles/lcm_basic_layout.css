@@ -48,7 +48,6 @@ body {
 
 #main_column {
 	margin-left: 170px;
-	border-top: 1px dashed #999;
 	background-color: #fff;
 	margin-right: 5px;
 	text-align: left;
@@ -129,6 +128,10 @@ a.head_subttl_link {
 
 a, p, div, h1, h2, h3, strong, input, select, option, form, textarea, td, table, th {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+h3 {
+	margin: 5px 0px 5px 0px;
 }
 
 hr.hair_line {
@@ -215,6 +218,12 @@ form.search_form {
 	margin: 4px 4px 10px 4px;
 }
 
+/*
+#main_column input[type=text], #main_column input[type=password], #main_column select, #main_column textarea {
+	width: 99%;
+}
+*/
+
 input.search_form_txt {
 	
 }
@@ -238,8 +247,8 @@ select.sel_frm {
 h3.content_head {
 	text-transform: uppercase;
 	text-align: left;
-	margin: 5px 0px 5px 0px;
-	padding: 0px;
+	margin: 0px 0px 5px 0px;
+	padding: 2px 0px 2px 0px;
 }
 
 h4 {
