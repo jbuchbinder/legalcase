@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.15 2005/01/12 10:16:22 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.16 2005/01/12 10:27:58 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -129,8 +129,8 @@ class Auth_db {
 			return false;
 
 		// Check for password size
-		if (! $pass || strlen(utf8_decode($pass)) <= 5) {
-			$this->error = _T('pass_title_new_pass');
+		if (strlen(utf8_decode($pass)) <= 5) {
+			$this->error = _T('pass_warning_too_short');
 			return false;
 		}
 
