@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.13 2005/01/19 12:24:05 mlutfy Exp $
+	$Id: client_det.php,v 1.14 2005/02/08 20:18:16 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -77,7 +77,7 @@ if ($client > 0) {
 		echo _T('person_input_gender') . ' ' . $gender . "<br/>\n";
 		echo _T('person_input_citizen_number') . ' ' . $row['citizen_number'] . "<br/>\n";
 		echo _T('person_input_address') . ' ' . $row['address'] . "<br/>\n";
-		echo _T('person_input_address') . ' ' . $row['civil_status'] . "<br/>\n";
+		echo _T('person_input_civil_status') . ' ' . $row['civil_status'] . "<br/>\n";
 		echo _T('person_input_income') . ' ' . $row['income'] . "<br/>\n";
 		echo 'Creation date: ' . format_date($row['date_creation']) . "<br/>\n";
 		// [ML] echo 'Last update date: ' . $row['date_update'] . "<br/>\n";
