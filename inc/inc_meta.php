@@ -1,31 +1,34 @@
 <?php
 
 //
-// Ce fichier ne sera execute qu'une fois
-if (defined("_INC_META")) return;
-define("_INC_META", "1");
+// Execute this file only once
+if (defined('_INC_META')) return;
+define('_INC_META', '1');
 
+// read metas
 function lire_metas() {
 	global $meta, $meta_maj;
 
 	$meta = '';
 	$meta_maj = '';
-	$query = 'SELECT * FROM spip_meta';
+	$query = 'SELECT * FROM lcm_meta';
 	$result = spip_query($query);
 	while ($row = spip_fetch_array($result)) {
-		$nom = $row['nom'];
-		$meta[$nom] = $row['valeur'];
-		$meta_maj[$nom] = $row['maj'];
+		$nom = $row['name'];
+		$meta[$nom] = $row['value'];
+		$meta_maj[$nom] = $row['upd'];
 	}
 }
 
+// write metas
 function ecrire_meta($nom, $valeur) {
 	$valeur = addslashes($valeur);
-	spip_query("REPLACE spip_meta (nom, valeur) VALUES ('$nom', '$valeur')");
+	spip_query("REPLACE lcm_meta (name, value) VALUES ('$nom', '$valeur')");
 }
 
+// delete metas
 function effacer_meta($nom) {
-	spip_query("DELETE FROM spip_meta WHERE nom='$nom'");
+	spip_query("DELETE FROM lcm_meta WHERE name='$nom'");
 }
 
 //
@@ -85,8 +88,8 @@ function lire_meta_maj($nom) {
 			@unlink($fichier_meta_cache_w);
 	} else {
 		global $connect_statut;
-		if ($connect_statut == '0minirezo')
-			echo "<h4 font color=red>"._T('texte_inc_meta_1')." <a href='lcm_test_dirs.php'>"._T('texte_inc_meta_2')."</a> "._T('texte_inc_meta_3')."&nbsp;</h4>\n";
+		if ($connect_statut == 'admin')
+			echo "<h4 font color='red'>"._T('texte_inc_meta_1')." <a href='lcm_test_dirs.php'>"._T('texte_inc_meta_2')."</a> "._T('texte_inc_meta_3')."&nbsp;</h4>\n";
 	}
 }
 
