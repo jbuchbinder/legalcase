@@ -469,8 +469,8 @@ function use_language_of_visitor() {
 	if (!regler_langue_navigateur())
 		use_language_of_site();
 
-	if ($GLOBALS['auteur_session']['lang'])
-		changer_langue($GLOBALS['auteur_session']['lang']);
+	if ($GLOBALS['author_session']['lang'])
+		changer_langue($GLOBALS['author_session']['lang']);
 
 	if (!$flag_ecrire AND ($cookie_lang = $HTTP_COOKIE_VARS['lcm_lang']))
 		changer_langue($cookie_lang);

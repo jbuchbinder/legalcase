@@ -9,7 +9,7 @@ define('_INC_SESSION', '1');
  * Management for authentication by sessions.
  */
 
-$GLOBALS['auteur_session'] = '';
+$GLOBALS['author_session'] = '';
 
 
 //
@@ -44,7 +44,7 @@ function ajouter_session($auteur, $id_session) {
 	$texte = "<"."?php\n";
 	reset($vars);
 	while (list(, $var) = each($vars)) {
-		$texte .= "\$GLOBALS['auteur_session']['$var'] = '".addslashes($auteur[$var])."';\n";
+		$texte .= "\$GLOBALS['author_session']['$var'] = '".addslashes($auteur[$var])."';\n";
 	}
 	$texte .= "?".">\n";
 
@@ -77,16 +77,16 @@ function verifier_session($id_session) {
 				// Renouveler la session (avec l'alea courant)
 				include($fichier_session);
 				supprimer_session($id_session);
-				ajouter_session($GLOBALS['auteur_session'], $id_session);
+				ajouter_session($GLOBALS['author_session'], $id_session);
 				$ok = true;
 			}
 		}
 	}
 
 	// if necessary, mark the session as 'ip-change'
-	if ($ok AND (hash_env() != $GLOBALS['auteur_session']['hash_env']) AND !$GLOBALS['auteur_session']['ip_change']) {
-		$GLOBALS['auteur_session']['ip_change'] = true;
-		ajouter_session($GLOBALS['auteur_session'], $id_session);
+	if ($ok AND (hash_env() != $GLOBALS['author_session']['hash_env']) AND !$GLOBALS['author_session']['ip_change']) {
+		$GLOBALS['author_session']['ip_change'] = true;
+		ajouter_session($GLOBALS['author_session'], $id_session);
 	}
 
 	return $ok;
@@ -188,13 +188,13 @@ function verifier_php_auth() {
 			return false;
 		} else {
 			// [ML] FIXME update fields
-			$GLOBALS['auteur_session']['id_author'] = $row['id_author'];
-			$GLOBALS['auteur_session']['nom'] = $row['nom'];
-			$GLOBALS['auteur_session']['login'] = $row['login'];
-			$GLOBALS['auteur_session']['email'] = $row['email'];
-			$GLOBALS['auteur_session']['statut'] = $row['statut'];
-			$GLOBALS['auteur_session']['lang'] = $row['lang'];
-			$GLOBALS['auteur_session']['hash_env'] = hash_env();
+			$GLOBALS['author_session']['id_author'] = $row['id_author'];
+			$GLOBALS['author_session']['nom'] = $row['nom'];
+			$GLOBALS['author_session']['login'] = $row['login'];
+			$GLOBALS['author_session']['email'] = $row['email'];
+			$GLOBALS['author_session']['statut'] = $row['statut'];
+			$GLOBALS['author_session']['lang'] = $row['lang'];
+			$GLOBALS['author_session']['hash_env'] = hash_env();
 			return true;
 		}
 	}
@@ -210,7 +210,7 @@ function ask_php_auth($text_failure) {
 }
 
 // Verify if we have a correct session cookie and load
-// the values in $GLOBALS['auteur_session'] (author)
+// the values in $GLOBALS['author_session'] (author)
 function verifier_visiteur() {
 	if (verifier_session($GLOBALS['HTTP_COOKIE_VARS']['lcm_session']))
 		return true;

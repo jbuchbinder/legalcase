@@ -66,7 +66,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	if ($GLOBALS['var_echec_cookie'])
 	  $echec_cookie = ($GLOBALS['lcm_session'] != 'test_echec_cookie');
 
-	global $auteur_session;
+	global $author_session;
 	global $lcm_session, $PHP_AUTH_USER, $ignore_auth_http;
 	global $lcm_admin;
 	global $php_module;
@@ -88,7 +88,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	include_lcm('inc_session');
 	verifier_visiteur();
 
-	if ($auteur_session AND !$logout AND ($auteur_session['status']=='admin' OR $auteur_session['status']=='1comite')) {
+	if ($author_session AND !$logout AND ($author_session['status']=='admin' OR $author_session['status']=='1comite')) {
 		if ($url != $GLOBALS['clean_link']->getUrl())
 			@Header("Location: $url");
 		echo "<a href='$url'>"._T('login_par_ici')."</a>\n";

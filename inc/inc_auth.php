@@ -36,7 +36,7 @@ function auth() {
 	global $connect_activer_imessage, $connect_activer_messagerie;
 	global $connect_status, $connect_toutes_rubriques, $connect_id_rubrique;
 
-	global $auteur_session, $prefs;
+	global $author_session, $prefs;
 	global $clean_link;
 
 	// If there is not SQL connection, quit.
@@ -57,8 +57,8 @@ function auth() {
 	// Fetch identification data from authentication session
 	if ($cookie_session = $HTTP_COOKIE_VARS['lcm_session']) {
 		if (verifier_session($cookie_session)) {
-			if ($auteur_session['status'] == 'admin' OR $auteur_session['status'] == '1comite') {
-				$auth_login = $auteur_session['username'];
+			if ($author_session['status'] == 'admin' OR $author_session['status'] == '1comite') {
+				$auth_login = $author_session['username'];
 				$auth_pass_ok = true;
 				$auth_can_disconnect = true;
 			}

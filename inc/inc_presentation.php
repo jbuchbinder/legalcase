@@ -2303,7 +2303,7 @@ function fin_html() {
 
 	// Create a new session cookie if the IP changed
 	// [ML] FIXME update paths and names
-	if ($GLOBALS['lcm_session'] && $GLOBALS['auteur_session']['ip_change']) {
+	if ($GLOBALS['lcm_session'] && $GLOBALS['author_session']['ip_change']) {
 		echo "<img name='img_session' src='img_pack/rien.gif' width='0' height='0'>\n";
 		echo "<script type='text/javascript'><!-- \n";
 		echo "document.img_session.src='lcm_cookie.php?change_session=oui';\n";

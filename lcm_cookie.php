@@ -15,9 +15,9 @@ if ($change_session == 'oui') {
 		// Attention : seul celui qui a le bon IP a le droit de rejouer,
 		// ainsi un eventuel voleur de cookie ne pourrait pas deconnecter
 		// sa victime, mais se ferait deconnecter par elle.
-		if ($auteur_session['hash_env'] == hash_env()) {
-			$auteur_session['ip_change'] = false;
-			$cookie = creer_cookie_session($auteur_session);
+		if ($author_session['hash_env'] == hash_env()) {
+			$author_session['ip_change'] = false;
+			$cookie = creer_cookie_session($author_session);
 			supprimer_session($lcm_session);
 			lcm_setcookie('lcm_session', $cookie);
 		}
@@ -45,19 +45,19 @@ if ($logout) {
 	include_lcm('inc_session');
 	verifier_visiteur();
 
-	if ($auteur_session['username'] == $logout) {
+	if ($author_session['username'] == $logout) {
 		if ($lcm_session) {
-			zap_sessions($auteur_session['id_author'], true);
+			zap_sessions($author_session['id_author'], true);
 			lcm_setcookie('lcm_session', $lcm_session, time() - 3600 * 24);
 		}
 		if ($PHP_AUTH_USER AND !$ignore_auth_http) {
 			include_local ("inc-login.php"); // [ML] XXX
 			auth_http($cible, 'logout');
 		}
-		unset ($auteur_session);
+		unset ($author_session);
 	}
 
-	$test = 'yes=' . $auteur_session['login'];
+	$test = 'yes=' . $author_session['login'];
 
 	if (!$url)
 		@Header("Location: ./lcm_login.php" . '?' . $test);
@@ -176,17 +176,17 @@ if ($var_lang_lcm) {
 
 		// [ML] Strange, if I don't do this, id_auteur stays null,
 		// and I have no idea where the variable should have been initialized
-		$id_auteur = $GLOBALS['auteur_session']['id_author'];
+		$id_auteur = $GLOBALS['author_session']['id_author'];
 
 		// Save language preference only if we are installed
 		if (@file_exists('inc/config/inc_connect.php')) {
 			include_lcm('inc_admin');
-			$cible->addvar('test', '123_' .  $GLOBALS['auteur_session']['id_author'] . '_' . $verif);
+			$cible->addvar('test', '123_' .  $GLOBALS['author_session']['id_author'] . '_' . $verif);
 
 			if (verifier_action_auteur('var_lang_lcm', $valeur, $id_auteur)) {
 				lcm_query("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_auteur);
-				$auteur_session['lang'] = $var_lang_lcm;
-				ajouter_session($auteur_session, $lcm_session);	// enregistrer dans le fichier de session
+				$author_session['lang'] = $var_lang_lcm;
+				ajouter_session($author_session, $lcm_session);	// enregistrer dans le fichier de session
 			}
 		}
 
