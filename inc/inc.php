@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.41 2005/01/26 10:35:35 mlutfy Exp $
+	$Id: inc.php,v 1.42 2005/02/04 21:17:50 antzi Exp $
 */
 
 // Test if LCM is installed
@@ -90,6 +90,14 @@ if (isset($_REQUEST['author_ui_modified'])) {
 	if ($_REQUEST['sel_mode'] != $_REQUEST['old_mode']) {
 		if ($_REQUEST['sel_mode'] == 'simple' || $_REQUEST['sel_mode'] == 'extended') {
 			$prefs['mode'] = $_REQUEST['sel_mode'];
+			$prefs_mod = true;
+		}
+	}
+
+	// Set absolute/relative time intervals
+	if ($_REQUEST['sel_time_intervals'] != $_REQUEST['old_time_intervals']) {
+		if ($_REQUEST['sel_time_intervals'] == 'absolute' || $_REQUEST['sel_time_intervals'] == 'relative') {
+			$prefs['time_intervals'] = $_REQUEST['sel_time_intervals'];
 			$prefs_mod = true;
 		}
 	}
