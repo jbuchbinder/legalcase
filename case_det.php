@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.75 2005/01/25 23:08:17 antzi Exp $
+	$Id: case_det.php,v 1.76 2005/02/01 13:04:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -158,46 +158,15 @@ if ($case > 0) {
 		echo '<tr><td align="left" valign="top" width="50%">' . "\n";
 
 		//
-		// Show case organization(s)
-		//
-		$html_show = false; // show table only if it has content
-		$html = '<table border="0" class="tbl_usr_dtl">' . "\n";
-		$html .= '<tr>';
-		$html .= '<th class="heading">' . _T('case_input_organisations'). '</th><th class="heading">&nbsp;</th>';
-		$html .= '</tr>' . "\n";
-
-		$q="SELECT lcm_org.id_org,name
-			FROM lcm_case_client_org,lcm_org
-			WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
-
-		$result = lcm_query($q);
-
-		while ($row = lcm_fetch_array($result)) {
-			$html .= '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">' . clean_output($row['name']) . "</a></td>\n";
-			if ($edit)
-				$html .= '<td><a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">' . _T('edit') . '</a></td>';
-			$html .= "</tr>\n";
-			$html_show = true;
-		}
-
-		$html .= "\t\t</table>";
-
-		if ($html_show)
-			echo $html;
-
-		if ($add)
-			echo "<br /><a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('add_organisation_s') . "</a><br />";
-
-		echo "</td>\n<td align=\"left\" valign=\"top\" width=\"50%\">";
-
-		//
 		// Show case client(s)
 		//
 		$html_show = false;
-		$html = '<table border="0" class="tbl_usr_dtl">' . "\n";
-		$html .= '<tr>';
-		$html .= '<th class="heading">' . _T('case_input_clients') . '</th><th class="heading">&nbsp;</th>';
+		$html = '<table border="0" width="99%" class="tbl_usr_dtl">' . "\n";
+		$html .= "<tr>\n";
+		/*
+		$html .= '<th class="heading" colspan="3">' . _T('case_input_clients') . '</th>';
 		$html .= '</tr>' . "\n";
+		*/
 
 		$q="SELECT cl.id_client, cl.name_first, cl.name_middle, cl.name_last
 			FROM lcm_case_client_org as clo, lcm_client as cl
@@ -206,28 +175,57 @@ if ($case > 0) {
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			$html .= '<tr><td><a class="content_link" href="client_det.php?client=' . $row['id_client'] . '">';
+			$html .= "<tr>\n";
+			$html .= '<td width="25"><img src="images/spip/client_one-20.png" alt="" height="20" width="20" /></td>' . "\n";
+			$html .= '<td><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 			$html .=  clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last']);
 			$html .= "</a></td>\n";
+
 			if ($edit)
-				$html .= '<td><a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">' . _T('edit') . '</a></td>';
+				$html .= '<td><a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">' . _T('edit') . '</a></td>' . "\n";
+
 			$html .= "</tr>\n";
 			$html_show = true;
 		}
 
-		$html .= "\t\t</table>\n";
+		//
+		// Show case organization(s)
+		//
+		$q="SELECT lcm_org.id_org,name
+			FROM lcm_case_client_org,lcm_org
+			WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
+
+		$result = lcm_query($q);
+
+		while ($row = lcm_fetch_array($result)) {
+			$html .= "<tr>\n";
+			$html .= '<td width="25"><img src="images/spip/client_org-20.png" alt="" height="20" width="20" /></td>' . "\n";
+			$html .= '<td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
+			$html .= clean_output($row['name']);
+			$html .= "</a></td>\n";
+
+			if ($edit)
+				$html .= '<td><a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">' . _T('edit') . '</a></td>' . "\n";
+
+			$html .= "</tr>\n";
+			$html_show = true;
+		}
+
+		$html .= "</table>\n\n";
 
 		if ($html_show)
 			echo $html;
 
-		if ($add)
-			echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('add_client_s') . "</a><br />\n";
+		if ($add) {
+			echo "<p><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
+			echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a></p>";
+		}
 
-		echo "</td></tr></table>";
+		echo "</td></tr></table>\n\n";
 
 	} else die(_T('error_no_such_case'));
 
-	echo "</p><br /></fieldset>";
+	echo "</fieldset>";
 
 	echo '<fieldset class="info_box">';
 	echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_followups') . '</div>';
