@@ -252,7 +252,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	echo "\n<div align='center' style='font-size: 12px;' >"; // start of the login footer
 
 	$open_subscription = read_meta("site_open_subscription");
-	if ($open_subscription == 'open' || $open_subscription == 'moderated')
+	if ($open_subscription == 'yes' || $open_subscription == 'moderated')
 		echo " [<a $pass_popup>" . _T('login_register').'</a>]';
 
 	echo "<div class='lang_combo_box'>". menu_languages() ."</div>\n";
