@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.74 2005/03/21 12:43:15 mlutfy Exp $
+	$Id: edit_fu.php,v 1.75 2005/03/22 13:27:24 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -84,8 +84,8 @@ if (empty($_SESSION['errors'])) {
 				$q = "SELECT * FROM lcm_app WHERE id_app=$app";
 				$result = lcm_query($q);
 				if ($row = lcm_fetch_array($result)) {
-					$_SESSION['fu_data']['description'] = 'Following the ' . _T(get_kw_title($row['type']))
-						. ' (' . $row['title'] . ') from ' . unhtmlentities(format_date($row['start_time']));
+					$_SESSION['fu_data']['description'] = 'Following the ' . _T(get_kw_title($row['type']))	// TRAD
+						. ' (' . $row['title'] . ') from ' . str_replace('&nbsp;', ' ', format_date($row['start_time'])); // TRAD
 					
 					// Show appointment participants
 					$participants = array();
