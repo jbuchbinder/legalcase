@@ -118,6 +118,7 @@ if ($step == 6) {
 		} else {
 			$query = "INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, alea_futur, status)
 							VALUES(\"$name_first\", \"$name_middle\", \"$name_last\", \"$username\", \"$mdpass\", FLOOR(32000*RAND()), \"admin\")";
+			$id_author = lcm_insert_id();
 		}
 
 		lcm_query_db($query);
@@ -154,19 +155,19 @@ if ($step == 6) {
 
 	}
 
+	$site_address = read_meta('site_address');
+	if (! $site_address) {
+		// Replace www.site.net/foo/name.php -> www.site.net/foo/
+		$site_address = $GLOBALS['HTTP_SERVER_VARS']['REQUEST_URI'];
+		$site_address = preg_replace("/\/.*\.php$/\//", $site_address);
+		$site_address = 'http://' . $GLOBALS['SERVER_NAME'] . $site_address;
+
+		write_meta('site_address', $site_address);
+	}
+
 	include_lcm('inc_meta_defaults');
 	init_default_config();
 	init_languages();
-
-	// Block public access to the 'data' subdirectory
-	// [ML] Moved data + config under inc, and blocked inc instead
-	// [ML] But for now, we can ignore it. Why not just simply ship with a .htaccess included?
-	/* ecrire_acces();
-	$protec = "deny from all\n";
-	$myFile = fopen('inc/.htaccess', 'w');
-	fputs($myFile, $protec);
-	fclose($myFile);
-	*/
 
 	@unlink('inc/data/inc_meta_cache.php');
 	if (!@rename('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php')) {
