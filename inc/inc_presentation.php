@@ -50,43 +50,18 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	// Style sheets
 	//
 
-	// [ML] This alternative allows the user to create custom themes
-	// without touching the PHP code.
-
 	if (@file_exists("styles/lcm_ui_" . $prefs['theme'] . ".css")) {
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_" . $prefs['theme'] . ".css\" />\n";
+	    echo '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_ui_' . $prefs['theme'] . '".css\' />' . "\n";
 	} else {
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
+	    echo '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_ui_default.css" />' . "\n";
 	}
-	
-	//[KM] This is my suggestion of the problem with style switcher
-	//There is one file for the layout and others for the themes
-	/*
-	switch($prefs['theme'])
-	{
-	    case "blue":
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" />\n";
-	    break;
-	    
-	    case "orange":
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" />\n";
-	    break;
-	    
-	    case "monochrome":
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" />\n";
-	    break;
-	    
-	    default:
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
-	    break;
-	} */
 
 	// It is the responsability of the function caller to make sure that
 	// the filename does not cause problems...
 	$css_files_array = explode(",", $css_files);
 	foreach ($css_files_array as $f)
 		if ($f)
-			echo "\t<link rel='stylesheet' type='text/css' href='styles/lcm_$f.css' />\n";
+			echo "\t" . '<link rel="stylesheet" type="text/css" href="styles/lcm_' . $f . '.css" />' . "\n";
 	
 	echo "</head>\n";
 
