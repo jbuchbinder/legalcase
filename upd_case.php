@@ -15,14 +15,12 @@ $fl = "title='$title',
 if ($public) $fl .= "public=1";
 else $fl .= "public=0";
 
-if ($id_case>0) {
+if ($id_case > 0) {
 	// Check access rights
 	if (!allowed($id_case,'e')) die("You don't have permission to change this case's information!");
 
-	// Update the existing case
 	$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
 } else {
-	// Insert new case row
 	$q = "INSERT INTO lcm_case SET id_case=0,$fl";
 	$result = lcm_query($q);
 	$id_case = lcm_insert_id();
@@ -40,13 +38,10 @@ if ($id_case>0) {
 //$q="INSERT INTO lcm_case SET id_case=$id_case,$fl ON DUPLICATE KEY UPDATE $fl";
 //$q="INSERT INTO lcm_case $cl VALUES $vl ON DUPLICATE KEY UPDATE $fl";
 
+$result = lcm_query($q);
 
-// Do the query
-$result=lcm_query($q);
+// [ML] I don't understand why: header("Location: $ref_edit_case");
 
-// Close connection
-// mysql_close($db);
-
-header("Location: $ref_edit_case");
+header("Location: case_det.php?case=$id_case");
 
 ?>
