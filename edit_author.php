@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.4 2004/11/16 15:53:30 mlutfy Exp $
+	$Id: edit_author.php,v 1.5 2004/11/23 14:58:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -72,7 +72,6 @@ if (empty($errors)) {
 	}
 }
 
-$prefs = ($usr['prefs']) ? unserialize($usr['prefs']) : array();
 $statuses = array('admin', 'normal', 'external', 'trash', 'waiting', 'suspended');
 
 // Start the page with the proper title
