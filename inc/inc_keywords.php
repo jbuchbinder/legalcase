@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.7 2005/03/03 16:06:45 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.8 2005/03/03 16:10:04 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -59,6 +59,9 @@ function get_kwg_from_id($id_group) {
 				WHERE id_group = " . intval($id_group);
 	$result = lcm_query($query);
 
+	if (! lcm_num_rows($result))
+		lcm_panic("Invalid keyword group (ID = " . $id_group . ")");
+
 	return lcm_fetch_array($result);
 }
 
@@ -72,6 +75,9 @@ function get_kw_from_id($id_keyword) {
 				WHERE kwg.id_group = k.id_group
 				AND id_keyword = " . intval($id_keyword);
 	$result = lcm_query($query);
+
+	if (! lcm_num_rows($result))
+		lcm_panic("Invalid keyword (ID = " . $id_keyword . ")");
 
 	return lcm_fetch_array($result);
 }
