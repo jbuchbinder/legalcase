@@ -7,13 +7,10 @@ define('_INC_CONTACTS', '1');
 function get_contact_type_id($name) {
 	global $system_kwg;
 
-	if (array_key_exists($name, $system_kwg['contacts']['keywords'])) {
+	if (array_key_exists($name, $system_kwg['contacts']['keywords']))
 		return $system_kwg['contacts']['keywords'][$name]['id_keyword'];
-	} else {
-		lcm_log("get_contact_type_id: keyword $name does not exist");
-		lcm_log(lcm_getbacktrace());
-		return 0;
-	}
+	else
+		lcm_panic("get_contact_type_id: keyword $name does not exist");
 }
 
 // type_person should be of the enum in the database (author, client, org, ..)
@@ -25,7 +22,7 @@ function get_contacts($type_person, $id, $type_contact = '') {
 	if ($type_contact == 'email')
 		$type_contact = 1;
 
-	$query = "SELECT type_contact, value
+	$query = "SELECT type_contact, value, id_contact
 				FROM lcm_contact
 				WHERE id_of_person = " . intval($id) . " 
 					AND type_person = '" . addslashes($type_person) . "' ";
@@ -42,6 +39,7 @@ function get_contacts($type_person, $id, $type_contact = '') {
 		$tmp_row['value'] = $row['value'];
 		$tmp_row['name'] = 'unknown';
 		$tmp_row['title'] = 'unknown';
+		$tmp_row['id_contact'] = $row['id_contact'];
 
 		foreach ($system_kwg['contacts']['keywords'] as $c) {
 			if ($c['id_keyword'] == $row['type_contact']) {
@@ -56,15 +54,53 @@ function get_contacts($type_person, $id, $type_contact = '') {
 	return $contacts;
 }
 
-function add_contact($type_person, $id, $type_contact, $value) {
+function get_contact_by_id($id_contact) {
+	$query = "SELECT *
+				FROM lcm_contact
+				WHERE id_contact = " . intval($id_contact);
+	
+	$result = lcm_query($query);
+
+	if (($row = lcm_fetch_array($result)))
+		return $row;
+	else
+		return NULL;
+}
+
+function add_contact($type_person, $id_person, $type_contact, $value) {
 	if ($type_contact == 'email')
 		$type_contact = get_contact_type_id('email_main');
 	else
 		$type_contact = get_contact_type_id($type_contact);
 
 	$query = "INSERT INTO lcm_contact (type_person, id_of_person, type_contact, value)
-		VALUES('" . addslashes($type_person) . "', " . intval($id) . ", "
+		VALUES('" . addslashes($type_person) . "', " . intval($id_person) . ", "
 			. intval($type_contact) . ", " . "'" . addslashes($value) . "')";
+
+	lcm_query($query);
+}
+
+function update_contact($id_contact, $new_value) {
+	if (! $id_contact)
+		lcm_panic("update_contact: no id_contact was provided");
+
+	$query = "UPDATE lcm_contact
+				SET value = '" . addslashes($new_value) . "'
+				WHERE id_contact = " . intval($id_contact);
+
+	lcm_query($query);
+}
+
+function delete_contact($id_contact) {
+	if (! $id_contact)
+		lcm_panic("delete_contact: no id_contact was provided");
+	
+	// XXX [ML] should we check for access rights?
+	// Currently it is done by the calling function
+	// Used in edit_author, edit_client, edit_org, 
+	
+	$query = "DELETE FROM lcm_contact
+				WHERE id_contact = " . intval($id_contact);
 
 	lcm_query($query);
 }
