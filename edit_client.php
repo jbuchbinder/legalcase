@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.41 2005/03/23 18:58:04 mlutfy Exp $
+	$Id: edit_client.php,v 1.42 2005/03/24 09:31:43 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -123,7 +123,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	if ($client_data['id_client']) {
 		echo "<tr>\n";
 		echo '<td>' . _Ti('time_input_date_creation') . '</td>';
-		echo '<td>' . format_date($client_data['date_creation'], 'short') . '</td>';
+		echo '<td>' . format_date($client_data['date_creation'], 'full') . '</td>';
 		echo "</tr>\n";
 	}
 
@@ -134,10 +134,12 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 		echo "</tr>\n";
 	}
 
+	/*
 	echo "<tr>\n";
 	echo '<td>' .  _T('person_input_address') . '</td>';
 	echo '<td><textarea name="address" rows="3" class="frm_tarea">' . clean_output($client_data['address']) . '</textarea></td>';
 	echo "</tr>\n";
+	*/
 
 	global $system_kwg;
 	
@@ -189,96 +191,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	echo '</td>';
 	echo "</tr>\n";
 
-	$cpt = 0;
-	$cpt_new = 0;
-
-	$emailmain_exists = false;
-	$addrmain_exists = false;
-
-	$contacts_emailmain = get_contacts('client', $client_data['id_client'], 'email_main');
-	$contacts_addrmain = get_contacts('client', $client_data['id_client'], 'address_main');
-	$contacts_other = get_contacts('client', $client_data['id_client'], 'email_main,address_main', 'not');
-	$contacts = get_contacts('client', $client_data['id_client']);
-
-/*	
-	// First show the main address
-	foreach ($contacts_addrmain as $contact) {
-		print_existing_contact($contact, $cpt); 
-		$cpt++;
-		$addrmain_exists = true;
-	}
-
-	if (! $addrmain_exists) {
-		print_new_contact('addressmain', 'address_main', $cpt_new);
-		$cpt_new++;
-	}
-
-	// Second show the email_main
-	foreach ($contacts_emailmain as $contact) {
-		print_existing_contact($contact, $cpt);
-		$cpt++;
-		$emailmain_exists = true;
-	}
-
-	if (! $emailmain_exists) {
-		print_new_contact('emailmain', 'email_main', $cpt_new);
-		$cpt_new++;
-	}
-
-	// Show all the rest
-	foreach ($contacts_other as $contact) {
-		print_existing_contact($contact, $cpt);
-		$cpt++;
-	}
-*/
-
-	// Show all contacts
-	foreach ($contacts as $contact) {
-		print_existing_contact($contact, $cpt);
-		$cpt++;
-	}
-
-	// Show "new contact"
-?>
-		<tr>
-			<td align="right" valign="top">
-			
-			<?php
-				echo f_err_star('new_contact_' . $cpt_new, $_SESSION['errors']);
-				echo "Add contact"; // TRAD
-			?>
-			
-			</td>
-			<td align="left" valign="top">
-				<div>
-				<?php
-					global $system_kwg;
-
-					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '" class="sel_frm">' . "\n";
-					echo "<option value=''>" . "- select contact type -" . "</option>\n"; // TRAD
-
-					foreach ($system_kwg['contacts']['keywords'] as $contact) {
-					//	if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main') {
-							echo "<option value='" . $contact['name'] . "'>" . _T($contact['title']) . "</option>\n";
-					//	}
-					}
-					echo "</select>\n";
-
-				?>
-				</div>
-				<div>
-					<input type='text' size='40' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt_new; ?>' 
-					
-					<?php 
-						echo ' value="' . $client_data['new_contact_' . $cpt_new] . '" ';
-						$cpt_new++;
-					?>
-						
-					class='search_form_txt' />
-				</div>
-			</td>
-		</tr>
-	<?php
+	show_edit_contacts_form('client', $client_data['id_client']);
 
 	//
 	// Organisations this client represents
