@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.28 2005/01/19 09:11:34 mlutfy Exp $
+	$Id: upd_case.php,v 1.29 2005/01/25 22:26:03 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -134,17 +134,18 @@ if (count($_SESSION['errors'])) {
 	// [AG] In each case the return page will be different.
 
 	//header("Location: case_det.php?case=$id_case");
+	$ref_edit_case = ($_SESSION['case_data']['ref_edit_case'] ? $_SESSION['case_data']['ref_edit_case'] : "case_det.php?case=$id_case");
 
 	// Proceed accoring to the button type
 	switch ($submit) {
 		case 'addnew':
-			header("Location: edit_case.php?case=0&ref=" . $_SESSION['case_data']['ref_edit_case']);
+			header("Location: edit_case.php?case=0&ref=$ref_edit_case");
 			break;
 		case 'adddet':
 			header("Location: case_det.php?case=$id_case");
 			break;
 		default :
-			header("Location: " . $_SESSION['case_data']['ref_edit_case']);
+			header("Location: $ref_edit_case");
 	}
 }
 ?>
