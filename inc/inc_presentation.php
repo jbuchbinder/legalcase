@@ -108,8 +108,26 @@ function lcm_page_start($title = "", $css_files = "") {
 	<a href='summary.php'><div id='header'>
 		<h1 class='lcm_main_head'>" . $site_name . "</h1>
 		<div class='lcm_slogan'>" . $site_desc . "</div>
-	</div></a>
-	<div id='wrapper_". $prefs['screen'] ."'>
+	</div></a>";
+	
+	/*
+	if($prefs['screen'] == "narrow")
+	{
+		//data from the refs_column - user name, links [My preferences] & [Logout]
+		echo "<div id=\"user_info_box_large_screen\">";
+		echo "<p class=\"prefs_column_text\"><strong>Name: </strong>"
+				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
+				. $author_session['name_first'] . ' '
+				. $author_session['name_middle'] . ' '
+				. $author_session['name_last']
+				. "</a><br /><br />
+			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ My preferences ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ Logout ]</a>
+			</p>";
+		echo "</div>";
+	}
+	*/
+	
+	echo "<div id='wrapper_". $prefs['screen'] ."'>
 		<div id=\"container_". $prefs['screen'] ."\">
 			<div id=\"content_". $prefs['screen'] ."\">
 			<!-- This is the navigation column, usually used for menus and brief information -->
@@ -254,11 +272,62 @@ if($prefs['screen'] == "wide")
 		</div>";
 //end of user screen IF
 }
+else
+{
+	//data from the refs_column - user name, links [My preferences] & [Logout]
+		echo "<div id=\"user_info_box_large_screen\">";
+		echo "<p class=\"prefs_column_text\"><strong>Name: </strong><br />"
+				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
+				. $author_session['name_first'] . ' '
+				. $author_session['name_middle'] . ' '
+				. $author_session['name_last']
+				. "</a><br /><br />
+			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ My preferences ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ Logout ]</a>
+			</p>";
+		echo "</div>";
+}
+
 		//just test...
 		echo "<div class=\"clearing\">&nbsp;</div>
-	</div>
+	</div>";
 
-	<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ". _T('info_free_software') ."</div>\n";
+if($prefs['screen'] == "narrow")
+{
+	echo "<div id=\"footer\">
+	<div class=\"prefs_column_menu_head\">Search</div>
+	<p class=\"prefs_column_text\">
+	<table border=\"0\" align=\"center\" width=\"100%\">
+		<tr>
+			<td align=\"left\" valign=\"top\">
+			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
+			Find case<br />
+			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\"";
+	if (isset($find_case_string)) echo " value='$find_case_string'";
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			</form>
+			</td>
+			<td align=\"left\" valign=\"top\">
+			<form name=\"frm_find_client\" class=\"search_form\" action=\"listclients.php\" method=\"post\">
+			Find client<br />
+			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\"";
+	if (isset($find_client_string)) echo " value='$find_client_string'";
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			</form>
+			</td>
+			<td align=\"left\" valign=\"top\">
+			<form name=\"frm_find_client\" class=\"search_form\" action=\"listorgs.php\" method=\"post\">
+			Find organisation<br />
+			<input type=\"text\" name=\"find_org_string\" size=\"10\" class=\"search_form_txt\"";
+	if (isset($find_org_string)) echo " value='$find_org_string'";
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			</form>
+			</td>
+		</tr>
+	</table>
+			</p>
+	</div><br />";
+}
+	echo "<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ". _T('info_free_software') ."</div>\n";
 
 	//
 	// Language choice (temporarely put here by [ML])
