@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.56 2005/02/04 19:51:48 antzi Exp $
+	$Id: edit_fu.php,v 1.57 2005/02/04 21:45:16 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -35,7 +35,7 @@ $fu_allow_modif = read_meta('fu_allow_modif');
 $modify = ($fu_allow_modif == 'yes');
 $admin = ($GLOBALS['author_session']['status']=='admin');
 
-if (empty($errors)) {
+if (empty($_SESSION['errors'])) {
     // Clear form data
 	// [ML] FIXME: referer may be null, should default to fu_det.php?fu=...
 	// [AG] Since id_followup of new follow-ups is not known at this point,
@@ -43,16 +43,16 @@ if (empty($errors)) {
     $fu_data = array('ref_edit_fu' => $GLOBALS['HTTP_REFERER']);
 
 	if (isset($_GET['followup'])) {
-		$followup=intval($_GET['followup']);
+		$_SESSION['followup'] = intval($_GET['followup']);
 
 		// Register followup as session variable
-	    if (!session_is_registered("followup"))
-			session_register("followup");
+//	    if (!session_is_registered("followup"))
+//			session_register("followup");
 
 		// Fetch the details on the specified follow-up
 		$q="SELECT *
 			FROM lcm_followup
-			WHERE id_followup=$followup";
+			WHERE id_followup=" . $_SESSION['followup'];
 
 		$result = lcm_query($q);
 
@@ -65,7 +65,7 @@ if (empty($errors)) {
 		// Set the case ID, to which this followup belongs
 		$case = $fu_data['id_case'];
 	} else {
-		unset($followup);
+		unset($_SESSION['followup']);
 		if ($_GET['case'] > 0) {
 			$case = intval($_GET['case']);
 
@@ -89,7 +89,7 @@ if (empty($errors)) {
 
 }
 
-if (isset($followup))
+if (isset($_SESSION['followup']))
 	lcm_page_start("Edit follow-up");
 else
 	lcm_page_start("New follow-up");
@@ -245,7 +245,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			}
 		echo "	</table>\n";
 
-		if (isset($followup)) {
+		if (isset($_SESSION['followup'])) {
 			echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 			if ($prefs['mode'] == 'extended')
 				echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
