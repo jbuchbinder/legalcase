@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.13 2005/02/01 14:50:23 mlutfy Exp $
+	$Id: sel_client.php,v 1.14 2005/03/18 08:59:20 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -66,9 +66,18 @@ if (strlen($find_client_string)>1) {
 
 
 $q2 .= ")";
+
+// Sort organisations by name
+$order_name = 'ASC';
+if (isset($_REQUEST['order_name']))
+	if ($_REQUEST['order_name'] == 'ASC' || $_REQUEST['order_name'] == 'DESC')
+		$order_name = $_REQUEST['order_name'];
+
+$q2 .= " ORDER BY name_first " . $order_name;
+
 $result = lcm_query($q2);
 
-lcm_page_start("Select client(s) for case: #" . $case_data['id_case'] . " " . $case_data['title']);
+lcm_page_start("Select client(s) for case: #" . $case_data['id_case'] . " " . $case_data['title']); // TRAD
 
 // Get the number of rows in the result
 $number_of_rows = lcm_num_rows($result);
@@ -81,25 +90,23 @@ if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
 
-// Search form
-echo "<form name='frm_find_client' class='search_form' action='sel_client.php?case=$case' method='post'>";
-echo _T('input_search_client') . '&nbsp;<input type="text" name="find_client_string" size="10" class="search_form_txt"';
+show_find_box('client', $find_client_string);
+echo '<form action="add_client.php" method="post">' . "\n";
 
-//	if (isset($find_client_string)) echo " value='$find_client_string'";
-	echo " value='$find_client_string'";
+$headers[0]['title'] = "";
+$headers[0]['order'] = 'no_order';
+$headers[1]['title'] = "Client name"; // TRAD
+$headers[1]['order'] = 'order_name';
+$headers[1]['default'] = 'ASC';
 
-?> />&nbsp;<input type="submit" name="submit" value="<?php echo _T('button_search'); ?>" class="search_form_btn" />
-</form>
-
-<form action="add_client.php" method="post">
-	<table border="0" class="tbl_usr_dtl" width="99%">
-<?php
+show_list_start($headers);
 
 // Process the output of the query
 for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show checkbox
-	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] . "'></td>\n";
+	echo "\t<tr><td width='1%' class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] . "'>";
+	echo "</td>\n";
 
 	// Show client name
 	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
@@ -111,56 +118,14 @@ for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) 
 	echo "\t</tr>\n";
 }
 
-?>
-		<tr>
-			<td></td>
-<?php
-	echo '<td><a href="edit_client.php?attach_case=' . $case . '" class="content_link">' . 'Create a new client and attach to case' . '</a></td>' . "\n";
-?>
-		<td></td>
-		</tr>
-	</table>
+echo "<tr>\n";
+echo '<td colspan="2"><a href="edit_client.php?attach_case=' . $case . '" class="content_link">' . 'Create a new client and attach to case' .  '</a></td>' . "\n"; // TRAD
+echo "</tr>\n";
 
-	<table border='0' align='center' width='99%' class='page_numbers'>
-		<tr><td align="left" width="15%"><?php
-
-// Show link to previous page
-if ($list_pos>0) {
-	echo "<a href='sel_client.php?case=$case";
-	if ($list_pos>$prefs['page_rows']) echo '&amp;list_pos=' . ($list_pos - $prefs['page_rows']);
-	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-	echo "' class='content_link'>< Prev</a> ";
-}
-
-echo "</td>\n\t\t\t<td align='center' width='70%'>";
-
-// Show page numbers with direct links
-$list_pages = ceil($number_of_rows / $prefs['page_rows']);
-if ($list_pages>1) {
-	echo 'Go to page: ';
-	for ($i=0 ; $i<$list_pages ; $i++) {
-		if ($i==floor($list_pos / $prefs['page_rows'])) echo '['. ($i+1) . '] ';
-		else {
-			echo "<a href='sel_client.php?case=$case&amp;list_pos=" . ($i*$prefs['page_rows']);
-			if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-			echo "' class='content_link'>" . ($i+1) . '</a> ';
-		}
-	}
-}
-
-echo "</td>\n\t\t\t<td align='right' width='15%'>";
-
-// Show link to next page
-$next_pos = $list_pos + $prefs['page_rows'];
-if ($next_pos<$number_of_rows) {
-	echo "<a href='sel_client.php?case=$case&amp;list_pos=$next_pos";
-	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-	echo "' class='content_link'>Next ></a> ";
-}
-
-echo "</td>\n\t\t</tr>\n\t</table>\n";
+show_list_end($list_pos, $number_of_rows);
 
 ?>
+
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
 	<input type="hidden" name="ref_sel_client" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button>
