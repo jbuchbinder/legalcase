@@ -59,7 +59,7 @@ define("_INC_META_CACHE", "1");
 function read_meta($name) {
 	global $meta;
 
-	if (! array_key_exists($name, $meta)) {
+	if (! isset($meta[$name])) {
 		lcm_debug("read_meta: -$name- does not exist");
 		return "";
 	}
