@@ -122,7 +122,7 @@ function lcm_page_start($title = "", $css_files = "") {
 	//
 	
 	echo "
-	<div id='header'>&nbsp;</div>
+	<div id='header'><h1 class='lcm_main_head'>Legal Case Management</h1><div class='lcm_slogan'>for not-for-profit legal advice centres</div></div>
 	<div id='wrapper'>
 		<div id=\"container\">
 			<div id=\"content\">
