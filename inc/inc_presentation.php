@@ -445,11 +445,27 @@ function install_html_end() {
 }
 
 //
+// Help
+//
+
+function lcm_help($code) {
+	global $lcm_lang;
+
+	$topic = _T('help_title_' . $code);
+
+	return '<div align="right"><a href="lcm_help.php?code=' . $code . '&amp;var_lang=' . $lcm_lang . '" target="lcm_help" ' 
+		. 'onclick="javascript:window.open(this.href, \'lcm_help\', \'scrollbars=yes, resizable=yes, width=740, height=580\'); return false;">'
+		. '<img src="images/lcm/help.png" alt="help: ' . $topic . '" '
+		. 'title="help: ' . $topic . '" width="12" height="12" border="0" align="middle" /> '
+		. "</a></div>\n"; 
+}
+
+
+//
 // Help pages HTML header & footer
 //
 
-function help_page_start($hlp_page_title)
-{
+function help_page_start($hlp_page_title) {
 
 	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 <html xmlns=\"http://www.w3.org/1999/xhtml\">
@@ -480,8 +496,7 @@ function help_page_start($hlp_page_title)
 
 }
 
-function help_page_end()
-{
+function help_page_end() {
 
 	echo "</div>
 </div>
@@ -664,32 +679,5 @@ function get_theme_list() {
 
 	return $list;
 }
-
-
-// ******************************************************************
-// The following functions are not used. Some are kept only as reminders
-// of features todo.
-// ******************************************************************
-
-//
-// Help
-//
-/*
-function help($aide='') {
- // ...
-}
-*/
-
-
-// Fake HR, with color control -- advantages is to hide in Lynx (?)
-/*
-function hr($color, $retour = false) {
-	$ret = "<div style='height: 1px; margin-top: 5px; padding-top: 5px; border-top: 1px solid $color;'></div>";
-	
-	if ($retour) return $ret;
-	else echo $ret;
-}
-*/
-
 
 ?>
