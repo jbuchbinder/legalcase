@@ -154,7 +154,7 @@ function upgrade_database($old_db_version) {
 			name VARCHAR(255) NOT NULL,
 			title text NOT NULL DEFAULT '',
 			description text NOT NULL DEFAULT '',
-			type ENUM('case', 'followup', 'client', 'org', 'author'),
+			type ENUM('system', 'case', 'followup', 'client', 'org', 'author'),
 			policy ENUM('optional', 'recommended', 'mandatory') DEFAULT 'optional',
 			suggest text NOT NULL DEFAULT '',
 			quantity ENUM('one', 'many') DEFAULT 'one',
