@@ -174,11 +174,9 @@ if ($var_lang_lcm) {
 		if (@file_exists('inc/config/inc_connect.php')) {
 			include_lcm('inc_admin');
 
-			if (verifier_action_auteur('var_lang_lcm', $valeur, $id_author)) {
-				lcm_query("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_author);
-				$author_session['lang'] = $var_lang_lcm;
-				ajouter_session($author_session, $lcm_session);	// enregistrer dans le fichier de session
-			}
+			lcm_query("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_author);
+			$author_session['lang'] = $var_lang_lcm;
+			lcm_add_session($author_session, $lcm_session);
 		}
 
 		$cible->delvar('lang');
