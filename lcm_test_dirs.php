@@ -1,12 +1,12 @@
 <?php
 
-include("inc/inc_version.php");
-include_lcm("inc_presentation");
+include('inc/inc_version.php');
+include_lcm('inc_presentation');
 
 use_language_of_visitor();
 
 function bad_dirs($bad_dirs, $test_dir, $install) {
-	install_debut_html();
+	install_html_start();
 
 	if ($install) {
 		$titre = _T('dirs_preliminaire');
@@ -31,12 +31,12 @@ function bad_dirs($bad_dirs, $test_dir, $install) {
 	echo "<DIV align='right'><INPUT TYPE='submit' CLASS='fondl' NAME='Valider' VALUE='". _T('login_recharger')."'></DIV>";
 	echo "</FORM>";
 
-	install_fin_html();
+	install_html_end();
 }
 
 
 function absent_dirs($bad_dirs, $test_dir) {
-	install_debut_html();
+	install_html_start();
 
 	$titre = _T('dirs_preliminaire');
 	$continuer = _T('dirs_commencer');
@@ -58,7 +58,7 @@ function absent_dirs($bad_dirs, $test_dir) {
 	echo "<DIV align='right'><INPUT TYPE='submit' CLASS='fondl' NAME='Valider' VALUE='". _T('login_recharger')."'></DIV>";
 	echo "</FORM>";
 
-	install_fin_html();
+	install_html_end();
 }
 
 //
@@ -83,7 +83,7 @@ $install = !@file_exists("inc/config/inc_connect.php");
 if ($test_dir)
 	$test_dirs[] = $test_dir;
 else {
-	$test_dirs = array("config", "log", "data");
+	$test_dirs = array("inc/config", "log", "inc/data");
 }
 
 unset($bad_dirs);

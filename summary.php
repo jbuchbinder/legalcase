@@ -2,10 +2,10 @@
 
 include ("inc/inc.php");
 
-debut_page();
+lcm_page_start();
 
 echo "hello!";
 
-fin_page();
+lcm_page_end();
 
 ?>
