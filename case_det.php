@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.97 2005/03/03 16:07:00 antzi Exp $
+	$Id: case_det.php,v 1.98 2005/03/06 11:32:58 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -500,12 +500,13 @@ if ($case > 0) {
 				$q = "SELECT	name_first,
 						name_middle,
 						name_last,
-						sum(UNIX_TIMESTAMP(lcm_followup.date_end)-UNIX_TIMESTAMP(lcm_followup.date_start)) as time
+						sum(IF(UNIX_TIMESTAMP(lcm_followup.date_end) > 0,
+							UNIX_TIMESTAMP(lcm_followup.date_end)-UNIX_TIMESTAMP(lcm_followup.date_start),
+							0)) as time
 					FROM	lcm_author,
 						lcm_followup
 					WHERE	lcm_followup.id_author=lcm_author.id_author
 						AND lcm_followup.id_case=$case
-						AND UNIX_TIMESTAMP(lcm_followup.date_end) > 0
 					GROUP BY lcm_followup.id_author";
 				$result = lcm_query($q);
 
