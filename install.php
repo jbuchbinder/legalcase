@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.40 2005/03/10 17:02:35 makaveev Exp $
+	$Id: install.php,v 1.41 2005/03/15 13:27:40 mlutfy Exp $
 */
 
 
@@ -49,10 +49,6 @@ function put_text_in_textbox($text) {
 	return $textbox;
 }
 
-function is_create_db_allowed() {
-	// TODO (well, is it worth it?)
-}
-
 //
 // Main program
 //
@@ -77,7 +73,7 @@ if (@file_exists('inc/config/inc_connect.php')) {
 // Main installation steps
 //
 
-if ($step == 6) {
+if ($step == 5) {
 	install_html_start();
 
 	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
@@ -182,10 +178,10 @@ if ($step == 6) {
 	install_html_end();
 }
 
-else if ($step == 5) {
+else if ($step == 4) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_five') . "</small> "
+	echo "<h3><small>" . _T('install_step_four') . "</small> "
 		. _T('install_title_admin_account') . "</h3>\n";
 
 	include_config('inc_connect_install');
@@ -206,7 +202,7 @@ else if ($step == 5) {
 		echo "<p class=\"simple_text\">" . _T('install_info_new_account_2') . "</p>\n";
 
 	echo "\n<form action='install.php' method='post'>\n";
-	echo "<input type='hidden' name='step' value='6' />\n";
+	echo "<input type='hidden' name='step' value='5' />\n";
 
 	// Your contact information
 	echo "<fieldset class=\"fs_box\">\n";
@@ -265,13 +261,13 @@ else if ($step == 5) {
 	install_html_end();
 }
 
-else if ($step == 4) {
+else if ($step == 3) {
 	install_html_start();
 
 	$install_log = "";
 	$upgrade_log = "";
 
-	echo "<h3><small>" . _T('install_step_four') . "</small> "
+	echo "<h3><small>" . _T('install_step_three') . "</small> "
 		. _T('install_title_creating_database') . "</h3>\n";
 
 	// Comment out possible errors because the creation of new tables
@@ -390,7 +386,7 @@ else if ($step == 4) {
 		echo "<p>" . _T('install_next_step') . "</p>\n\n";
 
 		echo "<form action='install.php' method='post'>\n";
-		echo "\t<input type='hidden' name='step' value='5' />\n";
+		echo "\t<input type='hidden' name='step' value='4' />\n";
 		echo "\t<div align='$lcm_lang_right'>"
 			. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 			. "</div>\n";
@@ -400,16 +396,33 @@ else if ($step == 4) {
 	install_html_end();
 }
 
-else if ($step == 3) {
+else if ($step == 2) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_three') .  "</small> "
+	echo "\n<!--\n";
+		$link = lcm_connect_db_test($db_address, $db_login, $db_password);
+		$error = (lcm_sql_errno() ? lcm_sql_error() : '');
+	echo "\n-->\n";
+
+	if ($error || ! $link) {
+		echo "<h3><small>" . _T('install_step_two') . "</small> "
+			. _T('install_title_connection_attempt') . "</h3>\n";
+
+		echo "<div class='box_error'>\n";
+		echo "<strong>" . _T('warning_sql_connection_failed') . "</strong>\n";
+		echo "<p><code>" . $error . "</code></p>\n";
+		echo "<p>"._T('install_info_go_back_verify_data') . ' ' . lcm_help('install_connection') . "</p>\n";
+		echo "<p><small>" . _T('install_info_sql_connection_failed') . "</small></p>\n";
+		echo "</div>\n\n";
+
+		exit;
+	}
+
+	echo "<h3><small>" . _T('install_step_two') .  "</small> "
 		. _T('install_title_select_database') . "</h3>\n";
 
-	// [ML] TODO echo help ("install2");
-
 	echo "<form action='install.php' method='post'>\n";
-	echo "\t<input type='hidden' name='step' value='4' />\n";
+	echo "\t<input type='hidden' name='step' value='3' />\n";
 	echo "\t<input type='hidden' name='db_address'  value=\"$db_address\" size='40' />\n";
 	echo "\t<input type='hidden' name='db_login' value=\"$db_login\" />\n";
 	echo "\t<input type='hidden' name='db_password' value=\"$db_password\" />\n\n";
@@ -477,6 +490,8 @@ else if ($step == 3) {
 	install_html_end();
 }
 
+/* [ML] useless and confusing -- 
+
 else if ($step == 2) {
 	install_html_start();
 
@@ -515,7 +530,7 @@ else if ($step == 2) {
 	}
 
 	install_html_end();
-}
+} */
 
 else if ($step == 1) {
 	install_html_start();
