@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along 
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.4 2004/11/16 09:58:27 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.5 2005/02/04 15:59:14 antzi Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
