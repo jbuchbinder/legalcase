@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.22 2005/03/21 09:41:23 mlutfy Exp $
+	$Id: edit_app.php,v 1.23 2005/03/22 02:16:04 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -76,9 +76,14 @@ if (empty($_SESSION['errors'])) {
 
 		// Setup default values
 		$_SESSION['app_data']['title'] = _T('title_app_new');
-		$_SESSION['app_data']['start_time'] = date('Y-m-d H:i:s');
-		$_SESSION['app_data']['end_time']   = date('Y-m-d H:i:s');
-		$_SESSION['app_data']['reminder']   = date('Y-m-d H:i:s');
+		if (!empty($_GET['time'])) {
+			$time = rawurldecode($_GET['time']);
+		} else {
+			$time = date('Y-m-d H:i:s');
+		}
+		$_SESSION['app_data']['start_time'] = $time;
+		$_SESSION['app_data']['end_time']   = $time;
+		$_SESSION['app_data']['reminder']   = $time;
 
 		// erases the "New appointment" when focuses (taken from Spip)
 		$title_onfocus = " onfocus=\"if(!title_antifocus) { this.value = ''; title_antifocus = true;}\" "; 
