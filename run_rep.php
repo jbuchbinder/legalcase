@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.6 2005/01/25 23:49:56 antzi Exp $
+	$Id: run_rep.php,v 1.7 2005/01/25 23:59:35 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -167,6 +167,8 @@ if ($fl && $tl && $wl) {
 		echo "</table>";
 	}
 }
+
+echo '<a href="' . $GLOBALS['HTTP_REFERER'] . '" class="run_lnk">Back</a><br />';
 
 lcm_page_end();
 
