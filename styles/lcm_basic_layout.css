@@ -580,9 +580,10 @@ ul.list_events li a.week_day {
 
 /* Used in the navigation bar at the top of the calendar */
 div.cal_navigation {
-	color: white;
+	color: black;
 	font-size: 14px;
 	padding: 2px;
+	background-color: #bbbbbb;
 	-moz-border-radius-topleft: 8px;
 	-moz-border-radius-topright: 8px;
 }
