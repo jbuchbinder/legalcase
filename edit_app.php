@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.21 2005/03/21 08:50:14 mlutfy Exp $
+	$Id: edit_app.php,v 1.22 2005/03/21 09:41:23 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,6 +26,7 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 $admin = ($GLOBALS['author_session']['status']=='admin');
+$title_onfocus = '';
 
 if (empty($_SESSION['errors'])) {
 	// Clear form data
@@ -74,9 +75,13 @@ if (empty($_SESSION['errors'])) {
 		$modify = true;
 
 		// Setup default values
+		$_SESSION['app_data']['title'] = _T('title_app_new');
 		$_SESSION['app_data']['start_time'] = date('Y-m-d H:i:s');
 		$_SESSION['app_data']['end_time']   = date('Y-m-d H:i:s');
 		$_SESSION['app_data']['reminder']   = date('Y-m-d H:i:s');
+
+		// erases the "New appointment" when focuses (taken from Spip)
+		$title_onfocus = " onfocus=\"if(!title_antifocus) { this.value = ''; title_antifocus = true;}\" "; 
 	}
 
 } else if ( array_key_exists('author_added',$_SESSION['errors']) ) {
@@ -91,12 +96,12 @@ if (empty($_SESSION['errors'])) {
 		$_SESSION['authors'][$row['id_author']] = $row;
 }
 
-if ($_SESSION['app_data']['id_app']>0)
-	lcm_page_start("Edit appointment"); // TRAD
+if ($_SESSION['app_data']['id_app'] > 0)
+	lcm_page_start(_T('title_app_edit'));
 else
-	lcm_page_start("New appointment"); // TRAD
+	lcm_page_start(_T('title_app_new'));
 
-if ($_SESSION['app_data']['id_case']>0) {
+if ($_SESSION['app_data']['id_case'] > 0) {
 	// Show a bit of background on the case
 	show_context_start();
 	show_context_case_title($_SESSION['app_data']['id_case']);
@@ -109,14 +114,16 @@ echo show_all_errors($_SESSION['errors']);
 
 // Disable inputs when edit is not allowed for the field
 $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
+
+
 ?>
 
-<form action="upd_app.php" method="POST">
+<form action="upd_app.php" method="post">
 	<table class="tbl_usr_dtl" width="99%">
 
 		<!-- Start time -->
 		<tr><td><?php echo _T('app_input_date_start'); ?></td>
-			<td><?php echo _T('calendar_info_date') . ' ';  
+			<td><?php /* echo _T('calendar_info_date') . ' ';  */
 				$name = (($admin || ($edit && $modify)) ? 'start' : '');
 				echo get_date_inputs($name, $_SESSION['app_data']['start_time'], false);
 				echo ' ' . _T('calendar_info_time') . ' ';
@@ -170,6 +177,11 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			</td>
 		</tr>
 
+		<!-- Appointment title -->
+		<tr><td valign="top"><?php echo _T('app_input_title'); ?></td>
+			<td><input type="text" <?php echo $title_onfocus . $dis; ?> name="title" size="50" value="<?php
+			echo clean_output($_SESSION['app_data']['title']) . "\" /></td></tr>\n"; ?>
+
 		<!-- Appointment type -->
 		<tr><td><?php echo _T('app_input_type'); ?></td>
 			<td><select <?php echo $dis; ?> name="type" size="1" class="sel_frm">
@@ -189,11 +201,6 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 			?>
 			</select></td></tr>
-
-		<!-- Appointment title -->
-		<tr><td valign="top"><?php echo _T('app_input_title'); ?></td>
-			<td><input <?php echo $dis; ?> name="title" size="40" value="<?php
-			echo clean_output($_SESSION['app_data']['title']) . "\" /></td></tr>\n"; ?>
 
 		<!-- Appointment description -->
 		<tr><td valign="top"><?php echo _T('app_input_description'); ?></td>
@@ -245,8 +252,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		$q = '';
 		while ($row = lcm_fetch_array($result)) {
 			$q .= ($q ? ', ' : '');
-			$q .= njoin(array($row['name_first'],$row['name_middle'],$row['name_last']))
-				. ( ($row['name']) ? " of " . $row['name'] : '');
+			$q .= get_person_name($row) . ( ($row['name']) ? " of " . $row['name'] : ''); // TRAD
 		}
 		echo "\t\t\t$q\n";
 		// List rest of the clients to add
@@ -262,12 +268,12 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		echo "\t\t\t\t<option selected='selected' value=\"0\">- Select client -</option>\n"; // TRAD
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t\t<option value=\"" . $row['id_client'] . ':' . $row['id_org'] . '">'
-				. njoin(array($row['name_first'],$row['name_middle'],$row['name_last']))
+				. get_person_name($row)
 				. ($row['name'] ? ' of ' . $row['name'] : '') // TRAD
 				. "</option>\n";
 		}
 		echo "\t\t\t</select>\n";
-		echo "\t\t\t<button name=\"submit\" type=\"submit\" value=\"add_client\" class=\"simple_form_btn\">" . 'Add' . "</button>\n";
+		echo "\t\t\t<button name=\"submit\" type=\"submit\" value=\"add_client\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
 		echo "\t\t</td></tr>\n";
 
 		echo "	</table>\n";
