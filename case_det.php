@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.116 2005/03/21 12:56:22 mlutfy Exp $
+	$Id: case_det.php,v 1.117 2005/03/21 16:23:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -560,41 +560,11 @@ if ($case > 0) {
 				echo "<p class=\"normal_text\">\n";
 
 				// List of attached files
-				$q = "SELECT * FROM lcm_case_attachment WHERE id_case=$case";
-				$result = lcm_query($q);
-				$i = lcm_num_rows($result);
-				if ($i > 0) {
-					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
-					// TRAD ++
-					echo "\t<tr><th class=\"heading\">" . _Th('file_input_name') . "</th>
-						<th class=\"heading\">" . _Th('file_input_type') . "</th>
-						<th class=\"heading\">" . _Th('file_input_size') . "</th>
-						<th class=\"heading\">" . _Th('file_input_description') . "</th></tr>\n";
-					for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
-						echo "\t<tr>";
-						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
-							. '<a href="view_file.php?type=case&amp;file_id=' . $row['id_attachment']
-							. '" class="content_link">' . $row['filename'] . '</a></td>';
-						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
-						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
-						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
-						echo "</tr>\n";
-					}
-					echo "</table><br />\n";
-				}
+				show_attachments_list('case', $id_case);
 
 				// Attach new file form
-				if ($add) {
-					echo '<div class="prefs_column_menu_head">' . 'Add new document' . '</div>'; // TRAD
-					echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
-					echo "<input type=\"hidden\" name=\"case\" value=\"$case\" />\n";
-					echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
-					echo '<strong>' . _Ti('file_input_name') . '</strong><br />';
-					echo '<input type="file" name="filename" size="40" />' . "<br />\n";
-					echo '<strong>' . _Ti('file_input_description') . '</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n";
-					echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
-					echo "</form>\n";
-				}
+				if ($add)
+					show_attachments_upload('case', $id_case);
 
 				echo '</fieldset>';
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.31 2005/03/14 10:07:45 mlutfy Exp $
+	$Id: client_det.php,v 1.32 2005/03/21 16:23:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -240,51 +240,20 @@ if ($client > 0) {
 				echo "<p class=\"normal_text\">\n";
 
 				// List of attached files
-				$q = "SELECT * FROM lcm_client_attachment WHERE id_client=$client";
-				$result = lcm_query($q);
-				$i = lcm_num_rows($result);
-				if ($i > 0) {
-					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
-					// TRAD ++
-					echo "\t<tr><th class=\"heading\">Filename</th>
-						<th class=\"heading\">Type</th>
-						<th class=\"heading\">Size</th>
-						<th class=\"heading\">Description</th></tr>\n";
-					for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
-						echo "\t<tr>";
-						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
-							. '<a href="view_file.php?type=client&amp;file_id=' . $row['id_attachment']
-							. '" class="content_link">' . $row['filename'] . '</a></td>';
-						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
-						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
-						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
-						echo "</tr>\n";
-					}
-					echo "</table><br />\n";
-				}
+				show_attachments_list('client', $client);
 
 				// Attach new file form
-				if ($edit) {
-					echo '<div class="prefs_column_menu_head">' . 'Add new document' . '</div>'; // TRAD
-					echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
-					echo "<input type=\"hidden\" name=\"client\" value=\"$client\" />\n";
-					echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
-					echo '<strong>Filename:</strong><br /><input type="file" name="filename" size="40" />' . "\n"; // TRAD
-					echo "<br />\n";
-					echo '<strong>Description:</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n"; // TRAD
-					echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
-					echo "</form>\n";
-				}
+				if ($edit)
+					show_attachments_upload('client', $client);
 
 				echo '</fieldset>';
-
 				break;
 		}
 
 		// Show this in all tabs
 		echo '<p>';
-		echo '<a href="edit_case.php?case=0&attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
-		echo "Open new case involving this client";
+		echo '<a href="edit_case.php?case=0&amp;attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
+		echo "Open new case involving this client"; // TRAD
 		echo "</a>";
 		echo "</p>\n";
 				
