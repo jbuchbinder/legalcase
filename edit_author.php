@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.35 2005/03/24 13:23:32 mlutfy Exp $
+	$Id: edit_author.php,v 1.36 2005/03/24 13:42:47 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,7 +26,7 @@ include_lcm('inc_filters');
 include_lcm('inc_contacts');
 
 global $author_session;
-$usr = array(); // form data
+$user = array(); // form data
 $author = intval($_GET['author']);
 
 $statuses = array('admin', 'normal', 'external', 'trash'); // , 'suspended'
@@ -37,9 +37,9 @@ if ($meta_subscription == 'moderated' || $meta_subscription == 'yes')
 
 // Set the returning page
 if (isset($_REQUEST['ref']))
-	$usr['ref_edit_author'] = $ref;
+	$user['ref_edit_author'] = $ref;
 else
-	$usr['ref_edit_author'] = $GLOBALS['HTTP_REFERER'];
+	$user['ref_edit_author'] = $GLOBALS['HTTP_REFERER'];
 
 // Find out if this is existing or new case
 $existing = ($author > 0);
@@ -56,33 +56,20 @@ if ($existing) {
 	$result = lcm_query($q);
 	if ($row = lcm_fetch_array($result)) {
 		foreach ($row as $key => $value) {
-			$usr[$key] = $value;
+			$user[$key] = $value;
 		}
 	} else
 		die(_T('error_no_such_user'));
-
-	$type_email = get_contact_type_id('email_main');
-
-	$q = "SELECT value
-		FROM lcm_contact
-		WHERE id_of_person = $author
-			AND type_person = 'author'
-			AND type_contact = " . $type_email;
-	$result = lcm_query($q);
-	if ($contact = lcm_fetch_array($result)) {
-		$usr['email'] = $contact['value'];
-		$usr['email_exists'] = 'yes';
-	}
 } else {
-	$usr['id_author'] = 0;
-	$usr['email'] = '';
-	$usr['status'] = 'normal';
+	$user['id_author'] = 0;
+	$user['email'] = '';
+	$user['status'] = 'normal';
 }
 
 // Fetch values that caused errors to show them with the error message
 if (isset($_SESSION['usr']))
 	foreach($_SESSION['usr'] as $key => $value)
-		$usr[$key] = $value;
+		$user[$key] = $value;
 
 // Start the page with the proper title
 if ($existing) lcm_page_start("Edit author"); // TRAD
@@ -92,10 +79,9 @@ echo show_all_errors($_SESSION['errors']);
 
 ?>
 <form name="edit_author" method="post" action="upd_author.php">
-	<input name="id_author" type="hidden" id="id_author" value="<?php echo $usr['id_author']; ?>"/>
-	<input name="email_exists" type="hidden" id="email_exists" value="<?php echo $usr['email_exists']; ?>"/>
+	<input name="id_author" type="hidden" id="id_author" value="<?php echo $user['id_author']; ?>"/>
 	<input name="ref_edit_author" type="hidden" id="ref_edit_author" value="<?php 
-			$ref_link = new Link($usr['ref_edit_author']);
+			$ref_link = new Link($user['ref_edit_author']);
 			echo $ref_link->getUrl();
 		?>"/>
 
@@ -110,23 +96,23 @@ echo show_all_errors($_SESSION['errors']);
 		</tr>
 
 		<tr><td align="right" valign="top"><?php echo f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first'); ?></td>
-			<td align="left" valign="top"><input name="name_first" type="text" class="search_form_txt" id="name_first" size="35" value="<?php echo clean_output($usr['name_first']); ?>"/></td>
+			<td align="left" valign="top"><input name="name_first" type="text" class="search_form_txt" id="name_first" size="35" value="<?php echo clean_output($user['name_first']); ?>"/></td>
 		</tr>
 
 		<?php
 			// Middle name can be desactivated, but show anyway if there is one
-			if ($usr['name_middle'] || read_meta('client_name_middle') == 'yes') {
+			if ($user['name_middle'] || read_meta('client_name_middle') == 'yes') {
 		?>
 
 		<tr><td align="right" valign="top"><?php echo _T('person_input_name_middle'); ?></td>
-			<td align="left" valign="top"><input name="name_middle" type="text" class="search_form_txt" id="name_middle" size="35" value="<?php echo clean_output($usr['name_middle']); ?>"/></td>
+			<td align="left" valign="top"><input name="name_middle" type="text" class="search_form_txt" id="name_middle" size="35" value="<?php echo clean_output($user['name_middle']); ?>"/></td>
 		</tr>
 
 		<?php
 			}
 		?>
 		<tr><td align="right" valign="top"><?php echo f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last'); ?></td>
-			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
+			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($user['name_last']); ?>"/></td>
 		</tr>
 <?php
 
@@ -140,7 +126,7 @@ echo show_all_errors($_SESSION['errors']);
 	echo '</td>';
 	echo "</tr>\n";
 
-	show_edit_contacts_form('author', $usr['id_author']);
+	show_edit_contacts_form('author', $user['id_author']);
 
 	//
 	// LOGIN INFO
@@ -169,15 +155,15 @@ echo show_all_errors($_SESSION['errors']);
 			// Some authentication methods might not allow the username to be 
 			// changed. Also, it is generally better not to allow users to
 			// change their username. Show the fields only if it is possible.
-			echo '<input name="username_old" type="hidden" id="username_old" value="' . clean_output($usr['username']) .'"/>';
+			echo '<input name="username_old" type="hidden" id="username_old" value="' . clean_output($user['username']) .'"/>';
 			echo "\n";
 
-			if ($auth->is_newusername_allowed($usr['id_author'], $usr['username'], $author_session)) {
+			if ($auth->is_newusername_allowed($user['id_author'], $user['username'], $author_session)) {
 				echo '<input name="username" type="text" class="search_form_txt" id="username" size="35" value="'
-					. ($usr['username'] == '0' ? '' : clean_output($usr['username'])) .'"/>';
+					. ($user['username'] == '0' ? '' : clean_output($user['username'])) .'"/>';
 			} else {
-				echo '<input type="hidden" name="username" value="' . clean_output($usr['username']) . '"/>';
-				echo $usr['username'];
+				echo '<input type="hidden" name="username" value="' . clean_output($user['username']) . '"/>';
+				echo $user['username'];
 			}
 		?>
 
@@ -187,9 +173,9 @@ echo show_all_errors($_SESSION['errors']);
 		<?php
 			// Some authentication methods might not allow the password
 			// to be changed. Show the fields only if it is possible.
-			if ($auth->is_newpass_allowed($usr['id_author'], $usr['username'], $author_session)) {
+			if ($auth->is_newpass_allowed($user['id_author'], $user['username'], $author_session)) {
 				// Do not request 'current password' if new author or admin
-				if ($usr['id_author'] && $author_session['status'] != 'admin') {
+				if ($user['id_author'] && $author_session['status'] != 'admin') {
 					echo '
 		<tr>
 			<td align="right" valign="top">' . f_err_star('password_current', $_SESSION['errors']) . _T('authorconf_input_password_current') . '</td>
@@ -215,20 +201,20 @@ echo show_all_errors($_SESSION['errors']);
 			<td align="left" valign="top">
 			
 <?php
-			echo '<input type="hidden" name="status_old" value="' . $usr['status'] . '"/>' . "\n";
+			echo '<input type="hidden" name="status_old" value="' . $user['status'] . '"/>' . "\n";
 
-			if ($author_session['status'] == 'admin' && $usr['id_author'] != $author_session['id_author']) {
+			if ($author_session['status'] == 'admin' && $user['id_author'] != $author_session['id_author']) {
 				echo '<select name="status" class="sel_frm" id="status">' . "\n";
 
 				foreach ($statuses as $s) {
 					echo "\t\t\t\t<option value=\"$s\""
-						. (($s == $usr['status']) ? ' selected="selected"' : '') . ">" . _T('authoredit_input_status_' . $s) . "</option>\n";
+						. (($s == $user['status']) ? ' selected="selected"' : '') . ">" . _T('authoredit_input_status_' . $s) . "</option>\n";
 				}
 
 				echo "</select>\n";
 			} else {
-				echo '<input type="hidden" name="status" value="' . $usr['status'] . '"/>' . "\n";
-				echo $usr['status'];
+				echo '<input type="hidden" name="status" value="' . $user['status'] . '"/>' . "\n";
+				echo $user['status'];
 			}
 ?>
 			</td>

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.21 2005/03/22 08:39:21 mlutfy Exp $
+	$Id: upd_author.php,v 1.22 2005/03/24 13:42:48 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -37,7 +37,7 @@ function force_session_restart($id_author) {
 	}
 }
 
-function change_password($usr) {
+function change_password() {
 	global $author_session;
 
 	// FIXME: include auth type according to 'auth_type' field in DB
@@ -54,7 +54,7 @@ function change_password($usr) {
 	}
 	
 	// Is user allowed to change the password?
-	if (! $auth->is_newpass_allowed($usr['id_author'], $usr['username'], $author_session)) {
+	if (! $auth->is_newpass_allowed($_SESSION['usr']['id_author'], $_SESSION['usr']['username'], $author_session)) {
 		$_SESSION['errors']['password_generic'] = $auth->error;
 		return;
 	}
@@ -68,12 +68,12 @@ function change_password($usr) {
 		if (isset($_REQUEST['session_password_md5']) &&
 			isset($_REQUEST['next_session_password_md5'])) 
 		{
-			$valid_oldpass = $auth->validate_md5_challenge($usr['session_password_md5'], $usr['next_session_password_md5']);
+			$valid_oldpass = $auth->validate_md5_challenge($_SESSION['usr']['session_password_md5'], $_SESSION['usr']['next_session_password_md5']);
 		}
 
 		// If it didn't work, fallback on cleartext
 		if (! $valid_oldpass) {
-			$valid_oldpass = $auth->validate_pass_cleartext($usr['username'], $usr['usr_old_passwd']);
+			$valid_oldpass = $auth->validate_pass_cleartext($_SESSION['usr']['username'], $_SESSION['usr']['usr_old_passwd']);
 		}
 
 		if (! $valid_oldpass) {
@@ -83,13 +83,13 @@ function change_password($usr) {
 	}
 
 	// Confirm matching passwords
-	if ($usr['usr_new_passwd'] != $usr['usr_retype_passwd']) {
+	if ($_SESSION['usr']['usr_new_passwd'] != $_SESSION['usr']['usr_retype_passwd']) {
 		$_SESSION['errors']['password_confirm'] = _T('login_warning_password_dont_match');
 		return;
 	}
 
 	// Change the password
-	$ok = $auth->newpass($usr['id_author'], $usr['username'], $usr['usr_new_passwd'], $author_session);
+	$ok = $auth->newpass($_SESSION['usr']['id_author'], $_SESSION['usr']['username'], $_SESSION['usr']['usr_new_passwd'], $author_session);
 
 	if (! $ok) {
 		lcm_log("New pass failed: " . $auth->error);
@@ -127,16 +127,17 @@ function change_username($id_author, $old_username, $new_username) {
 
 // Clear all previous errors
 $_SESSION['errors'] = array();
+$_SESSION['usr'] = array();
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-    $usr[$key] = $value;
+    $_SESSION['usr'][$key] = $value;
 
 //
 // Basic security check: Non-admins can only edit themselves.
 // Admins can edit any author.
 //
-if ($usr['id_author'] != $author_session['id_author'])
+if ($_SESSION['usr']['id_author'] != $author_session['id_author'])
 	if ($author_session['status'] != 'admin')
 		die("Only administrators can edit other authors");
 
@@ -146,32 +147,32 @@ if ($usr['id_author'] != $author_session['id_author'])
 $fl = 'date_update = NOW()';
 
 // First name must have at least one character
-if (strlen(lcm_utf8_decode($usr['name_first'])) < 1) {
+if (strlen(lcm_utf8_decode($_SESSION['usr']['name_first'])) < 1) {
 	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . _T('warning_field_mandatory');
-	$_SESSION['usr']['name_first'] = $usr['name_first'];
+	$_SESSION['usr']['name_first'] = $_SESSION['usr']['name_first'];
 } else {
-	$fl .= ", name_first = '" . clean_input($usr['name_first'])  . "'";
+	$fl .= ", name_first = '" . clean_input($_SESSION['usr']['name_first'])  . "'";
 }
 
 // Middle name can be empty
-$fl .= ", name_middle = '" . clean_input($usr['name_middle']) . "'";
+$fl .= ", name_middle = '" . clean_input($_SESSION['usr']['name_middle']) . "'";
 
 // Last name must have at least one character
-if (strlen(lcm_utf8_decode($usr['name_last'])) < 1) {
+if (strlen(lcm_utf8_decode($_SESSION['usr']['name_last'])) < 1) {
 	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . _T('warning_field_mandatory');
-	$_SESSION['usr']['name_last'] = $usr['name_last'];
+	$_SESSION['usr']['name_last'] = $_SESSION['usr']['name_last'];
 } else {
-	$fl .= ", name_last = '" . clean_input($usr['name_last'])  . "'";
+	$fl .= ", name_last = '" . clean_input($_SESSION['usr']['name_last'])  . "'";
 }
 
 // Author status can only be changed by admins
 if ($author_session['status'] == 'admin')
-	$fl .= ", status = '" . clean_input($usr['status'])      . "'";
+	$fl .= ", status = '" . clean_input($_SESSION['usr']['status'])      . "'";
 
-if ($usr['id_author'] > 0) {
+if ($_SESSION['usr']['id_author'] > 0) {
 	$q = "UPDATE lcm_author 
 			SET $fl 
-			WHERE id_author = " . $usr['id_author'];
+			WHERE id_author = " . $_SESSION['usr']['id_author'];
 	$result = lcm_query($q);
 } else {
 	// Keep form information in session, just in case there is an error
@@ -188,104 +189,43 @@ if ($usr['id_author'] > 0) {
 
 	$q = "INSERT INTO lcm_author SET date_creation = NOW(), $fl";
 	$result = lcm_query($q);
-	$usr['id_author'] = lcm_insert_id();
-	$_SESSION['usr']['id_author'] = $usr['id_author'];
+	$_SESSION['usr']['id_author'] = lcm_insert_id();
+	$_SESSION['usr']['id_author'] = $_SESSION['usr']['id_author'];
 }
 
 //
 // Change password (if requested)
 //
 
-if ($usr['usr_new_passwd'] || empty($usr['username_old']))
-	change_password($usr);
+if ($_SESSION['usr']['usr_new_passwd'] || empty($_SESSION['usr']['username_old']))
+	change_password();
 
 //
 // Change username
 //
 
-if ($usr['username'] != $usr['username_old'] || empty($usr['username_old']))
-	change_username($usr['id_author'], $usr['username_old'], $usr['username']);
+if ($_SESSION['usr']['username'] != $_SESSION['usr']['username_old'] || empty($_SESSION['usr']['username_old']))
+	change_username($_SESSION['usr']['id_author'], $_SESSION['usr']['username_old'], $_SESSION['usr']['username']);
 
 //
 // Insert/update author contacts
 //
 
 include_lcm('inc_contacts');
+update_contacts_request('author', $_SESSION['usr']['id_author']);
 
-//
-// Update existing contacts
-//
-if (isset($_REQUEST['contact_value'])) {
-	$contacts = $_REQUEST['contact_value'];
-	$c_ids = $_REQUEST['contact_id'];
-	$c_types = $_REQUEST['contact_type'];
-	// $c_delete = $_REQUEST['del_contact'];
-
-	//
-	// Check if the contacts provided are really attached to the author
-	// or else the author can provide a form with false contacts.
-	//
-	$all_contacts = get_contacts('author', $usr['id_author']);
-	for ($cpt = 0; $c_ids[$cpt]; $cpt++) {
-		$valid = false;
-
-		foreach ($all_contacts as $c)
-			if ($c['id_contact'] == $c_ids[$cpt])
-				$valid = true;
-
-		if (! $valid)
-			die("Invalid modification of contacts detected.");
-	}
-
-	for ($cpt = 0; isset($c_ids[$cpt]); $cpt++) {
-		if (isset($_REQUEST['del_contact_' . $c_ids[$cpt]]) && $_REQUEST['del_contact_' . $c_ids[$cpt]]) {
-			delete_contact($c_ids[$cpt]);
-		} else {
-			// Check for doubles, etc. -> the hell with it! [ML] 2005-01-18
-			update_contact($c_ids[$cpt], $contacts[$cpt]);
-		}
-	}
-}
-
-//
-// New contacts
-//
-if (isset($_REQUEST['new_contact_value'])) {
-	$cpt = 0;
-	$new_contacts = $_REQUEST['new_contact_value'];
-	$c_type_names = $_REQUEST['new_contact_type_name'];
-
-	while (isset($new_contacts[$cpt])) {
-		// Process only new contacts which have a value
-		if ($new_contacts[$cpt]) {
-			// And make sure that they have a "type of contact"
-			if ($c_type_names[$cpt]) {
-				add_contact('author', $usr['id_author'], $c_type_names[$cpt], $new_contacts[$cpt]);
-			} else {
-				$_SESSION['errors']['new_contact_' . $cpt] = "Please specify the type of contact.";
-				$_SESSION['usr']['new_contact_' . $cpt] = $new_contacts[$cpt];
-			}
-		}
-
-		$cpt++;
-	}
-}
-
-// There were errors, send user back to form
-// Note: Important to send back to edit_author, not HTTP_REFERER, because
-// if we are creating a new author, we must send to 'edit', not 'new'.
 if (count($_SESSION['errors'])) {
-    header("Location: edit_author.php?author=" . $usr['id_author']);
+    header("Location: edit_author.php?author=" . $_SESSION['usr']['id_author']);
     exit;
 }
 
 $dest_link = new Link('author_det.php');
-$dest_link->addVar('author', $usr['id_author']);
+$dest_link->addVar('author', $_SESSION['usr']['id_author']);
 
 // [ML] Not used at the moment, but could be useful eventually to send user
 // back to where he was (but as a choice, not automatically, see author_det.php).
-if (isset($usr['ref_edit_author']))
-	$dest_link->addVar('ref', $usr['ref_edit_author']);
+if (isset($_SESSION['usr']['ref_edit_author']))
+	$dest_link->addVar('ref', $_SESSION['usr']['ref_edit_author']);
 
 // Delete session (of form data will become ghosts)
 $_SESSION['usr'] = array();
