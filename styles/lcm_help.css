@@ -1,108 +1,84 @@
 /* -------------------- */
 /* Help pages styles */
 /* -------------------- */
+
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	margin: 5px;
-	padding: 0px;
-	text-align: center;
+	margin: 0;
+	padding: 0;
 }
 
-h1.hlp_h1 {
-	text-align: left;
-	border-bottom: 1px solid #333;
+h1 {
+	width: 735px;
+	height: 50px;
+	line-height: 50px;
 	margin: 0;
-	padding: 5px 0px 5px 0px;
+	padding-left: 5px;
+	border-bottom: 1px solid #999;
+	border-right: 1px solid #999;
 	color: #333;
+	background: #efefef;
 }
 
-h2.hlp_h2 {
-	text-align: left;
-	margin: 0;
-	padding: 5px;
+h2 {
+	margin: 5px 0px 0px 15px;
+	padding: 0;
 }
 
 #hlp_big_box {
-	text-align: left;
-	border-bottom: 1px solid #333;
+	width: 740px;
+	height: 530px;
+	border-bottom: 1px solid #999;
+	border-right: 1px solid #999;
 }
 
 #hlp_menu {
 	float: left;
-	text-align: left;
-	font-size: 11px;
-	margin: 0;
-	padding: 0;
-}
-
-/* [ML] Temporarely added because it makes the menu too long */
-/* (But this way Krasi can experiment without changing the PHP :-) */
-#hlp_menu li ul {
-	display: none;
+	width: 160px;
 }
 
 #hlp_cont {
-	margin-left: 3px;
-	height: 380px;
-	overflow: auto;
-	border-left: 1px solid #333;
-	padding: 0px 15px 15px 15px;
+	float: right;
+	width: 574px;
+	height: 510px;
+	border-left: 1px solid #999;
 }
 
-/* Help main menu... */
+#hlp_btm {
+	clear: both;
+	height: 19px;
+	background: #efefef;
+	border-top: 1px solid #999;
+}
 
-ul#hlp_nav, ul.hlp_subnav {
+/* Help main menu */
+
+ul#nav {
 	margin: 0;
 	padding: 0;
-	list-style: none;
+}
+
+ul#nav li {
+	list-style-type: none;
+}
+
+ul#nav li a {
+	display: block;
 	width: 160px;
-	border-bottom: 1px solid #ccc;
-}
-
-ul#hlp_nav li, ul.hlp_subnav li {
-	position: relative;
+	height: 25px;
+	line-height: 25px;
 	font-size: 11px;
-	text-align: left;
-}
-	
-li ul.hlp_subnav {
-	position: absolute;
-	left: 159px;
-	top: 0;
-	display: none;
-}
-	
-ul#hlp_nav li a, ul.hlp_subnav li a {
-	display: block;
 	text-decoration: none;
-	color: #000;
-	background: #fff;
-	padding: 5px;
-	border: 1px solid #ccc;
-	border-bottom: 0;
-}
-	
-ul#hlp_nav li a:hover, ul.hlp_subnav li a:hover {
-	background: #efefef;
 	color: #333;
+	border-bottom: 1px solid #999;
+	padding-left: 5px;
 }
-	
-	
-/* Fix IE. Hide from IE Mac \*/
-* html ul#hlp_nav li { float: left; }
-* html ul.hlp_subnav li { float: left; }
-* html ul#hlp_nav li a { height: 1%; }
-* html ul.hlp_subnav li a { height: 1%; }
-/* End */
 
-/*
-li:hover ul#hlp_nav, li.over ul#hlp_nav
-{ 
-	display: block;
+ul#nav li a:hover {
+	background: #efefef;
+	color: #000;
 }
-*/
 
-li:hover ul.hlp_subnav, li.over ul.hlp_subnav
-{ 
-	display: block;
+ul.subnav {
+	display: none;
 }
