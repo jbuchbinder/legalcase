@@ -226,6 +226,45 @@ $system_keyword_groups = array (
 				"description" => "kw_income_high_description",
 				"ac_author" => "Y"),
 		)
+	),
+
+	"stage" => array(
+		"name" => "stage",
+		"title" => "kwg_stage_title",
+		"description" => "kwg_stage_description",
+		"type" => "system",
+		"policy" => "optional",
+		"quantity" => "one",
+		"suggest" => "",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array(
+			array (
+				"name" => "investigation",
+				"title" => "kw_stage_investigation_title",
+				"description" => "kw_stage_investigation_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "pre-trial",
+				"title" => "kw_stage_pre-trial_title",
+				"description" => "kw_stage_pre-trial_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "trial",
+				"title" => "kw_stage_trial_title",
+				"description" => "kw_stage_trial_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "appeal",
+				"title" => "kw_stage_appeal_title",
+				"description" => "kw_stage_appeal_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "second_appeal",
+				"title" => "kw_stage_second_appeal_title",
+				"description" => "kw_stage_second_appeal_description",
+				"ac_author" => "Y"),
+		)
 	)
 );
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.33 2005/03/02 11:18:37 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.34 2005/03/03 15:11:52 antzi Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -85,6 +85,7 @@ function create_database() {
 		legal_reason text NOT NULL,
 		alledged_crime text NOT NULL,
 		status text NOT NULL,
+		stage varchar(255) NOT NULL,
 		public tinyint(1) DEFAULT '0' NOT NULL,
 		pub_write tinyint(1) DEFAULT '0' NOT NULL,
 		PRIMARY KEY (id_case))";

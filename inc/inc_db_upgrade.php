@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.41 2005/03/02 11:13:04 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.42 2005/03/03 15:11:52 antzi Exp $
 */
 
 // Execute this file only once
@@ -565,6 +565,13 @@ function upgrade_database($old_db_version) {
 		lcm_query("ALTER TABLE lcm_followup CHANGE type type varchar(255) NOT NULL DEFAULT 'other'");
 
 		upgrade_db_version (24); 
+	}
+
+	if ($lcm_db_version_current < 25) {
+		// Add case stage
+		lcm_query("ALTER TABLE lcm_case ADD stage VARCHAR(255) NOT NULL AFTER status");
+
+		upgrade_db_version (25); 
 	}
 
 	return $log;
