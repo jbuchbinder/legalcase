@@ -88,13 +88,11 @@ ul.small_agenda li a:hover {
 a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
 	background-color: #fff;
 	color: #369;
-	background: url("../images/jimmac/stock_new-16.png") no-repeat 1px 3px;
 }
 
 a.main_nav_btn:hover {
 	background-color: #def;
 	color: #f60;
-	background: url("../images/jimmac/stock_edit-16.png") no-repeat 1px 3px;
 }
 
 .mm_agenda a {
