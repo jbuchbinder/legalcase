@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.22 2004/12/11 11:18:29 antzi Exp $
+	$Id: inc_filters.php,v 1.23 2005/01/11 15:58:19 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -81,8 +81,24 @@ function format_date($timestamp = '', $format = '') {
 // Error display function
 // Highlights (outlines) errors in the form data
 function f_err($fn, $errors) {
-    if (isset($errors[$fn]))
-		echo "<font color='red'>$errors[$fn]</font>";
+	return (isset($errors[$fn]) ? '<span style="color: #ff0000">' . $errors[$fn] . '</span>' : '');
+}
+
+function f_err_star($fn, $errors) {
+	return (isset($errors[$fn]) ? '<span style="color: #ff0000">*</span>' : '');
+}
+
+function show_all_errors($all_errors) {
+	$ret = "<ul>";
+
+	if (! count($all_errors))
+		return "";
+
+	foreach ($all_errors as $error)
+		$ret .= "<li>" . $error . "</li>\n";
+	
+	$ret .= "</ul>\n";
+	return $ret;
 }
 
 // Cleans user input string from 'dangerous' characters
