@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.1 2005/02/11 16:20:11 antzi Exp $
+	$Id: app_det.php,v 1.2 2005/02/22 09:48:06 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -54,11 +54,11 @@ if ($row = lcm_fetch_array($result)) {
 	$res_author = lcm_query($q);
 	if (lcm_num_rows($res_author)>0) {
 		echo "Participants: ";
+		$participants = array();
 		while ($author = lcm_fetch_array($res_author)) {
-			echo  (strlen($author['name_first'])>0 ? $author['name_first'] . ' ' : '')
-			. (strlen($author['name_middle'])>0 ? $author['name_middle'] . ' ' : '')
-			. $author['name_last'];
+			$participants[] = join(' ',array($author['name_first'],$author['name_middle'],$author['name_last']));
 		}
+		echo join(', ',$participants);
 		echo "<br />\n";
 	}
 	
@@ -76,7 +76,7 @@ if ($row = lcm_fetch_array($result)) {
 		while ($client = lcm_fetch_array($res_client))
 			$clients[] = join(' ',array($client['name_first'],$client['name_middle'],$client['name_last']))
 				. ( ($client['id_org'] > 0) ? " of " . $client['name'] : '');
-		echo join(',',$clients);
+		echo join(', ',$clients);
 		echo "<br />\n";
 	}
 
