@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.10 2005/03/18 23:07:20 antzi Exp $
+	$Id: app_det.php,v 1.11 2005/03/22 15:33:13 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -118,7 +118,7 @@ if ($row = lcm_fetch_array($result)) {
 		} else {
 			// Show create followup from appointment
 			echo '<br /><a href="edit_fu.php?case=' . $row['id_case'] . '&amp;app=' . $row['id_app']
-				. '" class="create_new_lnk">Create new followup from this appointment';
+				. '" class="create_new_lnk">Create new followup from this appointment';	// TRAD
 		}
 		echo "</a><br />\n";
 
