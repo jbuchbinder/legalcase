@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.22 2005/03/02 17:29:17 antzi Exp $
+	$Id: listauthors.php,v 1.23 2005/03/02 17:30:21 antzi Exp $
 */
 
 include('inc/inc.php');
