@@ -19,29 +19,29 @@ body {
 }
 
 /* Maybe will be removed later */
-#wrapper_narrow {
-	
-}
-
 #wrapper_wide {
 	
 }
 
-#container_narrow {
+#wrapper_narrow {
+	
+}
+
+#container_wide {
 	width: 100%;
 	float: left;
 	margin-right: -200px;
 }
 
-#container_wide {
+#container_narrow {
 	
 }
 
-#content_narrow {
+#content_wide {
 	margin-right: 200px;
 }
 
-#content_wide {
+#content_narrow {
 
 }
 
