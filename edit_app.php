@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.25 2005/03/24 16:43:08 antzi Exp $
+	$Id: edit_app.php,v 1.26 2005/03/24 21:09:03 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -173,19 +173,19 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			<td><?php 
 				if ($prefs['time_intervals'] == 'absolute') {
 					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'reminder' : '');
-					echo get_date_inputs($name, $_SESSION['app_data']['end_time']);
+					echo get_date_inputs($name, $_SESSION['app_data']['reminder']);
 					echo ' ';
 					echo _T('time_input_time_at') . ' ';
-					echo get_time_inputs($name, $_SESSION['app_data']['end_time']);
-					echo f_err_star('end_time',$_SESSION['errors']);
+					echo get_time_inputs($name, $_SESSION['app_data']['reminder']);
+					echo f_err_star('reminder',$_SESSION['errors']);
 				} else {
 					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'rem_offset' : '');
 					$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
-							strtotime($_SESSION['app_data']['end_time']) - strtotime($_SESSION['app_data']['start_time']) : 0);
+							strtotime($_SESSION['app_data']['reminder']) - strtotime($_SESSION['app_data']['start_time']) : 0);
 				//	echo _T('calendar_info_time') . ' ';
 					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 					echo " before the start time"; // TRAD
-					echo f_err_star('end_time',$_SESSION['errors']);
+					echo f_err_star('reminder',$_SESSION['errors']);
 				} ?>
 			</td>
 		</tr>
