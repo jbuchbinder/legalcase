@@ -228,7 +228,7 @@ a.main_nav_btn:hover {
 
 .mm_agenda {
 	padding-left: 20px;
-	background: url("../images/jimmac/stock_reminder-16.png") no-repeat 0px 0px;
+	background: url("../images/jimmac/stock_reminder-16.png") no-repeat left center;
 }
 
 .mm_agenda a {
@@ -237,32 +237,38 @@ a.main_nav_btn:hover {
 
 .mm_calendar {
 	padding-left: 20px;
-	background: url("../images/jimmac/stock_insert_table-16.png") no-repeat 0px 0px;
+	background: url("../images/jimmac/stock_insert_table-16.png") no-repeat left center;
+	line-height: 20px;
 }
 
 .mm_admin {
 	padding-left: 20px;
-	background: url("../images/jimmac/stock_menu_properties.png") no-repeat 0px 0px;
+	background: url("../images/jimmac/stock_menu_properties.png") no-repeat left center;
+	line-height: 20px;
 }
 
 .mm_main_menu {
 	padding-left: 20px;
-	background: url("../images/jimmac/stock_home-16.png") no-repeat 0px 0px;
+	background: url("../images/jimmac/stock_home-16.png") no-repeat left center;
+	line-height: 20px;
 }
 
 .sm_profile {
 	padding-left: 20px;
-	background: url("../images/jimmac/stock_exec-16.png") no-repeat 0px 0px;
+	background: url("../images/jimmac/stock_exec-16.png") no-repeat left center;
+	line-height: 20px;
 }
 
 .sm_search {
 	padding-left: 20px;
-	background: url("../images/jimmac/stock_search-16.png") no-repeat 0px 0px;
+	background: url("../images/jimmac/stock_search-16.png") no-repeat left center;
+	line-height: 20px;
 }
 
 .sm_font_size {
 	padding-left: 20px;
-	background: url("../images/jimmac/stock_font-16.png") no-repeat 0px 0px;
+	background: url("../images/jimmac/stock_font-16.png") no-repeat left center;
+	line-height: 20px;
 }
 
 /* --------------------------------- */
