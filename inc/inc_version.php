@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.66 2005/03/25 13:15:01 mlutfy Exp $
+	$Id: inc_version.php,v 1.67 2005/03/28 19:11:11 antzi Exp $
 */
 
 // Execute this file only once
@@ -42,7 +42,11 @@ function magic_unquote($table) {
 // [ML] I think that this is absolutely without impact because
 // we use PHP >= 4.1. Still, I don't feel like breaking anything
 // at the moment, so I will leave it.
-@set_magic_quotes_runtime(0);
+// [AG] The following code breaks my escaping procedures AND
+// does unneeded work, unquoting things, which has to be quoted again
+// before going into database. I will disable it now, if something breaks,
+// bug me.
+/*@set_magic_quotes_runtime(0);
 if (@get_magic_quotes_gpc()) {
 	magic_unquote('_GET');
 	magic_unquote('_POST');
@@ -50,7 +54,7 @@ if (@get_magic_quotes_gpc()) {
 
 	if (@ini_get('register_globals'))
 		magic_unquote('GLOBALS');
-}
+}*/
 
 //
 // Dirty against the register_globals to 'Off' (PHP 4.1.x)
@@ -133,7 +137,7 @@ $convert_command = 'convert';
 // Should we debug in data/lcm.log ?
 $debug = true;
 
-// Shoud we highligh translation strings? (helps to find non-translated strings)
+// Shoud we highlight translation strings? (helps to find non-translated strings)
 $debug_tr = false;
 
 // Should SQL queries run in debug mode?
