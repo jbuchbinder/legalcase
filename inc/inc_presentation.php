@@ -703,67 +703,88 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 	return $ret;
 }
 
-function get_time_interval_inputs($name = 'select', $time, $table = false) {
-	
-	$days = (int) ($time / 86400);
-	$hours = (int) ( ($time % 86400) / 3600);
-	$minutes = (int) round( ($time % 3600) / 300) * 5;
-	
+function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $table = false) {
+
+	if ($hours_only) {
+		$days = 0;
+		$hours = $time / 3600;
+		$minutes = 0;
+	} else {
+		$days = (int) ($time / 86400);
+		$hours = (int) ( ($time % 86400) / 3600);
+		$minutes = (int) round( ($time % 3600) / 300) * 5;
+	}
+
 	// If name is empty, disable fields
 	$dis = (($name) ? '' : 'disabled');
 
 	$ret = '';
 
-	if ($table)
-		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n";
+	if ($table && !$hours_only)
+		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n<tr>\n";
 		
 	// Days
-	if ($table)
-		$ret .= "<tr>\n<td>\n"
-		. "<!-- " . _T('select_time_days') . "<br/ -->\n";
-	
-	$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
-	$ret .= " d, ";
-			
-	if ($table)
-		$ret .= "</td>\n";
+	if ($hours_only) {
+		$ret .= "<input type=\"hidden\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" value=\"$days\" />\n";
+	} else {
+		if ($table)
+			$ret .= "<td>\n"
+			. "<!-- " . _T('select_time_days') . "<br/ -->\n";
+		
+		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
+		$ret .= " d, ";
+				
+		if ($table)
+			$ret .= "</td>\n";
+	}
 
 	// Hour
-	if ($table)
-		$ret .= "<td>\n"
-		. "<!-- " . _T('select_time_hour') . "<br/ -->\n";
+	if ($hours_only) {
+		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
+		$ret .= " hours\n";
+	} else {
+		if ($table)
+			$ret .= "<td>\n"
+			. "<!-- " . _T('select_time_hour') . "<br/ -->\n";
 
-	$ret .= "<select $dis name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\">\n";
-
-	for ($i = 0; $i < 24; $i++) {
-		$default = ($i == $hours ? ' selected="selected"' : '');
-		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">$i</option>\n";
-	}
-
-	$ret .= "</select>";
-	$ret .= " h, ";
-
-	if ($table)
-		$ret .= "</td>\n";
-
-	// Minutes
-	if ($table)
-		$ret .= "<td>\n"
-		. "<!-- " . _T('select_time_minutes') . "<br/ -->\n";
+		$ret .= "<select $dis name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\">\n";
 	
-	$ret .= "<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
-
-	for ($i = 0; $i < 60; $i += 5) {
-		$default = ($i == $minutes ? ' selected="selected"' : '');
-		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
+		for ($i = 0; $i < 24; $i++) {
+			$default = ($i == $hours ? ' selected="selected"' : '');
+			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">$i</option>\n";
+		}
+	
+		$ret .= "</select>";
+		
+		$ret .= " h, ";
+	
+		if ($table)
+			$ret .= "</td>\n";
+	}
+	
+	// Minutes
+	if ($hours_only) {
+		$ret .= "<input type=\"hidden\" name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" value=\"$minutes\" />\n";
+	} else {
+		if ($table)
+			$ret .= "<td>\n"
+			. "<!-- " . _T('select_time_minutes') . "<br/ -->\n";
+		
+		$ret .= "<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
+	
+		for ($i = 0; $i < 60; $i += 5) {
+			$default = ($i == $minutes ? ' selected="selected"' : '');
+			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
+		}
+	
+		$ret .= "</select>";
+		$ret .= " m";
+	
+		if ($table)
+			$ret .= "</td>\n";
 	}
 
-	$ret .= "</select>";
-	$ret .= " m";
-
-	if ($table)
-		$ret .= "</td>\n"
-			. "</table>\n";
+	if ($table && !$hours_only) $ret .= "</tr></table>\n";
 
 	return $ret;
 }
