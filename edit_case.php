@@ -14,7 +14,7 @@ if (empty($errors)) {
 
 	// Set the returning page
 	if (isset($ref)) $case_data['ref_edit_case'] = $ref;
-	else $case_data['ref_edit_case'] = $HTTP_REFERER;
+	else $case_data['ref_edit_case'] = $GLOBALS['HTTP_REFERER'];
 
 	// Register case type variable for the session
 	if (!session_is_registered("existing"))
