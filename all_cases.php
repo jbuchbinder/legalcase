@@ -23,7 +23,7 @@ include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
-if ($GLOBALS['author_session']['type']!='admin') die("You don't have the right to list all cases!");
+if ($GLOBALS['author_session']['status'] != 'admin') die("You don't have the right to list all cases!");
 
 $q = "SELECT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author
