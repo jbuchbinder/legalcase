@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: view_file.php,v 1.1 2005/02/21 14:46:13 antzi Exp $
+	$Id: view_file.php,v 1.2 2005/02/22 09:44:58 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -42,8 +42,9 @@ if (!(($GLOBALS['author_session']['status'] == 'admin') || $row['public'] || all
 	die(_T('error_no_read_permission'));
 }
 
-header("Content-Location: " . $row['filename']);
 header("Content-Type: " . ($row['type'] ? $row['type'] : "application/octet-stream") );
+header("Content-Disposition: filename=" . $row['filename']);
+header("Content-Description: " . $row['description']);
 header("Content-Transfer-Encoding: binary");
 echo ( get_magic_quotes_runtime() ? stripslashes($row['content']) : $row['content'] );
 
