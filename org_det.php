@@ -27,9 +27,9 @@ if ($org>0) {
 
 		// Show organisation details
 //		echo '<h3>Details for organisation:</h3><p class="normal_text"><strong>' . $row['name'] .'</strong>';
-		echo '<p class="normal_text"><strong>' . $row['name'] .'</strong>';
+		echo '<p class="normal_text"><strong>' . $row['name'] ."</strong><br />\n";
 //		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
-	//	echo 'Organisation name: ' . $row['name'] . "<br />\n";
+//		echo 'Organisation name: ' . $row['name'] . "<br />\n";
 		echo 'Organisation address: ' . $row['address'] . "<br />\n";
 		echo 'Created on: ' . $row['date_creation'] . "<br />\n";
 		echo 'Last update: ' . $row['date_update'] . "<br />\n";
