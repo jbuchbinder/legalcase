@@ -124,8 +124,8 @@ if ($essai_login == 'oui') {
 
 		$query = "SELECT * FROM lcm_author WHERE username='".addslashes($auth->login)."'";
 		$result = lcm_query($query);
-		if ($row_auteur = lcm_fetch_array($result))
-			$cookie_session = creer_cookie_session($row_auteur);
+		if ($row_author = lcm_fetch_array($result))
+			$cookie_session = creer_cookie_session($row_author);
 
 		$cible->addVar('bonjour','oui');
 	} else {
@@ -140,26 +140,29 @@ if ($essai_login == 'oui') {
 }
 
 
-// cookie d'admin ?
+// Set an administrative cookie?
+// [ML] Not very useful I think
 if ($cookie_admin == 'non') {
 	lcm_setcookie('lcm_admin', $lcm_admin, time() - 3600 * 24);
 	$cible->delVar('var_login');
 	$cible->addVar('var_login', '-1');
-}
-else if ($cookie_admin AND $lcm_admin != $cookie_admin) {
+} else if ($cookie_admin AND $lcm_admin != $cookie_admin) {
 	lcm_setcookie('lcm_admin', $cookie_admin, time() + 3600 * 24 * 14);
 }
 
-// cookie de session ?
+// Set a session cookie?
 if ($cookie_session) {
-	if ($session_remember == 'oui')
+	if ($session_remember == 'yes')
 		lcm_setcookie('lcm_session', $cookie_session, time() + 3600 * 24 * 14);
 	else
 		lcm_setcookie('lcm_session', $cookie_session);
 
-	$prefs = ($row_auteur['prefs']) ? unserialize($row_auteur['prefs']) : array();
-	$prefs['cnx'] = ($session_remember == 'oui') ? 'perma' : '';
-	lcm_query("UPDATE lcm_author SET prefs = '".addslashes(serialize($prefs))."' WHERE id_author = ".$row_auteur['id_author']);
+	$prefs = ($row_author['prefs']) ? unserialize($row_author['prefs']) : array();
+	$prefs['cnx'] = ($session_remember == 'yes') ? 'perma' : '';
+
+	lcm_query("UPDATE lcm_author 
+				SET prefs = '" . addslashes(serialize($prefs)) . "' 
+				WHERE id_author = " . $row_author['id_author']);
 }
 
 // Change the language of the private area (or login)
