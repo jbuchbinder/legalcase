@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.57 2004/12/17 18:22:23 antzi Exp $
+	$Id: case_det.php,v 1.58 2004/12/17 18:33:54 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -100,7 +100,7 @@ if ($case > 0) {
 		foreach ($statuses as $s)
 			echo "\t\t<option" .  (($s == $row['status']) ? ' selected' : '') . ">$s</option>\n";
 		echo "\t</select>\n";
-		echo "\t<input type='submit' name='submit' value='Set case status'>\n";
+		echo "\t<input type='submit' value='Set case status'>\n";
 		echo "</form>\n";
 
 		echo _T('public') . ': ' . _T('Read') . '=';
@@ -109,15 +109,15 @@ if ($case > 0) {
 		echo ', ' . _T('Write') . '=';
 		if ($row['pub_write']) echo 'Yes';
 		else echo 'No';
-		echo "</p><br />\n";
-		
+		echo "</p><br /><br />\n";
+
 		if ($edit)
 			echo '&nbsp;<a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a>';
-		
+
 		if ($admin) echo '&nbsp;<a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a>';
-			
+
 		echo "<br /><br /></fieldset>";
-		
+
 		echo "<fieldset class=\"info_box\"><div class=\"prefs_column_menu_head\">" . _T('case_clients') . "</div><p class=\"normal_text\">";
 		
 		//first table
