@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.44 2005/02/22 15:59:04 antzi Exp $
+	$Id: inc.php,v 1.45 2005/02/24 14:52:07 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -48,26 +48,6 @@ if (! @file_exists('inc/data/inc_meta_cache.php'))
 $prefs_mod = false;
 
 if (isset($_REQUEST['author_ui_modified'])) {
-	// [ML] This is very important (but dirty hack) to change the language
-	// from config_author.php but passing by lcm_cookie.php
-	if (isset($_REQUEST['sel_language']))
-		$lang = $_REQUEST['sel_language'];
-	else
-		$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
-	
-	if (isset($lang) AND $lang <> $lcm_lang /* $author_session['lang'] */) {
-		// Boomerang via lcm_cookie to set a cookie and do all the dirty work
-		// The REQUEST_URI should always be set, and point to the current page
-		// we are being sent to (Ex: from config_author.php to listcases.php).
-		// [ML] I used $lcm_lang because there are rare cases where the cookie
-		// can disagree with $author_session['lang'] (e.g. login one user, set
-		// cookie, logout, login other user, conflict).
-		// [ML] Added $ref because some forms such as config_author.php expect it
-		$ref = (isset($_REQUEST['referer']) ? '&referer=' . $_REQUEST['referer'] : '');
-		header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" . $_SERVER['REQUEST_URI'] . $ref);
-		exit;
-	}
-
 	// Set UI theme
 	if ($_REQUEST['sel_theme'] != $_REQUEST['old_theme']) {	// Value is changed
 		// XSS risk: Theme names can only be alpha-numeric, "-" and "_"
@@ -126,6 +106,27 @@ if (isset($_REQUEST['author_advanced_settings_modified'])) {
 			$prefs_mod = true;
 		}
 	}
+
+	// [ML] This is very important (but dirty hack) to change the language
+	// from config_author.php but passing by lcm_cookie.php
+	// It must be called last, because FORM values will be lost in the redirect
+	if (isset($_REQUEST['sel_language']))
+		$lang = $_REQUEST['sel_language'];
+	else
+		$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
+	
+	if (isset($lang) AND $lang <> $lcm_lang /* $author_session['lang'] */) {
+		// Boomerang via lcm_cookie to set a cookie and do all the dirty work
+		// The REQUEST_URI should always be set, and point to the current page
+		// we are being sent to (Ex: from config_author.php to listcases.php).
+		// [ML] I used $lcm_lang because there are rare cases where the cookie
+		// can disagree with $author_session['lang'] (e.g. login one user, set
+		// cookie, logout, login other user, conflict).
+		// [ML] Added $ref because some forms such as config_author.php expect it
+		$ref = (isset($_REQUEST['referer']) ? '&referer=' . $_REQUEST['referer'] : '');
+		header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" . $_SERVER['REQUEST_URI'] . $ref);
+		exit;
+	}
 }
 
 // Update user preferences if modified
@@ -138,9 +139,6 @@ if ($prefs_mod) {
 //
 // Database version management
 //
-
-// [ML] Not required, there was a bug in line 25 of inc.php
-// write_metas();
 
 $installed_db_version = read_meta('lcm_db_version');
 
