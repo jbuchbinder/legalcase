@@ -53,8 +53,6 @@ function init_default_config() {
 
 		'documents_article' => 'oui',
 		'documents_rubrique' => 'non',
-
-		'creer_htpasswd' => 'non',
 		'gerer_trad' => 'non'
 	);
 

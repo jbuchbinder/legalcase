@@ -27,10 +27,9 @@ if ($p = addslashes($p)) {
 	if ($row = lcm_fetch_array($res)) {
 		if ($pass) {
 			$mdpass = md5($pass);
-			$htpass = generer_htpass($pass);
 
 			lcm_query("UPDATE lcm_author
-				SET cookie_recall = '', htpass='$htpass', password='$mdpass', alea_actuel=''
+				SET cookie_recall = '', password='$mdpass', alea_actuel=''
 				WHERE cookie_recall = '$p'");
 
 			$username = $row['username'];
@@ -130,8 +129,7 @@ if ($pass_forgotten == 'yes') {
 			$pass = creer_pass_aleatoire(8, $mail_inscription);
 			$login = test_login($mail_inscription);
 			$mdpass = md5($pass);
-			$htpass = generer_htpass($pass);
-			lcm_query("INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, status, htpass) ". "VALUES ('".addslashes($name_first)."', '".addslashes($name_middle)."', '".addslashes($name_last)."', '$username', '$mdpass', '$status', '$htpass')");
+			lcm_query("INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, status) ". "VALUES ('".addslashes($name_first)."', '".addslashes($name_middle)."', '".addslashes($name_last)."', '$username', '$mdpass', '$status')");
 			// TODO: e-mail
 			ecrire_acces();
 
