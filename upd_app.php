@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.3 2005/02/23 01:24:49 antzi Exp $
+	$Id: upd_app.php,v 1.4 2005/02/23 02:24:23 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -164,7 +164,8 @@ if (count($_SESSION['errors'])) {
 	// Add/update appointment participants (authors)
 	if (!empty($_SESSION['app_data']['author'])) {
 		$q = "INSERT IGNORE INTO lcm_author_app SET id_app=$id_app,id_author=" . $_SESSION['app_data']['author'];
-		$result = lcm_query($q);
+		if ($result = lcm_query($q))
+			$_SESSION['errors']['author_added'] = "An author was added to the participants of this appointment.";
 	}
 
 	// Add/update appointment clients/organisations
@@ -173,12 +174,37 @@ if (count($_SESSION['errors'])) {
 		$q = "INSERT IGNORE INTO lcm_app_client_org SET id_app=$id_app";
 		$q .= ',id_client=' . $client_org[0];
 		if ($client_org[1]) $q .= ',id_org=' . $client_org[1];
-		$result = lcm_query($q);
+		if ($result = lcm_query($q))
+			$_SESSION['errors']['client_added'] = "An client/organisation was added to the participants of this appointment.";
+	}
+
+	// Check if author or client/organisation was added
+	if (!empty($_SESSION['errors'])) {
+		header('Location: ' . $_SERVER['HTTP_REFERER'] . ( strstr($_SERVER['HTTP_REFERER'],'?') ? '&' : '?' ) . 'ref=' .  ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app") );
+		exit;
 	}
 	
 	// Send user back to add/edit page's referer or (default) to appointment detail page
-	header('Location: ' . ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app"));
-	
+	switch ($_SESSION['app_data']['submit']) {
+		case 'add_author':
+		case 'add_client':
+			// Go back to edit the same appointment. Save the original referer
+			header('Location: ' . $_SERVER['HTTP_REFERER'] . ( strstr($_SERVER['HTTP_REFERER'],'?') ? '&' : '?' ) . 'ref=' .  ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app") );
+			break;
+		case 'add' :
+			// Go back to the edit page's referer
+			header('Location: ' . ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app"));
+			break;
+		case 'addnew' :
+			// Open new appointment. Save the original referer
+			header('Location: edit_app.php?app=0&ref=' . ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app") );
+			break;
+		case 'adddet' :
+		case 'submit' :
+		default :
+			// Go to appointment details
+			header("Location: app_det.php?app=$id_app");
+	}	
 	exit;
 }
 
