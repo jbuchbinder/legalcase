@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.34 2004/12/02 21:12:52 mlutfy Exp $
+	$Id: inc.php,v 1.35 2005/01/17 09:01:34 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -82,6 +82,14 @@ if (isset($sel_screen)) {
 if (isset($_REQUEST['page_rows'])) {
 	if (intval($_REQUEST['page_rows']) > 0) {
 		$prefs['page_rows'] = intval($_REQUEST['page_rows']);
+		$prefs_mod = true;
+	}
+}
+
+// Set font size
+if (isset($_REQUEST['font_size'])) {
+	if ($font_size == 'small_font' || $font_size == 'medium_font' || $font_size == 'large_font') {
+		$prefs['font_size'] = $font_size;
 		$prefs_mod = true;
 	}
 }

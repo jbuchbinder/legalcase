@@ -118,6 +118,8 @@ function auth() {
 		if (! $prefs['screen'])
 			$prefs['screen'] = 'narrow';
 
+		if (! $prefs['font_size'])
+			$prefs['font_size'] = 'medium_font';
 	}
 	else {
 		// This case is a strange possibility: the author is authentified

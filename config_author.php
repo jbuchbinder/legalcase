@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.39 2005/01/14 11:57:11 makaveev Exp $
+	$Id: config_author.php,v 1.40 2005/01/17 09:00:20 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -97,14 +97,25 @@ function show_author_form() {
 			</td>
 		</tr>
 		<tr>
-			<td align="right" valign="top">Font size:</td>
-			<td align="left" valign="top"><!-- <input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
+			<td align="right" valign="top"><?php echo _T('authorconf_input_font_size'); ?></td>
+			<td align="left" valign="top">
+			
+				<input type="hidden" name="old_font_size" id="old_font_size" value="<?php echo $prefs['old_font_size'] ?>" />
+				<!-- <input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
                 &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" / >
 				(not working yet) -->
-				<select name="change_fnt_size" class="sel_frm" onchange="setActiveStyleSheet(document.upd_user_profile.change_fnt_size.options[document.upd_user_profile.change_fnt_size.options.selectedIndex].value)">
-					<option value="small_font">small</option>
-					<option value="">normal</option>
-					<option value="large_font">large</option>
+				<select name="font_size" class="sel_frm" onchange="setActiveStyleSheet(document.upd_user_profile.font_size.options[document.upd_user_profile.font_size.options.selectedIndex].value)">
+
+				<?php
+					$fonts = array('small_font', 'medium_font', 'large_font');
+
+					// font_size gets default value in inc_auth.php
+					foreach ($fonts as $f) {
+						$sel = ($f == $prefs['font_size'] ? 'selected="selected" ' : '');
+						echo '<option ' . $sel . 'value="' . $f . '">' . _T('authorconf_input_' . $f) . '</option>' . "\n";
+					}
+				?>
+
 				</select>
 			</td>
 		</tr>
@@ -156,7 +167,7 @@ function apply_author_ui_change() {
 
 	if ($sel_theme == $prefs['theme'] && $sel_theme <> $old_theme)
 		array_push($log, "Theme set to " . $sel_theme . ", was " . $old_theme . ".");
-		
+
 	//
 	// Change the type of the screen - wide or narrow
 	//
@@ -164,6 +175,12 @@ function apply_author_ui_change() {
 	if ($sel_screen == $prefs['sel_screen'] && $sel_screen <> $old_screen)
 		array_push($log, "Screen mode set to " . $sel_screen . ", was " . $old_screen . ".");
 
+	//
+	// Change the font size
+	//
+	
+	if ($font_size == $prefs['font_size'] && $font_size <> $old_font_size)
+		array_push($log, "Screen mode set to " . $font_size . ", was " . $old_font_size . ".");
 }
 
 function apply_author_password_change() {
