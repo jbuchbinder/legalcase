@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.43 2005/03/13 16:26:48 mlutfy Exp $
+	$Id: inc_filters.php,v 1.44 2005/03/15 06:27:26 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -185,15 +185,7 @@ function get_person_name($item) {
 		return '';
 	}
 
-	// Avoids having two spaces in someone's name when no middle name
-	$ret = $item['name_first'];
-
-	if ($item['name_middle'])
-		$ret .= ' ' . $item['name_middle'];
-	
-	$ret .= ' ' . $item['name_last'];
-
-	return $ret;
+	return njoin(array($item['name_first'], $item['name_middle'], $item['name_last']));
 }
 
 // Dirty hack: utf8_decode is mainly used for strlen(),
