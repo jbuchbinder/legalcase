@@ -114,6 +114,15 @@ h1.lcm_main_head {
 	width: 350px;
 }
 
+a.head_ttl_link, a.head_subttl_link {
+	text-decoration: none;
+	display: block;
+}
+
+a.head_subttl_link {
+	color: #666;
+}
+
 a, p, div, h1, h2, h3, strong, input, select, option, form, textarea, td, table, th {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 }

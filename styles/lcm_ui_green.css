@@ -31,7 +31,7 @@
 /* Other visual settings - font, colors, sizes, boxes */
 /* ================================================== */
 
-h1.lcm_main_head {
+h1.lcm_main_head, a.head_ttl_link {
 	color: #366;
 }
 
