@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.7 2005/02/23 02:23:18 antzi Exp $
+	$Id: edit_app.php,v 1.8 2005/02/23 02:31:28 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -27,20 +27,9 @@ include_lcm('inc_filters');
 
 $admin = ($GLOBALS['author_session']['status']=='admin');
 
-/* [AG] Adding authors/clients/orgs on the appointment switched to upd_app.php
-// Check if page is self-called to add author or client
-if (isset($_POST['submit'])) {
-	switch ($_POST['submit']) {
-		case 'add_author':
-			
-			$_SESSION['errors'][] = "An author was added to the appointment.";
-	}
-}
-*/
-
 if (empty($_SESSION['errors'])) {
 	// Clear form data
-	$_SESSION['app_data'] = array('ref_edit_app' => $GLOBALS['HTTP_REFERER']);
+	$_SESSION['app_data'] = array('ref_edit_app' => ( $_GET['ref'] ? clean_input($_GET['ref']) : $GLOBALS['HTTP_REFERER']) );
 
 	if ($_GET['app']>0) {
 		$app = intval($_GET['app']);

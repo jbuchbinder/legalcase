@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.4 2005/02/23 02:24:23 antzi Exp $
+	$Id: upd_app.php,v 1.5 2005/02/23 02:31:28 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -180,7 +180,7 @@ if (count($_SESSION['errors'])) {
 
 	// Check if author or client/organisation was added
 	if (!empty($_SESSION['errors'])) {
-		header('Location: ' . $_SERVER['HTTP_REFERER'] . ( strstr($_SERVER['HTTP_REFERER'],'?') ? '&' : '?' ) . 'ref=' .  ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app") );
+		header('Location: ' . $_SERVER['HTTP_REFERER'] );
 		exit;
 	}
 	
@@ -189,20 +189,23 @@ if (count($_SESSION['errors'])) {
 		case 'add_author':
 		case 'add_client':
 			// Go back to edit the same appointment. Save the original referer
-			header('Location: ' . $_SERVER['HTTP_REFERER'] . ( strstr($_SERVER['HTTP_REFERER'],'?') ? '&' : '?' ) . 'ref=' .  ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app") );
+			header('Location: ' . $_SERVER['HTTP_REFERER'] );
 			break;
 		case 'add' :
 			// Go back to the edit page's referer
+			unset($_SESSION['errors']);
 			header('Location: ' . ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app"));
 			break;
 		case 'addnew' :
 			// Open new appointment. Save the original referer
+			unset($_SESSION['errors']);
 			header('Location: edit_app.php?app=0&ref=' . ($_SESSION['app_data']['ref_edit_app'] ? $_SESSION['app_data']['ref_edit_app'] : "app_det.php?app=$id_app") );
 			break;
 		case 'adddet' :
 		case 'submit' :
 		default :
 			// Go to appointment details
+			unset($_SESSION['errors']);
 			header("Location: app_det.php?app=$id_app");
 	}	
 	exit;
