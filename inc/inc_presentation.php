@@ -788,4 +788,25 @@ function get_theme_list() {
 	return $list;
 }
 
+// Show tabs
+function show_tabs($tab_list, $selected, $url_base) {
+	// Get current GET parameters
+	$params = array();
+	foreach ($_GET as $k => $v) {
+		if ($k != 'tab')
+			$params[] = htmlspecialchars($k) . '=' . htmlspecialchars($v);
+	}
+
+	// Display tabs
+	foreach($tab_list as $key => $tab) {
+		if ($key != $selected) echo "<a href=\"$url_base?" . join('&amp;',$params) . ( count($params) > 0 ? '&amp;' : '') . 'tab=' . $key . "\">";
+		else echo "[";
+		echo $tab;
+		if ($key != $selected) echo "</a>";
+		else echo "]";
+		echo "\n";
+	}
+	echo "<br />\n";
+}
+
 ?>
