@@ -66,31 +66,49 @@ function lcm_html_start($title = "") {
 	//$link->addVar('right', $GLOBALS['spip_lang_right']);
 	//echo $link->getUrl(). '">' . "\n";
 	
-	echo "<link rel=\"stylesheet\" href=\"/styles/lcm_styles.css\" type=\"text/css\" />\n";
+	echo "<link rel='stylesheet' href='styles/lcm_styles.css' type='text/css' />\n";
 	echo "</head>\n";
 
-	// [ML] couleur_lien = link color
-	// We should clean this I guess. It could simply be in the CSS files
-	
-	//[KM]
-	//echo "<body text='#000000' bgcolor='#f8f7f3' link='$couleur_lien' vlink='$couleur_lien_off' alink='$couleur_lien_off' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0' frameborder='0'";
-
-	// [ML] This also, even dough we do not support arabic/hebrew/farsi at the moment
-	
-	//[KM]
+	// We do not support arabic/hebrew/farsi at the moment
 	/*
 	if ($spip_lang_rtl)
 		echo " dir='rtl'";
 	echo ">";
 	*/
 	
-	//[KM] This is the last part of the header section of a single page
-	//For now the main menu and the calendar will be displayed constantly
-	//In the calendar there are some fake data that will be removed later
+	echo "<body>\n";
+
+}
+
+function lcm_page_start($title = "") {
+	// [ML] Yes, too many globals. I will clean this later.
+	global $couleur_foncee; // dark color
+	global $couleur_claire; // light
+	global $adresse_site;
+	global $connect_id_auteur;
+	global $connect_status;
+	global $auth_can_disconnect, $connect_login;
+	global $options, $spip_display, $spip_ecran;
+	global $spip_lang, $spip_lang_rtl, $spip_lang_left, $spip_lang_right;
+	global $clean_link;
+
+	// Clean the global link (i.e. remove actions passed in the URL)
+	$clean_link->delVar('var_lang');
+	$clean_link->delVar('set_options');
+	$clean_link->delVar('set_couleur');
+	$clean_link->delVar('set_disp');
+	$clean_link->delVar('set_ecran');
+
+	lcm_html_start($title, $onLoad);
+
 	
-	echo "<body>
-<div id=\"header\">&nbsp;</div>
-	<div id=\"wrapper\">
+	// XXX TODO
+	// most of the header html after <head></head> should go here
+	//
+	
+	echo "
+	<div id='header'>&nbsp;</div>
+	<div id='wrapper'>
 		<div id=\"container\">
 			<div id=\"content\">
 			<!-- This is the navigation column, usually used for menus and brief information -->
@@ -130,34 +148,6 @@ function lcm_html_start($title = "") {
 <!-- Start of \"main_column\" content -->
 <h3 class=\"content_head\">". $title ."</h3>";
 
-}
-
-function lcm_page_start($title = "") {
-	// [ML] Yes, too many globals. I will clean this later.
-	global $couleur_foncee; // dark color
-	global $couleur_claire; // light
-	global $adresse_site;
-	global $connect_id_auteur;
-	global $connect_status;
-	global $auth_can_disconnect, $connect_login;
-	global $options, $spip_display, $spip_ecran;
-	global $spip_lang, $spip_lang_rtl, $spip_lang_left, $spip_lang_right;
-	global $clean_link;
-
-	// Clean the global link (i.e. remove actions passed in the URL)
-	$clean_link->delVar('var_lang');
-	$clean_link->delVar('set_options');
-	$clean_link->delVar('set_couleur');
-	$clean_link->delVar('set_disp');
-	$clean_link->delVar('set_ecran');
-
-	lcm_html_start($title, $onLoad);
-
-	
-	// XXX TODO
-	// most of the header html after <head></head> should go here
-	//
-
 	// Opening of the "main" part of the page
 	// [ML] This is temporary untill we cleanup the HTML
 	
@@ -185,9 +175,22 @@ function lcm_html_end() {
 		echo "document.img_session.src='lcm_cookie.php?change_session=oui';\n";
 		echo "// --></script>\n";
 	}
-
-	//echo "</body></html>\n";
 	
+	
+	flush();
+}
+
+
+function lcm_page_end($credits = '') {
+	global $lcm_version_shown;
+	global $connect_id_auteur;
+	global $auth_can_disconnect, $connect_login;
+
+	///
+	// Insert FOOTER stuff here
+	// Ignore the rest after this for now.
+	// 
+
 	//[KM] The bottom of a single page
 	//
 	echo "<!-- End of \"main_column\" content -->
@@ -218,33 +221,27 @@ function lcm_html_end() {
 		</div>
 		<div class=\"clearing\">&nbsp;</div>
 	</div>
-<div id=\"footer\">2004 &copy; Legal Case Management</div>
+<div id=\"footer\">2004 &copy; Legal Case Management</div>\n";
+
+	//
+	// Language choice (temporarely put here by [ML])
+	//
+	if ($GLOBALS['all_langs']) {
+		echo menu_languages('var_lang_lcm');
+	}
+
+	if ($auth_can_disconnect) {	
+		echo "<a href='lcm_cookie.php?logout=$connect_login' class='icone26' onMouseOver=\"changestyle('bandeaudeconnecter','visibility', 'visible');\"><img src='img_pack/deconnecter-24$spip_lang_rtl.gif' border='0'></a>";
+	}
+
+	echo "
 </body>
 </html>";
-	
-	flush();
-}
-
-
-function lcm_page_end($credits = '') {
-	global $lcm_version_shown;
-	global $connect_id_auteur;
-	global $auth_can_disconnect, $connect_login;
-
-	//[KM]
-	//echo "</td></tr></table>";
-
-	///
-	// Insert FOOTER stuff here
-	// Ignore the rest after this for now.
-	// 
-
-
 
 	// [ML] Off-topic note, seen while removing code:
 	// http://www.dynamicdrive.com/dynamicindex11/abox.htm
 
-	debut_grand_cadre(); // start_big_frame, needs cleaning
+	//debut_grand_cadre(); // start_big_frame, needs cleaning
 	
 	//[KM] This is some copyright info and its place is not here I think
 	//But I'm not sure
@@ -265,16 +262,6 @@ function lcm_page_end($credits = '') {
 	echo "</center>";
 	echo "</td></tr></center>\n";
 	*/
-	//
-	// Language choice (temporarely put here by [ML])
-	//
-	if ($GLOBALS['all_langs']) {
-		echo menu_languages('var_lang_lcm');
-	}
-
-	if ($auth_can_disconnect) {	
-		echo "<a href='lcm_cookie.php?logout=$connect_login' class='icone26' onMouseOver=\"changestyle('bandeaudeconnecter','visibility', 'visible');\"><img src='img_pack/deconnecter-24$spip_lang_rtl.gif' border='0'></a>";
-	}
 
 	lcm_html_end();
 }
