@@ -4,7 +4,7 @@ include('inc/inc_version.php');
 include_lcm('inc_presentation');
 include_lcm('inc_login');
 
-debut_html(_T('login_acces_prive'));
+lcm_html_start(_T('login_acces_prive'));
 
 global $spip_lang_right;
 $lcm_site_name = lire_meta('nom_site');
@@ -21,6 +21,6 @@ login('');
 
 echo "</td></tr></table></center>\n";
 
-fin_html();
+lcm_html_end();
 
 ?>
