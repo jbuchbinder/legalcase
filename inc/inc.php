@@ -46,8 +46,8 @@ if ($sel_theme) {
 }
 
 // Set wide/narrow screen mode preference
-if ($sel_screen) {
-	$prefs['sel_screen'] = ($sel_screen);
+if ($sel_screen == 'narrow' || $sel_screen == 'wide') {
+	$prefs['screen'] = $sel_screen;
 	$prefs_mod = true;
 }
 

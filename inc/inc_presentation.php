@@ -109,9 +109,9 @@ function lcm_page_start($title = "", $css_files = "") {
 		<h1 class='lcm_main_head'>" . $site_name . "</h1>
 		<div class='lcm_slogan'>" . $site_desc . "</div>
 	</div></a>
-	<div id='wrapper_". $prefs['sel_screen'] ."'>
-		<div id=\"container_". $prefs['sel_screen'] ."\">
-			<div id=\"content_". $prefs['sel_screen'] ."\">
+	<div id='wrapper_". $prefs['screen'] ."'>
+		<div id=\"container_". $prefs['screen'] ."\">
+			<div id=\"content_". $prefs['screen'] ."\">
 			<!-- This is the navigation column, usually used for menus and brief information -->
 				<div id=\"navigation_menu_column\">
 				<!-- Start of navigation_menu_column content -->
@@ -123,8 +123,7 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
 							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">Organisations</a></li>
 							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>";
-							if($prefs['sel_screen'] == "wide")
-							{
+							if($prefs['screen'] == "wide") {
 								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li>\n";
 							}
 	echo "
@@ -212,11 +211,12 @@ function lcm_page_end($credits = '') {
 				</div>
 			</div>
 		</div>
+
 <!-- The initial intention was that here can be placed some UI preferences -->
 <!-- but I think it will be much better to put the search boxes -->
 <!-- The right and the left column can be very long, so, we can put here a lot of additional information, some tiny help hints and so -->";
 //Checking for "wide/narrow" user screen
-if($prefs['sel_screen'] == "narrow")
+if($prefs['screen'] == "narrow")
 {
 		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
