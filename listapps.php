@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.4 2005/02/25 22:17:16 antzi Exp $
+	$Id: listapps.php,v 1.5 2005/03/01 09:43:02 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -86,7 +86,7 @@ if ($number_of_rows) {
 
 		// Show link to previous page
 		if ($list_pos>0) {
-			echo '<a href="listcases.php?list_pos=';
+			echo '<a href="listapps.php?list_pos=';
 			echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
 			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 			echo '" class="content_link">< Prev</a> ';
@@ -101,7 +101,7 @@ if ($number_of_rows) {
 			for ($i=0 ; $i<$list_pages ; $i++) {
 				if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
 				else {
-					echo '<a href="listcases.php?list_pos=' . ($i*$prefs['page_rows']);
+					echo '<a href="listapps.php?list_pos=' . ($i*$prefs['page_rows']);
 					if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 					echo '" class="content_link">' . ($i+1) . '</a> ';
 				}
@@ -113,7 +113,7 @@ if ($number_of_rows) {
 		// Show link to next page
 		$next_pos = $list_pos + $prefs['page_rows'];
 		if ($next_pos<$number_of_rows) {
-			echo "<a href=\"listcases.php?list_pos=$next_pos";
+			echo "<a href=\"listapps.php?list_pos=$next_pos";
 			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 			echo '" class="content_link">Next ></a>';
 		}
