@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.54 2005/02/04 16:13:23 antzi Exp $
+	$Id: edit_fu.php,v 1.55 2005/02/04 19:45:25 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -183,15 +183,23 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			</td>
 		</tr>
 		<tr><td><?php echo (($prefs['time_intervals'] == 'absolute') ? _T('fu_input_date_end') : _T('fu_input_time_length')); ?></td>
-			<td><?php $name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
+			<td><?php 
 				if ($prefs['time_intervals'] == 'absolute') {
+					$name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
 					echo _T('calendar_info_date'); 
 					echo get_date_inputs($name, $fu_data['date_end']);
 					echo ' ';
-				}
-				echo _T('calendar_info_time') . ' ';
-				echo get_time_inputs($name, $fu_data['date_end']);
-				echo f_err_star('date_end',$errors); ?>
+					echo _T('calendar_info_time') . ' ';
+					echo get_time_inputs($name, $fu_data['date_end']);
+					echo f_err_star('date_end',$errors);
+				} else {
+					$name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
+					$interval = ( ($fu_data['date_end']!='0000-00-00 00:00:00') ?
+							strtotime($fu_data['date_end']) - strtotime($fu_data['date_start']) : 0);
+					echo _T('calendar_info_time') . ' ';
+					echo get_time_interval_inputs($name, $interval));
+					echo f_err_star('date_end',$errors);
+				} ?>
 			</td>
 		</tr>
 		<tr><td><?php echo _T('fu_input_type'); ?></td>
