@@ -15,8 +15,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // A
 'add_and_go_to_details' => 'Добавяне и отиване към детайлите',
 'add_and_open_new' => 'Добавяне и отваряне на нов',
-'add_client_s' => 'Добавяне на клиент/и',
-'add_organisation_s' => 'Добавяне на организация/и',
 'add_user_case' => 'Добавяне на потребител към дело',
 'author_id' => 'Идентификатор на автор',
 'authorconf_button_change_password' => 'Промяна на парола',
@@ -25,9 +23,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_language' => 'Език:',
 'authorconf_input_large_font' => 'едър',
 'authorconf_input_medium_font' => 'среден',
-'authorconf_input_mode' => 'Потребителски интерфейс:',
-'authorconf_input_mode_extended' => 'Разширен',
-'authorconf_input_mode_simple' => 'Опростен',
 'authorconf_input_password_confirm' => 'Потвърждение на новата парола:',
 'authorconf_input_password_current' => 'Текуща парола:',
 'authorconf_input_password_new' => 'Нова парола:',
@@ -41,6 +36,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_theme_green' => 'зелен',
 'authorconf_input_theme_monochrome' => 'черно-бял',
 'authorconf_input_theme_orange' => 'оранжев',
+'authorconf_input_ui_level' => '<NEW>Data entry method:',
+'authorconf_input_ui_level_normal' => '<NEW>Normal',
+'authorconf_input_ui_level_technical' => '<NEW>Technical',
+'authorconf_subtitle_advanced' => '<NEW>Advanced features',
 'authorconf_subtitle_interface' => 'Интерфейс',
 'authorconf_subtitle_password' => 'Промяна на парола',
 'authoredit_input_username' => 'Идентификатор:',
@@ -59,6 +58,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // C
 'calendar_info_date' => 'Дата',
 'calendar_info_time' => 'Време',
+'case_button_add_client' => 'Добавяне на клиент',
+'case_button_add_org' => 'Добавяне на организация',
 'case_input_alledged_crime' => 'Предполагаемо престъпление:',
 'case_input_author' => 'Автор:',
 'case_input_authors' => 'Автори:',
@@ -74,6 +75,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_subtitle_clients' => 'Клиенти по това дело',
 'case_subtitle_followups' => 'Продължение по делото',
 'case_subtitle_general' => 'Общи данни по делото',
+'case_warning_no_title' => '<NEW>Please enter a case title.',
 'client_input_id' => 'Идентификатор на клиента:',
 'client_subtitle_associated_org' => 'Свързани организации',
 'client_subtitle_view_general' => 'Обща информация',
@@ -307,6 +309,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // N
 'new_followup' => 'Ново продължение',
+'new_report' => '<NEW>New report',
 
 
 // O
@@ -369,6 +372,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // S
 'save' => 'записано',
 'siteconf_info_admin_email' => 'Адресът на ел. поща за връзка за заявки към администраторите или за докладване на проблеми. Това може да е адресът на пощенски списък.',
+'siteconf_info_available_languages' => '<NEW>If you have added a new language file to LCM or if you have upgraded the software and not all languages are available, click on "Validate" to refresh the list of available languages.',
 'siteconf_info_case_fields' => 'Можете да конфигурирате какъв вид информация да се съхранява за всяко дело. Това зависи най-вече от дейността на вашата организация.',
 'siteconf_info_client_fields' => 'Можете да конфигурирате какъв вид информация да се съхранява за клиента и авторите. Имайте предвид, че не се препоръчва някои данни, напр. ЕГН/ЛНЧ, да се записват тук.',
 'siteconf_info_currency' => 'Парична единица, в която ще се отчита финансовата информация въведена в системата (като такси, сметки и др.)',
@@ -393,10 +397,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_admin_email' => 'Адрес на ел. поща на администратора:',
 'siteconf_input_alledged_crime' => 'Предполагаемо престъпление',
 'siteconf_input_assignment_date' => 'Дата на задаване',
+'siteconf_input_available_languages' => '<NEW>Refresh the list of available languages:',
 'siteconf_input_case_allow_modif' => 'Да се позволи ли информацията за дело да се променя от авторите след въвеждането й?',
 'siteconf_input_citizen_number' => 'ЕГН/ЛНЧ (само за клиенти)',
 'siteconf_input_court_archive' => 'Номер на дело в съда',
-'siteconf_input_currency' => 'Парична единица',
+'siteconf_input_currency' => 'Парична единица:',
 'siteconf_input_default_lang' => 'Език по подразбиране:',
 'siteconf_input_fu_allow_modif' => 'Да се позволи ли промяна на следващата информация по дело от авторите след въвеждането й?',
 'siteconf_input_name_middle' => 'Презиме или инициал',
