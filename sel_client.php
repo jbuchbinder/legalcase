@@ -28,12 +28,13 @@ if ($case>0) {
 	$result = lcm_query($q);
 ?>
 <form action="add_client.php" method="post">
-	<table border>
-		<caption>List if clients</caption>
+<h3>List if clients</h3>
+	<table border="0" width="99%" class="tbl_usr_dtl">
+		
 		<tr>
-			<th></th>
-			<th>Client name</th>
-			<th></th>
+			<th class="heading">&nbsp;</th>
+			<th class="heading">Client name</th>
+			<th class="heading">&nbsp;</th>
 		</tr>
 <?php
 	while ($row = lcm_fetch_array($result)) {

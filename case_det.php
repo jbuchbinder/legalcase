@@ -29,7 +29,7 @@ if ($case > 0) {
 
 		if ($edit)
 			echo ' [<a href="edit_case.php?case=' . $row['id_case'] . '">' . _T('edit_case_information') . '</a>]';
-		echo "<br>\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
+		echo "<p class='normal_text'>\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
 
 		// Show users, assigned to the case
 		echo _T('case_user_s') . ': ';
@@ -66,11 +66,11 @@ if ($case > 0) {
 		echo ', ' . _T('Write') . '=';
 		if ($row['pub_write']) echo 'Yes';
 		else echo 'No';
-		echo "<br>\n";
+		echo "</p>\n";
 
 		echo '<h3>' . _T('case_clients') . ':</h3>';
-		echo "\n\t\t<table border='1'>\n";
-		echo '<caption>' . _T('organisations'). ':</caption>';
+		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
+		echo "<th class='heading'>" . _T('organisations'). ":</th><th class='heading'>&nbsp;</th>";
 
 		// Show case organization(s)
 		$q="SELECT lcm_org.id_org,name
@@ -87,10 +87,10 @@ if ($case > 0) {
 		}
 
 		if ($add)
-			echo "<tr><td><a href=\"sel_org.php?case=$case\">" . _T('add_organisation_s') . "</a></td><td></td></tr>";
+			echo "<tr><td><a href=\"sel_org.php?case=$case\">" . _T('add_organisation_s') . "</a></td><td>&nbsp;</td></tr>";
 
-		echo "\t\t</table><br>\n\n\t\t<table border>\n";
-		echo "\t\t<caption>" . _T('clients') . ":</caption>\n";
+		echo "\t\t</table><br>\n\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
+		echo "\t\t<th class='heading'>" . _T('clients') . ":</th>\n\t\t<th class='heading'>&nbsp;</th>";
 
 		// Show case client(s)
 		$q="SELECT lcm_client.id_client,name_first,name_middle,name_last
@@ -108,64 +108,41 @@ if ($case > 0) {
 			echo "</tr>\n";
 		}
 		if ($add)
-			echo "<tr><td><a href=\"sel_client.php?case=$case\">" . _T('add_client_s') . "</a></td><td></td></tr>\n";
+			echo "<tr><td><a href=\"sel_client.php?case=$case\">" . _T('add_client_s') . "</a></td><td>&nbsp;</td></tr>\n";
 
 		echo "\t\t</table><br>\n";
 
 	} else die(_T('error_no_such_case'));
-
-	echo "\n\n<br/>\n";
-	echo "\n<form name='frm_find_fu' class='search_form' action='case_det.php?case=$case' method='post'>";
-	echo "Find followup:&nbsp;";
-	echo "<input type='text' name='find_fu_string' size='10' class='search_form_txt' value='$find_fu_string' />";
-	echo "&nbsp;";
-	echo "<input type='submit' name='submit' value='Search' class='search_form_btn' />\n";
-	echo "</form>\n";
-
-	echo "\n<table border='0' width='99%' align='center' class='tbl_data'>
-	<caption>" . (strlen($find_fu_string)>1 ? (_T('case_followups_containing') . ' ' . $find_fu_string) : _T('case_followups')) . ":</caption>
-	<tr><th class='tbl_head'>" . _T('date') . "</th>
-		<th class='tbl_head'>" . _T('type') . "</th>
-		<th class='tbl_head'>" . _T('description') . "</th>
-		<th class='tbl_head'></th></tr>\n";
+	
+	
+	echo "<h3>" . _T('case_followups') . ":</h3>\n";
+	echo "\n\n\t\n\t<table border='0' class='tbl_usr_dtl' width='99%'>
+	<tr><th class='heading'>" . _T('date') . "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
 
 	// Prepare query
 	$q = "SELECT id_followup,date_start,type,description
 		FROM lcm_followup
-		WHERE (id_case=$case";
-
-	if (strlen($find_fu_string)>1) {
-		$q .= " AND ((date_start LIKE '%$find_fu_string%')
-					OR (type LIKE '%$find_fu_string%')
-					OR (description LIKE '%$find_fu_string%'))";
-	}
-
-	$q .= ")";
+		WHERE id_case=$case";
 
 	// Do the query
 	$result = lcm_query($q);
 
 	// Process the output of the query
-	for ($i = 0 ; ($row = lcm_fetch_array($result)) ; $i++) {
+	while ($row = lcm_fetch_array($result)) {
 		// Show followup
-		echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-		echo highlight_matches(clean_output(date(_T('date_format_short'),strtotime($row['date_start']))),$find_fu_string) . "</td>\n";
-		echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-		echo highlight_matches(clean_output($row['type']),$find_fu_string) . "</td>\n";
+		echo '<tr><td>' . clean_output(date(_T('date_format_short'),strtotime($row['date_start']))) . '</td>';
+		echo '<td>' . clean_output($row['type']) . '</td>';
 		if (strlen($row['description'])<30) $short_description = $row['description'];
 		else $short_description = substr($row['description'],0,30) . '...';
-		echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-		echo highlight_matches(clean_output($short_description),$find_fu_string) . "</td>\n";
+		echo '<td>' . clean_output($short_description) . '</td>';
 		if ($edit)
-			echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"
-			. '<a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . "</a></td>\n";
-		echo "\t</tr>\n";
+			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . '</a></td>';
+		echo "</tr>\n";
 	}
 	if ($add)
-		echo "<tr><td colspan=\"3\" class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"
-		. "<a href=\"edit_fu.php?case=$case\">" . _T('new_followup') . "</a></td>\n\t<td></td>\n</tr>\n";
+		echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\">" . _T('new_followup') . "</a></td><td>&nbsp;</td></tr>\n";
 
-	echo "</table>\n";
+	echo "\t</table>\n";
 
 	lcm_page_end();
 } else {

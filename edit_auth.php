@@ -19,12 +19,13 @@ if ($case > 0) {
 		lcm_page_start("Edit author's rights on case $case");
 	?>
 	<form action="upd_auth.php" method="POST">
-		<table border><caption>Access rights</caption>
-			<tr><th align="center">User</th>
-				<th align="center">Read</th>
-				<th align="center">Write</th>
-				<th align="center">Edit</th>
-				<th align="center">Admin</th>
+	<h3>Access rights</h3>
+		<table border="0" class="tbl_usr_dtl" width="99%">
+			<tr><th align="center" class="heading">User</th>
+				<th align="center" class="heading">Read</th>
+				<th align="center" class="heading">Write</th>
+				<th align="center" class="heading">Edit</th>
+				<th align="center" class="heading">Admin</th>
 			</tr>
 	<?php
 

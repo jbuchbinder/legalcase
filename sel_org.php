@@ -28,12 +28,12 @@ if ($case>0) {
 	$result = lcm_query($q);
 ?>
 <form action="add_org.php" method="post">
-	<table border>
-		<caption>List if organisations</caption>
+<h3>List if organisations</h3>
+	<table border="0" class="tbl_usr_dtl">
 		<tr>
-			<th></th>
-			<th>Organisation name</th>
-			<th></th>
+			<th class="heading">&nbsp;</th>
+			<th class="heading">Organisation name</th>
+			<th class="heading">&nbsp;</th>
 		</tr>
 <?php
 	while ($row = lcm_fetch_array($result)) {

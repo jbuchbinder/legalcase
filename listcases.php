@@ -54,10 +54,10 @@ if ($list_pos>0)
 ?>
 
 <!-- [ML:FIXME] I'm not sure about the CSS classes -->
-<table border='0' align='center' class='tbl_data' width='99%'>
-	<tr><th class='tbl_head'>Description</th>
-		<th class='tbl_head'>Status</th>
-		<th colspan="2" class='tbl_head'>Actions</th>
+<table border='0' align='center' class='tbl_usr_dtl' width='99%'>
+	<tr><th class='heading'>Description</th>
+		<th class='heading'>Status</th>
+		<th colspan="2" class='heading'>Actions</th>
 	</tr>
 <?php
 // Process the output of the query
@@ -65,22 +65,22 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	// Show case title
 	echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 
-	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '">';
+	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['title']),$find_case_string);
 	if (allowed($row['id_case'],'r')) echo '</a>';
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $row['status'];
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (allowed($row['id_case'],'e'))
-		echo '<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a>';
+		echo '<a href="edit_case.php?case=' . $row['id_case'] . '" class="content_link">Edit case</a>';
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (allowed($row['id_case'],'w'))
-		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '">Add followup</a>';
+		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">Add followup</a>';
 	echo "</td></tr>\n";
 }
 
 ?>
 </table>
-<p align='right'><a href="edit_case.php?case=0">Open new case</a></p>
+<p align='right'><a href="edit_case.php?case=0" class="content_link">Open new case</a></p>
 
 <table border='0' align='center' width='99%'>
 	<tr><td align="left"><?php
