@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.43 2005/01/21 10:14:38 mlutfy Exp $
+	$Id: edit_fu.php,v 1.44 2005/01/21 10:36:40 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -36,7 +36,8 @@ $admin = ($GLOBALS['author_session']['status']=='admin');
 
 if (empty($errors)) {
     // Clear form data
-    $fu_data = array('ref_edit_fu'=>$HTTP_REFERER);
+	// [ML] FIXME: referer may be null, should default to fu_det.php?fu=...
+    $fu_data = array('ref_edit_fu' => $GLOBALS['HTTP_REFERER']);
 
 	if (isset($_GET['followup'])) {
 		$followup=intval($_GET['followup']);
@@ -83,7 +84,7 @@ if (empty($errors)) {
 	}
 }
 
-if ($followup)
+if (isset($followup))
 	lcm_page_start("Edit follow-up");
 else
 	lcm_page_start("New follow-up");
@@ -230,7 +231,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
 
 	<?php
-		if ($followup && $prefs['mode'] == 'extended')
+		if (isset($followup) && $prefs['mode'] == 'extended')
 			echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>'
 	?>
 
