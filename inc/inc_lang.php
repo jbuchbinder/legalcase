@@ -115,7 +115,7 @@ function traduire_chaine($code, $args) {
 		$text = $GLOBALS[$var][$code];
 	}
 
-	// languages which are not finished or late  (...)
+	// Languages which are not finished or late  (...)
 	if ($lcm_lang<>'en') {
 		$text = ereg_replace("^<(NEW|MODIF)>","",$text);
 		if (!$text) {
@@ -126,7 +126,7 @@ function traduire_chaine($code, $args) {
 		}
 	}
 
-	// insert the variables into the strings
+	// Insert the variables into the strings
 	if (!$args) return $text;
 	while (list($name, $value) = each($args))
 		$text = str_replace ("@$name@", $value, $text);
