@@ -53,24 +53,24 @@ lcm_page_start("Edit client details");
 	}
 ?>
 		<tr><td>First name:</td>
-			<td><input name="name_first" value="<?php echo clean_output($client_data['name_first']); ?>"></td></tr>
+			<td><input name="name_first" value="<?php echo clean_output($client_data['name_first']); ?>" class="search_form_txt"></td></tr>
 		<tr><td>Middle name:</td>
-			<td><input name="name_middle" value="<?php echo clean_output($client_data['name_middle']); ?>"></td></tr>
+			<td><input name="name_middle" value="<?php echo clean_output($client_data['name_middle']); ?>" class="search_form_txt"></td></tr>
 		<tr><td>Last name:</td>
-			<td><input name="name_last" value="<?php echo clean_output($client_data['name_last']); ?>"></td></tr>
+			<td><input name="name_last" value="<?php echo clean_output($client_data['name_last']); ?>" class="search_form_txt"></td></tr>
 		<tr><td>Created on:</td>
 			<td><?php echo clean_output(date(_T('date_format_short'),strtotime($client_data['date_creation']))); ?></td></tr>
 		<tr><td>Citizen number:</td>
-			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>"></td></tr>
+			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>" class="search_form_txt"></td></tr>
 		<tr><td>Address:</td>
-			<td><textarea name="address" rows=3><?php echo clean_output($client_data['address']); ?></textarea></td></tr>
+			<td><textarea name="address" rows="3" class="frm_tarea"><?php echo clean_output($client_data['address']); ?></textarea></td></tr>
 		<tr><td>Civil status:</td>
-			<td><input name="civil_status" value="<?php echo clean_output($client_data['civil_status']); ?>"></td></tr>
+			<td><input name="civil_status" value="<?php echo clean_output($client_data['civil_status']); ?>" class="search_form_txt"></td></tr>
 		<tr><td>Income:</td>
-			<td><input name="income" value="<?php echo clean_output($client_data['income']); ?>"></td></tr>
+			<td><input name="income" value="<?php echo clean_output($client_data['income']); ?>" class="search_form_txt"></td></tr>
 	</table>
-	<button name="submit" type="submit" value="submit">Save</button>
-	<button name="reset" type="reset">Reset</button>
+	<button name="submit" type="submit" value="submit" class="simple_form_btn">Save</button>
+	<button name="reset" type="reset" class="simple_form_btn">Reset</button>
 	<input type="hidden" name="ref_edit_client" value="<?php echo $HTTP_REFERER ?>">
 </form>
 

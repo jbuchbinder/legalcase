@@ -75,8 +75,9 @@ lcm_page_start("Edit follow-up");
 ?>
 
 <form action="upd_fu.php" method="POST">
-	<table><caption>Details of follow-up:</caption>
-		<!-- [ML;tech-talk] tr><th>Parameter</th><th>Value</th></tr -->
+<h3>Details of follow-up:</h3>
+	<table class="tbl_usr_dtl" width="99%">
+		<!-- [ML;tech-talk] tr><th>Parameter</th><th class="heading">Value</th></tr -->
 		<tr><td>Start date:</td>
 			<td><?php echo get_date_inputs('start', $fu_data['date_start'], false); ?><?php
 			echo f_err('date_start',$errors); ?>
@@ -96,13 +97,13 @@ lcm_page_start("Edit follow-up");
 			} ?>
 			</select></td></tr>
 		<tr><td>Description:</td>
-			<td><textarea name="description" rows="5" cols="30"><?php
+			<td><textarea name="description" rows="5" cols="30" class="frm_tarea"><?php
 			echo clean_output($fu_data['description']); ?></textarea></td></tr>
 		<tr><td>Sum billed:</td>
-			<td><input name="sumbilled" value="<?php echo clean_output($fu_data['sumbilled']); ?>"></td></tr>
+			<td><input name="sumbilled" value="<?php echo clean_output($fu_data['sumbilled']); ?>" class="search_form_txt"></td></tr>
 	</table>
-	<button name="submit" type="submit" value="submit">Save</button>
-	<button name="reset" type="reset">Reset</button>
+	<button name="submit" type="submit" value="submit" class="simple_form_btn">Save</button>
+	<button name="reset" type="reset" class="simple_form_btn">Reset</button>
 	<input type="hidden" name="id_followup" value="<?php echo $fu_data['id_followup']; ?>">
 	<input type="hidden" name="id_case" value="<?php echo $fu_data['id_case']; ?>">
 	<input type="hidden" name="ref_edit_fu" value="<?php echo $fu_data['ref_edit_fu']; ?>">

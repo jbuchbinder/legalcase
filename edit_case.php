@@ -74,22 +74,22 @@ else lcm_page_start(_T('new_case'));
 		<tr><td>" . _T('author_id') . ":</td><td>" . $case_data['id_author'] . "
 			<input type=\"hidden\" name=\"id_author\" value=\"" . $case_data['id_author'] . "\"></td></tr>
 		<tr><td>" . _T('case_title') . ":</td>
-			<td><input name=\"title\" value=\"" . clean_output($case_data['title']) . "\">";
+			<td><input name=\"title\" value=\"" . clean_output($case_data['title']) . "\" class=\"search_form_txt\">";
 	echo f_err('title',$errors) . "</td></tr>
 		<tr><td>" . _T('court_archive_id') . ":</td>
-			<td><input name=\"id_court_archive\" value=\"" . clean_output($case_data['id_court_archive']) . "\"></td></tr>";
+			<td><input name=\"id_court_archive\" value=\"" . clean_output($case_data['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>";
 // [AG] Creation date not shown upon ML request
 //		<tr><td>" . _T('creation_date') . ":</td>
 //			<td>" . $case_data['date_creation'] . "</td></tr>
 	echo "
 			<tr><td>" . _T('assignment_date') . ":</td>
-			<td><input name=\"date_assignment\" value=\"" . clean_output($case_data['date_assignment']) . "\"></td></tr>
+			<td><input name=\"date_assignment\" value=\"" . clean_output($case_data['date_assignment']) . "\" class=\"search_form_txt\"></td></tr>
 		<tr><td>" . _T('legal_reason') . ":</td>
-			<td><input name=\"legal_reason\" value=\"" . clean_output($case_data['legal_reason']) . "\"></td></tr>
+			<td><input name=\"legal_reason\" value=\"" . clean_output($case_data['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>
 		<tr><td>" . _T('alledged_crime') . ":</td>
-			<td><input name=\"alledged_crime\" value=\"" .  clean_output($case_data['alledged_crime']) . "\"></td></tr>
+			<td><input name=\"alledged_crime\" value=\"" .  clean_output($case_data['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>
 		<tr><td>" . _T('case_status') . ":</td>
-			<td><input name=\"status\" value=\"" . clean_output($case_data['status']) . "\"></td></tr>
+			<td><input name=\"status\" value=\"" . clean_output($case_data['status']) . "\" class=\"search_form_txt\"></td></tr>
 	";
 
 	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
@@ -126,13 +126,13 @@ else lcm_page_start(_T('new_case'));
 
 	// Different buttons for edit existing and for new case
 	if ($existing) {
-		echo '	<button name="submit" type="submit" value="submit">' . _T('save') . "</button>\n";
+		echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('save') . "</button>\n";
 	} else {
-		echo '	<button name="submit" type="submit" value="add">' . _T('add') . '</button>
-	<button name="submit" type="submit" value="addnew">' . _T('add_and_open_new') . '</button>
-	<button name="submit" type="submit" value="adddet">' . _T('add_and_go_to_details') . "</button>\n";
+		echo '	<button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('add') . '</button>
+	<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . '</button>
+	<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n";
 	}
-	echo '	<button name="reset" type="reset">' . _T('reset') . "</button>\n";
+	echo '	<button name="reset" type="reset" class="simple_form_btn">' . _T('reset') . "</button>\n";
 	echo '	<input type="hidden" name="ref_edit_case" value="' . $case_data['ref_edit_case'];
 	echo '">
 </form>

@@ -53,8 +53,8 @@ if ($case > 0) {
 	?>
 			</tr>
 		</table>
-		<button name="submit" type="submit" value="submit">Save</button>
-		<button name="reset" type="reset">Reset</button>
+		<button name="submit" type="submit" value="submit" class="simple_form_btn">Save</button>
+		<button name="reset" type="reset" class="simple_form_btn">Reset</button>
 		<input type="hidden" name="case" value="<?php echo $case; ?>">
 		<input type="hidden" name="ref_edit_auth" value="<?php echo $HTTP_REFERER; ?>">
 	</form>
