@@ -36,6 +36,7 @@ echo "</div>\n";
 login('');
 
 echo "</td></tr></table></center>\n";
+echo "</body></html>\n\n";
 
 lcm_html_end();
 
