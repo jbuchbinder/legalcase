@@ -45,7 +45,7 @@ function show_author_form() {
 
 	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
 		<tr>
-			<td colspan="2" align="center" valign="middle" class="heading"><h4>Interface</h4></td>
+			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authorconf_subtitle_interface'); ?></h4></td>
 		</tr>
 <?php
 	if ($GLOBALS['all_langs']) {
@@ -62,9 +62,9 @@ function show_author_form() {
 	}
 ?>
 	    <tr>
-	    	<td align="right" valign="top"><?php echo _T('authorconf_info_screen') ?></td>
+	    	<td align="right" valign="top"><?php echo _T('authorconf_input_screen') ?></td>
 			<td align="left" valign="top">
-				<input type="hidden" name="old_screen" id="old_screen" value="<?php echo $prefs['sel_screen'] ?>" />
+				<input type="hidden" name="old_screen" id="old_screen" value="<?php echo $prefs['screen'] ?>" />
 				<select name="sel_screen" class="sel_frm">
 <?php
 	$screen_modes = array("wide","narrow");
@@ -79,7 +79,7 @@ function show_author_form() {
 			</td>
 		</tr>
 		<tr>
-			<td align="right" valign="top">Theme:</td>
+			<td align="right" valign="top"><?php echo _T('authorconf_input_theme'); ?></td>
 			<td align="left" valign="top">
 				<input type="hidden" name="old_theme" id="old_theme" value="<?php echo $prefs['theme'] ?>" />
 				<select name="sel_theme" class="sel_frm" id="sel_theme">
@@ -93,25 +93,26 @@ function show_author_form() {
 				</select>
 			</td>
 		</tr>
-            <tr>
-              <td align="right" valign="top">Font size:</td>
-              <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
+		<tr>
+			<td align="right" valign="top">Font size:</td>
+			<td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
                 &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" />
 				(not working yet)
-		  	  </td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Rows per page:</td>
-              <td align="left" valign="top">
-			  <input name="page_rows" type="text" class="search_form_txt" id="page_rows" size="3" value="<?php
-			  echo ($prefs['page_rows'] ? $prefs['page_rows'] : 15); ?>" />
-		  	  </td>
-            </tr>
-            <tr>
-              <td colspan="2" align="center" valign="middle">
-                <input name="submit" type="submit" class="search_form_btn" id="submit" value="Update Preferences" /></td>
-            </tr>
-		  </table>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" valign="top"><?php echo _T('authorconf_input_results_per_page'); ?></td>
+			<td align="left" valign="top">
+				<input name="page_rows" type="text" class="search_form_txt" id="page_rows" size="3" value="<?php
+					// page_rows gets default value in inc_auth.php
+					echo $prefs['page_rows']; ?>" />
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center" valign="middle">
+				<input type="submit" name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
+		</tr>
+	</table>
 </form>
 
 		  <br />
@@ -121,23 +122,24 @@ function show_author_form() {
 	<input type="hidden" name="referer" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>"/>
           <table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
             <tr>
-              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change password</h4></td>
+              <td colspan="2" align="center" valign="middle"
+			  class="heading"><h4><?php echo _T('authorconf_subtitle_password'); ?></h4></td>
             </tr>
             <tr>
-              <td align="right" valign="top">Old password:</td>
+              <td align="right" valign="top"><?php echo _T('authorconf_input_password_current'); ?></td>
               <td align="left" valign="top"><input name="usr_old_passwd" type="password" class="search_form_txt" id="usr_old_passwd" size="35" /></td>
             </tr>
             <tr>
-              <td align="right" valign="top">New password:</td>
+              <td align="right" valign="top"><?php echo _T('authorconf_input_password_new'); ?></td>
               <td align="left" valign="top"><input name="usr_new_passwd" type="password" class="search_form_txt" id="usr_new_passwd" size="35" /></td>
             </tr>
             <tr>
-              <td align="right" valign="top">Retype new password:</td>
+              <td align="right" valign="top"><?php echo _T('authorconf_input_password_confirm'); ?></td>
               <td align="left" valign="top"><input name="usr_retype_passwd" type="password" class="search_form_txt" id="usr_retype_passwd" size="35" /></td>
             </tr>
             <tr> 
               <td colspan="2" align="center" valign="middle"> 
-                <input name="submit" type="submit" class="search_form_btn" id="submit" value="Change Password" /></td>
+                <input name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_change_password'); ?>" /></td>
             </tr>
 			</table>
 </form>
@@ -203,7 +205,6 @@ function show_author_form() {
 
 }
 
-// TODO
 function apply_author_ui_change() {
 	global $author_session;
 	global $lcm_session;
@@ -221,7 +222,6 @@ function apply_author_ui_change() {
 	// Change the user's language (done in inc.php, we only log the result)
 	//
 
-	// if ($sel_language == $author_session['lang'] && $sel_language <> $old_language) {
 	if ($sel_language <> $old_language) {
 		array_push($log, "Language set to " .
 			translate_language_name($sel_language) . ", was " .
@@ -281,9 +281,8 @@ function show_changes() {
 		echo "<div>Changes made:</div>\n";
 		echo "<ul>";
 
-		foreach ($log as $line) {
+		foreach ($log as $line)
 			echo "<li>" . $line . "</li>\n";
-		}
 
 		echo "</ul>\n";
 		echo "</div>\n";
@@ -296,15 +295,17 @@ if ($author_ui_modified)
 if ($author_password_modified)
 	apply_author_password_change();
 
-if ($author_ui_modified || $author_password_modified)
+if ($author_ui_modified || $author_password_modified) {
 	if ($referer) {
 		header('Location: ' . $referer);
 //		header('Retry-After: 30');
 		exit;
-	} else show_changes();
+	} else {
+		show_changes();
+	}
+}
 
-
-lcm_page_start(_T('title_my_preferences'));
+lcm_page_start(_T('title_authorconf'));
 
 show_author_form();
 lcm_page_end();
