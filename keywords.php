@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.20 2005/03/14 07:28:22 mlutfy Exp $
+	$Id: keywords.php,v 1.21 2005/03/21 14:47:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -80,10 +80,10 @@ function show_keyword_group_id($id_group) {
 	if (! $id_group) {
 		$kwg['name'] = '';
 		$kwg['type'] = 'user';
-		lcm_page_start("Keyword group:" . " " . "New keyword group"); // TRAD
+		lcm_page_start(_T('title_kwg_new'));
 	} else {
 		$kwg = get_kwg_from_id($id_group);
-		lcm_page_start("Keyword group:" . " " . $kwg['name']); // TRAD
+		lcm_page_start(_T('title_kwg_edit'));
 	}
 
 	echo show_all_errors($_SESSION['errors']);
@@ -197,10 +197,10 @@ function show_keyword_id($id_keyword = 0) {
 		$kw['id_group'] = $kwg['id_group'];
 		$kw['ac_author'] = 'Y';
 		$kw['type'] = $kwg['type'];
-		lcm_page_start("Keyword:" . " " . "New keyword"); // TRAD
+		lcm_page_start(_T('title_keyword_new'));
 	} else {
 		$kw = get_kw_from_id($id_keyword);
-		lcm_page_start("Keyword:" . " " . $kw['name']); // TRAD
+		lcm_page_start(_T('title_keyword_edit'));
 	}
 
 	echo show_all_errors($_SESSION['errors']);
@@ -269,14 +269,14 @@ function update_keyword_group($id_group) {
 
 	if (! $id_group) {
 		if (! clean_input($kwg_name))
-			$_SESSION['errors']['name'] = "The name cannot be empty."; // TRAD
+			$_SESSION['errors']['name'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
 
 		if (! check_if_kwg_name_unique($kwg_name))
-			$_SESSION['errors']['name'] = "There is already a keyword group using this name."; // TRAD
+			$_SESSION['errors']['name'] = _T('keywords_warning_kwg_code_exists');
 	}
 
 	if (! clean_input($kwg_title))
-		$_SESSION['errors']['title'] = "The title cannot be empty"; // TRAD
+		$_SESSION['errors']['title'] = _Ti('keywords_input_title') . _T('warning_field_mandatory');
 
 	if (count($_SESSION['errors'])) {
 		header("Location: " . $GLOBALS['HTTP_REFERER']);
@@ -350,14 +350,14 @@ function update_keyword($id_keyword) {
 		$kwg_info = get_kwg_from_id($kw_idgroup);
 
 		if (! clean_input($kw_name))
-			$_SESSION['errors']['name'] = "The name cannot be empty."; // TRAD
+			$_SESSION['errors']['name'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
 
 		if (isset($system_kwg[$kwg_info['name']]['keywords'][$kw_name])) // XXX [ML] what about user keywords?
-			$_SESSION['errors']['name'] = "The name already exists in this group (it must be unique).";
+			$_SESSION['errors']['name'] = _Ti('keywords_input_name') . _T('keywords_warning_kw_code_exists');
 	}
 
 	if (! clean_input($kw_title))
-		$_SESSION['errors']['title'] = "The title cannot be empty"; // TRAD
+		$_SESSION['errors']['title'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
 
 	if (count($_SESSION['errors'])) {
 		header("Location: " . $GLOBALS['HTTP_REFERER']);
