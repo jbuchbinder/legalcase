@@ -22,6 +22,23 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'alledged_crime' => '<NEW>Alledged crime',
 'assignment_date' => '<NEW>Assignment date',
 'author_id' => '<NEW>Author ID',
+'authorconf_button_change_password' => '<NEW>Change password',
+'authorconf_button_update_preferences' => '<NEW>Update preferences',
+'authorconf_input_language' => '<NEW>Language:',
+'authorconf_input_password_confirm' => '<NEW>Confirm new password:',
+'authorconf_input_password_current' => '<NEW>Current password:',
+'authorconf_input_password_new' => '<NEW>New password:',
+'authorconf_input_results_per_page' => '<NEW>Results per page:',
+'authorconf_input_screen' => '<NEW>Display:',
+'authorconf_input_screen_narrow' => '<NEW>Small',
+'authorconf_input_screen_wide' => '<NEW>Large',
+'authorconf_input_theme' => '<NEW>Interface colour:',
+'authorconf_input_theme_blue' => '<NEW>Blue',
+'authorconf_input_theme_green' => '<NEW>Green',
+'authorconf_input_theme_monochrome' => '<NEW>Monochrome',
+'authorconf_input_theme_orange' => '<NEW>Orange',
+'authorconf_subtitle_interface' => '<NEW>Interface',
+'authorconf_subtitle_password' => '<NEW>Change password',
 
 
 // B
@@ -258,6 +275,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // T
+'title_authorconf' => '<NEW>My preferences',
 'title_error' => 'Грешка',
 'title_site_configuration' => '<NEW>Site configuration',
 'title_software' => 'Програма за управление на юридически практики',
