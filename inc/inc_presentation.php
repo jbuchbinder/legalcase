@@ -330,7 +330,7 @@ function get_date_inputs($name = 'select', $date = '') {
 	// modify the date range.
 
 	// Date and month have no default selection, Year does
-	$default_month = ($date ? format_date($date, 'g') : 0);
+	$default_month = ($date ? format_date($date, 'n') : 0);
 	$default_day = ($date ? format_date($date, 'j') : 0);
 	$default_year = format_date($date, 'Y');
 
@@ -347,7 +347,7 @@ function get_date_inputs($name = 'select', $date = '') {
 
 	$default = ($default_day == 0 ? ' selected="selected"' : '');
 	$ret .= "<option" . $default . " value=\"\"></option>\n";
-	
+
 	// Month of year
 	$ret .= "\t\t</select>\n"
 		. "\t</td>\n"
