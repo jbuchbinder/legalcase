@@ -253,7 +253,7 @@ function upgrade_database($old_db_version) {
 			header varchar(255) NOT NULL default '',
 			sort enum('asc','desc') default NULL,
 			total tinyint(1) NOT NULL default '0',
-			group enum('COUNT','SUM') default NULL,
+			col_group enum('COUNT','SUM') default NULL,
 			PRIMARY KEY  (id_column),
 			KEY id_report (id_report),
 			KEY id_field (id_field),
