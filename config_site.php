@@ -94,32 +94,34 @@ function show_config_form() {
 <small>(Cases usually have one or many authors specifically assigned to them. It is assumed that assigned authors can consult the case and it's follow-ups, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
-	// If by default read set to public
+	// If by default read set to public (case_default_read == yes)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_1' value='yes'";
 	if ($case_default_read) echo " checked";
 	echo "><label for='case_default_read_1'>Any author can view the case information of other authors, even if they are not on the case (better cooperation).</label></input></li>\n";
 
-	// If by default read not set to public
+	// If by default read not set to public (case_default_read != yes)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_2' value=''";
 	if (!$case_default_read) echo " checked";
 	echo "><label for='case_default_read_2'>Only authors assigned to a case can view its information and follow-ups (better privacy).</label></input></li>\n";
 	echo "</ul>\n";
 
-	echo "<p><b>Who choses read access</b></p>\n";
+	// READ ACCESS POLICY
+	echo "<p><b>Read access global policy</b></p>\n";
 
-	echo "<p>Can authors, assigned to a case, decide to change its privacy setting?<br>
+	echo "<p>Who can change the read access to a case?<br>
 <small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
-	// If read always set to public
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_1' value='yes'";
-	if ($case_read_always) echo " checked";
-	echo "><label for='case_read_always_1'>Yes</label></input></li>\n";
-
-	// If read always set to not public
+	// Anyone can change the setting (case_read_always != yes)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_2' value=''";
 	if (!$case_read_always) echo " checked";
-	echo "><label for='case_read_always_2'>No, except if they have administrative rights.</label></input></li>\n";
+	echo "><label for='case_read_always_2'>Any author assigned to the case (and with the right to edit the case).</label></input></li>\n";
+
+	// Only the admin can change the setting (case_read_always == yes)
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_1' value='yes'";
+	if ($case_read_always) echo " checked";
+	echo "><label for='case_read_always_1'>Site administrators only.</label></input></li>\n";
+
 	echo "</ul>\n";
 
 	echo "<hr>\n";
@@ -131,32 +133,33 @@ function show_config_form() {
 <small>(Cases usually have one or many authors specifically assigned to them. It is assumed that only assigned authors can add follow-up information to the case, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
-	// If by default write set to public
+	// If by default write set to public (case_default_write == 'yes')
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_1' value='yes'";
 	if ($case_default_write) echo " checked";
 	echo "><label for='case_default_write_1'>Any author can write the case information of other authors, even if they are not on the case (better cooperation).</label></input></li>\n";
 
-	// If by default write not set to public
+	// If by default write not set to public (case_default_write != 'yes')
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_2' value=''";
 	if (!$case_default_write) echo " checked";
 	echo "><label for='case_default_write_2'>Only authors assigned to a case can write its information and follow-ups (better privacy).</label></input></li>\n";
 	echo "</ul>\n";
 
-	echo "<p><b>Who choses write access</b></p>\n";
+	// WRITE ACCESS POLICY
+	echo "<p><b>Write access global policy</b></p>\n";
 
-	echo "<p>Can authors of the case change write access rights?<br>
+	echo "<p>Who can change the write access to a case?<br>
 <small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
-	// If write always set to public
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value='yes'";
-	if ($case_write_always) echo " checked";
-	echo "><label for='case_write_always_1'>Yes.</label></input></li>\n";
-
-	// If write always set to not public
+	// Anyone can change the setting (case_write_always != yes)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_2' value=''";
 	if (!$case_write_always) echo " checked";
-	echo "><label for='case_write_always_2'>No, except if they have administrative rights.</label></input></li>\n";
+	echo "><label for='case_write_always_2'>Any author assigned to the case (and with the right to edit the case).</label></input></li>\n";
+
+	// Only the admin can change the setting (case_write_always == yes)
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value='yes'";
+	if ($case_write_always) echo " checked";
+	echo "><label for='case_write_always_1'>Site administrators only.</label></input></li>\n";
 	echo "</ul>\n";
 	echo "</td>\n</tr>\n</table>\n";
 
