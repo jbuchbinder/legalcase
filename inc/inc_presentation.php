@@ -134,7 +134,7 @@ function lcm_page_start($title = "", $css_files = "") {
 				<div id=\"navigation_menu_column\">
 				<!-- Start of navigation_menu_column content -->
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" />&nbsp;"
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;"
 							. _T('menu_main') . "</div>
 						<ul id=\"nav_menu_list\">
 							<li><a href=\"listcases.php\" class=\"main_nav_btn\">" . _T('menu_main_cases') . "</a></li>
@@ -151,7 +151,7 @@ function lcm_page_start($title = "", $css_files = "") {
 	if ($connect_status == 'admin') {
 		echo "		
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" alt=\"\" />&nbsp;" . _T('menu_admin') . "</div>
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_admin') . "</div>
 						<ul id=\"nav_menu_list\">
 							<li><a href=\"config_site.php\" class=\"main_nav_btn\">" . _T('menu_admin_siteconf') . "</a></li>
 							<li><a href=\"archives.php\" class=\"main_nav_btn\">" .  _T('menu_admin_archives') . " (<abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">not ready yet</abbr>)</a></li>
@@ -163,7 +163,7 @@ function lcm_page_start($title = "", $css_files = "") {
 
 	echo "
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_insert_table-16.png\" alt=\"\" />&nbsp;" . _T('menu_calendar') . "</div>
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_insert_table-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_calendar') . "</div>
 						<p class=\"nav_column_text\">". format_date() ."</p>
 					</div>
 					<!-- [ML] Keeping this so that testers see what features
@@ -239,7 +239,7 @@ if($prefs['screen'] == "wide")
 {
 		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
-			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_exec-16.png\" />&nbsp;" . _T('menu_profile') . "</div>
+			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_exec-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_profile') . "</div>
 			<p class=\"prefs_column_text\"><strong>Name: </strong>"
 				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
 				. $author_session['name_first'] . ' '
@@ -248,7 +248,7 @@ if($prefs['screen'] == "wide")
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ " .  _T('menu_profile_preferences') . " ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ " . _T('menu_profile_logout') . " ]</a>
 			</p>
-			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\" />&nbsp;Search</div>
+			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;Search</div>
 			<p class=\"prefs_column_text\">
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
 			Find case<br />
