@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.129 2005/04/05 06:16:01 mlutfy Exp $
+	$Id: case_det.php,v 1.130 2005/04/05 09:10:30 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -383,7 +383,7 @@ if ($case > 0) {
 				$headers[0]['title'] = _Th('time_input_date_start');
 				$headers[0]['order'] = 'fu_order';
 				$headers[0]['default'] = 'ASC';
-				$headers[1]['title'] = _Th('time_input_length');
+				$headers[1]['title'] = ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length') );
 				$headers[1]['order'] = 'no_order';
 				$headers[2]['title'] = _Th('case_input_author');
 				$headers[2]['order'] = 'no_order';
