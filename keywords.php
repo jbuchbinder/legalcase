@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.8 2005/02/16 18:13:55 antzi Exp $
+	$Id: keywords.php,v 1.9 2005/02/17 07:40:12 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -152,6 +152,7 @@ if (isset($_REQUEST['action'])) {
 			} else if (isset($_REQUEST['id_keyword']) && intval($_REQUEST['id_keyword']) > 0) {
 				show_keyword_id($_REQUEST['action'], intval($_REQUEST['id_keyword']));
 			}
+			exit;
 			break;
 		case 'refresh' :
 			// Do not remove, or variables won't be declared
