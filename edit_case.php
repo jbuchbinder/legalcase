@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.47 2005/01/19 00:20:46 antzi Exp $
+	$Id: edit_case.php,v 1.48 2005/01/19 00:33:24 antzi Exp $
 */
 
 //session_start();
@@ -87,6 +87,9 @@ if (empty($_SESSION['errors'])) {
 if ($existing) lcm_page_start(_T('title_case_edit'));
 else lcm_page_start(_T('title_case_new'));
 
+// Show the errors (if any)
+echo show_all_errors($_SESSION['errors']);
+
 // Start edit case form
 echo "\n<form action=\"upd_case.php\" method=\"post\">
 <table class=\"tbl_usr_dtl\">
@@ -103,7 +106,7 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "
 		<tr><td>" . _T('case_input_title') . "</td>
 			<td><input name=\"title\" value=\"" . clean_output($_SESSION['case_data']['title']) . "\" class=\"search_form_txt\">";
-	echo f_err('title',$_SESSION['errors']) . "</td></tr>
+	echo f_err_star('title',$_SESSION['errors']) . "</td></tr>
 		<tr><td>" . _T('case_input_court_archive') . "</td>
 			<td><input name=\"id_court_archive\" value=\"" . clean_output($_SESSION['case_data']['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>";
 // [AG] Creation date not shown upon ML request
