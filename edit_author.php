@@ -16,15 +16,15 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.5 2004/11/23 14:58:17 mlutfy Exp $
+	$Id: edit_author.php,v 1.6 2004/11/25 15:18:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
+include_lcm('inc_contacts');
 
-// Initiate session
 session_start();
 
 if (empty($errors)) {
@@ -52,8 +52,7 @@ if (empty($errors)) {
 			}
 		} else  die(_T('error_no_such_user'));
 
-		global $system_kwg;
-		$type_email = $system_kwg['contacts']['keywords']['email_main']['id_keyword'];
+		$type_email = get_contact_type_id('email_main');
 		
 		$q = "SELECT value
 				FROM lcm_contact 
@@ -96,9 +95,37 @@ else lcm_page_start("New author");
 		<tr><td align="right" valign="top">Last name:</td>
 			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
 		</tr>
-		<tr><td align="right" valign="top">E-mail:</td>
-			<td align="left" valign="top"><input name="email" type="text" class="search_form_txt" id="email" size="35" value="<?php echo clean_output($usr['email']); ?>"/>&nbsp;<?php echo f_err('email',$errors); ?></td>
-		</tr>
+		<!-- tr><td align="right" valign="top">E-mail:</td>
+			<td align="left" valign="top" -->
+<?php
+	$cpt = 0;
+	$contacts = get_contacts('author', $usr['id_author']);
+
+	foreach ($contacts as $c) {
+		// Translate title of contact type only if translation exists
+		$title = _T('kw_contacts_' . $c['name'] . '_title');
+		if ($title == 'kw_contacts_' . $c['name'] . '_title')
+			$title = $c['name'];
+
+		echo '<tr><td align="right" valign="top">' . $title .  "\n";
+		echo '<td align="left" valign="top">';
+	
+		echo '<input name="contact_type[]" id="contact_type_' . $cpt . '" '
+			. 'type="hidden" value="' . $c['name'] . '" />' . "\n";
+
+		echo '<input name="contact_value[]" id="contact_value_' . $cpt . '" type="text" '
+			. 'class="search_form_txt" size="35" value="' . clean_output($c['value']) . '"/>&nbsp;';
+		echo f_err('email', $errors) . "\n";
+
+		if ($c['name'] != 'email_main')
+			echo '<acronym title="Show icon with garbage bin to delete the contact?">Del?</acronym>';
+
+		echo "</td>\n</tr>\n";
+
+		$cpt++;
+	}
+?>
+
 		<tr>
 			<td align="right" valign="top">Other contact:<br />(optionnal)</td>
 			<td align="left" valign="top">
@@ -106,19 +133,19 @@ else lcm_page_start("New author");
 				<?php
 					global $system_kwg;
 
-					// XXX TODO: Temporary, for testing, will need to be a bit
-					// more wise
-					echo "<select name='sel_other_contact_type'>\n";
+					echo '<select name="contact_type[]" id="contact_type_' . $cpt . '">' . "\n";
 					echo "<option value=''>" . "- select contact type -" . "</option>\n";
 					foreach ($system_kwg['contacts']['keywords'] as $contact) {
 						if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main')
 							echo "<option value='" . $contact['name'] . "'>" .  $contact['title'] . "</option>\n";
 					}
 					echo "</select>\n";
+
+					$cpt++;
 				?>
 				</div>
 				<div>
-					<input type='text' size='40' style='style: 99%' name='sel_other_contact_value' id='sel_other_contact_value' />
+					<input type='text' size='40' style='style: 99%' name='contact_value[]' id='contact_value_$cpt' />
 				</div>
 			</td>
 		</tr>
