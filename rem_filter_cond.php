@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rem_filter_cond.php,v 1.1 2004/12/11 11:27:38 antzi Exp $
+	$Id: rem_filter_cond.php,v 1.2 2004/12/11 11:29:54 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -39,7 +39,7 @@ if (($filter>0) && ($cond)) {
 	$q = "UPDATE lcm_filter_conds
 			SET cond_order=cond_order-1
 			WHERE (id_filter=$filter
-				AND cond_order>$order)";
+				AND cond_order>$cond)";
 	$result = lcm_query($q);
 
 }
