@@ -502,7 +502,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 
 	$split_time = recup_time($time);
 	$default_hour = $split_time[0];
-	$default_minutes = $split_time[1];
+	$default_minutes = $split_time[1] - ($split_time[1] % 5); // make it round
 	$default_seconds = $split_time[2];
 
 	// If name is empty, disable fields
@@ -539,7 +539,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 		$ret .= "<td><!-- " . _T('select_time_minutes') . "<br/ -->\n";
 	$ret .= ":<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
 
-	for ($i = 0; $i < 60; $i++) {
+	for ($i = 0; $i < 60; $i += 5) {
 		$default = ($i == $default_minutes ? ' selected="selected"' : '');
 		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
 	}
