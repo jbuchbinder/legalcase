@@ -211,6 +211,40 @@ function upgrade_database($old_db_version) {
 			date_update datetime NOT NULL default '0000-00-00 00:00:00',
 			PRIMARY KEY  (id_filter),
 			KEY id_author (id_author))");
+// [AG] Removed due to error in field name ('order')
+/*		lcm_query("CREATE TABLE lcm_rep_cols (
+			id_column bigint(21) NOT NULL auto_increment,
+			id_report bigint(21) NOT NULL default '0',
+			id_field bigint(21) NOT NULL default '0',
+			order bigint(21) NOT NULL default '0',
+			header varchar(255) NOT NULL default '',
+			sort enum('asc','desc') default NULL,
+			total tinyint(1) NOT NULL default '0',
+			group enum('COUNT','SUM') default NULL,
+			PRIMARY KEY  (id_column),
+			KEY id_report (id_report),
+			KEY id_field (id_field),
+			KEY order (order))");	*/
+		lcm_query("CREATE TABLE lcm_rep_filters (
+			id_report bigint(21) NOT NULL default '0',
+			id_filter bigint(21) NOT NULL default '0',
+			type enum('AND','OR') NOT NULL default 'AND',
+			KEY id_report (id_report),
+			KEY id_filter (id_filter))");
+// [AG] Removed due to error in field name ('order')
+/*		lcm_query("CREATE TABLE lcm_filter_conds (
+			id_filter bigint(21) NOT NULL default '0',
+			id_field bigint(21) NOT NULL default '0',
+			order bigint(21) NOT NULL default '0',
+			type tinyint(2) NOT NULL default '0',
+			value varchar(255) default NULL,
+			KEY id_filter (id_filter),
+			KEY id_field (id_field),
+			KEY order (order))");	*/
+		upgrade_db_version (13);
+	}
+
+	if ($lcm_db_version_current < 14) {
 		lcm_query("CREATE TABLE lcm_rep_cols (
 			id_column bigint(21) NOT NULL auto_increment,
 			id_report bigint(21) NOT NULL default '0',
@@ -224,12 +258,6 @@ function upgrade_database($old_db_version) {
 			KEY id_report (id_report),
 			KEY id_field (id_field),
 			KEY col_order (col_order))");
-		lcm_query("CREATE TABLE lcm_rep_filters (
-			id_report bigint(21) NOT NULL default '0',
-			id_filter bigint(21) NOT NULL default '0',
-			type enum('AND','OR') NOT NULL default 'AND',
-			KEY id_report (id_report),
-			KEY id_filter (id_filter))");
 		lcm_query("CREATE TABLE lcm_filter_conds (
 			id_filter bigint(21) NOT NULL default '0',
 			id_field bigint(21) NOT NULL default '0',
@@ -239,7 +267,7 @@ function upgrade_database($old_db_version) {
 			KEY id_filter (id_filter),
 			KEY id_field (id_field),
 			KEY cond_order (cond_order))");
-		upgrade_db_version (13);
+		upgrade_db_version (14);
 	}
 
 /* [ML] I'm leaving this because it can provide us with interesting ideas
@@ -287,10 +315,10 @@ function upgrade_database($old_db_version) {
 			$res = lcm_query("SELECT * FROM spip_groupes_mots
 				WHERE titre='$type'");
 			if (spip_num_rows($res) == 0) {
-				lcm_query("INSERT IGNORE INTO spip_groupes_mots 
+				lcm_query("INSERT IGNORE INTO spip_groupes_mots
 					(titre, unseul, obligatoire, articles, breves, rubriques, syndic, admin, 1comite, 6forum)
 					VALUES ('$type', 'non', 'non', 'oui', 'oui', 'non', 'oui', 'oui', 'oui', 'non')");
-				if ($id_groupe = spip_insert_id()) 
+				if ($id_groupe = spip_insert_id())
 					lcm_query("UPDATE spip_mots SET id_groupe = '$id_groupe' WHERE type='$type'");
 			}
 		}
