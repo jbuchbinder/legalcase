@@ -1,13 +1,25 @@
+body {
+	background: #efefef;
+}
+
+select,button,input,option,textarea {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
 .box_error {
+	width: 450px;
 	border: 2px solid #ff0000;
 	padding-top: 5px;
 	padding-bottom: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
+	color: #900;
 }
 
 .box_warning {
-	border: 2px solid #ffff00;
+	width: 450px;
+	border: 2px solid #f60;
+	color: #f60;
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
 	padding-left: 10px;
@@ -17,7 +29,9 @@
 }
 
 .box_success {
-	border: 1px solid #00ff00;
+	width: 450px;
+	border: 1px solid #009900;
+	color: #090;
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
 	padding-left: 10px;
@@ -35,7 +49,11 @@ textarea {
 h1 {
 	font-size: 120%;
 	font-family: Verdana,Arial,Sans,sans-serif;
-	color: #970038;
+	color: #333;
+	background: #efefef;
+	margin: 0;
+	padding: 5px 0px 5px 0px;
+	border-bottom: 1px solid #333;
 }
 
 h3 {
@@ -71,9 +89,11 @@ li {
 
 
 button {
-	background-color: #FFCC66;
-	background-position: center bottom; 
-	color: #000000
+	background-color: #ccc;
+	border: 1px solid #999;
+	color: #333;
+	font-size: 12px;
+	font-weight: bold;
 }
 
 /* input[type=text],
@@ -102,6 +122,50 @@ input.fondo {
 #license {
 	margin-top: 5em;
 	padding: 0;
+	font-size: 12px;
+}
+
+#license a {
+	font-size: 12px;
+}
+
+#install_screen {
+	width: 600px;
+	border: 1px solid #333;
+	margin-left: auto;
+	margin-right: auto;
+	background: #fff;
+}
+
+#install_screen select {
+	font-size: 12px;
+}
+
+.simple_text {
+	font-size: 12px;
+	padding: 2px;
+}
+
+fieldset.fs_box {
+	border: 1px solid #ccc;
+	background: #efefef;
+	font-size: 12px;
+	width: 450px;
+	padding: 15px;
+}
+
+ul.simple_list li {
+	text-align: left;
+	font-size: 12px;
+}
+
+/* Form elements */
+
+input.txt_lmnt {
+	border: 1px solid #369;
+	background: #def;
+	color: #036;
+	font-size: 12px;
 }
 
 /* not used (and does not work) */
