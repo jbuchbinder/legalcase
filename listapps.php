@@ -18,12 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.8 2005/03/10 17:42:56 makaveev Exp $
+	$Id: listapps.php,v 1.9 2005/03/21 12:03:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
-lcm_page_start('Agenda');
+lcm_page_start('Agenda'); // TRAD
 
 $q = "SELECT lcm_app.*
 	FROM lcm_author_app,lcm_app
@@ -36,12 +36,12 @@ $number_of_rows = lcm_num_rows($result);
 if ($number_of_rows) {
 	echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 	echo "\t<tr>";
-	echo '<th class="heading">Start time</th>';
-	echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Duration' ) . '</th>';
-	echo '<th class="heading">Type</th>';
-	echo '<th class="heading">Title</th>';
-	echo '<th class="heading">Reminder</th>';
-	echo '<th class="heading">Action</th>';
+	echo '<th class="heading">Start time</th>'; // TRAD
+	echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Duration' ) . '</th>'; // TRAD
+	echo '<th class="heading">Type</th>'; // TRAD
+	echo '<th class="heading">Title</th>'; // TRAD
+	echo '<th class="heading">Reminder</th>'; // TRAD 
+	echo '<th class="heading">Action</th>'; // TRAD
 	echo "</tr>\n";
 
 	// Check for correct start position of the list
@@ -55,7 +55,7 @@ if ($number_of_rows) {
 	// Position to the page info start
 	if ($list_pos>0)
 		if (!lcm_data_seek($result,$list_pos))
-			die("Error seeking position $list_pos in the result");
+			lcm_panic("Error seeking position $list_pos in the result");
 	
 	// Show page of the list
 	for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
@@ -77,53 +77,11 @@ if ($number_of_rows) {
 			. '<a href="edit_app.php?app=' . $row['id_app'] . '" class="content_link">' . _T('edit') . '</a></td>';
 		echo "</tr>\n";
 	}
-	
-	echo "</table>\n\n";
 
-	if ($number_of_rows>$prefs['page_rows']) {
-		echo '<table border="0" align="center" width="99%" class="page_numbers">
-	<tr><td align="left" width="15%">';
-
-		// Show link to previous page
-		if ($list_pos>0) {
-			echo '<a href="listapps.php?list_pos=';
-			echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
-			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-			echo '" class="content_link">< Prev</a> ';
-		}
-
-		echo "</td>\n\t\t<td align='center' width='70%'>";
-
-		// Show page numbers with direct links
-		$list_pages = ceil($number_of_rows / $prefs['page_rows']);
-		if ($list_pages>1) {
-			echo 'Go to page: ';
-			for ($i=0 ; $i<$list_pages ; $i++) {
-				if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
-				else {
-					echo '<a href="listapps.php?list_pos=' . ($i*$prefs['page_rows']);
-					if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-					echo '" class="content_link">' . ($i+1) . '</a> ';
-				}
-			}
-		}
-		
-		echo "</td>\n\t\t<td align='right' width='15%'>";
-		
-		// Show link to next page
-		$next_pos = $list_pos + $prefs['page_rows'];
-		if ($next_pos<$number_of_rows) {
-			echo "<a href=\"listapps.php?list_pos=$next_pos";
-			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-			echo '" class="content_link">Next ></a>';
-		}
-		
-		echo "</td>\n\t</tr>\n</table>\n";
-	}
-
+	show_list_end($list_pos, $number_of_rows);
 }
 
-echo '<br /><a href="edit_app.php?app=0" class="create_new_lnk">New appointment</a><br /><br />';
+echo '<p><a href="edit_app.php?app=0" class="create_new_lnk">New appointment</a></p>'; // TRAD
 
 lcm_page_end();
 
