@@ -18,24 +18,23 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.24 2005/01/26 22:05:34 mlutfy Exp $
+	$Id: upd_fu.php,v 1.25 2005/01/26 22:13:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
-// Start session
-// [ML] inc_auth session_start();
-
-// Register $errors array - just in case
-if (!session_is_registered("errors"))
-    session_register("errors");
 
 // Clear all previous errors
-$errors=array();
+$_SESSION['errors'] = array();
+
+$id_followup = 0;
+if (isset($_REQUEST['id_followup']) && $_REQUEST['id_followup'] > 0)
+	$id_followup = $_REQUEST['id_followup'];
 
 // Register form data in the session
+// XXX [ML] use $_SESSION
 if(!session_is_registered("fu_data"))
     session_register("fu_data");
 
@@ -70,26 +69,29 @@ elseif (!$fu_data['end_year'] || !$fu_data['end_month'] || !$fu_data['end_day'])
 	$unix_date_end = strtotime($fu_data['end_year'] . '-' . $fu_data['end_month'] . '-' . $fu_data['end_day']);
 
 	if ($unix_date_end<0)
-		$errors['date_end']='Invalid end date!';
+		$_SESSION['errors']['date_end']='Invalid end date!';
 	else 
 		$fu_data['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
 }
 
-if (count($errors)) {
+if (count($_SESSION['errors'])) {
     header("Location: " . $GLOBALS['HTTP_REFERER']);
     exit;
 } else {
-    $fl="date_start='" . clean_input($fu_data['date_start']) . "',
-		date_end='" . clean_input($fu_data['date_end']) . "',
-		type='" . clean_input($fu_data['type']) . "',
-		description='" . clean_input($fu_data['description']) . "',
-    	sumbilled='" . clean_input($fu_data['sumbilled']) . "'";
+	global $author_session;
+
+    $fl="id_author   =  " . $author_session['id_author'] . ",
+		date_start   = '" . clean_input($fu_data['date_start']) . "',
+		date_end     = '" . clean_input($fu_data['date_end']) . "',
+		type         = '" . clean_input($fu_data['type']) . "',
+		description  = '" . clean_input($fu_data['description']) . "',
+    	sumbilled    = '" . clean_input($fu_data['sumbilled']) . "'";
 
     if ($id_followup>0) {
 		// Check access rights
 		if (!allowed($id_case,'e')) die("You don't have permission to modify this case's information!");
 
-		$q="UPDATE lcm_followup SET $fl WHERE id_followup=$id_followup";
+		$q="UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
 		if (!($result = lcm_query($q)))
 			lcm_panic("$q <br />\nError ".lcm_errno().": ".lcm_error());
     } else {
