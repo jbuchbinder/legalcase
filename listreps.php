@@ -82,7 +82,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 ?>
 </table>
-<p align='right'><a href="edit_rep.php?rep=0" class="content_link">Create new report</a></p>
+<br /><a href="edit_rep.php?rep=0" class="create_new_lnk">Create new report</a><br />
 
 <table border='0' align='center' width='99%'>
 	<tr><td align="left"><?php
