@@ -120,14 +120,14 @@ if ($numrows > 0)
 
 foreach ($all_clients as $client) {
 	if ($client['id_client']) {
-		echo '<a href="client_det.php?client=' . $client['id_client'] . '">'
+		echo '<a href="client_det.php?client=' . $client['id_client'] . '" class="content_link">'
 			. $client['name_first'] . ' ' . $client['name_middle'] . ' ' . $client['name_last']
 			. '</a>';
 
 		if (++$current < $numrows) 
 			echo ", ";
 	} else if ($client['id_org']) {
-		echo '<a href="org_det.php?org=' . $client['id_org'] . '">'
+		echo '<a href="org_det.php?org=' . $client['id_org'] . '" class="content_link">'
 			. $client['name']
 			. '</a>';
 
