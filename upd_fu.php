@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.22 2005/01/25 22:10:19 antzi Exp $
+	$Id: upd_fu.php,v 1.23 2005/01/25 22:54:43 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -123,7 +123,7 @@ if (count($errors)) {
     }
 
     // Send user back to add/edit page's referer or (default) to followup detail page
-    header('Location: ' . ($fu_data['ref_edit_fu'] ? $fu_data['ref_edit_fu'] : "fu_det.php?followup=$id_followup");
+    header('Location: ' . ($fu_data['ref_edit_fu'] ? $fu_data['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));
 }
 
 ?>
