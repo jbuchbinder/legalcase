@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.16 2005/04/04 11:35:46 mlutfy Exp $
+	$Id: author_det.php,v 1.17 2005/04/04 14:22:28 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -188,8 +188,8 @@ if ($author > 0) {
 				$q = "SELECT id_followup, id_case, date_start, date_end, type, description
 					FROM lcm_followup
 					WHERE id_author = $author
-					  AND UNIX_TIMESTAMP(date_start) > UNIX_TIMESTAMP('" . $date_start . "')
-					  AND UNIX_TIMESTAMP(date_end) < UNIX_TIMESTAMP('" . $date_end . "')";
+					  AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "')
+					  AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
 			
 				// Add ordering
 				if ($fu_order) $q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
