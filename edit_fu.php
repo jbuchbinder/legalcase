@@ -36,8 +36,8 @@ if (empty($errors)) {
 			session_register("followup");
 
 		// Debug code
-		echo "<!-- Followup: " . intval($followup) . "-->\n";
-		
+		echo "<!-- Followup: " . $followup . ", intval=" . intval($followup) . "-->\n";
+
 		// Fetch the details on the specified follow-up
 		$q="SELECT *
 			FROM lcm_followup
