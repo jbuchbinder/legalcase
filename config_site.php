@@ -187,22 +187,15 @@ function show_config_form_collab() {
 	if ($case_write_always) echo " checked";
 	echo "><label for='case_write_always_1'>Site administrators only.</label></input></li>\n";
 	echo "</ul>\n";
-	//echo "</td>\n</tr>\n</table>\n";
 	echo "</fieldset>";
+
 	//
 	// *** SELF-REGISTRATION
 	//
 	$site_open_subscription = read_meta('site_open_subscription');
 	
 	echo "<fieldset class='conf_info_box'>\n";
-	
-	//echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
-	//echo "<tr>\n";
-	//echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
 	echo "<div class=\"prefs_column_menu_head\">". _T('siteconf_subtitle_self_registration') ."</div>";
-	//echo "</h4></td>\n";
-	//echo "<tr>\n";
-	//echo "<td>";
 
 	echo "<p>" . _T('siteconf_info_self_registration') . "</p>\n";
 	echo "<ul>";
@@ -224,9 +217,9 @@ function show_config_form_collab() {
 	echo "><label for='site_open_subscription_3'>" . _T('siteconf_input_selfreg_no') . "</label></input></li>\n";
 
 	echo "</ul>\n";
-	//echo "</td>\n</tr>\n</table>\n";
 	echo "</fieldset>";
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+
 }
 
 function show_config_form_regional() {
@@ -298,21 +291,27 @@ function show_config_form_policy() {
 	$case_allow_modif = read_meta('case_allow_modif');
 	$fu_sum_billed = read_meta('fu_sum_billed');
 	$fu_allow_modif = read_meta('fu_allow_modif');
+	$hide_emails = read_meta('hide_emails');
 
 	echo "\t<input type='hidden' name='conf_modified_policy' value='yes'/>\n";
 	echo "\t<input type='hidden' name='panel' value='policy'/>\n";
 
 	// ** CLIENTS
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_client_fields') . "</b></p>\n";
-	echo "<p><small class='sm_11'>" . _T('siteconf_info_client_fields') . "</small></p>\n";
+	echo '<p class="prefs_column_menu_head"><b>' . _T('siteconf_subtitle_client_fields') . "</b></p>\n";
+	echo '<p><small class="sm_11">' . _T('siteconf_info_client_fields') . "</small></p>\n";
 
-	echo "<table width=\"350\" class=\"tbl_usr_dtl\">";
-	echo "<tr><td width=\"300\">" . _T('siteconf_input_name_middle') ."</td><td>"
-		. get_yes_no('client_name_middle', $client_name_middle) 
-		. "</td></tr>\n";
-	echo "<tr><td>" . _T('siteconf_input_citizen_number') ."</td><td>"
-		. get_yes_no('client_citizen_number', $client_citizen_number) 
+	echo '<table width="350" class="tbl_usr_dtl">' . "\n";
+	echo '<tr><td width="300">' . _T('siteconf_input_name_middle') ."</td>\n"
+		. "<td>" . get_yes_no('client_name_middle', $client_name_middle) .  "</td>\n"
+		. "</tr>\n";
+
+	echo "<tr><td>" . _T('siteconf_input_citizen_number') ."</td>"
+		. "<td>" . get_yes_no('client_citizen_number', $client_citizen_number) . "</td>"
+		. "</tr>\n";
+
+	echo "<tr><td>" . _T('siteconf_info_hide_emails') . "</td>\n"
+		. "<td>" . get_yes_no('hide_emails', $hide_emails) . "</td>"
 		. "</tr>\n";
 	echo "</table>\n";
 
