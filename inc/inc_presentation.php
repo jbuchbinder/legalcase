@@ -337,28 +337,44 @@ function get_date_inputs($name = 'select', $date) {
 	$ret = "<table cellpadding=\"3\" cellspacing=\"3\">\n"
 		. "<tr>\n"
 		. "\t<td><!-- " . _T('select_date_day') . "<br/ -->"
-		. "\t\t<select name=\"" . $name . "_day\">\n";
+		. "\t\t<select name=\"" . $name . "_day\" id=\"" . $name . "_day\">\n";
 
+	// Day of month
 	for ($i = 1; $i <= 31; $i++) {
-		$default = ($i == $default_day ? ' selected' : '');
+		$default = ($i == $default_day ? ' selected="selected"' : '');
 		$ret .= "<option" . $default . " value=\"" . $i . "\">" . $i . "</option>\n";
 	}
+
+	$default = ($default_day == 0 ? ' selected="selected"' : '');
+	$ret .= "<option" . $default . " value=\"\"></option>\n";
 	
+	// Month of year
 	$ret .= "\t\t</select>\n"
 		. "\t</td>\n"
 		. "\t<td><!-- " . _T('select_date_month') . "<br/ -->\n"
-		. "\t\t<select name=\"" . $name . "_month\">\n";
+		. "\t\t<select name=\"" . $name . "_month\" id=\"" . $name . "_month\">\n";
 
-	for ($i = 1; $i <= 12; $i++)
-		$ret .= "<option value=\"" . $i . "\">" . _T('date_month_' . $i) . "</option>\n";
+	for ($i = 1; $i <= 12; $i++) {
+		$default = ($i == $default_month ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"" . $i . "\">" . _T('date_month_' . $i) . "</option>\n";
+	}
 
+	$default = ($default_month == 0 ? ' selected="selected"' : '');
+	$ret .= "<option" . $default . " value=\"\"></option>\n";
+
+	// Year
 	$ret .= "\t</select>\n"
 		. "\t</td>\n"
 		. "\t<td><!-- " . _T('select_date_year') . "<br/ -->\n"
-		. "\t\t<select name=\"" . $name . "_year\">\n";
+		. "\t\t<select name=\"" . $name . "_year\" id=\"" . $name . "_year\">\n";
 
-	for ($i = 1999; $i <= 2006; $i++)
-		$ret .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
+	for ($i = 1999; $i <= 2006; $i++) {
+		$default = ($i == $default_year ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"" . $i . "\">" . $i . "</option>\n";
+	}
+
+	$default = ($default_year == 0 ? ' selected="selected"' : '');
+	$ret .= "<option" . $default . " value=\"\"></option>\n";
 		
 	$ret .= "\t</select>\n"
 		. "\t</td>\n"
