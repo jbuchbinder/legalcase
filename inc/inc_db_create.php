@@ -56,6 +56,7 @@ function create_database() {
 		alledged_crime text NOT NULL,
 		status text NOT NULL,
 		public tinyint(1) DEFAULT '0' NOT NULL,
+		pub_write tinyint(1) DEFAULT '0' NOT NULL,
 		PRIMARY KEY (id_case))";
 	$result = lcm_query($query);
 	
