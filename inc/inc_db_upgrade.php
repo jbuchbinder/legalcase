@@ -23,25 +23,9 @@ function upgrade_database($old_db_version) {
 	global $lcm_db_version;
 	$log = "";
 
-	// Read the current version
-	//$lcm_db_version_current = 0;
-	// $result = lcm_query("SELECT valeur FROM spip_meta WHERE name='version_lcm'");
-	// if ($result) if ($row = spip_fetch_array($result)) $lcm_version_current = (double) $row['valeur'];
-	// [AG] Current version os now passed as parameter to the function as it is available upon calling anyway
-	//$lcm_db_version_current = read_meta('lcm_db_version');
-	// echo "VERSION = $version \n";
-
 	// [ML] I think we still need this
-	$lcm_db_version_current = read_meta('lcm_db_version');
-
-	// If there is no version mentioned in lcm_meta, then it is a new installation
-	// and therefore there is no need to upgrade.
-	// [AG] No need to doublecheck it. upgrade_database is invoked only when necessary
-	//if (!$lcm_db_version_current) {
-	//	$lcm_db_version_current = $lcm_db_version;
-	//	upgrade_db_version($lcm_db_version_current);
-	//	return $log;
-	//}
+	// $lcm_db_version_current = read_meta('lcm_db_version');
+	$lcm_db_version_current = $old_db_version;
 
 	//
 	// Verify the rights to modify the database
@@ -173,6 +157,21 @@ function upgrade_database($old_db_version) {
 		create_groups($system_keyword_groups);
 
 		upgrade_db_version (10);
+	}
+
+	if ($lcm_db_version_current < 11) {
+		write_metas(); // forgotten at last upgrade
+		read_metas(); // make sure they are loaded
+
+		global $system_kwg;
+		$type_email = $system_kwg['contacts']['keywords']['email_main']['id_keyword'];
+
+		$query = "UPDATE lcm_contact
+					SET type_contact = $type_email
+					WHERE type_contact = 1";
+		$result = lcm_query($query);
+
+		upgrade_db_version (11);
 	}
 
 /* [ML] I'm leaving this because it can provide us with interesting ideas
