@@ -363,17 +363,23 @@ function include_data($file) {
 
 $flag_connect = @file_exists('config/inc_connect.php');
 
-function spip_query($query) { // TODO FIXME ML
-	include_lcm('inc_db_mysql');
+function lcm_query($query) {
+	include_lcm('inc_db');
 
+	// We silently fail if there is no database, this avoids 
+	// many warnings while installation, for example.
 	if ($GLOBALS['flag_connect']) {
 		include_config('inc_connect');
 		if (!$GLOBALS['db_ok'])
-		return;
+			return;
 	}
+
 	return lcm_query_db($query);
 }
 
+function spip_query($query) {
+	return lcm_query($query);
+}
 
 //
 // Infos de config PHP
@@ -779,13 +785,15 @@ if (count($GLOBALS['HTTP_POST_VARS'])) {
 
 
 //
-// Lire les meta cachees
+// Read the cached meta information
 //
 $inc_meta_cache = 'data/inc_meta_cache.php';
 if (@file_exists($inc_meta_cache) AND !defined('_INC_META_CACHE')  AND !defined('_INC_META')) {
 	include_data('inc_meta_cache');
 }
-if (!defined("_INC_META_CACHE")) {
+// This is used usually at installation, when the data/inc_meta_cache.php
+// is not yet created, and avoids having tons of warnings printed.
+if (!defined('_INC_META_CACHE')) {
 	function lire_meta($nom) {
 		global $meta;
 		return $meta[$nom];

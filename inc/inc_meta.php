@@ -11,8 +11,8 @@ function lire_metas() {
 
 	$meta = '';
 	$meta_maj = '';
-	$query = 'SELECT * FROM lcm_meta';
-	$result = spip_query($query);
+	$query = 'SELECT name, value, upd FROM lcm_meta';
+	$result = lcm_query($query);
 	while ($row = spip_fetch_array($result)) {
 		$nom = $row['name'];
 		$meta[$nom] = $row['value'];
@@ -23,12 +23,12 @@ function lire_metas() {
 // write metas
 function ecrire_meta($nom, $valeur) {
 	$valeur = addslashes($valeur);
-	spip_query("REPLACE lcm_meta (name, value) VALUES ('$nom', '$valeur')");
+	lcm_query("REPLACE lcm_meta (name, value) VALUES ('$nom', '$valeur')");
 }
 
 // delete metas
 function effacer_meta($nom) {
-	spip_query("DELETE FROM lcm_meta WHERE name='$nom'");
+	lcm_query("DELETE FROM lcm_meta WHERE name='$nom'");
 }
 
 //
@@ -55,6 +55,7 @@ function lire_meta_maj($nom) {
 	global $meta_maj;
 	return $meta_maj[$nom];
 }
+
 ';
 	if ($meta) {
 		reset($meta);
@@ -64,6 +65,8 @@ function lire_meta_maj($nom) {
 			$s .= "\$GLOBALS['meta']['$key'] = '$val';\n";
 		}
 		$s .= "\n";
+	} else {
+		echo "Niama meta!\n";
 	}
 	if ($meta_maj) {
 		reset($meta_maj);

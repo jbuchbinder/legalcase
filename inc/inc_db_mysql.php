@@ -45,7 +45,7 @@ function lcm_query_db($query) {
 }
 
 function spip_query_db($query) {
-	lcm_query_db($query);
+	return lcm_query_db($query);
 }
 
 function lcm_create_table($table, $query) {
@@ -122,9 +122,13 @@ function spip_sql_errno() {
 	return mysql_errno();
 }
 
-function spip_num_rows($r) {
+function lcm_num_rows($r) {
 	if ($r)
 		return mysql_num_rows($r);
+}
+
+function spip_num_rows($r) {
+	return lcm_num_rows($r);
 }
 
 function spip_free_result($r) {
