@@ -18,13 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.61 2005/02/10 09:02:40 makaveev Exp $
+	$Id: edit_fu.php,v 1.62 2005/02/10 20:20:21 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
-include_lcm('inc_keywords_default');
+//include_lcm('inc_keywords_default');
 
 // Initiate session
 // [ML] now in inc_auth session_start();
@@ -174,7 +174,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 <form action="upd_fu.php" method="POST">
 	<table class="tbl_usr_dtl" width="99%">
 		<tr><td><?php echo _T('fu_input_date_start'); ?></td>
-			<td><?php echo _T('calendar_info_date');  
+			<td><?php echo _T('calendar_info_date') . ' ';  
 				$name = (($admin || ($edit && $modify)) ? 'start' : '');
 				echo get_date_inputs($name, $_SESSION['fu_data']['date_start'], false);
 				echo ' ' . _T('calendar_info_time') . ' ';
