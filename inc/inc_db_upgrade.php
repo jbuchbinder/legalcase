@@ -47,10 +47,8 @@ function upgrade_database($old_db_version) {
 	// Verify the rights to modify the database
 	//
 
-	echo "\n<!-- Hide possibly confusing error messages: \n";
 	include_lcm('inc_db_test');
 	$alter_test_log = lcm_test_alter_table();
-	echo "-->\n";
 
 	if ($alter_test_log)
 		return $alter_test_log;
@@ -86,12 +84,6 @@ function upgrade_database($old_db_version) {
 
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.98) {
-		lcm_query("ALTER TABLE spip_breves DROP INDEX id_breve");
-		lcm_query("ALTER TABLE spip_breves DROP INDEX id_breve_2");
-		lcm_query("ALTER TABLE spip_breves ADD INDEX id_rubrique (id_rubrique)");
-
-		lcm_query("ALTER TABLE spip_forum ADD ip VARCHAR(16)");
-		lcm_query("ALTER TABLE spip_forum ADD maj TIMESTAMP");
 		lcm_query("ALTER TABLE spip_forum DROP INDEX id_forum");
 		lcm_query("ALTER TABLE spip_forum ADD INDEX id_parent (id_parent), ADD INDEX id_rubrique (id_rubrique), ADD INDEX id_article(id_article), ADD INDEX id_breve(id_breve)");
 		upgrade_version (0.98);
@@ -180,60 +172,6 @@ function upgrade_database($old_db_version) {
 		upgrade_version (0.999);
 	}
 	
-	if ($lcm_version_current < 1.01) {
-		lcm_query("UPDATE spip_forum SET statut='publie' WHERE statut=''");
-		upgrade_version (1.01);
-	}
-	
-	if ($lcm_version_current < 1.02) {
-		lcm_query("ALTER TABLE spip_forum ADD id_auteur BIGINT DEFAULT '0' NOT NULL");
-		upgrade_version (1.02);
-	}
-
-	if ($lcm_version_current < 1.03) {
-		lcm_query("DROP TABLE spip_maj");
-		upgrade_version (1.03);
-	}
-
-	if ($lcm_version_current < 1.04) {
-		lcm_query("ALTER TABLE spip_articles ADD accepter_forum VARCHAR(3)");
-		upgrade_version (1.04);
-	}
-
-	if ($lcm_version_current < 1.05) {
-		lcm_query("DROP TABLE spip_petition");
-		lcm_query("DROP TABLE spip_signatures_petition");
-		upgrade_version (1.05);
-	}
-
-	if ($lcm_version_current < 1.1) {
-		lcm_query("DROP TABLE spip_petition");
-		lcm_query("DROP TABLE spip_signatures_petition");
-		upgrade_version (1.1);
-	}
-
-	// Correction de l'oubli des modifs creations depuis 1.04
-	if ($lcm_version_current < 1.204) {
-		lcm_query("ALTER TABLE spip_articles ADD accepter_forum VARCHAR(3) NOT NULL");
-		lcm_query("ALTER TABLE spip_forum ADD id_message bigint(21) NOT NULL");
-		lcm_query("ALTER TABLE spip_forum ADD INDEX id_message (id_message)");
-		lcm_query("ALTER TABLE spip_auteurs ADD en_ligne datetime DEFAULT '0000-00-00 00:00:00' NOT NULL");
-		lcm_query("ALTER TABLE spip_auteurs ADD imessage VARCHAR(3) not null");
-		lcm_query("ALTER TABLE spip_auteurs ADD messagerie VARCHAR(3) not null");
-		upgrade_version (1.204);
-	}
-
-	if ($lcm_version_current < 1.207) {
-		lcm_query("ALTER TABLE spip_rubriques DROP INDEX id_rubrique");
-		lcm_query("ALTER TABLE spip_rubriques ADD INDEX id_parent (id_parent)");
-		lcm_query("ALTER TABLE spip_rubriques ADD statut VARCHAR(10) NOT NULL");
-		// Declencher le calcul des rubriques publiques
-		lcm_query("REPLACE spip_meta (nom, valeur) VALUES ('calculer_rubriques', 'oui')");
-		upgrade_version (1.207);
-	}
-
-	[ML] ...... (removed code) ....
-
 	if ($lcm_version_current < 1.414) {
 		// Forum par defaut "en dur" dans les spip_articles
 		// -> non, prio (priori), pos (posteriori), abo (abonnement)
