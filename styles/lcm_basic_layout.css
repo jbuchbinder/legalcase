@@ -325,11 +325,11 @@ form.search_form {
 	margin: 4px 4px 10px 4px;
 }
 
-td input.search_form_txt, td select.sel_frm, td textarea {
+td input.search_form_txt, td textarea {
 	width: 85%;
 }
 
-fieldset input.search_form_txt, fieldset textarea, fieldset select.sel_frm {
+fieldset input.search_form_txt, fieldset textarea {
 	width: 60%;
 }
 
