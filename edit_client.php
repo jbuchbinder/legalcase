@@ -10,7 +10,7 @@ function f_err($fn, $errors)
 }
 
 // Create empty client data
-$client_data=array();
+$client_data = array();
 
 // Initiate session
 session_start();
@@ -25,7 +25,7 @@ if (empty($errors)) {
 			session_register("client");
 
 		// Prepare query
-		$q='SELECT * FROM lcm_client WHERE id_client=' . $client;
+		$q = 'SELECT * FROM lcm_client WHERE id_client=' . $client;
 
 		// Do the query
 		$result = lcm_query($q);
@@ -34,12 +34,13 @@ if (empty($errors)) {
 		if ($row = mysql_fetch_array($result)) {
 			// Get client details
 			foreach($row as $key=>$value) {
-				$client_data[$key]=$value;
+				$client_data[$key] = $value;
 			}
 		}
 	} else {
 		// Setup default values
-		$client_data['date_creation'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+		$client_data['date_creation'] = date('Y-m-d H:i:s'); // now
+		$client_data['date_update'] = date('Y-m-d H:i:s'); // now
 	}
 }
 
@@ -76,7 +77,7 @@ lcm_page_start("Edit client details");
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>
-	<input type="hidden" name="referer" value="<?php echo $HTTP_REFERER ?>">
+	<input type="hidden" name="ref_edit_client" value="<?php echo $HTTP_REFERER ?>">
 </form>
 
 <?php

@@ -24,7 +24,9 @@ if (empty($errors)) {
 			session_register("followup");
 
 		// Prepare query
-		$q='SELECT * FROM lcm_followup WHERE id_followup=' . $followup;
+		$q="SELECT *
+			FROM lcm_followup
+			WHERE id_followup=$followup";
 
 		// Do the query
 		$result = lcm_query($q);
@@ -86,7 +88,7 @@ lcm_page_start("Edit follow-up");
 	<button name="reset" type="reset">Reset</button>
 	<input type="hidden" name="id_followup" value="<?php echo $fu_data['id_followup']; ?>">
 	<input type="hidden" name="id_case" value="<?php echo $fu_data['id_case']; ?>">
-	<input type="hidden" name="referer" value="<?php echo $fu_data['referer']; ?>">
+	<input type="hidden" name="ref_edit_fu" value="<?php echo $fu_data['referer']; ?>">
 </form>
 
 <?php

@@ -18,25 +18,28 @@ if(!session_is_registered("client_data"))
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-    $client_data[$key]=$value;
+    $client_data[$key] = $value;
 
 // Check submitted information
-if (strtotime($client_data['date_creation'])<0) { $errors['date_creation']='Invalid creation date!'; }
-if (strtotime($client_data['date_update'])<0) { $errors['date_update']='Invalid update date!'; }
+if (strtotime($client_data['date_creation']) < 0) { $errors['date_creation'] = 'Invalid creation date!'; }
+//if (strtotime($client_data['date_update']) < 0) { $errors['date_update'] = 'Invalid update date!'; }
+
+// Add timestamp
+$client_data['date_update'] = date('Y-m-d H:i:s'); // now
 
 if (count($errors)) {
     header("Location: $HTTP_REFERER");
     exit;
 } else {
-	$cl="name_first='$name_first',name_middle='$name_middle',name_last='$name_last',";
-    $cl.="date_creation='$date_creation',date_update='$date_update',citizen_number='$citizen_number',";
-    $cl.="address='" . addslashes($address) . "',civil_status='$civil_status',income='$income'";
+	$cl = "name_first='$name_first',name_middle='$name_middle',name_last='$name_last',";
+    $cl .= "date_creation='$date_creation',date_update='$date_update',citizen_number='$citizen_number',";
+    $cl .= "address='" . addslashes($address) . "',civil_status='$civil_status',income='$income'";
 
     if ($id_client>0) {
 		// Prepare query
-		$q="UPDATE lcm_client SET $cl WHERE id_client=$id_client";
+		$q = "UPDATE lcm_client SET $cl WHERE id_client=$id_client";
     } else {
-		$q="INSERT INTO lcm_client SET id_client=0,$cl";
+		$q = "INSERT INTO lcm_client SET id_client=0,$cl";
     }
 
     // Do the query
@@ -47,7 +50,7 @@ if (count($errors)) {
     session_destroy();
 
     // Send user back to add/edit page's referer
-    header('Location: ' . $client_data['referer']);
+    header('Location: ' . $client_data['ref_edit_client']);
 }
 
 ?>

@@ -23,6 +23,6 @@ $result=mysql_query($q);
 // Close connection
 // mysql_close($db);
 
-header("Location: $referer");
+header("Location: $ref_edit_case");
 
 ?>

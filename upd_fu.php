@@ -46,7 +46,7 @@ if (count($errors)) {
     session_destroy();
 
     // Send user back to add/edit page's referer
-    header('Location: ' . $fu_data['referer']);
+    header('Location: ' . $fu_data['ref_edit_fu']);
 }
 
 ?>

@@ -8,7 +8,9 @@ $case_data=array();
 
 if ($case>0) {
 	// Prepare query
-	$q = 'SELECT * FROM lcm_case WHERE id_case=' . $case;
+	$q = "SELECT *
+		  FROM lcm_case
+		  WHERE id_case=$case";
 
 	// Do the query
 	$result = lcm_query($q);
@@ -49,7 +51,7 @@ if ($case>0) {
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>
-	<input type="hidden" name="referer" value="<?php echo $HTTP_REFERER ?>">
+	<input type="hidden" name="ref_edit_case" value="<?php echo $HTTP_REFERER ?>">
 </form>
 
 <?php

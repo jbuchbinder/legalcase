@@ -66,7 +66,7 @@ lcm_page_start("Edit organisation details");
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>
-	<input type="hidden" name="referer" value="<?php echo $HTTP_REFERER ?>">
+	<input type="hidden" name="ref_edit_org" value="<?php echo $HTTP_REFERER ?>">
 </form>
 
 <?php

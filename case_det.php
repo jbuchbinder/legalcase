@@ -25,11 +25,13 @@ if ($row = mysql_fetch_array($result)) {
 	?><h2>Clients in this case:</h2>
 
 	<table border>
-	<caption>Organizations:</caption>
+	<caption>Organisations:</caption>
 	<?php
 
 	// Show case organization(s)
-	$q="SELECT * FROM lcm_case_client_org,lcm_org WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
+	$q="SELECT lcm_org.id_org,name
+		FROM lcm_case_client_org,lcm_org
+		WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
 
 	// Do the query
 	$result = lcm_query($q);
@@ -39,7 +41,7 @@ if ($row = mysql_fetch_array($result)) {
 		echo '<td><a href="edit_org.php?org=' . $row['id_org'] . "\">Edit</a></td></tr>\n";
 	}
 
-	?><tr><td>Add organization</td><td></td></tr>
+	?><tr><td><a href="sel_org.php?case=<?php echo $case; ?>">Add organisation(s)</a></td><td></td></tr>
 	</table><br>
 
 	<table border>
@@ -47,8 +49,9 @@ if ($row = mysql_fetch_array($result)) {
 	<?php
 
 	// Show case client(s)
-	$q="SELECT * FROM lcm_case_client_org,lcm_client WHERE id_case=$case";
-	$q.=" AND lcm_case_client_org.id_client=lcm_client.id_client";
+	$q="SELECT lcm_client.id_client,name_first,name_middle,name_last
+		FROM lcm_case_client_org,lcm_client
+		WHERE id_case=$case AND lcm_case_client_org.id_client=lcm_client.id_client";
 
 	// Do the query
 	$result = lcm_query($q);
@@ -57,7 +60,7 @@ if ($row = mysql_fetch_array($result)) {
 		echo '<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last'] . "</td>\n";
 		echo '<td><a href="edit_client.php?client=' . $row['id_client'] . "\">Edit</a></td></tr>\n";
 	}
-	?><tr><td>Add client</td><td></td></tr>
+	?><tr><td><a href="sel_client.php?case=<?php echo $case; ?>">Add client(s)</a></td><td></td></tr>
 	</table><br>
 	<?php
 
@@ -71,7 +74,9 @@ if ($row = mysql_fetch_array($result)) {
 <?php
 
 // Prepare query
-$q = 'SELECT id_followup,date_start,type,description FROM lcm_followup WHERE id_case=' . $case;
+$q = "SELECT id_followup,date_start,type,description
+	  FROM lcm_followup
+	  WHERE id_case=$case";
 
 // Do the query
 $result = lcm_query($q);

@@ -22,7 +22,10 @@ foreach($_POST as $key => $value)
 
 // Check submitted information
 if (strtotime($org_data['date_creation'])<0) { $errors['date_creation']='Invalid creation date!'; }
-if (strtotime($org_data['date_update'])<0) { $errors['date_update']='Invalid update date!'; }
+//if (strtotime($org_data['date_update'])<0) { $errors['date_update']='Invalid update date!'; }
+
+// Add timestamp
+$org_data['date_update'] = date('Y-m-d H:i:s'); // now
 
 if (count($errors)) {
     header("Location: $HTTP_REFERER");
@@ -46,7 +49,7 @@ if (count($errors)) {
     session_destroy();
 
     // Send user back to add/edit page's referer
-    header('Location: ' . $org_data['referer']);
+    header('Location: ' . $org_data['ref_edit_org']);
 }
 
 ?>
