@@ -264,7 +264,7 @@ function lcm_page_end($credits = '') {
 		</div>
 		<div class=\"clearing\">&nbsp;</div>
 	</div>
-<div id=\"footer\">2004 &copy; Legal Case Management</div>\n";
+<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")</div>\n";
 
 	//
 	// Language choice (temporarely put here by [ML])
