@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.9 2004/12/11 16:53:28 antzi Exp $
+	$Id: rep_det.php,v 1.10 2005/01/25 23:58:27 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -49,7 +49,7 @@ if ($rep > 0) {
 		if ($edit)
 			echo '<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="edit_lnk">Edit this report</a>&nbsp;';
 		echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="run_lnk">Run this report</a><br /><br />';
-		echo "\nReport ID: " . $row['id_report'] . "<br>\n";
+//		echo "\nReport ID: " . $row['id_report'] . "<br>\n";
 		echo "Created on: " . $row['date_creation'] . "<br>\n";
 		echo "Last update: " . $row['date_update'] . "<br>\n";
 
