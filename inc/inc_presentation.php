@@ -495,6 +495,78 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 	return $ret;
 }
 
+function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_seconds = false, $table = false) {
+
+	$split_time = recup_heure($time);
+	$default_hour = $split_time[0];
+	$default_minutes = $split_time[1];
+	$default_seconds = $split_time[2];
+
+	$ret = '';
+
+	// Hour
+	if ($table)
+		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n"
+			. "<tr>\n"
+			. "<td><!-- " . _T('select_time_hour') . "<br/ -->\n";
+
+	$ret .= "<select name=\"" . $name . "_hour\" id=\"" . $name . "_hour\">\n";
+
+	for ($i = 0; $i < 24; $i++) {
+		$default = ($i == $default_hour ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"" . $i . "\">";
+		if ($hours24) {
+			$ret .= $i;
+		} else {
+			$ret .= date('h a',mktime($i,0,0,0,0,1970));
+		}
+		$ret .= "</option>\n";
+	}
+
+	$ret .= "</select>\n";
+
+	if ($table)
+		$ret .= "</td>\n";
+
+	// Minutes
+	if ($table)
+		$ret .= "<td><!-- " . _T('select_time_minutes') . "<br/ -->\n";
+	$ret .= "<select name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\">\n";
+
+	for ($i = 0; $i < 60; $i++) {
+		$default = ($i == $default_minutes ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"" . $i . "\">" . $i . "</option>\n";
+	}
+
+	$ret .= "</select>\n";
+
+	if ($table)
+		$ret .= "</td>\n"
+
+	// Seconds
+	if ($show_seconds) {
+		if ($table)
+			$ret .= "<td><!-- " . _T('select_date_year') . "<br/ -->\n";
+		$ret .= "<select name=\"" . $name . "_year\" id=\"" . $name . "_year\">\n";
+
+		for ($i = 0; $i < 60; $i++) {
+			$default = ($i == $default_seconds ? ' selected="selected"' : '');
+			$ret .= "<option" . $default . " value=\"" . $i . "\">" . $i . "</option>\n";
+		}
+
+		$ret .= "</select>\n";
+
+		if ($table)
+			$ret .= "</td>\n"
+	}
+
+	if ($table)
+		$ret .= "</tr>\n"
+			. "</table>\n";
+
+	return $ret;
+}
+
 // Returns an array with valid CSS files for themes (lcm_ui_*.css)
 function get_theme_list() {
 	$list = array();
