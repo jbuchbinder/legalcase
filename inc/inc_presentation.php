@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.162 2005/03/16 15:44:18 makaveev Exp $
+	$Id: inc_presentation.php,v 1.163 2005/03/16 15:58:56 makaveev Exp $
 */
 
 //
@@ -583,7 +583,7 @@ function help_page_start($page_title) {
 <head>
 <title>' . _T('help_title_help') . '</title>
 <meta http-equiv="Content-Type" content="text/html; charset=' . $charset . '" />
-<link rel="stylesheet" href="styles/lcm_basic_layout.css" type="text/css" />
+<link rel="stylesheet" href="styles/lcm_help.css" type="text/css" />
 <link rel="stylesheet" href="styles/lcm_opt_mediumfonts.css" type="text/css" />
 </head>' . "\n";
 
@@ -591,11 +591,11 @@ function help_page_start($page_title) {
 	echo '<h1 class="hlp_h1">' . _T('help_title_help') . "</h1>\n";
 	echo '<div id="hlp_big_box">
 	<div id="hlp_menu">
-		<ul>';
+		<ul id="hlp_nav">';
 
 	foreach ($toc as $topic => $subtopics) {
 		echo '<li><a href="lcm_help.php?code=' . $topic .'">' . _T('help_title_' . $topic) . '</a>' . "\n";
-		echo '<ul>';
+		echo '<ul class="hlp_subnav">';
 		foreach ($subtopics as $st) {
 			echo '<li><a href="lcm_help.php?code=' . $st .'">' . _T('help_title_' . $st) . '</a></li>' . "\n";
 		}
