@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.1 2005/01/26 05:57:48 antzi Exp $
+	$Id: export_db.php,v 1.2 2005/01/26 22:28:39 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -84,21 +84,28 @@ function export_database($output_filename) {
 	}
 
 	// Export database
-	if (!mkdir("inc/data/db-$output_filename",0700))
+	if (!mkdir("inc/data/db-$output_filename",0777))
 		die("System error: Could not create inc/data/db-$output_filename!");
-//	chdir("inc/data/db-$output_filename");
+	echo getcwd();
+	if (!chdir("inc/data/db-$output_filename"))
+		die("System error: Could not change dir to 'inc/data/db-$output_filename'");
 
 	// Get the list of tables in the database
 	$q = "SHOW TABLES";
 	$result = lcm_query($q);
 	while ($row = lcm_fetch_array($result)) {
+		// Backup table structure
+		$q = "SHOW CREATE TABLE " . $row[0];
+		$res = lcm_query($q);
+
+		// Backup data
 		$q = "SELECT * FROM " . $row[0] . "
-				INTO OUTFILE 'inc/data/db-$output_filename/" . $row[0] . ".$output_filename'
+				INTO OUTFILE '" . $row[0] . ".$output_filename'
 				FIELDS TERMINATED BY ','
 					OPTIONALLY ENCLOSED BY '\"'
 					ESCAPED BY '\\\\'
 				LINES TERMINATED BY '\r\n'";
-		$result = lcm_query($q);
+		$res = lcm_query($q);
 	}
 
 }
