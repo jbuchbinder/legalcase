@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.13 2005/03/29 09:14:32 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.14 2005/03/29 10:36:28 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -189,10 +189,11 @@ function get_keywords_applied_to($type, $id) {
 	if (! ($type == 'case' || $type == 'client' || $type == 'org' || $type == 'author'))
 		lcm_panic("Unknown type: " . $type);
 	
-	$query = "SELECT *
-				FROM lcm_keyword_" . $type . " as kwlist, lcm_keyword as kwinfo
+	$query = "SELECT kwlist.*, kwinfo.*, kwg.title as kwg_title
+				FROM lcm_keyword_" . $type . " as kwlist, lcm_keyword as kwinfo, lcm_keyword_group as kwg
 				WHERE id_" . $type . " = " . $id . " 
-				  AND kwinfo.id_keyword = kwlist.id_keyword";
+				  AND kwinfo.id_keyword = kwlist.id_keyword
+				  AND kwg.id_group = kwinfo.id_group";
 	
 	$result = lcm_query($query);
 
@@ -201,6 +202,15 @@ function get_keywords_applied_to($type, $id) {
 		array_push($ret, $row);
 	
 	return $ret;
+}
+
+// show keywords in (ex) 'case_det.php', therefore, it is in a <p> ... </p>
+function show_all_keywords($type_obj, $id_obj) {
+	$all_kw = get_keywords_applied_to($type_obj, $id_obj);
+
+	foreach ($all_kw as $kw) {
+		echo _Ti($kw['kwg_title']) . $kw['title'] . "<br/>\n";
+	}
 }
 
 function show_edit_keywords_form($type_obj, $id_obj) {
@@ -212,6 +222,7 @@ function show_edit_keywords_form($type_obj, $id_obj) {
 	//
 	if ($id_obj) {
 		$current_kws = get_keywords_applied_to($type_obj, $id_obj);
+		$cpt = 0;
 	
 		foreach ($current_kws as $kw) {
 			$kwg = get_kwg_from_id($kw['id_group']);
@@ -224,6 +235,7 @@ function show_edit_keywords_form($type_obj, $id_obj) {
 			echo '<input type="hidden" name="kwg_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
 			echo '<input type="hidden" name="kw_entry[]" value="' . $kw['id_entry'] . '" />' . "\n";
 			echo '<select name="kw_value[]">';
+			echo '<option value="">' . '' . "</option>\n";
 
 			$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
 			foreach ($kw_for_kwg as $kw1) {
@@ -232,8 +244,14 @@ function show_edit_keywords_form($type_obj, $id_obj) {
 			}
 
 			echo "</select>\n";
+
+			echo '<label for="id_del_keyword' . $cpt . '">'
+				. '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" />' // TRAD
+				. '</label>&nbsp;<input type="checkbox" id="id_del_keyword' . $cpt . '" name="kw_del_' . $cpt . '"/>';
+
 			echo "</td>\n";
 			echo "</tr>\n";
+			$cpt++;
 		}
 	}
 
@@ -285,9 +303,14 @@ function update_keywords_request($type_obj, $id_obj) {
 		}
 
 		for ($cpt = 0; isset($kw_entries[$cpt]); $cpt++) {
-			$query = "UPDATE lcm_keyword_" . $type_obj . " 
-						SET id_keyword = " . $kw_values[$cpt] . "
-						WHERE id_entry = " . $kw_entries[$cpt];
+			if ($_REQUEST['kw_del_' . $cpt] || empty($kw_values[$cpt])) {
+				$query = "DELETE FROM lcm_keyword_" . $type_obj . "
+							WHERE id_entry = " . $kw_entries[$cpt];
+			} else if ($kw_values[$cpt]) {
+				$query = "UPDATE lcm_keyword_" . $type_obj . " 
+							SET id_keyword = " . $kw_values[$cpt] . "
+							WHERE id_entry = " . $kw_entries[$cpt];
+			}
 
 			lcm_query($query);
 		}
