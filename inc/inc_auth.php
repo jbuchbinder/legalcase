@@ -69,22 +69,11 @@ function auth() {
 				$auth_can_disconnect = true;
 			}
 		}
-	}
-
-	// Authentification .htaccess
-	// [ML] should be removed (TODO)
-	else if ($REMOTE_USER && !$INSECURE['REMOTE_USER'] && !$ignore_remote_user) {
-		$auth_login = $REMOTE_USER;
-		$auth_pass_ok = true;
-		$auth_htaccess = true;
-	}
-
-	// Failed login attempt
-	// [ML] this is rather obscure to me, I will try to clean it later (TODO)
-	else if ($GLOBALS['bonjour'] == 'oui') {
-		$link = new Link("lcm_cookie.php?test_echec_cookie=oui");
-		$clean_link->delVar('bonjour');
-		$url = str_replace('/./', '/', 'ecrire/'.$clean_link->getUrl());
+	} else if ($GLOBALS['privet'] == 'yes') {
+		// Failed login attempt: cookie failed
+		$link = new Link("lcm_cookie.php?cookie_test_failed=yes");
+		$clean_link->delVar('privet');
+		$url = str_replace('/./', '/', $clean_link->getUrl());
 		$link->addVar('var_url', $url);
 		@header("Location: ".$link->getUrl());
 		exit;
