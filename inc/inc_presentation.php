@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.199 2005/04/04 10:16:25 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.200 2005/04/04 14:14:11 mlutfy Exp $
 */
 
 //
@@ -69,6 +69,7 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 
 	// The 'antifocus' is used to erase default titles such as "New appointment"
 	// other functions are used in calendar functions (taken from Spip's presentation.js)
+	echo '<script type="text/javascript" src="inc/layer.js"></script>' . "\n";
 	echo "<script type='text/javascript'><!--
 		var title_antifocus = false;
 
@@ -105,8 +106,17 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 
 		function setvisibility (objet, status) {
 			element = findObj(objet);
-			if (element.style.visibility != status)
-				element.style.visibility = status; 
+			if (element.style.visibility != status) {
+				if (status == 'flip') {
+					if (element.style.visibility == 'visible') {
+						element.style.visibility = 'hidden';
+					} else {
+						element.style.visibility = 'visible';
+					}
+				} else {
+					element.style.visibility = status;
+				}
+			}
 		}
 
 		function lcm_show(objet) {
