@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.11 2005/03/30 17:37:28 antzi Exp $
+	$Id: upd_app.php,v 1.12 2005/03/31 11:06:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -45,19 +45,22 @@ $_SESSION['app_data']['start_time'] = $_SESSION['app_data']['start_year'] . '-'
 					. (isset($_SESSION['app_data']['start_hour']) ? $_SESSION['app_data']['start_hour'] : '00') . ':'
 					. (isset($_SESSION['app_data']['start_minutes']) ? $_SESSION['app_data']['start_minutes'] : '00') . ':'
 					. (isset($_SESSION['app_data']['start_seconds']) ? $_SESSION['app_data']['start_seconds'] : '00');
+
 $unix_start_time = strtotime($_SESSION['app_data']['start_time']);
 
 if ( ($unix_start_time<0) || !checkdate($_SESSION['app_data']['start_month'],$_SESSION['app_data']['start_day'],$_SESSION['app_data']['start_year']) )
-	$_SESSION['errors']['start_time'] = 'Invalid start time!';
+	$_SESSION['errors']['start_time'] = 'Invalid start time!'; // TRAD
 //else 
 //	$_SESSION['app_data']['start_time'] = date('Y-m-d H:i:s', $unix_start_time);
 
-// end_time
-if ($prefs['time_intervals']=='absolute') {
+//
+// End time
+//
+if ($prefs['time_intervals'] == 'absolute') {
 	// Set to default empty date if all fields empty
 	if (!($_SESSION['app_data']['end_year'] || $_SESSION['app_data']['end_month'] || $_SESSION['app_data']['end_day']))
 		$_SESSION['app_data']['end_time'] = '0000-00-00 00:00:00';
-		// Report error if some of the fields empty
+		// Report error if some of the fields empty TODO
 	elseif (!$_SESSION['app_data']['end_year'] || !$_SESSION['app_data']['end_month'] || !$_SESSION['app_data']['end_day']) {
 		$_SESSION['errors']['end_time'] = 'Partial end time!';
 		$_SESSION['app_data']['end_time'] = ($_SESSION['app_data']['end_year'] ? $_SESSION['app_data']['end_year'] : '0000') . '-'
@@ -91,7 +94,7 @@ if ($prefs['time_intervals']=='absolute') {
 				+ $_SESSION['app_data']['delta_minutes'] * 60;
 		$_SESSION['app_data']['end_time'] = date('Y-m-d H:i:s', $unix_end_time);
 	} else {
-		$_SESSION['errors']['end_time'] = 'Invalid time interval!';	// TRAD
+		$_SESSION['errors']['end_time'] = _Ti('app_input_time_length') . _T('time_warning_invalid_format') . ' (' . $_SESSION['app_data']['delta_hours'] . ')'; // XXX
 		$_SESSION['app_data']['end_time'] = $_SESSION['app_data']['start_time'];
 	}
 }
@@ -103,7 +106,7 @@ if ($prefs['time_intervals']=='absolute') {
 		$_SESSION['app_data']['reminder'] = '0000-00-00 00:00:00';
 		// Report error if some of the fields empty
 	elseif (!$_SESSION['app_data']['reminder_year'] || !$_SESSION['app_data']['reminder_month'] || !$_SESSION['app_data']['reminder_day']) {
-		$_SESSION['errors']['reminder'] = 'Partial reminder time!';
+		$_SESSION['errors']['reminder'] = 'Partial reminder time!'; // TRAD
 		$_SESSION['app_data']['reminder'] = ($_SESSION['app_data']['reminder_year'] ? $_SESSION['app_data']['reminder_year'] : '0000') . '-'
 							. ($_SESSION['app_data']['reminder_month'] ? $_SESSION['app_data']['reminder_month'] : '00') . '-'
 							. ($_SESSION['app_data']['reminder_day'] ? $_SESSION['app_data']['reminder_day'] : '00') . ' '
@@ -121,7 +124,7 @@ if ($prefs['time_intervals']=='absolute') {
 		$unix_reminder_time = strtotime($_SESSION['app_data']['reminder']);
 
 		if ( ($unix_reminder_time<0) || !checkdate($_SESSION['app_data']['reminder_month'],$_SESSION['app_data']['reminder_day'],$_SESSION['app_data']['reminder_year']) )
-			$_SESSION['errors']['reminder'] = 'Invalid reminder time!';
+			$_SESSION['errors']['reminder'] = 'Invalid reminder time!'; // TRAD
 //		else 
 //			$_SESSION['app_data']['reminder'] = date('Y-m-d H:i:s',$unix_reminder_time);
 	}
@@ -135,7 +138,7 @@ if ($prefs['time_intervals']=='absolute') {
 				- $_SESSION['app_data']['rem_offset_minutes'] * 60;
 		$_SESSION['app_data']['reminder'] = date('Y-m-d H:i:s', $unix_reminder_time);
 	} else {
-		$_SESSION['errors']['reminder'] = 'Invalid reminder offset!';	// TRAD
+		$_SESSION['errors']['reminder'] = _Ti('app_input_reminder') . _T('time_warning_invalid_format') . ' (' . $_SESSION['app_data']['rem_offset_hours'] . ')'; // XXX
 		$_SESSION['app_data']['reminder'] = $_SESSION['app_data']['start_time'];
 	}
 }
