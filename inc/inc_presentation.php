@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.174 2005/03/21 14:23:12 makaveev Exp $
+	$Id: inc_presentation.php,v 1.175 2005/03/21 15:11:43 mlutfy Exp $
 */
 
 //
@@ -66,6 +66,12 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 	<title>". ($lcm_site_name ? $lcm_site_name . " | " : '') . $title ."</title>
 	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n";
 	echo "$meta\n";
+
+	// The 'antifocus' is used to erase default titles such as "New appointment"
+	echo "<script type='text/javascript'><!--
+			var title_antifocus = false;
+		//--></script>\n";
+	
 	echo "	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_basic_layout.css\" media=\"screen\" />
 	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_print.css\" media=\"print\" />\n";
 
@@ -1337,6 +1343,61 @@ function show_context_case_involving($id_case) {
 
 function show_context_end() {
 	echo "</ul>\n";
+}
+
+function show_attachments_list($type, $id_type) {
+	if (! ($type == 'case' || $type == 'client' || $type == 'org')) 
+		lcm_panic("unknown type -" . $type . "-");
+
+	$q = "SELECT * 
+			FROM lcm_" . $type . "_attachment 
+			WHERE id_" . $type . " = " . intval($id_type);
+
+	$result = lcm_query($q);
+	$i = lcm_num_rows($result);
+
+	if ($i > 0) {
+		echo '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
+		echo "<tr>\n";
+		echo '<th class="heading">' . _Th('file_input_name') . "</th>\n";
+		echo '<th class="heading">' . _Th('file_input_type') . "</th>\n";
+		echo '<th class="heading">' . _Th('file_input_size') . "</th>\n";
+		echo '<th class="heading">' . _Th('file_input_description') . "</th>\n";
+		echo "</tr>\n";
+
+		for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
+			echo "<tr>\n";
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
+				. '<a href="view_file.php?type=' . $type . '&amp;file_id=' . $row['id_attachment']
+				. '" class="content_link">' . $row['filename'] . '</a></td>';
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
+			echo "</tr>\n";
+		}
+
+		echo "</table>\n";
+		echo "<br />\n";
+	}
+}
+
+function show_attachments_upload($type, $id_type) {
+	if (! ($type == 'case' || $type == 'client' || $type == 'org')) 
+		lcm_panic("unknown type -" . $type . "-");
+
+	echo '<div class="prefs_column_menu_head">' . 'Add new document' . "</div>\n"; // TRAD
+
+	echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+	echo '<input type="hidden" name="' . $type . '" value="' . $id_type . '" />' . "\n";
+	echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
+
+	echo '<strong>' . _Ti('file_input_name') . "</strong><br />";
+	echo '<input type="file" name="filename" size="40" />' . "<br />\n";
+
+	echo '<strong>' . _Ti('file_input_description') . "</strong><br />\n";
+	echo '<input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n";
+	echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
+	echo "</form>\n";
 }
 
 ?>
