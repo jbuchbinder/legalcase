@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.29 2005/02/20 22:17:37 antzi Exp $
+	$Id: inc_db_create.php,v 1.30 2005/02/20 22:29:08 antzi Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -100,6 +100,7 @@ function create_database() {
 		  size bigint(21) NOT NULL default '0',
 		  description text,
 		  content longblob NOT NULL,
+		  date_attached datetime NOT NULL default '0000-00-00 00:00:00',
 		  PRIMARY KEY  (id_attachment),
 		  KEY id_case (id_case),
 		  KEY filename (filename),
