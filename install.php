@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.33 2004/11/16 14:50:52 mlutfy Exp $
+	$Id: install.php,v 1.34 2005/01/17 14:45:15 mlutfy Exp $
 */
 
 
@@ -62,7 +62,7 @@ if (@file_exists('inc/config/inc_connect.php')) {
 	// forbidden area
 	echo "<div class='box_error'>\n";
 	echo "\t<h3>" . _T('warning_forbidden_area') . "</h3>\n";
-	echo "\t<p>" . _T('title_software_article') . " " . _T('warning_already_installed') . "</p>\n";
+	echo "\t<p>" . _T('warning_already_installed') . "</p>\n";
 	echo "</div>\n";
 
 	install_html_end();
@@ -314,7 +314,7 @@ else if ($step == 4) {
 				$old_lcm_db_version = $row['value'];
 
 			// Check if upgrade is needed
-			if ($old_lcm_db_version<$lcm_db_version) {
+			if ($old_lcm_db_version < $lcm_db_version) {
 				// Upgrade the existing database
 				include_lcm('inc_db_upgrade');
 				$upgrade_log  = upgrade_database($old_lcm_db_version);
@@ -337,13 +337,6 @@ else if ($step == 4) {
 
 		include_lcm('inc_db_test');
 		$structure_ok = lcm_structure_test();
-
-		if (!$already_installed) {
-			// [ML] This is not used at the moment (not checked once installed)
-			$query = "INSERT lcm_meta (name, value) VALUES ('new_installation', 'yes')";
-			lcm_query_db($query);
-			$structure_ok = !lcm_sql_errno();
-		}
 
 		// To simplify error listings
 		echo "\n\n";
