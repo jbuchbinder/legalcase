@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.193 2005/03/31 13:48:10 makaveev Exp $
+	$Id: inc_presentation.php,v 1.194 2005/03/31 13:49:54 mlutfy Exp $
 */
 
 //
@@ -604,6 +604,10 @@ function lcm_help($code, $anchor = '') {
 		. '<img src="images/lcm/help.png" alt="help: ' . $topic . '" '
 		. 'title="help: ' . $topic . '" width="12" height="12" border="0" align="middle" /> '
 		. "</a>\n";
+}
+
+function lcm_bubble($code) {
+	echo '<div class="small_help_box">' . _T('help_intro_' . $code) . "</div>\n";
 }
 
 // shows help link for a string rather than for icon (see GPL notice in install + footer)
