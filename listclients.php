@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.27 2005/03/16 08:16:01 mlutfy Exp $
+	$Id: listclients.php,v 1.28 2005/03/21 16:37:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,7 +28,7 @@ $find_client_string = '';
 if (isset($_REQUEST['find_client_string']))
 	$find_client_string = $_REQUEST['find_client_string'];
 
-lcm_page_start("List of clients"); // TRAD
+lcm_page_start(_T('title_client_list'));
 show_find_box('client', $find_client_string);
 
 // List all clients in the system + search criterion if any
