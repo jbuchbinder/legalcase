@@ -41,23 +41,24 @@ if (empty($errors)) {
 
 lcm_page_start("Edit organisation details");
 ?>
-<h1>Edit organisation information:</h1>
+<h2>Edit organisation information:</h2>
 <form action="upd_org.php" method="POST">
-	<table><caption><h3>Organisation details</h3></caption>
-		<tr><th>Parameter</th><th>Value</th></tr>
+<h3>Organisation details</h3>
+	<table class="tbl_usr_dtl" width="99%">
+		<tr><th class="heading">Parameter</th><th class="heading">Value</th></tr>
 		<tr><td>Organisation ID:</td>
 			<td><?php echo $org_data['id_org']; ?>
 			<input type="hidden" name="id_org" value="<?php echo $org_data['id_org']; ?>"></td></tr>
 		<tr><td>Name:</td>
-			<td><input name="name" value="<?php echo clean_output($org_data['name']); ?>"></td></tr>
+			<td><input name="name" value="<?php echo clean_output($org_data['name']); ?>" class="search_form_txt"></td></tr>
 		<tr><td>Created on:</td>
-			<td><input name="date_creation" value="<?php echo clean_output($org_data['date_creation']); ?>">
+			<td><input name="date_creation" value="<?php echo clean_output($org_data['date_creation']); ?>" class="search_form_txt">
 			<?php echo f_err('date_creation',$errors); ?></td></tr>
 		<tr><td>Updated on:</td>
-			<td><input name="date_update" value="<?php echo clean_output($org_data['date_update']); ?>">
+			<td><input name="date_update" value="<?php echo clean_output($org_data['date_update']); ?>" class="search_form_txt">
 			<?php echo f_err('date_update',$errors); ?></td></tr>
 		<tr><td>Address:</td>
-			<td><textarea name="address" cols="50" rows="3"><?php
+			<td><textarea name="address" cols="50" rows="3" class="frm_tarea"><?php
 			echo clean_output($org_data['address']); ?></textarea></td></tr>
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
