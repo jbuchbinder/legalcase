@@ -18,19 +18,22 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.16 2005/01/10 16:52:18 mlutfy Exp $
+	$Id: edit_author.php,v 1.17 2005/01/11 12:47:36 mlutfy Exp $
 */
+
+session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_contacts');
 
-session_start();
-
+global $author_session;
 $author = intval($_GET['author']);
 
-if (empty($errors)) {
+// TODO/FIXME: [ML] $usr variable was passed in $_SESSION, ...
+// bad for password.
 
+// if (empty($_SESSION['errors'])) {
     // Clear form data
     $usr = array();
 
@@ -47,10 +50,11 @@ if (empty($errors)) {
 
 	if ($existing) {
 		// Check if user is permitted to edit this author's data
-		if (($GLOBALS['author_session']['status'] != 'admin') &&
-			($author != $GLOBALS['author_session']['id_author'])) {
+		if (($author_session['status'] != 'admin') &&
+			($author != $author_session['id_author'])) {
 			die("You don't have the right to edit this author's details");
 		}
+
 		// Get author data
 		$q = "SELECT * FROM lcm_author WHERE id_author=$author";
 		$result = lcm_query($q);
@@ -58,7 +62,8 @@ if (empty($errors)) {
 			foreach ($row as $key => $value) {
 				$usr[$key] = $value;
 			}
-		} else  die(_T('error_no_such_user'));
+		} else
+			die(_T('error_no_such_user'));
 
 		$type_email = get_contact_type_id('email_main');
 
@@ -77,13 +82,15 @@ if (empty($errors)) {
 		$usr['email'] = '';
 		$usr['status'] = 'normal';
 	}
-}
+// }
 
 $statuses = array('admin', 'normal', 'external', 'trash', 'waiting', 'suspended');
 
 // Start the page with the proper title
 if ($existing) lcm_page_start("Edit author");
 else lcm_page_start("New author");
+
+echo show_all_errors($_SESSION['errors']);
 
 ?>
 <form name="edit_author" method="post" action="upd_author.php">
@@ -139,13 +146,13 @@ else lcm_page_start("New author");
 		if ($c['name'] != 'email_main')
 			echo "&nbsp;<img src=\"images/jimmac/stock_trash-16.png\" width=\"16\" height=\"16\" alt=\"Delete?\" title=\"Delete?\" />&nbsp;<input type=\"checkbox\" name=\"del_contact[]\" />";
 		else
-			$emailman_exists = true;
+			$emailmain_exists = true;
 
 		echo "</td>\n</tr>\n";
 		$cpt++;
 	}
 
-	if (! $emailman_exists) {
+	if (! $emailmain_exists) {
 		echo '<tr><td align="right" valign="top">' . _T("kw_contacts_emailmain_title") . "\n";
 		echo '<td align="left" valign="top">';
 		echo '<input name="contact_type[]" id="contact_type_' . $cpt . '" '
@@ -212,25 +219,30 @@ else lcm_page_start("New author");
 				lcm_log("ERROR: failed to initialize auth method");
 			}
 
-			// TODO: check with is_newpass_allowed() ...
-
-			if ($usr['id_author'] && $author_session['status'] != 'admin') {
-				echo '
+			// Some authentication methods might not allow the password
+			// to be changed. Show the fields only if it is possible.
+			if ($auth->is_newpass_allowed($usr['username'], $author_session)) {
+				if ($usr['id_author'] && $author_session['status'] != 'admin') {
+					echo '
 		<tr>
-			<td align="right" valign="top">' . _T('authorconf_input_password_current') . '</td>
+			<td align="right" valign="top">' . f_err_star('password_current', $_SESSION['errors']) . _T('authorconf_input_password_current') . '</td>
 			<td align="left" valign="top"><input name="usr_old_passwd" type="password" class="search_form_txt" id="usr_old_passwd" size="35" /></td>
 		</tr>' . "\n";
-			}
+				}
 		?>
 		
 		<tr>
-			<td align="right" valign="top"><?php echo _T('authorconf_input_password_new'); ?></td>
+			<td align="right" valign="top"><?php echo f_err_star('password_confirm', $_SESSION['errors']) . _T('authorconf_input_password_new'); ?></td>
 			<td align="left" valign="top"><input name="usr_new_passwd" type="password" class="search_form_txt" id="usr_new_passwd" size="35" /></td>
 		</tr>
 		<tr>
-			<td align="right" valign="top"><?php echo _T('authorconf_input_password_confirm'); ?></td>
+			<td align="right" valign="top"><?php echo f_err_star('password_confirm', $_SESSION['errors']) . _T('authorconf_input_password_confirm'); ?></td>
 			<td align="left" valign="top"><input name="usr_retype_passwd" type="password" class="search_form_txt" id="usr_retype_passwd" size="35" /></td>
 		</tr>
+
+		<?php
+			} /* is_newpass_allowed() */
+		?>
 
 		<tr><td align="right" valign="top">Status:</td>
 			<td align="left" valign="top"><select name="status" class="sel_frm" id="status">
@@ -249,5 +261,8 @@ else lcm_page_start("New author");
 <?php
 
 lcm_page_end();
+
+// Destroy session data (e.g error messages)
+session_destroy();
 
 ?>
