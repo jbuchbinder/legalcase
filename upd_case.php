@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.30 2005/01/27 18:16:06 mlutfy Exp $
+	$Id: upd_case.php,v 1.31 2005/02/08 10:12:13 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -57,6 +57,10 @@ if (count($_SESSION['errors'])) {
 			legal_reason='" . clean_input($_SESSION['case_data']['legal_reason']) . "',
 			alledged_crime='" . clean_input($_SESSION['case_data']['alledged_crime']) . "'";
 
+	// Add status to the list of fields
+	$fl .= ",status='" . $_SESSION['case_data']['status'] . "'";
+
+			
 // Put public access rights settings in a separate string
 	$public_access_rights = '';
 	if ($_SESSION['case_data']['public'] || read_meta('case_read_always'))
@@ -75,9 +79,6 @@ if (count($_SESSION['errors'])) {
 		// Check access rights
 		if (!allowed($id_case,'e')) die("You don't have permission to change this case's information!");
 
-		// If modifying existing case, add status change to the list of fields
-		$fl .= ",status='" . clean_input($_SESSION['case_data']['status']) . "'";
-
 		// If admin access is allowed, set all fields
 		if (allowed($id_case,'a'))
 			$q = "UPDATE lcm_case SET $fl,$public_access_rights WHERE id_case=$id_case";
@@ -85,7 +86,7 @@ if (count($_SESSION['errors'])) {
 			$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
 	} else {
 		// This is new case
-		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,status='open',$public_access_rights";
+		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,$public_access_rights";
 		$result = lcm_query($q);
 		$id_case = lcm_insert_id();
 		$id_author = $GLOBALS['author_session']['id_author'];
