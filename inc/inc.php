@@ -39,9 +39,13 @@ if ($lang AND $lang <> $author_session['lang'] AND lcm_set_language($lang)) {
 }
 
 if ($sel_theme) {
-	$prefs['theme'] = floor($sel_theme);
-	$prefs_mod = true;
-	lcm_log("Theme = " . $sel_theme);
+	// XSS risk: Theme names can only be alpha-numeric, "-" and "_"
+	$sel_theme = preg_replace("/[^-_a-zA-Z0-9]/", '', $sel_theme);
+
+	if (file_exists("styles/lcm_ui_" . $sel_theme . ".css")) {
+		$prefs['theme'] = ($sel_theme);
+		$prefs_mod = true;
+	}
 }
 
 // Update user preferences if modified
@@ -50,6 +54,8 @@ if ($prefs_mod) {
 				SET   prefs = '".addslashes(serialize($prefs))."' 
 				WHERE id_author = " . $author_session['id_author']);
 }
+
+lcm_log("Theme = " . $prefs['theme']);
 
 
 //
