@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.76 2005/03/23 10:08:15 mlutfy Exp $
+	$Id: edit_fu.php,v 1.77 2005/03/23 18:19:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -254,4 +254,5 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 	// Clear the errors, in case user jumps to other 'edit' page
 	$_SESSION['errors'] = array();
+	$_SESSION['fu_data'] = array();
 ?>
