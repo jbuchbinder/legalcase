@@ -23,7 +23,7 @@ use_language_of_visitor();
 
 // Presentation of the interface, headers and "<head></head>".
 // XXX You may want to use lcm_page_start() instead.
-function lcm_html_start($title = "", $onLoad = "") {
+function lcm_html_start($title = "") {
 	global $couleur_foncee, $couleur_claire, $couleur_lien, $couleur_lien_off;
 	global $flag_ecrire;
 	global $spip_lang_rtl, $spip_lang_left;
@@ -43,36 +43,93 @@ function lcm_html_start($title = "", $onLoad = "") {
 	@Header("Cache-Control: no-cache,no-store");
 	@Header("Pragma: no-cache");
 	@Header("Content-Type: text/html; charset=$charset");
-
-	echo "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>\n"
-		. "<html>\n"
-		. "<head>\n"
-		. "\t<title>[$nom_site_spip] $title</title>\n"
-		. "\t" . '<meta http-equiv="Content-Type" content="text/html; charset='.$charset.'">'
-		. "\t" . '<link rel="stylesheet" type="text/css" href="';
+	
+	//[KM] Here begins XHTML code
+	//My opinion is to use XHTML 1.0 Transitional because it supports simultaneously
+	//HTML code style and XHTML code style. Some kind of universal version.
+	
+	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\">
+<head>
+<title>". $nom_site_spip ." | ". $title ."</title>
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n";
 
 	// [ML] We might need something similar 
 	// (to calculate some colors in the CSS depending on variables)
 	// [ML] couleur_claire == light color, couleur_foncee == dark color
-	$link = new Link('lcm_css_basic.php');
-	$link->addVar('couleur_claire', $couleur_claire);
-	$link->addVar('couleur_foncee', $couleur_foncee);
-	$link->addVar('left', $GLOBALS['spip_lang_left']);
-	$link->addVar('right', $GLOBALS['spip_lang_right']);
-	echo $link->getUrl(). '">' . "\n";
-
- 	// echo "\t" . '<link rel="stylesheet" href="styles/spip_style_visible.css" type="text/css" title="visible" />' . "\n";
-
-	echo '</head>' . "\n";
+	
+	//[KM]
+	//$link = new Link('lcm_css_basic.php');
+	//$link->addVar('couleur_claire', $couleur_claire);
+	//$link->addVar('couleur_foncee', $couleur_foncee);
+	//$link->addVar('left', $GLOBALS['spip_lang_left']);
+	//$link->addVar('right', $GLOBALS['spip_lang_right']);
+	//echo $link->getUrl(). '">' . "\n";
+	
+	echo "<link rel=\"stylesheet\" href=\"styles/lcm_styles.css\" type=\"text/css\" />\n";
+	echo "</head>\n";
 
 	// [ML] couleur_lien = link color
 	// We should clean this I guess. It could simply be in the CSS files
-	echo "<body text='#000000' bgcolor='#f8f7f3' link='$couleur_lien' vlink='$couleur_lien_off' alink='$couleur_lien_off' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0' frameborder='0'";
+	
+	//[KM]
+	//echo "<body text='#000000' bgcolor='#f8f7f3' link='$couleur_lien' vlink='$couleur_lien_off' alink='$couleur_lien_off' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0' frameborder='0'";
 
 	// [ML] This also, even dough we do not support arabic/hebrew/farsi at the moment
+	
+	//[KM]
+	/*
 	if ($spip_lang_rtl)
 		echo " dir='rtl'";
 	echo ">";
+	*/
+	
+	//[KM] This is the last part of the header section of a single page
+	//For now the main menu and the calendar will be displayed constantly
+	//In the calendar there are some fake data that will be removed later
+	
+	echo "<body>
+<div id=\"header\">&nbsp;</div>
+	<div id=\"wrapper\">
+		<div id=\"container\">
+			<div id=\"content\">
+			<!-- This is the navigation column, usually used for menus and brief information -->
+				<div id=\"navigation_menu_column\">
+				<!-- Start of \"navigation_menu_column\" content -->
+					<div id=\"nav_menu_box\">
+						<div class=\"nav_column_menu_head\">Main menu</div>
+						<ul id=\"nav_menu_list\">
+							<li>Add/Edit Client</li>
+							<li>Add/Edit Case</li>
+							<li>Edit <abbr title=\"User Interface\">UI</abbr> preferences</li>
+						</ul>
+					</div>
+					<div id=\"nav_menu_box\">
+						<div class=\"nav_column_menu_head\">Calendar</div>
+						<p class=\"nav_column_text\">". date("l, dS F Y") ."</p>
+					</div>
+					<div id=\"nav_menu_box\">
+						<div class=\"nav_column_menu_head\">Next 7 meetings</div>
+						<p class=\"nav_column_text\">
+						<strong>Today</strong><br />
+						9:30 - Meeting with Mr. Smith<br /><br />
+						11:00 - At the court
+						</p>
+						<hr class=\"hair_line\" />
+						<p class=\"nav_column_text\">
+						<strong>Tomorrow(28.09.2004)</strong><br />
+						8:30 - Meeting with Mr. Johnson<br /><br />
+						10:00 - At the court
+						</p>
+					</div>
+					<br /><br />
+				<!-- End of \"navigation_menu_column\" content -->
+				</div>
+<!-- The main content will be here - all the data, html forms, search results etc. -->
+<div id=\"main_column\">
+<!-- Start of \"main_column\" content -->
+<h3 class=\"content_head\">". $title ."</h3>";
+
 }
 
 function lcm_page_start($title = "") {
@@ -103,15 +160,22 @@ function lcm_page_start($title = "") {
 
 	// Opening of the "main" part of the page
 	// [ML] This is temporary untill we cleanup the HTML
-	echo "<center>";
-	echo "<table><tr><td>\n";
+	
+	//[KM] Obsolete!
+	//Tags like <center></center> are substituted with for example <div align="center"></div>
+	
+	//echo "<center>";
+	//echo "<table><tr><td>\n";
 }
 
 // Footer of the interface
 // XXX You may want to use lcm_page_end() instead
 function lcm_html_end() {
-
-	echo "</font>";
+	
+	//[KM] Font tags are generally not recommended since we have CSS which defines the font family,
+	//different sizes, colors, letter spacing and some other font properties
+	
+	//echo "</font>";
 
 	// Create a new session cookie if the IP changed
 	// [ML] FIXME update paths and names
@@ -122,7 +186,42 @@ function lcm_html_end() {
 		echo "// --></script>\n";
 	}
 
-	echo "</body></html>\n";
+	//echo "</body></html>\n";
+	
+	//[KM] The bottom of a single page
+	//
+	echo "<!-- End of \"main_column\" content -->
+</div>
+			</div>
+		</div>
+<!-- The initial intention was that here can be placed some UI preferences -->
+<!-- but after revisiting AIMS I think it will be much better to put the search boxes -->
+<!-- The right and the left column can be very long, so, we can put here a lot of additional information, some tiny help hints and so -->
+		<div id=\"prefs_column\">
+<!-- Start of \"prefs_column\" content -->
+			<div class=\"prefs_column_menu_head\">Profile</div>
+			<p class=\"prefs_column_text\"><strong>Name:</strong> Krasimir Makaveev<br /><br />
+			<a href=\"#\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"#\" class=\"prefs_bold_lnk\">[ logout ]</a>
+			</p>
+			<div class=\"prefs_column_menu_head\">Search</div>
+			<p class=\"prefs_column_text\">
+			<form name=\"frm_find_client\" class=\"search_form\">
+			Find client<br />
+			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\" />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			</form>
+			<form name=\"frm_find_case\" class=\"search_form\">
+			Find case<br />
+			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\" />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			</form>
+			</p>
+<!-- End of \"prefs_column\" content -->
+		</div>
+		<div class=\"clearing\">&nbsp;</div>
+	</div>
+<div id=\"footer\">2004 &copy; Legal Case Management</div>
+</body>
+</html>";
+	
 	flush();
 }
 
@@ -132,7 +231,8 @@ function lcm_page_end($credits = '') {
 	global $connect_id_auteur;
 	global $auth_can_disconnect, $connect_login;
 
-	echo "</td></tr></table>";
+	//[KM]
+	//echo "</td></tr></table>";
 
 	///
 	// Insert FOOTER stuff here
@@ -145,7 +245,10 @@ function lcm_page_end($credits = '') {
 	// http://www.dynamicdrive.com/dynamicindex11/abox.htm
 
 	debut_grand_cadre(); // start_big_frame, needs cleaning
-
+	
+	//[KM] This is some copyright info and its place is not here I think
+	//But I'm not sure
+	/*
 	echo "<div align='right' class='verdana2'>";
 	echo "<b>LCM $lcm_version_shown</b> ";
 	echo _T('info_copyright');
@@ -161,7 +264,7 @@ function lcm_page_end($credits = '') {
 
 	echo "</center>";
 	echo "</td></tr></center>\n";
-
+	*/
 	//
 	// Language choice (temporarely put here by [ML])
 	//
@@ -511,16 +614,15 @@ function fin_grand_cadre(){
 function install_html_start($title = 'AUTO') {
 	global $spip_lang_rtl;
 
-	if ($title == 'AUTO')
-		$title = _T('install_title_installation_start');
+	if ($title=='AUTO')
+		$title=_T('info_installation_legal_case_management');
 
 	if (!$charset = read_meta('charset'))
 		$charset = 'utf-8';
 
 	@Header("Content-Type: text/html; charset=$charset");
 
-	echo "<html>
-<head>
+	echo "<html><head>
 	<title>$title</title>
 	<meta http-equiv='Expires' content='0'>
 	<meta http-equiv='cache-control' content='no-cache,no-store'>
@@ -538,17 +640,16 @@ function install_html_start($title = 'AUTO') {
 	.serif { font-family: Georgia, Garamond, Times New Roman, serif; }
 	-->
 	</style>
-</head>
-<body bgcolor='#FFFFFF' text='#000000' link='#E86519' vlink='#6E003A' alink='#FF9900' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0'";
+	</head>
+	<body bgcolor='#FFFFFF' text='#000000' link='#E86519' vlink='#6E003A' alink='#FF9900' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0'";
 
 	if ($spip_lang_rtl) echo " dir='rtl'";
 
-	echo "><br/>
+	echo "><br><br><br>
 	<center>
 	<table width='450'>
 	<tr><td width='450' class='serif'>
-	<p><font face='Verdana,Arial,Sans,sans-serif' size='4' color='#970038'><b>$title</b></font></p>\n";
-	echo "\n<!-- END install_html_start() -->\n\n";
+	<font face='Verdana,Arial,Sans,sans-serif' size='4' color='#970038'><B>$title</b></font>\n<p>";
 }
 
 /*
@@ -556,13 +657,13 @@ function install_html_start($title = 'AUTO') {
  * They are used by install.php and lcm_test_dirs.php
  */
 function install_html_end() {
-	echo "\n<!-- START install_html_end() -->\n";
-	echo "
+	echo '
+	</font>
 	</td></tr></table>
 	</center>
-	<br/>
-</body>
-</html>\n";
+	</body>
+	</html>
+	';
 }
 
 
