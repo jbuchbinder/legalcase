@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.15 2005/02/10 08:42:58 antzi Exp $
+	$Id: set_case_status.php,v 1.16 2005/02/10 09:08:11 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -29,14 +29,23 @@ include_lcm('inc_filters');
 $case = intval($_GET['case']);
 $status = clean_input($_GET['status']);
 
-// Get site preferences
-$fu_sum_billed = read_meta('fu_sum_billed');
-
+// Check if case_id is set
 if (!($case>0)) die("Which case?");
 
+// Check access rights
 if ( !(($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'we')) )
 	die("You don't have rights to set this case status!");
 
+// Get site preferences
+$fu_sum_billed = read_meta('fu_sum_billed');
+
+// Check if there are no errors - new followup
+if (! count($_SESSION['errors'])) {
+	// Clear followup data
+	$_SESSION['fu-data'] = array();
+}
+
+// Get case details
 $q = "SELECT * FROM lcm_case WHERE id_case=$case";
 $result = lcm_query($q);
 if (!($row=lcm_fetch_array($result))) die("There is no such case!");
@@ -91,18 +100,18 @@ switch ($status) {
 		echo get_date_inputs('start', $date_start, false);
 		echo ' ' . _T('calendar_info_time') . ' ';
 		echo get_time_inputs('start', $date_start);
-		echo ' ' . f_err('date_start',$errors);
+		echo ' ' . f_err_star('date_start',$errors);
 		echo "</td>
 		</tr>
 		<tr><td>Type:</td>
 			<td><input type='hidden' name='type' value='$type'>$type</td>
 		</tr>
 		<tr><td valign='top'>Description:</td>
-			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
+			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'>" . $_SESSION['fu_data']['description'] . "</textarea></td>
 		</tr>\n";
 		if ($fu_sum_billed == 'yes') {
 			echo "\t\t<tr><td>Sum billed:</td>
-			<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
+			<td><input name='sumbilled' value='" . $_SESSION['fu_data']['sumbilled'] . "' class='search_form_txt' size='10' />";
 			// [ML] If we do this we may as well make a function
 			// out of it, but not sure where to place it :-)
 			// This code is also in config_site.php
@@ -144,21 +153,24 @@ switch ($status) {
 		// Write form
 		echo '<form action="upd_fu.php" method="POST">
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td>Close date:</td>
+		<tr><td>Close:</td>
 			<td>';
+		echo _T('calendar_info_date');
 		echo get_date_inputs('start', $date_start, false);
-//		echo f_err('date_start',$errors);
+		echo ' ' . _T('calendar_info_time') . ' ';
+		echo get_time_inputs('start', $date_start);
+		echo ' ' . f_err_star('date_start',$errors);
 		echo "</td>
 		</tr>
 		<tr><td>Type:</td>
 			<td><input type='hidden' name='type' value='$type'>$type</td>
 		</tr>
 		<tr><td valign='top'>Description:</td>
-			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
+			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'>" . $_SESSION['fu_data']['description'] . "</textarea></td>
 		</tr>\n";
 		if ($fu_sum_billed == 'yes') {
 			echo "\t\t<tr><td>Sum billed:</td>
-			<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
+			<td><input name='sumbilled' value='" . $_SESSION['fu_data']['sumbilled'] . "' class='search_form_txt' size='10' />";
 			// [ML] If we do this we may as well make a function
 			// out of it, but not sure where to place it :-)
 			// This code is also in config_site.php
@@ -200,21 +212,24 @@ switch ($status) {
 		// Write form
 		echo '<form action="upd_fu.php" method="POST">
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td>Suspension date:</td>
+		<tr><td>Suspension:</td>
 			<td>';
+		echo _T('calendar_info_date');
 		echo get_date_inputs('start', $date_start, false);
-//		echo f_err('date_start',$errors);
+		echo ' ' . _T('calendar_info_time') . ' ';
+		echo get_time_inputs('start', $date_start);
+		echo ' ' . f_err_star('date_start',$errors);
 		echo "</td>
 		</tr>
 		<tr><td>Type:</td>
 			<td><input type='hidden' name='type' value='$type'>$type</td>
 		</tr>
 		<tr><td valign='top'>Description:</td>
-			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
+			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'>" . $_SESSION['fu_data']['description'] . "</textarea></td>
 		</tr>\n";
 		if ($fu_sum_billed == 'yes') {
 			echo "\t\t<tr><td>Sum billed:</td>
-				<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
+				<td><input name='sumbilled' value='" . $_SESSION['fu_data']['sumbilled'] . "' class='search_form_txt' size='10' />";
 			// [ML] If we do this we may as well make a function
 			// out of it, but not sure where to place it :-)
 			// This code is also in config_site.php
@@ -256,10 +271,13 @@ switch ($status) {
 		// Write form
 		echo '<form action="merge_case.php" method="POST">
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td>Merge date:</td>
+		<tr><td>Merge:</td>
 			<td>';
+		echo _T('calendar_info_date');
 		echo get_date_inputs('start', $date_start, false);
-//		echo f_err('date_start',$errors);
+		echo ' ' . _T('calendar_info_time') . ' ';
+		echo get_time_inputs('start', $date_start);
+		echo ' ' . f_err_star('date_start',$errors);
 		echo "</td>
 		</tr>
 		<tr><td>Type:</td>
@@ -289,11 +307,11 @@ switch ($status) {
 
 		// Description
 		echo "		<tr><td valign='top'>Description:</td>
-			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
+			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'>" . $_SESSION['fu_data']['description'] . "</textarea></td>
 		</tr>\n";
 		if ($fu_sum_billed == 'yes') {
 			echo "\t\t<tr><td>Sum billed:</td>
-			<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
+			<td><input name='sumbilled' value='" . $_SESSION['fu_data']['sumbilled'] . "' class='search_form_txt' size='10' />";
 			// [ML] If we do this we may as well make a function
 			// out of it, but not sure where to place it :-)
 			// This code is also in config_site.php
