@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.67 2005/03/09 14:51:52 antzi Exp $
+	$Id: edit_fu.php,v 1.68 2005/03/09 15:26:24 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -115,6 +115,10 @@ if (empty($_SESSION['errors'])) {
 
 					// Add separator
 					$_SESSION['fu_data']['description'] .= "\n--=+=--\n";
+
+					// Set start and end times of the followup from the appointment
+					$_SESSION['fu_data']['date_start'] = $row['start_time'];
+					$_SESSION['fu_data']['date_end']   = $row['end_time'];
 
 					// Save appointment ID as session variable
 					$_SESSION['fu_data']['id_app'] = $app;
