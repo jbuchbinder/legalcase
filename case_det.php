@@ -114,7 +114,10 @@ if ($case > 0) {
 
 	} else die(_T('error_no_such_case'));
 
-	echo "\n\n<br/>\n\n<table border='0' width='99%' align='center' class='tbl_data'>
+	echo "\n\n<br/>\n";
+	echo "\n<form name='frm_find_fu' class='search_form' action='case_det.php?case='$case' method='post'>Find followup:&nbsp;<input type='text' name='find_fu_string' size='10' class='search_form_txt'\n";
+
+	echo "\n<table border='0' width='99%' align='center' class='tbl_data'>
 	<caption>" . _T('case_followups') . ":</caption>
 	<tr><th class='tbl_head'>" . _T('date') . "</th>
 		<th class='tbl_head'>" . _T('type') . "</th>
@@ -126,10 +129,10 @@ if ($case > 0) {
 		FROM lcm_followup
 		WHERE (id_case=$case";
 
-	if (strlen($fu_search_string)>1) {
-		$q .= " AND ((date_start LIKE '%$fu_search_string%')
-					OR (type LIKE '%$fu_search_string%')
-					OR (description LIKE '%$fu_search_string%'))";
+	if (strlen($find_fu_string)>1) {
+		$q .= " AND ((date_start LIKE '%$find_fu_string%')
+					OR (type LIKE '%$find_fu_string%')
+					OR (description LIKE '%$find_fu_string%'))";
 	}
 
 	$q .= ")";
