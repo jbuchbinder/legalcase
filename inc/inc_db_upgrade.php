@@ -81,6 +81,14 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (5);
 	}
 
+	// Renames a previously unused column
+	// (stores a cookie for when user forgets pass and needs reset)
+	if ($lcm_db_version_current < 6) {
+		lcm_query("ALTER TABLE lcm_author DROP cookie_oubli");
+		lcm-query("ALTER TABLE lcm_author ADD cookie_recall char(3) default 'no' NOT NULL");
+		upgrade_db_version (6);
+	}
+
 
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.98) {

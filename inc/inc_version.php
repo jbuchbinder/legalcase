@@ -153,7 +153,7 @@ $lcm_version = 0.1;
 $lcm_version_shown = "0.1";
 
 // Current version of LCM database
-$lcm_db_version = 5;
+$lcm_db_version = 6;
 
 // Don't show silly warnings
 // [ML] For now, until the first beta, better to keep them
@@ -341,7 +341,6 @@ function include_data($file) {
 	include($lcmfile);
 	$GLOBALS['included_files'][$lcmfile] = 1;
 }
-
 
 $flag_connect = @file_exists('inc/config/inc_connect.php');
 
