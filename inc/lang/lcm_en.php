@@ -101,6 +101,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'edit' => 'Edit',
 'edit_case_details' => 'Edit case details',
 'edit_case_information' => 'Edit case information',
+'edit_filter_details' => 'Edit filter details',
+'edit_rep_details' => 'Edit report details',
 'enter_name_first' => 'First',
 'enter_name_last' => 'Last',
 'enter_name_middle' => 'Middle',
@@ -111,6 +113,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'error_no_read_permission' => 'You don\'t have permission to view this case!',
 'error_no_such_case' => 'There\'s no such case!',
 'error_no_such_user' => 'There is no such user in the database. How did you get in?',
+
+
+// F
+'filter_id' => 'Filter ID',
+'filter_title' => 'Title',
+'filter_type' => 'Conditions logic',
 
 
 // I
@@ -209,6 +217,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // M
 'menu_admin' => 'Administration',
 'menu_admin_archives' => 'Archives',
+'menu_admin_filters' => 'Filters',
 'menu_admin_keywords' => 'Keywords',
 'menu_admin_reports' => 'Reports',
 'menu_admin_siteconf' => 'Site configuration',
@@ -274,6 +283,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // R
 'read' => 'Read',
+'rep_title' => 'Title',
+'report_id' => 'Report ID',
 
 
 // S
