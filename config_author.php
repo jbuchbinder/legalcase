@@ -84,7 +84,7 @@ function show_author_form() {
 	$screen_modes = array("wide","narrow");
 	foreach ($screen_modes as $scrm) {
 		$selected_mode = ($scrm == $prefs['screen'] ? " selected='selected'" : '');
-		echo "<option value='" . $scrm . "'" . $selected_mode . ">" . $scrm .  "</option>\n";
+		echo "<option value='" . $scrm . "'" . $selected_mode . ">" . _T('userconf_screen_' . $scrm) . "</option>\n";
 	}
 ?>
 			</select>
