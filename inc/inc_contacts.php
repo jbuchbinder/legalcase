@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.18 2005/03/24 15:35:06 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.19 2005/04/05 11:55:12 makaveev Exp $
 */
 
 
@@ -367,7 +367,7 @@ function show_all_contacts($type_person, $id_of_person) {
 				$html .= "\t<tr>";
 				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>";
 				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-				$html .= '<a href="mailto:' . $c['value'] . '">' . $c['value'] . '</a></td>';
+				$html .= '<a href="mailto:' . $c['value'] . '" class="content_link">' . $c['value'] . '</a></td>';
 				$html .= "</tr>\n";
 				$i++;
 			}
