@@ -76,7 +76,7 @@ function create_database() {
 		id_case bigint(21) DEFAULT '0' NOT NULL,
 		date_start datetime NOT NULL,
 		date_end datetime NOT NULL,
-		type ENUM('assignment', 'suspension', 'resumption', 'delay', 'conclusion', 'reopening', 'consultation', 'correspondance', 'travel', 'other') NOT NULL,
+		type ENUM('assignment', 'suspension', 'resumption', 'delay', 'conclusion', 'reopening', 'merge', 'consultation', 'correspondance', 'travel', 'other') NOT NULL,
 		description text NOT NULL,
 		sumbilled decimal(19,4) NOT NULL,
 		PRIMARY KEY (id_followup),

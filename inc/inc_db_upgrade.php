@@ -271,7 +271,7 @@ function upgrade_database($old_db_version) {
 	}
 
 	if ($lcm_db_version_current < 15) {
-		lcm_query("ALTER TABLE `lcm`.`lcm_followup` CHANGE `type` `type` ENUM('assignment','suspension','resumption','delay','conclusion','reopening','consultation','correspondance','travel','other') DEFAULT 'assignment' NOT NULL");
+		lcm_query("ALTER TABLE `lcm`.`lcm_followup` CHANGE `type` `type` ENUM('assignment','suspension','resumption','delay','conclusion','reopening','merge','consultation','correspondance','travel','other') DEFAULT 'assignment' NOT NULL");
 		upgrade_db_version (15);
 	}
 
