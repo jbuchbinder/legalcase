@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.41 2005/01/18 20:31:56 antzi Exp $
+	$Id: config_author.php,v 1.42 2005/01/18 20:42:53 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -99,7 +99,7 @@ function show_author_form() {
 		<tr>
 			<td align="right" valign="top"><?php echo _T('authorconf_input_font_size'); ?></td>
 			<td align="left" valign="top">
-			
+
 				<input type="hidden" name="old_font_size" id="old_font_size" value="<?php echo $prefs['old_font_size'] ?>" />
 				<!-- <input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
                 &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" / >
@@ -127,10 +127,6 @@ function show_author_form() {
 					echo $prefs['page_rows']; ?>" />
 			</td>
 		</tr>
-		<tr>
-			<td colspan="2" align="center" valign="middle">
-				<input type="submit" name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
-		</tr>
 	    <tr>
 	    	<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_mode') ?></td>
 			<td align="left" valign="top">
@@ -148,6 +144,10 @@ function show_author_form() {
 				</select>
 			</td>
 		</tr>
+		<tr>
+			<td colspan="2" align="center" valign="middle">
+				<input type="submit" name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
+		</tr>
 	</table>
 </form>
 
@@ -164,6 +164,7 @@ function apply_author_ui_change() {
 	global $sel_language, $old_language;
 	global $sel_theme, $old_theme;
 	global $sel_screen, $old_screen;
+	global $sel_mode, $old_mode;
 
 	// Show modifications made one finished
 	$log = array();
