@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.36 2005/03/01 12:03:14 mlutfy Exp $
+	$Id: inc_filters.php,v 1.37 2005/03/02 08:40:03 antzi Exp $
 */
 
 // Execute this file only once
@@ -175,7 +175,7 @@ function get_person_name($item) {
 		return '';
 	}
 
-	return $item['name_first'] . ' ' . $item['name_middle'] . ' ' . $item['name_last'];
+	return njoin( array($item['name_first'], $item['name_middle'], $item['name_last']) );
 }
 
 // Dirty hack: utf8_decode is mainly used for strlen(),
