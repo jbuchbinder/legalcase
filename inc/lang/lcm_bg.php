@@ -13,17 +13,14 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // A
-'add' => 'Добавяне',
 'add_and_go_to_details' => 'Добавяне и отиване към детайлите',
 'add_and_open_new' => 'Добавяне и отваряне на нов',
 'add_client_s' => 'Добавяне на клиент/и',
 'add_organisation_s' => 'Добавяне на организация/и',
 'add_user_case' => 'Добавяне на потребител към дело',
-'alledged_crime' => 'Предполагаемо престъпление',
-'assignment_date' => 'Дата на възлагане',
 'author_id' => 'Идентификатор на автор',
 'authorconf_button_change_password' => 'Промяна на парола',
-'authorconf_button_update_preferences' => 'Обновяване на настройките',
+'authorconf_button_update_preferences' => '<MODIF>Обновяване на настройките',
 'authorconf_input_language' => 'Език:',
 'authorconf_input_password_confirm' => 'Потвърждение на новата парола:',
 'authorconf_input_password_current' => 'Текуща парола:',
@@ -39,6 +36,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_theme_orange' => 'оранжев',
 'authorconf_subtitle_interface' => 'Интерфейс',
 'authorconf_subtitle_password' => 'Промяна на парола',
+'authoredit_input_username' => '<NEW>Username:',
+'authoredit_subtitle_connectionidentifiers' => '<NEW>Connection identifiers',
+'authoredit_subtitle_personalinfo' => '<NEW>Personal information',
 
 
 // B
@@ -50,15 +50,21 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // C
-'case_clients' => 'Клиенти по това дело',
-'case_details' => 'Информация за делото',
-'case_followups' => 'Продължение по делото',
-'case_id' => 'Номер на делото',
-'case_status' => 'Състояние на делото',
-'case_title' => 'Име на делото',
-'case_user_s' => 'Потребител(и) по делото',
-'clients' => 'Клиенти',
-'court_archive_id' => 'Номер на делото в съда',
+'case_input_alledged_crime' => 'Предполагаемо престъпление:',
+'case_input_author' => 'Автор:',
+'case_input_authors' => 'Автори:',
+'case_input_clients' => 'Клиенти:',
+'case_input_court_archive' => 'Номер на делото в съда:',
+'case_input_date_assigned' => 'Дата на задаване:',
+'case_input_date_creation' => 'Дата на създаване:',
+'case_input_id' => 'Номер на делото:',
+'case_input_legal_reason' => 'Юридическо основание:',
+'case_input_organisations' => 'Организации:',
+'case_input_status' => 'Състояние:',
+'case_input_title' => 'Име на делото:',
+'case_subtitle_clients' => 'Клиенти по това дело',
+'case_subtitle_followups' => 'Продължение по делото',
+'case_subtitle_general' => '<NEW>General case information',
 'creation_date' => 'Дата на създаване',
 'currency_default_format' => 'лв',
 
@@ -99,7 +105,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // E
 'edit' => 'Редактиране',
-'edit_case_details' => 'Редактиране на информация за делото',
 'edit_case_information' => 'Редактиране на информация по делото',
 'edit_filter_details' => '<NEW>Edit filter details',
 'edit_rep_details' => '<NEW>Edit report details',
@@ -138,6 +143,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_your_contact_information' => 'Информацията за контакт с вас ...',
 'input_connection_identifiers' => 'Идентификация на вашата връзка ...',
 'input_email' => 'Адрес на ел. поща',
+'input_search_case' => '<NEW>Find case:',
+'input_search_client' => '<NEW>Find client:',
+'input_search_organisation' => '<NEW>Find organisation:',
 'install_connection_login' => 'Име на връзка',
 'install_connection_password' => 'Парола за връзка',
 'install_connection_succeeded' => 'Връзката е установена.',
@@ -195,7 +203,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // L
-'legal_reason' => 'Юридическо основание',
 'login_access_denied' => 'Достъпът е отказан.',
 'login_identifier_unknown' => 'Системата не разпознава името: „@login@“.',
 'login_info_login' => 'потребителско име за свързване със сайта',
@@ -230,15 +237,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_profile' => '<NEW>Profile',
 'menu_profile_logout' => '<NEW>Logout',
 'menu_profile_preferences' => '<NEW>My preferences',
+'menu_search' => 'Търсене',
 
 
 // N
-'new_case' => 'Ново дело',
 'new_followup' => 'Ново продължение',
-
-
-// O
-'organisations' => 'Организации',
 
 
 // P
@@ -321,6 +324,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_subtitle_followup_fields' => 'Следваща информация',
 'siteconf_subtitle_general_info' => 'Обща информация',
 'siteconf_subtitle_policy' => 'Политика на офиса',
+'siteconf_subtitle_regional' => '<NEW>Regional settings',
 'siteconf_subtitle_self_registration' => 'Самостоятелна регистрация на новите автори',
 'siteconf_warning' => '<b>Внимание!</b> Настройките на тази страница имат глобален ефект и могат да повлияят на функционирането на сайта.',
 'siteconf_warning_currency' => '<b>Предупреждение!</b> Ако промените паричната единица, текущата информация <strong>няма</strong> да бъде конвертирана.',
@@ -329,6 +333,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // T
 'title_authorconf' => 'Лични настройки',
+'title_case_details' => 'Информация за делото:',
+'title_case_edit' => 'Редактиране на информация за делото',
+'title_case_new' => 'Ново дело',
 'title_error' => 'Грешка',
 'title_site_configuration' => 'Настройки на сайта',
 'title_software' => 'Програма за управление на юридически практики',
