@@ -101,7 +101,7 @@ function read_meta_upd($name) {
 			if (! is_numeric($key)) {
 				$key = addslashes($key);
 				$val = ereg_replace("([\\\\'])", "\\\\1", $val);
-				$s .= "\$GLOBALS['kwg']['$name']['$key'] = '$val';\n";
+				$s .= "\$GLOBALS['system_kwg']['$name']['$key'] = '$val';\n";
 			}
 		}
 	}
@@ -119,7 +119,7 @@ function read_meta_upd($name) {
 				if (! is_numeric($key)) {
 					$key = addslashes($key);
 					$val = ereg_replace("([\\\\'])", "\\\\1", $val);
-					$s .= "\$GLOBALS['kwg']['" . $kwg['name'] .  "']['keywords']['$kw_name']['$key'] = '$val';\n";
+					$s .= "\$GLOBALS['system_kwg']['" . $kwg['name'] .  "']['keywords']['$kw_name']['$key'] = '$val';\n";
 				}
 			}
 		}
