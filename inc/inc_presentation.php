@@ -203,7 +203,8 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	// Start agenda box
 	echo '<div class="nav_menu_box">' . "\n";
 	echo '<div class="nav_column_menu_head">';
-	echo '<img src="images/jimmac/stock_reminder-16.png" width="16" height="16" alt="" />&nbsp;' . _T('menu_agenda') . "</div>\n";
+	echo '<a href="listapps.php">';
+	echo '<img src="images/jimmac/stock_reminder-16.png" width="16" height="16" alt="" />&nbsp;' . _T('menu_agenda') . "</a></div>\n";
 
 	// Show appointments for today
 	$q = "SELECT lcm_app.id_app,start_time,type,title
@@ -741,7 +742,7 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 
 	// Hour
 	if ($hours_only || !$select_hours) {
-		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
+		$ret .= "<input $dis size=\"4\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
 		$ret .= ($hours_only ? " hours\n" : " h, ");
 	} else {
 		if ($table)
