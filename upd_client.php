@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.14 2005/03/24 12:04:35 mlutfy Exp $
+	$Id: upd_client.php,v 1.15 2005/03/29 10:37:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -63,7 +63,6 @@ $cl = "name_first = '" . clean_input($_SESSION['client_data']['name_first']) . "
 	name_last = '" . clean_input($_SESSION['client_data']['name_last']) . "',
 	gender = '" . clean_input($_SESSION['client_data']['gender']) . "',
 	citizen_number = '" . clean_input($_SESSION['client_data']['citizen_number']) . "',
-	address = '" . clean_input($_SESSION['client_data']['address']) . "',
 	civil_status = '" . clean_input($_SESSION['client_data']['civil_status']) . "',
 	income = '" . clean_input($_SESSION['client_data']['income']) . "'";
 
