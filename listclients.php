@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.30 2005/03/29 15:36:10 mlutfy Exp $
+	$Id: listclients.php,v 1.31 2005/03/31 11:48:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -100,7 +100,7 @@ for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) 
 show_listclient_end($list_pos, $number_of_rows);
 
 ?>
-<a href="edit_client.php" class="create_new_lnk">Register new client</a> <?php /* TRAD */ ?>
+<p><a href="edit_client.php" class="create_new_lnk"><?php echo _T('client_button_new'); ?></a></p>
 <br /><br />
 <?php
 lcm_page_end();
