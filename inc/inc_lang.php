@@ -7,8 +7,9 @@ define('_INC_LANG', '1');
 
 //
 // Load a language file
+// [ML] "force" parameter might be useless
 //
-function charger_langue($lang, $module = 'lcm', $forcer = false) {
+function load_language_file($lang, $module = 'lcm', $force = false) {
 	if (@file_exists('inc/lang/'.$module.'_'.$lang.'.php')) {
 		$GLOBALS['idx_lang'] = 'i18n_'.$module.'_'.$lang;
 		include_lcm('lang/'.$module.'_'.$lang);
@@ -29,13 +30,17 @@ function charger_langue($lang, $module = 'lcm', $forcer = false) {
 	if (@file_exists('lang/perso.php')) {
 		include_lcm('lang/perso');
 	}
+}
 
+function charger_langue($lang, $module = 'lcm', $force = false) {
+	lcm_log("charger_langue is deprecated, use load_language_file");
+	load_language_file($lang, $module, $force);
 }
 
 //
 // Change the current language
 //
-function changer_langue($lang) {
+function lcm_set_language($lang) {
 	global $all_langs, $spip_lang_rtl, $spip_lang_right, $spip_lang_left, $spip_lang_dir, $spip_dir_lang;
 
 	$liste_langues = $all_langs.','.read_meta('langues_multilingue');
@@ -55,6 +60,11 @@ function changer_langue($lang) {
 		return false;
 }
 
+function changer_langue($lang) {
+	lcm_log("Use of deprecated function changer_langue(), use lcm_set_language instead");
+	return lcm_set_language($lang);
+}
+
 //
 // Set the current language depending on the information sent by the browser
 //
@@ -66,7 +76,7 @@ function regler_langue_navigateur() {
 		while(list(, $s) = each($accept_langs)) {
 			if (eregi('^([a-z]{2,3})(-[a-z]{2,3})?(;q=[0-9.]+)?$', trim($s), $r)) {
 				$lang = strtolower($r[1]);
-				if (changer_langue($lang)) return $lang;
+				if (lcm_set_language($lang)) return $lang;
 			}
 		}
 	}
@@ -93,11 +103,11 @@ function traduire_chaine($code, $args) {
 	while (!$text AND (list(,$module) = each ($modules))) {
 		$var = "i18n_".$module."_".$lcm_lang;
 		if (!$GLOBALS[$var])
-			charger_langue($lcm_lang, $module);
+			load_language_file($lcm_lang, $module);
 
 		if (!$flag_ecrire) {
 			if (!isset($GLOBALS[$var][$code]))
-				charger_langue($lcm_lang, $module, $code);
+				load_language_file($lcm_lang, $module, $code);
 
 			if (isset($GLOBALS[$var][$code]))
 				$cache_lang[$lcm_lang][$code] = 1;
@@ -125,10 +135,14 @@ function traduire_chaine($code, $args) {
 }
 
 
-function traduire_nom_langue($lang) {
+function translate_language_name($lang) {
 	$r = $GLOBALS['codes_langues'][$lang];
 	if (!$r) $r = $lang;
 	return $r;
+}
+
+function traduire_nom_langue($lang) {
+	return translate_language_name($lang);
 }
 
 function init_codes_langues() {
@@ -331,14 +345,14 @@ function changer_typo($lang = '', $source = '') {
 // selectionner une langue
 function lang_select ($lang='') {
 	global $pile_langues, $lcm_lang;
-	php3_array_push($pile_langues, $lcm_lang);
-	changer_langue($lang);
+	array_push($pile_langues, $lcm_lang);
+	lcm_set_language($lang);
 }
 
 // revenir a la langue precedente
 function lang_dselect ($rien='') {
 	global $pile_langues;
-	changer_langue(php3_array_pop($pile_langues));
+	lcm_set_language(array_pop($pile_langues));
 }
 
 
@@ -348,69 +362,69 @@ function lang_dselect ($rien='') {
 // - 'var_lang' = [NOT USED] langue de l'article, espace public
 // - 'changer_lang' = [NOT_USED] langue de l'article, espace prive
 // 
-function menu_languages($nom_select = 'var_lang_lcm', $default = '', $texte = '', $herit = '') {
-	global $couleur_foncee, $couleur_claire, $flag_ecrire, $connect_id_auteur;
+function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = '', $herit = '') {
+	global $couleur_foncee, $couleur_claire, $connect_id_auteur;
 
 	if ($default == '')
 		$default = $GLOBALS['lcm_lang'];
 
-	if ($nom_select == 'var_lang_lcm_all') {
+	if ($select_name == 'var_lang_lcm_all') {
 		$langues = explode(',', $GLOBALS['all_langs']);
 		// [ML] XXX because I need a normal var_lang_lcm, but with all 
 		// the languages, instead, the function parameters should be changed.
-		$nom_select = 'var_lang_lcm';
+		$select_name = 'var_lang_lcm';
 	} else {
 		$langues = explode(',', read_meta('langues_multilingue'));
 	}
 
-	if (count($langues) <= 1) return;
+	// We do not offer a choice if there is only one language installed
+	if (count($langues) <= 1)
+		return;
 
-	if (!$couleur_foncee) $couleur_foncee = '#044476';
+	if (!$couleur_foncee)
+		$couleur_foncee = '#044476';
 
 	$lien = $GLOBALS['clean_link'];
 
-	if ($nom_select == 'changer_lang') {
+	if ($select_name == 'changer_lang') {
 		$lien->delvar('changer_lang');
 		$lien->delvar('url');
 		$post = $lien->getUrl();
-		$cible = '';
+		$target = '';
 	} else {
 		include_lcm('inc_admin');
-		$cible = $lien->getUrl();
+		$target = $lien->getUrl();
 		$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
 	}
 
 	$ret = "<form action='$post' method='post' style='margin:0px; padding:0px;'>";
-	if ($cible)
-		$ret .= "<input type='hidden' name='url' value='$cible'>";
-	if ($texte)
-		$ret .= $texte;
 
-	if (!$flag_ecrire)
-		$style = "class='forml' style='vertical-align: top; max-height: 24px; margin-bottom: 5px; width: 120px;'";
-	else if ($nom_select == 'var_lang_lcm') 
-		$style = "class='verdana1' style='background-color: $couleur_foncee; max-height: 24px; border: 1px solid white; color: white; width: 100px;'";
-	else
-		$style = "class='fondl'";
+	if ($target)
+		$ret .= "<input type='hidden' name='url' value='$target'>";
+
+	if ($text)
+		$ret .= $text;
+
+	$style = "class='forml' style='vertical-align: top; max-height: 24px; margin-bottom: 5px; width: 120px;'";
+	// $style = "class='verdana1' style='background-color: $couleur_foncee; max-height: 24px; border: 1px solid white; color: white; width: 100px;'";
 
 	$postcomplet = new Link($post);
-	if ($cible) $postcomplet->addvar('url', $cible);
+	if ($target) $postcomplet->addvar('url', $target);
 
-	$ret .= "\n<select name='$nom_select' $style onChange=\"document.location.href='".$postcomplet->geturl()."&$nom_select='+this.options[this.selectedIndex].value\">\n";
+	$ret .= "\n<select name='$select_name' $style onChange=\"document.location.href='".$postcomplet->geturl()."&$select_name='+this.options[this.selectedIndex].value\">\n";
 
 	sort($langues);
 	while (list(, $l) = each ($langues)) {
 		if ($l == $default) {
 			$selected = ' selected';
-		}
-		else {
+		} else {
 			$selected = '';
 		}
 		if ($l == $herit) {
 			$ret .= "<option class='maj-debut' style='font-weight: bold;' value='herit'$selected>"
-				.traduire_nom_langue($herit)." ("._T('info_multi_herit').")</option>\n";
+				.translate_language_name($herit)." ("._T('info_multi_herit').")</option>\n";
 		}
-		else $ret .= "<option class='maj-debut' value='$l'$selected>".traduire_nom_langue($l)."</option>\n";
+		else $ret .= "<option class='maj-debut' value='$l'$selected>".translate_language_name($l)."</option>\n";
 	}
 	$ret .= "</select>\n";
 	$ret .= "<noscript><INPUT TYPE='submit' NAME='Valider' VALUE='&gt;&gt;' class='spip_bouton' $style></noscript>";
@@ -418,49 +432,12 @@ function menu_languages($nom_select = 'var_lang_lcm', $default = '', $texte = ''
 	return $ret;
 }
 
-//
-// Cette fonction est appelee depuis inc-public-global si on a installe
-// la variable de personnalisation $forcer_lang ; elle renvoie le brouteur
-// si necessaire vers l'URL xxxx?lang=ll
-//
-function verifier_lang_url() {
-	global $HTTP_GET_VARS, $HTTP_COOKIE_VARS, $lcm_lang, $clean_link;
-
-	// quelle langue est demandee ?
-	$lang_demandee = read_meta('langue_site');
-	if ($HTTP_COOKIE_VARS['lcm_lang_ecrire']) $lang_demandee = $HTTP_COOKIE_VARS['lcm_lang_ecrire'];
-	if ($HTTP_COOKIE_VARS['lcm_lang']) $lang_demandee = $HTTP_COOKIE_VARS['lcm_lang'];
-	if ($HTTP_GET_VARS['lang']) $lang_demandee = $HTTP_GET_VARS['lang'];
-
-	// Verifier que la langue demandee existe
-	include_lcm('inc_lang'); // [ML] XXX strange, we are in inc_lang...
-	lang_select($lang_demandee);
-	$lang_demandee = $lcm_lang;
-
-	// Renvoyer si besoin
-	if (!($HTTP_GET_VARS['lang']<>'' AND $lang_demandee == $HTTP_GET_VARS['lang'])
-	AND !($HTTP_GET_VARS['lang']=='' AND $lang_demandee == read_meta('langue_site')))
-	{
-		$destination = $clean_link;
-		$destination->addvar('lang', $lang_demandee);
-		if ($GLOBALS['recalcul'] == 'oui')
-			$destination->addvar('recalcul', 'oui');
-		@header("Location: ".$destination->getUrl());
-		exit;
-	}
-
-	// Subtilite : si la langue demandee par cookie est la bonne
-	// alors on fait comme si $lang etait passee dans l'URL
-	// (pour criteres {lang}).
-	$GLOBALS['lang'] = $lcm_lang;
-}
-
 
 //
-// Selection de langue haut niveau
+// High-level language selection function
 //
 function use_language_of_site() {
-	changer_langue($GLOBALS['langue_site']);
+	lcm_set_language($GLOBALS['langue_site']);
 }
 
 function use_language_of_visitor() {
@@ -470,13 +447,10 @@ function use_language_of_visitor() {
 		use_language_of_site();
 
 	if ($GLOBALS['author_session']['lang'])
-		changer_langue($GLOBALS['author_session']['lang']);
+		lcm_set_language($GLOBALS['author_session']['lang']);
 
-	if (!$flag_ecrire AND ($cookie_lang = $HTTP_COOKIE_VARS['lcm_lang']))
-		changer_langue($cookie_lang);
-
-	if ($flag_ecrire AND ($cookie_lang = $HTTP_COOKIE_VARS['lcm_lang_ecrire']))
-		changer_langue($cookie_lang);
+	if ($cookie_lang = $HTTP_COOKIE_VARS['lcm_lang'])
+		lcm_set_language($cookie_lang);
 
 }
 
@@ -488,7 +462,7 @@ function init_languages() {
 	global $pile_langues, $lang_typo, $lang_dir;
 
 	$all_langs = read_meta('langues_proposees');
-$langue_site = read_meta('langue_site');
+	$langue_site = read_meta('langue_site');
 	$cache_lang = array();
 	$cache_lang_modifs = array();
 	$pile_langues = array();
@@ -527,54 +501,5 @@ $langue_site = read_meta('langue_site');
 
 init_languages();
 use_language_of_site();
-
-
-//
-// array_push et array_pop pour php3 (a virer si on n'a pas besoin de la compatibilite php3
-// et a passer dans inc_version si on a besoin de ces fonctions ailleurs qu'ici)
-//
-/*
- * Avertissement : Cette librairie de fonctions PHP est distribuee avec l'espoir
- * qu'elle sera utile, mais elle l'est SANS AUCUNE GARANTIE; sans meme la garantie de
- * COMMERCIALISATION ou d'UTILITE POUR UN BUT QUELCONQUE.
- * Elle est librement redistribuable tant que la presente licence, ainsi que les credits des
- * auteurs respectifs de chaque fonctions sont laisses ensembles.
- * En aucun cas, Nexen.net ne pourra etre tenu responsable de quelques consequences que ce soit
- * de l'utilisation ou la mesutilisation de ces fonctions PHP.
- */
-/****
- * Titre : array_push() et array_pop() pour PHP3
- * Auteur : Cedric Fronteau
- * Email : charlie@nexen.net
- * Url :
- * Description : Implementation de array_push() et array_pop pour PHP3
-****/
-// Le code qui suit est encore un peu trop leger. Y a personne pour le coder en Java (ou en Flash) ?
-function php3_array_push(&$stack,$value){
-	if (!is_array($stack))
-		return FALSE;
-	end($stack);
-	do {
-		$k = key($stack);
-		if (is_long($k));
-			break;
-	} while(prev($stack));
-
-	if (is_long($k))
-		$stack[$k+1] = $value;
-	else
-		$stack[0] = $value;
-	return count($stack);
-}
-
-function php3_array_pop(&$stack){
-	if (!is_array($stack) || count($stack) == 0)
-		return NULL;
-	end($stack);
-	$v = current($stack);
-	$k = key($stack);
-	unset($stack[$k]);
-	return $v;
-}
 
 ?>
