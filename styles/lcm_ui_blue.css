@@ -305,6 +305,12 @@ a.prefs_logout {
 	border: 1px solid #369;
 }
 
+a.back_lnk {
+	background-color: #69c;
+	color: #036;
+	border: 1px solid #369;
+}
+
 /*
 a.prefs_logout:hover {
 	background-color: #def;
