@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.31 2005/02/23 00:31:03 antzi Exp $
+	$Id: inc_filters.php,v 1.32 2005/02/23 00:47:33 antzi Exp $
 */
 
 // Execute this file only once
@@ -136,7 +136,7 @@ function clean_output($string) {
 function njoin($parts,$separator=' ') {
 	if (!empty($parts) && is_array($parts)) {
 		foreach ($parts as $key => $value) {
-			if ($value === '') unset($parts[$key]);
+			if (empty($value)) unset($parts[$key]);
 		}
 		return join($separator,$parts);
 	} else return false;
