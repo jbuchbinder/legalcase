@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.15 2005/03/18 09:17:07 mlutfy Exp $
+	$Id: fu_det.php,v 1.16 2005/03/21 16:31:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -69,7 +69,7 @@ show_context_end();
 ?>
 
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td><?php echo 'Author:'; /* TRAD */ ?></td>
+		<tr><td><?php echo _T('case_input_author'); ?></td>
 			<td><?php echo get_person_name($fu_data); ?></td></tr>
 		<tr><td><?php echo _T('fu_input_date_start'); ?></td>
 			<td><?php echo format_date($fu_data['date_start']); ?></td></tr>
