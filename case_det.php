@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.92 2005/03/01 08:33:04 antzi Exp $
+	$Id: case_det.php,v 1.93 2005/03/01 09:31:55 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -66,15 +66,19 @@ if ($case > 0) {
 		echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
 
 		// Show tabs
-		$groups = array('general','clients','followups','times','attachments');
-		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 0 );
+		$groups = array('general' => _T('case_tab_general'),
+				'clients' => _T('case_tab_clients'),
+				'followups' => _T('case_tab_followups'),
+				'times' => _T('case_tab_times'),
+				'attachments' => _T('case_tab_attachments'));
+		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
 		switch ($tab) {
 			//
 			// General tab
 			//
-			case 0 :
+			case 'general' :
 				echo "<fieldset class='info_box'>";
 				echo "<div class='prefs_column_menu_head'>" . _T('case_subtitle_general') . "</div>";
 				echo "<p class='normal_text'>";
@@ -161,7 +165,7 @@ if ($case > 0) {
 			//
 			// Case clients / organisations
 			//
-			case 1 :
+			case 'clients' :
 				//
 				// Main table for attached organisations and clients
 				//
@@ -244,7 +248,7 @@ if ($case > 0) {
 			//
 			// Case followups
 			//
-			case 2 :
+			case 'followups' :
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_followups') . '</div>';
 				echo "<p class=\"normal_text\">\n";
@@ -343,7 +347,7 @@ if ($case > 0) {
 			//
 			// Time spent on case by authors
 			//
-			case 3 :
+			case 'times' :
 				// Get the information from database
 /*
 				// List followup authors, which are on the case
@@ -407,7 +411,7 @@ if ($case > 0) {
 			//
 			// Case attachments
 			//
-			case 4 :
+			case 'attachments' :
 				// Attach new file form
 				if ($add) {
 					echo '<fieldset class="info_box">';
