@@ -19,6 +19,17 @@ function upgrade_version ($version, $test = true) {
 	}
 }
 
+function upgrade_db_version ($version, $test = true) {
+	if ($test) {
+		lcm_query("REPLACE lcm_meta (name, value) VALUES ('lcm_db_version', '$version')");
+		lcm_log("upgrading database to version: $version");
+	} else {
+		include_lcm('inc_lang');
+		echo _T('install_warning_update_impossible', array('version' => $version));
+		exit;
+	}
+}
+
 function upgrade_database() {
 	global $lcm_db_version;
 	$log = "";
@@ -34,7 +45,7 @@ function upgrade_database() {
 	// and therefore there is no need to upgrade.
 	if (!$lcm_db_version_current) {
 		$lcm_db_version_current = $lcm_db_version;
-		upgrade_version($lcm_db_version_current);
+		upgrade_db_version($lcm_db_version_current);
 		return $log;
 	}
 
@@ -64,22 +75,22 @@ function upgrade_database() {
 												ADD ac_write tinyint(1) DEFAULT '0' NOT NULL,
 												ADD ac_admin tinyint(1) DEFAULT '0' NOT NULL");
 
-		upgrade_version (2);
+		upgrade_db_version (2);
 	}
 
-	if ($lcm_version_current < 3) {
+	if ($lcm_db_version_current < 3) {
 		lcm_query("ALTER TABLE lcm_case_author ADD ac_edit tinyint(1) DEFAULT '0' NOT NULL AFTER ac_write");
-		upgrade_version (3);
+		upgrade_db_version (3);
 	}
 
-	if ($lcm_version_current < 4) {
+	if ($lcm_db_version_current < 4) {
 		lcm_query("ALTER TABLE lcm_author ALTER id_office SET DEFAULT 0");
-		upgrade_version (4);
+		upgrade_db_version (4);
 	}
 
-	if ($lcm_version_current < 5) {
+	if ($lcm_db_version_current < 5) {
 		lcm_query("ALTER TABLE lcm_case ADD pub_write tinyint(1) DEFAULT '0' NOT NULL");
-		upgrade_version (5);
+		upgrade_db_version (5);
 	}
 
 

@@ -186,6 +186,9 @@ if ($installed_version <> $lcm_version) {
 	exit;
 }
 
+// Database version management
+//$lcm_db_version_current = read_meta('lcm_db_version');
+upgrade_database(); 
 
 //
 // Management of the global configuration of the site
