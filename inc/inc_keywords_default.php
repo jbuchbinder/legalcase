@@ -153,6 +153,79 @@ $system_keyword_groups = array (
 				"description" => "kw_appointments_court_session_description",
 				"ac_author" => "Y")
 		)
+	),
+
+	"civilstatus" => array(
+		"name" => "civilstatus",
+		"title" => "kwg_civilstatus_title",
+		"description" => "kwg_civilstatus_description",
+		"type" => "system",
+		"policy" => "optional",
+		"quantity" => "one",
+		"suggest" => "unknown",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array(
+			array (
+				"name" => "unknown",
+				"title" => "kw_civilstatus_unknown_title",
+				"description" => "kw_civilstatus_unknown_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "single",
+				"title" => "kw_civilstatus_single_title",
+				"description" => "kw_civilstatus_single_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "married", // or civil union
+				"title" => "kw_civilstatus_married_title",
+				"description" => "kw_civilstatus_married_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "divorced", // or seperated
+				"title" => "kw_civilstatus_divorced_title",
+				"description" => "kw_civilstatus_divorced_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "widowed",
+				"title" => "kw_civilstatus_widowed_title",
+				"description" => "kw_civilstatus_widowed_description",
+				"ac_author" => "Y"),
+		)
+	),
+
+	"income" => array(
+		"name" => "income",
+		"title" => "kwg_income_title",
+		"description" => "kwg_income_description",
+		"type" => "system",
+		"policy" => "optional",
+		"quantity" => "one",
+		"suggest" => "unknown",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array(
+			array (
+				"name" => "unknown",
+				"title" => "kw_income_unknown_title",
+				"description" => "kw_income_unknown_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "single",
+				"title" => "kw_income_low_title",
+				"description" => "kw_income_low_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "average",
+				"title" => "kw_income_average_title",
+				"description" => "kw_income_average_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "high",
+				"title" => "kw_income_high_title",
+				"description" => "kw_income_high_description",
+				"ac_author" => "Y"),
+		)
 	)
 );
 
