@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: merge_case.php,v 1.5 2005/02/07 21:26:11 antzi Exp $
+	$Id: merge_case.php,v 1.6 2005/02/07 21:41:47 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -31,6 +31,7 @@ $destination = intval($_POST['destination']);
 $case = intval($_POST['id_case']);
 $sumbilled = ($_POST['sumbilled'] ? $_POST['sumbilled'] : 0);
 $ref_edit_fu = clean_input($_POST['ref_edit_fu']);
+$id_author = $GLOBALS['author_session']['id_author'];
 
 // Check incoming data
 if ($type != 'merge') die("This module is used for case merging only!");
@@ -38,10 +39,6 @@ if (!($case>0)) die("Which case?");
 
 // Check access rights
 if (!allowed($case,'w')) die("You don't have permission to add information to this case!");
-
-// Add "merged to" follow-up to the old case
-$q = "INSERT INTO lcm_followup SET id_followup=0,id_case=$case,date_start=NOW(),type=$type,sumbilled=$sumbilled";
-$result = lcm_query($q);
 
 // Create new case if $destination is 0
 if ($destination==0) {
@@ -52,7 +49,6 @@ if ($destination==0) {
 			status='open'";
 	$result = lcm_query($q);
 	$destination = lcm_insert_id($result);
-	$id_author = $GLOBALS['author_session']['id_author'];
 
 	// Insert new case_author relation
 	$q = "INSERT INTO lcm_case_author SET
@@ -64,12 +60,26 @@ if ($destination==0) {
 	$result = lcm_query($q);
 }
 
+// Add "merged to" follow-up to the old case
+$q = "INSERT INTO lcm_followup SET id_followup=0,
+		id_case=$case,
+		id_author=$id_author,
+		date_start=NOW(),
+		date_end=NOW(),
+		type=$type,
+		sumbilled=$sumbilled,
+		description='Merged to case ID:$destination'";
+$result = lcm_query($q);
+
 // Add "merged from" follow-up to the new case
 $q = "INSERT INTO lcm_followup SET
 		id_followup=0,
 		id_case=$destination,
+		id_author=$id_author,
 		date_start=NOW(),
-		type=$type";
+		date_end=NOW(),
+		type=$type,
+		description='Case ID:$case merged in'";
 // That would cause double counting the sumbilled
 //		sumbilled=$sumbilled";
 $result = lcm_query($q);
