@@ -18,29 +18,38 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.1 2005/02/15 12:30:12 mlutfy Exp $
+	$Id: archive.php,v 1.2 2005/02/17 09:44:52 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
+// Check access rights
 if ($GLOBALS['author_session']['status'] != 'admin') 
 	die("You don't have the right to list all cases!");
 
-lcm_page_start("Case archives");
+// Show page start
+lcm_page_start("Archives");
+
+// Show tabs
+$tabs = array(	array('name' => 'All cases','url' => 'archive.php'),
+		array('name' => 'Export DB','url' => 'export_db.php'),
+		array('name' => 'Import DB','url' => 'import_db.php')
+	);
+show_tabs_links($tabs,0);
+
+// This should be shown in other tabs
+/*echo "<p>This will go into tabs: ";
+echo '<a href="export_db.php" class="content_link">' . "Export DB" . "</a>, ";
+echo '<a href="import_db.php" class="content_link">' . "Import DB" . "</a>";
+echo "</p>\n";*/
 
 $q = "SELECT DISTINCT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author
 		WHERE (lcm_case.id_case=lcm_case_author.id_case";
 
-// This should be shown in other tabs
-echo "<p>This will go into tabs: ";
-echo '<a href="export_db.php" class="content_link">' . "Export DB" . "</a>, ";
-echo '<a href="import_db.php" class="content_link">' . "Import DB" . "</a>";
-echo "</p>\n";
-
-$find_case_strinr = $_REQUEST['find_case_string'];
+$find_case_string = $_REQUEST['find_case_string'];
 
 // Add search criteria if any
 if (strlen($find_case_string) > 1) {

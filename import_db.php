@@ -18,16 +18,28 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.6 2005/02/04 10:13:57 antzi Exp $
+	$Id: import_db.php,v 1.7 2005/02/17 09:45:40 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
 
-function get_parameters() {
-	lcm_page_start('Import database');
+$tabs = array(	array('name' => 'All cases','url' => 'archive.php'),
+		array('name' => 'Export DB','url' => 'export_db.php'),
+		array('name' => 'Import DB','url' => 'import_db.php')
+	);
 
+function get_parameters() {
+	lcm_page_start('Archives');
+
+	// Show tabs
+	global $tabs;
+	show_tabs_links($tabs,2);
+
+	// Show tab header
+	echo "Import database\n";
+	
 	// Create form
 	echo "\n<form action='import_db.php' method='POST'>\n";
 	
@@ -61,6 +73,8 @@ function get_parameters() {
 }
 
 function import_database($input_filename) {
+	global $tabs;
+
 	// Clean input data
 	$input_filename = clean_input($input_filename);
 	// Check if file exists
@@ -69,7 +83,14 @@ function import_database($input_filename) {
 	if (file_exists($dir)) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
-			lcm_page_start("Warning!");
+			lcm_page_start('Archives');
+
+			// Show tabs
+			show_tabs_links($tabs,2,true);
+
+			// Show tab header
+			echo "Warning!\n";
+
 			echo "<fieldset class='info_box'>\n";
 			echo "<form action='import_db.php' method='POST'>\n";
 			echo "\tRestore operation will overwrite your database. Are you sure?<br />\n";
@@ -125,7 +146,14 @@ function import_database($input_filename) {
 	}	// Old backup version
 	else if ($backup_db_version > read_meta('lcm_db_version')) {
 		// Backup version newer than installed db version
-		lcm_page_start("Version mismatch!");
+		lcm_page_start('Archives');
+		
+		// Show tabs
+		show_tabs_links($tabs,2,true);
+
+		// Show tab header
+		echo "Version mismatch!\n";
+
 		echo "<fieldset class='info_box'>\n";
 		echo "Backup database version is newer than the installed database.";
 		echo "</fieldset\n>";
@@ -178,7 +206,14 @@ function import_database($input_filename) {
 	// Debugging
 	//lcm_query("use lcm");
 
-	lcm_page_start("Import finished");
+	lcm_page_start('Archives');
+
+	// Show tabs
+	show_tabs_links($tabs,2,true);
+
+	// Show tab header
+	echo "Import finished\n";
+
 	echo "<fieldset class='info_box'>\n";
 	echo "Backup '$input_filename' was successfully imported into database.";
 	echo "</fieldset\n>";

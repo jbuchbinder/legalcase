@@ -18,15 +18,27 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.7 2005/02/04 09:38:00 makaveev Exp $
+	$Id: export_db.php,v 1.8 2005/02/17 09:45:21 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
 
+$tabs = array(	array('name' => 'All cases','url' => 'archive.php'),
+		array('name' => 'Export DB','url' => 'export_db.php'),
+		array('name' => 'Import DB','url' => 'import_db.php')
+	);
+
 function get_parameters() {
-	lcm_page_start('Export database');
+	lcm_page_start('Archives');
+
+	// Show tabs
+	global $tabs;
+	show_tabs_links($tabs,1);
+
+	// Show tab header
+	echo "Export database\n";
 
 	// Create form
 	echo "<fieldset class='info_box'>\n";
@@ -65,6 +77,8 @@ function deldir($dir) {
 }
 
 function export_database($output_filename) {
+	global $tabs;
+	
 	// Clean input data
 	$output_filename = clean_input($output_filename);
 	// Check if file exists
@@ -72,7 +86,14 @@ function export_database($output_filename) {
 	if (file_exists("$root/inc/data/db-$output_filename")) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
-			lcm_page_start("Warning!");
+			lcm_page_start('Archives');
+
+			// Show tabs
+			show_tabs_links($tabs,1,true);
+
+			// Show tab header
+			echo "Warning!\n";
+
 			echo "<fieldset class='info_box'>\n";
 			echo "<form action='export_db.php' method='POST'>\n";
 			echo "\tBackup named '$output_filename' already exists. Do you want to overwrite it?<br />\n";
@@ -123,12 +144,19 @@ function export_database($output_filename) {
 	}
 	chmod("$root/inc/data/db-$output_filename",0700);
 	
-	lcm_page_start("Export finished");
+	lcm_page_start('Archives');
+
+	// Show tabs
+	show_tabs_links($tabs,1,true);
+
+	// Show tab header
+	echo "Export finished\n";
+
 	echo "<fieldset class='info_box'>\n";
 	echo "Database has been successfully exported. The name of the backup is '$output_filename'.";
 	echo "</fieldset>\n";
+
 	lcm_page_end();
-	
 }
 
 //
