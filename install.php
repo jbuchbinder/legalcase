@@ -10,8 +10,8 @@ use_language_of_visitor();
 if (@file_exists('inc/config/inc_connect.php')) {
 	install_html_start();
 	echo "<p><font face='Verdana,Arial,Sans,sans-serif' size='4'>"._T('avis_espace_interdit')."</font>";
-
 	install_html_end();
+
 	exit;
 }
 
@@ -58,14 +58,14 @@ if ($etape == 6) {
 	// [ML USELESS?] init_languages();
 
 	// Block public access to the 'data' subdirectory
-	// TODO: We might need to do this for more directories
+	// [ML] Moved data + config under inc, and blocked inc instead
 	ecrire_acces();
 	$protec = "deny from all\n";
-	$myFile = fopen('data/.htaccess', 'w');
+	$myFile = fopen('inc/.htaccess', 'w');
 	fputs($myFile, $protec);
 	fclose($myFile);
 
-	@unlink('data/inc_meta_cache.php');
+	@unlink('inc/data/inc_meta_cache.php');
 	if (!@rename('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php')) {
 		copy('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php');
 		@unlink('inc/config/inc_connect_install.php');
@@ -360,8 +360,11 @@ else if ($etape == 'dirs') {
 }
 
 else if (!$etape) {
+	// If LCM is unilingual (only one language file), we skip to step 2
 	$menu_lang = menu_languages('var_lang_lcm');
-	if (!$menu_lang) header("Location: lcm_test_dirs.php");
+
+	if (!$menu_lang)
+		header("Location: lcm_test_dirs.php");
 	else {
 		install_html_start();
 
