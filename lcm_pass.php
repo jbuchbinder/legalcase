@@ -35,49 +35,49 @@ function get_unique_username($username) {
 	return $unique_name;
 }
 
-// Resets the password using the cookie which was sent by e-mail
-function reset_pass($my_p, $my_password) {
+// If only a cookie (p) was provided, show the form to reset the password
+// If a cookie + password were provided, reset the password.
+function reset_pass($my_p, $my_password = 0) {
 	$my_p = addslashes($my_p);
 	$my_pass_forgotten = 'yes';
+	$errors = array();
 
-	$res = lcm_query("SELECT * 
-		FROM lcm_author
-		WHERE cookie_recall='$my_p' AND status <> 'trash' AND password <> ''");
+	if ($my_password) {
+		$res = lcm_query("SELECT id_author, username 
+				FROM lcm_author
+				WHERE cookie_recall='$my_p' AND status <> 'trash' AND password <> ''");
 
-	$row = lcm_fetch_array($res);
+		if ($row = lcm_fetch_array($res)) {
+			$usr['id_author'] = $row['id_author'];
+			$usr['username'] = $row['username'];
+		} else {
+			install_html_start(_T('pass_title_new_pass'), 'login');
+			echo "<div class='box_error'><p>" . _T('pass_warning_unknown_cookie') . "</p></div>\n";
+			return;
+		}
 
-	if (! $row) {
-		install_html_start(_T('pass_title_new_pass'), 'login');
-		echo "<div class='box_error'><p>" . _T('pass_warning_unknown_cookie') . "</p></div>\n";
-		return;
+		// FIXME: include auth type according to 'auth_type' field in DB
+		// default on 'db' if field not present/set.
+		// NOTE: author_session is not available here, since not logged in.
+		$class_auth = 'Auth_db';
+		include_lcm('inc_auth_db');
+
+		$auth = new $class_auth;
+
+		if ($auth->init()) {
+			$ok = $auth->newpass($usr['id_author'], $usr['username'], $my_password);
+			if (! $ok) $errors['password_generic'] = $auth->error;
+		} else {
+			lcm_log("pass change: failed auth init, signal 'internal error'.");
+			$errors['password_generic'] = $auth->error;
+		}
 	}
 
-	// Check whether there was a password provided and it is acceptable
-	$change_pass = true;
-
-	if (! $my_password)
-		$change_pass = false;
-	else if (strlen(utf8_decode($my_password)) <= 5) {
-		install_html_start(_T('pass_title_new_pass'), 'login');
-		$error = "<p>" . _T('pass_warning_too_short') . "</p>\n";
-		$change_pass = false;
-	}
-
-	if ($change_pass) {
-		$mdpass = md5($my_password);
-
-		lcm_query("UPDATE lcm_author
-				SET cookie_recall = '', password='$mdpass', alea_actuel=''
-				WHERE cookie_recall = '$my_p'");
-
-		$username = $row['username'];
-
-		install_html_start(_T('pass_info_pass_updated'), 'login');
-	} else {
+	if (count($errors) || ! $my_password) {
 		install_html_start(_T('pass_title_new_pass'), 'login');
 
-		if ($error)
-			echo "<div class='box_error'>" . $error;
+		include_lcm('inc_filters');
+		echo show_all_errors($errors);
 		
 		echo "<form name='form_newpass' id='form_newpass' action='lcm_pass.php' method='post'>\n";
 		echo "<input type='hidden' name='p' value='" .  htmlspecialchars($my_p) . "'>\n";
@@ -90,9 +90,8 @@ function reset_pass($my_p, $my_password) {
 		echo "<script type=\"text/javascript\"><!--
 				document.form_newpass.password.focus();
 				//--></script>\n";
-
-		if ($error)
-			echo "</div>\n";
+	} else {
+		install_html_start(_T('pass_info_pass_updated'), 'login');
 	}
 }
 
