@@ -66,6 +66,14 @@ body {
 	float: right;
 }
 
+#user_info_box_large_screen {
+	position: absolute;
+	top: 5px;
+	right: 10px;
+	width: 200px;
+	text-align: right;
+}
+
 .clearing {
 	height: 0;
 	clear: both;
