@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.10 2005/03/24 15:16:19 mlutfy Exp $
+	$Id: author_det.php,v 1.11 2005/03/24 15:26:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -46,8 +46,8 @@ if ($author > 0) {
 		$groups = array('general' => _T('generic_tab_general'),
 				'cases' => _T('generic_tab_cases'),
 				'followups' => _T('generic_tab_followups'),
-				'times' => _T('generic_tab_reports'),
-				'attachments' => _T('generic_tab_documents'));
+				'times' => _T('generic_tab_reports'));
+				// [ML] better not to support this, high risk of abuse // 'attachments' => _T('generic_tab_documents'));
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
@@ -145,7 +145,9 @@ if ($author > 0) {
 
 				if (lcm_num_rows($result)) {
 					echo '<fieldset class="info_box">' . "\n";
-					echo '<div class="prefs_column_menu_head">' . _T('author_subtitle_cases') . "</div>\n";
+					echo '<div class="prefs_column_menu_head">' 
+						.  _T('author_subtitle_cases', array('author' => get_person_name($author_data)))
+						. "</div>\n";
 					show_listcase_start();
 		
 					for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
@@ -164,7 +166,7 @@ if ($author > 0) {
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' 
 					. "<div style='float: right'>" . lcm_help('author_followups') . "</div>"
-					. _T('author_subtitle_followups')
+					. _T('author_subtitle_followups', array('author' => get_person_name($author_data)))
 					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 
@@ -278,7 +280,9 @@ if ($author > 0) {
 
 				// Show table headers
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('author_subtitle_reports') . '</div>';
+				echo '<div class="prefs_column_menu_head">' 
+					. _T('author_subtitle_reports', array('author' => get_person_name($author_data))) 
+					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
