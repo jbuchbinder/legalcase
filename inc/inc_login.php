@@ -10,6 +10,7 @@ include_lcm('inc_filters');
 include_lcm('inc_text');
 
 // Management of HTTP authentication
+// [ML] Might not be used at all -- or should be removed
 function auth_http($cible, $essai_auth_http) {
 	if ($essai_auth_http == 'oui') {
 		include_lcm('inc_session');
@@ -30,12 +31,13 @@ function auth_http($cible, $essai_auth_http) {
 }
 
 function open_login($title='') {
-	$text = "<div>";
+	$text = "<div>\n";
 
 	if ($title)
 		$text .= "<h3>$title</h3>";
 
-	$text .= '<div style="font-family: Verdana,arial,helvetica,sans-serif; font-size: 12px;">';
+	// $text .= '<div style="font-family: Verdana,arial,helvetica,sans-serif; font-size: 12px;">';
+	$text .= '<div id="login_main">' . "\n";
 	return $text;
 }
 
@@ -58,7 +60,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	// who is there, and it's probably a bookmark on bonjour=oui and not
 	// a cookie failure.
 	if ($GLOBALS['var_cookie_failed'])
-		$echec_cookie = ($GLOBALS['lcm_session'] != 'cookie_test_failed');
+		$cookie_failed = ($GLOBALS['lcm_session'] != 'cookie_test_failed');
 
 	global $author_session;
 	global $lcm_session, $PHP_AUTH_USER, $ignore_auth_http;
@@ -92,16 +94,6 @@ function login($cible, $prive = 'prive', $message_login='') {
 		return;
 	}
 
-	// Initialisations
-	$nom_site = lire_meta('site_name');
-	$url_site = lire_meta('site_address');
-
-	if (!$nom_site)
-		$nom_site = _T('info_mon_site_spip');
-
-	if (!$url_site) 
-		$url_site = "./";
-
 	if ($GLOBALS['var_erreur'] == 'pass')
 		$erreur = _T('login_password_incorrect');
 
@@ -112,6 +104,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	} else if ($login == '-1')
 		$login = '';
 
+	// other sources for authentication
 	$flag_autres_sources = $GLOBALS['ldap_present'];
 
 	// What informations to pass?
@@ -124,13 +117,13 @@ function login($cible, $prive = 'prive', $message_login='') {
 		$result = lcm_query($query);
 		if ($row = lcm_fetch_array($result)) {
 			if ($row['status'] == 'trash' OR $row['password'] == '') {
-				$status_login = -1; // refuse
+				$status_login = -1; // deny
 			} else {
 				$status_login = 1; // known login
 
 				// Which infos to pass for the javascript ?
 				$id_author = $row['id_author'];
-				$alea_actuel = $row['alea_actuel'];
+				$alea_actuel = $row['alea_actuel']; // for MD5
 				$alea_futur = $row['alea_futur'];
 
 				// Button for lenght of connection
@@ -141,7 +134,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 			}
 		}
 
-		// unknown login (except LDAP) or refused
+		// Unknown login (except LDAP) or refused
 		if ($status_login == -1 OR ($status_login == 0 AND !$flag_autres_sources)) {
 			$erreur = _T('login_identifier_unknown', array('login' => htmlspecialchars($login)));
 			$login = '';
@@ -155,16 +148,12 @@ function login($cible, $prive = 'prive', $message_login='') {
 	else
 		$js_focus = 'document.form_login.var_login.focus();';
 
-	if ($echec_cookie == "yes") {
-		echo open_login (_T('erreur_probleme_cookie'));
+	if ($cookie_failed == "yes") {
+		echo open_login(_T('erreur_probleme_cookie'));
 		echo "<p /><b>"._T('login_cookie_oblige')."</b> ";
 		echo _T('login_cookie_accepte')."\n";
 	} else {
-		echo open_login ();
-		if ($message_login) {
-			echo "<br />" .  _T("forum_vous_enregistrer") . " <a $pass_popup>"
-				.  _T("forum_vous_inscrire") .  "</a><p/>\n";
-		}
+		echo open_login();
 	}
 
 	$action = $clean_link->getUrl();
@@ -174,9 +163,9 @@ function login($cible, $prive = 'prive', $message_login='') {
 		$flag_challenge_md5 = true;
 
 		if ($flag_challenge_md5)
-			echo "<script type=\"text/javascript\" src=\"inc/md5.js\"></script>";
+			echo '<script type="text/javascript" src="inc/md5.js"></script>';
 
-		echo "<form name='form_login' action='lcm_cookie.php' method='post'";
+		echo '<form name="form_login" action="lcm_cookie.php" method="post"';
 
 		if ($flag_challenge_md5)
 			echo " onsubmit='if (this.session_password.value) {
@@ -246,7 +235,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	// Focus management
 	echo "<script type=\"text/javascript\"><!--\n" . $js_focus . "\n//--></script>\n";
 
-	if ($echec_cookie == "yes" AND $php_module AND !$ignore_auth_http) {
+	if ($cookie_failed == "yes" AND $php_module AND !$ignore_auth_http) {
 		echo "<form action='lcm_cookie.php' method='get'>";
 		echo "<fieldset>\n<p>";
 		echo _T('login_prefer_no_cookie') . " \n";
