@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.113 2005/03/21 07:44:03 mlutfy Exp $
+	$Id: case_det.php,v 1.114 2005/03/21 12:36:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -64,7 +64,7 @@ if ($case > 0) {
 		lcm_page_start(_T('title_case_details') . " " . $row['title']);
 
 		// [ML] This will probably never be implemented
-		// echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>"; // TRAD
+		// echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
 
 		// Show tabs
 		$groups = array('general' => _T('case_tab_general'),
@@ -286,12 +286,12 @@ if ($case > 0) {
 				if ($number_of_rows) {
 					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 					echo "\t<tr>";
-					echo '<th class="heading">Start time</th>'; // TRAD
+					echo '<th class="heading">' . _Th('time_input_date_start') . '</th>';
 					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Duration' ) . '</th>'; // TRAD
-					echo '<th class="heading">Type</th>'; // TRAD
-					echo '<th class="heading">Title</th>'; // TRAD
+					echo '<th class="heading">' . _Th('app_input_type') . '</th>';
+					echo '<th class="heading">' . _Th('app_input_title') . '</th>';
 					echo '<th class="heading">Reminder</th>'; // TRAD
-					echo '<th class="heading">Action</th>'; // TRAD
+					// [ML] echo '<th class="heading">Action</th>'; // TRAD
 					echo "</tr>\n";
 				
 					// Check for correct start position of the list
@@ -311,20 +311,26 @@ if ($case > 0) {
 					for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 						echo "<tr>\n";
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. date('d.m.y H:i',strtotime($row['start_time'])) . '</td>'; // FIXME [ML] use format_date for i18n
+							. format_date($row['start_time'], 'short') . '</td>';
+
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. ( ($prefs['time_intervals'] == 'absolute') ?
 								date('d.m.y H:i',strtotime($row['end_time'])) : /* FIXME [ML] */
 								format_time_interval(strtotime($row['end_time']) - strtotime($row['start_time']),
 											($prefs['time_intervals_notation'] == 'hours_only') )
 							) . '</td>';
+
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['type'] . '</td>';
+
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. date('d.m.y H:i',strtotime($row['reminder'])) . '</td>'; // FIXME [ML]
+							. format_date($row['reminder'], 'short') . '</td>'; // FIXME [ML]
+
+						/* [ML] 
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. '<a href="edit_app.php?app=' . $row['id_app'] . '" class="content_link">' . _T('edit') . '</a></td>';
+						*/ 
 						echo "</tr>\n";
 					}
 
