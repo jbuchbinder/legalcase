@@ -116,13 +116,19 @@ function lcm_page_start($title = "", $css_files = "") {
 	$clean_link->delVar('set_ecran');
 
 	lcm_html_start($title, $css_files);
+
+	// TODO: To make it possible to customize the site short description and logo
+	// (as is the case with the site_name)
+	$site_name = read_meta('site_name');
+	if (!$site_name)
+		$site_name = _T('title_software');
 	
 	// XXX TODO
 	// most of the header html after <head></head> should go here
 	//
 	
 	echo "
-	<div id='header'><h1 class='lcm_main_head'>Legal Case Management</h1><div class='lcm_slogan'>for not-for-profit legal advice centres</div></div>
+	<div id='header'><h1 class='lcm_main_head'>" . $site_name . "</h1><div class='lcm_slogan'>for not-for-profit legal advice centres</div></div>
 	<div id='wrapper'>
 		<div id=\"container\">
 			<div id=\"content\">
