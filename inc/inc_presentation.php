@@ -23,7 +23,7 @@ use_language_of_visitor();
 
 // Presentation of the interface, headers and "<head></head>".
 // XXX You may want to use lcm_page_start() instead.
-function lcm_html_start($title = "") {
+function lcm_html_start($title = "", $css_files = "") {
 	global $couleur_foncee, $couleur_claire, $couleur_lien, $couleur_lien_off;
 	global $flag_ecrire;
 	global $spip_lang_rtl, $spip_lang_left;
@@ -51,8 +51,8 @@ function lcm_html_start($title = "") {
 	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 <html xmlns=\"http://www.w3.org/1999/xhtml\">
 <head>
-<title>". $nom_site_spip ." | ". $title ."</title>
-<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n";
+	<title>". ($nom_site_spip ? $nom_site_spip ." | " : '') . $title ."</title>
+	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n";
 
 	// [ML] We might need something similar 
 	// (to calculate some colors in the CSS depending on variables)
@@ -66,7 +66,14 @@ function lcm_html_start($title = "") {
 	//$link->addVar('right', $GLOBALS['spip_lang_right']);
 	//echo $link->getUrl(). '">' . "\n";
 	
-	echo "<link rel='stylesheet' href='styles/lcm_styles.css' type='text/css' />\n";
+	echo "\t<link rel='stylesheet' href='styles/lcm_styles.css' type='text/css' />\n";
+
+	// It is the responsability of the function caller to make sure that
+	// the filename does not cause problems...
+	$css_files_array = explode(",", $css_files);
+	foreach ($css_files_array as $f)
+		echo "\t<link rel='stylesheet' href='styles/lcm_$f.css' type='text/css' />\n";
+	
 	echo "</head>\n";
 
 	// We do not support arabic/hebrew/farsi at the moment
@@ -77,7 +84,6 @@ function lcm_html_start($title = "") {
 	*/
 	
 	echo "<body>\n";
-
 }
 
 function lcm_page_start($title = "") {
@@ -601,42 +607,21 @@ function fin_grand_cadre(){
 function install_html_start($title = 'AUTO') {
 	global $spip_lang_rtl;
 
-	if ($title=='AUTO')
-		$title=_T('info_installation_legal_case_management');
 
-	if (!$charset = read_meta('charset'))
-		$charset = 'utf-8';
+	if ($title == 'AUTO')
+		$title = _T('install_title_installation_start');
 
-	@Header("Content-Type: text/html; charset=$charset");
+	lcm_html_start($title, "install");
 
-	echo "<html><head>
-	<title>$title</title>
-	<meta http-equiv='Expires' content='0'>
-	<meta http-equiv='cache-control' content='no-cache,no-store'>
-	<meta http-equiv='pragma' content='no-cache'>
-	<meta http-equiv='Content-Type' content='text/html; charset=$charset'>
-	<style>
-	<!--
-	a {text-decoration: none; }
-	A:Hover {color:#FF9900; text-decoration: underline;}
-	.forml {width: 100%; background-color: #FFCC66; background-position: center bottom; float: none; color: #000000}
-	.formo {width: 100%; background-color: #FFF0E0; background-position: center bottom; weight: bold; float: none; color: #000000}
-	.fondl {background-color: #FFCC66; background-position: center bottom; float: none; color: #000000}
-	.fondo {background-color: #FFF0E0; background-position: center bottom; float: none; color: #000000}
-	.fondf {background-color: #FFFFFF; border-style: solid ; border-width: 1; border-color: #E86519; color: #E86519}
-	.serif { font-family: Georgia, Garamond, Times New Roman, serif; }
-	-->
-	</style>
-	</head>
-	<body bgcolor='#FFFFFF' text='#000000' link='#E86519' vlink='#6E003A' alink='#FF9900' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0'";
+/*
+*/
 
-	if ($spip_lang_rtl) echo " dir='rtl'";
+	echo "\t<br/>\n";
+	echo "\t<div align='center'>\n";
+	echo "\t\t<div align='left' style='width: 450px;'>\n";
+	echo "\t\t<h1 style='font-family: Verdana,Arial,Sans,sans-serif; font-size: 120%; color: #970038'><b>$title</b></h1>\n";
 
-	echo "><br><br><br>
-	<center>
-	<table width='450'>
-	<tr><td width='450' class='serif'>
-	<font face='Verdana,Arial,Sans,sans-serif' size='4' color='#970038'><B>$title</b></font>\n<p>";
+	echo "\n<!-- END install_html_start() -->\n\n";
 }
 
 /*
@@ -644,13 +629,12 @@ function install_html_start($title = 'AUTO') {
  * They are used by install.php and lcm_test_dirs.php
  */
 function install_html_end() {
-	echo '
-	</font>
-	</td></tr></table>
-	</center>
+	echo "
+			</div>
+		</div>
 	</body>
 	</html>
-	';
+";
 }
 
 
