@@ -543,7 +543,7 @@ function install_html_start($title = 'AUTO') {
 
 	if ($spip_lang_rtl) echo " dir='rtl'";
 
-	echo "><br><br>
+	echo "><br/>
 	<center>
 	<table width='450'>
 	<tr><td width='450' class='serif'>
@@ -560,6 +560,7 @@ function install_html_end() {
 	echo "
 	</td></tr></table>
 	</center>
+	<br/>
 </body>
 </html>\n";
 }
