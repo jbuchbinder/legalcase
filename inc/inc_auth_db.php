@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.13 2005/01/11 16:11:15 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.14 2005/01/12 09:27:38 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -97,7 +97,10 @@ class Auth_db {
 		return $this->activate();
 	}
 
-	function is_newpass_allowed($id_author, $username, $author_session) {
+	function is_newpass_allowed($id_author, $username, $author_session = 0) {
+		if (! $author_session)
+			return true;
+
 		if ($author_session['username'] == $username)
 			return true;
 		else if ($author_session['status'] == 'admin')
@@ -106,7 +109,7 @@ class Auth_db {
 			return false;
 	}
 
-	function newpass($id_author, $username, $pass, $author_session) {
+	function newpass($id_author, $username, $pass, $author_session = 0) {
 		if ($this->is_newpass_allowed($id_author, $username, $author_session) == false)
 			return false;
 
@@ -124,14 +127,20 @@ class Auth_db {
 		return true;
 	}
 
-	function is_newusername_allowed($id_author, $username, $author_session) {
+	function is_newusername_allowed($id_author, $username, $author_session = 0) {
+		if (! $author_session)
+			return true;
+
 		if ($author_session['status'] == 'admin')
 			return true;
 		else
 			return false;
 	}
 
-	function newusername($id_author, $old_username, $new_username, $author_session) {
+	function newusername($id_author, $old_username, $new_username, $author_session = 0) {
+		if ($this->is_newusername_allowed($id_author, $username, $author_session) == false)
+			return false;
+
 		$query = "SELECT username
 					FROM lcm_author
 					WHERE username = '" . addslashes($new_username) . "'";
