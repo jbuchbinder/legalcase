@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.39 2005/03/24 20:03:51 antzi Exp $
+	$Id: upd_case.php,v 1.40 2005/03/28 10:44:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -29,10 +29,6 @@ global $author_session;
 
 // Clear all previous errors
 $_SESSION['errors'] = array();
-
-// Register form data in the session
-//if(!session_is_registered("case_data"))
-//    session_register("case_data");
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
@@ -127,7 +123,7 @@ if (count($_SESSION['errors'])) {
 		$q = "INSERT INTO lcm_followup
 				SET id_followup=0,id_case=$id_case,id_author=$id_author,type='assignment',description='";
 		$q .= njoin(array($author_data['name_first'], $author_data['name_middle'], $author_data['name_last']));
-		$q .= " created the case and is auto-assigned to it',date_start=NOW()";
+		$q .= " created the case and is auto-assigned to it',date_start=NOW()"; // TRAD
 		$result = lcm_query($q);
 
 		// Set case date_assigned to NOW()
