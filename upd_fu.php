@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.36 2005/03/24 20:45:29 antzi Exp $
+	$Id: upd_fu.php,v 1.37 2005/03/25 08:08:50 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -92,7 +92,7 @@ if ($prefs['time_intervals']=='absolute') {
 
 // Description
 if ( !(strlen($_SESSION['fu_data']['description']) > 0) )
-	$_SESSION['errors']['description'] = 'Description should not be empty!';	// TRAD
+	$_SESSION['errors']['description'] = _Ti('fu_input_description') . _T('warning_field_mandatory');
 
 if (count($_SESSION['errors'])) {
     header("Location: " . $GLOBALS['HTTP_REFERER']);
