@@ -55,7 +55,7 @@ function auth() {
 	$auth_htaccess = false;
 
 	// Fetch identification data from authentication session
-	else if ($cookie_session = $HTTP_COOKIE_VARS['lcm_session']) {
+	if ($cookie_session = $HTTP_COOKIE_VARS['lcm_session']) {
 		if (verifier_session($cookie_session)) {
 			if ($auteur_session['status'] == 'admin' OR $auteur_session['status'] == '1comite') {
 				$auth_login = $auteur_session['username'];
