@@ -162,6 +162,12 @@ function upgrade_database($old_db_version) {
 	
 		$result = lcm_query($query);
 
+		global $system_keyword_groups;
+		$system_keyword_groups = array();
+
+		include_lcm('inc_keywords_default');
+		create_groups($system_keyword_groups);
+
 		upgrade_db_version (10);
 	}
 
