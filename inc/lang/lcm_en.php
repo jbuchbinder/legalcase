@@ -33,6 +33,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'enter_name_first' => 'First',
 'enter_name_last' => 'Last',
 'enter_name_middle' => 'Middle',
+'Error' => 'Error',
+'error_add_auth_no_rights' => 'You don\'t have permission to add access rights to this case!',
 
 
 // I
@@ -107,7 +109,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_already_installed' => 'is already installed.',
 'warning_forbidden_area' => 'Forbidden area',
 'warning_operation_failed' => 'The operation failed.',
-'warning_sql_connection_failed' => 'Connection to SQL database server failed.'
+'warning_sql_connection_failed' => 'Connection to SQL database server failed.',
+'which_case' => 'Which case?'
 
 );
 
