@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.52 2005/03/22 09:35:15 mlutfy Exp $
+	$Id: inc_filters.php,v 1.53 2005/03/22 09:48:12 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -387,8 +387,7 @@ function http_href($href, $clic, $title='', $style='', $class='', $evt='') {
 // Produces an IMG tag with an 'alt' field and optional title + extra attributes
 // Warning: htmlentities and translation must be applied first.
 function http_img_pack($img, $alt = '', $att = '', $title = '') {
-	static $num = 0;
-	return '<img src="images/spip/' . $img . '" '
+	return '<img border="0" align="middle" src="images/spip/' . $img . '" '
 		. 'alt="' . ($alt ? $alt : '') . '" '
 		. ($title ? " title=\"$title\"" : '')
 		. $att . " />";
