@@ -21,12 +21,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.44 2005/03/18 11:05:13 mlutfy Exp $
+	$Id: install.php,v 1.45 2005/03/18 13:42:24 mlutfy Exp $
 */
 
 
 include('inc/inc_version.php');
 include_lcm('inc_presentation');
+include_lcm('inc_filters');
 include_lcm('inc_db');
 
 //
@@ -48,6 +49,17 @@ function put_text_in_textbox($text) {
 
 	return $textbox;
 }
+
+function get_number_admins() {
+	$query = "SELECT name_first, name_middle, name_last, username
+			  FROM lcm_author
+			  WHERE status = 'admin'";
+
+	$result = lcm_query($query);
+	$number = lcm_num_rows($result);
+	return $number;
+}
+
 
 //
 // Main program
@@ -76,31 +88,37 @@ if (@file_exists('inc/config/inc_connect.php')) {
 $step = $_REQUEST['step'];
 
 if ($step == 5) {
-	install_html_start();
-
-	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
-
-	// last step
-	echo "<div class='box_success'>\n";
-	echo "<p><b>"._T('install_info_do_not_forget') . "</b></p>\n";
-	echo "<p>" . _T('install_info_application_ready') . "</p>\n";
-	echo "</div>\n\n";
-
 	include_config('inc_connect_install');
 	include_lcm('inc_meta');
 	include_lcm('inc_access');
 
-	if ($_REQUEST['username']) {
-		// If the login name already exists, this provides a way to reset
-		// an administrator's account.
-		$name_first  = addslashes($_REQUEST['name_first']);
-		$name_middle = addslashes($_REQUEST['name_middle']);
-		$name_last   = addslashes($_REQUEST['name_last']);
-		$username    = addslashes($_REQUEST['username']);
+	session_start();
 
-		// XXX TODO: This should use inc_auth_db.php
+	$_SESSION['usr'] = array();
+	$_SESSION['errors'] = array();
 
-		$query = "SELECT id_author FROM lcm_author WHERE username='$username'";
+	// Either leave the form completely empty, or fill in everything
+	if ($_REQUEST['username'] || $_REQUEST['name_first'] || $_REQUEST['name_last'] || $_REQUEST['email']) {
+		$_SESSION['usr']['name_first']  = addslashes($_REQUEST['name_first']);
+		$_SESSION['usr']['name_middle'] = addslashes($_REQUEST['name_middle']);
+		$_SESSION['usr']['name_last']   = addslashes($_REQUEST['name_last']);
+		$_SESSION['usr']['username']    = addslashes($_REQUEST['username']);
+		$_SESSION['usr']['email']       = addslashes($_REQUEST['email']);
+
+		// First and last name are mandatory
+		if (! $_SESSION['usr']['name_first'])
+			$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . _T('warning_field_mandatory');
+		
+		if (! $_SESSION['usr']['name_last'])
+			$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . _T('warning_field_mandatory');
+
+		if (count($_SESSION['errors'])) {
+			header("Location: install.php?step=4");
+			exit;
+		}
+
+		// TODO: This should use inc_auth_db.php
+		$query = "SELECT id_author FROM lcm_author WHERE username='" . $_SESSION['usr']['username'] . "'";
 		$result = lcm_query($query);
 
 		unset($id_author);
@@ -109,41 +127,42 @@ if ($step == 5) {
 
 		$mdpass = md5($_REQUEST['pass']);
 
-		// Update main author information
+		// If user exists, allow to reset a forgotten password, which is possible
+		// by deleting inc_connect.php and re-installing (it does not affect the DB).
+		$query = "SET name_first = '" . $_SESSION['usr']['name_first'] . "', 
+					name_middle = '" . $_SESSION['usr']['name_middle'] . "', 
+					name_last = '" . $_SESSION['usr']['name_last'] . "', 
+					username = '" . $_SESSION['usr']['username'] . "', 
+					password = '" . $mdpass . "', 
+					alea_actuel = '', 
+					alea_futur = FLOOR(32000*RAND()), 
+					status = 'admin'";
+
 		if ($id_author) {
-			$query = "UPDATE lcm_author 
-						SET name_first = \"$name_first\", 
-							name_middle = \"$name_middle\", 
-							name_last = \"$name_last\", 
-							username = \"$username\", 
-							password = \"$mdpass\", 
-							alea_actuel = '', 
-							alea_futur = FLOOR(32000*RAND()), 
-							status = \"admin\" 
-					  WHERE id_author = $id_author";
+			$query = "UPDATE lcm_author " . $query . " WHERE id_author = " . $id_author;
+			lcm_query_db($query);
 		} else {
-			$query = "INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, alea_futur, status)
-							VALUES(\"$name_first\", \"$name_middle\", \"$name_last\", \"$username\", \"$mdpass\", FLOOR(32000*RAND()), \"admin\")";
+			$query = "INSERT INTO lcm_author " . $query;
+			lcm_query_db($query);
 			$id_author = lcm_insert_id();
 		}
 
-		lcm_query_db($query);
-
 		// Set e-mail for author
-		if ($email) {
+		if ($_SESSION['usr']['email']) {
 			include_lcm('inc_contacts');
 
-			if (! is_existing_contact('author', $id_author, 'email_main', $email))
-				add_contact('author', $id_author, 'email_main', $email);
+			if (! is_existing_contact('author', $id_author, 'email_main', $_SESSION['usr']['email']))
+				add_contact('author', $id_author, 'email_main', $_SESSION['usr']['email']);
+
+			// Insert email as main system administrator
+			write_meta('email_sysadmin', $_SESSION['usr']['email']);
 		}
-
-		// Insert email as main system administrator
-		write_meta('email_sysadmin', $email);
 	} else {
+		// Test if an administrator already exists
+		$number_admins = get_number_admins();
 
-		// TODO: We should test if any users exist at all, because it would
-		// leave the system in a unusable state...
-
+		if (! $number_admins)
+			$_SESSION['errors'] = _T('install_warning_no_admins_exist');
 	}
 
 	$site_address = read_meta('site_address');
@@ -159,6 +178,10 @@ if ($step == 5) {
 		write_meta('site_address', $site_address);
 	}
 
+	install_html_start();
+
+	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
+
 	include_lcm('inc_meta_defaults');
 	init_default_config();
 	init_languages();
@@ -169,11 +192,18 @@ if ($step == 5) {
 		@unlink('inc/config/inc_connect_install.php');
 	}
 
+	echo "<div class='box_success'>\n";
+	echo "<p><b>"._T('install_info_do_not_forget') . "</b></p>\n";
+	echo "<p>" . _T('install_info_application_ready') . "</p>\n";
+	echo "</div>\n\n";
+
 	echo "<form action='index.php' method='post'>\n";
 	echo "<div align='$lcm_lang_right'>"
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
+
+	session_destroy();
 
 	write_metas();
 
@@ -183,38 +213,33 @@ if ($step == 5) {
 else if ($step == 4) {
 	install_html_start();
 
+	session_start();
+
 	echo "<h3><small>" . _T('install_step_four') . "</small> "
 		. _T('install_title_admin_account') . "</h3>\n";
 
 	include_config('inc_connect_install');
 
-	// Test if an administrator already exists
-	$query = "SELECT name_first, name_middle, name_last, username
-			  FROM lcm_author
-			  WHERE status = 'admin'";
+	echo '<p class="simple_text">' 
+		. _T('install_info_new_account_1') . '<br />'
+		. _T('warning_field_mandatory_all') 
+		. ' ' . lcm_help('install_personal') . "</p>\n";
 
-	$result = lcm_query($query);
-	$number_admins = lcm_num_rows($result);
+	if (isset($_SESSION['errors']))
+		show_all_errors($_SESSION['errors']);
 
-	echo "<!-- Number of administrators: " . $number_admins . " -->\n";
-
-	echo "<p class=\"simple_text\">" . _T('install_info_new_account_1') . ' ' . lcm_help('install_personal') . "</p>\n";
-
-	if ($numrows)
-		echo "<p class=\"simple_text\">" . _T('install_info_new_account_2') . "</p>\n";
-
-	echo "\n<form action='install.php' method='post'>\n";
+	echo "<form action='install.php' method='post'>\n";
 	echo "<input type='hidden' name='step' value='5' />\n";
 
 	// Your contact information
 	echo "<fieldset class=\"fs_box\">\n";
-	echo "<p><b><label>". _T('info_your_contact_information') . "</label></b></p>\n";
+	echo "<p><b>". _T('info_your_contact_information') . "</b></p>\n";
 
 	// [ML] Altough not most problematic, could be better. But if someone
 	// fixes here, please fix lcm_pass.php also (function print_registration_form())
 	echo "<table border='0' cellpadding='0' cellspacing='5'><tr>\n";
 	echo "<td>
-			<strong><label for='name_first'>" . _T('person_input_name_first') . "</label></strong><br />
+			<strong><label for='name_first'>" . f_err_star('name_first') . _T('person_input_name_first') . "</label></strong><br />
 			<input type='text' style='width: 100%;' id='name_first' name='name_first' value='$name_first' size='15' class='txt_lmnt' />
 		</td>\n";
 	echo "<td>
@@ -231,30 +256,27 @@ else if ($step == 4) {
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n\n";
-	echo "</fieldset>\n\n";
 
 	// Identifiers
-	echo "<br />";
-	echo "<fieldset class=\"fs_box\">\n";
 	echo "<p><b>" . _T('input_connection_identifiers') . "</b></p>\n";
 
 	echo "<table border='0' cellpadding='0' cellspacing='5'>\n";
 	echo "<tr>\n";
 	echo "<td>";
-	echo "<b><label for='username'>" . _T('login_login') . "</label></b> \n";
+	echo "<b><label for='username'>" . _T('authoredit_input_username') . "</label></b> \n";
 	echo "<small>" . _T('info_more_than_three') . "</small><br />\n";
 	echo "<input style='width: 100%;' type='text' id='username' name='username' value='$username' size='40' class='txt_lmnt' />\n";
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>";
-
-	// TODO XXX
-	// - Confirm the password?
-	// - Error check if no authors and none created?
-
-	echo "<p><b><label for='pass'>" . _T('login_password') . "</label></b> \n";
+	echo "<p><b><label for='pass'>" . _T('authorconf_input_password') . "</label></b> \n";
 	echo "<small>" . _T('info_more_than_five')."</small><br />\n";
-	echo "<input style='width: 100%;' type='password' id='pass' name='pass' value='$pass' size='40' class='txt_lmnt' /></p>\n";
+	echo "<input style='width: 100%;' type='password' id='pass' name='pass' value='' size='40' class='txt_lmnt' /></p>\n";
+	echo "</td>\n";
+	echo "</tr><tr>\n";
+	echo "<td>";
+	echo "<p><b><label for='pass'>" . _T('authorconf_input_password_confirm') . "</label></b> \n";
+	echo "<input style='width: 100%;' type='password_confirm' id='pass' name='pass_confirm' value='' size='40' class='txt_lmnt' /></p>\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
@@ -481,9 +503,9 @@ else if ($step == 2) {
 		echo "<label for='manual_db'>" . _T('install_input_database_name') . "</label>\n";
 		echo "<input type='text' name='manual_db' id='manual_db' value='' size='20' class='txt_lmnt' /></li>\n";
 		echo "</ul>\n";
-		echo "</fieldset>\n";
 	}
 
+	echo "</fieldset>\n";
 	echo "<br /><div align='$lcm_lang_right'>"
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
@@ -518,34 +540,34 @@ else if ($step == 1) {
 	}
 
 	echo "<form action='install.php' method='post'>\n";
-	echo "<input type='hidden' name='step' value='2'>\n";
+	echo "<input type='hidden' name='step' value='2' />\n";
 
 	echo "<fieldset class='fs_box'>\n";
 
 	echo "<div><label for='db_address'><strong>" . _T('install_database_address') . "</strong></label></div>\n";
 	// echo "<div>" . _T('install_info_database_address') . "</div>\n";
-	echo "<input type='text' id='db_address' name='db_address' value=\"$db_address\" size='40' class='txt_lmnt'>\n";
+	echo "<input type='text' id='db_address' name='db_address' value=\"$db_address\" size='40' class='txt_lmnt' />\n";
 
 	echo "<br />\n";
 	echo "<br />\n";
 
-	echo "<div><label for='db_login'><strong>" . _T('install_connection_login') . "</strong></div></label>\n";
+	echo "<div><label for='db_login'><strong>" . _T('install_connection_login') . "</strong></label></div>\n";
 	// echo "<div>(" . _T('install_info_connection_login') . ")</div>\n";
-	echo "<input type='text' id='db_login' name='db_login' value=\"$db_login\" size='40' class='txt_lmnt'>\n";
+	echo "<input type='text' id='db_login' name='db_login' value=\"$db_login\" size='40' class='txt_lmnt' />\n";
 
 	echo "<br />\n";
 	echo "<br />\n";
 
-	echo "<div><label for='db_password'><strong>" . _T('install_connection_password') . "</strong></div></label>\n";
+	echo "<div><label for='db_password'><strong>" . _T('install_connection_password') . "</strong></label></div>\n";
 	// echo "<div>(" . _T('install_info_connection_password') . ")</div>\n";
-	echo "<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40' class='txt_lmnt'>\n";
+	echo "<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40' class='txt_lmnt' />\n";
 
-	echo "</fieldset>";
+	echo "</fieldset>\n";
 
 	echo "<div align='$lcm_lang_right'>"
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
-		. "</div>";
-	echo "</form>";
+		. "</div>\n";
+	echo "</form>\n";
 
 	install_html_end();
 }
@@ -584,7 +606,7 @@ else if (!$step) {
 	echo "<div align='center'><p>" . $menu_lang . "</p></div>\n";
 
 	echo "<form action='install.php' method='get'>\n";
-	echo "\t<input type='hidden' name='step' value='dirs'>\n";
+	echo "\t<input type='hidden' name='step' value='dirs' />\n";
 	echo "\t<div align='$lcm_lang_right'>"
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>";
