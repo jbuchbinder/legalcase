@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.6 2005/03/16 08:26:10 mlutfy Exp $
+	$Id: archive.php,v 1.7 2005/03/16 16:02:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,7 +30,7 @@ if ($GLOBALS['author_session']['status'] != 'admin')
 	die("You don't have the right to list all cases!");
 
 $find_case_string = '';
-if (isset($_REQUEST['find_case_string'])) {
+if (isset($_REQUEST['find_case_string']))
 	$find_case_string = $_REQUEST['find_case_string'];
 
 // Show page start
