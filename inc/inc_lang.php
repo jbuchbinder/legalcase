@@ -108,7 +108,8 @@ function traduire_chaine($code, $args) {
 		if (isset($GLOBALS[$var][$code]))
 			$cache_lang[$lcm_lang][$code] = 1;
 
-		$text = $GLOBALS[$var][$code];
+		if (array_key_exists($code, $GLOBALS[$var]))
+			$text = $GLOBALS[$var][$code];
 	}
 
 	// Languages which are not finished or late  (...)
@@ -123,9 +124,8 @@ function traduire_chaine($code, $args) {
 	}
 
 	if (empty($text) || $text == '') {
-		lcm_log("Warning: translation string -" . $code . "- has no text");
-		if ($debug)
-			$text = $code;
+		lcm_debug("Warning: translation string -" . $code . "- has no text");
+		$text = $code;
 	}
 
 	// Insert the variables into the strings
