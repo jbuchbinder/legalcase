@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.14 2005/03/02 16:15:48 antzi Exp $
+	$Id: edit_app.php,v 1.15 2005/03/05 00:28:22 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -32,12 +32,12 @@ if (empty($_SESSION['errors'])) {
 	$_SESSION['app_data'] = array('ref_edit_app' => ( $_GET['ref'] ? clean_input($_GET['ref']) : $GLOBALS['HTTP_REFERER']) );
 
 	if ($_GET['app']>0) {
-		$app = intval($_GET['app']);
+		$_SESSION['app_data']['id_app'] = intval($_GET['app']);
 
 		// Fetch the details on the specified appointment
 		$q="SELECT *
 			FROM lcm_app
-			WHERE id_app=$app";
+			WHERE id_app=" . $_SESSION['app_data']['id_app'];
 
 		$result = lcm_query($q);
 
@@ -50,7 +50,7 @@ if (empty($_SESSION['errors'])) {
 			$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
 				FROM lcm_author_app,lcm_author
 				WHERE lcm_author_app.id_author=lcm_author.id_author
-					AND id_app=$app";
+					AND id_app=" . $_SESSION['app_data']['id_app'];
 			$result = lcm_query($q);
 			$_SESSION['authors'] = array();
 			while ($row = lcm_fetch_array($result))
@@ -66,7 +66,7 @@ if (empty($_SESSION['errors'])) {
 		//$case = $_SESSION['app_data']['id_case'];
 		$modify = ($_SESSION['app_data']['id_author'] == $GLOBALS['author_session']['id_author']);
 	} else {
-		unset($app);
+		$_SESSION['app_data']['id_app'] = 0;
 		if ($_GET['case'] > 0) {
 			$_SESSION['app_data']['id_case'] = intval($_GET['case']);
 		}
@@ -83,7 +83,7 @@ if (empty($_SESSION['errors'])) {
 	$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
 		FROM lcm_author_app,lcm_author
 		WHERE lcm_author_app.id_author=lcm_author.id_author
-			AND id_app=$app";
+			AND id_app=" . $_SESSION['app_data']['id_app'];
 	$result = lcm_query($q);
 	$_SESSION['authors'] = array();
 	while ($row = lcm_fetch_array($result))
@@ -299,7 +299,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		$q = "SELECT lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
 			FROM lcm_client,lcm_app_client_org
 			LEFT JOIN lcm_org USING (id_org)
-			WHERE id_app=" . ( $_SESSION['app_data']['id_app'] ? $_SESSION['app_data']['id_app'] : 0 ) . "
+			WHERE id_app=" . $_SESSION['app_data']['id_app'] . "
 				AND lcm_client.id_client=lcm_app_client_org.id_client";
 		$result = lcm_query($q);
 		$q = '';
@@ -314,8 +314,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			FROM lcm_client AS c
 			LEFT JOIN lcm_client_org AS co USING (id_client)
 			LEFT JOIN lcm_org AS o ON (co.id_org=o.id_org)
-			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=";
-		$q .= ( $_SESSION['app_data']['id_app'] ? $_SESSION['app_data']['id_app'] : 0 ) . ")
+			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=" . $_SESSION['app_data']['id_app'] . ")
 			WHERE id_app IS NULL";
 		
 		$result = lcm_query($q);
@@ -351,7 +350,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		}
 	?>
 
-	<input type="hidden" name="id_app" value="<?php echo $app; ?>">
+	<input type="hidden" name="id_app" value="<?php echo $_SESSION['app_data']['id_app']; ?>">
 	<input type="hidden" name="id_case" value="<?php echo $_SESSION['app_data']['id_case']; ?>">
 	<input type="hidden" name="ref_edit_app" value="<?php echo $_SESSION['app_data']['ref_edit_app']; ?>">
 </form>
