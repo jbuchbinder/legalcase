@@ -510,7 +510,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 			. "<tr>\n"
 			. "<td><!-- " . _T('select_time_hour') . "<br/ -->\n";
 
-	$ret .= "<select name=\"" . $name . "_hour\" id=\"" . $name . "_hour\">\n";
+	$ret .= "<select name=\"" . $name . "_hour\" id=\"" . $name . "_hour\" align=\"right\">\n";
 
 	for ($i = 0; $i < 24; $i++) {
 		$default = ($i == $default_hour ? ' selected="selected"' : '');
@@ -531,7 +531,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 	// Minutes
 	if ($table)
 		$ret .= "<td><!-- " . _T('select_time_minutes') . "<br/ -->\n";
-	$ret .= ":<select name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\">\n";
+	$ret .= ":<select name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
 
 	for ($i = 0; $i < 60; $i++) {
 		$default = ($i == $default_minutes ? ' selected="selected"' : '');
@@ -546,8 +546,8 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 	// Seconds
 	if ($show_seconds) {
 		if ($table)
-			$ret .= "<td><!-- " . _T('select_date_year') . "<br/ -->\n";
-		$ret .= ":<select name=\"" . $name . "_year\" id=\"" . $name . "_year\">\n";
+			$ret .= "<td><!-- " . _T('select_time_seconds') . "<br/ -->\n";
+		$ret .= ":<select name=\"" . $name . "_seconds\" id=\"" . $name . "_seconds\" align=\"right\">\n";
 
 		for ($i = 0; $i < 60; $i++) {
 			$default = ($i == $default_seconds ? ' selected="selected"' : '');
