@@ -31,8 +31,9 @@ if ($id_case>0) {
 	$q = "INSERT INTO lcm_case_author SET
 			id_case=$id_case,
 			id_author=$id_author,
-			read=1,
-			write=1";
+			ac_read=1,
+			ac_write=1,
+			ac_admin=1";
 }
 
 // Some advanced ideas for future use
