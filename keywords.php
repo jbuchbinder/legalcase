@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.7 2005/02/04 09:58:39 makaveev Exp $
+	$Id: keywords.php,v 1.8 2005/02/16 18:13:55 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -29,15 +29,9 @@ include_lcm('inc_keywords');
 // client, org, author).
 //
 function show_all_keywords($type = '') {
-	if (! $type)
+/*	if (! $type)
 		$type = 'system';
 	
-	lcm_page_start(_T('menu_admin_keywords') . _T('typo_column') . " " . $type);
-	echo "<fieldset class='info_box'>\n";
-	echo "<p class='normal_text'><strong>Warning:</strong> This feature is still in early development. For more
-	information, please consult the <a href='http://www.lcm.ngo-bg.org/article43.html' class='content_link'>analysis
-	documentation for keywords</a>.</p>\n";
-
 	$html_system = ($type == 'system' ? '&nbsp;&lt;--' : '');
 	$html_user   = ($type == 'user' ? '&nbsp;&lt;--' : '');
 
@@ -47,8 +41,7 @@ function show_all_keywords($type = '') {
 	echo '<li><a href="?type=user" class="content_link">User keywords</a>' . $html_user . "</li>\n";
 	echo "</ul>\n\n";
 	
-	echo "</fieldset>\n";
-	
+*/
 	$kwg_all = get_kwg_all($type);
 
 	foreach ($kwg_all as $kwg) {
@@ -74,8 +67,6 @@ function show_all_keywords($type = '') {
 		echo "</fieldset>\n";
 		
 	}
-	
-	lcm_page_end();
 } 
 
 //
@@ -148,24 +139,68 @@ function show_keyword_id($action = 'view', $id_keyword) {
 	lcm_page_end();
 }
 
-if (isset($_REQUEST['action'])) {
-	if ($_REQUEST['action'] == 'edit') {
-		$action = $_REQUEST['action'];
-		
-		if (isset($_REQUEST['id_group']) && intval($_REQUEST['id_group']) > 0) {
-			show_keyword_group_id($action, intval($_REQUEST['id_group']));
-		} else if (isset($_REQUEST['id_keyword']) && intval($_REQUEST['id_keyword']) > 0) {
-			show_keyword_id($action, intval($_REQUEST['id_keyword']));
-		}
-	} else if ($_REQUEST['action'] == 'edit') {
-		echo "<p>Not ready yet</p>\n";
-	}
+//
+// Main
+//
 
-	exit;
+// Do any requested actions
+if (isset($_REQUEST['action'])) {
+	switch ($_REQUEST['action']) {
+		case 'edit' :
+			if (isset($_REQUEST['id_group']) && intval($_REQUEST['id_group']) > 0) {
+				show_keyword_group_id($_REQUEST['action'], intval($_REQUEST['id_group']));
+			} else if (isset($_REQUEST['id_keyword']) && intval($_REQUEST['id_keyword']) > 0) {
+				show_keyword_id($_REQUEST['action'], intval($_REQUEST['id_keyword']));
+			}
+			break;
+		case 'refresh' :
+			// Do not remove, or variables won't be declared
+			global $system_keyword_groups;
+			$system_keyword_groups = array();
+		
+			include_lcm('inc_meta');
+			include_lcm('inc_keywords_default');
+			create_groups($system_keyword_groups);
+
+			break;
+		default :
+			//echo "<p>Not ready yet</p>\n";
+			die("No such action!");
+	}
+	//exit;
 }
 
-// Default action
-$type = (isset($_REQUEST['type']) ? $_REQUEST['type'] : '');
-show_all_keywords($type);
+// Define tabs
+$groups = array('system' => 'System keywords','user' => 'User keywords','maint' => 'Keyword maintenance');
+$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'system' );
+
+// Start page
+//lcm_page_start(_T('menu_admin_keywords') . _T('typo_column') . " " . $groups[$tab]);
+lcm_page_start(_T('menu_admin_keywords'));
+
+// Show warning message
+echo "<fieldset class='info_box'>\n";
+echo "<p class='normal_text'><strong>Warning:</strong> This feature is still in early development. For more
+information, please consult the <a href='http://www.lcm.ngo-bg.org/article43.html' class='content_link'>analysis
+documentation for keywords</a>.</p>\n";
+echo "</fieldset>\n";
+
+// Show tabs
+//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
+show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
+
+// Show tab contents
+switch ($tab) {
+	case 'system' :
+	case 'user' :
+		show_all_keywords($tab);
+		break;
+	case 'maint' :
+		echo '<form method="POST" action="' . $_SERVER['REQUEST_URI'] . "\">\n";
+		echo "\t<button type=\"submit\" name=\"action\" value=\"refresh\">Refresh default keywords</button>\n";
+		echo "</form>\n";
+}
+
+lcm_page_end();
 
 ?>
