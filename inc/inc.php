@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.37 2005/01/19 09:42:25 mlutfy Exp $
+	$Id: inc.php,v 1.38 2005/01/19 10:00:41 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -53,12 +53,13 @@ if (isset($_REQUEST['author_ui_modified'])) {
 		$lang = $_REQUEST['sel_language'];
 	else
 		$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
-
+	
 	if (isset($lang) AND $lang <> $author_session['lang']) {
 		// Boomerang via lcm_cookie to set a cookie and do all the dirty work
 		// The REQUEST_URI should always be set, and point to the current page
 		// we are being sent to (Ex: from config_author.php to listcases.php).
 		header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" .  $_SERVER['REQUEST_URI']);
+		exit;
 	}
 
 	// Set UI theme
