@@ -18,16 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.9 2005/02/24 16:24:25 mlutfy Exp $
+	$Id: import_db.php,v 1.10 2005/02/24 16:26:08 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
 
-$tabs = array(	array('name' => 'All cases','url' => 'archive.php'),
-		array('name' => 'Export DB','url' => 'export_db.php'),
-		array('name' => 'Import DB','url' => 'import_db.php')
+$tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
+		array('name' => _T('archives_tab_export'), 'url' => 'export_db.php'),
+		array('name' => _T('archives_tab_import'), 'url' => 'import_db.php')
 	);
 
 function get_parameters() {
