@@ -567,10 +567,10 @@ function help_page_start($page_title) {
 		<ul>';
 
 	foreach ($toc as $topic => $subtopics) {
-		echo '<li><a href="lcm_help?code=' . $topic .'">' . _T('help_title_' . $topic) . '</a>' . "\n";
+		echo '<li><a href="lcm_help.php?code=' . $topic .'">' . _T('help_title_' . $topic) . '</a>' . "\n";
 		echo '<ul>';
 		foreach ($subtopics as $st) {
-			echo '<li><a href="lcm_help?code=' . $st .'">' . _T('help_title_' . $st) . '</a></li>' . "\n";
+			echo '<li><a href="lcm_help.php?code=' . $st .'">' . _T('help_title_' . $st) . '</a></li>' . "\n";
 		}
 		echo "</ul></li>\n";
 	}
