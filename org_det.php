@@ -60,14 +60,13 @@ if ($org>0) {
 				echo '<a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">Edit</a>';
 			echo "</td></tr>\n";
 		}
+		
+		echo "</table>";
 
 		if ($edit)
-			echo "<tr><td><a href=\"sel_cli_org.php?org=$org\" class=\"content_link\"><strong>Add representative(s)</strong></a></td><td>&nbsp;</td></tr>";
+			echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_create_new_lnk\">Add representative(s)</a><br />";
 
-		?>
-		</table><br>
-		<?php
-
+		
 	} else die("There's no such organisation!");
 } else die("Which organisation?");
 
