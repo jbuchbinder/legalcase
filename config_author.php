@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.50 2005/02/22 15:55:24 antzi Exp $
+	$Id: config_author.php,v 1.51 2005/02/24 15:17:25 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -181,7 +181,7 @@ function show_author_form($tab) {
 		</tr>
 	<!-- Absolute/relative time intervals setting -->
 		<tr>
-			<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_time_intervals') ?></td>
+			<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_ui_time') ?></td>
 			<td align="left" valign="top">
 				<input type="hidden" name="old_time_intervals" id="old_time_intervals" value="<?php echo $prefs['time_intervals'] ?>" />
 				<select name="sel_time_intervals" class="sel_frm">
@@ -342,21 +342,23 @@ if (isset($_POST['author_ui_modified']))
 if (isset($_POST['author_advanced_settings_modified']))
 	apply_author_advanced_settings_change();
 
-if (count($log)>0) {
-	lcm_page_start(_T('title_authorconf'),'','<META HTTP-EQUIV="refresh" content="5; URL=' . $_POST['referer'] . '">');
+/* [ML] I find this useful only for debugging, otherwise confusing for the user
+if (count($log) > 0) {
+	lcm_page_start(_T('title_authorconf'),'','<meta http-equiv="refresh" content="5; url=' . $_POST['referer'] . '">');
 	show_changes();
 	lcm_page_end();
 } else {
-
-/*
-// Referer may be set by the form, but also by lcm_cookie.php which
-// is called before config_author.php via inc.php (ahem..)
-if (isset($_REQUEST['referer'])) {
-	$target = new Link($_REQUEST['referer']);
-	header('Location: ' . $target->getUrl());
-	exit;
-}
 */
+
+	// Referer may be set by the form, but also by lcm_cookie.php which
+	// is called before config_author.php via inc.php (ahem..)
+	// [ML] If this is removed, the user will not be correctly sent to the 
+	// referer when the language setting is changed
+	if (isset($_REQUEST['referer'])) {
+		$target = new Link($_REQUEST['referer']);
+		header('Location: ' . $target->getUrl());
+		exit;
+	}
 
 	lcm_page_start(_T('title_authorconf'));
 	
@@ -369,7 +371,6 @@ if (isset($_REQUEST['referer'])) {
 	show_author_form($tab);
 	
 	lcm_page_end();
-
-}
+// }
 
 ?>
