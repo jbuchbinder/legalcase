@@ -249,11 +249,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "</fieldset></form>\n";
 	}
 
-	echo "\n<div align='center' style='font-size: 12px;' >"; // start of the login footer
-
-	$open_subscription = read_meta("site_open_subscription");
-	if ($open_subscription == 'yes' || $open_subscription == 'moderated')
-		echo " [<a $pass_popup>" . _T('login_register').'</a>]';
+	echo "\n<div align='left' style='font-size: 12px;' >"; // start of the login footer
 
 	echo "<div class='lang_combo_box'>". menu_languages() ."</div>\n";
 
@@ -262,6 +258,10 @@ function login($cible, $prive = 'prive', $message_login='') {
 	if (tester_mail()) {
 		echo '<a href="lcm_pass.php?pass_forgotten=yes" target="lcm_pass" onclick="' ."javascript:window.open(this.href, 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=280'); return false;\" class=\"link_btn\">" ._T('login_password_forgotten').'</a>';
 	}
+	
+	$open_subscription = read_meta("site_open_subscription");
+	if ($open_subscription == 'yes' || $open_subscription == 'moderated')
+		echo "&nbsp;&nbsp;&nbsp;<a $pass_popup class=\"link_btn\">" . _T('login_register').'</a>';
 
 	echo "</div>\n";
 
