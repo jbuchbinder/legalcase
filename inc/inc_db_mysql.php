@@ -1,20 +1,22 @@
 <?php
 
-if (defined("_ECRIRE_INC_DB_MYSQL")) return;
-define("_ECRIRE_INC_DB_MYSQL", "1");
+if (defined('_INC_DB_MYSQL')) return;
+define('_INC_DB_MYSQL', '1');
 
 //
-// Appel de requetes SQL
+// SQL query functions
 //
 
 function lcm_query_db($query) {
 	global $spip_mysql_link;
 	static $tt = 0;
-	$my_admin = (($GLOBALS['connect_statut'] == '0minirezo') OR ($GLOBALS['auteur_session']['statut'] == '0minirezo'));
+
+	// [ML] added "1 OR" temporarely, because this case ignores the installation process
+	$my_admin = 1 OR (($GLOBALS['connect_statut'] == 'admin') OR ($GLOBALS['auteur_session']['statut'] == 'admin'));
 	$my_profile = ($GLOBALS['mysql_profile'] AND $my_admin);
 	$my_debug = ($GLOBALS['mysql_debug'] AND $my_admin);
 
-	$query = traite_query($query);
+	$query = process_query($query);
 
 	if ($my_profile)
 		$m1 = microtime();
@@ -47,18 +49,15 @@ function spip_query_db($query) {
 }
 
 function lcm_create_table($table, $query) {
-	// global $db_table_prefix TODO
-	$db_prefix = 'lcm';
-
-	$full_query = 'CREATE TABLE '.$db_prefix.'_'.$table.'('.$query.')';
-	return lcm_query_db($full_query);
+	return lcm_query_db('CREATE TABLE '.$GLOBALS['table_prefix'].'_'.$table.'('.$query.')');
 }
 
 
 //
-// Passage d'une requete standardisee
+// Process a standard query
+// This includes the "prefix" name for the database tables
 //
-function traite_query($query) {
+function process_query($query) {
 	if ($GLOBALS['mysql_rappel_connexion'] AND $db = $GLOBALS['spip_mysql_db'])
 		$db = '`'.$db.'`.';
 
@@ -68,14 +67,14 @@ function traite_query($query) {
 			$suite = strstr($query, $regs[0]);
 			$query = substr($query, 0, -strlen($suite));
 		}
-		$query = preg_replace('/([,\s])spip_/', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
+		$query = preg_replace('/([,\s])lcm_/', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
 	}
 	else {
 		if (eregi('[[:space:]](VALUES|WHERE)[[:space:]]', $query, $regs)) {
 			$suite = strstr($query, $regs[0]);
 			$query = substr($query, 0, -strlen($suite));
 		}
-		$query = ereg_replace('([[:space:],])spip_', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
+		$query = ereg_replace('([[:space:],])lcm_', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
 	}
 
 	return $query;

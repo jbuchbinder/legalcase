@@ -1,9 +1,9 @@
 <?php
 
 //
-// Execute only once
-if (defined("_INC_DEFAULTS")) return;
-define("_INC_DEFAULTS", "1");
+// Execute this file only once
+if (defined('_INC_DEFAULTS')) return;
+define('_INC_DEFAULTS', '1');
 
 include_lcm('inc_meta');
 include_lcm('inc_admin'); // [ML] not sure what for
@@ -55,7 +55,7 @@ function init_default_config() {
 
 		'documents_article' => 'oui',
 		'documents_rubrique' => 'non',
-		'charset' => 'iso-8859-1',
+		'charset' => 'UTF-8',
 
 		'creer_htpasswd' => 'non',
 

@@ -2,8 +2,8 @@
 
 //
 // Execute this file only once
-if (defined("_INC_FILTRES")) return;
-define("_INC_FILTRES", "1");
+if (defined('_INC_FILTRES')) return;
+define('_INC_FILTRES', '1');
 
 
 // Echappement des entites HTML avec correction des entites "brutes"
@@ -23,7 +23,7 @@ function entites_html($texte) {
 
 // Transformer les &eacute; dans le charset local
 function filtrer_entites($texte) {
-	include_ecrire('inc_charsets.php3');
+	include_lcm('inc_charsets');
 	// filtrer
 	$texte = html2unicode($texte);
 	// remettre le tout dans le charset cible
@@ -32,7 +32,7 @@ function filtrer_entites($texte) {
 
 // Tout mettre en entites pour l'export backend (sauf iso-8859-1)
 function entites_unicode($texte) {
-	include_ecrire('inc_charsets.php3');
+	include_lcm('inc_charsets');
 	return charset2unicode($texte);
 }
 
@@ -486,7 +486,7 @@ function centrer($letexte) {
 //
 
 function filtrer_ical($texte) {
-	include_ecrire('inc_charsets.php3');
+	include_lcm('inc_charsets');
 	$texte = html2unicode($texte);
 	$texte = unicode2charset(charset2unicode($texte, lire_meta('charset'), 1), 'utf-8');
 	$texte = ereg_replace("\n", " ", $texte);
