@@ -68,9 +68,12 @@ function login($cible, $prive = 'prive', $message_login='') {
 	global $clean_link;
 
 	if (!$cible) {
-		if ($GLOBALS['var_url']) $cible = new Link($GLOBALS['var_url']);
-		else if ($prive) $cible = new Link('index.php');
-		else $cible = $clean_link;
+		if ($GLOBALS['var_url'])
+			$cible = new Link($GLOBALS['var_url']);
+		/* else if ($prive) 
+			$cible = new Link('index.php'); */
+		else 
+			$cible = $clean_link;
 	}
 
 	$cible->delVar('var_erreur');
@@ -93,7 +96,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 
 	// Initialisations
 	$nom_site = lire_meta('site_name');
-	$url_site = lire_meta('adresse_site');
+	$url_site = lire_meta('site_address');
 
 	if (!$nom_site)
 		$nom_site = _T('info_mon_site_spip');
@@ -117,7 +120,9 @@ function login($cible, $prive = 'prive', $message_login='') {
 	if ($login) {
 		$status_login = 0; // unknown status
 		$login = addslashes($login);
-		$query = "SELECT id_author, status, password, prefs FROM lcm_author WHERE username='$login'";
+		$query = "SELECT id_author, status, password, prefs, alea_actuel, alea_futur 
+					FROM lcm_author 
+					WHERE username='$login'";
 		$result = lcm_query($query);
 		if ($row = lcm_fetch_array($result)) {
 			if ($row['status'] == 'trash' OR $row['password'] == '') {
@@ -152,7 +157,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	else
 		$js_focus = 'document.form_login.var_login.focus();';
 
-	if ($echec_cookie == "oui") {
+	if ($echec_cookie == "yes") {
 		echo open_login (_T('erreur_probleme_cookie'));
 		echo "<p /><b>"._T('login_cookie_oblige')."</b> ";
 		echo _T('login_cookie_accepte')."\n";
@@ -171,7 +176,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		$flag_challenge_md5 = true;
 
 		if ($flag_challenge_md5)
-			echo "<script type=\"text/javascript\" src=\"md5.js\"></script>";
+			echo "<script type=\"text/javascript\" src=\"inc/md5.js\"></script>";
 
 		echo "<form name='form_login' action='lcm_cookie.php' method='post'";
 
@@ -191,7 +196,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 			// If javascript is active, we pass the login in the hidden field
 			echo "<script type=\"text/javascript\"><!--\n" . 
 				"document.write('" . addslashes(_T('login_login')) .  _T('typo_column') . " <b>$login</b><br/>" .
-				"<font size=\\'2\\'>[<a href=\\'lcm_cookie.php?cookie_admin=non&amp;url=".rawurlencode($action)."\\'>" . _T('login_other_identifier') . "</a>]</font>');\n" .
+				"<font size=\\'2\\'>[<a href=\\'lcm_cookie.php?cookie_admin=no&amp;url=".rawurlencode($action)."\\'>" . _T('login_other_identifier') . "</a>]</font>');\n" .
 				"//--></script>\n";
 		 	echo "<input type='hidden' name='session_login_hidden' value='$login' />";
 
@@ -243,7 +248,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	// Focus management
 	echo "<script type=\"text/javascript\"><!--\n" . $js_focus . "\n//--></script>\n";
 
-	if ($echec_cookie == "oui" AND $php_module AND !$ignore_auth_http) {
+	if ($echec_cookie == "yes" AND $php_module AND !$ignore_auth_http) {
 		echo "<form action='lcm_cookie.php' method='get'>";
 		echo "<fieldset>\n<p>";
 		echo _T('login_prefer_no_cookie') . " \n";
