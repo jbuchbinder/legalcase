@@ -543,8 +543,13 @@ else if (!$step) {
 	install_html_start();
 
 	echo "<div align='center'>\n";
-	echo "<table border='0' cellspacing='0' width='300' height='170' style=\"background-image: url('images/lcm/logo_lcm-170.png'); border: 0\">\n";
-	echo "<tr><td align='center'><p style='font-size: 130%;'>" .  _T('title_software') . "</p></td></tr>\n";
+	echo "<table border='0' cellspacing='0' width='490' height='242' style=\"background-image: url('images/lcm/lcm_logo_install.png'); border: 0\">\n";
+	echo "<tr><td align='center' valign='middle'>
+			<div style='background-color: #ffffff; -moz-opacity: 0.7; filter: alpha(opacity=70);'>
+				<p><span style='font-size: 130%;'>" .  _T('title_software') . "</span><br/>
+				<span style='font-size: 90%;'>" .  _T('title_software_description') . "</span></p>
+			</div>
+		</td></tr>\n";
 	echo "</table>\n";
 	echo "</div>\n";
 
