@@ -3,11 +3,13 @@
 include('inc/inc.php');
 lcm_page_start("Select representative(s)");
 
+$org = intval($_GET['org']);
+
 if ($org>0) {
 	// Prepare query
 	$q = "SELECT *
 		  FROM lcm_client_org
-		  WHERE id_org='$case'";
+		  WHERE id_org=$org";
 
 	// Do the query
 	$result = lcm_query($q);
