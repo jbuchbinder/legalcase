@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.25 2005/03/01 12:03:48 mlutfy Exp $
+	$Id: client_det.php,v 1.26 2005/03/01 22:11:19 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -179,7 +179,7 @@ if ($client > 0) {
 				// Show recent cases
 				// [AG] Since this info is on separate tab, they could be more, i.e. $prefs['page_rows']
 				//
-				$q = "SELECT clo.id_case, c.title, c.date_creation
+				$q = "SELECT clo.id_case, c.title, c.date_creation, c.id_court_archive, c.status
 						FROM lcm_case_client_org as clo, lcm_case as c
 						WHERE id_client = " . $client . "
 						AND clo.id_case = c.id_case
