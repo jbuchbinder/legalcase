@@ -20,7 +20,7 @@
 */
 
 // Test settings
-$GLOBALS['list_len'] = 3;
+//$GLOBALS['list_len'] = 3;
 
 include('inc/inc.php');
 include_lcm('inc_acc');
