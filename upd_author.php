@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.3 2004/12/10 09:08:36 antzi Exp $
+	$Id: upd_author.php,v 1.4 2004/12/10 18:13:15 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -84,7 +84,7 @@ include_lcm('inc_contacts');
 if (isset($_REQUEST['contact_value'])) {
 	$cpt = 0;
 	$contacts = $_REQUEST['contact_value'];
-	$c_types  = $_REQUEST['contact_type']; 
+	$c_types  = $_REQUEST['contact_type'];
 
 	// TODO: update existing information
 	// check for doubles, etc.
@@ -100,7 +100,7 @@ if (isset($_REQUEST['contact_value'])) {
 				if (is_existing_contact('author', 0, 'email', $usr['email'])) {
 					// email exists, and is associated to someone else
 				} else {
-					add_contact('author', $id_author, 'email', $contacts[$cpt]);
+					add_contact('author', $usr['id_author'], 'email', $contacts[$cpt]);
 				}
 			} else {
 				// update
@@ -109,7 +109,7 @@ if (isset($_REQUEST['contact_value'])) {
 		} else {
 			lcm_debug("contact type = " . $c_types[$cpt]);
 			if ($contacts[$cpt])
-				add_contact('author', $id_author, $c_types[$cpt], $contacts[$cpt]);
+				add_contact('author', $usr['id_author'], $c_types[$cpt], $contacts[$cpt]);
 		}
 
 		$cpt++;
