@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.35 2005/03/09 15:38:19 antzi Exp $
+	$Id: upd_case.php,v 1.36 2005/03/22 22:44:46 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -61,15 +61,15 @@ if (count($_SESSION['errors'])) {
 
 // Put public access rights settings in a separate string
 	$public_access_rights = '';
-	if ($_SESSION['case_data']['public'] || read_meta('case_read_always'))
+	if (($_SESSION['case_data']['public'] == 'yes') || (read_meta('case_read_always') == 'yes'))
 		$public_access_rights .= "public=1";
 	else
 		$public_access_rights .= "public=0";
 
-	if ($_SESSION['case_data']['pub_write'] || read_meta('case_write_always'))
-		$public_access_rights .= ", pub_write=1";
+	if (($_SESSION['case_data']['pub_write'] == 'yes') || (read_meta('case_write_always') == 'yes'))
+		$public_access_rights .= ",pub_write=1";
 	else
-		$public_access_rights .= ", pub_write=0";
+		$public_access_rights .= ",pub_write=0";
 
 	if ($id_case > 0) {
 		// This is modification of existing case
