@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.95 2005/03/01 16:55:02 antzi Exp $
+	$Id: case_det.php,v 1.96 2005/03/02 16:49:08 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -352,7 +352,7 @@ if ($case > 0) {
 				
 				}
 
-				echo "<br /><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">New appointment</a>";
+				echo "<br /><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">New appointment</a><br /><br />\n";
 
 				break;
 			//
@@ -511,9 +511,9 @@ if ($case > 0) {
 				}
 
 				// Show total case hours
-				echo "\t\t<tr><td>" . 'TOTAL:' . "</td><td>";
+				echo "\t\t<tr><td><strong>" . 'TOTAL:' . "</strong></td><td><strong>";
 				echo format_time_interval($total_time,($prefs['time_intervals_notation'] == 'hours_only'));
-				echo "</td></tr>\n";
+				echo "</strong></td></tr>\n";
 
 				// Close table
 				echo "\t</table>\n</p></fieldset>\n";
@@ -522,19 +522,9 @@ if ($case > 0) {
 			// Case attachments
 			//
 			case 'attachments' :
-				// Attach new file form
-				if ($add) {
-					echo '<fieldset class="info_box">';
-					echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
-					echo "<input type=\"hidden\" name=\"case\" value=\"$case\" />\n";
-					echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
-					echo '<strong>Filename:</strong><br /><input type="file" name="filename" size="40" />' . "\n";
-					echo "<br /><br />\n";
-					echo '<strong>Description:</strong><br /><input type="text" name="description" class="search_form_txt" /><br /><br />' . "\n";
-					echo '<input type="submit" name="submit" value="Attach" class="search_form_btn" />' . "\n";
-					echo "</form>\n";
-					echo '</fieldset>';
-				}
+				echo '<fieldset class="info_box">';
+				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_attachments') . '</div>';
+				echo "<p class=\"normal_text\">\n";
 
 				// List of attached files
 				$q = "SELECT * FROM lcm_case_attachment WHERE id_case=$case";
@@ -556,8 +546,23 @@ if ($case > 0) {
 						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
 						echo "</tr>\n";
 					}
-					echo "</table>\n";
+					echo "</table><br />\n";
 				}
+
+				// Attach new file form
+				if ($add) {
+					echo '<div class="prefs_column_menu_head">' . 'Add new document' . '</div>';
+					echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+					echo "<input type=\"hidden\" name=\"case\" value=\"$case\" />\n";
+					echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
+					echo '<strong>Filename:</strong><br /><input type="file" name="filename" size="65" />' . "\n";
+					echo "<br />\n";
+					echo '<strong>Description:</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n";
+					echo '<input type="submit" name="submit" value="Attach" class="search_form_btn" />' . "\n";
+					echo "</form>\n";
+				}
+
+				echo '</fieldset>';
 
 				break;
 		}
