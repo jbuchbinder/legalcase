@@ -9,23 +9,6 @@ include_lcm('inc_meta'); // initiates the database connection
 include_lcm('inc_session');
 
 
-// Management function to restrictive access to sections
-// [ML] At the moment, we have no reason to use this
-function acces_rubrique($id_rubrique) {
-	global $connect_toutes_rubriques;
-	global $connect_id_rubrique;
-
-	return ($connect_toutes_rubriques OR $connect_id_rubrique[$id_rubrique]);
-}
-
-function acces_restreint_rubrique($id_rubrique) {
-	global $connect_id_rubrique;
-	global $connect_status;
-
-	return ($connect_status == "admin" AND $connect_id_rubrique[$id_rubrique]);
-}
-
-
 // [ML] Alot of things to adapt... XXX/TODO
 function auth() {
 	global $INSECURE, $HTTP_POST_VARS, $HTTP_GET_VARS, $HTTP_COOKIE_VARS, $REMOTE_USER, $PHP_AUTH_USER, $PHP_AUTH_PW;
@@ -86,7 +69,7 @@ function auth() {
 
 	// If not authenticated, ask for login / password
 	if (!$auth_login) {
-		$url = /* str_replace('/./', '/', 'ecrire/'. */ $clean_link->getUrl(); //);
+		$url = $clean_link->getUrl();
 		@header("Location: lcm_login.php?var_url=".urlencode($url));
 		exit;
 	}
@@ -112,18 +95,11 @@ function auth() {
 		$connect_activer_messagerie = "non"; //$row["messagerie"];
 		$connect_activer_imessage = "non "; //$row["imessage"];
 
-		// set the users' preferences
+		// Set the users' preferences
 		$prefs = unserialize($row['prefs']);
 
-		// [ML] I will clean this later, for not it is not used much (TODO)
-		if (! isset($prefs['display'])) { // recuperer les cookies ou creer defaut
-			if ($GLOBALS['set_disp'] = $GLOBALS['HTTP_COOKIE_VARS']['spip_display']) {}
-			else $GLOBALS['set_disp'] = 2;
-			if ($GLOBALS['set_couleur'] = $GLOBALS['HTTP_COOKIE_VARS']['spip_couleur']) {}
-			else $GLOBALS['set_couleur'] = 6;
-			if ($GLOBALS['set_options'] = $GLOBALS['HTTP_COOKIE_VARS']['spip_options']) {}
-			else $GLOBALS['set_options'] = 'basiques';
-		}
+		// XXX [ML] if some preferences are absent from $prefs,
+		// we can set them here.
 	}
 	else {
 		// This case is a strange possibility: the author is authentified
