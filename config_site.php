@@ -22,26 +22,22 @@
 include ("inc/inc.php");
 
 function show_config_form() {
-	$site_name = read_meta('site_name');
-	$site_desc = read_meta('site_description');
-	$default_language = read_meta('default_language');
-	$email_sysadmin = read_meta('email_sysadmin');
-	$case_default_read = read_meta('case_default_read');
-	$case_default_write = read_meta('case_default_write');
-	$case_read_always = read_meta('case_read_always');
-	$case_write_always = read_meta('case_write_always');
-	$site_open_subscription = read_meta('site_open_subscription');
-
-	if (empty($site_name))
-		$site_name = _T('title_software');
-	
-	# if (empty($site_desc))
-	#	$site_desc = _T('title_software_description');
+	echo "<p><img src='images/jimmac/icon_warning.gif' alt='' align='right'
+	height='48' width='48'><b>Caution!</b> The settings on this page have a global
+	impact which may influence the functionning of the site.</p>";
 
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
 	echo "\t<input type='hidden' name='conf_modified' value='yes'/>\n";
 
 	// *** INFO SITE
+	$site_name = read_meta('site_name');
+	$site_desc = read_meta('site_description');
+	$default_language = read_meta('default_language');
+	$email_sysadmin = read_meta('email_sysadmin');
+
+	if (empty($site_name))
+		$site_name = _T('title_software');
+
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
 	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
@@ -68,6 +64,11 @@ function show_config_form() {
 	echo "</td>\n</tr>\n</table>\n";
 
 	// *** COLLAB WORD
+	$case_default_read = read_meta('case_default_read');
+	$case_default_write = read_meta('case_default_write');
+	$case_read_always = read_meta('case_read_always');
+	$case_write_always = read_meta('case_write_always');
+
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
 	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
@@ -75,9 +76,6 @@ function show_config_form() {
 	echo "</h4></td>\n";
 	echo "<tr>\n";
 	echo "<td>";
-
-	# echo "<h3>Collaborative work on cases</h3>\n";
-	# echo "<div style='border: 1px solid #999999; padding: 5px; margin-bottom: 1em;'>\n";
 
 	echo "<p><small>This only applies to new cases. Wording of this page needs fixing.</small></p>\n";
 
@@ -137,10 +135,38 @@ function show_config_form() {
 	echo "<ul>";
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value=''";
 	if (!$case_write_always) echo " checked";
-	echo "><label for='case_write_always_1'>Yes</label></input></li>\n";
+	echo "><label for='case_write_always_1'>Yes.</label></input></li>\n";
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_2' value='1'";
 	if ($case_write_always) echo " checked";
 	echo "><label for='case_write_always_2'>No, except if they have administrative rights.</label></input></li>\n";
+	echo "</ul>\n";
+	echo "</td>\n</tr>\n</table>\n";
+
+	// *** SELF-REGISTRATION
+	$site_open_subscription = read_meta('site_open_subscription');
+
+	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
+	echo "<tr>\n";
+	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
+	echo "Self-registration of new authors";
+	echo "</h4></td>\n";
+	echo "<tr>\n";
+	echo "<td>";
+
+	echo "<p>Can users create themselves a new account (e.g. self-register) on the site?</p>\n";
+	echo "<ul>";
+
+	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_1' value='open'";
+	if ($site_open_subscription == 'open') echo " checked";
+	echo "><label for='site_open_subscription_1'>Yes, without moderation.</label></input></li>\n";
+
+	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_2' value='moderated'";
+	if ($site_open_subscription == 'moderated') echo " checked";
+	echo "><label for='site_open_subscription_2'>Yes, but an administrator must approve the request.</label></input></li>\n";
+
+	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_3' value='no'";
+	if ($site_open_subscription == 'no') echo " checked";
+	echo "><label for='site_open_subscription_3'>No.</label></input></li>\n";
 	echo "</ul>\n";
 	echo "</td>\n</tr>\n</table>\n";
 
@@ -159,6 +185,7 @@ function apply_conf_changes() {
 	global $case_default_write;
 	global $case_read_always;
 	global $case_write_always;
+	global $site_open_subscription;
 
 	// Site name
 	if (! empty($site_name)) {
@@ -234,6 +261,16 @@ function apply_conf_changes() {
 		else $entry .= "everybody";
 		$entry .= "</tt>";
 		array_push($log, $entry);
+	}
+
+	// Self-registration
+	$old_site_open_subscription = read_meta('site_open_subscription');
+	if ($site_open_subscription != $old_site_open_subscription) {
+		if ($site_open_subscription == 'open' || $site_open_subscription == 'moderated' || $site_open_subscription == 'no') {
+			write_meta('site_open_subscription', $site_open_subscription);
+			array_push($log, "New author self-registration changed to "
+				. "'$site_open_subscription', was '$old_site_open_subscription'.");
+		}
 	}
 
 	if (! empty($log))
