@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.82 2005/02/15 23:46:03 antzi Exp $
+	$Id: case_det.php,v 1.83 2005/02/20 22:44:37 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -66,13 +66,16 @@ if ($case > 0) {
 		echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
 
 		// Show tabs
-		$groups = array('general','clients','followups');
+		$groups = array('general','clients','followups','attachments');
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 0 );
 		//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 		show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
 
 		switch ($tab) {
-			case 0 :	// General
+			//
+			// General tab
+			//
+			case 0 :
 				echo "<fieldset class='info_box'>";
 				echo "<div class='prefs_column_menu_head'>" . _T('case_subtitle_general') . "</div>";
 				echo "<p class='normal_text'>";
@@ -156,7 +159,10 @@ if ($case > 0) {
 				echo "</fieldset>\n";
 
 				break;
-			case 1 :	// Clients
+			//
+			// Case clients / organisations
+			//
+			case 1 :
 				//
 				// Main table for attached organisations and clients
 				//
@@ -236,6 +242,9 @@ if ($case > 0) {
 				echo "</fieldset>";
 				
 				break;
+			//
+			// Case followups
+			//
 			case 2 :
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_followups') . '</div>';
@@ -315,6 +324,42 @@ if ($case > 0) {
 			
 				echo "</p></fieldset>";
 				
+				break;
+			//
+			// Case attachments
+			//
+			case 3 :
+				// Attach new file form
+				echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+				echo "<input type=\"hidden\" name=\"case\" value=\"$case\" />\n";
+				echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
+				echo 'Filename: <input type="file" name="filename" />' . "\n";
+				// echo "<br />\n";
+				echo ' Description: <input type="text" size="30" name="description" />' . "\n";
+				echo '<input type="submit" name="submit" value="Attach" />' . "\n";
+				echo "</form>\n";
+
+				// List of attached files
+				$q = "SELECT * FROM lcm_case_attachment WHERE id_case=$case";
+				$result = lcm_query($q);
+				$i = lcm_num_rows($result);
+				if ($i > 0) {
+					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
+					echo "\t<tr><th class=\"heading\">Filename</th>
+						<th class=\"heading\">Type</th>
+						<th class=\"heading\">Size</th>
+						<th class=\"heading\">Description</th></tr>\n";
+					for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
+						echo "\t<tr>";
+						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['filename'] . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
+						echo "</tr>\n";
+					}
+					echo "</table>\n";
+				}
+
 				break;
 		}
 	} else die(_T('error_no_such_case'));
