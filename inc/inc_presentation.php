@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.197 2005/04/04 06:14:45 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.198 2005/04/04 08:30:02 mlutfy Exp $
 */
 
 //
@@ -1273,7 +1273,10 @@ function show_listcase_item($item, $cpt, $custom = '') {
 	}
 	
 	// Status
-	echo "<td class='tbl_cont_" . $css . "'>" . _T('case_status_option_' . $item['status']) . "</td>\n";
+	echo "<td class='tbl_cont_" . $css . "'>";
+	if ($item['status'])
+		echo _T('case_status_option_' . $item['status']);
+	echo "</td>\n";
 	
 	// Actions / custom html
 	echo "<td class='tbl_cont_" . $css . "'>";
