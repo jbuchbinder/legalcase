@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.34 2004/11/24 15:21:47 makaveev Exp $
+	$Id: listcases.php,v 1.35 2004/12/02 09:15:12 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -102,8 +102,8 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 // Show link to previous page
 if ($list_pos>0) {
-	echo '<a href="listcases.php';
-	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
+	echo '<a href="listcases.php?list_pos=';
+	echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 	echo '">< Prev</a> ';
 }
