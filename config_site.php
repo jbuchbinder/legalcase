@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.32 2005/02/10 09:19:56 makaveev Exp $
+	$Id: config_site.php,v 1.33 2005/02/16 00:15:33 antzi Exp $
 */
 
 include ("inc/inc.php");
@@ -31,6 +31,7 @@ function show_config_form($panel) {
 	echo "<p class='normal_text'><img src='images/jimmac/icon_warning.gif' alt='' align='right'
 		height='48' width='48' />" . _T('siteconf_warning') . "</p>\n";
 
+/*
 	if ($panel == 'collab')
 		$html_collab = " &lt;--";
 	else if ($panel == 'policy')
@@ -46,9 +47,18 @@ function show_config_form($panel) {
 	echo "<li><a href='config_site.php?panel=policy' class='content_link'>" .  _T('siteconf_subtitle_policy') . "</a>" . $html_policy . "</li>\n";
 	echo "<li><a href='config_site.php?panel=regional' class='content_link'>" . _T('siteconf_subtitle_regional') . "</a>" . $html_regional . "</li>\n";
 	echo "</ul>\n";
+*/
+	// Show tabs
+	$groups = array('general' => _T('siteconf_subtitle_general_info'),
+			'collab' => _T('siteconf_subtitle_collab_work'),
+			'policy' => _T('siteconf_subtitle_policy'),
+			'regional' => _T('siteconf_subtitle_regional'));
+	$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
+	//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
+	show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
 
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
-
+/*
 	if ($panel == 'collab')
 		show_config_form_collab();
 	else if ($panel == 'policy')
@@ -57,7 +67,22 @@ function show_config_form($panel) {
 		show_config_form_regional();
 	else
 		show_config_form_general();
-
+*/
+	switch ($tab) {
+		case 'general' :
+			show_config_form_general();
+			break;
+		case 'collab' :
+			show_config_form_collab();
+			break;
+		case 'policy' :
+			show_config_form_policy();
+			break;
+		case 'regional' :
+			show_config_form_regional();
+			break;
+	}
+	
 	echo "</form>\n";
 }
 
