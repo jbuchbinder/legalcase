@@ -15,8 +15,12 @@ function get_contact_type_id($name) {
 
 // type_person should be of the enum in the database (author, client, org, ..)
 // type_contact is the name of the contact, and can be a comma seperated list.
+//
 // For example: get_contacts('author', $id_author, 'email_main,email_alternate')
-function get_contacts($type_person, $id, $type_contact = '') {
+//    will return all e-mail contacts for an author
+// And: get_contacts('author', $id_author, 'email_main,address_main', 'not')
+//    will return all contacts except email_main and address_main
+function get_contacts($type_person, $id, $type_contact = '', $not = '') {
 	global $system_kwg;
 	$contacts = array();
 
@@ -29,15 +33,20 @@ function get_contacts($type_person, $id, $type_contact = '') {
 				WHERE id_of_person = " . intval($id) . " 
 					AND type_person = '" . addslashes($type_person) . "' ";
 
+	if ($not)
+		$not = 'NOT'; // avoid typos
+
 	if ($type_contact) {
 		$all_types = explode(",", $type_contact);
 		$id_type_contact = "";
+		$seperator = "";
 
 		foreach ($all_types as $t) {
-			$id_type_contact .= $system_kwg['contacts']['keywords'][$t]['id_keyword'];
+			$id_type_contact .= $seperator . $system_kwg['contacts']['keywords'][$t]['id_keyword'];
+			$seperator = ", ";
 		}
 
-		$query .= "AND type_contact IN (" . addslashes($id_type_contact) . ")";
+		$query .= "AND type_contact " . $not . " IN (" . addslashes($id_type_contact) . ")";
 	}
 
 	$result = lcm_query($query);
