@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listfilters.php,v 1.4 2004/12/11 11:18:29 antzi Exp $
+	$Id: listfilters.php,v 1.5 2004/12/13 08:20:44 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -81,7 +81,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 ?>
 </table>
-<p align='right'><a href="edit_filter.php?filter=0" class="content_link">Create new filter</a></p>
+<br /><a href="edit_filter.php?filter=0" class="create_new_lnk">Create new filter</a><br />
 
 <table border='0' align='center' width='99%'>
 	<tr><td align="left"><?php
