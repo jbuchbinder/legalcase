@@ -12,9 +12,10 @@ define('_INC_META', '1');
 
 function read_metas() {
 	global $meta, $meta_upd;
+	global $db_ok;
 
-	if (! $GLOBALS['db_ok'])
-		return;
+	if (! defined($db_ok)) return; // no inc_connect.php
+	if (! $db_ok) return; // database connection failed
 
 	$meta = '';
 	$meta_upd = '';
