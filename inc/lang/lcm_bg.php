@@ -25,7 +25,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // B
-'button_next' => '<NEW>Next',
+'button_next' => 'По-нататък',
 'button_reload_page' => '<NEW>Reload this page',
 'button_validate' => '<NEW>Validate',
 
@@ -77,6 +77,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_more_than_three' => '<NEW>(More than 3 characters)',
 'info_name_of_person' => '<NEW>Name',
 'info_or' => 'или',
+'info_technical_problem_database' => '<NEW>The connection to the database failed. It is possible that either is it not running or it has refused the login/password. Please consult the message provided below (if any) for more information.',
 'info_your_contact_information' => '<NEW>Your contact information ...',
 'input_connection_identifiers' => '<NEW>Your connection identifiers ...',
 'input_email' => '<NEW>E-mail address',
@@ -99,7 +100,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_info_sql_connection_failed' => '<NEW><b>N.B.</b> On a number of servers, you must request the activation of your access to the SQL database before you can use it. If you are unable to connect, make sure that you actually made this request.',
 'install_next_step' => '<NEW>You can proceed to the next step.',
 'install_select_database' => '<NEW>Select the database that your host has attributed to you',
-'install_select_language' => '<NEW>Select a language then click on the button "next" to start the installation procedure.',
+'install_select_language' => 'Изберете език и след това натиснете бутон „по-нататък“, за да стартирате процедурата по инсталацията.',
 'install_step_five' => '<NEW>Fifth step',
 'install_step_four' => '<NEW>Fourth step',
 'install_step_last' => '<NEW>Last step',
@@ -163,7 +164,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_error' => 'Грешка',
 'title_software' => 'Подготовка на програмен продукт за управление на регистрация на юридическа практика',
 'title_software_article' => '&ETH;�&ETH;&frac34;&ETH;&#381;&ETH;&sup3;&ETH;&frac34;&Ntilde;�&ETH;&frac34;&ETH;&sup2;&ETH;&ordm;&ETH;&deg; &ETH;&frac12;&ETH;&deg; &ETH;&iquest;&Ntilde;&euro;&ETH;&frac34;&ETH;&sup3;&Ntilde;&euro;&ETH;&deg;&ETH;&frac14;&ETH;&micro;&ETH;&frac12; &ETH;&iquest;&Ntilde;&euro;&ETH;&frac34;&ETH;&#381;&Ntilde;�&ETH;&ordm;&Ntilde;� &ETH;&middot;&ETH;&deg; &Ntilde;�&ETH;&iquest;&Ntilde;&euro;&ETH;&deg;&ETH;&sup2;&ETH;&raquo;&ETH;&micro;&ETH;&frac12;&ETH;&#382;&ETH;&micro; &ETH;&frac12;&ETH;&deg; &Ntilde;&euro;&ETH;&micro;&ETH;&sup3;&ETH;&#382;&Ntilde;�&Ntilde;�&Ntilde;&euro;&ETH;&deg;&Ntilde;�&ETH;&#382;&Ntilde;� &ETH;&frac12;&ETH;&deg; &Ntilde;�&Ntilde;&euro;&ETH;&#382;&ETH;&#381;&ETH;&#382;&Ntilde;�&ETH;&micro;&Ntilde;�&ETH;&ordm;&ETH;&deg; &ETH;&iquest;&Ntilde;&euro;&ETH;&deg;&ETH;&ordm;&Ntilde;�&ETH;&#382;&ETH;&ordm;&ETH;&deg;',
+'title_software_description' => '<NEW>for not-for-profit legal advice centres',
 'title_technical_message' => '<NEW>Technical message',
+'title_technical_problem' => '<NEW>Technical problem',
 'type' => '<NEW>Type',
 'typo_column' => ':',
 
