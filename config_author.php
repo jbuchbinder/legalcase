@@ -41,6 +41,7 @@ function show_author_form() {
 ?>
 <form name="upd_user_profile" method="post" action="config_author.php">
 	<input type="hidden" name="author_ui_modified" value="yes"/>
+	<input type="hidden" name="referer" value="<?php echo $HTTP_REFERER; ?>"/>
 
           <table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
             <tr>
@@ -99,6 +100,7 @@ function show_author_form() {
 
 <form name="upd_user_profile" method="post" action="config_author.php">
 	<input type="hidden" name="author_password_modified" value="yes"/>
+	<input type="hidden" name="referer" value="<?php echo $HTTP_REFERER; ?>"/>
           <table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
             <tr>
               <td colspan="2" align="center" valign="middle" class="heading"><h4>Change password</h4></td>
@@ -273,13 +275,18 @@ function apply_author_password_change() {
 
 }
 
-lcm_page_start("Update profile");
-
 if ($author_ui_modified)
 	apply_author_ui_change();
 
 if ($author_password_modified)
 	apply_author_password_change();
+
+if ($author_ui_modified || $author_password_modified) {
+	header('Location: ' . $referer);
+	header('Retry-After: 10');
+}
+
+lcm_page_start("Update profile");
 
 show_author_form();
 lcm_page_end();
