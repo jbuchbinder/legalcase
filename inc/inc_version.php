@@ -315,7 +315,7 @@ function include_lcm($file) {
 }
 
 function include_config($file) {
-	$lcmfile = 'config/' . $file . '.php';
+	$lcmfile = 'inc/config/' . $file . '.php';
 
 	if ($GLOBALS['included_files'][$lcmfile]) return;
 
@@ -327,7 +327,7 @@ function include_config($file) {
 }
 
 function include_data($file) {
-	$lcmfile = 'data/' . $file . '.php';
+	$lcmfile = 'inc/data/' . $file . '.php';
 
 	if ($GLOBALS['included_files'][$lcmfile]) return;
 
@@ -339,7 +339,7 @@ function include_data($file) {
 }
 
 
-$flag_connect = @file_exists('config/inc_connect.php');
+$flag_connect = @file_exists('inc/config/inc_connect.php');
 
 function lcm_query($query) {
 	include_lcm('inc_db');
@@ -734,11 +734,11 @@ if (count($GLOBALS['HTTP_POST_VARS'])) {
 
 //
 // Read the cached meta information
-$inc_meta_cache = 'data/inc_meta_cache.php';
+$inc_meta_cache = 'inc/data/inc_meta_cache.php';
 if (@file_exists($inc_meta_cache) AND !defined('_INC_META_CACHE')  AND !defined('_INC_META')) {
 	include_data('inc_meta_cache');
 }
-// This is used usually at installation, when the data/inc_meta_cache.php
+// This is used usually at installation, when the inc/data/inc_meta_cache.php
 // is not yet created, and avoids having tons of warnings printed.
 if (!defined('_INC_META_CACHE')) {
 	function lire_meta($nom) {
@@ -841,7 +841,7 @@ function timeout($lock=false, $action=true, $connect_mysql=true) {
 	global $db_ok;
 
 	// Has the hosting provided put a lock? (maximum age, 10 minutes)
-	$timeoutfile = 'data/lock';
+	$timeoutfile = 'inc/data/lock';
 	if (@file_exists($timeoutfile)
 	AND ((time() - @filemtime($timeoutfile)) < 600)) {
 		lcm_debug ("lock hebergeur $timeoutfile");

@@ -6,8 +6,8 @@ if (defined("_INC_ACCES")) return;
 define("_INC_ACCES", "1");
 
 
-$GLOBALS['htaccess'] = /* $GLOBALS['dir_ecrire']. */ '.htaccess';
-$GLOBALS['htpasswd'] = /* $GLOBALS['dir_ecrire']. */ 'data/.htpasswd';
+$GLOBALS['htaccess'] = 'inc/.htaccess';
+$GLOBALS['htpasswd'] = 'inc/data/.htpasswd';
 
 function creer_pass_aleatoire($longueur = 8, $sel = "") {
 	$seed = (double) (microtime() + 1) * time();

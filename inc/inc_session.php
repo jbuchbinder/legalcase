@@ -29,7 +29,7 @@ function fichier_session($id_session, $alea) {
 		$id_author = $regs[1];
 
 	$fichier_session = 'session_'.$id_author.md5($id_session.' '.$alea).'.php';
-	$fichier_session = 'data/'.$fichier_session;
+	$fichier_session = 'inc/data/'.$fichier_session;
 
 	return $fichier_session;
 }
@@ -145,7 +145,7 @@ function creer_uniqid() {
 // We also take the opportunity to delete sessions older than 48 hours.
 //
 function zap_sessions ($id_author, $zap) {
-	$dirname = 'data/';
+	$dirname = 'inc/data/';
 
 	// Do not delete yourself by accident
 	// [ML] This does not seem necessary.
