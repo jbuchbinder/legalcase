@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.15 2005/03/05 00:28:22 antzi Exp $
+	$Id: edit_app.php,v 1.16 2005/03/06 10:27:14 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -30,6 +30,7 @@ $admin = ($GLOBALS['author_session']['status']=='admin');
 if (empty($_SESSION['errors'])) {
 	// Clear form data
 	$_SESSION['app_data'] = array('ref_edit_app' => ( $_GET['ref'] ? clean_input($_GET['ref']) : $GLOBALS['HTTP_REFERER']) );
+	$_SESSION['authors'] = array();
 
 	if ($_GET['app']>0) {
 		$_SESSION['app_data']['id_app'] = intval($_GET['app']);
@@ -52,7 +53,7 @@ if (empty($_SESSION['errors'])) {
 				WHERE lcm_author_app.id_author=lcm_author.id_author
 					AND id_app=" . $_SESSION['app_data']['id_app'];
 			$result = lcm_query($q);
-			$_SESSION['authors'] = array();
+
 			while ($row = lcm_fetch_array($result))
 				$_SESSION['authors'][$row['id_author']] = $row;
 
@@ -259,19 +260,21 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 		<!-- Appointment description -->
 		<tr><td valign="top"><?php echo _T('app_input_description'); ?></td>
-			<td><textarea <?php echo $dis; ?> name="description" rows="15" cols="40" class="frm_tarea"><?php
+			<td><textarea <?php echo $dis; ?> name="description" rows="5" cols="40" class="frm_tarea"><?php
 			echo clean_output($_SESSION['app_data']['description']) . "</textarea></td></tr>\n";
 
 		// Appointment participants - authors
 		echo "\t\t<tr><td valign=\"top\">";
 		echo _T('app_input_authors');
 		echo "</td><td>";
-		$q = '';
-		foreach($_SESSION['authors'] as $author) {
-			$q .= ($q ? ', ' : '');
-			$q .= njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
+		if (count($_SESSION['authors'])>0) {
+			$q = '';
+			foreach($_SESSION['authors'] as $author) {
+				$q .= ($q ? ', ' : '');
+				$q .= njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
+			}
+			echo "\t\t\t$q\n";
 		}
-		echo "\t\t\t$q\n";
 		// List rest of the authors to add
 		$q = "SELECT lcm_author.id_author,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
 			FROM lcm_author
