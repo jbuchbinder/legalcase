@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.1 2004/12/17 17:51:38 antzi Exp $
+	$Id: set_case_status.php,v 1.2 2004/12/17 18:03:36 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -57,14 +57,14 @@ switch ($status) {
 		// Write form
 		echo '<form action="upd_fu.php" method="POST">
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td>Start date:</td>
+		<tr><td>Close date:</td>
 			<td>';
 		echo get_date_inputs('start', $date_start, false);
 //		echo f_err('date_start',$errors);
 		echo "</td>
 		</tr>
 		<tr><td>Type:</td>
-			<td>$type</td>
+			<td><input type='hidden' name='type' value='$type'>$type</td>
 		</tr>
 		<tr><td valign='top'>Description:</td>
 			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
@@ -88,7 +88,7 @@ switch ($status) {
 	</table>
 	<button name='submit' type='submit' value='submit' class='simple_form_btn'>" . _T('button_validate') . "</button>
 	<input type='hidden' name='id_case' value='$case'>
-	<input type='hidden' name='ref_edit_fu' value='" . $GLOBALS['HTTP_REFERER'] . ">
+	<input type='hidden' name='ref_edit_fu' value='" . $GLOBALS['HTTP_REFERER'] . "'>
 </form>";
 
 		lcm_page_end();
