@@ -26,19 +26,22 @@ if ($org>0) {
 		$edit = true;
 
 		// Show organisation details
-		echo '<h1>Details for organisation:</h1>' . $row['name'];
-		echo "<br>\nOrganisation ID: " . $row['id_org'] . "<br>\n";
-	//	echo 'Organisation name: ' . $row['name'] . "<br>\n";
-		echo 'Organisation address: ' . $row['address'] . "<br>\n";
-		echo 'Creation date: ' . $row['date_creation'] . "<br>\n";
-		echo 'Last update date: ' . $row['date_update'] . "<br>\n";
+		echo '<h3>Details for organisation:</h3><p class="normal_text"><strong>' . $row['name'] .'</strong>';
+		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
+	//	echo 'Organisation name: ' . $row['name'] . "<br />\n";
+		echo 'Organisation address: ' . $row['address'] . "<br />\n";
+		echo 'Creation date: ' . $row['date_creation'] . "<br />\n";
+		echo 'Last update date: ' . $row['date_update'] . "<br />\n";
 		if ($edit)
-			echo ' [<a href="edit_org.php?org=' . $row['id_org'] . '">Edit organisation information</a>]';
+			echo ' [<a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link"><strong>Edit organisation information</strong></a>]';
 
-		?><h2>Representative(s) of this organisation:</h2>
-
-		<table border>
-		<caption>Representative(s):</caption>
+		?></p><h3>Representative(s) of this organisation:</h3>
+		
+		<table class="tbl_usr_dtl">
+			<tr>
+			    <th class="heading">Representative(s):</th>
+			    <th class="heading">&nbsp;</th>
+			</tr>
 		<?php
 
 		// Show organisation representative(s)
@@ -50,15 +53,15 @@ if ($org>0) {
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td><a href="client_det.php?client=' . $row['id_client'] . '">';
+			echo '<tr><td><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 			echo $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "</a></td>\n<td>";
 			if ($edit)
-				echo '<a href="edit_client.php?client=' . $row['id_client'] . '">Edit</a>';
+				echo '<a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">Edit</a>';
 			echo "</td></tr>\n";
 		}
 
 		if ($edit)
-			echo "<tr><td><a href=\"sel_cli_org.php?org=$org\">Add representative(s)</a></td><td></td></tr>";
+			echo "<tr><td><a href=\"sel_cli_org.php?org=$org\" class=\"content_link\"><strong>Add representative(s)</strong></a></td><td>&nbsp;</td></tr>";
 
 		?>
 		</table><br>
