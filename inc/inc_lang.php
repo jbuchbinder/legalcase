@@ -316,7 +316,7 @@ function changer_typo($lang = '', $source = '') {
 	global $lang_typo, $lang_dir, $dir_lang;
 
 	if (ereg("^(article|rubrique|breve|auteur)([0-9]+)", $source, $regs)) {
-		$r = spip_fetch_array(spip_query("SELECT lang FROM spip_".$regs[1]."s WHERE id_".$regs[1]."=".$regs[2]));
+		$r = lcm_fetch_array(lcm_query("SELECT lang FROM spip_".$regs[1]."s WHERE id_".$regs[1]."=".$regs[2]));
 		$lang = $r['lang'];
 	}
 

@@ -44,13 +44,13 @@ function creer_pass_aleatoire($longueur = 8, $sel = "") {
 function low_sec($id_auteur) {
 	if (!$id_auteur = intval($id_auteur)) return; // jamais trop prudent ;)
 	$query = "SELECT * FROM spip_auteurs WHERE id_auteur = $id_auteur";
-	$result = spip_query($query);
+	$result = lcm_query($query);
 
-	if ($row = spip_fetch_array($result)) {
+	if ($row = lcm_fetch_array($result)) {
 		$low_sec = $row["low_sec"];
 		if (!$low_sec) {
 			$low_sec = creer_pass_aleatoire();
-			spip_query("UPDATE spip_auteurs SET low_sec = '$low_sec' WHERE id_auteur = $id_auteur");
+			lcm_query("UPDATE spip_auteurs SET low_sec = '$low_sec' WHERE id_auteur = $id_auteur");
 		}
 		return $low_sec;
 	}
@@ -65,7 +65,7 @@ function verifier_low_sec ($id_auteur, $cle, $action='') {
 }
 
 function effacer_low_sec($id_auteur) {
-	spip_query("UPDATE spip_auteurs SET low_sec = '' WHERE id_auteur = $id_auteur");
+	lcm_query("UPDATE spip_auteurs SET low_sec = '' WHERE id_auteur = $id_auteur");
 }
 
 
@@ -101,7 +101,7 @@ function ecrire_acces() {
 	$query = "SELECT login, htpass FROM spip_auteurs WHERE statut != '5poubelle' AND statut!='6forum'";
 	$result = lcm_query_db($query);	// warning, we must first connect to the database (since it is used by install.php)
 	$logins = array();
-	while($row = spip_fetch_array($result)) $logins[$row['login']] = $row['htpass'];
+	while($row = lcm_fetch_array($result)) $logins[$row['login']] = $row['htpass'];
 
 	$fichier = @fopen($htpasswd, "w");
 	if ($fichier) {
@@ -120,7 +120,7 @@ function ecrire_acces() {
 	$result = lcm_query_db($query);
 
 	$logins = array();
-	while($row = spip_fetch_array($result)) $logins[$row['login']] = $row['htpass'];
+	while($row = lcm_fetch_array($result)) $logins[$row['login']] = $row['htpass'];
 
 	$fichier = fopen("$htpasswd-admin", "w");
 	ecrire_logins($fichier, $logins);

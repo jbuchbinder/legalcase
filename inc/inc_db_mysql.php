@@ -11,10 +11,8 @@ function lcm_query_db($query) {
 	global $spip_mysql_link;
 	static $tt = 0;
 
-	// [ML] added "1 OR" temporarely, because this case ignores the installation process
-	$my_admin = 1 OR (($GLOBALS['connect_status'] == 'admin') OR ($GLOBALS['auteur_session']['status'] == 'admin'));
-	$my_profile = ($GLOBALS['mysql_profile'] AND $my_admin);
-	$my_debug = ($GLOBALS['mysql_debug'] AND $my_admin);
+	$my_debug = $GLOBALS['sql_debug'];
+	$my_profile = $GLOBALS['sql_profile'];
 
 	$query = process_query($query);
 
@@ -26,7 +24,7 @@ function lcm_query_db($query) {
 	else 
 		$result = mysql_query($query);
 
-	if ($my_profile) {
+	if ($my_debug AND $my_profile) {
 		$m2 = microtime();
 		list($usec, $sec) = explode(" ", $m1);
 		list($usec2, $sec2) = explode(" ", $m2);
@@ -37,7 +35,7 @@ function lcm_query_db($query) {
 	}
 
 	if ($my_debug AND $s = mysql_error()) {
-		echo _T('info_erreur_requete')." ".htmlentities($query)."<br>";
+		echo _T('info_erreur_requete') . " " . htmlentities($query) . "<br>";
 		echo "&laquo; ".htmlentities($s)." &raquo;<p>";
 	}
 
@@ -50,6 +48,7 @@ function spip_query_db($query) {
 }
 
 function lcm_create_table($table, $query) {
+	lcm_log("use of deprecated function: lcm_create_table, use lcm_query instead");
 	return lcm_query_db('CREATE TABLE '.$GLOBALS['table_prefix'].'_'.$table.'('.$query.')');
 }
 

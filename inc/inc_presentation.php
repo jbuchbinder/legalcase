@@ -53,7 +53,7 @@ function bouton_imessage($destinataire, $row = '') {
 	// verifier que le destinataire a un login
 	if ($row != "force") {
 		$login_req = "select login, messagerie from spip_auteurs where id_auteur=$destinataire AND en_ligne>DATE_SUB(NOW(),INTERVAL 15 DAY)";
-		$row = spip_fetch_array(spip_query($login_req));
+		$row = lcm_fetch_array(lcm_query($login_req));
 
 		if (($row['login'] == "") OR ($row['messagerie'] == "non")) {
 			return;
@@ -333,7 +333,7 @@ function afficher_tranches_requete(&$query, $colspan) {
 	$query = trim($query);
 	$query_count = eregi_replace('^(SELECT)[[:space:]].*[[:space:]](FROM)[[:space:]]', '\\1 COUNT(*) \\2 ', $query);
 
-	list($num_rows) = spip_fetch_row(spip_query($query_count));
+	list($num_rows) = spip_fetch_row(lcm_query($query_count));
 	if (!$num_rows) return;
 
 	$nb_aff = 10;
@@ -431,7 +431,7 @@ function afficher_articles($titre_table, $requete, $afficher_visites = false, $a
 	$requete = str_replace("FROM spip_articles AS articles ", "FROM spip_articles AS articles LEFT JOIN spip_petitions AS petitions USING (id_article)", $requete);
 
 	if (strlen($tranches) OR $toujours_afficher) {
-	 	$result = spip_query($requete);
+	 	$result = lcm_query($requete);
 
 		// if ($afficher_cadre) debut_cadre_gris_clair("article-24.gif");
 
@@ -445,7 +445,7 @@ function afficher_articles($titre_table, $requete, $afficher_visites = false, $a
 
 		echo $tranches;
 
-		while ($row = spip_fetch_array($result)) {
+		while ($row = lcm_fetch_array($result)) {
 			$vals = '';
 
 			$id_article = $row['id_article'];
@@ -466,9 +466,9 @@ function afficher_articles($titre_table, $requete, $afficher_visites = false, $a
 			 	$query2 = "SELECT auteurs.id_auteur, nom, messagerie, login, en_ligne ".
 			 		"FROM spip_auteurs AS auteurs, spip_auteurs_articles AS lien ".
 			 		"WHERE lien.id_article=$id_article AND auteurs.id_auteur=lien.id_auteur";
-				$result_auteurs = spip_query($query2);
+				$result_auteurs = lcm_query($query2);
 
-				while ($row = spip_fetch_array($result_auteurs)) {
+				while ($row = lcm_fetch_array($result_auteurs)) {
 					$id_auteur = $row['id_auteur'];
 					$nom_auteur = typo($row['nom']);
 					$auteur_messagerie = $row['messagerie'];
@@ -609,10 +609,10 @@ function afficher_breves($titre_table, $requete, $affrub=false) {
 
 		echo $tranches;
 
-		$result = spip_query($requete);
+		$result = lcm_query($requete);
 
 		$table = '';
-		while ($row = spip_fetch_array($result)) {
+		while ($row = lcm_fetch_array($result)) {
 			$vals = '';
 
 			$id_breve = $row['id_breve'];
@@ -649,7 +649,7 @@ function afficher_breves($titre_table, $requete, $affrub=false) {
 
 			$s = "";
 			if ($affrub) {
-				$rub = spip_fetch_array(spip_query("SELECT id_rubrique, titre FROM spip_rubriques WHERE id_rubrique=$id_rubrique"));
+				$rub = lcm_fetch_array(lcm_query("SELECT id_rubrique, titre FROM spip_rubriques WHERE id_rubrique=$id_rubrique"));
 				$id_rubrique = $rub['id_rubrique'];
 				$s .= "<a href='naviguer.php3?coll=$id_rubrique'>".typo($rub['titre'])."</a>";
 			} else if ($statut != "prop")
@@ -708,10 +708,10 @@ function afficher_rubriques($titre_table, $requete) {
 
 		echo $tranches;
 
-		$result = spip_query($requete);
+		$result = lcm_query($requete);
 
 		$table = '';
-		while ($row = spip_fetch_array($result)) {
+		while ($row = lcm_fetch_array($result)) {
 			$vals = '';
 
 			$id_rubrique = $row['id_rubrique'];
@@ -815,10 +815,10 @@ function afficher_auteurs ($titre_table, $requete) {
 
 		echo $tranches;
 
-		$result = spip_query($requete);
+		$result = lcm_query($requete);
 
 		$table = '';
-		while ($row = spip_fetch_array($result)) {
+		while ($row = lcm_fetch_array($result)) {
 			$vals = '';
 
 			$id_auteur = $row['id_auteur'];
@@ -878,10 +878,10 @@ function afficher_messages($titre_table, $query_message, $afficher_auteurs = tru
 
 		echo $tranches;
 
-		$result_message = spip_query($query_message);
+		$result_message = lcm_query($query_message);
 		$num_rows = spip_num_rows($result_message);
 
-		while($row = spip_fetch_array($result_message)) {
+		while($row = lcm_fetch_array($result_message)) {
 			$vals = '';
 
 			$id_message = $row['id_message'];
@@ -926,9 +926,9 @@ function afficher_messages($titre_table, $query_message, $afficher_auteurs = tru
 
 			if ($afficher_auteurs) {
 				$query_auteurs = "SELECT auteurs.id_auteur, auteurs.nom FROM spip_auteurs AS auteurs, spip_auteurs_messages AS lien WHERE lien.id_message=$id_message AND lien.id_auteur!=$connect_id_auteur AND lien.id_auteur=auteurs.id_auteur";
-				$result_auteurs = spip_query($query_auteurs);
+				$result_auteurs = lcm_query($query_auteurs);
 				$auteurs = '';
-				while ($row_auteurs = spip_fetch_array($result_auteurs)) {
+				while ($row_auteurs = lcm_fetch_array($result_auteurs)) {
 					$id_auteur = $row_auteurs['id_auteur'];
 					$auteurs[] = "<a href='auteurs_edit.php3?id_auteur=$id_auteur'>".typo($row_auteurs['nom'])."</a>";
 				}
@@ -1004,7 +1004,7 @@ function afficher_forum($request, $adresse_retour, $controle = "non", $recurrenc
 
 	$nb_forum[$compteur_forum] = spip_num_rows($request);
 	$i[$compteur_forum] = 1;
- 	while($row = spip_fetch_array($request)) {
+ 	while($row = lcm_fetch_array($request)) {
 		$id_forum=$row['id_forum'];
 		$id_parent=$row['id_parent'];
 		$id_rubrique=$row['id_rubrique'];
@@ -1101,9 +1101,9 @@ function afficher_forum($request, $adresse_retour, $controle = "non", $recurrenc
 			if ($mots_cles_forums == "oui"){
 
 				$query_mots = "SELECT * FROM spip_mots AS mots, spip_mots_forum AS lien WHERE lien.id_forum = '$id_forum' AND lien.id_mot = mots.id_mot";
-				$result_mots = spip_query($query_mots);
+				$result_mots = lcm_query($query_mots);
 
-				while ($row_mots = spip_fetch_array($result_mots)) {
+				while ($row_mots = lcm_fetch_array($result_mots)) {
 					$id_mot = $row_mots['id_mot'];
 					$titre_mot = propre($row_mots['titre']);
 					$type_mot = propre($row_mots['type']);
@@ -1136,7 +1136,7 @@ function forum($le_forum, $adresse_retour, $controle = "non") {
 	else {
 		$query_forum2 = "SELECT * FROM spip_forum WHERE id_parent='$le_forum' AND statut<>'off' ORDER BY date_heure";
 	}
- 	$result_forum2 = spip_query($query_forum2);
+ 	$result_forum2 = lcm_query($query_forum2);
 	afficher_forum($result_forum2, $adresse_retour, $controle);
 	
 	echo "</div>";
@@ -1495,8 +1495,8 @@ function barre_onglets($rubrique, $onglet){
 		onglet(_T('onglet_messages_internes'), "controle_forum.php3?page=interne", "interne", $onglet, "forum-interne-24.gif");
 
 		$query_forum = "SELECT * FROM spip_forum WHERE statut='publie' AND texte='' LIMIT 0,1";
-		$result_forum = spip_query($query_forum);
-		if ($row = spip_fetch_array($result_forum)) {
+		$result_forum = lcm_query($query_forum);
+		if ($row = lcm_fetch_array($result_forum)) {
 			onglet(_T('onglet_messages_vide'), "controle_forum.php3?page=vide", "sans", $onglet);
 		}
 	}
@@ -1743,14 +1743,14 @@ function bandeau_rubrique ($id_rubrique, $titre_rubrique, $z = 1) {
 	
 	
 	
-	$result_rub = spip_query("SELECT * FROM spip_rubriques WHERE id_parent=$id_rubrique ORDER BY titre");
+	$result_rub = lcm_query("SELECT * FROM spip_rubriques WHERE id_parent=$id_rubrique ORDER BY titre");
 
 	$i = spip_num_rows($result_rub);
 	if ($i > 0 AND $zdecal < $zmax) {
 		echo "<div style='position: relative; z-index: $z;' onMouseOver=\"findObj('bandeau_rub$id_rubrique').style.visibility = 'visible';\" onMouseOut=\"findObj('bandeau_rub$id_rubrique').style.visibility = 'hidden';\">\n";
 		echo "<div style='background: url(img_pack/triangle-droite$spip_lang_rtl.gif) $spip_lang_right center no-repeat;'><a href='naviguer.php3?coll=$id_rubrique' class='bandeau_rub' style='background-image: url(img_pack/$image);'>$titre_rubrique</a></div>\n";
 		echo "<div class='bandeau_rub' style='z-index: ".($z+1).";' id='bandeau_rub$id_rubrique'>";
-		while ($row_rub = spip_fetch_array($result_rub)) {
+		while ($row_rub = lcm_fetch_array($result_rub)) {
 			$id_rub = $row_rub["id_rubrique"];
 			$titre_rub = supprimer_numero(typo($row_rub["titre"]));
 			//echo "<a href='naviguer.php3?coll=$id_rub' class='bandeau_rub'>$titre_rub</a>";
@@ -1867,7 +1867,7 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 		echo "<div class='$class' id='bandeaudocuments' style='position: absolute; $spip_lang_left: ".$decal."px;'><div class='bandeau_sec'><table class='gauche'><tr>\n";
 		//icone_bandeau_secondaire (_T('icone_rubriques'), "naviguer.php3", "rubrique-24.gif", "rubriques", $sous_rubrique);
 
-		$nombre_articles = spip_num_rows(spip_query("SELECT art.id_article FROM spip_articles AS art, spip_auteurs_articles AS lien WHERE lien.id_auteur = '$connect_id_auteur' AND art.id_article = lien.id_article LIMIT 0,1"));
+		$nombre_articles = spip_num_rows(lcm_query("SELECT art.id_article FROM spip_articles AS art, spip_auteurs_articles AS lien WHERE lien.id_auteur = '$connect_id_auteur' AND art.id_article = lien.id_article LIMIT 0,1"));
 		if ($nombre_articles > 0) {
 			icone_bandeau_secondaire (_T('icone_articles'), "articles_page.php3", "article-24.gif", "articles", $sous_rubrique);
 		}
@@ -1887,7 +1887,7 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 			if ($activer_sites<>'non')
 				icone_bandeau_secondaire (_T('icone_sites_references'), "sites_tous.php3", "site-24.gif", "sites", $sous_rubrique);
 
-			if (@spip_num_rows(spip_query("SELECT * FROM spip_documents_rubriques LIMIT 0,1")) > 0) {
+			if (@spip_num_rows(lcm_query("SELECT * FROM spip_documents_rubriques LIMIT 0,1")) > 0) {
 				icone_bandeau_secondaire (_T('icone_doc_rubrique'), "documents_liste.php3", "doc-24.gif", "documents", $sous_rubrique);
 			}
 		}
@@ -2056,12 +2056,12 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 		echo "<div id='bandeautoutsite' class='bandeau_couleur_sous' style='$spip_lang_left: 0px; width: 170px;'>";
 		echo _T('icone_site_entier');
 		
-		$result_racine = spip_query("SELECT * FROM spip_rubriques WHERE id_parent=0 ORDER BY titre");
+		$result_racine = lcm_query("SELECT * FROM spip_rubriques WHERE id_parent=0 ORDER BY titre");
 		$i = spip_num_rows($result_racine);
 		if ($i > 0) {
 			echo "<div>&nbsp;</div>";
 			echo "<div class='bandeau_rubriques' style='z-index: 1;'>";
-			while ($row = spip_fetch_array($result_racine)) {
+			while ($row = lcm_fetch_array($result_racine)) {
 				$id_rubrique = $row["id_rubrique"];
 				$titre_rubrique = supprimer_numero(typo($row["titre"]));
 				
@@ -2079,14 +2079,14 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 		echo _T('icone_brouteur');
 		
 
-		$vos_articles = spip_query("SELECT articles.id_article, articles.titre, articles.statut FROM spip_articles AS articles, spip_auteurs_articles AS lien WHERE articles.id_article=lien.id_article ".
+		$vos_articles = lcm_query("SELECT articles.id_article, articles.titre, articles.statut FROM spip_articles AS articles, spip_auteurs_articles AS lien WHERE articles.id_article=lien.id_article ".
 			"AND lien.id_auteur=$connect_id_auteur AND articles.statut='prepa' ORDER BY articles.date DESC LIMIT 0,5");
 		if (spip_num_rows($vos_articles) > 0) {
 			echo "<div>&nbsp;</div>";
 			echo "<div class='bandeau_rubriques' style='z-index: 1;'>";
 			bandeau_titre_boite2(_T('info_en_cours_validation'), "article-24.gif");
 			echo "<div class='plan-articles'>";
-			while($row = spip_fetch_array($vos_articles)) {
+			while($row = lcm_fetch_array($vos_articles)) {
 				$id_article = $row['id_article'];
 				$title = typo($row['titre']);
 				$statut = $row['statut'];
@@ -2097,14 +2097,14 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 			echo "</div>";
 		}
 	
-		$vos_articles = spip_query("SELECT articles.id_article, articles.titre, articles.statut FROM spip_articles AS articles WHERE articles.statut='prop' ".
+		$vos_articles = lcm_query("SELECT articles.id_article, articles.titre, articles.statut FROM spip_articles AS articles WHERE articles.statut='prop' ".
 			" ORDER BY articles.date DESC LIMIT 0,5");
 		if (spip_num_rows($vos_articles) > 0) {
 			echo "<div>&nbsp;</div>";
 			echo "<div class='bandeau_rubriques' style='z-index: 1;'>";
 			bandeau_titre_boite2(_T('info_articles_proposes'), "article-24.gif");
 			echo "<div class='plan-articles'>";
-			while($row = spip_fetch_array($vos_articles)) {
+			while($row = lcm_fetch_array($vos_articles)) {
 				$id_article = $row['id_article'];
 				$title = typo($row['titre']);
 				$statut = $row['statut'];
@@ -2115,14 +2115,14 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 			echo "</div>";
 		}
 			
-		$vos_articles = spip_query("SELECT * FROM spip_breves WHERE statut='prop' ".
+		$vos_articles = lcm_query("SELECT * FROM spip_breves WHERE statut='prop' ".
 			" ORDER BY date_heure DESC LIMIT 0,5");
 		if (spip_num_rows($vos_articles) > 0) {
 			echo "<div>&nbsp;</div>";
 			echo "<div class='bandeau_rubriques' style='z-index: 1;'>";
 			bandeau_titre_boite2(_T('info_breves_valider'), "breve-24.gif", "$couleur_foncee", "white");
 			echo "<div class='plan-articles'>";
-			while($row = spip_fetch_array($vos_articles)) {
+			while($row = lcm_fetch_array($vos_articles)) {
 				$id_breve = $row['id_breve'];
 				$title = typo($row['titre']);
 				$statut = $row['statut'];
@@ -2135,7 +2135,7 @@ function lcm_page_start($title = "", $rubrique = "asuivre", $sous_rubrique = "as
 	
 
 		$query = "SELECT id_rubrique FROM spip_rubriques LIMIT 0,1";
-		$result = spip_query($query);
+		$result = lcm_query($query);
 	
 		if (spip_num_rows($result) > 0) {
 			$id_rubrique = $GLOBALS['id_rubrique'];
@@ -2397,7 +2397,7 @@ function debut_droite($rubrique="") {
 		// liste des articles bloques
 		if (lire_meta("articles_modif") != "non") {
 			$query = "SELECT id_article, titre FROM spip_articles WHERE auteur_modif = '$connect_id_auteur' AND date_modif > DATE_SUB(NOW(), INTERVAL 1 HOUR) ORDER BY date_modif DESC";
-			$result = spip_query($query);
+			$result = lcm_query($query);
 			$num_articles_ouverts = spip_num_rows($result);
 			if ($num_articles_ouverts) {
 				echo "<p>";
@@ -2406,7 +2406,7 @@ function debut_droite($rubrique="") {
 				echo "<div class='verdana2' style='padding: 2px; background-color:$couleur_foncee; color: white; font-weight: bold;'>";
 					echo _T('info_cours_edition')."&nbsp;:".aide('artmodif');
 				echo "</div>";
-				while ($row = @spip_fetch_array($result)) {
+				while ($row = @lcm_fetch_array($result)) {
 					$ze_article = $row['id_article'];
 					$ze_titre = typo($row['titre']);
 
@@ -2543,9 +2543,9 @@ function afficher_parents($id_rubrique) {
 	$parents = ereg_replace("(~+)","\\1~",$parents);
 	if ($id_rubrique) {
 		$query = "SELECT id_rubrique, id_parent, titre, lang FROM spip_rubriques WHERE id_rubrique=$id_rubrique";
-		$result = spip_query($query);
+		$result = lcm_query($query);
 
-		while ($row = spip_fetch_array($result)) {
+		while ($row = lcm_fetch_array($result)) {
 			$id_rubrique = $row['id_rubrique'];
 			$id_parent = $row['id_parent'];
 			$titre = $row['titre'];
@@ -2562,6 +2562,63 @@ function afficher_parents($id_rubrique) {
 		afficher_parents($id_parent);
 	}
 }
+
+// 
+// Header/footer functions for installation
+// They are used by install.php and lcm_test_dirs.php
+//
+
+function install_html_start($title = 'AUTO') {
+	global $spip_lang_rtl;
+
+	if ($title=='AUTO')
+		$title=_T('info_installation_legal_case_management');
+
+	if (!$charset = read_meta('charset'))
+		$charset = 'utf-8';
+
+	@Header("Content-Type: text/html; charset=$charset");
+
+	echo "<html><head>
+	<title>$title</title>
+	<meta http-equiv='Expires' content='0'>
+	<meta http-equiv='cache-control' content='no-cache,no-store'>
+	<meta http-equiv='pragma' content='no-cache'>
+	<meta http-equiv='Content-Type' content='text/html; charset=$charset'>
+	<style>
+	<!--
+	a {text-decoration: none; }
+	A:Hover {color:#FF9900; text-decoration: underline;}
+	.forml {width: 100%; background-color: #FFCC66; background-position: center bottom; float: none; color: #000000}
+	.formo {width: 100%; background-color: #FFF0E0; background-position: center bottom; weight: bold; float: none; color: #000000}
+	.fondl {background-color: #FFCC66; background-position: center bottom; float: none; color: #000000}
+	.fondo {background-color: #FFF0E0; background-position: center bottom; float: none; color: #000000}
+	.fondf {background-color: #FFFFFF; border-style: solid ; border-width: 1; border-color: #E86519; color: #E86519}
+	.serif { font-family: Georgia, Garamond, Times New Roman, serif; }
+	-->
+	</style>
+	</head>
+	<body bgcolor='#FFFFFF' text='#000000' link='#E86519' vlink='#6E003A' alink='#FF9900' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0'";
+
+	if ($spip_lang_rtl) echo " dir='rtl'";
+
+	echo "><br><br><br>
+	<center>
+	<table width='450'>
+	<tr><td width='450' class='serif'>
+	<font face='Verdana,Arial,Sans,sans-serif' size='4' color='#970038'><B>$title</b></font>\n<p>";
+}
+
+function install_html_end() {
+	echo '
+	</font>
+	</td></tr></table>
+	</center>
+	</body>
+	</html>
+	';
+}
+
 
 
 ?>

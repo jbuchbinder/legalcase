@@ -111,11 +111,11 @@ $convert_command = 'convert';
 // Should we debug in data/lcm.log ?
 $debug = true;
 
-// Should MySQL run in debug mode?
-$mysql_debug = true;
+// Should SQL queries run in debug mode?
+$sql_debug = true;
 
-// Should MySQL queries be profiled (chronometer) ?
-$mysql_profile = false;
+// Should SQL queries be profiled (chronometer) ?
+$sql_profile = false;
 
 // Should we make full connection requests including the server name and
 // the database name? (useful if you plan adding extentions which make

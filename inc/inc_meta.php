@@ -19,7 +19,7 @@ function read_metas() {
 	$meta_upd = '';
 	$query = 'SELECT name, value, upd FROM lcm_meta';
 	$result = lcm_query($query);
-	while ($row = spip_fetch_array($result)) {
+	while ($row = lcm_fetch_array($result)) {
 		$nom = $row['name'];
 		$meta[$nom] = $row['value'];
 		$meta_upd[$nom] = $row['upd'];

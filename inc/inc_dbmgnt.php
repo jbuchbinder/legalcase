@@ -11,10 +11,24 @@ function create_database() {
 	// Main objects
 	//
 
+	// - DONE lcm_case
+	// - DONE lcm_followup
+	// - DONE lcm_author
+	// - DONE lcm_client 
+	// - DONE lcm_org
+	// + TODO lcm_client_org
+	// + TODO lcm_courtfinal 
+	// + TODO lcm_appelation 
+	// + TODO lcm_keyword 
+	// + TODO lcm_keyword_group 
+	// + TODO lcm_client_keywords 
+	// - DONE lcm_case_client_org
+	// - DONE lcm_case_author
+
 	lcm_log("creating the tables for objects", 'install');
 
-	// * case *
-	$query = "id_case bigint(21) NOT NULL auto_increment,
+	$query = "CREATE TABLE lcm_case (
+		id_case bigint(21) NOT NULL auto_increment,
 		title text NOT NULL,
 		id_court_archive text NOT NULL,
 		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
@@ -22,11 +36,11 @@ function create_database() {
 		legal_reason text NOT NULL,
 		alledged_crime text NOT NULL,
 		status text NOT NULL,
-		PRIMARY KEY (id_case)";
-	$result = lcm_create_table('case', $query);
+		PRIMARY KEY (id_case))";
+	$result = lcm_query($query);
 
-	// * followup *
-	$query = "id_followup bigint(21) NOT NULL auto_increment,
+	$query = "CREATE TABLE lcm_followup (
+		id_followup bigint(21) NOT NULL auto_increment,
 		id_case bigint(21) DEFAULT '0' NOT NULL,
 		date_start datetime NOT NULL,
 		date_end datetime NOT NULL,
@@ -34,12 +48,12 @@ function create_database() {
 		description text NOT NULL,
 		sumbilled decimal(19,4) NOT NULL,
 		PRIMARY KEY (id_followup),
-		KEY id_case (id_case)";
-	$result = lcm_create_table('followup', $query);
+		KEY id_case (id_case))";
+	$result = lcm_query($query);
 
-	// * author *
 	// [ML] XXX too many extra fields
-	$query = "id_author bigint(21) NOT NULL auto_increment,
+	$query = "CREATE TABLE lcm_author (
+		id_author bigint(21) NOT NULL auto_increment,
 		id_office bigint(21) DEFAULT 1 NOT NULL,
 		name_first text NOT NULL,
 		name_middle text NOT NULL,
@@ -66,93 +80,73 @@ function create_database() {
 		PRIMARY KEY (id_author),
 		KEY username (username),
 		KEY status (status),
-		KEY lang (lang)";
-	$result = lcm_create_table('author', $query);
+		KEY lang (lang))";
+	$result = lcm_query($query);
 
-	// XXX TODO
-	// * client *
-	// * courtfinal *
-	// * appelation *
-	// * keyword *
-	// * keyword_group *
-	// * client_keywords *
-	// * case_client *
-	// * case_lawyer *
+	$query = "CREATE TABLE lcm_client (
+		id_client bigint(21) NOT NULL auto_increment,
+		name_first text NOT NULL,
+		name_middle text NOT NULL,
+		name_last text NOT NULL,
+		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		citizen_number text NOT NULL,
+		address text NOT NULL,
+		civil_status decimal(2) DEFAULT 0 NOT NULL,
+		income decimal(2) DEFAULT 0 NOT NULL,
+		PRIMARY KEY id_client (id_client))";
+	$result = lcm_query($query);
+
+	$query = "CREATE TABLE lcm_org (
+		id_org bigint(21) NOT NULL auto_increment,
+		name text NOT NULL,
+		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		address text NOT NULL,
+		PRIMARY KEY id_org (id_org))";
+	$result = lcm_query($query);
+
 
 	//
 	// Relations
 	//
 
 	lcm_log("creating the tables used for relations between objects", 'install');
-	/*
-	$query = "CREATE TABLE spip_auteurs_articles (
-		id_auteur bigint(21) DEFAULT '0' NOT NULL,
-		id_article bigint(21) DEFAULT '0' NOT NULL,
-		KEY id_auteur (id_auteur),
-		KEY id_article (id_article))";
-	$result = spip_query($query);
+	
+	$query = "CREATE TABLE lcm_case_client_org (
+		id_case bigint(21) DEFAULT '0' NOT NULL,
+		id_client bigint(21) DEFAULT '0' NOT NULL,
+		id_org bigint(21) DEFAULT '0' NOT NULL,
+		KEY id_case (id_case),
+		KEY id_client (id_client),
+		KEY id_org (id_org))";
+	$result = lcm_query($query);
 
-	$query = "CREATE TABLE spip_auteurs_rubriques (
-		id_auteur bigint(21) DEFAULT '0' NOT NULL,
-		id_rubrique bigint(21) DEFAULT '0' NOT NULL,
-		KEY id_auteur (id_auteur),
-		KEY id_rubrique (id_rubrique))";
-	$result = spip_query($query);
+	$query = "CREATE TABLE lcm_case_author (
+		id_case bigint(21) DEFAULT '0' NOT NULL,
+		id_author bigint(21) DEFAULT '0' NOT NULL,
+		KEY id_case (id_case),
+		KEY id_author (id_author))";
+	$result = lcm_query($query);
 
-	$query = "CREATE TABLE spip_auteurs_messages (
-		id_auteur bigint(21) DEFAULT '0' NOT NULL,
-		id_message bigint(21) DEFAULT '0' NOT NULL,
-		vu CHAR(3) NOT NULL,
-		KEY id_auteur (id_auteur),
-		KEY id_message (id_message))";
-	$result = spip_query($query);
 
-	$query = "CREATE TABLE spip_mots_articles (
-		id_mot bigint(21) DEFAULT '0' NOT NULL,
-		id_article bigint(21) DEFAULT '0' NOT NULL,
-		KEY id_mot (id_mot),
-		KEY id_article (id_article))";
-	$result = spip_query($query);
-
-	$query = "CREATE TABLE spip_mots_breves (
-		id_mot bigint(21) DEFAULT '0' NOT NULL,
-		id_breve bigint(21) DEFAULT '0' NOT NULL,
-		KEY id_mot (id_mot),
-		KEY id_breve (id_breve))";
-	$result = spip_query($query);
-
-	$query = "CREATE TABLE spip_mots_rubriques (
-		id_mot bigint(21) DEFAULT '0' NOT NULL,
-		id_rubrique bigint(21) DEFAULT '0' NOT NULL,
-		KEY id_mot (id_mot),
-		KEY id_rubrique (id_rubrique))";
-	$result = spip_query($query);
-
-	$query = "CREATE TABLE spip_mots_syndic (
-		id_mot bigint(21) DEFAULT '0' NOT NULL,
-		id_syndic bigint(21) DEFAULT '0' NOT NULL,
-		KEY id_mot (id_mot),
-		KEY id_syndic (id_syndic))";
-	$result = spip_query($query);
-
-	$query = "CREATE TABLE spip_mots_forum (
-		id_mot bigint(21) DEFAULT '0' NOT NULL,
-		id_forum bigint(21) DEFAULT '0' NOT NULL,
-		KEY id_mot (id_mot),
-		KEY id_forum (id_forum))";
-	$result = spip_query($query);
-	*/
-
+	$query = "CREATE TABLE lcm_client_org (
+		id_client bigint(21) DEFAULT '0' NOT NULL,
+		id_org bigint(21) DEFAULT '0' NOT NULL,
+		KEY id_client (id_client),
+		KEY id_org (id_org))";
+	$result = lcm_query($query);
 
 	//
 	// Management of the application
 	//
 
-	$query = "name VARCHAR(255) NOT NULL,
+	$query = "CREATE TABLE lcm_meta (
+		name VARCHAR(255) NOT NULL,
 		value VARCHAR(255) DEFAULT '',
 		upd TIMESTAMP,
-		PRIMARY KEY (name)";
-	$result = lcm_create_table('meta', $query);
+		PRIMARY KEY (name))";
+	$result = lcm_query($query);
 
 	lcm_log("LCM database initialisation complete", 'install');
 }

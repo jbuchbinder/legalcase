@@ -180,8 +180,8 @@ function verifier_php_auth() {
 	global $PHP_AUTH_USER, $PHP_AUTH_PW, $ignore_auth_http;
 	if ($PHP_AUTH_USER && $PHP_AUTH_PW && !$ignore_auth_http) {
 		$login = addslashes($PHP_AUTH_USER);
-		$result = spip_query("SELECT * FROM lcm_author WHERE username='$login'");
-		$row = spip_fetch_array($result);
+		$result = lcm_query("SELECT * FROM lcm_author WHERE username='$login'");
+		$row = lcm_fetch_array($result);
 		$auth_mdpass = md5($row['alea_actuel'] . $PHP_AUTH_PW);
 		if ($auth_mdpass != $row['pass']) {
 			$PHP_AUTH_USER='';
