@@ -18,45 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.7 2005/01/10 15:39:07 mlutfy Exp $
+	$Id: upd_author.php,v 1.8 2005/01/10 16:11:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-session_start();
+function change_password($usr) {
+	global $author_session;
 
-// Register $errors array - just in case
-if (!session_is_registered("errors"))
-    session_register("errors");
-
-// Clear all previous errors
-$errors=array();
-
-// Register form data in the session
-if(!session_is_registered("usr"))
-    session_register("usr");
-
-// Get form data from POST fields
-foreach($_POST as $key => $value)
-    $usr[$key]=$value;
-
-// Check author data for validty
-// [ML:temporary] if (!$usr['email']) $errors['email'] = 'You MUST specify an e-mail!';
-
-// There were errors, send user back to form
-if (count($errors)) {
-    header("Location: $HTTP_REFERER");
-    exit;
-}
-
-//
-// Change password (if requested)
-//
-
-global $author_session;
-
-if ($usr['usr_new_passwd']) {
 	// FIXME: include auth type according to 'auth_type' field in DB
 	// default on 'db' if field not present/set.
 	$class_auth = 'Auth_db';
@@ -67,6 +37,7 @@ if ($usr['usr_new_passwd']) {
 	if (! $auth->init()) {
 		// TODO: make error
 		lcm_log("pass change: failed auth init, signal 'internal error'.");
+		return;
 	}
 
 	if ($author_session['status'] == 'admin') {
@@ -105,7 +76,42 @@ if ($usr['usr_new_passwd']) {
 			lcm_log("pass change: could not validate current password");
 		}
 	}
+
 }
+
+session_start();
+
+// Register $errors array - just in case
+if (!session_is_registered("errors"))
+    session_register("errors");
+
+// Clear all previous errors
+$errors=array();
+
+// Register form data in the session
+if(!session_is_registered("usr"))
+    session_register("usr");
+
+// Get form data from POST fields
+foreach($_POST as $key => $value)
+    $usr[$key]=$value;
+
+// Check author data for validty
+// [ML:temporary] if (!$usr['email']) $errors['email'] = 'You MUST specify an e-mail!';
+
+// There were errors, send user back to form
+if (count($errors)) {
+    header("Location: $HTTP_REFERER");
+    exit;
+}
+
+//
+// Change password (if requested)
+//
+
+if ($usr['usr_new_passwd'])
+	change_password($usr);
+
 
 //
 // No errors, update database
