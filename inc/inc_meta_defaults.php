@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta_defaults.php,v 1.9 2005/02/07 08:16:20 mlutfy Exp $
+	$Id: inc_meta_defaults.php,v 1.10 2005/02/15 09:06:55 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -46,9 +46,9 @@ function init_default_config() {
 		// Does the site allow users to self-register an account? (yes/no)
 		'site_open_subscription' => 'no',
 
-		// Defaut name/description of the site
-		'site_name' => _T('title_software'),
-		'site_description' => _T('title_software_description'),
+		// Defaut name/description of the site, will be sent through in _T()
+		'site_name' => 'title_software',
+		'site_description' => 'title_software_description',
 
 		// Default currency (based on the language/regional of admin)
 		'currency' => _T('currency_default_format'),
