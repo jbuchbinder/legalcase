@@ -100,9 +100,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'calendar_button_fullday' => 'Entire day',
 'calendar_button_monthly' => 'Monthly calendar',
 'calendar_button_morning' => 'Morning (a.m.)',
+'calendar_button_nextapps' => 'Next activities',
 'calendar_button_now' => 'Today',
 'calendar_button_weekly' => 'Weekly calendar',
 'calendar_info_date' => 'Date',
+'calendar_info_noacts' => 'No activities.',
 'calendar_info_time' => 'Time',
 'case_button_add_client' => 'Add a client',
 'case_button_add_org' => 'Add an organisation',
@@ -136,6 +138,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_subtitle_general' => 'General case information',
 'case_subtitle_times' => 'Total time spent on the case',
 'case_warning_no_title' => 'Please enter a case title.',
+'client_button_edit' => 'Edit client information',
 'client_button_new' => 'Register a new client',
 'client_input_id' => 'Client ID:',
 'client_input_notes' => 'Notes:',
@@ -278,6 +281,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // G
 'generic_subtitle_contacts' => 'Contacts',
+'generic_subtitle_document_add' => 'Add a new document',
 'generic_subtitle_general' => 'General information',
 'generic_tab_agenda' => 'Agenda',
 'generic_tab_cases' => 'Cases',
