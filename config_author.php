@@ -47,7 +47,7 @@ function show_author_form() {
             <tr>
               <td colspan="2" align="center" valign="middle" class="heading"><h4>Change user interface preferences</h4></td>
             </tr>
-            <tr>
+	    <tr>
               <td align="right" valign="top">Theme:</td>
               <td align="left" valign="top">
 			  	<input type="hidden" name="old_theme" id="old_theme" value="<?php echo $prefs['theme'] ?>" />
@@ -75,6 +75,21 @@ function show_author_form() {
 			</tr>\n";
 	}
 ?>
+	    <tr>
+	    	<td align="right" valign="top">Select screen type:</td>
+		<td align="left" valign="top">
+		<input type="hidden" name="old_screen" id="old_screen" value="<?php echo $prefs['sel_screen'] ?>" />
+			<select name="sel_screen" class="sel_frm">
+<?php
+	$screen_modes = array("wide","narrow");
+	foreach ($screen_modes as $scrm) {
+		$selected_mode = ($scrm == $prefs['sel_screen'] ? " selected='selected'" : '');
+		echo "<option value='" . $scrm . "'" . $selected_mode . ">" . $scrm .  "</option>\n";
+	}
+?>
+			</select>
+		</td>
+	    </tr>
             <tr>
               <td align="right" valign="top">Font size:</td>
               <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
@@ -194,6 +209,7 @@ function apply_author_ui_change() {
 	// From the form
 	global $sel_language, $old_language;
 	global $sel_theme, $old_theme;
+	global $sel_screen, $old_screen;
 
 	// Show modifications made one finished
 	$log = array();
@@ -215,6 +231,13 @@ function apply_author_ui_change() {
 
 	if ($sel_theme == $prefs['theme'] && $sel_theme <> $old_theme)
 		array_push($log, "Theme set to " . $sel_theme . ", was " . $old_theme . ".");
+		
+	//
+	// Change the type of the screen - wide or narrow
+	//
+	
+	if ($sel_screen == $prefs['sel_screen'] && $sel_screen <> $old_screen)
+		array_push($log, "Screen mode set to " . $sel_screen . ", was " . $old_screen . ".");
 
 }
 
