@@ -178,7 +178,6 @@ if ($var_lang_lcm) {
 		// Save language preference only if we are installed
 		if (@file_exists('inc/config/inc_connect.php')) {
 			include_lcm('inc_admin');
-			$cible->addvar('test', '123_' .  $GLOBALS['author_session']['id_author'] . '_' . $verif);
 
 			if (verifier_action_auteur('var_lang_lcm', $valeur, $id_auteur)) {
 				lcm_query("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_auteur);
