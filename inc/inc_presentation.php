@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.164 2005/03/17 09:39:09 makaveev Exp $
+	$Id: inc_presentation.php,v 1.165 2005/03/17 14:05:17 mlutfy Exp $
 */
 
 //
@@ -889,7 +889,7 @@ function get_yes_no($name, $value = '') {
 	$val_yes = 'yes';
 	$val_no = 'no';
 
-	if ($value == 'Y' || $value = 'N') {
+	if ($value == 'Y' || $value == 'N') {
 		$val_yes = 'Y';
 		$val_no  = 'N';
 	}
