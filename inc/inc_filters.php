@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.53 2005/03/22 09:48:12 mlutfy Exp $
+	$Id: inc_filters.php,v 1.54 2005/03/22 15:39:18 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -375,10 +375,10 @@ function http_href($href, $clic, $title='', $style='', $class='', $evt='') {
 	return '<a href="' .
 		str_replace('&', '&amp;', $href) .
 		'"' .
-		(!$title ? '' : ("\ntitle=\"" . supprimer_tags($title)."\"")) .
-		(!$style ? '' : ("\nstyle=\"" . $style . "\"")) .
-		(!$class ? '' : ("\nclass=\"" . $class . "\"")) .
-		($evt ? "\n$evt" : '') .
+		(!$title ? '' : (" title=\"" . supprimer_tags($title)."\"")) .
+		(!$style ? '' : (" style=\"" . $style . "\"")) .
+		(!$class ? '' : (" class=\"" . $class . "\"")) .
+		($evt ? " $evt" : '') .
 		'>' .
 		$clic .
 		'</a>';
