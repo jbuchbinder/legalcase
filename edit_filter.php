@@ -80,19 +80,29 @@ if (empty($errors)) {
 if ($existing) lcm_page_start(_T('edit_filter_details'));
 else lcm_page_start(_T('new_filter'));
 
+	// Show filter data form
 	echo "\n<form action='upd_filter.php' method='POST'>
 		<table class='tbl_usr_dtl'>\n";
+	// Show filter ID if available
 	if ($filter_data['id_filter']) {
 		echo "\t<tr><td>" . _T('filter_id') . ":</td><td>" . $filter_data['id_filter'] . "
 			<input type=\"hidden\" name=\"id_filter\" value=\"" .  $filter_data['id_filter'] . "\"></td></tr>\n";
 	}
-
+	// Show author ID
 	echo "
 		<tr><td>" . _T('author_id') . ":</td><td>" . $filter_data['id_author'] . "
-			<input type=\"hidden\" name=\"id_author\" value=\"" . $filter_data['id_author'] . "\"></td></tr>
+			<input type=\"hidden\" name=\"id_author\" value=\"" . $filter_data['id_author'] . "\"></td></tr>";
+	// Show filter title
+	echo"
 		<tr><td>" . _T('filter_title') . ":</td>
 			<td><input name=\"title\" value=\"" . clean_output($filter_data['title']) . "\" class=\"search_form_txt\">";
 	echo f_err('title',$errors) . "</td></tr>";
+	echo"
+		<tr><td>" . _T('filter_type') . ":</td>
+			<td><select name=\"type\">
+				<option" . (($filter_data['type']='AND') ? ' selected' : '') . ">AND</option>
+				<option" . (($filter_data['type']='OR') ? ' selected' : '') . ">OR</option>
+			</select></td></tr>";
 
 //	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
 //		echo "\t<tr><td>" . _T('public') . "</td>
