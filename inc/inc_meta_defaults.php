@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta_defaults.php,v 1.11 2005/03/01 09:18:08 mlutfy Exp $
+	$Id: inc_meta_defaults.php,v 1.12 2005/03/23 11:02:33 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -36,6 +36,10 @@ function init_default_config() {
 	// (if no cookie, then set to English)
 	if (!$lang = $GLOBALS['lcm_lang'])
 		$lang = 'en';
+	
+	$meta_name_middle = 'no';
+	if ($lang == 'bg' || $lang == 'pt_br')
+		$meta_name_middle = 'yes';
 
 	// c.f. http://www.lcm.ngo-bg.org/article28.html
 	$list_meta = array(
@@ -69,15 +73,15 @@ function init_default_config() {
 		'case_write_always' => 'no',
 
 		// ** Policy **
-		'client_name_middle' => 'yes',
+		'client_name_middle' => $meta_name_middle,
 		'client_citizen_number' => 'no',
-		'client_civil_status' => 'yes',
-		'client_income' => 'yes',
+		'client_civil_status' => 'no',
+		'client_income' => 'no',
 		'case_court_archive' => 'yes',
 		'case_assignment_date' => 'yes',
 		'case_alledged_crime' => 'yes',
 		'case_allow_modif' => 'yes',
-		'fu_sum_billed' => 'yes',
+		'fu_sum_billed' => 'no',
 		'fu_allow_modif' => 'yes',
 		'hide_emails' => 'no',
 
