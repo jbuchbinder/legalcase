@@ -12,8 +12,8 @@ $lcm_site_name = read_meta('nom_site');
 echo "<p>&nbsp;</p>\n";
 echo "<center><table width='400'><tr><td width='400'>\n";
 echo "<div align='center'>\n";
-echo "<h3 class='spip'>" . $lcm_site_name . "<br>\n";
-echo "<small>" . _T('login_acces_prive') . "</small></h3>\n";
+echo "<h3>" . $lcm_site_name . "</h3>\n";
+// echo "<small>" . _T('login_acces_prive') . "</small></h3>\n";
 echo "<div align='" . $spip_lang_right . "'>" . menu_languages() . "</div>\n";
 echo "</div>\n";
 
