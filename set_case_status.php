@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.2 2004/12/17 18:03:36 antzi Exp $
+	$Id: set_case_status.php,v 1.3 2004/12/17 18:25:00 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -27,7 +27,7 @@ include_lcm('inc_filters');
 
 // Get input values
 $case = intval($_GET['case']);
-$status = clean_input($_POST['status']);
+$status = clean_input($_GET['status']);
 
 if (!($case>0)) die("Which case?");
 
