@@ -58,7 +58,10 @@ if ($list_pos>0)
 
 <!-- [ML:FIXME] I'm not sure about the CSS classes -->
 <table border='0' align='center' class='tbl_data' width='99%'>
-<!-- [ML] tr><th colspan="3" class='tbl_head'>Case description</th></tr -->
+	<tr><th class='tbl_head'>Description</th>
+		<th class='tbl_head'>Status</th>
+		<th class='tbl_head'>Actions</th>
+	</tr>
 <?php
 // Process the output of the query
 for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
