@@ -25,13 +25,14 @@ include_lcm('inc_filters');
 
 if ($GLOBALS['author_session']['status'] != 'admin') die("You don't have the right to list all cases!");
 
-$q = "SELECT lcm_case.id_case,title,status,public,pub_write
+$q = "SELECT DISTINCT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author
 		WHERE (lcm_case.id_case=lcm_case_author.id_case";
 
 // Add search criteria if any
 if (strlen($find_case_string)>1) {
-	$q .= " AND (lcm_case.title LIKE '%$find_case_string%')";
+	$q .= " AND ((lcm_case.title LIKE '%$find_case_string%')
+				OR (lcm_case.status LIKE '%$find_case_string%'))";
 	lcm_page_start("Cases, containing '$find_case_string':");
 } else {
 	lcm_page_start("List of all cases");
@@ -53,12 +54,10 @@ if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
 
-// Debuging code
-echo "<!-- Page rows:" . $prefs['page_rows'] . "-->\n";
 ?>
 
 <form name="frm_find_case" class="search_form" action="all_cases.php" method="post">
-	Find author:&nbsp;<input type="text" name="find_case_string" size="10" class="search_form_txt"<?php
+	Find:&nbsp;<input type="text" name="find_case_string" size="10" class="search_form_txt"<?php
 
 //	if (isset($find_author_string)) echo " value='$find_author_string'";
 	echo " value='$find_case_string'";
@@ -83,7 +82,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	echo highlight_matches(clean_output($row['title']),$find_case_string);
 //	if (allowed($row['id_case'],'r'))
 		echo '</a>';
-	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $row['status'];
+	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . highlight_matches(clean_output($row['status']),$find_case_string);
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 //	if (allowed($row['id_case'],'e'))
 		echo '<a href="edit_case.php?case=' . $row['id_case'] . '" class="content_link">Edit case</a>';
@@ -102,8 +101,8 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 // Show link to previous page
 if ($list_pos>0) {
-	echo '<a href="all_cases.php';
-	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
+	echo '<a href="all_cases.php?list_pos=';
+	echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : '0');
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
 	echo '">< Prev</a> ';
 }
