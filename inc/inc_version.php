@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.68 2005/03/28 20:19:43 antzi Exp $
+	$Id: inc_version.php,v 1.69 2005/04/01 07:17:11 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -370,7 +370,7 @@ function include_data($file) {
 
 $flag_connect = @file_exists('inc/config/inc_connect.php');
 
-function lcm_query($query) {
+function lcm_query($query, $accept_fail = false) {
 	include_lcm('inc_db');
 
 	// We silently fail if there is no database, this avoids 
@@ -381,7 +381,7 @@ function lcm_query($query) {
 			return;
 	}
 
-	return lcm_query_db($query);
+	return lcm_query_db($query, $accept_fail);
 }
 
 function spip_query($query) {

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.19 2005/03/28 10:51:01 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.20 2005/04/01 07:17:11 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -28,7 +28,7 @@ define('_INC_DB_MYSQL', '1');
 // SQL query functions
 //
 
-function lcm_query_db($query) {
+function lcm_query_db($query, $accept_fail = false) {
 	global $spip_mysql_link;
 	static $tt = 0;
 
@@ -58,7 +58,8 @@ function lcm_query_db($query) {
 	if ($my_debug)
 		lcm_log("QUERY: $query\n", "mysql");
 
-	if (lcm_sql_errno()) {
+	if (lcm_sql_errno() && (!$accept_fail)) {
+		echo "accept fail = $accept_fail";
 		$s = lcm_sql_error();
 		$error = _T('warning_sql_query_failed') . "<br />\n" . htmlentities($query) . "<br />\n";
 		$error .= "&laquo; " . htmlentities($s) . " &raquo;<br />";

@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.47 2005/03/18 14:55:58 mlutfy Exp $
+	$Id: install.php,v 1.48 2005/04/01 07:17:10 mlutfy Exp $
 */
 
 session_start();
@@ -267,7 +267,7 @@ else if ($step == 4) {
 	// [ML] Altough not most problematic, could be better. But if someone
 	// fixes here, please fix lcm_pass.php also (function print_registration_form())
 	$name_first = (isset($_SESSION['usr']['name_first']) ?  $_SESSION['usr']['name_first'] : '');
-	echo "<table border='0' cellpadding='0' cellspacing='5'><tr>\n";
+	echo "<table border='0' cellpadding='0' cellspacing='5' width='80%'><tr>\n";
 	echo "<td>
 			<strong><label for='name_first'>" . f_err_star('name_first') . _T('person_input_name_first') . "</label></strong><br />
 			<input type='text' style='width: 100%;' id='name_first' name='name_first' value='$name_first' size='15' class='txt_lmnt' />
@@ -294,7 +294,7 @@ else if ($step == 4) {
 	echo "<p><b>" . _T('input_connection_identifiers') . "</b></p>\n";
 
 	$username = (isset($_SESSION['usr']['username']) ?  $_SESSION['usr']['username'] : '');
-	echo "<table border='0' cellpadding='0' cellspacing='5'>\n";
+	echo "<table border='0' cellpadding='0' cellspacing='5' width='80%'>\n";
 	echo "<tr>\n";
 	echo "<td>";
 	echo "<b><label for='username'>" . f_err_star('username') . _T('authoredit_input_username') . "</label></b> \n";
@@ -352,7 +352,7 @@ else if ($step == 3) {
 	$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db);
 
 	// Test if the software was already installed
-	lcm_query("SELECT COUNT(*) FROM lcm_meta");
+	lcm_query("SELECT COUNT(*) FROM lcm_meta", true);
 	$already_installed = !lcm_sql_errno();
 	$old_lcm_version = 'NONE';
 
