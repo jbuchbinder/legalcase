@@ -23,18 +23,19 @@ use_language_of_visitor();
 
 // Presentation of the interface, headers and "<head></head>".
 // XXX You may want to use lcm_page_start() instead.
-function lcm_html_start($title = "", $css_files = "") {
+function lcm_html_start($title = "AUTO", $css_files = "") {
 	global $couleur_foncee, $couleur_claire, $couleur_lien, $couleur_lien_off;
 	global $flag_ecrire;
 	global $spip_lang_rtl, $spip_lang_left;
 	global $mode;
 	global $connect_status, $connect_toutes_rubriques;
 	
-	$nom_site_spip = entites_html(lire_meta("nom_site"));
+	$lcm_site_name = entites_html(lire_meta("nom_site"));
 	$title = textebrut(typo($title));
 
-	if (!$nom_site_spip)
-		$nom_site_spip="LCM";
+	// Don't show site name (if none) while installation
+	if (!$lcm_site_name && $title == "AUTO")
+		$lcm_site_name = "LCM";
 
 	if (!$charset = lire_meta('charset'))
 		$charset = 'utf-8';
@@ -51,7 +52,7 @@ function lcm_html_start($title = "", $css_files = "") {
 	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 <html xmlns=\"http://www.w3.org/1999/xhtml\">
 <head>
-	<title>". ($nom_site_spip ? $nom_site_spip ." | " : '') . $title ."</title>
+	<title>". ($lcm_site_name ? $lcm_site_name ." | " : '') . $title ."</title>
 	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n";
 
 	// [ML] We might need something similar 
@@ -619,7 +620,7 @@ function install_html_start($title = 'AUTO') {
 	echo "\t<br/>\n";
 	echo "\t<div align='center'>\n";
 	echo "\t\t<div align='left' style='width: 450px;'>\n";
-	echo "\t\t<h1 style='font-family: Verdana,Arial,Sans,sans-serif; font-size: 120%; color: #970038'><b>$title</b></h1>\n";
+	echo "\t\t<h1><b>$title</b></h1>\n";
 
 	echo "\n<!-- END install_html_start() -->\n\n";
 }
