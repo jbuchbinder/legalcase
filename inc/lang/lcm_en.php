@@ -21,6 +21,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'app_input_date_end' => 'End:',
 'app_input_date_start' => 'Start:',
 'app_input_description' => 'Description:',
+'app_input_for_case' => 'Appointment to case:',
+'app_input_involving_clients' => 'Involving:',
 'app_input_reminder_offset' => 'Remind me:',
 'app_input_reminder_time' => 'Remind me at:',
 'app_input_time_length' => 'Duration:',
@@ -217,6 +219,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'fu_input_date_end' => 'End:',
 'fu_input_date_start' => 'Start:',
 'fu_input_description' => 'Description:',
+'fu_input_for_case' => 'To case:',
+'fu_input_involving_clients' => 'Involving:',
 'fu_input_sum_billed' => 'Sum billed:',
 'fu_input_time_length' => 'Time spent on activity:',
 'fu_input_type' => 'Type:',
@@ -235,11 +239,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // I
-'info_appointment_involving' => 'Involving:',
-'info_appointment_to_case' => 'Appointment to case:',
-'info_followup_case' => 'Case:',
-'info_followup_involving' => 'Involving:',
-'info_followup_to_case' => 'To case:',
 'info_free_software' => 'Free software <a href=\'http://www.lcm.ngo-bg.org/en\' class=\'prefs_normal_lnk\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\' class=\'prefs_normal_lnk\'>GPL licence</a>.',
 'info_greetings' => 'Good day',
 'info_more_than_five' => '(More than 5 characters)',
@@ -297,6 +296,18 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
+'keywords_info_quantity' => 'Authors can select @quantity@ of this group in a given situation (case, follow-up, etc.).',
+'keywords_input_description' => 'Description:',
+'keywords_input_name' => 'Name:',
+'keywords_input_policy' => 'Policy:',
+'keywords_input_suggest' => 'Default choice:',
+'keywords_input_title' => 'Title:',
+'keywords_input_type' => 'Type:',
+'keywords_option_quantity_many' => 'many keywords',
+'keywords_option_quantity_one' => 'one keyword',
+'keywords_tab_maintenance' => 'Maintenance',
+'keywords_tab_system' => 'System keywords',
+'keywords_tab_user' => 'User keywords',
 'kw_appointments_court_session_title' => 'Court session',
 'kw_appointments_meeting_title' => 'Meeting',
 'kw_appointments_phone_conversation_title' => 'Phone conversation',
@@ -328,10 +339,16 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw_income_high_title' => 'Above average',
 'kw_income_low_title' => 'Under average',
 'kw_income_unknown_title' => 'Unknown',
+'kw_stage_appeal_title' => 'Appeal',
+'kw_stage_investigation_title' => 'Investigation',
+'kw_stage_pre-trial_title' => 'Pre-trial',
+'kw_stage_second_appeal_title' => 'Second appeal',
+'kw_stage_trial_title' => 'Trial',
 'kwg_civilstatus_title' => 'Civil status',
 'kwg_contacts_title' => 'Contact keywords',
 'kwg_followups_title' => 'Followup keywords',
 'kwg_income_title' => 'Income',
+'kwg_stage_title' => 'Case stage',
 
 
 // L
