@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.26 2005/03/01 22:11:19 antzi Exp $
+	$Id: client_det.php,v 1.27 2005/03/06 21:24:15 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -101,7 +101,7 @@ if ($client > 0) {
 				echo "</p>\n";
 		
 				if ($edit)
-					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "</p>\n";
+					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "<br /><br /></p>\n";
 		
 				echo "</fieldset>\n";
 				break;
