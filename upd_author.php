@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.20 2005/03/18 14:59:16 mlutfy Exp $
+	$Id: upd_author.php,v 1.21 2005/03/22 08:39:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -176,11 +176,13 @@ if ($usr['id_author'] > 0) {
 } else {
 	// Keep form information in session, just in case there is an error
 	// now or later (username/pass).
+	/* [ML] It is already saved
 	foreach($usr as $key => $value)
 		$_SESSION['usr'][$key] = $value;
+	*/
 
 	if (count($errors)) {
-		header("Location: $HTTP_REFERER");
+    	header("Location: edit_author.php?author=0");
 		exit;
 	}
 
@@ -277,13 +279,17 @@ if (count($_SESSION['errors'])) {
     exit;
 }
 
-// No errors, then delete session info
+$dest_link = new Link('author_det.php');
+$dest_link->addVar('author', $usr['id_author']);
+
+// [ML] Not used at the moment, but could be useful eventually to send user
+// back to where he was (but as a choice, not automatically, see author_det.php).
+if (isset($usr['ref_edit_author']))
+	$dest_link->addVar('ref', $usr['ref_edit_author']);
+
+// Delete session (of form data will become ghosts)
 $_SESSION['usr'] = array();
 
-// No errors: send user back to referer, or (if none) show author details.
-if (isset($usr['ref_edit_author']) && $usr['ref_edit_author'])
-	header('Location: ' . $usr['ref_edit_author']);
-else
-	header('Location: author_det.php?author=' . $usr['id_author']);
+header('Location: ' . $dest_link->getUrlForHeader());
 
 ?>

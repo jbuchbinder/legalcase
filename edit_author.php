@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.31 2005/03/21 14:23:10 mlutfy Exp $
+	$Id: edit_author.php,v 1.32 2005/03/22 08:39:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -36,8 +36,10 @@ if ($meta_subscription == 'moderated' || $meta_subscription == 'yes')
 	array_push($statuses, 'waiting');
 
 // Set the returning page
-if (isset($ref)) $usr['ref_edit_author'] = $ref;
-else $usr['ref_edit_author'] = $HTTP_REFERER;
+if (isset($_REQUEST['ref']))
+	$usr['ref_edit_author'] = $ref;
+else
+	$usr['ref_edit_author'] = $GLOBALS['HTTP_REFERER'];
 
 // Find out if this is existing or new case
 $existing = ($author > 0);
