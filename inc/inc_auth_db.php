@@ -86,11 +86,17 @@ class Auth_db {
 	}
 
 	function newpass($username, $pass, $author_session) {
-		if ($this->is_newpass_allowed() == false)
+		if ($this->is_newpass_allowed($username, $author_session) == false)
 			return false;
+
+		$alea_current = create_uniq_id();
+		$alea_future  = create_uniq_id();
+		$pass = md5($alea_current . $pass);
 	
 		$query = "UPDATE lcm_author
-					SET password = '" . md5($pass) . "'
+					SET password = '" . $pass . "',
+						alea_actuel = '" . $alea_current . "',
+						alea_futur = '" . $alea_future . "'
 					WHERE username = '" . $username . "'";
 
 		lcm_query($query);
