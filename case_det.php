@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.64 2005/01/13 13:51:51 mlutfy Exp $
+	$Id: case_det.php,v 1.65 2005/01/13 15:05:42 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,10 +57,11 @@ if ($case > 0) {
 
 		// Edit case link was here!
 
-		echo "\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
+		echo "\n" . _T('case_input_id') . " " . $row['id_case'] . "<br>\n";
 
 		// Show users, assigned to the case
-		echo _T('case_user_s') . ': ';
+		// TODO: use case_input_authors if many authors
+		echo _T('case_input_author') . ' ';
 		$q = "SELECT id_case,lcm_author.id_author,name_first,name_middle,name_last
 			FROM lcm_case_author,lcm_author
 			WHERE (id_case=$case
@@ -135,7 +136,7 @@ if ($case > 0) {
 		echo "<table border=\"0\" width=\"99%\">\n<tr>\n<td align=\"left\" valign=\"top\" width=\"50%\">";
 		
 		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
-		echo "<th class='heading'>" . _T('organisations'). ":</th><th class='heading'>&nbsp;</th>";
+		echo "<th class='heading'>" . _T('case_input_organisations'). "</th><th class='heading'>&nbsp;</th>";
 
 		// Show case organization(s)
 		$q="SELECT lcm_org.id_org,name
@@ -160,7 +161,7 @@ if ($case > 0) {
 		//second table
 
 		echo "<table border='0' class='tbl_usr_dtl'>\n";
-		echo "\t\t<th class='heading'>" . _T('clients') . ":</th>\n\t\t<th class='heading'>&nbsp;</th>";
+		echo "\t\t<th class='heading'>" . _T('case_input_clients') . "</th>\n\t\t<th class='heading'>&nbsp;</th>";
 
 		// Show case client(s)
 		$q="SELECT lcm_client.id_client,name_first,name_middle,name_last
