@@ -514,7 +514,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 
 	for ($i = 0; $i < 24; $i++) {
 		$default = ($i == $default_hour ? ' selected="selected"' : '');
-		$ret .= "<option" . $default . " value=\"" . $i . "\">";
+		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">";
 		if ($hours24) {
 			$ret .= $i;
 		} else {
@@ -535,7 +535,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 
 	for ($i = 0; $i < 60; $i++) {
 		$default = ($i == $default_minutes ? ' selected="selected"' : '');
-		$ret .= "<option" . $default . " value=\"" . $i . "\">" . sprintf('%02u',$i) . "</option>\n";
+		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
 	}
 
 	$ret .= "</select>";
@@ -551,7 +551,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 
 		for ($i = 0; $i < 60; $i++) {
 			$default = ($i == $default_seconds ? ' selected="selected"' : '');
-			$ret .= "<option" . $default . " value=\"" . $i . "\">" . sprintf('%02u',$i) . "</option>\n";
+			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
 		}
 
 		$ret .= "</select>\n";
