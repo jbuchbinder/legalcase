@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.35 2005/02/24 14:14:26 mlutfy Exp $
+	$Id: config_site.php,v 1.36 2005/03/01 08:55:57 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -271,6 +271,8 @@ function show_config_form_policy() {
 
 	$client_name_middle = read_meta('client_name_middle');
 	$client_citizen_number = read_meta('client_citizen_number');
+	$client_civil_status = read_meta('client_civil_status');
+	$client_income = read_meta('client_income');
 	$case_court_archive = read_meta('case_court_archive');
 	$case_assignment_date = read_meta('case_assignment_date');
 	$case_alledged_crime = read_meta('case_alledged_crime');
@@ -294,6 +296,14 @@ function show_config_form_policy() {
 
 	echo "<tr><td>" . _T('siteconf_input_citizen_number') ."</td>"
 		. "<td>" . get_yes_no('client_citizen_number', $client_citizen_number) . "</td>"
+		. "</tr>\n";
+
+	echo "<tr><td>" . _T('siteconf_input_civil_status') ."</td>"
+		. "<td>" . get_yes_no('client_civil_status', $client_civil_status) . "</td>"
+		. "</tr>\n";
+
+	echo "<tr><td>" . _T('siteconf_input_client_income') ."</td>"
+		. "<td>" . get_yes_no('client_income', $client_income) . "</td>"
 		. "</tr>\n";
 
 	echo "<tr><td>" . _T('siteconf_info_hide_emails') . "</td>\n"
@@ -478,7 +488,8 @@ function apply_conf_changes_collab() {
 function apply_conf_changes_policy() {
 	$log = array();
 
-	$items = array('client_name_middle', 'client_citizen_number', 'hide_emails',
+	$items = array('client_name_middle', 'client_citizen_number',
+				'client_civil_status', 'client_income', 'hide_emails',
 				'case_court_archive', 'case_assignment_date', 'case_alledged_crime',
 				'case_allow_modif', 'fu_sum_billed', 'fu_allow_modif');
 

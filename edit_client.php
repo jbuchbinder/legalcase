@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.32 2005/02/15 12:24:21 mlutfy Exp $
+	$Id: edit_client.php,v 1.33 2005/03/01 08:55:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -114,25 +114,48 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 ?>
 				</select>
 			</td></tr>
-		<tr><td>Created on:</td>
-			<td><?php echo format_date($client_data['date_creation'], 'short'); ?></td></tr>
-<?php if ($client_citizen_number == 'yes') {
-?>		<tr><td><?php echo _T('person_input_citizen_number'); ?></td>
-			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>" class="search_form_txt"></td></tr>
-<?php }
-?>		<tr><td><?php echo _T('person_input_address'); ?></td>
-			<td><textarea name="address" rows="3" class="frm_tarea"><?php echo clean_output($client_data['address']); ?></textarea></td></tr>
-		<tr><td><?php echo _T('person_input_civil_status'); ?></td>
-			<td><input name="civil_status" value="<?php echo clean_output($client_data['civil_status']); ?>" class="search_form_txt"></td></tr>
-		<tr><td><?php echo _T('person_input_income'); ?></td>
-			<td><input name="income" value="<?php echo clean_output($client_data['income']); ?>" class="search_form_txt"></td></tr>
-		<tr>
-			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('client_subtitle_contacts'); ?></h4></td>
-		</tr>
+
 <?php
+	echo "<tr>\n";
+	echo '<td>' . "Created on:" . '</td>';
+	echo '<td>' . format_date($client_data['date_creation'], 'short') . '</td>';
+	echo "</tr>\n";
+
+	if ($client_citizen_number == 'yes') {
+		echo "<tr>\n";
+		echo '<td>' . _T('person_input_citizen_number') . '</td>';
+		echo '<td><input name="citizen_number" value="' . clean_output($client_data['citizen_number']) . '" class="search_form_txt"></td>';
+		echo "</tr>\n";
+	}
+
+	echo "<tr>\n";
+	echo '<td>' .  _T('person_input_address') . '</td>';
+	echo '<td><textarea name="address" rows="3" class="frm_tarea">' . clean_output($client_data['address']) . '</textarea></td>';
+	echo "</tr>\n";
+	
+	if ($client_civil_status == 'yes') {
+		echo "<tr>\n";
+		echo '<td>' . _T('person_input_civil_status') . '</td>';
+		echo '<td><input name="civil_status" value="' . clean_output($client_data['civil_status']) . '" class="search_form_txt"></td>';
+		echo "</tr>\n";
+	}
+
+	if ($client_income == 'yes') {
+		echo "<tr>\n";
+		echo '<td>' . _T('person_input_income') . '</td>';
+		echo '<td><input name="income" value="' . clean_output($client_data['income']) . '" class="search_form_txt"></td>';
+		echo "</tr>\n";
+	}
+
 	//
 	// Contacts (e-mail, phones, etc.)
 	//
+	
+	echo "<tr>\n";
+	echo '<td colspan="2" align="center" valign="middle" class="heading">';
+	echo '<h4>' . _T('client_subtitle_contacts') . '</h4>';
+	echo '</td>';
+	echo "</tr>\n";
 
 	$cpt = 0;
 	$cpt_new = 0;
