@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.10 2005/02/08 10:34:08 antzi Exp $
+	$Id: edit_rep.php,v 1.11 2005/02/08 11:10:36 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -27,21 +27,24 @@ include_lcm('inc_filters');
 
 if (empty($_SESSION['errors'])) {
 
-    // Clear form data
-    $rep_data = array();
+	// Clear form data
+	$_SESSION['rep_data'] = array();
 
 	// Set the returning page
-	if (isset($ref)) $rep_data['ref_edit_rep'] = $ref;
-	else $rep_data['ref_edit_rep'] = $GLOBALS['HTTP_REFERER'];
+	if (isset($ref)) $_SESSION['rep_data']['ref_edit_rep'] = $ref;
+	else $_SESSION['rep_data']['ref_edit_rep'] = $GLOBALS['HTTP_REFERER'];
 
 	// Register case type variable for the session
-	if (!session_is_registered("existing"))
-		session_register("existing");
+//	if (!session_is_registered("existing"))
+//		session_register("existing");
+
+	// Read input values
+	$rep = intval($_GET['rep']);
 
 	// Find out if this is existing or new case
-	$existing = ($rep > 0);
+	$_SESSION['existing'] = ($rep > 0);
 
-	if ($existing) {
+	if ($_SESSION['existing']) {
 		// Check access rights
 		//if (!allowed($case,'e')) die(_T('error_no_edit_permission'));
 
@@ -52,12 +55,12 @@ if (empty($_SESSION['errors'])) {
 		$result = lcm_query($q);
 
 		// Register report ID as session variable
-	    if (!session_is_registered("rep"))
-			session_register("rep");
+//		if (!session_is_registered("rep"))
+//			session_register("rep");
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach ($row as $key => $value) {
-				$rep_data[$key] = $value;
+				$_SESSION['rep_data'][$key] = $value;
 			}
 		}
 
@@ -65,10 +68,10 @@ if (empty($_SESSION['errors'])) {
 
 	} else {
 		// Set default values for the new report
-		$rep_data['id_author'] = $GLOBALS['author_session']['id_author'];
+		$_SESSION['rep_data']['id_author'] = $GLOBALS['author_session']['id_author'];
 
-		//$rep_data['public'] = read_meta('case_default_read');
-		//$rep_data['pub_write'] = read_meta('case_default_write');
+		//$_SESSION['rep_data']['public'] = read_meta('case_default_read');
+		//$_SESSION['rep_data']['pub_write'] = read_meta('case_default_write');
 
 		//$admin = true;
 
@@ -76,7 +79,7 @@ if (empty($_SESSION['errors'])) {
 }
 
 // Start the page with the proper title
-if ($existing) 
+if ($_SESSION['existing']) 
 	lcm_page_start(_T('edit_rep_details'));
 else 
 	lcm_page_start(_T('new_report'));
@@ -88,18 +91,18 @@ echo "<fieldset class=\"info_box\">\n";
 
 echo "\n<form action='upd_rep.php' method='post'>\n";
 
-if ($rep_data['id_report']) {
-	echo "<strong>". _T('report_id') . ":</strong>&nbsp;" . $rep_data['id_report'] . "
-		<input type=\"hidden\" name=\"id_report\" value=\"" .  $rep_data['id_report'] . "\">&nbsp;|&nbsp;\n";
+if ($_SESSION['rep_data']['id_report']) {
+	echo "<strong>". _T('report_id') . ":</strong>&nbsp;" . $_SESSION['rep_data']['id_report'] . "
+		<input type=\"hidden\" name=\"id_report\" value=\"" .  $_SESSION['rep_data']['id_report'] . "\">&nbsp;|&nbsp;\n";
 }
 
-echo "<strong>". _T('author_id') . ":</strong>&nbsp;" . $rep_data['id_author'] . "
-		<input type=\"hidden\" name=\"id_author\" value=\"" . $rep_data['id_author'] . "\"><br /><br />" . f_err_star('title', $_SESSION['errors']) ."<strong>". _T('rep_title') . ":</strong><br /><input name=\"title\" value=\"" . clean_output($rep_data['title']) . "\" class=\"search_form_txt\">\n";
+echo "<strong>". _T('author_id') . ":</strong>&nbsp;" . $_SESSION['rep_data']['id_author'] . "
+		<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['rep_data']['id_author'] . "\"><br /><br />" . f_err_star('title', $_SESSION['errors']) ."<strong>". _T('rep_title') . ":</strong><br /><input name=\"title\" value=\"" . clean_output($_SESSION['rep_data']['title']) . "\" class=\"search_form_txt\">\n";
 
 // Description
 echo '<br /><br />' . "<strong>Description:</strong><br />\n";
 echo '<textarea name="description" rows="5" cols="40" class="frm_tarea">';
-echo $rep_data['description'];
+echo $_SESSION['rep_data']['description'];
 echo "</textarea><br /><br />\n";
 
 //	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
@@ -115,13 +118,13 @@ echo "</textarea><br /><br />\n";
 //
 //		if (!read_meta('case_read_always') || $admin) {
 //			echo '			<td><input type="checkbox" name="public" value="yes"';
-//			if ($rep_data['public']) echo ' checked';
+//			if ($_SESSION['rep_data']['public']) echo ' checked';
 //			echo "></td>\n";
 //		}
 //
 //		if (!read_meta('case_write_always') || $admin) {
 //			echo '			<td><input type="checkbox" name="pub_write" value="yes"';
-//			if ($rep_data['pub_write']) echo ' checked';
+//			if ($_SESSION['rep_data']['pub_write']) echo ' checked';
 //			echo "></td>\n";
 //		}
 //? >				</tr>
@@ -144,7 +147,7 @@ if ($prefs['mode'] == 'extended') {
 	echo '	<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
 }
 
-echo '<input type="hidden" name="ref_edit_rep" value="' . $rep_data['ref_edit_rep'] . '">' . "\n";
+echo '<input type="hidden" name="ref_edit_rep" value="' . $_SESSION['rep_data']['ref_edit_rep'] . '">' . "\n";
 echo '</form>' . "\n";
 
 echo "</fieldset>";
