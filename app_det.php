@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.6 2005/03/09 14:50:45 antzi Exp $
+	$Id: app_det.php,v 1.7 2005/03/09 15:23:34 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -51,7 +51,7 @@ if ($row = lcm_fetch_array($result)) {
 		$duration = ($end_time ? strtotime($row['end_time']) - strtotime($row['start_time']) : 0);
 		echo "Duration: " . format_time_interval($duration,($prefs['time_intervals_notation'] == 'hours_only')) . "<br />\n";
 		$reminder_offset = ($reminder ? strtotime($row['start_time']) - strtotime($row['reminder']) : 0);
-		echo "Reminder: " . format_time_interval($duration,($prefs['time_intervals_notation'] == 'hours_only')) . " before start time<br />\n";
+		echo "Reminder: " . format_time_interval($reminder_offset,($prefs['time_intervals_notation'] == 'hours_only')) . " before start time<br />\n";
 	}
 	echo "Type: " . $row['type'] . "<br />\n";
 	echo "Title: " . $row['title'] . "<br />\n";
