@@ -91,6 +91,43 @@ body {
 	text-decoration: underline;
 }
 
+/* ------------------- [Tabs list] ------------------- */
+
+.tabs {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	height: 26px;
+}
+
+ul.tabs_list {
+	padding: 0;
+	margin: 0;
+	height: 25px;
+}
+
+ul.tabs_list li {
+	list-style-type: none;
+	float: left;
+	margin: 0px 0px 0px 5px;
+	line-height: 25px;
+	height: 25px;
+}
+
+ul.tabs_list li.active {
+	list-style-type: none;
+	float: left;
+	margin: 0px 0px 0px 5px;
+	padding: 0px 3px 0px 3px;
+	line-height: 25px;
+	height: 25px;
+}
+
+ul.tabs_list li a {
+	padding: 0px 3px 0px 3px;
+	text-decoration: none;
+	display: block;
+}
+
 .clearing {
 	height: 0;
 	clear: both;

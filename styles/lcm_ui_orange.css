@@ -134,6 +134,34 @@ h4 {
 	color: #f60;
 }
 
+/* ------------------- [Tabs list] ------------------- */
+
+.tabs {
+	background: #fff url("../images/lcm/orange_tabs_back_div.gif") repeat-x bottom;
+}
+
+ul.tabs_list li {
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+}
+
+ul.tabs_list li.active {
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+	background: #fff url("../images/lcm/orange_tabs_back_active.gif") repeat-x bottom;
+	font-weight: bold;
+}
+
+ul.tabs_list li a {
+	background: url("../images/lcm/orange_tabs_back_inactive.gif") repeat-x bottom;
+}
+
+ul.tabs_list li, ul.tabs_list li.active, ul.tabs_list li a {
+	color: #06f;
+}
+
 table.tbl_data {
 	border-right: 1px solid #def;
 	border-bottom: 1px solid #def;

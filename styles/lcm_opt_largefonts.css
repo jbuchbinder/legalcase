@@ -2,6 +2,16 @@
 	font-size: 11px;
 }
 
+/* tabs */
+
+ul.tabs_list li {
+	font-size: 12px;
+}
+
+ul.tabs_list li.active {
+	font-size: 12px;
+}
+
 .nav_column_menu_head {
 	font-size: 12px;
 }
