@@ -18,10 +18,8 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.16 2005/01/18 10:56:11 mlutfy Exp $
+	$Id: upd_author.php,v 1.17 2005/01/18 12:45:54 mlutfy Exp $
 */
-
-// [ML] inc_auth session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.24 2005/01/18 10:56:10 mlutfy Exp $
+	$Id: edit_author.php,v 1.25 2005/01/18 12:45:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -73,8 +73,9 @@ if ($existing) {
 }
 
 // Fetch values that caused errors to show them with the error message
-foreach($_SESSION['usr'] as $key => $value)
-	$usr[$key] = $value;
+if (isset($_SESSION['usr']))
+	foreach($_SESSION['usr'] as $key => $value)
+		$usr[$key] = $value;
 
 // Start the page with the proper title
 if ($existing) lcm_page_start("Edit author");
@@ -156,13 +157,15 @@ echo show_all_errors($_SESSION['errors']);
 		$cpt++;
 	}
 
+	$cpt = 0;
+
 	if (! $emailmain_exists) {
 		echo '<tr><td align="right" valign="top">' . _T("kw_contacts_emailmain_title") . "\n";
 		echo '<td align="left" valign="top">';
-		echo '<input name="contact_type[]" id="contact_type_' . $cpt . '" '
+		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $cpt . '" '
 			. 'type="hidden" value="email_main" />' . "\n";
 
-		echo '<input name="contact_value[]" id="contact_value_' . $cpt . '" type="text" '
+		echo '<input name="new_contact_value[]" id="new_contact_value_' . $cpt . '" type="text" '
 			. 'class="search_form_txt" size="35" value=""/>&nbsp;';
 		
 		echo "</td>\n</tr>\n";
