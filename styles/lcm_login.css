@@ -9,7 +9,7 @@ h3 {
 	color: #333;
 }
 
-.button_login {
+.button_login, .fondl {
 	background-color: #ccc;
 	border: 1px solid #999;
 	color: #333;
@@ -59,8 +59,9 @@ a.link_btn {
 	background-color: #fff;
 }
 
-input[type=text], input[type=password] {
-	width: 100%; 
+/* input[type=text], input[type=password] { */
+.main_login_box input.forml, input.formo {
+	width: 99%; 
 	background-color: #def;
 	border: 1px solid #369;
 	color: #036;

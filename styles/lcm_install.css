@@ -44,6 +44,7 @@ h3 {
 	color: #000000;
 }
 
+/*
 a {
 	text-decoration: none; 
 }
@@ -51,6 +52,17 @@ a {
 a:hover {
 	color:#FF9900; 
 	text-decoration: underline;
+}
+*/
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+	color: #f60;
+}
+
+a:hover {
+	text-decoration: underline;
+	color: #f60;
 }
 
 li {
@@ -64,13 +76,17 @@ button {
 	color: #000000
 }
 
-input[type=text],
-input[type=password] {
+/* input[type=text],
+input[type=password] { */
+input.fondo {
 	width: 100%; 
-	background-color: #FFF0E0; 
-	background-position: center bottom; 
+	/* background-color: #FFF0E0; 
+	background-position: center bottom; */
 	float: none; 
-	color: #000000
+	/* color: #000000; */
+	background-color: #def;
+	border: 1px solid #369;
+	color: #036;
 }
 
 /*
