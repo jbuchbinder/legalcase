@@ -24,6 +24,7 @@ if ($case>0) {
 		<tr><th align="center">User</th>
 			<th align="center">Read</th>
 			<th align="center">Write</th>
+			<th align="center">Edit</th>
 			<th align="center">Admin</th>
 		</tr>
 <?php
