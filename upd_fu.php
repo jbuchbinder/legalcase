@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.16 2004/12/17 18:17:16 antzi Exp $
+	$Id: upd_fu.php,v 1.17 2004/12/17 22:25:59 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -88,6 +88,13 @@ if (count($errors)) {
 		switch ($fu_data['type']) {
 			case 'conclusion' :
 				$status = 'closed';
+				break;
+			case 'suspension' :
+				$status = 'suspended';
+				break;
+			case 'resumption' :
+			case 'reopening' :
+				$status = 'open';
 				break;
 			default: $status = '';
 		}
