@@ -64,20 +64,20 @@ if ($list_pos>0)
 ?> />&nbsp;<input type="submit" name="submit" value="Search" class="search_form_btn" />
 </form>
 
-<table border='1' width='99%' align='center' class='tbl_data'>
+<table border='0' width='99%' align='center' class='tbl_data'>
 <tr><th class='tbl_head'>Name</th><th class='tbl_head'>Status</th><th class='tbl_head'>Action</th></tr>
 <?php
 // Process the output of the query
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show author name
-	echo "<tr><td class='tbl_data'>";
+	echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 //	if ( ) echo '<a href=".php?author=' . $row['id_author'] . '">';
 	echo highlight_matches(clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' '
 		. $row['name_last']),$find_author_string);
 //	if ( ) echo '</a>';
-	echo "</td>\n<td class='tbl_data'>";
+	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo clean_output($row['status']);
-	echo "</td>\n<td class='tbl_data'>";
+	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if ($GLOBALS['author_session']['status'] = 'admin')
 		echo '<a href="edit_author.php?author=' . $row['id_author'] . '">Edit</a>';
 	echo "</td></tr>\n";
