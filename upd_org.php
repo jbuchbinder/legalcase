@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_org.php,v 1.9 2005/03/29 10:38:55 mlutfy Exp $
+	$Id: upd_org.php,v 1.10 2005/03/29 13:58:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -47,12 +47,12 @@ if (count($_SESSION['errors'])) {
 	exit;
 }
 
-
 	// Record data in database
-	$ol="name='" . clean_input($_SESSION['org_data']['name']);
-
-	// TODO [ML] add new fields (tax, court, etc.)
-	// . "'," .  "address='" . clean_input($_SESSION['org_data']['address']) . "'";
+	$ol="name='" . clean_input($_SESSION['org_data']['name']) . "', "
+		. "court_reg='" . clean_input($_SESSION['org_data']['court_reg']) .  "', "
+		. "tax_number='" . clean_input($_SESSION['org_data']['tax_number']) .  "', "
+		. "stat_number='" . clean_input($_SESSION['org_data']['stat_number']) . "', "
+		. "notes='" . clean_input($_SESSION['org_data']['notes']) . "'";
 
 	if ($_SESSION['data_org']['id_org'] > 0) {
 		$q = "UPDATE lcm_org SET date_update=NOW(),$ol WHERE id_org = " . $_SESSION['data_org']['id_org'];
