@@ -32,11 +32,6 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 	}
 }
 
-function charger_langue($lang, $module = 'lcm', $force = false) {
-	lcm_log("charger_langue is deprecated, use load_language_file");
-	load_language_file($lang, $module, $force);
-}
-
 //
 // Change the current language
 //
@@ -66,9 +61,9 @@ function changer_langue($lang) {
 }
 
 //
-// Set the current language depending on the information sent by the browser
+// Set the current language based on the information sent by the browser
 //
-function regler_langue_navigateur() {
+function lcm_set_language_from_browser() {
 	global $HTTP_SERVER_VARS, $HTTP_COOKIE_VARS;
 
 	$accept_langs = explode(',', $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE']);
@@ -82,7 +77,6 @@ function regler_langue_navigateur() {
 	}
 	return false;
 }
-
 
 //
 // Translate a string
@@ -142,6 +136,7 @@ function translate_language_name($lang) {
 }
 
 function traduire_nom_langue($lang) {
+	lcm_log("Use of deprecated function traduire_nom_langue(), use translate_language_name() instead");
 	return translate_language_name($lang);
 }
 
@@ -360,10 +355,9 @@ function lang_dselect ($rien='') {
 // Show a selection menu for the language
 // - 'var_lang_lcm' = language of the interface
 // - 'var_lang' = [NOT USED] langue de l'article, espace public
-// - 'changer_lang' = [NOT_USED] langue de l'article, espace prive
 // 
 function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = '', $herit = '') {
-	global $couleur_foncee, $couleur_claire, $connect_id_auteur;
+	global $connect_id_auteur;
 
 	$ret = '';
 
@@ -383,19 +377,8 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 	if (count($langues) <= 1)
 		return;
 
-	if (!$couleur_foncee)
-		$couleur_foncee = '#044476';
-
 	$lien = $GLOBALS['clean_link'];
 
-	/*
-	if ($select_name == 'changer_lang') {
-		$lien->delvar('changer_lang');
-		$lien->delvar('url');
-		$post = $lien->getUrl();
-		$target = '';
-	} else {
-	*/
 	if ($select_name == 'var_lang_lcm') {
 		include_lcm('inc_admin');
 		$target = $lien->getUrl();
@@ -456,7 +439,7 @@ function use_language_of_site() {
 function use_language_of_visitor() {
 	global $HTTP_COOKIE_VARS, $flag_ecrire;
 
-	if (!regler_langue_navigateur())
+	if (!lcm_set_language_from_browser())
 		use_language_of_site();
 
 	if ($GLOBALS['author_session']['lang'])
