@@ -160,6 +160,12 @@ a.prefs_bold_lnk {
 	font-size: 10px;
 }
 
+a.prefs_normal_lnk {
+	font-weight: normal;
+	text-decoration: underline;
+	font-size: 10px;
+}
+
 /* Form elements */
 
 form.search_form {
