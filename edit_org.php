@@ -18,11 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.19 2005/03/02 14:56:57 antzi Exp $
+	$Id: edit_org.php,v 1.20 2005/03/24 10:37:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
+include_lcm('inc_contacts');
 
 // Initialise variables
 $org = intval($_GET['org']);
@@ -55,39 +56,66 @@ if (empty($_SESSION['errors'])) {
 }
 
 if ($org) 
-	lcm_page_start("Edit organisation details");
+	lcm_page_start("Edit organisation details"); // TRAD
 else
-	lcm_page_start("New organisation");
+	lcm_page_start("New organisation"); // TRAD
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
 
-?>
+echo '<form action="upd_org.php" method="post">' . "\n";
+echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 
-<form action="upd_org.php" method="POST">
-<fieldset class="info_box">
-	<!-- strong>Organisation ID:</strong><br />
-	<?php echo $_SESSION['org_data']['id_org']; ?><br /><br / -->
-	<input type="hidden" name="id_org" value="<?php echo $_SESSION['org_data']['id_org']; ?>">
-	
-	<strong><?php echo _T('org_input_name'); ?></strong><br />
-	<input name="name" value="<?php echo clean_output($_SESSION['org_data']['name']); ?>" class="search_form_txt">
-	<?php echo f_err_star('name',$_SESSION['errors']); ?><br /><br />
-	
-	<!-- strong>Created on:</strong><br />
-	<input name="date_creation" value="<?php echo clean_output($_SESSION['org_data']['date_creation']); ?>" class="search_form_txt">
-	<?php echo f_err_star('date_creation',$_SESSION['errors']); ?><br /><br / -->
-	
-	<!-- strong>Updated on:</strong><br />
-	<input name="date_update" value="<?php echo clean_output($_SESSION['org_data']['date_update']); ?>" class="search_form_txt">
-	<?php echo f_err_star('date_update',$_SESSION['errors']); ?><br /><br / -->
+// Organisation ID
+if ($_SESSION['org_data']['id_org']) {
+	echo "<tr>\n";
+	echo "<td>" . _Ti('org_input_id') . "</td>\n";
+	echo "<td>" . $_SESSION['org_data']['id_org'] 
+		. '<input type="hidden" name="id_org" value="' . $_SESSION['org_data']['id_org'] . '" />'
+		. "</td>\n";
+	echo "</tr>\n";
+}
+
+// Organisation name
+echo "<tr>\n";
+echo "<td>" . f_err_star('name') . _Ti('org_input_name') . "</td>\n";
+echo '<td><input name="name" value="' . clean_output($_SESSION['org_data']['name']) . '" class="search_form_txt" />'
+	. "</td>\n";
+echo "</tr>\n";
+
+// Creation date
+if ($_SESSION['org_data']['id_org']) {
+	echo "<tr>\n";
+	echo '<td>' . _Ti('time_input_date_creation') . '</td>';
+	echo '<td>' . format_date($_SESSION['org_data']['date_creation'], 'full') . '</td>';
+	echo "</tr>\n";
+}
+
+//
+// Contacts (e-mail, phones, etc.)
+//
+
+echo "<tr>\n";
+echo '<td colspan="2" align="center" valign="middle" class="heading">';
+echo '<h4>' . _T('client_subtitle_contacts') . '</h4>';
+echo '</td>';
+echo "</tr>\n";
+
+show_edit_contacts_form('org', $_SESSION['org_data']['id_org']);
+
+/*
 	<strong>Address:</strong><br />
 	<textarea name="address" cols="50" rows="3" class="frm_tarea"><?php echo clean_output($_SESSION['org_data']['address']); ?></textarea><br /><br />
-<?php
-	echo '<input type="hidden" name="ref_edit_org" value="' . $_SESSION['org_data']['ref_edit_org'] . '">' . "\n";
-	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . '</button>' . "\n";
-	if ($org && $prefs['mode'] == 'extended')
-		echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>' . "\n";
+*/
+
+echo "</table>\n";
+
+echo '<input type="hidden" name="ref_edit_org" value="' . $_SESSION['org_data']['ref_edit_org'] . '">' . "\n";
+echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
+
+if ($org && $prefs['mode'] == 'extended')
+	echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>' . "\n";
+
 ?>
 </fieldset>
 </form>
