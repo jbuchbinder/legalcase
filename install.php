@@ -204,11 +204,11 @@ else if ($step == 4) {
 
 	// echo "<"."!--";
 
-	if ($choix_db == "new_spip") {
+	if ($db_choice == "new_lcm") {
 		$sel_db = $table_new;
 		mysql_query("CREATE DATABASE $sel_db");
 	} else {
-		$sel_db = $choix_db;
+		$sel_db = $db_choice;
 	}
 	mysql_select_db("$sel_db");
 
@@ -297,7 +297,7 @@ else if ($step == 3) {
 		$bases = "";
 		for ($i = 0; $i < $n; $i++) {
 			$table_nom = mysql_dbname($result, $i);
-			$base = "<input name='choix_db' value='".$table_nom."' type='radio' id='tab$i'";
+			$base = "<input name='db_choice' value='".$table_nom."' type='radio' id='tab$i'";
 			$base_fin = "><label for='tab$i'>".$table_nom."</label><br>\n";
 			if ($table_nom == $login_db) {
 				$bases = "$base CHECKED$base_fin".$bases;
@@ -316,14 +316,14 @@ else if ($step == 3) {
 		if ($login_db) {
 			echo _T('avis_lecture_noms_bases_3');
 			echo "<UL>";
-			echo "<input name=\"choix_db\" value=\"".$login_db."\" type=Radio id='stand' CHECKED>";
+			echo "<input name=\"db_choice\" value=\"".$login_db."\" type=Radio id='stand' CHECKED>";
 			echo "<label for='stand'>".$login_db."</label><BR>\n";
 			echo "</UL>";
 			echo _T('info_ou')." ";
 			$checked = true;
 		}
 	}
-	echo "<input name=\"choix_db\" value=\"new_spip\" type=Radio id='nou'";
+	echo "<input name=\"db_choice\" value=\"new_lcm\" type=Radio id='nou'";
 	if (!$checked) echo " CHECKED";
 	echo "> <label for='nou'>"._T('info_creer_base')."</label> ";
 	echo "<input type='text' name='table_new' class='fondo' value=\"lcm\" size='20'></fieldset><P>";
