@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.17 2005/01/12 14:30:23 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.18 2005/01/17 14:49:23 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -66,8 +66,12 @@ class Auth_db {
 		// Do not allow empty passwords
 		if ($pass == '') return false;
 
-		$query = "SELECT alea_actuel, alea_futur FROM lcm_author WHERE username='".addslashes($username)."'";
+		$query = "SELECT alea_actuel, alea_futur
+					FROM lcm_author 
+					WHERE username='".addslashes($username)."'";
+
 		$result = lcm_query($query);
+
 		if ($row = lcm_fetch_array($result)) {
 			$md5pass = md5($row['alea_actuel'] . $pass);
 			$md5next = md5($row['alea_futur'] . $pass);
@@ -87,8 +91,11 @@ class Auth_db {
 		$this->error = "";
 
 		if ($this->statut == 'nouveau') { // new author
-			lcm_query("UPDATE lcm_author SET status='normal' WHERE username='".addslashes($this->username)."'");
+			lcm_query("UPDATE lcm_author 
+						SET status='normal' 
+						WHERE username='".addslashes($this->username)."'");
 		}
+
 		if ($this->md5next) {
 			include_lcm('inc_session');
 			// creates a new salt for password encoding in the database
@@ -96,14 +103,8 @@ class Auth_db {
 			$query = "UPDATE lcm_author SET alea_actuel = alea_futur, ".
 				"password = '".addslashes($this->md5next)."', alea_futur = '$nouvel_alea_futur' ".
 				"WHERE username='".$this->username."'";
-			@spip_query($query);
+			@lcm_query($query);
 		}
-	}
-
-	function activer() {
-		$this->error = "";
-		lcm_log("use of deprecated function: activer, use activate instead");
-		return $this->activate();
 	}
 
 	function is_newpass_allowed($id_author, $username, $author_session = 0) {
@@ -165,16 +166,23 @@ class Auth_db {
 	function newusername($id_author, $old_username, $new_username, $author_session = 0) {
 		$this->error = "";
 
-		if ($this->is_newusername_allowed($id_author, $username, $author_session) == false)
+		if ($this->is_newusername_allowed($id_author, $old_username, $author_session) == false)
 			return false;
 
+		// Check for username size
+		if (strlen(utf8_decode($new_username)) <= 3) {
+			$this->error = _T('login_warning_too_short');
+			return false;
+		}
+
+		// Check if username is not already taken
 		$query = "SELECT username
 					FROM lcm_author
 					WHERE username = '" . addslashes($new_username) . "'";
 		$result = lcm_query($query);
 
 		if ($row = lcm_fetch_array($result)) {
-			$this->error = "The username already exists.";
+			$this->error = _T('login_warning_already_exists ');
 			return false;
 		}
 	
