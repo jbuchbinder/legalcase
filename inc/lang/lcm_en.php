@@ -164,6 +164,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_error' => 'Error',
 'title_software' => 'Legal Case Management System',
 'title_software_article' => 'The Legal Case Management Software',
+'title_software_description' => 'for not-for-profit legal advice centres',
 'title_technical_message' => 'Technical message',
 'title_technical_problem' => 'Technical problem',
 'type' => 'Type',
