@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.32 2005/02/23 00:47:33 antzi Exp $
+	$Id: inc_filters.php,v 1.33 2005/02/24 10:24:47 antzi Exp $
 */
 
 // Execute this file only once
@@ -89,6 +89,28 @@ function format_date($timestamp = '', $format = 'full') {
 				'mins' => $tt[1]));
 
 	return $my_date;
+}
+
+// Formats time interval
+function format_time_interval($time, $hours_only=false) {
+	if (is_int($time) && ($time>0)) {
+		if ($hours_only) {
+			$days = 0;
+			$hours = $time / 3600;
+			$minutes = 0;
+		} else {
+			$days = (int) ($time / 86400);
+			$hours = (int) ( ($time % 86400) / 3600);
+			$minutes = (int) ( ($time % 3600) / 60);
+		}
+
+		$ret = array();
+		if ($days) $ret[] = $days . 'd';
+		if ($hours) $ret[] = $hours . ($hours_only ? ( ($hours == 1.0) ? 'hr' : 'hrs') : 'h');
+		if ($minutes) $ret[] = $minutes . 'm';
+
+		return join(', ',$ret);
+	} else return '';
 }
 
 // Error display function
