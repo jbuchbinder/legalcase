@@ -238,9 +238,9 @@ function lcm_page_end($credits = '') {
 <!-- The initial intention was that here can be placed some UI preferences -->
 <!-- but I think it will be much better to put the search boxes -->
 <!-- The right and the left column can be very long, so, we can put here a lot of additional information, some tiny help hints and so -->";
-//Checking for "wide/narrow" user screen
-if($prefs['screen'] == "wide")
-{
+
+// Checking for "wide/narrow" user screen
+if($prefs['screen'] == "wide") {
 		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
 			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_exec-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_profile') . "</div>
@@ -252,37 +252,46 @@ if($prefs['screen'] == "wide")
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a>&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
 			</p>
-			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;Search</div>
+			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_search') . "</div>
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
 			<p class=\"prefs_column_text\">
-			Find case<br />
+			" . _T('input_search_case') . "<br />
 			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\"";
-	if (isset($find_case_string)) echo " value='$find_case_string'";
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+
+	if (isset($find_case_string))
+		echo " value='$find_case_string'";
+
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
 			</p>
 			</form>
 			<form name=\"frm_find_client\" class=\"search_form\" action=\"listclients.php\" method=\"post\">
 			<p class=\"prefs_column_text\">
-			Find client<br />
+			" . _T('input_search_client') . "<br />
 			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\"";
-	if (isset($find_client_string)) echo " value='$find_client_string'";
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+
+	if (isset($find_client_string)) 
+		echo " value='$find_client_string'";
+
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
 			</p>
 			</form>
 			<form name=\"frm_find_client\" class=\"search_form\" action=\"listorgs.php\" method=\"post\">
 			<p class=\"prefs_column_text\">
-			Find organisation<br />
+			" . _T('input_search_organisation') . "<br />
 			<input type=\"text\" name=\"find_org_string\" size=\"10\" class=\"search_form_txt\"";
-	if (isset($find_org_string)) echo " value='$find_org_string'";
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+
+	if (isset($find_org_string))
+		echo " value='$find_org_string'";
+
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
 			</p>
 			</form>
-<!-- End of \"prefs_column\" content -->
+		<!-- End of \"prefs_column\" content -->
 		</div>";
 //end of user screen IF
-}
-else
-{
+
+} else {
+
 	//data from the refs_column - user name, links [My preferences] & [Logout]
 		echo "<div id=\"user_info_box_large_screen\">";
 		echo "<p class=\"prefs_column_text\">"
