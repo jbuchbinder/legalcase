@@ -16,11 +16,11 @@ use_language_of_visitor();
 // Aide
 //
 function aide($aide='') {
-	global $couleur_foncee, $spip_lang, $spip_lang_rtl, $dir_ecrire;
+	global $couleur_foncee, $lcm_lang, $spip_lang_rtl, $dir_ecrire;
 
 	if (!$aide) return;
 
-	return "&nbsp;&nbsp;<a class='aide' href=\"".$dir_ecrire."aide_index.php3?aide=$aide&var_lang=$spip_lang\" target=\"spip_aide\" ".
+	return "&nbsp;&nbsp;<a class='aide' href=\"".$dir_ecrire."aide_index.php3?aide=$aide&var_lang=$lcm_lang\" target=\"spip_aide\" ".
 		"onclick=\"javascript:window.open(this.href, 'spip_aide', 'scrollbars=yes, ".
 		"resizable=yes, width=740, height=580'); return false;\"><img ".
 		"src=\"images/lcm/help.png\" alt=\""._T('info_image_aide')."\" ".
@@ -2080,7 +2080,7 @@ function lcm_page_start($titre = "", $rubrique = "asuivre", $sous_rubrique = "as
 	//
 	if ($GLOBALS['all_langs']) {
 		echo "<td class='bandeau_couleur' style='width: 100px; text-align: $spip_lang_right;' valign='middle'>";
-		echo menu_langues('var_lang_ecrire');
+		echo menu_languages('var_lang_lcm');
 		echo "</td>";
 	}
 

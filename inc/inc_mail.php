@@ -142,7 +142,7 @@ function envoyer_mail_publication($id_article) {
 		if ($row = spip_fetch_array($result)) {
 
 			// selectionne langue du site
-			$lang_utilisateur = $GLOBALS['spip_lang'];
+			$lang_utilisateur = $GLOBALS['lcm_lang'];
 			changer_langue($GLOBALS['langue_site']);
 
 			$titre = nettoyer_titre_email($row['titre']);
@@ -171,7 +171,7 @@ function envoyer_mail_proposition($id_article) {
 		$result = spip_query($query);
 
 		if ($row = spip_fetch_array($result)) {
-			$lang_utilisateur = $GLOBALS['spip_lang'];
+			$lang_utilisateur = $GLOBALS['lcm_lang'];
 			changer_langue($GLOBALS['langue_site']);
 
 			$titre = nettoyer_titre_email($row['titre']);

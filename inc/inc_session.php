@@ -141,13 +141,14 @@ function creer_uniqid() {
 
 
 //
-// Cette fonction efface toutes les sessions appartenant a l'auteur
-// On en profite pour effacer toutes les sessions creees il y a plus de 48 h
+// This function deletes all the sessions belonging to the author.
+// We also take the opportunity to delete sessions older than 48 hours.
 //
 function zap_sessions ($id_author, $zap) {
 	$dirname = 'data/';
 
-	// ne pas se zapper soi-meme
+	// Do not delete yourself by accident
+	// [ML] This does not seem necessary.
 	if ($s = $GLOBALS['lcm_session'])
 		$fichier_session = fichier_session($s, lire_meta('alea_ephemere'));
 
@@ -157,11 +158,11 @@ function zap_sessions ($id_author, $zap) {
 		$chemin = "$dirname$item";
 		if (ereg("^session_([0-9]+_)?([a-z0-9]+)\.php$", $item, $regs)) {
 
-			// Si c'est une vieille session, on jette
+			// If it is an old session, we throw away
 			if (($t - filemtime($chemin)) > 48 * 3600)
 				@unlink($chemin);
 
-			// sinon voir si c'est une session du meme auteur
+			// If not, we test whether it is from the same author
 			else if ($regs[1] == $id_author.'_') {
 				$zap_num ++;
 				if ($zap)

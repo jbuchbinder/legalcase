@@ -16,7 +16,7 @@ include_lcm('inc_admin'); // [ML] not sure what for
 function init_default_config() {
 	// default language of the site = installation language (cookie)
 	// (if no cookie, then set to English)
-	if (!$lang = $GLOBALS['spip_lang'])
+	if (!$lang = $GLOBALS['lcm_lang'])
 		$lang = 'en';
 
 	$liste_meta = array(
@@ -247,7 +247,7 @@ function appliquer_modifs_config() {
 
 	// langue_site : la globale est mangee par inc_version
 	if ($lang = $GLOBALS['changer_langue_site']) {
-		$lang2 = $GLOBALS['spip_lang'];
+		$lang2 = $GLOBALS['lcm_lang'];
 		if (changer_langue($lang)) {
 			ecrire_meta('langue_site', $lang);
 			changer_langue($lang2);

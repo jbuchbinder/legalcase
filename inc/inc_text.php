@@ -51,10 +51,10 @@ if (!tester_variable('puce', "<img class='spip_puce' src='puce.gif' alt='-' bord
 //
 // Trouver une locale qui marche
 //
-$lang2 = strtoupper($GLOBALS['spip_lang']);
-setlocale(LC_CTYPE, $GLOBALS['spip_lang']) ||
-setlocale(LC_CTYPE, $lang2.'_'.$GLOBALS['spip_lang']) ||
-setlocale(LC_CTYPE, $GLOBALS['spip_lang'].'_'.$lang2);
+$lang2 = strtoupper($GLOBALS['lcm_lang']);
+setlocale(LC_CTYPE, $GLOBALS['lcm_lang']) ||
+setlocale(LC_CTYPE, $lang2.'_'.$GLOBALS['lcm_lang']) ||
+setlocale(LC_CTYPE, $GLOBALS['lcm_lang'].'_'.$lang2);
 
 
 //
@@ -451,7 +451,7 @@ function typo_en($letexte) {
 // General typography: French is the language is 'cpf', 'fr' or 'eo', 
 // else English (minimalist).
 function typo($letexte) {
-	global $spip_lang, $lang_typo;
+	global $lcm_lang, $lang_typo;
 
 	// escape <html>...</html> code, etc.
 	list($letexte, $les_echap) = echappe_html($letexte, "SOURCETYPO");
@@ -461,7 +461,7 @@ function typo($letexte) {
 
 	if (!$lang = $lang_typo) {
 		include_lcm('inc_lang');
-		$lang = lang_typo($spip_lang);
+		$lang = lang_typo($lcm_lang);
 	}
 
 	if ($lang == 'fr')
@@ -704,7 +704,7 @@ function traiter_raccourcis($letexte, $les_echap = false, $traiter_les_notes = '
 	// Puce
 	if (!$lang_dir) {
 		include_lcm('inc_lang');
-		$lang_dir = lang_dir($GLOBALS['spip_lang']);
+		$lang_dir = lang_dir($GLOBALS['lcm_lang']);
 	}
 	if ($lang_dir == 'rtl' AND $GLOBALS['puce_rtl'])
 		$puce = $GLOBALS['puce_rtl'];
@@ -780,7 +780,7 @@ function traiter_raccourcis($letexte, $les_echap = false, $traiter_les_notes = '
 				$url = str_replace("%s", $terme_underscore, $url_glossaire_externe);
 			else
 				$url = $url_glossaire_externe.$terme_underscore;
-			$url = str_replace("@lang@", $GLOBALS['spip_lang'], $url);
+			$url = str_replace("@lang@", $GLOBALS['lcm_lang'], $url);
 			$code = "[$terme->?$url]";
 			$letexte = str_replace($regs[0], $code, $letexte);
 		}

@@ -638,7 +638,7 @@ Thank you for your participation
 'info_contenu_articles' => 'Articles content',
 'info_contribution' => 'forum contributions',
 'info_copyright' => 'is a free software distributed <a href=\'license.txt\'>under GPL license.</a>',
-'info_copyright_doc' => 'For further information, visit the site <a href=\'http://www.spip.net/en\'>http://www.spip.net/en</a>.',
+'info_copyright_doc' => 'For further information, visit the site <a href=\'http://legalcase.sf.net\'>http://legalcase.sf.net</a>.',
 'info_cours_edition' => 'Your articles in progress',
 'info_creation_mots_cles' => 'Create and configure the site\'s keywords here',
 'info_creation_paragraphe' => '(To create paragraphs, you simply leave blank lines.)',

@@ -25,8 +25,8 @@ if (!@file_exists('data/inc_meta_cache.php'))
 // Preferences for presentation
 //
 
-if ($lang = $GLOBALS['HTTP_COOKIE_VARS']['spip_lang_ecrire'] AND $lang <> $auteur_session['lang'] AND changer_langue($lang)) {
-	// [ML TODO] spip_query ("UPDATE spip_auteurs SET lang = '".addslashes($lang)."' WHERE id_auteur = $connect_id_auteur");
+if ($lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'] AND $lang <> $auteur_session['lang'] AND changer_langue($lang)) {
+	spip_query ("UPDATE lcm_author SET lang = '".addslashes($lang)."' WHERE id_author  = $connect_id_auteur");
 	$auteur_session['lang'] = $lang;
 	ajouter_session($auteur_session, $lcm_session);
 }

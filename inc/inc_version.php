@@ -843,7 +843,7 @@ function _L($text) {
 // Langue principale du site
 $langue_site = lire_meta('langue_site');
 if (!$langue_site) include_lcm('inc_lang');
-$spip_lang = $langue_site;
+$lcm_lang = $langue_site;
 
 
 // Nommage bizarre des tables d'objets

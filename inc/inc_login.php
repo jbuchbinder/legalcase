@@ -88,8 +88,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	include_lcm('inc_session');
 	verifier_visiteur();
 
-	if ($auteur_session AND !$logout AND
-	($auteur_session['statut']=='admin' OR $auteur_session['statut']=='1comite')) {
+	if ($auteur_session AND !$logout AND ($auteur_session['status']=='admin' OR $auteur_session['status']=='1comite')) {
 		if ($url != $GLOBALS['clean_link']->getUrl())
 			@Header("Location: $url");
 		echo "<a href='$url'>"._T('login_par_ici')."</a>\n";

@@ -8,87 +8,34 @@ define('_INC_LANG', '1');
 include_lcm('inc_meta');
 
 //
-// Ecrire un fichier cache langue
-//
-function ecrire_cache_lang($lang, $module) {
-	include_lcm('inc_filtres');
-
-	$fichier_lang = $module.'_'.$lang.'.php';
-	if ($t = @fopen('CACHE/lang_'.$fichier_lang.'_'.@getmypid(), "wb")) {
-		@fwrite($t, "<"."?php\n\n// Ceci est le CACHE d'un fichier langue spip\n\n");
-		if (is_array($cache = $GLOBALS['cache_lang'][$lang])) {
-			@fwrite($t, "\$GLOBALS[\$GLOBALS['idx_lang']] = array(\n");
-			$texte = '';
-			ksort($cache);
-			reset($cache);
-			while (list($code, ) = each($cache))
-				$texte .= ",\n\t'".$code."' => '".texte_script($GLOBALS['i18n_'.$module.'_'.$lang][$code])."'";
-			@fwrite($t, substr($texte,2)."\n);\n\n");
-			@fwrite($t, "\$GLOBALS['cache_lang']['$lang'] = array(\n");
-			$texte = '';
-			reset($cache);
-			while (list($code, ) = each($cache))
-				$texte .= ",\n\t'".$code."' => 1";
-			@fwrite($t, substr($texte,2)."\n);\n\n");
-		}
-		@fwrite($t, "\n\n?".">\n");
-		@fclose($t);
-		@rename('CACHE/lang_'.$fichier_lang.'_'.@getmypid(), 'CACHE/lang_'.$fichier_lang);
-	}
-}
-
-function ecrire_caches_langues() {
-	global $cache_lang_modifs;
-	reset($cache_lang_modifs);
-	while(list($module,$cache_module) = each($cache_lang_modifs))
-		while(list($lang, ) = each($cache_module))
-			ecrire_cache_lang($lang, $module);
-}
-
-//
-// Charger un fichier langue
+// Load a language file
 //
 function charger_langue($lang, $module = 'lcm', $forcer = false) {
-	global $dir_ecrire, $flag_ecrire;
-
-	$fichier_lang = 'lang/'.$module.'_'.$lang.'.php';
-	$fichier_lang_exists = @file_exists($dir_ecrire.$fichier_lang);
-
-	// chercher dans le fichier cache ?
-	if (!$flag_ecrire AND $fichier_lang_exists) {
-		if (!$forcer AND @file_exists('CACHE/lang_'.$module.'_'.$lang.'.php')
-		AND (@filemtime('CACHE/lang_'.$module.'_'.$lang.'.php') > @filemtime('ecrire/lang/'.$module.'_'.$lang.'.php'))
-		AND (@filemtime('CACHE/lang_'.$module.'_'.$lang.'.php') > @filemtime('ecrire/lang/perso.php'))) {
-			$GLOBALS['idx_lang'] = 'i18n_'.$module.'_'.$lang;
-			return include_local('CACHE/lang_'.$module.'_'.$lang.'.php');
-		}
-		else $GLOBALS['cache_lang_modifs'][$module][$lang] = true;
-	}
-
-	if ($fichier_lang_exists) {
-		$GLOBALS['idx_lang']='i18n_'.$module.'_'.$lang;
-		include_ecrire ($fichier_lang);
+	if (@file_exists('inc/lang/'.$module.'_'.$lang.'.php')) {
+		$GLOBALS['idx_lang'] = 'i18n_'.$module.'_'.$lang;
+		include_lcm('lang/'.$module.'_'.$lang);
+		lcm_log("Language file loaded");
 	} else {
 		// If the language file of the module does not exist, we fallback
 		// on English, which *by definition* must exist. We then recopy the
 		// 'en' table in the variable related to the requested language
-		$fichier_lang = 'lang/'.$module.'_en.php';
-		if (@file_exists($dir_ecrire.$fichier_lang)) {
-			$GLOBALS['idx_lang']='i18n_'.$module.'_en';
-			include_ecrire ($fichier_lang);
+		if (@file_exists('inc/lang/'.$module.'_en.php')) {
+			$GLOBALS['idx_lang'] = 'i18n_'.$module.'_en';
+			include_lcm('lang/'.$module.'_en');
 		}
 		$GLOBALS['i18n_'.$module.'_'.$lang] = $GLOBALS['i18n_'.$module.'_en'];
+		lcm_log("Fellback on English");
 	}
 
-	// surcharge perso
-	if (@file_exists($dir_ecrire.'lang/perso.php')) {
-		include($dir_ecrire.'lang/perso.php');
+	// The local system administrator can overload official strings
+	if (@file_exists('lang/perso.php')) {
+		include_lcm('lang/perso');
 	}
 
 }
 
 //
-// Changer la langue courante
+// Change the current language
 //
 function changer_langue($lang) {
 	global $all_langs, $spip_lang_rtl, $spip_lang_right, $spip_lang_left, $spip_lang_dir, $spip_dir_lang, $flag_ecrire;
@@ -111,7 +58,7 @@ function changer_langue($lang) {
 }
 
 //
-// Regler la langue courante selon les infos envoyees par le brouteur
+// Set the current language depending on the information sent by the browser
 //
 function regler_langue_navigateur() {
 	global $HTTP_SERVER_VARS, $HTTP_COOKIE_VARS;
@@ -133,10 +80,9 @@ function regler_langue_navigateur() {
 // Translate a string
 //
 function traduire_chaine($code, $args) {
-	global $spip_lang, $flag_ecrire;
-	global $cache_lang;
+	global $lcm_lang;
 
-	// list of modules to process
+	// list of modules to process (ex: "module:my_string")
 	$modules = array('lcm');
 	if (strpos($code, ':')) {
 		if (ereg("^([a-z/]+):(.*)$", $code, $regs)) {
@@ -145,27 +91,32 @@ function traduire_chaine($code, $args) {
 		}
 	}
 
+	lcm_log("DEBUG: lcm_lang = " . $lcm_lang);
+
 	// go thgough all the modules until we find our string
 	while (!$text AND (list(,$module) = each ($modules))) {
-		$var = "i18n_".$module."_".$spip_lang;
-		if (!$GLOBALS[$var]) charger_langue($spip_lang, $module);
+		$var = "i18n_".$module."_".$lcm_lang;
+		if (!$GLOBALS[$var])
+			charger_langue($lcm_lang, $module);
+
 		if (!$flag_ecrire) {
 			if (!isset($GLOBALS[$var][$code]))
-				charger_langue($spip_lang, $module, $code);
+				charger_langue($lcm_lang, $module, $code);
+
 			if (isset($GLOBALS[$var][$code]))
-				$cache_lang[$spip_lang][$code] = 1;
+				$cache_lang[$lcm_lang][$code] = 1;
 		}
 		$text = $GLOBALS[$var][$code];
 	}
 
 	// languages which are not finished or late  (...)
-	if ($spip_lang<>'en') {
+	if ($lcm_lang<>'en') {
 		$text = ereg_replace("^<(NEW|MODIF)>","",$text);
 		if (!$text) {
-			$spip_lang_temp = $spip_lang;
-			$spip_lang = 'en';
+			$lcm_lang_temp = $lcm_lang;
+			$lcm_lang = 'en';
 			$text = traduire_chaine($code, $args);
-			$spip_lang = $spip_lang_temp;
+			$lcm_lang = $lcm_lang_temp;
 		}
 	}
 
@@ -383,8 +334,8 @@ function changer_typo($lang = '', $source = '') {
 
 // selectionner une langue
 function lang_select ($lang='') {
-	global $pile_langues, $spip_lang;
-	php3_array_push($pile_langues, $spip_lang);
+	global $pile_langues, $lcm_lang;
+	php3_array_push($pile_langues, $lcm_lang);
 	changer_langue($lang);
 }
 
@@ -396,10 +347,10 @@ function lang_dselect ($rien='') {
 
 
 //
-// Afficher un menu de selection de langue
-// - 'var_lang_ecrire' = langue interface privee,
-// - 'var_lang' = langue de l'article, espace public
-// - 'changer_lang' = langue de l'article, espace prive
+// Show a selection menu for the language
+// - 'var_lang_lcm' = language of the interface
+// - 'var_lang' = [NOT USED] langue de l'article, espace public
+// - 'changer_lang' = [NOT_USED] langue de l'article, espace prive
 // 
 function menu_languages($nom_select = 'var_lang', $default = '', $texte = '', $herit = '') {
 	global $couleur_foncee, $couleur_claire, $flag_ecrire, $connect_id_auteur;
@@ -407,10 +358,7 @@ function menu_languages($nom_select = 'var_lang', $default = '', $texte = '', $h
 	if ($default == '')
 		$default = $GLOBALS['lcm_lang'];
 
-	// if ($nom_select == 'var_lang_ecrire')
-	//	$langues = explode(',', $GLOBALS['all_langs']);
-	// else
-		$langues = explode(',', lire_meta('langues_multilingue'));
+	$langues = explode(',', lire_meta('langues_multilingue'));
 
 	if (count($langues) <= 1) return;
 
@@ -427,7 +375,7 @@ function menu_languages($nom_select = 'var_lang', $default = '', $texte = '', $h
 		// [ML] if ($flag_ecrire) {
 			include_lcm('inc_admin');
 			$cible = $lien->getUrl();
-			$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_ecrire', $connect_id_auteur);
+			$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
 		/* [ML] } else {
 			$cible = $lien->getUrl();
 			$post = 'lcm_cookie.php';
@@ -442,7 +390,7 @@ function menu_languages($nom_select = 'var_lang', $default = '', $texte = '', $h
 
 	if (!$flag_ecrire)
 		$style = "class='forml' style='vertical-align: top; max-height: 24px; margin-bottom: 5px; width: 120px;'";
-	else if ($nom_select == 'var_lang_ecrire') 
+	else if ($nom_select == 'var_lang_lcm') 
 		$style = "class='verdana1' style='background-color: $couleur_foncee; max-height: 24px; border: 1px solid white; color: white; width: 100px;'";
 	else
 		$style = "class='fondl'";
@@ -472,29 +420,24 @@ function menu_languages($nom_select = 'var_lang', $default = '', $texte = '', $h
 	return $ret;
 }
 
-function menu_langues($nom_select = 'var_lang', $default = '', $texte = '', $herit = '') {
-	return menu_languages($nom_select, $default, $texte, $herit);
-}
-
-
 //
 // Cette fonction est appelee depuis inc-public-global si on a installe
 // la variable de personnalisation $forcer_lang ; elle renvoie le brouteur
 // si necessaire vers l'URL xxxx?lang=ll
 //
 function verifier_lang_url() {
-	global $HTTP_GET_VARS, $HTTP_COOKIE_VARS, $spip_lang, $clean_link;
+	global $HTTP_GET_VARS, $HTTP_COOKIE_VARS, $lcm_lang, $clean_link;
 
 	// quelle langue est demandee ?
 	$lang_demandee = lire_meta('langue_site');
-	if ($HTTP_COOKIE_VARS['spip_lang_ecrire']) $lang_demandee = $HTTP_COOKIE_VARS['spip_lang_ecrire'];
-	if ($HTTP_COOKIE_VARS['spip_lang']) $lang_demandee = $HTTP_COOKIE_VARS['spip_lang'];
+	if ($HTTP_COOKIE_VARS['lcm_lang_ecrire']) $lang_demandee = $HTTP_COOKIE_VARS['lcm_lang_ecrire'];
+	if ($HTTP_COOKIE_VARS['lcm_lang']) $lang_demandee = $HTTP_COOKIE_VARS['lcm_lang'];
 	if ($HTTP_GET_VARS['lang']) $lang_demandee = $HTTP_GET_VARS['lang'];
 
 	// Verifier que la langue demandee existe
 	include_lcm('inc_lang'); // [ML] XXX strange, we are in inc_lang...
 	lang_select($lang_demandee);
-	$lang_demandee = $spip_lang;
+	$lang_demandee = $lcm_lang;
 
 	// Renvoyer si besoin
 	if (!($HTTP_GET_VARS['lang']<>'' AND $lang_demandee == $HTTP_GET_VARS['lang'])
@@ -511,7 +454,7 @@ function verifier_lang_url() {
 	// Subtilite : si la langue demandee par cookie est la bonne
 	// alors on fait comme si $lang etait passee dans l'URL
 	// (pour criteres {lang}).
-	$GLOBALS['lang'] = $spip_lang;
+	$GLOBALS['lang'] = $lcm_lang;
 }
 
 
