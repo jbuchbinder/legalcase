@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: filter_det.php,v 1.4 2004/12/11 10:45:49 antzi Exp $
+	$Id: filter_det.php,v 1.5 2004/12/11 11:02:07 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -40,9 +40,12 @@ if ($filter > 0) {
 		// Show filter details
 		lcm_page_start("Filter details: " . $row['title']);
 
+		if (($GLOBALS['author_session']['status'] == 'admin') ||
+			($row['id_author'] == $GLOBALS['author_session']['id_author'])) $edit = true;
+
 		echo "<p class='normal_text'>";
 
-		if (true)
+		if ($edit)
 			echo '[<a href="edit_filter.php?filter=' . $row['id_filter'] . '" class="content_link"><strong>Edit this filter</strong></a>]<br /><br />';
 		echo "\nFilter ID: " . $row['id_filter'] . "<br>\n";
 		echo "Created on: " . $row['date_creation'] . "<br>\n";
@@ -60,6 +63,7 @@ if ($filter > 0) {
 	<th class='heading'>Field</th>
 	<th class='heading'>Condition</th>
 	<th class='heading'>Value</th>
+	<th class='heading'>Action</th>
 </tr>";
 
 		// Show fields included in this filter
@@ -76,13 +80,14 @@ if ($filter > 0) {
 			echo '<tr><td>' . $condition['cond_order'] . '</td>';
 			// Field description
 			echo '<td>';
-			if (true) echo '<a href="edit_filter_cond.php?filter=' . $filter . '&amp;cond=' . $condition['id_condition'] . '" class="content_link">';
+			if ($edit) echo '<a href="edit_filter_cond.php?filter=' . $filter . '&amp;cond=' . $condition['cond_order'] . '" class="content_link">';
 			echo clean_output($condition['description']);
-			if (true) echo '</a>';
+			if ($edit) echo '</a>';
 			echo '</td>';
 			// Condition description
 			echo '<td>' . $GLOBALS['condition_types'][$condition['type']] . '</td>';
 			echo '<td>' . $condition['value'] . '</td>';
+			if ($edit) echo "<td><a href='rem_filter_cond.php?filter=$filter&amp;cond=" . $condition['cond_order'] . "' class='content_link'></td>\n";
 			echo "</tr>\n";
 			$last_order = $condition['cond_order']+1;
 		}
