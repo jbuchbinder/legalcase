@@ -24,12 +24,20 @@ if ($existing) {
 			$case_data[$key] = $value;
 		}
 	}
+
+	$admin = allowed($case,'a');
+
 } else {
 	lcm_page_start("New case");
 
 	// Set default values for the new case
 	$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
 	$case_data['date_creation'] = date('Y-m-d H:i:s');
+	$case_data['public'] = read_meta('case_default_read');
+	$case_data['pub_write'] = read_meta('case_default_write');
+
+	$admin = true;
+
 }
 
 ?>
@@ -57,17 +65,30 @@ if ($existing) {
 		<tr><td>Case status:</td>
 			<td><input name="status" value="<?php echo $case_data['status']; ?>"></td></tr>
 	</table>
+<?php
+	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) { ?>
 	<table>
 		<tr><td></td>
-			<td>Read</td>
-			<td>Write</td></tr>
+<?php
+			if (read_meta('case_read_always') || $admin) echo "			<td>Read</td>\n";
+			if (read_meta('case_write_always') || $admin) echo "			<td>Write</td>\n";
+?>		</tr>
 		<tr><td>Public:</td>
-			<td><input type="checkbox" name="public" value="yes"<?php
-			if ($case_data['public']) echo ' checked'; ?>></td></tr>
-			<td><input type="checkbox" name="pub_write" value="yes"<?php
-			if ($case_data['pub_write']) echo ' checked'; ?>></td></tr>
+<?php
+			if (read_meta('case_read_always') || $admin) {
+				echo '			<td><input type="checkbox" name="public" value="yes"';
+				if ($case_data['public']) echo ' checked';
+				echo "></td>\n";
+			}
+			if (read_meta('case_write_always') || $admin) {
+				echo '			<td><input type="checkbox" name="pub_write" value="yes"';
+				if ($case_data['pub_write']) echo ' checked';
+				echo "></td>";
+			}
+?>		</tr>
 	</table>
 <?php
+	}
 
 // Different buttons for edit existing and for new case
 	if ($existing) { ?>
