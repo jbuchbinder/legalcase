@@ -41,19 +41,25 @@ if (empty($errors)) {
 lcm_page_start("Edit client details");
 ?>
 
-<h1>Edit client information:</h1>
-<form action="upd_client.php" method="POST">
-	<table><caption>Client details</caption>
-		<tr><th>Parameter</th><th>Value</th></tr>
-		<tr><td>Client ID:</td>
-			<td><?php echo $client_data['id_client']; ?>
-			<input type="hidden" name="id_client" value="<?php echo $client_data['id_client']; ?>"></td></tr>
+<!-- [ML:redundant] h1>Edit client information:</h1 -->
+<form action="upd_client.php" method="post">
+	<table><!-- caption>Client details</caption -->
+		<!-- [ML:tech-talk] tr><th>Parameter</th><th>Value</th></tr -->
+<?php
+	if($client_data['id_client']) {
+		echo "<tr><td>Client ID:</td>\n";
+		echo "<td>" . $client_data['id_client']
+			. '<input type="hidden" name="id_client" value="' .  $client_data['id_client']; '"></td></tr>' . "\n";
+	}
+?>
 		<tr><td>First name:</td>
 			<td><input name="name_first" value="<?php echo clean_output($client_data['name_first']); ?>"></td></tr>
 		<tr><td>Middle name:</td>
 			<td><input name="name_middle" value="<?php echo clean_output($client_data['name_middle']); ?>"></td></tr>
 		<tr><td>Last name:</td>
 			<td><input name="name_last" value="<?php echo clean_output($client_data['name_last']); ?>"></td></tr>
+		<!-- [ML:FIXME] Such information should not be editable,
+			only recorded when doing SQL queries -->
 		<tr><td>Created on:</td>
 			<td><input name="date_creation" value="<?php echo clean_output($client_data['date_creation']); ?>">
 			<?php echo f_err('date_creation',$errors); ?></td></tr>
