@@ -89,8 +89,9 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 }
 
 ?>
-<tr><td colspan="2"><a href="edit_author.php?author=0">Add author</a></td></tr>
 </table>
+
+<a href="edit_author.php?author=0">Add author</a>
 
 <?php
 
