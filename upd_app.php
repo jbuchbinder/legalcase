@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.2 2005/02/23 00:06:01 antzi Exp $
+	$Id: upd_app.php,v 1.3 2005/02/23 01:24:49 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -162,13 +162,13 @@ if (count($_SESSION['errors'])) {
 	}
 
 	// Add/update appointment participants (authors)
-	if ($_SESSION['app_data']['author']) {
+	if (!empty($_SESSION['app_data']['author'])) {
 		$q = "INSERT IGNORE INTO lcm_author_app SET id_app=$id_app,id_author=" . $_SESSION['app_data']['author'];
 		$result = lcm_query($q);
 	}
 
 	// Add/update appointment clients/organisations
-	if ($_SESSION['app_data']['client']) {
+	if (!empty($_SESSION['app_data']['client'])) {
 		$client_org = explode(':',$_SESSION['app_data']['client']);
 		$q = "INSERT IGNORE INTO lcm_app_client_org SET id_app=$id_app";
 		$q .= ',id_client=' . $client_org[0];
