@@ -6,11 +6,11 @@
 	background: url("../images/lcm/lcm_logo_orange.png") repeat-y left;
 }
 
-#wrapper {
+#wrapper_narrow {
 	background: url("../images/lcm/right_back_orange.gif") repeat-y right;
 }
 
-#container {
+#container_narrow {
 	background: url("../images/lcm/right_back_orange.gif") repeat-y right;
 }
 
