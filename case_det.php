@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.98 2005/03/06 11:32:58 antzi Exp $
+	$Id: case_det.php,v 1.99 2005/03/06 14:35:10 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,7 @@ if (isset($_GET['fu_order']))
 
 if ($case > 0) {
 	$q="SELECT id_case, title, id_court_archive, date_creation, date_assignment,
-			legal_reason, alledged_crime, status, public, pub_write
+			legal_reason, alledged_crime, status, stage, public, pub_write
 		FROM lcm_case
 		WHERE id_case=$case";
 
