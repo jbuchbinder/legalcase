@@ -10,12 +10,13 @@ include_lcm('inc_db');
 
 function put_text_in_textbox($text) {
 	$textbox = "";
-
 	$lines = count(explode("\n", $text));
 
-	// TODO: Add CSS class
+	if ($lines <= 1)
+		$lines = 2;
+
 	$textbox  = "<form action='get'>\n";
-	$textbox .= "<textarea style='width: 100%; margin-top: 1em; margin-bottom: 1em;' readonly='readonly' cols='40' wrap='off' rows='$lines' dir='ltr'>";
+	$textbox .= "\t<textarea readonly='readonly' cols='60' wrap='off' rows='$lines' dir='ltr'>";
 	$textbox .= $text;
 	$textbox .= "</textarea>\n";
 	$textbox .= "</form>\n";
@@ -32,13 +33,14 @@ use_language_of_visitor();
 // Test if the software is already installed
 if (@file_exists('inc/config/inc_connect.php')) {
 	install_html_start();
+
 	// forbidden area
-	echo "<div style='font-size: 130%; font-family: sans-serif; border: 2px solid #ff0000; padding: 0.5em;'>\n";
-	echo "\t<p>" . _T('warning_forbidden_area') . "</p>\n";
+	echo "<div class='box_error'>\n";
+	echo "\t<h3>" . _T('warning_forbidden_area') . "</h3>\n";
 	echo "\t<p>" . _T('title_software_article') . " " . _T('warning_already_installed') . "</p>\n";
 	echo "</div>\n";
-	install_html_end();
 
+	install_html_end();
 	exit;
 }
 
@@ -49,11 +51,13 @@ if (@file_exists('inc/config/inc_connect.php')) {
 if ($step == 6) {
 	install_html_start();
 
+	echo "<h3><small>" . _T('install_step_last') . _T('typo_column') .  "</small></h3>\n";
+
 	// last step
-	echo "<br><font face='Verdana,Arial,Sans,sans-serif' size='3'>"._T('info_derniere_etape')."</b></font>";
-	echo "<p>";
-	echo "<b>"._T('info_code_acces')."</b>";
-	echo "<p>"._T('info_utilisation_spip');
+	echo "<div class='box_success'>\n";
+	echo "<p><b>"._T('install_info_do_not_forget') . "</b></p>\n";
+	echo "<p>" . _T('install_info_application_ready') . "</p>\n";
+	echo "</div>\n";
 
 	include_config('inc_connect_install');
 	include_lcm('inc_meta');
@@ -140,7 +144,8 @@ if ($step == 6) {
 else if ($step == 5) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_five') . _T('typo_column') .  "</small> " . _T('install_title_admin_account') . "</h3>\n";
+	echo "<h3><small>" . _T('install_step_five') . _T('typo_column') .  "</small> "
+		. _T('install_title_admin_account') . "</h3>\n";
 
 	include_config('inc_connect_install');
 
@@ -155,9 +160,7 @@ else if ($step == 5) {
 	echo "<!-- Number of administrators: " . $number_admins . " -->\n";
 
 	echo "<p>" . _T('install_info_new_account_1') . "</p>\n";
-	// echo aide ("install5");
-
-	$trad = "<span style='font-size: 80%;'>[<acronym title='translate!'>T</acronym>]</span>";
+	// echo help ("install5");
 
 	if ($numrows)
 		echo "<p>" . _T('install_info_new_account_2') . "</p>\n";
@@ -165,32 +168,36 @@ else if ($step == 5) {
 	echo "\n<form action='install.php' method='post'>\n";
 	echo "<input type='hidden' name='step' value='6'>\n";
 
-	echo "<fieldset><label><b>". $trad . 'Your contact information ...' . "</b><br></label>\n";
-	echo "<b>". "$trad Name" . "</b><br>\n";
+	echo "<fieldset><label><b>". _T('info_your_contact_information') . "</b><br></label>\n";
+	echo "<b>". _T('info_name_of_person') . "</b><br>\n";
 	echo "<table border='0'>\n";
 	echo "<tr>\n";
-	echo "<td>" . $trad . "First" . "</td>\n";
-	echo "<td>" . $trad . "Middle" . "</td>\n";
-	echo "<td>" . $trad . "Last" . "</td>\n";
+	echo "<td><small><label for='name_first'>" . _T('enter_name_first') .  "</label></small></td>\n";
+	echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
+	echo "<td><small><label for='name_last'>" . _T('enter_name_last') . "</label></small></td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
-	echo "<td><input type='text' name='name_first' class='formo' value=\"$name_first\" size='20'></td>\n";
-	echo "<td><input type='text' name='name_middle' class='formo' value=\"$name_middle\" size='20'></td>\n";
-	echo "<td><input type='text' name='name_last' class='formo' value=\"$name_last\" size='20'></td>\n";
+	echo "<td><input type='text' id='name_first' name='name_first' class='formo' value='$name_first' size='20'></td>\n";
+	echo "<td><input type='text' id='name_middle' name='name_middle' class='formo' value='$name_middle' size='20'></td>\n";
+	echo "<td><input type='text' id='name_last' name='name_last' class='formo' value='$name_last' size='20'></td>\n";
 	echo "<tr>\n";
 	echo "</table>\n";
 
-	echo "<b>"._T('entree_adresse_email')."</b><br>";
-	echo "<input type='text' name='email' class='formo' value=\"$email\" size='40'></fieldset><p>\n";
+	echo "<b><label for='email'>" . _T('input_email') . "</label></b><br>";
+	echo "<input type='text' id='email' name='email' class='formo' value=\"$email\" size='40'></fieldset><p>\n";
 
-	echo "<fieldset><label><B>"._T('entree_identifiants_connexion')."</B><BR></label>";
-	echo "<b>"._T('entree_login')."</b><br>";
-	echo _T('info_plus_trois_car')."<br>";
-	echo "<input type='text' name='username' class='formo' value=\"$username\" size='40'><p>\n";
+	echo "<fieldset><b>" . _T('input_connection_identifiers') . "</b><br/>";
+	echo "<b><label for='username'>" . _T('login_login') . "</label></b><br>";
+	echo "<small>" . _T('info_more_than_three') . "</small><br>";
+	echo "<input type='text' id='username' name='username' class='formo' value=\"$username\" size='40'><p>\n";
 
-	echo "<b>"._T('entree_mot_passe')."</b><br>";
-	echo _T('info_plus_cinq_car_2')."<br>";
-	echo "<input type='password' name='pass' class='formo' value=\"$pass\" size='40'></fieldset><p>\n";
+	// TODO XXX
+	// - Confirm the password?
+	// - Error check if no authors and none created?
+
+	echo "<b><label for='pass'>" . _T('login_password') . "</label></b><br>";
+	echo "<small>" . _T('info_more_than_five')."</small><br>";
+	echo "<input type='password' id='pass' name='pass' class='formo' value=\"$pass\" size='40'></fieldset><p>\n";
 
 	echo "<div align='$spip_lang_right'><input type='submit' class='fondl' name='validate' value='"._T('button_next')." >>'>";
 	echo "</form>";
@@ -213,83 +220,94 @@ else if ($step == 5) {
 else if ($step == 4) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_four') . _T('typo_column') .  "</small> " . _T('install_title_creating_database') . "</h3>\n";
+	$install_log = "";
+	$upgrade_log = "";
+
+	echo "<h3><small>" . _T('install_step_four') . _T('typo_column') . "</small> "
+		. _T('install_title_creating_database') . "</h3>\n";
 
 	// Comment out possible errors because the creation of new tables
-	// over an already installed system is not a problem.
-	echo '<!--';
+	// over an already installed system is not a problem. Besides, we do
+	// additional error reporting.
+	echo "<!-- \n\n";
 
 	// TODO: Error checking
 	if ($db_choice == "new_lcm") {
 		$sel_db = $table_new;
 		$link = lcm_connect_db($db_address, 0, $db_login, $db_password);
-		lcm_query("CREATE DATABASE $sel_db");
-		// TODO ERROR CHECKING
-		$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db, $link);
+		@lcm_query_db("CREATE DATABASE $sel_db");
+
+		if (lcm_sql_errno()) {
+			$install_log = lcm_sql_error();
+		} else {
+			$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db, $link);
+		}
 	} else {
 		$sel_db = $db_choice;
 		$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db);
 	}
 
-	// Test if the software was already installed
-	@lcm_query_db("SELECT COUNT(*) FROM lcm_meta");
-	$already_installed = !lcm_sql_errno();
-	$old_lcm_version = 'NONE';
-	
-	if ($already_installed) {
-		$query = "SELECT value FROM lcm_meta WHERE name = 'version_lcm'";
-		$result = lcm_query_db($query);
-		while ($row = lcm_fetch_array($result))
-			$old_lcm_version = $row['value'];
+	if (empty($install_log)) {
+		// Test if the software was already installed
+		@lcm_query_db("SELECT COUNT(*) FROM lcm_meta");
+		$already_installed = !lcm_sql_errno();
+		$old_lcm_version = 'NONE';
+
+		if ($already_installed) {
+			$query = "SELECT value FROM lcm_meta WHERE name = 'version_lcm'";
+			$result = lcm_query_db($query);
+			while ($row = lcm_fetch_array($result))
+				$old_lcm_version = $row['value'];
+		}
+
+		include_lcm('inc_db_create');
+		include_lcm('inc_db_upgrade');
+		include_lcm('inc_db_test');
+
+		$install_log .= create_database();
+		$upgrade_log  = upgrade_database();
+
+		// Previous structure test. Not appropriate.
+		// $query = "SELECT COUNT(*) FROM lcm_case";
+		// $result = lcm_query_db($query);
+		// $structure_ok = (lcm_num_rows($result) > 0);
+		$structure_ok = lcm_structure_test();
+
+		if (!$already_installed) {
+			// [ML] This is not used at the moment (not checked once installed)
+			$query = "INSERT lcm_meta (name, value) VALUES ('new_installation', 'yes')";
+			lcm_query_db($query);
+			$structure_ok = !lcm_sql_errno();
+		}
+
+		// To simplify error listings
+		echo "\n\n";
+		echo "* ------\n";
+		echo "* Existing: " . ($already_installed ? 'Yes (' . $old_lcm_version .  ')' : 'No') . "\n";
+		echo "* Install: " . ($install_log ? 'ERROR(S), see listing' : 'INSTALL OK') . "\n";
+		echo "* Upgrade: " . ($upgrade_log ? 'UPGRADED OK' : 'UPGRADE FAILED') . "\n";
+		echo "* Integrety: " . ($structure_ok ? 'STRUCTURE OK' : 'VALIDATION FAILED') . "\n";
+		echo "* ------\n\n";
 	}
-
-	include_lcm('inc_db_create');
-	include_lcm('inc_db_upgrade');
-	include_lcm('inc_db_test');
-
-	$install_log = create_database();
-	$upgrade_log = upgrade_database();
-
-	// Previous structure test. Not appropriate.
-	// $query = "SELECT COUNT(*) FROM lcm_case";
-	// $result = lcm_query_db($query);
-	// $structure_ok = (lcm_num_rows($result) > 0);
-	$structure_ok = lcm_structure_test();
-
-	if (!$already_installed) {
-		// [ML] This is not used at the moment (not checked once installed)
-		$query = "INSERT lcm_meta (name, value) VALUES ('new_installation', 'yes')";
-		lcm_query_db($query);
-		$structure_ok = !lcm_sql_errno();
-	}
-
-	// To simplify error listings
-	echo "\n\n";
-	echo "* ------\n";
-	echo "* Existing: " . ($already_installed ? 'Yes (' . $old_lcm_version .  ')' : 'No') . "\n";
-	echo "* Install: " . ($install_log ? 'ERROR(S), see listing' : 'INSTALL OK') . "\n";
-	echo "* Upgrade: " . ($upgrade_log ? 'UPGRADED OK' : 'UPGRADE FAILED') . "\n";
-	echo "* Integrety: " . ($structure_ok ? 'STRUCTURE OK' : 'VALIDATION FAILED') . "\n";
-	echo "* ------\n\n";
 
 	echo "--> \n\n";
 
 	if (! empty($install_log)) {
-		echo "<div style='border: 2px solid #ff0000; padding: 10px;'>\n";
+		echo "<div class='box_error'>\n";
 		echo "\t<p><b>" . _T('warning_operation_failed') . "</b> " .  _T('install_database_install_failed') . "</p>\n";
 		echo "</div>\n";
 
 		// Dump error listing
 		echo put_text_in_textbox($install_log);
 	} else if (! empty($upgrade_log)) {
-		echo "<div style='border: 2px solid #ff0000; padding: 10px;'>\n";
+		echo "<div class='box_error'>\n";
 		echo "\t<p>" . _T('install_warning_update_impossible', array('old_version' => $old_lcm_version, 'version' => $lcm_version)) . "</p>\n";
 		echo "</div>\n";
 
 		// Dump error listing
 		echo put_text_in_textbox($upgrade_log);
 	} else if (! $structure_ok) {
-		echo "<div style='border: 2px solid #ff0000; padding: 10px;'>\n";
+		echo "<div class='box_error'>\n";
 		// TODO TRANSLATE
 		echo "\t<p> STRUCTURE PROBLEM </p>\n";
 		echo "</div>\n";
@@ -309,7 +327,7 @@ else if ($step == 4) {
 		fputs($myFile, $conn);
 		fclose($myFile);
 
-		echo "<div style='border: 1px solid #00ff00; padding: 10px;'>\n";
+		echo "<div class='box_success'>\n";
 		echo "\t<p><b>" . _T('install_database_installed_ok') . "</b></p>\n";
 		echo "</div>\n\n";
 
@@ -327,9 +345,10 @@ else if ($step == 4) {
 else if ($step == 3) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_three') . _T('typo_column') .  "</small> " . _T('install_title_select_database') . "</h3>\n";
+	echo "<h3><small>" . _T('install_step_three') . _T('typo_column') .  "</small> "
+		. _T('install_title_select_database') . "</h3>\n";
 
-	// [ML] TODO echo aide ("install2");
+	// [ML] TODO echo help ("install2");
 
 	echo "<form action='install.php' method='post'>\n";
 	echo "\t<input type='hidden' name='step' value='4'>\n";
@@ -353,7 +372,8 @@ else if ($step == 3) {
 			$table_name = array_pop($result);
 			$base = "<input name='db_choice' value='" . $table_name . "' type='radio' id='tab$i'";
 			$base_end = "><label for='tab$i'>" . $table_name . "</label><br>\n";
-			if ($table_name == $login_db) {
+
+			if ($table_name == $db_login) {
 				$listdbtxt = "$base CHECKED$base_end" . $listdbtxt;
 				$checked = true;
 			} else {
@@ -361,29 +381,33 @@ else if ($step == 3) {
 			}
 		}
 
-		echo $listdbtxt . "</ul>";
-		echo "<p>" . _T('info_or') . " ... </p>";
+		echo $listdbtxt;
+		echo "</ul>\n";
+		echo "<p>" . _T('info_or') . " ... </p>\n";
 	} else {
-		echo "<b>" . _T('avis_lecture_noms_bases_1') . "</b>" . _T('avis_lecture_noms_bases_2') . "<P>";
+		echo "<div class='box_warning'>\n";
+		echo "<p><b>" . _T('install_warning_no_databases_1') . "</b></p>\n";
+		echo "<p><small>" . _T('install_warning_no_databases_2') . "</small></p>\n";
+		echo "</div>\n";
 
-		if ($login_db) {
-			echo _T('avis_lecture_noms_bases_3');
+		if ($db_login) {
+			echo _T('install_warning_no_databases_3');
 			echo "<ul>";
-			echo "<input name=\"db_choice\" value=\"".$login_db."\" type=Radio id='stand' CHECKED>";
-			echo "<label for='stand'>".$login_db."</label><br>\n";
+			echo "<input name=\"db_choice\" value=\"" . $db_login . "\" type=Radio id='stand' CHECKED>";
+			echo "<label for='stand'>" . $db_login . "</label><br>\n";
 			echo "</ul>";
-			echo "<p>" . _T('info_ou') . " ... </p>";
+			echo "<p>" . _T('info_or') . " ... </p>\n";
 			$checked = true;
 		}
 	}
 
+	echo "<p><label for='new_db'>" . _T('install_create_new_database') .  _T('typo_column') . "</label></p>\n";
+	echo "<ul>\n";
 	echo "<input name='db_choice' value='new_lcm' type=Radio id='new_db'";
 	if (!$checked) echo " CHECKED";
-	echo "> <label for='nou'>" . _T('info_creer_base') . "</label> ";
+	echo "> ";
 	echo "<input type='text' name='table_new' class='fondo' value=\"lcm\" size='20'></fieldset><p>\n";
-
 	echo "<div align='$spip_lang_right'><input type='submit' class='fondl' name='Next' value='"._T('button_next')." >>'></div>\n";
-
 	echo "</form>\n";
 
 	install_html_end();
@@ -392,7 +416,8 @@ else if ($step == 3) {
 else if ($step == 2) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_two') . _T('typo_column') .  "</small> " . _T('install_title_connection_attempt') . "</h3>\n";
+	echo "<h3><small>" . _T('install_step_two') . _T('typo_column') . "</small> "
+		. _T('install_title_connection_attempt') . "</h3>\n";
 
 	echo "\n<!--\n";
 		$link = lcm_connect_db_test($db_address, $db_login, $db_password);
@@ -401,7 +426,7 @@ else if ($step == 2) {
 	echo "\n-->\n";
 
 	if (($db_connect == "0") && $link) {
-		echo "<div style='border: 1px solid #00ff00; padding: 10px;'>\n";
+		echo "<div class='box_success'>\n";
 		echo "\t<b>" . _T('install_connection_succeeded') . "</b>\n";
 		echo "</div>\n";
 		echo "<p>" . _T('install_next_step') . "</p>";
@@ -414,10 +439,10 @@ else if ($step == 2) {
 		echo "\t<div align='$spip_lang_right'><input type='submit' class='fondl' name='Next' value='"._T('button_next')." >>'></div>";
 		echo "</form>";
 	} else {
-		echo "<div style='border: 2px solid #ff0000; padding: 10px;'>\n";
+		echo "<div class='box_error'>\n";
 		echo "\t<b>"._T('warning_sql_connection_failed') . "</b>\n";
 		echo "\t<p>"._T('install_info_go_back_verify_data') . "\n";
-		echo "\t<p><div style='font-size: 80%;'>" .  _T('install_info_sql_connection_failed') .  "</div>\n";
+		echo "\t<p><small>" .  _T('install_info_sql_connection_failed') .  "</small></p>\n";
 		echo "</div>\n\n";
 	}
 
@@ -427,10 +452,12 @@ else if ($step == 2) {
 else if ($step == 1) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_one') . _T('typo_column') .  "</small> " .  _T('install_title_sql_connection') . "</h3\n";
-	echo "<p>"._T('install_info_sql_connection');
+	echo "<h3><small>" . _T('install_step_one') . _T('typo_column') .  "</small> "
+		.  _T('install_title_sql_connection') . "</h3>\n";
 
-	// [ML] TODO echo aide ("install1");
+	echo "<p>" . _T('install_info_sql_connection') . "</p>\n";
+
+	// [ML] TODO echo help ("install1");
 
 	$db_address = 'localhost';
 	$db_login = '';
@@ -484,18 +511,19 @@ else if (!$step) {
 
 	install_html_start();
 
-	echo "<p>&nbsp;</p>\n";
+	echo "<div align='center'>\n";
 	echo "<table border='0' cellspacing='0' width='300' height='170' style=\"background-image: url('images/lcm/logo_lcm-170.png'); border: 0\">\n";
 	echo "<tr><td align='center'><p style='font-size: 130%;'>" .  _T('title_software') . "</p></td></tr>\n";
 	echo "</table>\n";
+	echo "</div>\n";
 
-	echo "<p>&nbsp;</p><p>" . _T('install_select_language');
+	echo "<p>" . _T('install_select_language') . "</p>\n";
 
-	echo "<p><div align='center'>" . $menu_lang . "</div>";
+	echo "<div align='center'><p>" . $menu_lang . "</p></div>\n";
 
-	echo "<p><form action='install.php' method='get'>";
-	echo "<input type='hidden' name='step' value='dirs'>";
-	echo "<div align='$spip_lang_right'><input type='submit' class='fondl' name='Next' value='"._T('button_next')." >>'></div>";
+	echo "<form action='install.php' method='get'>";
+	echo "\t<input type='hidden' name='step' value='dirs'>";
+	echo "\t<div align='$spip_lang_right'><input type='submit' class='fondl' name='Next' value='"._T('button_next')." >>'></div>";
 	echo "</form>";
 
 	install_html_end();
