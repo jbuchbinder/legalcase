@@ -3,6 +3,8 @@
 include('inc/inc.php');
 lcm_page_start("Select client(s)");
 
+$case = intval($_GET['case']);
+
 if ($case>0) {
 	// Prepare query
 	$q = "SELECT *
@@ -28,9 +30,9 @@ if ($case>0) {
 	$result = lcm_query($q);
 ?>
 <form action="add_client.php" method="post">
-<h3>List if clients</h3>
+	<!--h3>List if clients</h3-->
 	<table border="0" width="99%" class="tbl_usr_dtl">
-		
+
 		<tr>
 			<th class="heading">&nbsp;</th>
 			<th class="heading">Client name</th>
@@ -54,7 +56,7 @@ if ($case>0) {
 		</tr>
 	</table>
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
-	<input type="hidden" name="ref_sel_client" value="<?php echo $HTTP_REFERER ?>">
+	<input type="hidden" name="ref_sel_client" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
 	<button name="submit" type="submit" value="submit">Add client(s) to the case</button>
 	<button name="reset" type="reset" value="reset">Clear selected</button>
 </form>
