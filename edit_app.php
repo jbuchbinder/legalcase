@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.3 2005/02/22 23:02:42 antzi Exp $
+	$Id: edit_app.php,v 1.4 2005/02/22 23:35:44 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -277,7 +277,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		$result = lcm_query($q);
 		echo "\t\t<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"POST\">\n";
 		echo "\t\t\t<select name=\"author\">\n";
-		echo "\t\t\t\t<option selected>- Select author -</option>\n";
+		echo "\t\t\t\t<option selected value=\"0\">- Select author -</option>\n";
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t\t<option value=\"" . $row['id_author'] . '">'
 				. join(' ',array($row['name_first'],$row['name_middle'],$row['name_last']))
@@ -313,7 +313,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		
 		$result = lcm_query($q);
 		echo "\t\t\t<select name=\"client\">\n";
-		echo "\t\t\t\t<option selected>- Select client -</option>\n";
+		echo "\t\t\t\t<option selected value=\"0\">- Select client -</option>\n";
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t\t<option value=\"" . $row['id_client'] . ':' . $row['id_org'] . '">'
 				. join(' ',array($row['name_first'],$row['name_middle'],$row['name_last']))
