@@ -270,6 +270,11 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (14);
 	}
 
+	if ($lcm_db_version_current < 15) {
+		lcm_query("ALTER TABLE `lcm`.`lcm_followup` CHANGE `type` `type` ENUM('assignment','suspension','resumption','delay','conclusion','reopening','consultation','correspondance','travel','other') DEFAULT 'assignment' NOT NULL");
+		upgrade_db_version (15);
+	}
+
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.999) {
 		global $htsalt;
