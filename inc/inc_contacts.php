@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.17 2005/03/24 14:44:59 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.18 2005/03/24 15:35:06 mlutfy Exp $
 */
 
 
@@ -237,14 +237,8 @@ function show_existing_contact($c, $num) {
 
 // For new contact (may be specific 'email_main', etc. or empty for combobox)
 // Should be used in a two column table (ID + Value)
-function show_new_contact($num_new, $type_kw = "__add__", $type_name = "__add__") {
+function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_name = "__add__") {
 	echo "<tr>\n";
-
-	// [ML] Temporarely adding this to find silly errors
-	if (! is_numeric($num_new)) {
-		global $lcm_debug;
-		if ($lcm_debug) lcm_panic("error in parameters");
-	}
 
 	// Contact type (either specific or 'Add contact')
 	echo '<td align="left" valign="top">'
@@ -278,14 +272,14 @@ function show_new_contact($num_new, $type_kw = "__add__", $type_name = "__add__"
 
 		// [ML] clean this.. one day...
 		$value = '';
-		if ($_SESSION['client_data']['new_contact_value'][$num_new])
-			$value = $_SESSION['client_data']['new_contact_value'][$num_new];
 
-		if ($_SESSION['org_data']['new_contact_value'][$num_new])
-			$value = $_SESSION['org_data']['new_contact_value'][$num_new];
-		
-		if ($_SESSION['usr']['new_contact_value'][$num_new])
-			$value = $_SESSION['usr']['new_contact_value'][$num_new];
+		if ($type_person == 'client' || $type_person == 'org') {
+			if ($_SESSION[$type_person . '_data']['new_contact_value'][$num_new])
+				$value = $_SESSION[$type_person . '_data']['new_contact_value'][$num_new];
+		} else if ($type_person == 'author') {
+			if ($_SESSION['usr']['new_contact_value'][$num_new])
+				$value = $_SESSION['usr']['new_contact_value'][$num_new];
+		}
 					
 		echo ' value="' . $value . '" ';
 						
@@ -326,7 +320,7 @@ function show_edit_contacts_form($type_person, $id_person) {
 	}
 
 	if (! $addrmain_exists) {
-		show_new_contact($cpt, 'addressmain', 'address_main');
+		show_new_contact($cpt, $type_person, 'addressmain', 'address_main');
 		$cpt_new++;
 	}
 
@@ -338,7 +332,7 @@ function show_edit_contacts_form($type_person, $id_person) {
 	}
 
 	if (! $emailmain_exists) {
-		show_new_contact($cpt_new, 'emailmain', 'email_main');
+		show_new_contact($cpt_new, $type_person, 'emailmain', 'email_main');
 		$cpt_new++;
 	}
 
@@ -349,10 +343,10 @@ function show_edit_contacts_form($type_person, $id_person) {
 	}
 
 	// Show "new contact"
-	show_new_contact($cpt_new);
+	show_new_contact($cpt_new, $type_person);
 	$cpt_new++;
 
-	show_new_contact($cpt_new);
+	show_new_contact($cpt_new, $type_person);
 	$cpt_new++;
 }
 
