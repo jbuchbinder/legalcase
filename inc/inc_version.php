@@ -152,6 +152,8 @@ $lcm_version = 0.10;
 // Current version of LCM shown on screen
 $lcm_version_shown = "0.1";
 
+// Current version of LCM database
+$lcm_db_version = 1;
 
 // Don't show silly warnings
 // [ML] For now, until the first beta, better to keep them
