@@ -18,23 +18,23 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.46 2005/01/18 21:51:40 antzi Exp $
+	$Id: edit_case.php,v 1.47 2005/01/19 00:20:46 antzi Exp $
 */
 
-session_start();
+//session_start();
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
-if (empty($errors)) {
+if (empty($_SESSION['errors'])) {
 
     // Clear form data
-    $case_data = array();
+    $_SESSION['case_data'] = array();
 
 	// Set the returning page
-	if (isset($ref)) $case_data['ref_edit_case'] = $ref;
-	else $case_data['ref_edit_case'] = $GLOBALS['HTTP_REFERER'];
+	if (isset($ref)) $_SESSION['case_data']['ref_edit_case'] = $ref;
+	else $_SESSION['case_data']['ref_edit_case'] = $GLOBALS['HTTP_REFERER'];
 
 	// Register case ID as session variable
     if (!session_is_registered("case"))
@@ -51,7 +51,7 @@ if (empty($errors)) {
 
 	// Set author ID by session data
 	// [ML] XXX FIXME: absurd! this is written in the database, there may be many authors
-	$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
+	$_SESSION['case_data']['id_author'] = $GLOBALS['author_session']['id_author'];
 
 	if ($existing) {
 		// Check access rights
@@ -65,7 +65,7 @@ if (empty($errors)) {
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach ($row as $key => $value) {
-				$case_data[$key] = $value;
+				$_SESSION['case_data'][$key] = $value;
 			}
 		}
 
@@ -73,10 +73,10 @@ if (empty($errors)) {
 
 	} else {
 		// Set default values for the new case
-		$case_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
-		$case_data['public'] = read_meta('case_default_read');
-		$case_data['pub_write'] = read_meta('case_default_write');
-		$case_data['status'] = 'draft';
+		$_SESSION['case_data']['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
+		$_SESSION['case_data']['public'] = read_meta('case_default_read');
+		$_SESSION['case_data']['pub_write'] = read_meta('case_default_write');
+		$_SESSION['case_data']['status'] = 'draft';
 
 		$admin = true;
 
@@ -90,35 +90,35 @@ else lcm_page_start(_T('title_case_new'));
 // Start edit case form
 echo "\n<form action=\"upd_case.php\" method=\"post\">
 <table class=\"tbl_usr_dtl\">
-<input type=\"hidden\" name=\"id_author\" value=\"" . $case_data['id_author'] . "\">\n";
+<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\">\n";
 
-if ($case_data['id_case']) {
-	echo "\t<tr><td>" . _T('case_input_id') . "</td><td>" . $case_data['id_case']
-		. "<input type=\"hidden\" name=\"id_case\" value=\"" .  $case_data['id_case'] . "\"></td></tr>\n";
+if ($_SESSION['case_data']['id_case']) {
+	echo "\t<tr><td>" . _T('case_input_id') . "</td><td>" . $_SESSION['case_data']['id_case']
+		. "<input type=\"hidden\" name=\"id_case\" value=\"" .  $_SESSION['case_data']['id_case'] . "\"></td></tr>\n";
 }
 
 //	echo "
-//		<tr><td>" . _T('author_id') . "</td><td>" . $case_data['id_author'] . "
-//			<input type=\"hidden\" name=\"id_author\" value=\"" . $case_data['id_author'] . "\"></td></tr>";
+//		<tr><td>" . _T('author_id') . "</td><td>" . $_SESSION['case_data']['id_author'] . "
+//			<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\"></td></tr>";
 	echo "
 		<tr><td>" . _T('case_input_title') . "</td>
-			<td><input name=\"title\" value=\"" . clean_output($case_data['title']) . "\" class=\"search_form_txt\">";
-	echo f_err('title',$errors) . "</td></tr>
+			<td><input name=\"title\" value=\"" . clean_output($_SESSION['case_data']['title']) . "\" class=\"search_form_txt\">";
+	echo f_err('title',$_SESSION['errors']) . "</td></tr>
 		<tr><td>" . _T('case_input_court_archive') . "</td>
-			<td><input name=\"id_court_archive\" value=\"" . clean_output($case_data['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>";
+			<td><input name=\"id_court_archive\" value=\"" . clean_output($_SESSION['case_data']['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>";
 // [AG] Creation date not shown upon ML request
 //		<tr><td>" . _T('case_input_date_creation') . "</td>
-//			<td>" . $case_data['date_creation'] . "</td></tr>
+//			<td>" . $_SESSION['case_data']['date_creation'] . "</td></tr>
 // [AG] Assignment date is set only when adding user to the case
 //		<tr><td>" . _T('case_input_date_assignment') . "</td>
-//			<td><input name=\"date_assignment\" value=\"" . clean_output($case_data['date_assignment']) . "\" class=\"search_form_txt\"></td></tr>
+//			<td><input name=\"date_assignment\" value=\"" . clean_output($_SESSION['case_data']['date_assignment']) . "\" class=\"search_form_txt\"></td></tr>
 	echo "
 		<tr><td>" . _T('case_input_legal_reason') . "</td>
-			<td><input name=\"legal_reason\" value=\"" . clean_output($case_data['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>
+			<td><input name=\"legal_reason\" value=\"" . clean_output($_SESSION['case_data']['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>
 		<tr><td>" . _T('case_input_alledged_crime') . "</td>
-			<td><input name=\"alledged_crime\" value=\"" .  clean_output($case_data['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>
+			<td><input name=\"alledged_crime\" value=\"" .  clean_output($_SESSION['case_data']['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>
 		<tr><td>" . _T('case_input_status') . "</td>
-			<td><input name=\"status\" value=\"" . clean_output($case_data['status']) . "\" class=\"search_form_txt\"></td></tr>
+			<td><input name=\"status\" value=\"" . clean_output($_SESSION['case_data']['status']) . "\" class=\"search_form_txt\"></td></tr>
 	";
 
 	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
@@ -134,13 +134,13 @@ if ($case_data['id_case']) {
 
 		if (!read_meta('case_read_always') || $admin) {
 			echo '			<td><input type="checkbox" name="public" value="yes"';
-			if ($case_data['public']) echo ' checked';
+			if ($_SESSION['case_data']['public']) echo ' checked';
 			echo "></td>\n";
 		}
 
 		if (!read_meta('case_write_always') || $admin) {
 			echo '			<td><input type="checkbox" name="pub_write" value="yes"';
-			if ($case_data['pub_write']) echo ' checked';
+			if ($_SESSION['case_data']['pub_write']) echo ' checked';
 			echo "></td>\n";
 		}
 ?>				</tr>
@@ -169,12 +169,12 @@ if ($case_data['id_case']) {
 	// [ML] if ($existing)
 	//	echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
 
-	echo '<input type="hidden" name="ref_edit_case" value="' . $case_data['ref_edit_case'];
+	echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['case_data']['ref_edit_case'];
 	echo '">
 </form>
 
 ';
 
 	lcm_page_end();
-	session_destroy();
+//	session_destroy();
 ?>
