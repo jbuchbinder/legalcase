@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.14 2005/03/23 18:22:26 mlutfy Exp $
+	$Id: org_det.php,v 1.15 2005/03/23 18:45:58 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -68,12 +68,12 @@ if ($row = lcm_fetch_array($result)) {
 		
 			//		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
 			//		echo 'Organisation name: ' . $row['name'] . "<br />\n";
-			echo 'Address: ' . $row['address'] . "<br />\n";
-			echo 'Created on: ' . format_date($row['date_creation'], 'short') . "<br />\n";
+			echo 'Address: ' . $row['address'] . "<br />\n"; // TRAD
+			echo _Ti('time_input_date_created') . format_date($row['date_creation'], 'short') . "<br />\n";
 			// [ML] echo 'Last update: ' . format_date($row['date_update'], 'short') . "<br />\n";
 		
 			if ($edit)
-				echo '<br /><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a><br />';
+				echo '<br /><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a><br />'; // TRAD
 		
 			echo "<br /></p>\n";
 			echo "</fieldset>\n";
@@ -101,7 +101,7 @@ if ($row = lcm_fetch_array($result)) {
 		?>
 				<table class="tbl_usr_dtl">
 				<tr>
-					<th class="heading">Representative(s):</th>
+					<th class="heading"><?php echo "Representative(s):"; /* TRAD */ ?></th>
 				</tr>
 		<?php
 			}
@@ -115,7 +115,7 @@ if ($row = lcm_fetch_array($result)) {
 				echo "</table>";
 		
 			if ($edit)
-				echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />";
+				echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />"; // TRAD
 		
 			echo "<br /></fieldset>";
 
