@@ -15,12 +15,12 @@ lcm_html_start(_T('login_title_login'), 'login');
 global $lcm_lang_right;
 
 // Site name: mandatory
-$site_name = read_meta('site_name');
+$site_name = _T(read_meta('site_name'));
 if (! $site_name)
 	$site_name = _T('title_software');
 
 // Site description: may be empty
-$site_desc = read_meta('site_description');
+$site_desc = _T(read_meta('site_description'));
 
 echo "\n";
 echo "<div align='center'>\n";
