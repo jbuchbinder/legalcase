@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.38 2005/03/03 16:24:41 makaveev Exp $
+	$Id: inc_filters.php,v 1.39 2005/03/06 11:33:55 antzi Exp $
 */
 
 // Execute this file only once
@@ -93,28 +93,30 @@ function format_date($timestamp = '', $format = 'full') {
 
 // Formats time interval
 function format_time_interval($time, $hours_only=false, $hours_only_format='%.2f') {
-	if (is_numeric($time) && ($time>0)) {
-		if ($hours_only) {
-			$days = 0;
-			$hours = $time / 3600;
-			$minutes = 0;
-		} else {
-			$days = (int) ($time / 86400);
-			$hours = (int) ( ($time % 86400) / 3600);
-			$minutes = (int) ( ($time % 3600) / 60);
-		}
+	if (is_numeric($time)) {
+		if ($time>0) {
+			if ($hours_only) {
+				$days = 0;
+				$hours = $time / 3600;
+				$minutes = 0;
+			} else {
+				$days = (int) ($time / 86400);
+				$hours = (int) ( ($time % 86400) / 3600);
+				$minutes = (int) ( ($time % 3600) / 60);
+			}
 
-		$ret = array();
-		if ($days) $ret[] = $days . 'd';
-		if ($hours) {
-			if ($hours_only)
-				$ret[] = sprintf($hours_only_format,$hours) . ( ($hours == 1.0) ? ' hr' : ' hrs');
-			else
-				$ret[] = $hours . 'h';
-		}
-		if ($minutes) $ret[] = $minutes . 'm';
+			$ret = array();
+			if ($days) $ret[] = $days . 'd';
+			if ($hours) {
+				if ($hours_only)
+					$ret[] = sprintf($hours_only_format,$hours) . ( ($hours == 1.0) ? ' hr' : ' hrs');
+				else
+					$ret[] = $hours . 'h';
+			}
+			if ($minutes) $ret[] = $minutes . 'm';
 
-		return join(', ',$ret);
+			return join(', ',$ret);
+		} else if ($time == 0) return '0';
 	} else return '';
 }
 
