@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.9 2005/03/07 12:58:11 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.10 2005/03/10 14:48:51 antzi Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -124,5 +124,14 @@ function check_if_kwg_name_unique($name) {
 	return (lcm_num_rows($result) == 0);
 }
 
+// Get keyword title
+function get_kw_title($name) {
+	$query = "SELECT title FROM lcm_keyword WHERE name='" . clean_input($name) . "'";
+	$result = lcm_query($query);
+	if ($row = lcm_fetch_array($result))
+		return $row['title'];
+	else
+		return false;
+}
 
 ?>
