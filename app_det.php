@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.8 2005/03/10 17:34:51 antzi Exp $
+	$Id: app_det.php,v 1.9 2005/03/15 13:28:47 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -58,7 +58,7 @@ if ($row = lcm_fetch_array($result)) {
 	echo "Description: " . $row['description'] . "<br />\n";
 	echo "Created by: " . njoin(array($row['name_first'],$row['name_middle'],$row['name_last'])) . "<br />\n";
 	if ($row['case_title'])
-		echo 'In connection with case: <a href="case_det.php?case=' . $row['id_case'] . '">' . $row['case_title'] , "</a><br />\n";
+		echo 'In connection with case: <a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">' . $row['case_title'] , "</a><br />\n";
 
 	// Show appointment participants
 	$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
@@ -114,12 +114,12 @@ if ($row = lcm_fetch_array($result)) {
 		} else {
 			// Show create followup from appointment
 			echo '<br /><a href="edit_fu.php?case=' . $row['id_case'] . '&amp;app=' . $row['id_app']
-				. '">Create new followup from this appointment';
+				. '" class="create_new_lnk">Create new followup from this appointment';
 		}
 		echo "</a><br />\n";
 
 		// Show link back to the case details
-		echo '<br /><a href="case_det.php?case=' . $row['id_case'] . '&amp;tab=appointments">' . 'To case appointments' . "</a><br />\n";
+		echo '<br /><a href="case_det.php?case=' . $row['id_case'] . '&amp;tab=appointments" class="back_lnk">' . 'To case appointments' . "</a><br />\n";
 	}
 
 	echo "<br /></p>";
