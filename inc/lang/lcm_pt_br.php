@@ -86,6 +86,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_author' => 'Autor:',
 'case_input_authors' => 'Autores:',
 'case_input_clients' => 'Clientes:',
+'case_input_collaboration' => '<NEW>Office collaboration and confidentiality:',
+'case_input_collaboration_read' => '<NEW>Other authors can consult this case.',
+'case_input_collaboration_write' => '<NEW>Other authors can contribute to this case.',
 'case_input_court_archive' => 'Nº do Processo:',
 'case_input_date_assigned' => 'Data da designação:',
 'case_input_date_creation' => 'Data da criação:',
@@ -369,7 +372,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // L
-'login_access_denied' => 'Acesso negado',
+'login_access_denied' => 'Acesso negado:',
 'login_identifier_unknown' => 'A identificação "@login@" é desconhecido.',
 'login_info_login' => 'identifique-se para se conectar ao site',
 'login_link_reload_page' => 'Atualizar esta página',
@@ -465,11 +468,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'person_input_name_first' => 'Sobre Nome:',
 'person_input_name_last' => 'Nome:',
 'person_input_name_middle' => 'Segundo nome:',
-'public' => 'Publico',
 
 
 // R
-'read' => 'Ler',
 'rep_title' => 'Título',
 'report_id' => 'Relatar ID',
 
@@ -567,8 +568,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_operation_failed' => 'A operação falhou',
 'warning_sql_connection_failed' => 'Conexão com o servidor da base de dados SQL falhou.',
 'warning_sql_query_failed' => 'Erro na base de dados SQL.',
-'which_case' => 'Qual caso?',
-'write' => 'Editar'
+'which_case' => 'Qual caso?'
 
 );
 

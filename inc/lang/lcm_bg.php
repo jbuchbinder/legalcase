@@ -81,6 +81,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_author' => 'Автор:',
 'case_input_authors' => 'Автори:',
 'case_input_clients' => 'Клиенти:',
+'case_input_collaboration' => '<NEW>Office collaboration and confidentiality:',
+'case_input_collaboration_read' => '<NEW>Other authors can consult this case.',
+'case_input_collaboration_write' => '<NEW>Other authors can contribute to this case.',
 'case_input_court_archive' => 'Номер на делото в съда:',
 'case_input_date_assigned' => 'Дата на задаване:',
 'case_input_date_creation' => 'Дата на създаване:',
@@ -364,7 +367,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // L
-'login_access_denied' => 'Достъпът е отказан.',
+'login_access_denied' => 'Достъпът е отказан:',
 'login_identifier_unknown' => 'Системата не разпознава името: „@login@“.',
 'login_info_login' => 'потребителско име за свързване със сайта',
 'login_link_reload_page' => 'презареждане на страницата',
@@ -460,11 +463,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'person_input_name_first' => 'Име:',
 'person_input_name_last' => 'Фамилия:',
 'person_input_name_middle' => 'Презиме:',
-'public' => 'публично',
 
 
 // R
-'read' => 'прочетено',
 'rep_title' => 'Заглавие',
 'report_id' => 'Идентификатор на доклад',
 
@@ -562,8 +563,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_operation_failed' => 'Неуспешно действие.',
 'warning_sql_connection_failed' => 'Неуспешна връзка към базата данни.',
 'warning_sql_query_failed' => 'Грешка в заявката към базата данни.',
-'which_case' => 'Кое дело?',
-'write' => 'записано'
+'which_case' => 'Кое дело?'
 
 );
 

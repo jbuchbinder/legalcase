@@ -367,7 +367,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // L
-'login_access_denied' => 'Access denied',
+'login_access_denied' => 'Access denied:',
 'login_identifier_unknown' => 'The identifier "@login@" is unknown.',
 'login_info_login' => 'identifier for connection to the site',
 'login_link_reload_page' => 'reload this page',

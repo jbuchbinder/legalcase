@@ -81,6 +81,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_author' => '<NEW>Author:',
 'case_input_authors' => '<NEW>Authors:',
 'case_input_clients' => '<NEW>Clients:',
+'case_input_collaboration' => '<NEW>Office collaboration and confidentiality:',
+'case_input_collaboration_read' => '<NEW>Other authors can consult this case.',
+'case_input_collaboration_write' => '<NEW>Other authors can contribute to this case.',
 'case_input_court_archive' => '<NEW>Court archive ID:',
 'case_input_date_assigned' => '<NEW>Assignment date:',
 'case_input_date_creation' => '<NEW>Creation date:',
@@ -89,6 +92,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_organisations' => '<NEW>Organisations:',
 'case_input_status' => '<NEW>Status:',
 'case_input_title' => '<NEW>Title:',
+'case_status_option_closed' => '<NEW>Closed',
+'case_status_option_draft' => '<NEW>Draft',
+'case_status_option_merged' => '<NEW>Merged',
+'case_status_option_open' => '<NEW>Open',
+'case_status_option_suspended' => '<NEW>Suspended',
 'case_subtitle_appointments' => '<NEW>Appointments',
 'case_subtitle_attachments' => '<NEW>Attached documents',
 'case_subtitle_clients' => '<NEW>Case clients',
@@ -199,9 +207,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'edit_case_information' => '<NEW>Edit case information',
 'edit_filter_details' => '<NEW>Edit filter details',
 'edit_rep_details' => '<NEW>Edit report details',
-'enter_name_first' => '<NEW>First',
-'enter_name_last' => '<NEW>Last',
-'enter_name_middle' => '<NEW>Middle',
 'error_add_auth_no_rights' => '<NEW>You don\'t have permission to add access rights to this case!',
 'error_no_case_name' => '<NEW>Case should have a name!',
 'error_no_case_specified' => '<NEW>No case was specified',
@@ -228,14 +233,22 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // H
 'help_title_about' => '<NEW>About ...',
+'help_title_about_contrib' => '<NEW>Contributors',
+'help_title_about_license' => '<NEW>License and terms of use',
 'help_title_archives' => '<NEW>Archives',
 'help_title_authors' => '<NEW>Authors',
 'help_title_cases' => '<NEW>Cases',
 'help_title_clients' => '<NEW>Clients',
+'help_title_help' => '<NEW>Legal Case Management Help',
+'help_title_install_database' => '<NEW>The SQL database connection',
+'help_title_install_permissions' => '<NEW>Setting up directory permissions',
+'help_title_install_personal' => '<NEW>Personal information',
 'help_title_installation' => '<NEW>Installation',
 'help_title_keywords' => '<NEW>Keywords',
 'help_title_reports' => '<NEW>Reports',
 'help_title_siteconfig' => '<NEW>Site configuration',
+'help_warning_no_files' => '<NEW>The help files are not installed.',
+'help_warning_no_section' => '<NEW>The requested help section does not exist.',
 
 
 // I
@@ -245,7 +258,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_greetings' => '<NEW>Good day',
 'info_more_than_five' => '<NEW>(More than 5 characters)',
 'info_more_than_three' => '<NEW>(More than 3 characters)',
-'info_name_of_person' => '<NEW>Name',
 'info_no' => 'non',
 'info_not_available' => '<NEW>n/a',
 'info_or' => '<NEW>or',
@@ -355,7 +367,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // L
-'login_access_denied' => '<NEW>Access denied',
+'login_access_denied' => 'Accès refusé:',
 'login_identifier_unknown' => '<NEW>The identifier "@login@" is unknown.',
 'login_info_login' => '<NEW>identifier for connection to the site',
 'login_link_reload_page' => '<NEW>reload this page',
@@ -451,11 +463,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'person_input_name_first' => '<NEW>Name:',
 'person_input_name_last' => '<NEW>Surname:',
 'person_input_name_middle' => '<NEW>Middle name:',
-'public' => '<NEW>Public',
 
 
 // R
-'read' => '<NEW>Read',
 'rep_title' => '<NEW>Title',
 'report_id' => '<NEW>Report ID',
 
@@ -520,7 +530,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_tab_regional' => '<NEW>Regional settings',
 'siteconf_warning' => '<NEW><b>Caution!</b> The settings on this page have a global impact which may influence the functionning of the site.',
 'siteconf_warning_currency' => '<NEW><b>Warning!</b> If you change the currency, the current information entered will <strong>not</strong> be converted.',
-'status' => '<NEW>Status',
 
 
 // T
@@ -554,8 +563,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_operation_failed' => '<NEW>The operation failed.',
 'warning_sql_connection_failed' => '<NEW>Connection to SQL database server failed.',
 'warning_sql_query_failed' => '<NEW>Error in SQL database query.',
-'which_case' => '<NEW>Which case?',
-'write' => '<NEW>Write'
+'which_case' => '<NEW>Which case?'
 
 );
 
