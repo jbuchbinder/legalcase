@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.16 2005/01/12 10:27:58 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.17 2005/01/12 14:30:23 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -92,7 +92,7 @@ class Auth_db {
 		if ($this->md5next) {
 			include_lcm('inc_session');
 			// creates a new salt for password encoding in the database
-			$nouvel_alea_futur = creer_uniqid();
+			$nouvel_alea_futur = create_uniq_id();
 			$query = "UPDATE lcm_author SET alea_actuel = alea_futur, ".
 				"password = '".addslashes($this->md5next)."', alea_futur = '$nouvel_alea_futur' ".
 				"WHERE username='".$this->username."'";
