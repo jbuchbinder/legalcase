@@ -122,7 +122,7 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listcases.php\" class=\"main_nav_btn\">Recent cases</a></li>
 							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
-							<li><a href=\"edit_client.php\" class=\"main_nav_btn\">New Client</a></li>
+							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">Organisations</a></li>
 							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>
 							<!-- li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li-->\n";
 	echo "
