@@ -293,8 +293,18 @@ if (isset($_POST['$author_password_modified']))
 
 if (isset($_POST['author_ui_modified']) || isset($_POST['author_password_modified'])) {
 	if ($referer) {
-		header('Location: ' . $referer);
-//		header('Retry-After: 30');
+		// [ML] I have no exact idea why, but if we do not do this,
+		// the language will not be changed. There is not this problem
+		// with theme/screen/etc, only language. Perhaps because of the
+		// lcm_cookie.php boomerang, see inc.php
+		$target = new Link($referer);
+		$target->delVar('sel_language');
+
+		if (isset($sel_language))
+			$target->addVar('sel_language', $sel_language);
+
+		header('Location: ' . $target->getUrl());
+
 		exit;
 	} else {
 		show_changes();
