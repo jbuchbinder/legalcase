@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.39 2005/01/21 10:52:24 mlutfy Exp $
+	$Id: inc.php,v 1.40 2005/01/21 11:22:15 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -54,10 +54,13 @@ if (isset($_REQUEST['author_ui_modified'])) {
 	else
 		$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
 	
-	if (isset($lang) AND $lang <> $author_session['lang']) {
+	if (isset($lang) AND $lang <> $lcm_lang /* $author_session['lang'] */) {
 		// Boomerang via lcm_cookie to set a cookie and do all the dirty work
 		// The REQUEST_URI should always be set, and point to the current page
 		// we are being sent to (Ex: from config_author.php to listcases.php).
+		// [ML] I used $lcm_lang because there are rare cases where the cookie
+		// can disagree with $author_session['lang'] (e.g. login one user, set
+		// cookie, logout, login other user, conflict).
 		header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" .  $_SERVER['REQUEST_URI']);
 		exit;
 	}

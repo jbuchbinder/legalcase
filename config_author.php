@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.43 2005/01/19 09:27:38 mlutfy Exp $
+	$Id: config_author.php,v 1.44 2005/01/21 11:23:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -54,7 +54,8 @@ function show_author_form() {
 			<tr>
 				<td align=\"right\" valign=\"top\">" . _T('authorconf_input_language') . "</td>
 				<td align=\"left\" valign=\"top\">
-					<input type='hidden' name='old_language' value='" .  $author_session['lang'] . "'/>\n";
+					<input type='hidden' name='old_language' value='" .
+					$GLOBALS['lcm_lang']  /* [ML] A cookie might cause problems in 1% of cases $author_session['lang'] */ . "'/>\n";
 
 		echo menu_languages('sel_language');
 		echo "
