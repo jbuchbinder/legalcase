@@ -1185,7 +1185,7 @@ function debut_html($titre = "", $rubrique="", $onLoad="") {
 	$nom_site_spip = entites_html(lire_meta("nom_site"));
 	$titre = textebrut(typo($titre));
 
-	if (!$nom_site_spip) $nom_site_spip="SPIP";
+	if (!$nom_site_spip) $nom_site_spip="LCM";
 	if (!$charset = lire_meta('charset')) $charset = 'utf-8';
 
 	@Header("Expires: 0");
@@ -1196,14 +1196,14 @@ function debut_html($titre = "", $rubrique="", $onLoad="") {
 	echo "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>\n<html>\n<head>\n<title>[$nom_site_spip] $titre</title>\n";
 	echo '<meta http-equiv="Content-Type" content="text/html; charset='.$charset.'">';
 	echo '<link rel="stylesheet" type="text/css" href="';
-	if (!$flag_ecrire) echo 'ecrire/';
-	$link = new Link('spip_style.php3');
+	$link = new Link('lcm_css_basic.php');
 	$link->addVar('couleur_claire', $couleur_claire);
 	$link->addVar('couleur_foncee', $couleur_foncee);
 	$link->addVar('left', $GLOBALS['spip_lang_left']);
 	$link->addVar('right', $GLOBALS['spip_lang_right']);
 	echo $link->getUrl()."\">\n";
 
+	include_lcm('inc_layer');
 	afficher_script_layer();
 ?>
 <script type='text/javascript'><!--
@@ -1361,8 +1361,8 @@ function debut_html($titre = "", $rubrique="", $onLoad="") {
 	var antifocus=false; // effacement titre quand new=oui
 	
 //--></script>
-	<link rel="alternate stylesheet" href="spip_style_invisible.css" type="text/css" title="invisible" />
-	<link rel="stylesheet" href="spip_style_visible.css" type="text/css" title="visible" />
+	<link rel="alternate stylesheet" href="styles/spip_style_invisible.css" type="text/css" title="invisible" />
+	<link rel="stylesheet" href="styles/spip_style_visible.css" type="text/css" title="visible" />
 </head>
 <?php
 	echo "<body text='#000000' bgcolor='#f8f7f3' link='$couleur_lien' vlink='$couleur_lien_off' alink='$couleur_lien_off' topmargin='0' leftmargin='0' marginwidth='0' marginheight='0' frameborder='0'";
@@ -2240,7 +2240,7 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 		echo "<div id='bandeauagenda' class='bandeau_couleur_sous' style='width: $largeur; $spip_lang_left: 100px;'>";
 		echo _T('icone_agenda');
 
-			include_ecrire("inc_agenda.php3");
+			include_lcm('inc_agenda');
 			
 			echo "<table><tr>";
 			echo "<td valign='top' width='200'>";
@@ -2373,10 +2373,6 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 				}
 			}
 			if ($flag_cadre) echo "</div>";
-
-
-
-
 
 }
 
@@ -2628,7 +2624,7 @@ function fin_page($credits='') {
 	debut_grand_cadre();
 
 	echo "<div align='right' class='verdana2'>";
-	echo "<b>SPIP $spip_version_affichee</b> ";
+	echo "<b>LCM $spip_version_affichee</b> ";
 	echo _T('info_copyright');
 
 	echo "<br>"._T('info_copyright_doc');
@@ -2685,7 +2681,7 @@ function install_html_start($titre = 'AUTO') {
 	global $spip_lang_rtl;
 
 	if ($titre=='AUTO')
-		$titre=_T('info_installation_systeme_publication');
+		$titre=_T('info_installation_legal_case_management');
 
 	if (!$charset = lire_meta('charset')) $charset = 'utf-8';
 	@Header("Content-Type: text/html; charset=$charset");
