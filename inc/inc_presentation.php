@@ -136,8 +136,8 @@ function lcm_page_start($title = "", $css_files = "") {
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" />&nbsp;Main menu</div>
 						<ul id=\"nav_menu_list\">
-							<li><a href=\"listcases.php\" class=\"main_nav_btn\">Recent cases</a></li>
-							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
+							<li><a href=\"listcases.php\" class=\"main_nav_btn\">Cases</a></li>
+							<!-- li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li -->
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
 							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">Organisations</a></li>
 							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>";
