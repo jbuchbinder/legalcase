@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.109 2005/03/18 08:16:45 mlutfy Exp $
+	$Id: case_det.php,v 1.110 2005/03/18 10:19:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -386,24 +386,20 @@ if ($case > 0) {
 					. _T('case_subtitle_followups') 
 					. '</div>';
 				echo "<p class=\"normal_text\">\n";
-			
-				echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-				echo "\t\t<tr><th class='heading'>";
 
-				if ($fu_order == 'ASC') {
-					echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=followups' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
-				} else {
-					// by default
-					echo "<a href='case_det.php?case=$case&amp;fu_order=ASC&amp;tab=followups' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
-				}
-			//	echo _T('date') .
-				echo "</th>";
-				echo "<th class='heading'>" . 'Author' . "</th>"; // TRAD
-				echo "<th class='heading'>"
-					. _T( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>";
-				echo "<th class='heading'>" . _T('type') . "</th>";
-				echo "<th class='heading'>" . _T('description') . "</th>";
-				echo "<th class='heading'>&nbsp;</th></tr>\n";
+				$headers[0]['title'] = "Date start"; // TRAD
+				$headers[0]['order'] = 'fu_order';
+				$headers[0]['default'] = 'ASC';
+				$headers[1]['title'] = "Length"; // TRAD
+				$headers[1]['order'] = 'no_order';
+				$headers[2]['title'] = "Author"; // TRAD
+				$headers[2]['order'] = 'no_order';
+				$headers[3]['title'] = "Type"; // TRAD
+				$headers[3]['order'] = 'no_order';
+				$headers[4]['title'] = "Description"; // TRAD
+				$headers[4]['order'] = 'no_order';
+			
+				show_list_start($headers);
 			
 				// Prepare query
 				$q = "SELECT	lcm_followup.id_followup,
@@ -420,25 +416,32 @@ if ($case > 0) {
 				// Add ordering
 				if ($fu_order) $q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
 			
-				// Do the query
 				$result = lcm_query($q);
+
+				// Check for correct start position of the list
+				$number_of_rows = lcm_num_rows($result);
+				$list_pos = 0;
+				
+				if (isset($_REQUEST['list_pos']))
+					$list_pos = $_REQUEST['list_pos'];
+				
+				if ($list_pos >= $number_of_rows)
+					$list_pos = 0;
+				
+				// Position to the page info start
+				if ($list_pos > 0)
+					if (!lcm_data_seek($result,$list_pos))
+						lcm_panic("Error seeking position $list_pos in the result");
 			
 				// Set the length of short followup title
 				$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
 			
 				// Process the output of the query
-				while ($row = lcm_fetch_array($result)) {
-					echo "\t\t";
+				for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
+					echo "<tr>\n";
 					
 					// Start date
-					echo '<tr><td>' . format_date($row['date_start'], 'short') . '</td>';
-					
-					// Author initials
-					echo '<td>';
-					echo substr($row['name_first'],0,1);
-					echo substr($row['name_middle'],0,1);
-					echo substr($row['name_last'],0,1);
-					echo '</td>';
+					echo '<td>' . format_date($row['date_start'], 'short') . '</td>';
 					
 					// Time
 					echo '<td>';
@@ -451,23 +454,33 @@ if ($case > 0) {
 					}
 					echo '</td>';
 
+					// Author initials
+					echo '<td>';
+					echo get_person_initials($row);
+					echo '</td>';
+					
 					// Type
 					echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
-			
+
 					// Description
 					if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
 						$short_description = $row['description'];
 					else
 						$short_description = substr($row['description'],0,$title_length) . '...';
 			
-					echo '<td><a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a></td>';
+					echo '<td>';
+					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
+					echo '</td>';
 			
+					/* [ML]
 					if ($edit)
 						echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '" class="content_link">' . _T('Edit') . '</a></td>';
+					*/
+
 					echo "</tr>\n";
 				}
 			
-				echo "\t</table>\n";
+				show_list_end($list_pos, $number_of_rows);
 
 				echo "<br />\n";
 
