@@ -248,7 +248,7 @@ function upgrade_database() {
 	}
 
 	if ($version_installee < 1.418) {
-		$query = "SELECT * FROM spip_auteurs WHERE statut = '0minirezo' AND email != '' ORDER BY id_auteur LIMIT 0,1";
+		$query = "SELECT * FROM spip_auteurs WHERE statut = 'admin' AND email != '' ORDER BY id_auteur LIMIT 0,1";
 		$result = spip_query($query);
 		if ($webmaster = spip_fetch_array($result)) {
 			include_ecrire("inc_meta.php3");
@@ -369,7 +369,7 @@ function upgrade_database() {
 				WHERE titre='$type'");
 			if (spip_num_rows($res) == 0) {
 				spip_query("INSERT IGNORE INTO spip_groupes_mots 
-					(titre, unseul, obligatoire, articles, breves, rubriques, syndic, 0minirezo, 1comite, 6forum)
+					(titre, unseul, obligatoire, articles, breves, rubriques, syndic, admin, 1comite, 6forum)
 					VALUES ('$type', 'non', 'non', 'oui', 'oui', 'non', 'oui', 'oui', 'oui', 'non')");
 				if ($id_groupe = spip_insert_id()) 
 					spip_query("UPDATE spip_mots SET id_groupe = '$id_groupe' WHERE type='$type'");

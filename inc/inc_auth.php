@@ -20,9 +20,9 @@ function acces_rubrique($id_rubrique) {
 
 function acces_restreint_rubrique($id_rubrique) {
 	global $connect_id_rubrique;
-	global $connect_statut;
+	global $connect_status;
 
-	return ($connect_statut == "admin" AND $connect_id_rubrique[$id_rubrique]);
+	return ($connect_status == "admin" AND $connect_id_rubrique[$id_rubrique]);
 }
 
 
@@ -34,7 +34,7 @@ function auth() {
 	global $connect_id_auteur, $connect_nom, $connect_bio, $connect_email;
 	global $connect_nom_site, $connect_url_site, $connect_login, $connect_pass;
 	global $connect_activer_imessage, $connect_activer_messagerie;
-	global $connect_statut, $connect_toutes_rubriques, $connect_id_rubrique;
+	global $connect_status, $connect_toutes_rubriques, $connect_id_rubrique;
 
 	global $auteur_session, $prefs;
 	global $clean_link;
@@ -108,7 +108,7 @@ function auth() {
 		$connect_url_site = $row['url_site'];
 		$connect_login = $row['username'];
 		$connect_pass = $row['password'];
-		$connect_statut = $row['status'];
+		$connect_status = $row['status'];
 		$connect_activer_messagerie = "non"; //$row["messagerie"];
 		$connect_activer_imessage = "non "; //$row["imessage"];
 
@@ -146,10 +146,10 @@ function auth() {
 
 	// [ML] Again, not sure how this is used, but we can ignore it for now
 	// TODO (note: nouveau == new)
-	if ($connect_statut == 'nouveau') {
+	if ($connect_status == 'nouveau') {
 		$query = "UPDATE lcm_author SET status = '1comite' WHERE id_author = $connect_id_auteur";
 		$result = spip_query($query);
-		$connect_statut = '1comite';
+		$connect_status = '1comite';
 	}
 
 	return true;

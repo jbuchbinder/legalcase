@@ -13,9 +13,9 @@ function fichier_admin($action) {
 
 function debut_admin($action, $commentaire='') {
 	global $this_link;
-	global $connect_statut;
+	global $connect_status;
 
-	if ((!$action) || ($connect_statut != "0minirezo")) {
+	if ((!$action) || ($connect_status != "admin")) {
 		include_ecrire ("inc_presentation.php3");
 		install_debut_html(_T('info_acces_refuse'));
 		install_fin_html();

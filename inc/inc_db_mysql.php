@@ -12,7 +12,7 @@ function lcm_query_db($query) {
 	static $tt = 0;
 
 	// [ML] added "1 OR" temporarely, because this case ignores the installation process
-	$my_admin = 1 OR (($GLOBALS['connect_statut'] == 'admin') OR ($GLOBALS['auteur_session']['statut'] == 'admin'));
+	$my_admin = 1 OR (($GLOBALS['connect_status'] == 'admin') OR ($GLOBALS['auteur_session']['status'] == 'admin'));
 	$my_profile = ($GLOBALS['mysql_profile'] AND $my_admin);
 	$my_debug = ($GLOBALS['mysql_debug'] AND $my_admin);
 

@@ -541,7 +541,7 @@ function http_calendrier_clics($annee, $mois, $jour, $clic)
 		 $vert,
 		 _T("lien_nouveau_message"),
 		 'color: green; font-family: Arial, Sans, sans-serif; font-size: 10px; ') .
-    (($GLOBALS['connect_statut'] != "0minirezo") ? "" :
+    (($GLOBALS['connect_status'] != "admin") ? "" :
      ("\n" .
       http_calendrier_href("$href&type=affich",
 		   $jaune,
@@ -1151,7 +1151,7 @@ function http_calendrier_jour($jour,$mois,$annee,$large = "large", $le_message =
 				   $vert ._T("lien_nouveau_message"),
 				   '',
 				   'font-family: Arial, Sans, sans-serif; font-size: 10px; color: green;') .
-	      (!($GLOBALS['connect_statut'] == "0minirezo") ? '' :
+	      (!($GLOBALS['connect_status'] == "admin") ? '' :
 	       (" &nbsp; " .
 		http_calendrier_href("message_edit.php3?rv=$annee-$mois-$jour&new=oui&type=affich",
 				   $jaune ._T("lien_nouvelle_annonce"),

@@ -162,7 +162,7 @@ if (ereg('Name: v(.*) ','$Name:  $', $regs)) $lcm_version_shown = $regs[1];
 
 // ** Security **
 $auteur_session = '';
-$connect_statut = '';
+$connect_status = '';
 $hash_recherche = '';
 $hash_recherche_strict = '';
 

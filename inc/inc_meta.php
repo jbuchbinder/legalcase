@@ -119,8 +119,8 @@ function lire_meta_maj($name) {
 		else
 			@unlink($file_meta_cache_w);
 	} else {
-		global $connect_statut;
-		if ($connect_statut == 'admin')
+		global $connect_status;
+		if ($connect_status == 'admin')
 			echo "<h4 font color='red'>"._T('texte_inc_meta_1')." <a href='lcm_test_dirs.php'>"._T('texte_inc_meta_2')."</a> "._T('texte_inc_meta_3')."&nbsp;</h4>\n";
 	}
 }

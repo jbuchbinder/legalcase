@@ -116,7 +116,7 @@ function ecrire_acces() {
 		exit;
 	}
 
-	$query = "SELECT login, htpass FROM spip_auteurs WHERE statut = '0minirezo'";
+	$query = "SELECT login, htpass FROM spip_auteurs WHERE statut = 'admin'";
 	$result = lcm_query_db($query);
 
 	$logins = array();

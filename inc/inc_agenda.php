@@ -124,7 +124,7 @@ function agenda ($mois, $annee, $jour_ved, $mois_ved, $annee_ved, $semaine = fal
 
 function calendrier_jour($jour,$mois,$annee,$large = "large", $le_message = 0) {
 	global $spip_lang_rtl, $spip_lang_right, $spip_lang_left;
-	global $connect_id_auteur, $connect_statut;
+	global $connect_id_auteur, $connect_status;
 	global $couleur_claire;
 
 
@@ -173,7 +173,7 @@ function calendrier_jour($jour,$mois,$annee,$large = "large", $le_message = 0) {
 		echo " <a href='message_edit.php3?rv=$annee-$mois-$jour&new=oui&type=pb' class='arial1' style='color: blue;'><IMG SRC='img_pack/m_envoi_bleu$spip_lang_rtl.gif' WIDTH='14' HEIGHT='7' BORDER='0' alt='' /> "._T("lien_nouvea_pense_bete")."</a>";
 		echo " &nbsp; <a href='message_edit.php3?rv=$annee-$mois-$jour&new=oui&type=normal' class='arial1' style='color: green;'><IMG SRC='img_pack/m_envoi$spip_lang_rtl.gif' WIDTH='14' HEIGHT='7' BORDER='0' alt='' /> "._T("lien_nouveau_message")."</a>";
 
-		if ($connect_statut == "0minirezo")
+		if ($connect_status == "admin")
 			echo " &nbsp; <a href='message_edit.php3?rv=$annee-$mois-$jour&new=oui&type=affich' class='arial1' style='color: #ff9900;'><IMG SRC='img_pack/m_envoi_jaune$spip_lang_rtl.gif' WIDTH='14' HEIGHT='7' BORDER='0' alt='' /> "._T("lien_nouvelle_annonce")."</a>\n";
 		echo "</div>";
 	}
