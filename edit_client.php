@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.15 2004/11/23 13:23:58 mlutfy Exp $
+	$Id: edit_client.php,v 1.16 2004/11/23 13:34:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -83,9 +83,20 @@ if ($client) {
 			<td><input name="name_last" value="<?php echo clean_output($client_data['name_last']); ?>" class="search_form_txt"></td></tr>
 		<tr><td><?php echo _T('person_input_gender') ?></td>
 			<td><select name="gender">
-					<option value="unknown"><?php echo _T('info_not_available') ?></option>
-					<option value="male"><?php echo _T('person_input_gender_male') ?></option>
-					<option value="female"><?php echo _T('person_input_gender_female') ?></option>
+<?php
+	$opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
+
+	if ($client_data['gender'] == 'male')
+		$opt_sel_male = 'selected="selected" ';
+	else if ($client_data['gender'] == 'female')
+		$opt_sel_female = 'selected="selected" ';
+	else
+		$opt_sel_unknown = 'selected="selected" ';
+
+	echo '<option ' . $opt_sel_unknown . 'value="unknown">' . _T('info_not_available') . "</option>\n";
+	echo '<option ' . $opt_sel_male . 'value="male">' . _T('person_input_gender_male') . "</option>\n";
+	echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_female') . "</option>\n";
+?>
 				</select>
 			</td></tr>
 		<tr><td>Created on:</td>
