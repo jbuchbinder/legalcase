@@ -12,12 +12,12 @@ if ($id_followup>0) {
    // Prepare query
    $q="UPDATE lcm_followup SET $fl WHERE id_followup=$id_followup";
 } else {
-   $q="INSERT INTO lcm_folloup SET id_followup=0,id_case=$id_case,$fl";
+   $q="INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
 }
 
 // Do the query
-$result=mysql_query($q,$db);
-echo $q;
+if (!($result=mysql_query($q,$db))) die("$q<br>\nError ".mysql_errno().": ".mysql_error());
+//echo $q;
 
 // Close connection
 mysql_close($db);
