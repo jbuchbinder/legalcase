@@ -2,8 +2,8 @@
 
 //
 // Execute this file only once
-if (defined("_INC_VERSION")) return;
-define("_INC_VERSION", "1");
+if (defined('_INC_VERSION')) return;
+define('_INC_VERSION', '1');
 
 
 // *********** traiter les variables ************
@@ -229,13 +229,13 @@ function spip_setcookie ($name='', $value='', $expire=0, $path='AUTO', $domain='
 	if ($secure)
 		@setcookie ($name, $value, $expire, $path, $domain, $secure);
 	else if ($domain)
-		@setcookie ($name, $value, $expire, $path, $domain);
+		@setcookie($name, $value, $expire, $path, $domain);
 	else if ($path)
-		@setcookie ($name, $value, $expire, $path);
+		@setcookie($name, $value, $expire, $path);
 	else if ($expire)
-		@setcookie ($name, $value, $expire);
+		@setcookie($name, $value, $expire);
 	else
-		@setcookie ($name, $value);
+		@setcookie($name, $value);
 }
 
 if ($cookie_prefix != 'lcm') {
