@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.182 2005/03/23 09:34:29 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.183 2005/03/23 10:57:08 mlutfy Exp $
 */
 
 //
@@ -1074,12 +1074,18 @@ function show_list_start($headers = array()) {
 		echo "<th class=\"heading\">";
 
 		if ($h['order'] && $h['order'] != 'no_order') {
-			$ovar = $h['order'];
+			$ovar = $h['order']; // on which variable to order
 			$cur_sort_order = $h['default'];
+			$new_sort_order = '';
+
 			if (isset($_REQUEST[$ovar]) && ($_REQUEST[$ovar] == 'ASC' || $_REQUEST[$ovar] == 'DESC'))
 				$cur_sort_order = $_REQUEST[$ovar];
+
+			if (! $cur_sort_order || $cur_sort_order == 'DESC')
+				$new_sort_order = 'ASC';
+			else
+				$new_sort_order = 'DESC';
 		
-			$new_sort_order = ($cur_sort_order == 'DESC' ? 'ASC' : 'DESC');
 			$sort_link = new Link();
 			$sort_link->addVar($ovar, $new_sort_order);
 		
@@ -1089,8 +1095,10 @@ function show_list_start($headers = array()) {
 		
 			if ($cur_sort_order == 'ASC')
 				echo '<img src="images/lcm/asc_desc_arrow.gif" alt="" />';
-			else
+			else if ($cur_sort_order == 'DESC')
 				echo '<img src="images/lcm/desc_asc_arrow.gif" alt="" />';
+			else
+				echo '<img src="images/lcm/sort_arrow.gif" alt="" />';
 		
 		} else {
 			echo $h['title'];
