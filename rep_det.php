@@ -38,19 +38,22 @@ if ($rep > 0) {
 		// Show report details
 		lcm_page_start("Report details: " . $row['title']);
 
-		echo "<p class='normal_text'>";
+		//echo "<p class='normal_text'>";
+		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report details</div><p class='normal_text'>";
 
 		if (true)
-			echo '[<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="content_link"><strong>Edit this report</strong></a>]&nbsp;';
-		echo '[<a href="run_rep.php?rep=' . $row['id_report'] . '" class="content_link"><strong>Run this report</strong></a>]<br /><br />';
+			echo '<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="edit_lnk">Edit this report</a>&nbsp;';
+		echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="run_lnk">Run this report</a><br /><br />';
 		echo "\nReport ID: " . $row['id_report'] . "<br>\n";
 		echo "Created on: " . $row['date_creation'] . "<br>\n";
 		echo "Last update: " . $row['date_update'] . "<br>\n";
-
+		
+		echo "</p><br /></fieldset>";
 //
 //	List the columns in the report
 //
-		echo '<h3>Report columns:</h3>';
+		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report columns</div><p class='normal_text'>";
+		//echo '<h3>Report columns:</h3>';
 		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
 		echo "<tr><th class='heading'>#</th>
 	<th class='heading'>Header</th>
@@ -119,7 +122,7 @@ if ($rep > 0) {
 
 			// Get column header
 			echo "\t\t<tr><th class='heading'>Header</th>\n";
-			echo "\t\t\t<td><input type='text' name='header' /></td></tr>\n";
+			echo "\t\t\t<td><input type='text' name='header' class='search_form_txt' /></td></tr>\n";
 
 			// Get field from list
 			echo "\t\t<tr><th class='heading'>Contents</th>\n";
@@ -152,15 +155,18 @@ if ($rep > 0) {
 			echo "\t\t</tr>";
 
 			echo "\t</table>\n";
-			echo "\t<button type='submit' class='simple_form_btn'>Add column</button>\n";
+			echo "\t<br /><button type='submit' class='simple_form_btn'>Add column</button>\n";
 			echo "</form>\n";
 		}
-		echo "<br>\n";
+		echo "<br />\n";
 
 //
 //	List the filters on the report data
-//
-		echo '<h3>Report filters:</h3>';
+//		
+		echo "</p></fieldset>";
+
+		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report filters</div><p class='normal_text'>";
+		//echo '<h3>Report filters:</h3>';
 		echo "\n\t<table border='0' class='tbl_usr_dtl'>\n";
 		echo "\t\t<tr><th class='heading'>Description</th></tr>\n";
 
@@ -212,10 +218,12 @@ if ($rep > 0) {
 			echo "\t\t</tr>\n";
 
 			echo "\t</table>\n";
-			echo "\t<button type='submit' class='simple_form_btn'>Add filter</button>\n";
+			echo "\t<br /><button type='submit' class='simple_form_btn'>Add filter</button>\n";
 			echo "</form>\n";
 		}
-		echo "<br>\n";
+		echo "<br />\n";
+		
+		echo "</p></fieldset>";
 
 	} // End of check if such report exists in the database
 
