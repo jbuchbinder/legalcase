@@ -106,7 +106,7 @@ if ($rep > 0) {
 
 			// Get column order
 			echo "\t\t<tr><th class='heading'>Position</th><td>\n";
-			echo "\t\t\t<select name='col_order'>\n";
+			echo "\t\t\t<select name='order'>\n";
 			$i = 1;
 			while ($i<$last_order) {
 				echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n";
@@ -114,7 +114,7 @@ if ($rep > 0) {
 			}
 			echo "\t\t\t\t<option selected label='Add at the end' value='$i'>Add at the end</option>\n";
 			echo "\t\t\t</select>\n";
-//			echo "<input type='text' name='col_order' value='$last_order' size='2' />";
+//			echo "<input type='text' name='order' value='$last_order' size='2' />";
 			echo "\t\t</td></tr>\n";
 
 			// Get column header
