@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.12 2005/02/07 19:04:24 antzi Exp $
+	$Id: set_case_status.php,v 1.13 2005/02/08 09:01:45 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -48,13 +48,6 @@ switch ($status) {
 	case 'open' :
 		// Check the current case status
 		switch ($row['status']) {
-			case 'draft' :
-				// Set defaults
-				$page_title = 'Opening case: ' . clean_output($row['title']);
-				$date_title = 'Start date:';
-				$type = 'opening';
-				$date_start = date('Y-m-d H:i:s');
-				break;
 			case 'suspended' :
 				// Set defaults
 				$page_title = 'Resuming case: ' . clean_output($row['title']);
@@ -73,6 +66,14 @@ switch ($status) {
 			case 'merged' :
 				header('Location: ' . $GLOBALS['HTTP_REFERER']);
 				exit;
+				break;
+			case 'draft' :
+			default :
+				// Set defaults
+				$page_title = 'Opening case: ' . clean_output($row['title']);
+				$date_title = 'Start date:';
+				$type = 'opening';
+				$date_start = date('Y-m-d H:i:s');
 				break;
 		}
 		// Start the page
