@@ -7,6 +7,7 @@ define('_INC_AUTH', '1');
 
 include_lcm('inc_meta'); // initiates the database connection
 include_lcm('inc_session');
+include_lcm('inc_db');
 
 
 // [ML] Alot of things to adapt... XXX/TODO
@@ -17,15 +18,37 @@ function auth() {
 	global $connect_id_auteur, $connect_nom, $connect_bio, $connect_email;
 	global $connect_nom_site, $connect_url_site, $connect_login, $connect_pass;
 	global $connect_activer_imessage, $connect_activer_messagerie;
-	global $connect_status, $connect_toutes_rubriques, $connect_id_rubrique;
+	global $connect_status;
 
 	global $author_session, $prefs;
 	global $clean_link;
 
+	// This reloads $GLOBALS['db_ok'], just in case
+	include_config('inc_connect');
+
 	// If there is not SQL connection, quit.
-	if (!$GLOBALS['db_ok']) {
-		echo "<P><H4>"._T('titre_probleme_technique')."</H4><P><P>\n".
-		"<tt>".lcm_sql_errno()." ".lcm_sql_error()."</tt>";
+	if (! $GLOBALS['db_ok']) {
+		include_lcm('inc_presentation');
+		lcm_html_start("Technical problem", "install");
+
+		// annoy sql_errno()
+		echo "\n<!-- \n";
+		echo "\t* Flag connect: ". $GLOBALS['flag_connect'] ."\n\t";
+		lcm_query("SELECT count(*) from lcm_meta");
+		echo "\n-->\n\n";
+
+		echo "<div align='left' style='width: 600px;' class='box_error'>\n";
+		echo "\t<h3>". _T('title_technical_problem') ."</h3>\n";
+		echo "\t<p>" . _T('info_technical_problem_database') . "</p>\n";
+
+		if (lcm_sql_errno())
+			echo "\t<p><tt>". lcm_sql_errno() ." ". lcm_sql_error() ."</tt></p>\n";
+		else
+			echo "\t<p><tt>No error diagnostic was provided.</tt></p>\n";
+
+		echo "</div>\n";
+		lcm_html_end();
+
 		return false;
 	}
 
