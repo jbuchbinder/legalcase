@@ -124,9 +124,7 @@ if ($pass_forgotten == 'yes') {
 } else if ($open_subscription == 'yes' || $open_subscription == 'moderated') {
 	install_html_start(_T('pass_title_register'), 'login');
 
-	echo "<p>" . _T('pass_info_why_register') . "</p>\n";
-
-	if ($email && ($name_first || $name_last)) {
+	if ($email) {
 		// There is a risk that an author changes his e-mail
 		// after his account is created, to the e-mail of another
 		// person, and therefore block the other person from 
@@ -139,7 +137,7 @@ if ($pass_forgotten == 'yes') {
 					AND type_contact = 1"; // XXX
 		$result = lcm_query($query);
 
-		$res = "<div class='reponse_formulaire'>";
+		echo "<div>\n";
 
 		// Test if the user already exists
 	 	if ($row = lcm_fetch_array($result)) {
@@ -148,12 +146,12 @@ if ($pass_forgotten == 'yes') {
 
 			unset ($continue);
 			if ($status == 'trash')
-				$res .= "<b>"._T('form_forum_access_refuse')."</b>";
+				echo "<b>" . _T('pass_registration_denied') . "</b>\n";
 			else if ($status == 'nouveau') {
 				lcm_query("DELETE FROM lcm_author WHERE id_author=$id_author");
 				$continue = true;
 			} else
-				$res .= "<b>"._T('form_forum_email_deja_enregistre')."</b>";
+				echo "<b>" . _T('pass_already_registered') . "</b>";
 		} else {
 			$continue = true;
 		}
@@ -169,8 +167,10 @@ if ($pass_forgotten == 'yes') {
 				// TODO: generate error
 			}
 
-			$login = get_unique_username($username);
+			$username = get_unique_username($username);
 			$mdpass = md5($pass);
+			// FIXME: Probably better to put "new" as type (not external)
+			// so that we can delete authors who try twice to subscribe (see above)
 			lcm_query("INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, status) "
 				. "VALUES ('".addslashes($name_first)."', '".addslashes($name_middle)."', '".addslashes($name_last)."', '$username', '$mdpass', 'external')");
 
@@ -182,32 +182,36 @@ if ($pass_forgotten == 'yes') {
 
 			// Prepare the e-mail to send to the user
 			$site_name = read_meta('site_name');
+			$site_address = read_meta('site_address');
 
-			// get from Link?
-			// $adresse_site = read_meta('adresse_site'); // XXX
-			$site_url = new Link("index.php");
+			// This is only a last resort solution. It is not info
+			// which can be trusted, and could be abused.
+			if (! $site_address)
+				$site_address = $GLOBALS['fallback_site_address']; // TODO
 
-			$message = _T('form_forum_message_auto')."\n\n"._T('form_forum_bonjour')."\n\n";
-			$message .= "_T('form_forum_voici2', array('nom_site_spip' => $nom_site_spip, 'adresse_site' => $site_url))" . "\n\n";
-			$message .= "- "._T('form_forum_login')." $login\n";
-			$message .= "- "._T('form_forum_pass')." $pass\n\n";
+			$message = _T('pass_info_automated_msg') . "\n\n";
+			$message .= _T('info_greetings') . ",\n\n";
+			$message .= _T('pass_info_here_info', array('site_name' => $site_name, 'site_address' => $site_url)) . "\n\n";
+			$message .= "- "._T('login_login') . _T('typo_column') . " $username\n";
+			$message .= "- "._T('login_password') . _T('typo_column') . " $pass\n\n";
 
-			if (send_email($email, "[$site_name] " . _T('form_forum_identifiants'), $message)) {
-				// $res .=  _T('form_forum_identifiant_mail');
-				echo "<p>OK</p>";
-			}
-			else {
-				//  $res .= _T('form_forum_probleme_mail');
-				echo "<p>FAILED</p>";
+			if (send_email($email, "[$site_name] " . _T('pass_title_personal_identifier'), $message)) {
+				echo "<p>" . _T('pass_info_identifier_mail') . "</p>\n";
+			} else {
+				$email_admin = meta_read('email_sysadmin');
+				echo "<div class=\"box_error\"><p>" 
+					.  _T('pass_warning_mail_failure', array('email_admin' => $email_admin))
+					. "</p></div>\n";
 			}
 		}
-		$res .= "</div>";
-		echo $res;
+		echo "</div>";
 	} else {
 		// Show form to enter mail
 		$link = new Link;
 		$url = $link->getUrl();
 		$url = quote_amp($url);
+
+		echo "<p>" . _T('pass_info_why_register') . "</p>\n";
 
 	  	echo "<form method='get' action='$url' style='border: 0px; margin: 0px;'>\n";
 
