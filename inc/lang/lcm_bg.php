@@ -110,7 +110,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_day_8' => '8ми',
 'date_day_9' => '9ти',
 'date_format' => 'l, jS F Y',
-'date_format_full' => '@day_name@, @day@ @month_name@ @year@&nbsp;г. ',
+'date_format_full' => '<span style=\'text-transform: capitalize;\'>@day_name@</span>, @day@ @month_name@ @year@&nbsp;г. ',
 'date_format_short' => 'dd.mm.yy',
 'date_month_1' => 'януари',
 'date_month_10' => 'октомври',
