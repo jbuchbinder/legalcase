@@ -80,6 +80,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_subtitle_clients' => 'Case clients',
 'case_subtitle_followups' => 'Case follow-ups',
 'case_subtitle_general' => 'General case information',
+'case_tab_appointments' => 'Appointments',
+'case_tab_attachments' => 'Attachments',
+'case_tab_clients' => 'Clients',
+'case_tab_followups' => 'Follow-ups',
+'case_tab_general' => 'General',
+'case_tab_times' => 'Times',
 'case_warning_no_title' => 'Please enter a case title.',
 'client_input_id' => 'Client ID:',
 'client_subtitle_associated_org' => 'Related organisations',
@@ -199,6 +205,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'fu_input_date_start' => 'Start:',
 'fu_input_description' => 'Description:',
 'fu_input_sum_billed' => 'Sum billed:',
+'fu_input_time_length' => 'Time spent on activity:',
 'fu_input_type' => 'Type:',
 
 
@@ -275,6 +282,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
+'kw_civilstatus_divorced_title' => 'Divorced or seperated',
+'kw_civilstatus_married_title' => 'Married or cohabiting',
+'kw_civilstatus_single_title' => 'Single',
+'kw_civilstatus_unknown_title' => 'Unknown',
+'kw_civilstatus_widowed_title' => 'Widowed',
 'kw_contacts_addressmain_title' => 'Home address',
 'kw_contacts_emailalternate_title' => 'E-mail (alternate)',
 'kw_contacts_emailmain_title' => 'E-mail',
@@ -288,13 +300,20 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw_followups_correspondance_title' => 'Correspondance',
 'kw_followups_delay_title' => 'Delay',
 'kw_followups_merge_title' => 'Merge',
+'kw_followups_opening_title' => 'Opening',
 'kw_followups_other_title' => 'Other',
 'kw_followups_reopening_title' => 'Reopening',
 'kw_followups_resumption_title' => 'Resumption',
 'kw_followups_suspension_title' => 'Suspension',
 'kw_followups_travel_title' => 'Travel',
+'kw_income_average_title' => 'Average',
+'kw_income_high_title' => 'Above average',
+'kw_income_low_title' => 'Under average',
+'kw_income_unknown_title' => 'Unknown',
+'kwg_civilstatus_title' => 'Civil status',
 'kwg_contacts_title' => 'Contact keywords',
 'kwg_followups_title' => 'Followup keywords',
+'kwg_income_title' => 'Income',
 
 
 // L
