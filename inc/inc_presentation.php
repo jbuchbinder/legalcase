@@ -796,17 +796,24 @@ function show_tabs($tab_list, $selected, $url_base) {
 		if ($k != 'tab')
 			$params[] = htmlspecialchars($k) . '=' . htmlspecialchars($v);
 	}
-
+	
+	// [KM]
+	echo "<div class=\"tabs\">\n";
+	echo "<ul class=\"tabs_list\">\n";
+	
 	// Display tabs
 	foreach($tab_list as $key => $tab) {
-		if ($key != $selected) echo "<a href=\"$url_base?" . join('&amp;',$params) . ( count($params) > 0 ? '&amp;' : '') . 'tab=' . $key . "\">";
-		else echo "[";
+		if ($key != $selected) echo "\t<li><a href=\"$url_base?" . join('&amp;',$params) . ( count($params) > 0 ? '&amp;' : '') . 'tab=' . $key . "\">";
+		else echo "\t<li class=\"active\">";
 		echo $tab;
-		if ($key != $selected) echo "</a>";
-		else echo "]";
+		if ($key != $selected) echo "</a></li>";
+		else echo "</li>";
 		echo "\n";
 	}
-	echo "<br />\n";
+	
+	echo "</ul>";
+	echo "</div>";
+	//echo "<br />\n";
 }
 
 ?>
