@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.22 2004/12/17 09:24:43 antzi Exp $
+	$Id: upd_case.php,v 1.23 2004/12/17 09:34:56 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -61,8 +61,7 @@ if (count($errors)) {
 // [AG] Assignment date is set only when creating case or adding new user to it
 	$fl .= "
 			legal_reason='" . clean_input($case_data['legal_reason']) . "',
-			alledged_crime='" . clean_input($case_data['alledged_crime']) . "',
-			status='" . clean_input($case_data['status']) . "'";
+			alledged_crime='" . clean_input($case_data['alledged_crime']) . "'";
 
 // Put public access rights settings in a separate string
 	$public_access_rights = '';
@@ -77,13 +76,22 @@ if (count($errors)) {
 		$public_access_rights .= ", pub_write=0";
 
 	if ($id_case > 0) {
+		// This is modification of existing case
+
 		// Check access rights
 		if (!allowed($id_case,'e')) die("You don't have permission to change this case's information!");
+
+		// If modifying existing case, add status change to the list of fields
+		$fl .= ",status='" . clean_input($case_data['status']) . "'";
+
 		// If admin access is allowed, set all fields
-		if (allowed($id_case,'a')) $q = "UPDATE lcm_case SET $fl,$public_access_rights WHERE id_case=$id_case";
-		else $q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
+		if (allowed($id_case,'a'))
+			$q = "UPDATE lcm_case SET $fl,$public_access_rights WHERE id_case=$id_case";
+		else
+			$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
 	} else {
-		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,$public_access_rights";
+		// This is new case
+		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,status='open',$public_access_rights";
 		$result = lcm_query($q);
 		$id_case = lcm_insert_id();
 
