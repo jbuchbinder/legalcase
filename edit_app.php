@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.24 2005/03/23 10:13:39 mlutfy Exp $
+	$Id: edit_app.php,v 1.25 2005/03/24 16:43:08 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -87,6 +87,16 @@ if (empty($_SESSION['errors'])) {
 
 		// erases the "New appointment" when focuses (taken from Spip)
 		$title_onfocus = " onfocus=\"if(!title_antifocus) { this.value = ''; title_antifocus = true;}\" "; 
+		
+		// Set author as appointment participants
+		$q = "SELECT id_author,name_first,name_middle,name_last
+			FROM lcm_author
+			WHERE id_author=" . $GLOBALS['author_session']['id_author'];
+		$result = lcm_query($q);
+
+		while ($row = lcm_fetch_array($result))
+			$_SESSION['authors'][$row['id_author']] = $row;
+
 	}
 
 } else if ( array_key_exists('author_added',$_SESSION['errors']) ) {
@@ -216,18 +226,26 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		echo "</td><td>";
 		if (count($_SESSION['authors'])>0) {
 			$q = '';
+			$author_ids = array();
 			foreach($_SESSION['authors'] as $author) {
 				$q .= ($q ? ', ' : '');
+				$author_ids[] = $author['id_author'];
 				$q .= njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
+				$q .= ' (<label for="id_rem_author' . $author['id_author'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_author' . $author['id_author'] . '" name="rem_author_' . $author['id_author'] . '"/>)';	// TRAD
+
 			}
 			echo "\t\t\t$q\n";
 		}
 		// List rest of the authors to add
-		$q = "SELECT lcm_author.id_author,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
+/*		$q = "SELECT lcm_author.id_author,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
 			FROM lcm_author
 			LEFT JOIN lcm_author_app
 			ON (lcm_author.id_author=lcm_author_app.id_author AND id_app=" . $_SESSION['app_data']['id_app'] . ")
 			WHERE id_app IS NULL";
+*/
+		$q = "SELECT id_author,name_first,name_middle,name_last
+			FROM lcm_author
+			WHERE id_author NOT IN (" . join(',',$author_ids) . ")";
 		$result = lcm_query($q);
 //		echo "\t\t<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"POST\">\n";
 		echo "\t\t\t<select name=\"author\">\n";
