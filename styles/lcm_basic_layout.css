@@ -354,8 +354,8 @@ a.prefs_logout {
 }
 
 a.prefs_logout, a.prefs_myprefs, a.run_lnk, a.edit_lnk, a.create_new_lnk, a.add_lnk {
-	display: block;
-	width: 150px;
+	display: inline;
+	clear:  both;
 }
 
 /* Go to page bar */
