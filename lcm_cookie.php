@@ -10,7 +10,7 @@ else
 	$cible = new Link('/');
 
 // Replay the cookie to renew lcm_session
-if ($change_session == 'oui') {
+if ($change_session == 'yes' || $change_session == 'oui') {
 	if (verifier_session($lcm_session)) {
 		// Attention : seul celui qui a le bon IP a le droit de rejouer,
 		// ainsi un eventuel voleur de cookie ne pourrait pas deconnecter
