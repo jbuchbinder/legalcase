@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.12 2005/03/16 08:22:52 mlutfy Exp $
+	$Id: listorgs.php,v 1.13 2005/03/21 14:54:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -27,7 +27,7 @@ $find_org_string = '';
 if (isset($_REQUEST['find_org_string']))
 	$find_org_string = $_REQUEST['find_org_string'];
 
-lcm_page_start("List of organisations"); // TRAD
+lcm_page_start(_T('title_org_list'));
 show_find_box('org', $find_org_string);
 
 // List all organisations in the system + search criterion if any
@@ -49,25 +49,14 @@ $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
-$list_pos = 0;
-
-if (isset($_REQUEST['list_pos']))
-	$list_pos = $_REQUEST['list_pos'];
-
-if ($list_pos >= $number_of_rows)
-	$list_pos = 0;
-
-// Position to the page info start
-if ($list_pos > 0)
-	if (!lcm_data_seek($result, $list_pos))
-		lcm_panic("Error seeking position $list_pos in the result");
+$list_pos = get_list_pos($result);
 
 // Output table tags
 // Not worth creating show_listorgs_*() for now
 $cpt = 0;
 $headers = array();
 
-$headers[0]['title'] = "Organisation name"; // TRAD
+$headers[0]['title'] = _Th('org_input_name');
 $headers[0]['order'] = 'order_name';
 $headers[0]['default'] = 'ASC';
 
