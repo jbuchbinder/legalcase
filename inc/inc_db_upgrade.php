@@ -8,16 +8,17 @@ include('inc/inc_version.php');
 include_lcm('inc_meta');
 include_lcm('inc_db');
 
-function upgrade_version ($version, $test = true) {
-	if ($test) {
-		lcm_query("REPLACE lcm_meta (name, value) VALUES ('version_lcm', '$version')");
-		lcm_log("upgrading database to version: $version");
-	} else {
-		include_lcm('inc_lang');
-		echo _T('install_warning_update_impossible', array('version' => $version));
-		exit;
-	}
-}
+// [AG] Maybe not needed anymore
+//function upgrade_version ($version, $test = true) {
+//	if ($test) {
+//		lcm_query("REPLACE lcm_meta (name, value) VALUES ('version_lcm', '$version')");
+//		lcm_log("upgrading database to version: $version");
+//	} else {
+//		include_lcm('inc_lang');
+//		echo _T('install_warning_update_impossible', array('version' => $version));
+//		exit;
+//	}
+//}
 
 function upgrade_db_version ($version, $test = true) {
 	if ($test) {
@@ -25,35 +26,37 @@ function upgrade_db_version ($version, $test = true) {
 		lcm_log("upgrading database to version: $version");
 	} else {
 		include_lcm('inc_lang');
-		echo _T('install_warning_update_impossible', array('version' => $version));
+		echo _T('install_warning_update_impossible', array('db_version' => $version));
 		exit;
 	}
 }
 
-function upgrade_database() {
+function upgrade_database($old_db_version) {
 	global $lcm_db_version;
 	$log = "";
 
 	// Read the current version
-	$lcm_db_version_current = 0;
+	//$lcm_db_version_current = 0;
 	// $result = lcm_query("SELECT valeur FROM spip_meta WHERE name='version_lcm'");
 	// if ($result) if ($row = spip_fetch_array($result)) $lcm_version_current = (double) $row['valeur'];
-	$lcm_db_version_current = read_meta('lcm_db_version');
+	// [AG] Current version os now passed as parameter to the function as it is available upon calling anyway
+	//$lcm_db_version_current = read_meta('lcm_db_version');
 	// echo "VERSION = $version \n";
 
 	// If there is no version mentioned in lcm_meta, then it is a new installation
 	// and therefore there is no need to upgrade.
-	if (!$lcm_db_version_current) {
-		$lcm_db_version_current = $lcm_db_version;
-		upgrade_db_version($lcm_db_version_current);
-		return $log;
-	}
+	// [AG] No need to doublecheck it. upgrade_database is invoked only when necessary
+	//if (!$lcm_db_version_current) {
+	//	$lcm_db_version_current = $lcm_db_version;
+	//	upgrade_db_version($lcm_db_version_current);
+	//	return $log;
+	//}
 
 	//
 	// Verify the rights to modify the database
 	//
 
-	lcm_query("DROP TABLE IF EXISTS spip_test");
+	lcm_query("DROP TABLE IF EXISTS lcm_test");
 	lcm_query("CREATE TABLE lcm_test (a INT)");
 	lcm_query("ALTER TABLE lcm_test ADD b INT");
 	lcm_query("INSERT INTO lcm_test (b) VALUES (1)");
