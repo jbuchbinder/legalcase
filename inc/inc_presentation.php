@@ -1047,7 +1047,73 @@ function show_listcase_item($item, $cpt, $custom = '') {
 	echo "</tr>\n";
 }
 
-function show_listcase_end() {
+function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
+	global $prefs;
+
+	echo "</table>\n";
+
+	//
+	// Navigation for previous/next screens
+	//
+	$list_pages = ceil($number_of_rows / $prefs['page_rows']);
+
+	if (! $list_pages) {
+		echo "<!-- list_pages == 0 -->\n";
+		return;
+	}
+
+	echo "<table border='0' align='center' width='99%' class='page_numbers'>\n";
+	echo '<tr><td align="left" width="15%">';
+
+	// Previous page
+	if ($current_pos > 0) {
+		$link = new Link();
+		$link->delVar('list_pos');
+
+		if ($current_pos > $prefs['page_rows'])
+			$link->addVar('list_pos', $current_pos - $prefs['page_rows']);
+
+		echo '<a href="' . $link->getUrl() . '" class="content_link">' . "< Prev" . '</a> '; // TRAD
+	}
+
+	echo "</td>\n";
+	echo '<td align="center" width="70%">';
+
+	// Page numbers with direct links
+	if ($list_pages > 1) {
+		echo 'Go to page: '; // TRAD
+
+		for ($i = 0; $i < $list_pages; $i++) {
+			if ($i == floor($current_pos / $prefs['page_rows'])) {
+				echo '[' . ($i+1) . '] ';
+			} else {
+				$current_pos_val = ($i * $prefs['page_rows']);
+				$link = new Link();
+				$link->delVar('list_pos');
+
+				if ($current_pos_val > 0)
+					$link->addVar('list_pos', $current_pos_val);
+				
+				echo '<a href="' . $link->getUrl() . '" class="content_link">' . ($i+1) . '</a> ';
+			}
+		}
+	}
+
+	echo "</td>\n";
+	echo "<td align='right' width='15%'>";
+
+	// Next page
+	$next_pos = $current_pos + $prefs['page_rows'];
+	if ($next_pos < $number_of_rows) {
+		$current_pos_val = $next_pos;
+		$link = new Link();
+		$link->addVar('list_pos', $current_pos_val);
+
+		echo '<a href="' . $link->getUrl() . '" class="content_link">' . "Next >" . '</a>'; // TRAD
+	}
+
+	echo "</td>\n";
+	echo "</tr>\n";
 	echo "</table>\n";
 }
 
