@@ -75,8 +75,8 @@ if ($essai_login == 'oui') {
 	if ($session_login_hidden AND !$session_login)
 		$session_login = $session_login_hidden;
 
-	$login = $session_login; // [ML] where from?
-	$pass = $session_password; // [ML] not used??
+	$login = $session_login; // [ML] where from? -- html form
+	$pass = $session_password; // [ML] not used?? -- html form
 
 	// Try different authentication methods, starting with "db" (database)
 	$auths = array('db');
@@ -90,7 +90,7 @@ if ($essai_login == 'oui') {
 
 	$ok = false;
 	reset($auths);
-	while (list(, $nom_auth) = each($auths)) {
+	foreach($auths as $nom_auth) {
 		include_lcm('inc_auth_'.$nom_auth);
 		$classe_auth = 'Auth_'.$nom_auth;
 		$auth = new $classe_auth;
@@ -102,8 +102,10 @@ if ($essai_login == 'oui') {
 			$ok = $auth->validate_md5_challenge($login, $session_password_md5, $next_session_password_md5);
 
 			// If failed, try as cleartext
-			if (!$ok && $session_password)
+			if (!$ok && $session_password) {
+				lcm_debug("md5 login failed, trying with plaintext");
 				$ok = $auth->validate_pass_cleartext($login, $session_password);
+			}
 		}
 
 		if ($ok) break;
@@ -169,6 +171,7 @@ if ($var_lang_lcm) {
 	include_lcm('inc_lang');
 	include_lcm('inc_session');
 
+	$var_lang_lcm = clean_input($var_lang_lcm);
 	$valid_author = verifier_visiteur();
 
 	if (lcm_set_language($var_lang_lcm)) {
@@ -179,7 +182,7 @@ if ($var_lang_lcm) {
 			include_lcm('inc_admin');
 
 			lcm_query("UPDATE lcm_author 
-					SET lang = '" . addslashes($var_lang_lcm) . "' 
+					SET lang = '" . $var_lang_lcm . "' 
 					WHERE id_author = " . $GLOBALS['author_session']['id_author']);
 			$author_session['lang'] = $var_lang_lcm;
 			lcm_add_session($author_session, $lcm_session);
