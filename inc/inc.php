@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.35 2005/01/17 09:01:34 mlutfy Exp $
+	$Id: inc.php,v 1.36 2005/01/18 21:18:04 antzi Exp $
 */
 
 // Test if LCM is installed
@@ -42,65 +42,79 @@ if (! @file_exists('inc/data/inc_meta_cache.php'))
 // Preferences for presentation
 // Can be done from any screen, but for now most is in config_author.php
 //
+if (isset($_REQUEST['author_ui_modified'])) {
+// [AG] This means that author UI preferences form was submitted
 
-// Set prefs_mod to true if prefs need to be saved in DB
-$prefs_mod = false; 
+	// Set prefs_mod to true if prefs need to be saved in DB
+	$prefs_mod = false;
 
-// [ML] This is very important (but dirty hack) to change the language
-// from config_author.php but passing by lcm_cookie.php
-if (isset($_REQUEST['sel_language']))
-	$lang = $_REQUEST['sel_language'];
-else
-	$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
+	// [ML] This is very important (but dirty hack) to change the language
+	// from config_author.php but passing by lcm_cookie.php
+	if (isset($_REQUEST['sel_language']))
+		$lang = $_REQUEST['sel_language'];
+	else
+		$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
 
-if (isset($lang) AND $lang <> $author_session['lang']) {
-	// Boomerang via lcm_cookie to set a cookie and do all the dirty work
-	// The REQUEST_URI should always be set, and point to the current page
-	// we are being sent to (Ex: from config_author.php to listcases.php).
-	header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" .  $_SERVER['REQUEST_URI']);
-}
+	if (isset($lang) AND $lang <> $author_session['lang']) {
+		// Boomerang via lcm_cookie to set a cookie and do all the dirty work
+		// The REQUEST_URI should always be set, and point to the current page
+		// we are being sent to (Ex: from config_author.php to listcases.php).
+		header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" .  $_SERVER['REQUEST_URI']);
+	}
 
-if (isset($_REQUEST['sel_theme'])) {
-	// XSS risk: Theme names can only be alpha-numeric, "-" and "_"
-	$sel_theme = preg_replace("/[^-_a-zA-Z0-9]/", '', $sel_theme);
+	// Set UI theme
+//	if (isset($_REQUEST['sel_theme'])) {	// [AG] $_REQUEST['sel_theme'] is always set
+	if ($_REQUEST['sel_theme'] != $_REQUEST['old_theme']) {	// Value is changed
+		// XSS risk: Theme names can only be alpha-numeric, "-" and "_"
+		$sel_theme = preg_replace("/[^-_a-zA-Z0-9]/", '', $_REQUEST['sel_theme']);
 
-	if (file_exists("styles/lcm_ui_" . $sel_theme . ".css")) {
-		$prefs['theme'] = ($sel_theme);
-		$prefs_mod = true;
+		if (file_exists("styles/lcm_ui_" . $sel_theme . ".css")) {
+			$prefs['theme'] = ($sel_theme);
+			$prefs_mod = true;
+		}
+	}
+
+	// Set wide/narrow screen mode preference
+//	if (isset($sel_screen)) {	// [AG] 1. We have to use superglobals 2. It's always set
+	if ($_REQUEST['sel_screen'] != $_REQUEST['old_screen']) {	// Value is changed
+		if ($_REQUEST['sel_screen'] == 'narrow' || $_REQUEST['sel_screen'] == 'wide') {
+			$prefs['screen'] = $_REQUEST['sel_screen'];
+			$prefs_mod = true;
+		}
+	}
+
+	// Set normal/advanced UI mode preference
+	if ($_REQUEST['sel_mode'] != $_REQUEST['old_mode']) {
+		if ($_REQUEST['sel_mode'] == 'simple' || $_REQUEST['sel_mode'] == 'extended') {
+			$prefs['mode'] = $_REQUEST['sel_mode'];
+			$prefs_mod = true;
+		}
+	}
+
+	// Set rows per page preference
+//	if (isset($_REQUEST['page_rows'])) {	[AG] It's always set
+		if (intval($_REQUEST['page_rows']) > 0) {
+			$prefs['page_rows'] = intval($_REQUEST['page_rows']);
+			$prefs_mod = true;
+		}
+//	}
+
+	// Set font size
+//	if (isset($_REQUEST['font_size'])) { [AG] It's always set
+	if ($_REQUEST['font_size'] != $_REQUEST['old_font_size']) {
+		if ($font_size == 'small_font' || $font_size == 'medium_font' || $font_size == 'large_font') {
+			$prefs['font_size'] = $font_size;
+			$prefs_mod = true;
+		}
+	}
+
+	// Update user preferences if modified
+	if ($prefs_mod) {
+		lcm_query("UPDATE lcm_author
+					SET   prefs = '".addslashes(serialize($prefs))."'
+					WHERE id_author = " . $author_session['id_author']);
 	}
 }
-
-// Set wide/narrow screen mode preference
-if (isset($sel_screen)) {
-	if ($sel_screen == 'narrow' || $sel_screen == 'wide') {
-		$prefs['screen'] = $sel_screen;
-		$prefs_mod = true;
-	}
-}
-
-// Set rows per page preference
-if (isset($_REQUEST['page_rows'])) {
-	if (intval($_REQUEST['page_rows']) > 0) {
-		$prefs['page_rows'] = intval($_REQUEST['page_rows']);
-		$prefs_mod = true;
-	}
-}
-
-// Set font size
-if (isset($_REQUEST['font_size'])) {
-	if ($font_size == 'small_font' || $font_size == 'medium_font' || $font_size == 'large_font') {
-		$prefs['font_size'] = $font_size;
-		$prefs_mod = true;
-	}
-}
-
-// Update user preferences if modified
-if ($prefs_mod) {
-	lcm_query("UPDATE lcm_author
-				SET   prefs = '".addslashes(serialize($prefs))."'
-				WHERE id_author = " . $author_session['id_author']);
-}
-
 
 //
 // Database version management
