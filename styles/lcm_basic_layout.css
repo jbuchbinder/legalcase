@@ -426,6 +426,12 @@ ul.wo_blt li {
 	list-style-type: none;
 }
 
+ul.list_names {
+	margin: 2px 0px 10px 0px;
+	padding: 0;
+	list-style-type: none;
+}
+
 a.add_lnk {
 	padding: 4px 4px 4px 22px;
 	margin-left: 5px;
@@ -559,13 +565,14 @@ ul.list_events li {
 	border-bottom: 1px solid #ccc;
 	width: 20px;
 	height: 20px;
+	line-height: 20px;
 }   
 
 ul.list_events li a {
 	display: block; 
 	width: 20px;
 	height: 20px;
-	line-height: 20px;
+	/* line-height: 20px; */
 	font-size: 10px;
 	text-decoration: none;
 	text-align: center;
