@@ -4,8 +4,6 @@ include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
-$case_data = array();
-
 // Initiate session
 session_start();
 
@@ -15,8 +13,8 @@ if (empty($errors)) {
     $case_data = array();
 
 	// Set the returning page
-	if (isset($ref)) $case_data['referer'] = $ref;
-	else $case_data['referer'] = $HTTP_REFERER;
+	if (isset($ref)) $case_data['ref_edit_case'] = $ref;
+	else $case_data['ref_edit_case'] = $HTTP_REFERER;
 
 	// Register case type variable for the session
 	if (!session_is_registered("existing"))
@@ -135,11 +133,7 @@ else lcm_page_start(_T('new_case'));
 	<button name="submit" type="submit" value="adddet">' . _T('add_and_go_to_details') . "</button>\n";
 	}
 	echo '	<button name="reset" type="reset">' . _T('reset') . "</button>\n";
-//		<input type="hidden" name="date_creation" value="' .  $case_data['date_creation'] . '">
-	echo '	<input type="hidden" name="referer" value="' . $case_data['referer'];
-//	echo '	<input type="hidden" name="ref_edit_case" value="';
-//	if ($ref) echo $ref;
-//	else echo $HTTP_REFERER;
+	echo '	<input type="hidden" name="ref_edit_case" value="' . $case_data['ref_edit_case'];
 	echo '">
 </form>
 
