@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: add_auth.php,v 1.12 2005/04/01 08:07:19 mlutfy Exp $
+	$Id: add_auth.php,v 1.13 2005/04/04 06:12:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,16 +57,21 @@ if (! ($case > 0)) {
 
 				// Add 'assigned' followup to the case
 				$q = "INSERT INTO lcm_followup
-						SET id_followup=0,id_case=$case,id_author=" . $GLOBALS['author_session']['id_author']
-						. ",type='assignment',description='";
-				$q .= njoin(array($author_data['name_first'], $author_data['name_middle'], $author_data['name_last']));
-				$q .= " assigned to the case',date_start=NOW()"; // TRAD
+						SET id_followup = 0, id_case = $case, 
+							id_author = " . $GLOBALS['author_session']['id_author'] . ",
+							type = 'assignment', 
+							description = '" . $author_data['id_author'] . "'";
+
+				// [ML] In order to use the translation system
+				// $q .= njoin(array($author_data['name_first'], $author_data['name_middle'], $author_data['name_last']));
+				// $q .= " assigned to the case',date_start=NOW()"; // TRAD
+
 				$result = lcm_query($q);
 
 				// Set case date_assigned to NOW()
 				$q = "UPDATE lcm_case
-						SET date_assignment=NOW()
-						WHERE id_case=$case";
+						SET date_assignment = NOW()
+						WHERE id_case = $case";
 				$result = lcm_query($q);
 			}
 		} else die(_T('error_add_auth_no_rights')); // XXX

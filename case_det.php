@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.126 2005/04/01 11:04:41 mlutfy Exp $
+	$Id: case_det.php,v 1.127 2005/04/04 06:12:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -69,8 +69,8 @@ if ($case > 0) {
 		// Show tabs
 		$groups = array('general' => _T('generic_tab_general'),
 				'clients' => _T('generic_tab_clients'),
-				'appointments' => _T('generic_tab_agenda'),
 				'followups' => _T('generic_tab_followups'),
+				'appointments' => _T('generic_tab_agenda'),
 				'times' => _T('generic_tab_reports'),
 				'attachments' => _T('generic_tab_documents'));
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
@@ -88,8 +88,6 @@ if ($case > 0) {
 					. "</div>";
 				echo "<p class='normal_text'>";
 		
-				// Edit case link was here!
-		
 				// Show users, assigned to the case
 				// TODO: use case_input_authors if many authors
 				echo _T('case_input_author') . ' ';
@@ -104,33 +102,29 @@ if ($case > 0) {
 				while ($user = lcm_fetch_array($authors)) {
 					if ($q) $q .= "; \n";
 					if ($admin) $q .= '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
-					$q .= clean_output($user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last']);
+					$q .= clean_output(get_person_name($user));
 					if ($admin) $q .= '</a>';
 				}
 				echo "$q<br />\n";
 		
-				// Add user to the case link was here
-
 				// [ML] Added ID back, since it was requested by users/testers
 				// as a way to cross-reference paper documentation
-				echo "\n" . _T('case_input_id') . " " . $row['id_case'] . "<br />\n";
+				echo "\n" . _Ti('case_input_id') . $row['id_case'] . "<br />\n";
 		
 				if ($case_court_archive == 'yes')
-					echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br />\n";
-				echo _T('case_input_date_creation') . ' ' . format_date($row['date_creation']) . "<br />\n";
+					echo _Ti('case_input_court_archive') . clean_output($row['id_court_archive']) . "<br />\n";
+				echo _Ti('case_input_date_creation') . format_date($row['date_creation']) . "<br />\n";
 		
 				if ($case_assignment_date == 'yes') {
 					// [ML] Case is assigned/unassigned when authors are added/remove
-					// + case is auto-assigned when created, so the 'else' should not happen
+					// + case is auto-assigned when created.
 					if ($row['date_assignment'])
-						echo _T('case_input_date_assigned') . ' ' . format_date($row['date_assignment']) . "<br />\n";
-					else
-						echo _T('case_input_date_assigned') . ' ' . "Click to assign<br/>\n";
+						echo _Ti('case_input_date_assigned') . format_date($row['date_assignment']) . "<br />\n";
 				}
 		
-				echo _T('case_input_legal_reason') . ' ' . clean_output($row['legal_reason']) . "<br />\n";
+				echo _Ti('case_input_legal_reason') . clean_output($row['legal_reason']) . "<br />\n";
 				if ($case_alledged_crime == 'yes')
-					echo _T('case_input_alledged_crime') . ' ' . clean_output($row['alledged_crime']) . "<br />\n";
+					echo _Ti('case_input_alledged_crime') . clean_output($row['alledged_crime']) . "<br />\n";
 
 				include_lcm('inc_keywords');
 				show_all_keywords('case', $row['id_case']);
@@ -436,10 +430,16 @@ if ($case > 0) {
 					echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
 
 					// Description
-					if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
-						$short_description = $row['description'];
-					else
-						$short_description = substr($row['description'],0,$title_length) . '...';
+					if ($row['type'] == 'assignment' && is_numeric($row['description'])) {
+						$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $row['description']);
+						$author1 = lcm_fetch_array($res1);
+						$short_description = _T('case_info_author_assigned', array('name' => get_person_name($author1)));
+					} else{
+						if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
+							$short_description = $row['description'];
+						else
+							$short_description = substr($row['description'],0,$title_length) . '...';
+					}
 			
 					echo '<td>';
 					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
