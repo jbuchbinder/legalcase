@@ -214,14 +214,14 @@ a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
 	text-decoration: none;
 	display: block;
 	padding-left: 22px;
-	background: url("../images/jimmac/stock_new-16.png") no-repeat 1px 3px;
+	background: url("../images/lcm/main_nav_sq_out.gif") no-repeat 3px 3px;
 }
 
 a.main_nav_btn:hover {
 	text-decoration: none;
 	display: block;
 	padding-left: 22px;
-	background: url("../images/jimmac/stock_edit-16.png") no-repeat 1px 3px;
+	background: url("../images/lcm/main_nav_sq_over.gif") no-repeat 3px 3px;
 }
 
 /* --------------------------------- */
