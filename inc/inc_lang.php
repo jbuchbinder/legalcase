@@ -429,7 +429,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 	} else {
 		// XXX TODO FIXME
 		// rename class 'forml' to 'form_lang' and adjust CSS
-		$ret .= "\n<select class='forml' name='$select_name'>\n";
+		$ret .= "\n<select class='sel_frm' name='$select_name'>\n";
 	}
 
 	sort($languages);
