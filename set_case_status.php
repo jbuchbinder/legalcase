@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.6 2004/12/17 22:18:41 antzi Exp $
+	$Id: set_case_status.php,v 1.7 2004/12/17 23:07:48 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -60,6 +60,7 @@ switch ($status) {
 				$date_start = date('Y-m-d H:i:s');
 				break;
 			case 'open' :
+			case 'merged' :
 				header('Location: ' . $GLOBALS['HTTP_REFERER']);
 				exit;
 				break;
@@ -111,7 +112,7 @@ switch ($status) {
 //
 	case 'closed' :
 		// Check if the case is already closed
-		if ($row['status'] == 'closed') {
+		if (($row['status'] == 'closed') || ($row['status'] == 'merged')) {
 			header('Location: ' . $GLOBALS['HTTP_REFERER']);
 			break;
 		}
@@ -165,7 +166,7 @@ switch ($status) {
 //
 	case 'suspended' :
 		// Check if the case is already suspended or closed
-		if (($row['status'] == 'suspended') || ($row['status'] == 'closed')) {
+		if (($row['status'] == 'suspended') || ($row['status'] == 'closed') || ($row['status'] == 'merged')) {
 			header('Location: ' . $GLOBALS['HTTP_REFERER']);
 			break;
 		}
@@ -223,6 +224,65 @@ switch ($status) {
 			header('Location: ' . $GLOBALS['HTTP_REFERER']);
 			break;
 		}
+		// Start the page
+		lcm_page_start("Merging case: " . clean_output($row['title']));
+		// Set defaults
+		$type = 'merge';
+		$date_start = date('Y-m-d H:i:s');
+
+		// Write form
+		echo '<form action="merge_case.php" method="POST">
+	<table class="tbl_usr_dtl" width="99%">
+		<tr><td>Merge date:</td>
+			<td>';
+		echo get_date_inputs('start', $date_start, false);
+//		echo f_err('date_start',$errors);
+		echo "</td>
+		</tr>
+		<tr><td>Type:</td>
+			<td><input type='hidden' name='type' value='$type'>$type</td>
+		</tr>\n";
+
+		// Select case to merge to
+		echo "\t\t<tr><td>Merge to case:</td>\n";
+		echo "\t\t\t<td><select name='destination'>\n";
+		$q = "SELECT id_case,title
+		FROM lcm_case
+		WHERE id_case<>$case";
+		$result = lcm_query($q);
+		while ($row = lcm_fetch_array($result)) {
+			echo "\t\t\t\t<option value='" . $row['id_case'] . "'>" . $row['title'] . "</option>\n";
+		}
+		echo "\t\t\t</select></td>\n";
+		echo "\t\t</tr>\n";
+
+		// Description
+		echo "		<tr><td valign='top'>Description:</td>
+			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
+		</tr>
+		<tr><td>Sum billed:</td>
+			<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
+		// [ML] If we do this we may as well make a function
+		// out of it, but not sure where to place it :-)
+		// This code is also in config_site.php
+		$currency = read_meta('currency');
+		if (empty($currency)) {
+			$current_lang = $GLOBALS['lang'];
+			$GLOBALS['lang'] = read_meta('default_language');
+			$currency = _T('currency_default_format');
+			$GLOBALS['lang'] = $current_lang;
+		}
+
+		echo htmlspecialchars($currency);
+		echo "</td>
+		</tr>
+	</table>
+	<button name='submit' type='submit' value='submit' class='simple_form_btn'>" . _T('button_validate') . "</button>
+	<input type='hidden' name='id_case' value='$case'>
+	<input type='hidden' name='ref_edit_fu' value='" . $GLOBALS['HTTP_REFERER'] . "'>
+</form>";
+
+		lcm_page_end();
 		break;
 }
 
