@@ -18,12 +18,19 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.52 2005/02/01 16:35:30 mlutfy Exp $
+	$Id: edit_case.php,v 1.53 2005/02/08 09:56:16 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
+
+// Read site configuration preferences
+$case_court_archive = read_meta('case_court_archive');
+$case_assignment_date = read_meta('case_assignment_date');
+$case_alledged_crime = read_meta('case_alledged_crime');
+$case_allow_modif = read_meta('case_allow_modif');
+
 
 if (empty($_SESSION['errors'])) {
 
@@ -105,21 +112,37 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "
 		<tr><td>" . f_err_star('title', $_SESSION['errors']) . _T('case_input_title') . "</td>
 			<td><input name=\"title\" value=\"" . clean_output($_SESSION['case_data']['title']) . "\" class=\"search_form_txt\">";
-	echo "</td></tr>
-		<tr><td>" . _T('case_input_court_archive') . "</td>
-			<td><input name=\"id_court_archive\" value=\"" . clean_output($_SESSION['case_data']['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>";
+	echo "</td></tr>\n";
+	
+	// Court archive ID
+	if ($case_court_archive == 'yes')
+		echo "		<tr><td>" . _T('case_input_court_archive') . "</td>
+			<td><input name=\"id_court_archive\" value=\"" . clean_output($_SESSION['case_data']['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>\n";
+
 // [AG] Assignment date is set only when adding user to the case
 //		<tr><td>" . _T('case_input_date_assignment') . "</td>
 //			<td><input name=\"date_assignment\" value=\"" . clean_output($_SESSION['case_data']['date_assignment']) . "\" class=\"search_form_txt\"></td></tr>
-	echo "
-		<tr><td>" . _T('case_input_legal_reason') . "</td>
-			<td><input name=\"legal_reason\" value=\"" . clean_output($_SESSION['case_data']['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>
-		<tr><td>" . _T('case_input_alledged_crime') . "</td>
-			<td><input name=\"alledged_crime\" value=\"" .  clean_output($_SESSION['case_data']['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>
-		<tr><td>" . _T('case_input_status') . "</td>
-			<td><input name=\"status\" value=\"" . clean_output($_SESSION['case_data']['status']) . "\" class=\"search_form_txt\"></td></tr>
-	";
+	
+	// Legal reason
+	echo "		<tr><td>" . _T('case_input_legal_reason') . "</td>
+			<td><input name=\"legal_reason\" value=\"" . clean_output($_SESSION['case_data']['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>\n";
 
+	// Alledged crime
+	if ($case_alledged_crime == 'yes')
+		echo "		<tr><td>" . _T('case_input_alledged_crime') . "</td>
+			<td><input name=\"alledged_crime\" value=\"" .  clean_output($_SESSION['case_data']['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>\n";
+
+	// Case status
+	echo"		<tr><td>" . _T('case_input_status') . "</td>
+			<td>";
+	echo "<select name='status' class='sel_frm'>\n";
+	$statuses = array('draft','open','suspended','closed','merged');
+	foreach ($statuses as $s)
+		echo "\t\t\t\t<option" .  (($s == $_SESSION['case_data']['status']) ? ' selected' : '') . ">$s</option>\n";
+	echo "\t\t\t</select></td>\n";
+	echo "\t\t</tr>\n";
+
+	// Public access rights
 	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
 		echo "\t<tr><td>" . _T('public') . "</td>
 			<td>
