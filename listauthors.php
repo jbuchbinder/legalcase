@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.16 2004/11/16 08:38:03 mlutfy Exp $
+	$Id: listauthors.php,v 1.17 2004/11/24 12:31:07 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -87,8 +87,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 ?>
 </table>
-
-<a href="edit_author.php?author=0" class="content_link">Add author</a>
+<br /><a href="edit_author.php?author=0" class="add_create_new_lnk">Add author</a>
 
 <?php
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.5 2004/11/16 08:38:03 mlutfy Exp $
+	$Id: listorgs.php,v 1.6 2004/11/24 12:32:10 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -57,11 +57,8 @@ while ($row = lcm_fetch_array($result)) {
 <?php
 }
 ?>
-	<tr>
-		<td><a href="edit_org.php" class="content_link"><strong>Add new organisation</strong></a></td>
-		<td>&nbsp;</td>
-	</tr>
 </table>
+<br /><a href="edit_org.php" class="add_create_new_lnk">Add new organisation</a>
 <?php
 
 lcm_page_end();

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.32 2004/11/16 08:38:03 mlutfy Exp $
+	$Id: listcases.php,v 1.33 2004/11/24 12:31:25 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -95,7 +95,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 ?>
 </table>
-<p align='right'><a href="edit_case.php?case=0" class="content_link">Open new case</a></p>
+<br /><a href="edit_case.php?case=0" class="add_create_new_lnk">Open new case</a>
 
 <table border='0' align='center' width='99%'>
 	<tr><td align="left"><?php
