@@ -128,9 +128,8 @@ function auth() {
 	else {
 		// This case is a strange possibility: the author is authentified
 		// OK, but he does not exist in the authors table. Possible cause:
-		// the database was restaured and the author does not exist.
-		// [ML] I am not sure this could really happen if we use cookie-only
-		// authentication (not php_auth). I will clean it later (TODO)
+		// the database was restaured and the author does not exist (and
+		// the user was authentified by another source, such as LDAP).
 		include_lcm('inc_presentation');
 		include_lcm('inc_text');
 
