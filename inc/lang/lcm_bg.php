@@ -89,6 +89,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_organisations' => 'Организации:',
 'case_input_status' => 'Състояние:',
 'case_input_title' => 'Име на делото:',
+'case_status_option_closed' => '<NEW>Closed',
+'case_status_option_draft' => '<NEW>Draft',
+'case_status_option_merged' => '<NEW>Merged',
+'case_status_option_open' => '<NEW>Open',
+'case_status_option_suspended' => '<NEW>Suspended',
 'case_subtitle_appointments' => '<NEW>Appointments',
 'case_subtitle_attachments' => '<NEW>Attached documents',
 'case_subtitle_clients' => 'Клиенти по това дело',
@@ -199,9 +204,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'edit_case_information' => 'Редактиране на информация по делото',
 'edit_filter_details' => 'Редакция на настройките на филтър',
 'edit_rep_details' => 'Редакция на настройките на доклад',
-'enter_name_first' => 'Име',
-'enter_name_last' => 'Фамилия',
-'enter_name_middle' => 'Презиме',
 'error_add_auth_no_rights' => 'Нямате право да добавяте права за достъп за това дело!',
 'error_no_case_name' => 'Делото трябва да има име!',
 'error_no_case_specified' => 'Не е указано дело',
@@ -228,14 +230,22 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // H
 'help_title_about' => '<NEW>About ...',
+'help_title_about_contrib' => '<NEW>Contributors',
+'help_title_about_license' => '<NEW>License and terms of use',
 'help_title_archives' => '<NEW>Archives',
 'help_title_authors' => '<NEW>Authors',
 'help_title_cases' => '<NEW>Cases',
 'help_title_clients' => '<NEW>Clients',
+'help_title_help' => '<NEW>Legal Case Management Help',
+'help_title_install_database' => '<NEW>The SQL database connection',
+'help_title_install_permissions' => '<NEW>Setting up directory permissions',
+'help_title_install_personal' => '<NEW>Personal information',
 'help_title_installation' => '<NEW>Installation',
 'help_title_keywords' => '<NEW>Keywords',
 'help_title_reports' => '<NEW>Reports',
 'help_title_siteconfig' => '<NEW>Site configuration',
+'help_warning_no_files' => '<NEW>The help files are not installed.',
+'help_warning_no_section' => '<NEW>The requested help section does not exist.',
 
 
 // I
@@ -245,7 +255,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_greetings' => 'Добър ден',
 'info_more_than_five' => '(Поне 6 символа)',
 'info_more_than_three' => '(Поне 4 символа)',
-'info_name_of_person' => 'Име',
 'info_no' => 'не',
 'info_not_available' => 'няма информация',
 'info_or' => 'или',
@@ -520,7 +529,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_tab_regional' => 'Регионални настройки',
 'siteconf_warning' => '<b>Внимание!</b> Настройките на тази страница имат глобален ефект и могат да повлияят на функционирането на сайта.',
 'siteconf_warning_currency' => '<b>Предупреждение!</b> Ако промените паричната единица, текущата информация <strong>няма</strong> да бъде конвертирана.',
-'status' => 'Състояние',
 
 
 // T
