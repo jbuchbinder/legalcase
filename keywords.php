@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along 
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.3 2004/11/16 09:57:49 mlutfy Exp $
+	$Id: keywords.php,v 1.4 2004/12/14 15:08:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,9 +30,13 @@ include_lcm('inc_keywords');
 //
 function show_all_keywords($type = '') {
 	if (! $type)
-		$type = 'user';
+		$type = 'system';
 	
-	lcm_page_start("Keywords: " . $type);
+	lcm_page_start(_T('menu_admin_keywords') . _T('typo_column') . " " . $type);
+
+	echo "<p>Warning: This feature is still in early development. For more
+	information, please consult the <a href='http://www.lcm.ngo-bg.org/article43.html'>analysis
+	documentation for keywords</a>.</p>\n";
 
 	// Mini-menu: system or user keyword groups
 	echo "<ul>";
@@ -45,18 +49,16 @@ function show_all_keywords($type = '') {
 	foreach ($kwg_all as $kwg) {
 		// tester ac-admin?
 		echo "<ul style='padding: 0.5em; border: 1px solid #cccccc; -moz-border-radius: 10px;'>\n";
-		echo "<li style='list-style-type: none;'><a href='?action=view&amp;id_group=" . $kwg['id_group'] . "'>" . $kwg['name'] . ": " . $kwg['title'] . "</a></li>\n";
+		echo "<li style='list-style-type: none;'><a href='?action=view&amp;id_group=" . $kwg['id_group'] . "'>" . _T($kwg['title']) . "</a></li>\n";
 
 		$kw_all = get_keywords_in_group_id($kwg['id_group']);
 
 		if (count($kw_all)) {
-			echo "<ul style='padding: 0.5em;>";
+			echo "<ul style='padding: 1em;>";
 
 			foreach ($kw_all as $kw) {
 				echo "<li style='list-style-type: none;'>";
-				echo "<a href='?action=view&amp;id_keyword=" . $kw['id_keyword'] . "'>";
-				echo $kw['name'] . ": " . $kw['title'];
-				echo "</a>";
+				echo "<a href='?action=view&amp;id_keyword=" . $kw['id_keyword'] . "'>". _T($kw['title']) . "</a>";
 				echo "</li>\n";
 			}
 
