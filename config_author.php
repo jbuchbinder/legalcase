@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.49 2005/02/22 11:05:12 antzi Exp $
+	$Id: config_author.php,v 1.50 2005/02/22 15:55:24 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -32,14 +32,22 @@ function read_author_data($id_author) {
 	return $usr;
 }
 
-function show_author_form() {
+function show_author_form($tab) {
 	global $author_session;
 	global $prefs;
 
 	// Referer not always set (bookmark, reload, etc.)
-	$http_ref = (isset($GLOBALS['HTTP_REFERER']) ? $GLOBALS['HTTP_REFERER'] : '');
+//	$http_ref = (isset($GLOBALS['HTTP_REFERER']) ? $GLOBALS['HTTP_REFERER'] : '');
+	// [AG] This is to preserve page's referer in 'ref' GET value during tab transitions
+	// giving it higher priority than the actual page referer
+	if (isset($_GET['ref'])) $http_ref = clean_input($_GET['ref']);
+	else $http_ref = (isset($GLOBALS['HTTP_REFERER']) ? $GLOBALS['HTTP_REFERER'] : '');
 
-?>
+	switch ($tab) {
+		//
+		// User interface
+		//
+		case 0 : ?>
 <form name="upd_user_profile" method="post" action="config_author.php">
 	<input type="hidden" name="author_ui_modified" value="yes"/>
 	<input type="hidden" name="referer" value="<?php echo $http_ref; ?>" />
@@ -126,16 +134,36 @@ function show_author_form() {
 		<tr>
 			<td align="right" valign="top"><?php echo _T('authorconf_input_results_per_page'); ?></td>
 			<td align="left" valign="top">
+				<input type="hidden" name="old_page_rows" id="old_page_rows" value="<?php echo $prefs['page_rows'] ?>" /> 
 				<input name="page_rows" type="text" class="search_form_txt" id="page_rows" size="3" value="<?php
 					// page_rows gets default value in inc_auth.php
 					echo $prefs['page_rows']; ?>" />
 			</td>
 		</tr>
+	<!-- Submit button -->
+		<tr>
+			<td colspan="2" align="center" valign="middle">
+				<input type="submit" name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
+		</tr>
+	</table>
+</form>
+<?php			break;
+
+		//
+		// Advanced settings
+		//
+		case 1 : ?>
+<form name="upd_user_profile" method="post" action="config_author.php">
+	<input type="hidden" name="tab" value="1" />
+	<input type="hidden" name="author_advanced_settings_modified" value="yes"/>
+	<input type="hidden" name="referer" value="<?php echo $http_ref; ?>" />
+
+	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
 		<tr>
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authorconf_subtitle_advanced'); ?></h4></td>
 		</tr>
-	    <tr>
-	    	<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_ui_level') ?></td>
+		<tr>
+			<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_ui_level') ?></td>
 			<td align="left" valign="top">
 				<input type="hidden" name="old_mode" id="old_mode" value="<?php echo $prefs['mode'] ?>" />
 				<select name="sel_mode" class="sel_frm">
@@ -194,24 +222,22 @@ function show_author_form() {
 		</tr>
 	</table>
 </form>
-
-<?php
-
+<?php			break;
+	} // switch()
 }
 
 function apply_author_ui_change() {
 	global $author_session;
 	global $lcm_session;
 	global $prefs;
+	global $log;
 
 	// From the form
 	global $sel_language, $old_language;
 	global $sel_theme, $old_theme;
 	global $sel_screen, $old_screen;
-	global $sel_mode, $old_mode;
-
-	// Show modifications made one finished
-	$log = array();
+	global $font_size, $old_font_size;
+	global $page_rows, $old_page_rows;
 
 	//
 	// Change the user's language (done in inc.php, we only log the result)
@@ -245,6 +271,26 @@ function apply_author_ui_change() {
 		array_push($log, "Screen mode set to " . $font_size . ", was " . $old_font_size . ".");
 
 	//
+	// Change the rows per page
+	//
+
+	if ($page_rows == $prefs['page_rows'] && $page_rows <> $old_page_rows)
+		array_push($log, "Rows per page set to " . $page_rows . ", was " . $old_page_rows . ".");
+
+}
+
+function apply_author_advanced_settings_change() {
+	global $author_session;
+	global $lcm_session;
+	global $prefs;
+	global $log;
+
+	// From the form
+	global $sel_mode, $old_mode;
+	global $sel_time_intervals, $old_time_intervals;
+	global $sel_time_intervals_notation, $old_time_intervals_notation;
+
+	//
 	// Change the interface mode
 	//
 
@@ -257,6 +303,13 @@ function apply_author_ui_change() {
 
 	if ($sel_time_intervals == $prefs['time_intervals'] && $sel_time_intervals <> $old_time_intervals)
 		array_push($log, "Time intervals set to $sel_time_intervals, was $old_time_intervals.");
+	
+	//
+	// Change the time intervals notation
+	//
+
+	if ($sel_time_intervals_notation == $prefs['time_intervals_notation'] && $sel_time_intervals_notation <> $old_time_intervals_notation)
+		array_push($log, "Time intervals notation set to $sel_time_intervals_notation, was $old_time_intervals_notation.");
 }
 
 function show_changes() {
@@ -277,9 +330,25 @@ function show_changes() {
 	}
 }
 
+//
+// Main body
+//
+
+// Clear list of modifications
+$log = array();
+
 if (isset($_POST['author_ui_modified']))
 	apply_author_ui_change();
+if (isset($_POST['author_advanced_settings_modified']))
+	apply_author_advanced_settings_change();
 
+if (count($log)>0) {
+	lcm_page_start(_T('title_authorconf'),'','<META HTTP-EQUIV="refresh" content="5; URL=' . $_POST['referer'] . '">');
+	show_changes();
+	lcm_page_end();
+} else {
+
+/*
 // Referer may be set by the form, but also by lcm_cookie.php which
 // is called before config_author.php via inc.php (ahem..)
 if (isset($_REQUEST['referer'])) {
@@ -287,13 +356,20 @@ if (isset($_REQUEST['referer'])) {
 	header('Location: ' . $target->getUrl());
 	exit;
 }
+*/
 
-if (isset($_POST['author_ui_modified']))
-	show_changes();
+	lcm_page_start(_T('title_authorconf'));
+	
+	// Show tabs
+	$groups = array('interface','advanced');
+	$tab = ( isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 0 );
+	//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
+	show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME'] . "?ref=" . ( isset($_GET['ref']) ? clean_input($_GET['ref']) : $_SERVER['HTTP_REFERER']) );
+	
+	show_author_form($tab);
+	
+	lcm_page_end();
 
-lcm_page_start(_T('title_authorconf'));
-
-show_author_form();
-lcm_page_end();
+}
 
 ?>
