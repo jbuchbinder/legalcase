@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.17 2005/02/08 20:38:27 antzi Exp $
+	$Id: client_det.php,v 1.18 2005/02/08 20:43:52 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -101,14 +101,14 @@ if ($client > 0) {
 		$html = '<fieldset class="info_box">';
 		$html .= '<div class="prefs_column_menu_head">' . _T('client_subtitle_contacts') . "</div>\n";
 
-		$html .= '<table border="0" align="center" class="tbl_usr_dtl">' . "\n";
-		$html .= '<tr><th class="heading" colspan="2">' . "Contacts:" . '</th></tr>' . "\n";
+		$html .= '<table border="0" class="tbl_usr_dtl">' . "\n";
+		//$html .= '<tr><th class="heading" colspan="2">' . "Contacts:" . '</th></tr>' . "\n";
 
 		$i = 0;
 		foreach($contacts as $c) {
 			if (! ($hide_emails == 'yes' && $c['name'] == 'email_main' && $author_session['status'] != 'admin')) {
 				$html .= "\t<tr>";
-				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . "</td>";
+				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>";
 				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $c['value'] . "</td>";
 				$html .= "</tr>\n";
 				$i++;
