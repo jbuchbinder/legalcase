@@ -176,6 +176,71 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (12);
 	}
 
+	if ($lcm_db_version_current < 13) {
+		lcm_query("CREATE TABLE lcm_report (
+			id_report bigint(21) NOT NULL auto_increment,
+			title varchar(255) NOT NULL default '',
+			id_author bigint(21) NOT NULL default '0',
+			date_creation datetime NOT NULL default '0000-00-00 00:00:00',
+			date_update datetime NOT NULL default '0000-00-00 00:00:00',
+			PRIMARY KEY  (id_report),
+			KEY id_author (id_author))");
+		lcm_query("CREATE TABLE lcm_fields (
+			id_field bigint(21) NOT NULL auto_increment,
+			table_name varchar(255) NOT NULL default '',
+			field_name varchar(255) NOT NULL default '',
+			description varchar(255) NOT NULL default '',
+			PRIMARY KEY  (id_field))");
+		lcm_query("REPLACE INTO lcm_fields VALUES (1, 'lcm_case', 'title', 'Case: Title'),
+											(2, 'lcm_case', 'id_court_archive', 'Case: Court archive ID'),
+											(3, 'lcm_case', 'date_creation', 'Case: Creation date'),
+											(4, 'lcm_case', 'date_assignment', 'Case: Assignment date'),
+											(5, 'lcm_case', 'legal_reason', 'Case: Legal reason'),
+											(6, 'lcm_case', 'alledged_crime', 'Case: Alleged crime'),
+											(7, 'lcm_author', 'name_first', 'Author: First name'),
+											(8, 'lcm_author', 'name_middle', 'Author: Middle name'),
+											(9, 'lcm_author', 'name_last', 'Author: Last name'),
+											(10, 'lcm_author', 'date_creation', 'Author: Date created'),
+											(11, 'lcm_author', 'date_update', 'Author: Date updated')");
+		lcm_query("CREATE TABLE lcm_filter (
+			id_filter bigint(21) NOT NULL auto_increment,
+			title varchar(255) NOT NULL default '',
+			type enum('AND','OR') NOT NULL default 'AND',
+			id_author bigint(21) NOT NULL default '0',
+			date_creation datetime NOT NULL default '0000-00-00 00:00:00',
+			date_update datetime NOT NULL default '0000-00-00 00:00:00',
+			PRIMARY KEY  (id_filter),
+			KEY id_author (id_author))");
+		lcm_query("CREATE TABLE lcm_rep_cols (
+			id_column bigint(21) NOT NULL auto_increment,
+			id_report bigint(21) NOT NULL default '0',
+			id_field bigint(21) NOT NULL default '0',
+			order bigint(21) NOT NULL default '0',
+			header varchar(255) NOT NULL default '',
+			sort enum('asc','desc') default NULL,
+			total tinyint(1) NOT NULL default '0',
+			group enum('COUNT','SUM') default NULL,
+			PRIMARY KEY  (id_column),
+			KEY id_report (id_report),
+			KEY id_field (id_field),
+			KEY order (order))");
+		lcm_query("CREATE TABLE lcm_rep_filters (
+			id_report bigint(21) NOT NULL default '0',
+			id_filter bigint(21) NOT NULL default '0',
+			type enum('AND','OR') NOT NULL default 'AND',
+			KEY id_report (id_report),
+			KEY id_filter (id_filter))");
+		lcm_query("CREATE TABLE lcm_filter_conds (
+			id_filter bigint(21) NOT NULL default '0',
+			id_field bigint(21) NOT NULL default '0',
+			order bigint(21) NOT NULL default '0',
+			type tinyint(2) NOT NULL default '0',
+			value varchar(255) default NULL,
+			KEY id_filter (id_filter),
+			KEY id_field (id_field),
+			KEY order (order))");
+		upgrade_db_version (13);
+	}
 
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.999) {
