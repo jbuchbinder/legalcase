@@ -43,29 +43,15 @@ function show_author_form() {
 	<input type="hidden" name="author_ui_modified" value="yes"/>
 	<input type="hidden" name="referer" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>"/>
 
-          <table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
-            <tr>
-              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change user interface preferences</h4></td>
-            </tr>
-	    <tr>
-              <td align="right" valign="top">Theme:</td>
-              <td align="left" valign="top">
-			  	<input type="hidden" name="old_theme" id="old_theme" value="<?php echo $prefs['theme'] ?>" />
-			  	<select name="sel_theme" class="sel_frm" id="sel_theme">
-<?php
-	$themes = get_theme_list();
-	foreach ($themes as $t) {
-		$selected = ($t == $prefs['theme'] ? " selected='selected'" : '');
-		echo "<option value='" . $t . "'" . $selected . ">" . $t .  "</option>\n";
-	}
-?>
-                </select></td>
-            </tr>
+	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
+		<tr>
+			<td colspan="2" align="center" valign="middle" class="heading"><h4>Interface</h4></td>
+		</tr>
 <?php
 	if ($GLOBALS['all_langs']) {
 		echo "
 			<tr>
-				<td align=\"right\" valign=\"top\">Language:</td>
+				<td align=\"right\" valign=\"top\">" . _T('authorconf_input_language') . "</td>
 				<td align=\"left\" valign=\"top\">
 					<input type='hidden' name='old_language' value='" .  $author_session['lang'] . "'/>\n";
 
@@ -76,20 +62,37 @@ function show_author_form() {
 	}
 ?>
 	    <tr>
-	    	<td align="right" valign="top">Select screen type:</td>
-		<td align="left" valign="top">
-		<input type="hidden" name="old_screen" id="old_screen" value="<?php echo $prefs['sel_screen'] ?>" />
-			<select name="sel_screen" class="sel_frm">
+	    	<td align="right" valign="top"><?php echo _T('authorconf_info_screen') ?></td>
+			<td align="left" valign="top">
+				<input type="hidden" name="old_screen" id="old_screen" value="<?php echo $prefs['sel_screen'] ?>" />
+				<select name="sel_screen" class="sel_frm">
 <?php
 	$screen_modes = array("wide","narrow");
 	foreach ($screen_modes as $scrm) {
 		$selected_mode = ($scrm == $prefs['screen'] ? " selected='selected'" : '');
-		echo "<option value='" . $scrm . "'" . $selected_mode . ">" . _T('userconf_screen_' . $scrm) . "</option>\n";
+		echo "<option value='" . $scrm . "'" . $selected_mode . ">" 
+			. _T('authorconf_input_screen_' . $scrm) 
+			. "</option>\n";
 	}
 ?>
-			</select>
-		</td>
-	    </tr>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" valign="top">Theme:</td>
+			<td align="left" valign="top">
+				<input type="hidden" name="old_theme" id="old_theme" value="<?php echo $prefs['theme'] ?>" />
+				<select name="sel_theme" class="sel_frm" id="sel_theme">
+<?php
+	$themes = get_theme_list();
+	foreach ($themes as $t) {
+		$selected = ($t == $prefs['theme'] ? " selected='selected'" : '');
+		echo "<option value='" . $t . "'" . $selected . ">" . _T('authorconf_input_theme_' . $t) . "</option>\n";
+	}
+?>
+				</select>
+			</td>
+		</tr>
             <tr>
               <td align="right" valign="top">Font size:</td>
               <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
@@ -301,7 +304,7 @@ if ($author_ui_modified || $author_password_modified)
 	} else show_changes();
 
 
-lcm_page_start("Update profile");
+lcm_page_start(_T('title_my_preferences'));
 
 show_author_form();
 lcm_page_end();
