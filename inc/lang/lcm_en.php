@@ -42,6 +42,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'clients' => 'Clients',
 'court_archive_id' => 'Court archive ID',
 'creation_date' => 'Creation date',
+'currency_default_format' => '€',
 
 
 // D

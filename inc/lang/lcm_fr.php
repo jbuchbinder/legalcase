@@ -27,6 +27,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // B
 'button_next' => 'Suivant',
 'button_reload_page' => 'Recharcher cette page',
+'button_reset' => '<NEW>Reset',
 'button_validate' => 'Valider',
 
 
@@ -41,6 +42,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'clients' => '<NEW>Clients',
 'court_archive_id' => '<NEW>Court archive ID',
 'creation_date' => '<NEW>Creation date',
+'currency_default_format' => '€',
 
 
 // D
@@ -60,6 +62,13 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_month_8' => 'Août',
 'date_month_9' => 'Septembre',
 'date_time_format' => '<NEW>Y-m-d H:i:s',
+'date_wday_1' => '<NEW>Monday',
+'date_wday_2' => '<NEW>Tuesday',
+'date_wday_3' => '<NEW>Wednesday',
+'date_wday_4' => '<NEW>Thursday',
+'date_wday_5' => '<NEW>Friday',
+'date_wday_6' => '<NEW>Saturday',
+'date_wday_7' => '<NEW>Sunday',
 'description' => '<NEW>Description',
 'directories_bad_rights' => '<NEW>The following directories do not have write permission',
 'directories_bad_rights_cause' => '<NEW>To change this, use your SSH/SFTP client in order to set access permissions for each of these directories. The procedure is detailed in the install guide.',
@@ -87,6 +96,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // I
+'info_followup_involving' => '<NEW>Involving:',
+'info_followup_to_case' => '<NEW>To case:',
 'info_free_software' => '<NEW>Free software <a href=\'http://www.lcm.ngo-bg.org/en\' class=\'prefs_normal_lnk\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\' class=\'prefs_normal_lnk\'>GPL licence</a>.',
 'info_greetings' => '<NEW>Good day',
 'info_more_than_five' => '<NEW>(More than 5 characters)',
@@ -101,7 +112,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_connection_login' => '<NEW>Connection login',
 'install_connection_password' => '<NEW>Connection password',
 'install_connection_succeeded' => '<NEW>Connection succeeded.',
-'install_create_new_database' => '<NEW><B>Create</b> a new database',
+'install_create_new_database' => '<NEW>Create a new database',
 'install_database_address' => '<NEW>Database address',
 'install_database_install_failed' => '<NEW>Go back to the previous page, select another database or create a new one. Verify the information provided by your host.',
 'install_database_installed_ok' => '<NEW>Your database is now ready to use.',
@@ -190,7 +201,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_title_new_pass' => '<NEW>New password',
 'pass_title_personal_identifier' => '<NEW>Personal identifiers',
 'pass_title_register' => '<NEW>Register with the site',
-'pass_warning_already_registered' => '<NEW>Your are already registered. If you have lost your password, click on "password forgotten" from the main page.',
+'pass_warning_already_registered' => '<NEW>You are already registered. If you have lost your password, click on "password forgotten" from the main page.',
 'pass_warning_invalid_email' => '<NEW><b>Error:</b> the e-mail <tt>@user_email@</tt> is not valid!',
 'pass_warning_mail_failure' => '<NEW>Mail problem: the identifier could not be sent. Please contact the site administrator by e-mail (@email_admin@).',
 'pass_warning_no_action' => '<NEW>There\'s nothing I can do. How about coffee?',
