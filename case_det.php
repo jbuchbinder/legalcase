@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.51 2004/12/17 12:07:55 antzi Exp $
+	$Id: case_det.php,v 1.52 2004/12/17 12:13:34 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -28,9 +28,8 @@ include_lcm('inc_filters');
 $case = intval($_GET['case']);
 
 if ($case > 0) {
-	$q="SELECT id_case, title, id_court_archive, FROM_UNIXTIME(date_creation) AS date_creation,
-			FROM_UNIXTIME(date_assignment) AS date_assignment, legal_reason, alledged_crime,
-			status, public, pub_write
+	$q="SELECT id_case, title, id_court_archive, date_creation, date_assignment,
+			legal_reason, alledged_crime, status, public, pub_write
 		FROM lcm_case
 		WHERE id_case=$case";
 
