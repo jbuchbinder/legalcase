@@ -41,14 +41,14 @@ if ($case>0) {
 		<tr>
 			<td><input type="checkbox" name="orgs[]" value="<?php echo $row['id_org']; ?>"></td>
 			<td><?php echo $row['name']; ?></td>
-			<td><a href="edit_org.php?org=<?php echo $row['id_org']; ?>">Edit</a></td>
+			<td><a href="edit_org.php?org=<?php echo $row['id_org']; ?>" class="content_link">Edit</a></td>
 		</tr>
 <?php
 	}
 ?>
 		<tr>
 			<td></td>
-			<td><a href="edit_org.php">Add new organisation</a></td>
+			<td><a href="edit_org.php" class="content_link">Add new organisation</a></td>
 			<td></td>
 		</tr>
 	</table>
