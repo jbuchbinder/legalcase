@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.51 2005/01/27 18:18:48 mlutfy Exp $
+	$Id: edit_case.php,v 1.52 2005/02/01 16:35:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -83,6 +83,8 @@ if (empty($_SESSION['errors'])) {
 // Start page and title
 if ($existing) lcm_page_start(_T('title_case_edit'));
 else lcm_page_start(_T('title_case_new'));
+
+echo lcm_help("case_edit");
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
