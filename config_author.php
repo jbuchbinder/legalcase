@@ -173,11 +173,11 @@ function show_author_form() {
             <tr>
               <td colspan="2" align="center" valign="middle" class="separate">&nbsp;</td>
             </tr>
-            <tr> 
+            <tr>
               <td colspan="2" align="right" valign="top" class="separate">&nbsp;</td>
             </tr>
-            <tr> 
-              <td colspan="2" align="center" valign="middle"> 
+            <tr>
+              <td colspan="2" align="center" valign="middle">
                 <input name="submit" type="submit" class="search_form_btn" id="submit" value="Save changes" /></td>
             </tr>
           </table -->
@@ -216,27 +216,13 @@ function apply_author_ui_change() {
 	if ($sel_theme == $prefs['theme'] && $sel_theme <> $old_theme)
 		array_push($log, "Theme set to " . $sel_theme . ", was " . $old_theme . ".");
 
-	//
-	// Show changes on screen
-	//
-	if (! empty($log)) {
-		echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
-		echo "<div>Changes made:</div>\n";
-		echo "<ul>";
-
-		foreach ($log as $line) {
-			echo "<li>" . $line . "</li>\n";
-		}
-
-		echo "</ul>\n";
-		echo "</div>\n";
-	}
 }
 
 function apply_author_password_change() {
 	global $author_session;
 	global $lcm_session;
 	global $prefs;
+	global $log;
 
 	// From the form
 	global $usr_old_passwd;
@@ -257,6 +243,10 @@ function apply_author_password_change() {
 	// - verify if old password matches
 
 
+}
+
+function show_changes() {
+	global $log;
 	//
 	// Show changes on screen
 	//
@@ -272,7 +262,6 @@ function apply_author_password_change() {
 		echo "</ul>\n";
 		echo "</div>\n";
 	}
-
 }
 
 if ($author_ui_modified)
@@ -284,6 +273,7 @@ if ($author_password_modified)
 if ($author_ui_modified || $author_password_modified) {
 	header('Retry-After: 10');
 	header('Location: ' . $referer);
+	show_changes();
 	exit;
 }
 
