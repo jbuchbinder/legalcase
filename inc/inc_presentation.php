@@ -244,7 +244,7 @@ if($prefs['screen'] == "wide")
 		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
 			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_exec-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_profile') . "</div>
-			<p class=\"prefs_column_text\"><strong>Name: </strong>"
+			<p class=\"prefs_column_text\">"
 				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
 				. $author_session['name_first'] . ' '
 				. $author_session['name_middle'] . ' '
@@ -285,7 +285,7 @@ else
 {
 	//data from the refs_column - user name, links [My preferences] & [Logout]
 		echo "<div id=\"user_info_box_large_screen\">";
-		echo "<p class=\"prefs_column_text\"><strong>Name: </strong><br />"
+		echo "<p class=\"prefs_column_text\">"
 				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
 				. $author_session['name_first'] . ' '
 				. $author_session['name_middle'] . ' '
