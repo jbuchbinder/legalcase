@@ -161,18 +161,13 @@ if ($pass_forgotten == 'yes') {
 			include_lcm('inc_access');
 			include_lcm('inc_mail');
 
-			if (! $pass) {
-				$pass = create_random_password(8, $username);
-			} else if ($pass != $pass2) {
-				// TODO: generate error
-			}
-
 			$username = get_unique_username($username);
+			$pass = create_random_password(8, $username);
 			$mdpass = md5($pass);
-			// FIXME: Probably better to put "new" as type (not external)
-			// so that we can delete authors who try twice to subscribe (see above)
-			lcm_query("INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, status) "
-				. "VALUES ('".addslashes($name_first)."', '".addslashes($name_middle)."', '".addslashes($name_last)."', '$username', '$mdpass', 'external')");
+
+			// TODO: If subscriptions moderated, send cookie + email to sysadmin
+			lcm_query("INSERT INTO lcm_author (name_first, name_last, username, password, status) "
+				. "VALUES ('".addslashes($name_first)."', '".addslashes($name_last)."', '$username', '$mdpass', 'normal')");
 
 			$id_author = lcm_insert_id();
 
@@ -221,11 +216,11 @@ if ($pass_forgotten == 'yes') {
 		echo "<table border='0'>\n";
 		echo "<tr>\n";
 		echo "<td><small><label for='name_first'>" . _T('enter_name_first') .  "</label></small></td>\n";
-		echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
+		// echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
 		echo "<td><small><label for='name_last'>" . _T('enter_name_last') . "</label></small></td>\n";
 		echo "</tr><tr>\n";
 		echo "<td><input type='text' id='name_first' name='name_first' class='formo' value='$name_first' size='20'></td>\n";
-		echo "<td><input type='text' id='name_middle' name='name_middle' class='formo' value='$name_middle' size='20'></td>\n";
+		// echo "<td><input type='text' id='name_middle' name='name_middle' class='formo' value='$name_middle' size='20'></td>\n";
 		echo "<td><input type='text' id='name_last' name='name_last' class='formo' value='$name_last' size='20'></td>\n";
 		echo "<tr>\n";
 		echo "</table>\n";
@@ -238,13 +233,18 @@ if ($pass_forgotten == 'yes') {
 		echo "<small>" . _T('info_more_than_three') . "</small><br>";
 		echo "<input type='text' id='username' name='username' class='formo' value=\"$username\" size='40'><p>\n";
 	
+		/*
 		echo "<b><label for='pass'>" . _T('login_password') . "</label></b><br>";
 		echo "<small>" . _T('pass_more_than_5_or_random')."</small><br>";
 		echo "<input type='password' id='pass' name='pass' class='formo' value=\"$pass\" size='40'><p>\n";
 
 		echo "<b><label for='pass2'>" . _T('login_password_confirm') . "</label></b><br>";
 		echo "<small>" . _T('info_password_confirm')."</small><br>";
-		echo "<input type='password' id='pass2' name='pass2' class='formo' value=\"$pass\" size='40'></fieldset><p>\n";
+		echo "<input type='password' id='pass2' name='pass2' class='formo' value=\"$pass\" size='40'><p>\n";
+		*/
+
+		echo "<small>" . "Your password will be sent to you by e-mail." .  "</small>\n";
+		echo "</fieldset>\n";
 
 		echo "<div align=\"right\"><input type=\"submit\" name='Validate' class='fondl' value=\""._T('button_validate')."\" /></div>";
 		echo "</form>\n";
