@@ -21,6 +21,46 @@ if ($row = mysql_fetch_array($result)) {
 	echo 'Legal reason: ' . $row['legal_reason'] . "<br>\n";
 	echo 'Alledged crime: ' . $row['alledged_crime'] . "<br>\n";
 	echo 'Status: ' . $row['status'] . "<br>\n";
+
+	?><h2>Clients in this case:</h2><br>
+
+	<table border>
+	<caption>Organizations:</caption>
+	<?php
+
+	// Show case organization(s)
+	$q="SELECT * FROM lcm_case_client_org,lcm_org WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
+
+	// Do the query
+	$result = lcm_query($q);
+
+	while ($row = mysql_fetch_array($result)) {
+		echo '<tr><td>' . $row['name'] . "</td>\n";
+		echo '<td><a href="edit_org.php?org=' . $row['id_org'] . "\">Edit</a></td></tr>\n";
+	}
+
+	?><tr><td>Add organization</td><td></td></tr>
+	</table><br>
+
+	<table border>
+	<caption>Clients:</caption>
+	<?php
+
+	// Show case client(s)
+	$q="SELECT * FROM lcm_case_client_org,lcm_client WHERE id_case=$case";
+	$q.=" AND lcm_case_client_org.id_client=lcm_client.id_client";
+
+	// Do the query
+	$result = lcm_query($q);
+
+	while ($row = mysql_fetch_array($result)) {
+		echo '<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last'] . "</td>\n";
+		echo '<td><a href="edit_client.php?client=' . $row['id_client'] . "\">Edit</a></td></tr>\n";
+	}
+	?><tr><td>Add client</td><td></td></tr>
+	</table><br>
+	<?php
+
 } else die("There's no such case!")
 
 

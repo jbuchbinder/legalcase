@@ -65,7 +65,8 @@ lcm_page_start("Edit follow-up");
 <INPUT type="hidden" name="id_case" value="<?php echo $fu_data['id_case']; ?>">
 <tr><td>Start date:</td><td><INPUT name="date_start" value="<?php echo $fu_data['date_start']; ?>">
 <?php echo f_err('date_start',$errors); ?></td></tr>
-<tr><td>End date:</td><td><INPUT name="date_end" value="<?php echo $fu_data['date_end']; ?>"></td></tr>
+<tr><td>End date:</td><td><INPUT name="date_end" value="<?php echo $fu_data['date_end']; ?>">
+<?php echo f_err('date_end',$errors); ?></td></tr>
 <tr><td>Type:</td><td><SELECT name="type" size="1"><OPTION selected><?php echo $fu_data['type']; ?></OPTION>
 <?php
 foreach($types as $item) {
