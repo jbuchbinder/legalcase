@@ -16,62 +16,65 @@
 
 	You should have received a copy of the GNU General Public License along 
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: all_cases.php,v 1.8 2005/02/15 08:04:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
-if ($GLOBALS['author_session']['status'] != 'admin') die("You don't have the right to list all cases!");
+if ($GLOBALS['author_session']['status'] != 'admin') 
+	die("You don't have the right to list all cases!");
 
 $q = "SELECT DISTINCT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author
 		WHERE (lcm_case.id_case=lcm_case_author.id_case";
 
+error_reporting(E_ALL);
+$find_case_strinr = $_REQUEST['find_case_string'];
+
+lcm_page_start("Case archives");
+
 // Add search criteria if any
-if (strlen($find_case_string)>1) {
+if (strlen($find_case_string) > 1) {
 	$q .= " AND ((lcm_case.title LIKE '%$find_case_string%')
 				OR (lcm_case.status LIKE '%$find_case_string%'))";
-	lcm_page_start("Cases, containing '$find_case_string':");
-} else {
-	lcm_page_start("List of all cases");
 }
 
 $q .= ")";
 
-// Do the query
 $result = lcm_query($q);
-
-// Get the number of rows in the result
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
-if ($list_pos>=$number_of_rows) $list_pos = 0;
+$list_pos = (isset($_REQUEST['list_pos']) ? $_REQUEST['list_pos'] : 0);
+
+if ($list_pos >= $number_of_rows)
+	$list_pos = 0;
 
 // Position to the page info start
-if ($list_pos>0)
+if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
 
+echo '<form name="frm_find_case" class="search_form" action="all_cases.php" method="post">' . "\n";
+echo _T('input_search_case') . "&nbsp;";
+echo '<input type="text" name="find_case_string" size="10" class="search_form_txt" value="' .  $find_case_string . '" />';
+echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
+echo "</form>\n";
+
 ?>
 
-<form name="frm_find_case" class="search_form" action="all_cases.php" method="post">
-	Find:&nbsp;<input type="text" name="find_case_string" size="10" class="search_form_txt"<?php
-
-//	if (isset($find_author_string)) echo " value='$find_author_string'";
-	echo " value='$find_case_string'";
-
-?> />&nbsp;<input type="submit" name="submit" value="Search" class="search_form_btn" />
-</form>
-
-<!-- [ML:FIXME] I'm not sure about the CSS classes -->
-<table border='0' align='center' class='tbl_usr_dtl' width='99%'>
-	<tr><th class='heading'>Description</th>
-		<th class='heading'>Status</th>
-		<th colspan="2" class='heading'>Actions</th>
+<table border="0" align="center" class="tbl_usr_dtl" width="99%">
+	<tr><th class="heading">Description</th>
+		<th class="heading">Status</th>
+		<th colspan="2" class="heading">Actions</th>
 	</tr>
+
 <?php
+
 // Process the output of the query
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show case title
