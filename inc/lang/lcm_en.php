@@ -16,6 +16,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'add_and_go_to_details' => 'Add &amp; go to details',
 'add_and_open_new' => 'Add &amp; open new',
 'add_user_case' => 'Add user to the case',
+'archives_tab_all_cases' => 'All cases',
+'archives_tab_export' => 'Export',
+'archives_tab_import' => 'Import',
 'author_id' => 'Author ID',
 'authorconf_button_change_password' => 'Change password',
 'authorconf_button_update_preferences' => 'Save preferences',
@@ -43,6 +46,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_subtitle_advanced' => 'Advanced features',
 'authorconf_subtitle_interface' => 'Interface',
 'authorconf_subtitle_password' => 'Change password',
+'authorconf_tab_advanced' => 'Advanced',
+'authorconf_tab_interface' => 'Interface',
 'authoredit_input_username' => 'Username:',
 'authoredit_subtitle_personalinfo' => 'Personal information',
 
@@ -315,9 +320,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // M
 'menu_admin' => 'Administration',
 'menu_admin_archives' => 'Archives',
-'menu_admin_export_db' => 'Export DB',
 'menu_admin_filters' => 'Filters',
-'menu_admin_import_db' => 'Import DB',
 'menu_admin_keywords' => 'Keywords',
 'menu_admin_reports' => 'Reports',
 'menu_admin_siteconf' => 'Site configuration',
@@ -458,6 +461,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // T
+'title_archives' => 'Archives',
 'title_authorconf' => 'My preferences',
 'title_case_details' => 'Case details:',
 'title_case_edit' => 'Edit case details',
