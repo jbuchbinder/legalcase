@@ -96,7 +96,7 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	echo "<body>\n";
 }
 
-function lcm_page_start($title = "") {
+function lcm_page_start($title = "", $css_files = "") {
 	// [ML] Yes, too many globals. I will clean this later.
 	global $couleur_foncee; // dark color
 	global $couleur_claire; // light
@@ -115,7 +115,7 @@ function lcm_page_start($title = "") {
 	$clean_link->delVar('set_disp');
 	$clean_link->delVar('set_ecran');
 
-	lcm_html_start($title); // , $onLoad);
+	lcm_html_start($title, $css_files);
 	
 	// XXX TODO
 	// most of the header html after <head></head> should go here
