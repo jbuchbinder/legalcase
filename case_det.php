@@ -17,6 +17,8 @@
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$ Id: case_det.php Exp $
 */
 
 include('inc/inc.php');
@@ -63,16 +65,16 @@ if ($case > 0) {
 		// Do the query
 		$authors = lcm_query($q);
 		// Show the results
-		
+
 		//echo "<ul class=\"simple_list\">\n";
-		
+
 		while ($user = lcm_fetch_array($authors)) {
 			if ($admin) echo '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
 			echo clean_output($user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last']);
 			if ($admin) echo '</a>';
 			echo '; ';
 		}
-		
+
 		//echo "</ul>";
 		
 		//Add user to the case link was here
@@ -126,15 +128,15 @@ if ($case > 0) {
 				echo '<td><a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">' . _T('edit') . '</a></td>';
 			echo "</tr>\n";
 		}
-		
+
 		echo "\t\t</table>";
-		
+
 		if ($add)
 			echo "<br /><a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('add_organisation_s') . "</a><br />";
-		
+
 		echo "</td>\n<td align=\"left\" valign=\"top\" width=\"50%\">";
 		//second table
-			
+
 		echo "<table border='0' class='tbl_usr_dtl'>\n";
 		echo "\t\t<th class='heading'>" . _T('clients') . ":</th>\n\t\t<th class='heading'>&nbsp;</th>";
 
@@ -153,18 +155,18 @@ if ($case > 0) {
 				echo '<td><a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">' . _T('edit') . '</a></td>';
 			echo "</tr>\n";
 		}
-		
+
 		echo "\t\t</table>\n";
-		
+
 		if ($add)
 			echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('add_client_s') . "</a><br />\n";
 
 		echo "</td></tr></table>";
 
 	} else die(_T('error_no_such_case'));
-	
+
 	echo "</p><br /></fieldset>";
-	
+
 	echo "<fieldset class=\"info_box\"><div class=\"prefs_column_menu_head\">" . _T('case_followups') . "</div><p class=\"normal_text\">\n";
 	echo "\n\n\t\n\t<table border='0' class='tbl_usr_dtl' width='99%'>
 	<tr><th class='heading'>" . _T('date') . "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
@@ -177,24 +179,27 @@ if ($case > 0) {
 	// Do the query
 	$result = lcm_query($q);
 
+	// Set the length of short followup title
+	$title_length = (($prefs['screen'] == "wide") ? 60 : 30);
+
 	// Process the output of the query
 	while ($row = lcm_fetch_array($result)) {
 		// Show followup
 		echo '<tr><td>' . clean_output(date(_T('date_format_short'),strtotime($row['date_start']))) . '</td>';
 		echo '<td>' . clean_output($row['type']) . '</td>';
-		if (strlen($row['description'])<30) $short_description = $row['description'];
-		else $short_description = substr($row['description'],0,30) . '...';
+		if (strlen($row['description'])<$title_length) $short_description = $row['description'];
+		else $short_description = substr($row['description'],0,$title_length) . '...';
 		echo '<td>' . clean_output($short_description) . '</td>';
 		if ($edit)
 			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '" class="content_link">' . _T('Edit') . '</a></td>';
 		echo "</tr>\n";
 	}
-	
+
 	echo "\t</table>\n";
-	
+
 	if ($add)
 		echo "<br /><a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a><br /><br />\n";
-	
+
 	echo "</p></fieldset>";
 		
 	lcm_page_end();
