@@ -137,7 +137,7 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
 							<li><a href=\"edit_client.php\" class=\"main_nav_btn\">New Client</a></li>
 							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>
-							<li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li>\n";
+							<!-- li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li-->\n";
 	echo "
 						</ul>
 					</div>\n";
@@ -245,11 +245,12 @@ function lcm_page_end($credits = '') {
 <!-- Start of \"prefs_column\" content -->
 			<div class=\"prefs_column_menu_head\">Profile</div>
 			<p class=\"prefs_column_text\"><strong>Name: </strong>"
+				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\">"
 				. $author_session['name_first'] . ' '
 				. $author_session['name_middle'] . ' '
 				. $author_session['name_last']
-				. "<br /><br />
-			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ logout ]</a>
+				. "</a><br /><br />
+			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ My preferences ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ Logout ]</a>
 			</p>
 			<div class=\"prefs_column_menu_head\">Search <img height='24' width='24' border='0' src=\"images/lcm/search.gif\" /></div>
 			<p class=\"prefs_column_text\">
