@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.12 2005/01/07 10:27:11 makaveev Exp $
+	$Id: edit_author.php,v 1.13 2005/01/10 12:11:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -103,10 +103,14 @@ else lcm_page_start("New author");
 		<tr><td align="right" valign="top">Last name:</td>
 			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
 		</tr>
-		<!-- tr><td align="right" valign="top">E-mail:</td>
-			<td align="left" valign="top" -->
 <?php
+
+	//
+	// Contacts (e-mail, phones, etc.)
+	//
+
 	$cpt = 0;
+	$emailmain_exists = false;
 	$contacts = get_contacts('author', $usr['id_author']);
 
 	foreach ($contacts as $c) {
@@ -126,11 +130,24 @@ else lcm_page_start("New author");
 		echo f_err('email', $errors) . "\n";
 
 		if ($c['name'] != 'email_main')
-			//echo '<acronym title="Show icon with garbage bin to delete the contact?">Del?</acronym>';
 			echo "&nbsp;<img src=\"images/jimmac/stock_trash-16.png\" width=\"16\" height=\"16\" alt=\"Delete?\" title=\"Delete?\" />&nbsp;<input type=\"checkbox\" name=\"del_contact[]\" />";
+		else
+			$emailman_exists = true;
 
 		echo "</td>\n</tr>\n";
+		$cpt++;
+	}
 
+	if (! $emailman_exists) {
+		echo '<tr><td align="right" valign="top">' . _T("kw_contacts_emailmain_title") . "\n";
+		echo '<td align="left" valign="top">';
+		echo '<input name="contact_type[]" id="contact_type_' . $cpt . '" '
+			. 'type="hidden" value="email_main" />' . "\n";
+
+		echo '<input name="contact_value[]" id="contact_value_' . $cpt . '" type="text" '
+			. 'class="search_form_txt" size="35" value=""/>&nbsp;';
+		
+		echo "</td>\n</tr>\n";
 		$cpt++;
 	}
 ?>
