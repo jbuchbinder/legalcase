@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.119 2005/03/22 15:21:18 antzi Exp $
+	$Id: case_det.php,v 1.120 2005/03/22 16:50:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -171,11 +171,12 @@ if ($case > 0) {
 					echo _T('case_input_stage') . "&nbsp;" . clean_output($row['stage']) . "<br />\n";
 				}
 
-				echo _T('public') . ': ' . _T('Read') . '=';
-				echo ($row['public'] ? 'Yes' : 'No');
-				echo ', ' . _T('Write') . '=';
-				echo ($row['pub_write'] ? 'Yes' : 'No');
-				echo "</p><br /><br />\n";
+				echo _Ti('case_input_collaboration');
+				echo "<ul style='padding-top: 1px; margin-top: 1px;'>";
+				echo "<li>" . _Ti('case_input_collaboration_read') . _T('info_' . ($row['public'] ? 'yes' : 'no')) . "</li>\n";
+				echo "<li>" . _Ti('case_input_collaboration_write') . _T('info_' . ($row['pub_write'] ? 'yes' : 'no')) . "</li>\n";
+				echo "</ul>\n";
+				echo "</p>\n";
 		
 				if ($edit && $modify)
 					echo '<p><a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a></p>';
