@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.181 2005/03/22 23:51:51 antzi Exp $
+	$Id: inc_presentation.php,v 1.182 2005/03/23 09:34:29 mlutfy Exp $
 */
 
 //
@@ -282,9 +282,9 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	include_lcm('inc_calendar');
 	$now = date('Y-m-d');
 
-	echo "<table><tr><td>\n"; // Temporary? [ML]
+	echo "<table border='0' align='center'><tr><td>\n"; // Temporary? [ML]
 	echo http_calendrier_agenda(mois($now), annee($now), jour($now), mois($now), annee($now), false, 'calendar.php');
-	echo "</table>\n";
+	echo "</td></tr></table>\n";
 
 	echo "
 					</div>\n";
