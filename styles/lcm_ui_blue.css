@@ -164,18 +164,17 @@ td.tbl_cont_light {
 /* Update profile form */
 
 table.tbl_usr_dtl {
-	border-left: 1px solid #6e8595;
+	/* border-left: 1px solid #6e8595; */
 	border-top: 1px solid #6e8595;
+	/* border-right: 1px solid #6e8595; */
 }
 
 table.tbl_usr_dtl td {
-	border-right: 1px solid #6e8595;
 	border-bottom: 1px solid #6e8595;
 	color: #036;
 }
 
 table.tbl_usr_dtl th {
-	border-right: 1px solid #6e8595;
 	border-bottom: 1px solid #6e8595;
 }
 

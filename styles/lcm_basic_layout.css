@@ -72,7 +72,7 @@ body {
 
 #user_info_box_large_screen {
 	position: absolute;
-	top: 5px;
+	top: 0px;
 	right: 10px;
 	width: 250px;
 	text-align: right;
@@ -248,7 +248,8 @@ h3.content_head {
 	text-transform: uppercase;
 	text-align: left;
 	margin: 0px 0px 5px 0px;
-	padding: 2px 0px 2px 0px;
+	padding: 2px 2px 2px 5px;
+	width: 99%;
 }
 
 h4 {
@@ -268,7 +269,12 @@ td.tbl_head, th.tbl_head {
 }
 
 table.tbl_usr_dtl td, table.tbl_usr_dtl th{
-	padding: 2px;
+	padding: 3px;
+}
+
+table.tbl_usr_dtl, table.tbl_data {
+	border-collapse: collapse;
+	/* border-collapse: separate; */
 }
 
 td.heading, th.heading {
@@ -295,6 +301,10 @@ small.sm_11 {
 
 ul.simple_list li {
 	
+}
+
+ul.wo_blt li {
+	list-style-type: none;
 }
 
 a.add_lnk {
@@ -352,8 +362,8 @@ a.prefs_logout {
 }
 
 a.prefs_logout, a.prefs_myprefs, a.run_lnk, a.edit_lnk, a.create_new_lnk, a.add_lnk {
-	display: inline;
-	clear:  both;
+	/* display: inline; */
+	/* clear: right; */
 }
 
 /* Go to page bar */

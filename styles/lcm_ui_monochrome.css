@@ -159,12 +159,12 @@ td.tbl_cont_light {
 /* Update profile form */
 
 table.tbl_usr_dtl {
-	border-left: 1px solid #ccc;
 	border-top: 1px solid #ccc;
+	/* border-right: 1px solid #ccc; */
+	/* border-left: 1px solid #ccc; */
 }
 
 table.tbl_usr_dtl td, table.tbl_usr_dtl th {
-	border-right: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
 

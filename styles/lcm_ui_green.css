@@ -145,12 +145,12 @@ td.tbl_cont_light {
 /* Update profile form */
 
 table.tbl_usr_dtl {
-	border-left: 1px solid #996;
+	/* border-left: 1px solid #996; */
 	border-top: 1px solid #996;
+	/* border-right: 1px solid #996; */
 }
 
 table.tbl_usr_dtl td, table.tbl_usr_dtl th {
-	border-right: 1px solid #996;
 	border-bottom: 1px solid #996;
 }
 
