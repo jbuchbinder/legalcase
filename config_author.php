@@ -22,6 +22,9 @@
 include('inc/inc.php');
 
 function read_author_data() {
+	// We'll store author information here
+	global $usr;
+
 	// Get author information from database
 	$q = "SELECT * FROM lcm_author WHERE id_author=" . $GLOBALS['author_session']['id_author'];
 	$result = lcm_query($q);
@@ -31,6 +34,7 @@ function read_author_data() {
 function show_author_form() {
 	global $author_session;
 	global $prefs;
+	global $usr;
 
 	// TODO: Show author information
 
@@ -174,7 +178,7 @@ function apply_author_changes() {
 
 	// Show modifications made one finished
 	$log = array();
-	
+
 	//
 	// Change the user's language (done in inc.php, we only log the result)
 	//
