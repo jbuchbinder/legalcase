@@ -20,7 +20,8 @@ if ($case>0) {
 		if (!($row['public'] || allowed($case,'r'))) {
 			die("You don't have permission to view this case!");
 		}
-		$edit = allowed($case,'we');
+		$add = allowed($case,'w');
+		$edit = allowed($case,'e');
 		$admin = allowed($case,'a');
 
 		// Show case details
@@ -73,14 +74,14 @@ if ($case>0) {
 		// Do the query
 		$result = lcm_query($q);
 
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = lcm_fetch_array($result)) {
 			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . $row['name'] . "</a></td>\n<td>";
 			if ($edit)
 				echo '<a href="edit_org.php?org=' . $row['id_org'] . '">Edit</a>';
 			echo "</td></tr>\n";
 		}
 
-		if ($edit)
+		if ($add)
 			echo "<tr><td><a href=\"sel_org.php?case=$case\">Add organisation(s)</a></td><td></td></tr>";
 
 		?></table><br>
@@ -97,13 +98,13 @@ if ($case>0) {
 		// Do the query
 		$result = lcm_query($q);
 
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = lcm_fetch_array($result)) {
 			echo '<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last'] . "</td>\n<td>";
 			if ($edit)
 				echo '<a href="edit_client.php?client=' . $row['id_client'] . '">Edit</a>';
 			echo "</td></tr>\n";
 		}
-		if ($edit)
+		if ($add)
 			echo "<tr><td><a href=\"sel_client.php?case=$case\">Add client(s)</a></td><td></td></tr>";
 		?></table><br>
 		<?php
@@ -125,14 +126,14 @@ if ($case>0) {
 	$result = lcm_query($q);
 
 	// Process the output of the query
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = lcm_fetch_assoc($result)) {
 		// Show followup
 		echo '<tr><td>' . $row['date_start'] . '</td><td>' . $row['type'] . '</td><td>' . $row['description'] . '</td><td>';
 		if ($edit)
 			echo '<a href="edit_fu.php?followup=' . $row['id_followup'] . '">Edit</a>';
 		echo "</td></tr>\n";
 	}
-	if ($edit)
+	if ($add)
 		echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\">New followup</a></td><td></td></tr>\n";
 
 	?>
