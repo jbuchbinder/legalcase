@@ -523,7 +523,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 		$ret .= "</option>\n";
 	}
 
-	$ret .= "</select>\n";
+	$ret .= "</select>";
 
 	if ($table)
 		$ret .= "</td>\n";
@@ -538,7 +538,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 		$ret .= "<option" . $default . " value=\"" . $i . "\">" . $i . "</option>\n";
 	}
 
-	$ret .= "</select>\n";
+	$ret .= "</select>";
 
 	if ($table)
 		$ret .= "</td>\n";
