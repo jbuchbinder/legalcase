@@ -43,7 +43,7 @@ function fichier_session($id_session, $alea) {
 // Add a session for the specified author
 //
 function lcm_add_session($author, $id_session) {
-	$fichier_session = fichier_session($id_session, read_meta('alea_ephemere'));
+	$session_file = get_session_file($id_session, read_meta('alea_ephemere'));
 	$vars = array('id_author', 'name_first', 'name_middle', 'name_last', 'username', 'email', 'status', 'lang', 'ip_change', 'hash_env');
 
 	$texte = "<"."?php\n";
@@ -53,11 +53,11 @@ function lcm_add_session($author, $id_session) {
 	}
 	$texte .= "?".">\n";
 
-	if ($f = @fopen($fichier_session, "wb")) {
+	if ($f = @fopen($session_file, "wb")) {
 		fputs($f, $texte);
  		fclose($f);
 	} else {
-		lcm_log("CRITICAL: cannot write in $fichier_session, am I installed?");
+		lcm_log("CRITICAL: cannot write in $session_file, am I installed?");
 		@header("Location: lcm_test_dirs.php");
 		exit;
 	}
@@ -75,17 +75,17 @@ function verifier_session($id_session) {
 	// Test with the current alea
 	$ok = false;
 	if ($id_session) {
-		$fichier_session = fichier_session($id_session, read_meta('alea_ephemere'));
-		if (@file_exists($fichier_session)) {
-			include($fichier_session);
+		$session_file = get_session_file($id_session, read_meta('alea_ephemere'));
+		if (@file_exists($session_file)) {
+			include($session_file);
 			$ok = true;
 		}
 		else {
 			// Else, check with the previous alea
-			$fichier_session = fichier_session($id_session, read_meta('alea_ephemere_ancien'));
-			if (@file_exists($fichier_session)) {
+			$session_file = get_session_file($id_session, read_meta('alea_ephemere_ancien'));
+			if (@file_exists($session_file)) {
 				// Renouveler la session (avec l'alea courant)
-				include($fichier_session);
+				include($session_file);
 				supprimer_session($id_session);
 				ajouter_session($GLOBALS['author_session'], $id_session);
 				$ok = true;
@@ -106,11 +106,11 @@ function verifier_session($id_session) {
 // Delete a session
 //
 function delete_session($id_session) {
-	$session_file = fichier_session($id_session, read_meta('alea_ephemere'));
+	$session_file = get_session_file($id_session, read_meta('alea_ephemere'));
 	if (@file_exists($session_file)) {
 		@unlink($session_file);
 	}
-	$session_file = fichier_session($id_session, read_meta('alea_ephemere_ancien'));
+	$session_file = get_session_file($id_session, read_meta('alea_ephemere_ancien'));
 	if (@file_exists($session_file)) {
 		@unlink($session_file);
 	}
@@ -170,23 +170,23 @@ function zap_sessions($id_author, $zap) {
 	// Do not delete yourself by accident
 	// [ML] This does not seem necessary.
 	if ($s = $GLOBALS['lcm_session'])
-		$fichier_session = fichier_session($s, read_meta('alea_ephemere'));
+		$session_file = get_session_file($s, read_meta('alea_ephemere'));
 
 	$dir = opendir($dirname);
 	$t = time();
 	while(($item = readdir($dir)) != '') {
-		$chemin = "$dirname$item";
+		$fullname = "$dirname$item";
 		if (ereg("^session_([0-9]+_)?([a-z0-9]+)\.php$", $item, $regs)) {
 
 			// If it is an old session, we throw away
-			if (($t - filemtime($chemin)) > 48 * 3600)
-				@unlink($chemin);
+			if (($t - filemtime($fullname)) > 48 * 3600)
+				@unlink($fullname);
 
 			// If not, we test whether it is from the same author
 			else if ($regs[1] == $id_author.'_') {
 				$zap_num ++;
 				if ($zap)
-					@unlink($chemin);
+					@unlink($fullname);
 			}
 		}
 	}
@@ -197,6 +197,7 @@ function zap_sessions($id_author, $zap) {
 // Recognize a user authentified with php_auth
 // [ML] I think we can scrap this
 function verifier_php_auth() {
+	lcm_log("inc_session.php/verifier_php_auth: should be deprecated");
 	global $PHP_AUTH_USER, $PHP_AUTH_PW, $ignore_auth_http;
 	if ($PHP_AUTH_USER && $PHP_AUTH_PW && !$ignore_auth_http) {
 		$login = addslashes($PHP_AUTH_USER);
