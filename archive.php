@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.3 2005/02/24 16:22:12 mlutfy Exp $
+	$Id: archive.php,v 1.4 2005/02/28 14:09:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -73,39 +73,17 @@ echo '<input type="text" name="find_case_string" size="10" class="search_form_tx
 echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
 echo "</form>\n";
 
-?>
-
-<table border="0" align="center" class="tbl_usr_dtl" width="99%">
-	<tr><th class="heading">Description</th>
-		<th class="heading">Status</th>
-		<th colspan="2" class="heading">Actions</th>
-	</tr>
-
-<?php
-
 // Process the output of the query
-for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	// Show case title
-	echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+show_listcase_start();
 
-//	if (allowed($row['id_case'],'r'))
-		echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
-	echo highlight_matches(clean_output($row['title']),$find_case_string);
-//	if (allowed($row['id_case'],'r'))
-		echo '</a>';
-	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . highlight_matches(clean_output($row['status']),$find_case_string);
-	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-//	if (allowed($row['id_case'],'e'))
-		echo '<a href="edit_case.php?case=' . $row['id_case'] . '" class="content_link">Edit case</a>';
-	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-//	if (allowed($row['id_case'],'w'))
-//		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">Add followup</a>';
-	echo "</td></tr>\n";
+for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+	$action = '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">Add followup</a>';
+	show_listcase_item($row, $i, $action);
 }
 
+show_listcase_end();
+
 ?>
-</table>
-<!--p align='right'><a href="edit_case.php?case=0" class="content_link">Open new case</a></p-->
 
 <table border='0' align='center' width='99%' class='page_numbers'>
 	<tr><td align="left" width="15%"><?php
