@@ -134,15 +134,15 @@ function lcm_page_start($title = "", $css_files = "") {
 				<div id=\"navigation_menu_column\">
 				<!-- Start of navigation_menu_column content -->
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" />&nbsp;Main menu</div>
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" />&nbsp;"
+							. _T('menu_main') . "</div>
 						<ul id=\"nav_menu_list\">
-							<li><a href=\"listcases.php\" class=\"main_nav_btn\">Cases</a></li>
-							<!-- li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li -->
-							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
-							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">Organisations</a></li>
-							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>";
+							<li><a href=\"listcases.php\" class=\"main_nav_btn\">" . _T('menu_main_cases') . "</a></li>
+							<li><a href=\"listclients.php\" class=\"main_nav_btn\">" . _T('menu_main_clients') . "</a></li>
+							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">" . _T('menu_main_org') . "</a></li>
+							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">" . _T('menu_main_authors') . "</a></li>";
 							if($prefs['screen'] == "narrow") {
-								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li>\n";
+								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">" . _T('menu_main_preferences') . "</a></li>\n";
 							}
 	echo "
 						</ul>
@@ -151,25 +151,25 @@ function lcm_page_start($title = "", $css_files = "") {
 	if ($connect_status == 'admin') {
 		echo "		
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" />&nbsp;Administration</div>
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" alt=\"\" />&nbsp;" . _T('menu_admin') . "</div>
 						<ul id=\"nav_menu_list\">
-							<li><a href=\"config_site.php\" class=\"main_nav_btn\">Site configuration</a></li>
-							<li><a href=\"archives.php\" class=\"main_nav_btn\">Archives (<abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">not ready yet</abbr>)</a></li>
-							<li><a href=\"reports.php\" class=\"main_nav_btn\">Reports (<abbr title=\"Generate reports on all cases (admin only)\">not ready yet</abbr>)</a></li>
-							<li><a href=\"keywords.php\" class=\"main_nav_btn\">Keywords</a></li>
+							<li><a href=\"config_site.php\" class=\"main_nav_btn\">" . _T('menu_admin_siteconf') . "</a></li>
+							<li><a href=\"archives.php\" class=\"main_nav_btn\">" .  _T('menu_admin_archives') . " (<abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">not ready yet</abbr>)</a></li>
+							<li><a href=\"reports.php\" class=\"main_nav_btn\">" . _T('menu_admin_reports') . " (<abbr title=\"Generate reports on all cases (admin only)\">not ready yet</abbr>)</a></li>
+							<li><a href=\"keywords.php\" class=\"main_nav_btn\">" .  _T('menu_admin_keywords') . "</a></li>
 						</ul>
 					</div>\n";
 	}
 
 	echo "
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_insert_table-16.png\" />&nbsp;Calendar</div>
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_insert_table-16.png\" alt=\"\" />&nbsp;" . _T('menu_calendar') . "</div>
 						<p class=\"nav_column_text\">". format_date() ."</p>
 					</div>
 					<!-- [ML] Keeping this so that testers see what features
 					to expect, but I put the opacity low to insist that it is
 					not ready. Who knows whether it works in MSIE. -->
-					<div id=\"nav_menu_box\" style='-moz-opacity: 0.5; filter: alpha(opacity=50);'>
+					<div id=\"nav_menu_box\" style='-moz-opacity: 0.45; filter: alpha(opacity=45);'>
 						<div class=\"nav_column_menu_head\">Next 7 meetings (demo)</div>
 						<p style='font-size: 70%;'><b>This feature is not ready yet.</b></p>
 						<p class=\"nav_column_text\">
@@ -239,14 +239,14 @@ if($prefs['screen'] == "wide")
 {
 		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
-			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_exec-16.png\" />&nbsp;Profile</div>
+			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_exec-16.png\" />&nbsp;" . _T('menu_profile') . "</div>
 			<p class=\"prefs_column_text\"><strong>Name: </strong>"
 				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
 				. $author_session['name_first'] . ' '
 				. $author_session['name_middle'] . ' '
 				. $author_session['name_last']
 				. "</a><br /><br />
-			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ My preferences ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ Logout ]</a>
+			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ " .  _T('menu_profile_preferences') . " ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ " . _T('menu_profile_logout') . " ]</a>
 			</p>
 			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\" />&nbsp;Search</div>
 			<p class=\"prefs_column_text\">
