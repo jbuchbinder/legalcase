@@ -59,7 +59,7 @@ lcm_page_start("Edit client details");
 		<tr><td>Last name:</td>
 			<td><input name="name_last" value="<?php echo clean_output($client_data['name_last']); ?>"></td></tr>
 		<tr><td>Created on:</td>
-			<td><?php echo clean_output($client_data['date_creation']); ?></td></tr>
+			<td><?php echo clean_output(date(_T('date_format_short'),strtotime($client_data['date_creation']))); ?></td></tr>
 		<tr><td>Citizen number:</td>
 			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>"></td></tr>
 		<tr><td>Address:</td>
