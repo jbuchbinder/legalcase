@@ -176,7 +176,7 @@ function apply_conf_changes() {
 
 	if ($old_desc != $site_desc) {
 		write_meta('site_description', $site_desc);
-		array_push($log, "Description of site set to <tt>$site_desc</tt>, was <tt>$old_desc</tt>.");
+		array_push($log, "Description of site set to '<tt>$site_desc</tt>', was '<tt>$old_desc</tt>'.");
 	}
 
 	// Default language
