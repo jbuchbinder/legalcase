@@ -1,11 +1,12 @@
 <?php
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
+include_lcm('inc_acc');
+include_lcm('inc_filters');
 
 if ($case > 0) {
 	$q="SELECT id_case, title, id_court_archive, FROM_UNIXTIME(date_creation),
-			FROM_UNIXTIME(date_assignment), legal_reason, alledged_crime, 
+			FROM_UNIXTIME(date_assignment), legal_reason, alledged_crime,
 			status, public, pub_write
 		FROM lcm_case
 		WHERE id_case=$case";
@@ -41,13 +42,13 @@ if ($case > 0) {
 		// Show the results
 		while ($user = lcm_fetch_array($authors)) {
 			if ($admin) echo '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '">';
-			echo $user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last'];
+			echo clean_output($user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last']);
 			if ($admin) echo '</a>';
 			echo '; ';
 		}
 		if ($admin) echo '[<a href="sel_auth.php?case=' . $case . '">' . _T('add_user_case') . '</a>]';
 		echo "<br>\n";
-		echo _T('court_archive_id') . ': ' . $row['id_court_archive'] . "<br>\n";
+		echo _T('court_archive_id') . ': ' . clean_output($row['id_court_archive']) . "<br>\n";
 		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
 
 		// [ML] FIXME: Not very clear how this should work
@@ -56,14 +57,15 @@ if ($case > 0) {
 		else
 			echo _T('assignment_date') . _T('typo_column') . ' ' . "Click to assign (?)<br/>\n";
 
-		echo _T('legal_reason') . ': ' . $row['legal_reason'] . "<br>\n";
-		echo _T('alledged_crime') . ': ' . $row['alledged_crime'] . "<br>\n";
-		echo _T('status') . ': ' . $row['status'] . "<br>\n";
-		echo _T('public') . ': ';
-		if ($row['public'])
-			echo 'Yes';
-		else
-			echo 'No';
+		echo _T('legal_reason') . ': ' . clean_output($row['legal_reason']) . "<br>\n";
+		echo _T('alledged_crime') . ': ' . clean_output($row['alledged_crime']) . "<br>\n";
+		echo _T('status') . ': ' . clean_output($row['status']) . "<br>\n";
+		echo _T('public') . ': ' . _T('Read') . '=';
+		if ($row['public']) echo 'Yes';
+		else echo 'No';
+		echo ', ' . _T('Write') . '=';
+		if ($row['pub_write']) echo 'Yes';
+		else echo 'No';
 		echo "<br>\n";
 
 		echo '<h3>' . _T('case_clients') . ':</h3>';
@@ -78,7 +80,7 @@ if ($case > 0) {
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . $row['name'] . "</a></td>\n<td>";
+			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . clean_output($row['name']) . "</a></td>\n<td>";
 			if ($edit)
 				echo '<a href="edit_org.php?org=' . $row['id_org'] . '">' . _T('edit') . '</a>';
 			echo "</td></tr>\n";
@@ -98,7 +100,9 @@ if ($case > 0) {
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last'] . "</td>\n<td>";
+			echo '<tr><td>';
+			echo  clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last']);
+			echo "</td>\n<td>";
 			if ($edit)
 				echo '<a href="edit_client.php?client=' . $row['id_client'] . '">' . _T('edit') . '</a>';
 			echo "</td></tr>\n";
@@ -125,10 +129,12 @@ if ($case > 0) {
 	// Process the output of the query
 	while ($row = lcm_fetch_array($result)) {
 		// Show followup
-		echo '<tr><td>' . $row['date_start'] . '</td><td>' . $row['type'] . '</td><td>' . $row['description'] . '</td><td>';
+		echo '<tr><td>' . clean_output($row['date_start']) . '</td>';
+		echo '<td>' . clean_output($row['type']) . '</td>';
+		echo '<td>' . clean_output($row['description']) . '</td>';
 		if ($edit)
-			echo '<a href="edit_fu.php?followup=' . $row['id_followup'] . '">Edit</a>';
-		echo "</td></tr>\n";
+			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . '</a></td>';
+		echo "</tr>\n";
 	}
 	if ($add)
 		echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\">" . _T('new_followup') . "</a></td><td></td></tr>\n";
