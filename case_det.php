@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.80 2005/02/07 19:57:20 antzi Exp $
+	$Id: case_det.php,v 1.81 2005/02/07 20:06:49 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -251,7 +251,7 @@ if ($case > 0) {
 	echo "<th class='heading'>&nbsp;</th></tr>\n";
 
 	// Prepare query
-	$q = "SELECT id_followup,date_start,type,description
+	$q = "SELECT id_followup,date_start,date_end,type,description
 		FROM lcm_followup
 		WHERE id_case=$case";
 
