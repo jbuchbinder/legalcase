@@ -33,7 +33,7 @@ function highlight_matches($source, $match) {
 
 // Format the date according to the user's preferences or
 // the localised format
-function format_date($timestamp = '') {
+function format_date($timestamp = '', $format = '') {
 	// TODO: Check if the user specified a format
 
 	if (! is_numeric($timestamp)) {
@@ -50,10 +50,14 @@ function format_date($timestamp = '') {
 
 	if ($timestamp == 0)
 		return '';
-	else if ($timestamp)
-		return date(_T('date_format'), $timestamp);
+
+	if (! $format) 
+		$format = _T('date_format');
+		
+	if ($timestamp)
+		return date($format, $timestamp);
 	else
-		return date(_T('date_format'));
+		return date($format);
 }
 
 // Error display function
