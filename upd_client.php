@@ -35,8 +35,6 @@ if (count($errors)) {
 	$cl = "name_first='" . clean_input($client_data['name_first']) . "',
 		name_middle='" . clean_input($client_data['name_middle']) . "',
 		name_last='" . clean_input($client_data['name_last']) . "',
-		date_creation='" . clean_input($client_data['date_creation']) . "',
-		date_update='" . clean_input($client_data['date_update']) . "',
 		citizen_number='" . clean_input($client_data['citizen_number']) . "',
 		address='" . clean_input($client_data['address']) . "',
 		civil_status='" . clean_input($client_data['civil_status']) . "',
@@ -44,9 +42,9 @@ if (count($errors)) {
 
     if ($id_client>0) {
 		// Prepare query
-		$q = "UPDATE lcm_client SET $cl WHERE id_client=$id_client";
+		$q = "UPDATE lcm_client SET date_update=NOW(),$cl WHERE id_client=$id_client";
     } else {
-		$q = "INSERT INTO lcm_client SET id_client=0,$cl";
+		$q = "INSERT INTO lcm_client SET id_client=0,date_creation=NOW(),date_update=NOW(),$cl";
     }
 
     // Do the query

@@ -60,12 +60,12 @@ lcm_page_start("Edit client details");
 			<td><input name="name_last" value="<?php echo clean_output($client_data['name_last']); ?>"></td></tr>
 		<!-- [ML:FIXME] Such information should not be editable,
 			only recorded when doing SQL queries -->
-		<tr><td>Created on:</td>
+		<!-- tr><td>Created on:</td>
 			<td><input name="date_creation" value="<?php echo clean_output($client_data['date_creation']); ?>">
 			<?php echo f_err('date_creation',$errors); ?></td></tr>
 		<tr><td>Updated on:</td>
 			<td><input name="date_update" value="<?php echo clean_output($client_data['date_update']); ?>">
-			<?php echo f_err('date_update',$errors); ?></td></tr>
+			<?php echo f_err('date_update',$errors); ?></td></tr -->
 		<tr><td>Citizen number:</td>
 			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>"></td></tr>
 		<tr><td>Address:</td>
