@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.12 2005/01/18 16:03:59 mlutfy Exp $
+	$Id: client_det.php,v 1.13 2005/01/19 12:24:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -136,7 +136,7 @@ if ($client > 0) {
 		$cpt = 0;
 
 		while ($row = lcm_fetch_array($result)) {
-			$html .= '<tr><td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' 
+			$html .= '<tr><td class="tbl_cont_' . ($cpt++ % 2 ? "dark" : "light") . '">' 
 				. '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">' 
 				.  $row['title'] 
 				. '</a></td></tr>' . "\n";
