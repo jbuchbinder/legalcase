@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.185 2005/03/23 22:22:05 antzi Exp $
+	$Id: inc_presentation.php,v 1.186 2005/03/24 11:44:02 mlutfy Exp $
 */
 
 //
@@ -536,7 +536,7 @@ if($prefs['screen'] == "narrow")
 	echo _T('info_free_software', 
 			array(
 				'distributed' => '<a href="http://www.lcm.ngo-bg.org/" class="prefs_normal_lnk">' . _T('info_free_software1') . '</a>',
-				'license' => lcm_help_string('about#license', _T('info_free_software2'))))
+				'license' => lcm_help_string('about_license', _T('info_free_software2'))))
 		. "</div>\n";
 
 	//
