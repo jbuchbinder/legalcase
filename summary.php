@@ -1,5 +1,11 @@
 <?php
 
-include ("summary.php");
+include ("inc/inc.php");
+
+debut_page();
+
+echo "hello!";
+
+fin_page();
 
 ?>
