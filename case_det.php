@@ -131,6 +131,8 @@ if ($case > 0) {
 		// Show followup
 		echo '<tr><td>' . clean_output(date(_T('date_format_short'),strtotime($row['date_start']))) . '</td>';
 		echo '<td>' . clean_output($row['type']) . '</td>';
+		if (strlen($row['description'])<30) $short_description = $row['description'];
+		else $short_description = substr($row['description'],0,30) . '...';
 		echo '<td>' . clean_output($row['description']) . '</td>';
 		if ($edit)
 			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . '</a></td>';
