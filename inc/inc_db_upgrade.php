@@ -85,7 +85,7 @@ function upgrade_database($old_db_version) {
 	// (stores a cookie for when user forgets pass and needs reset)
 	if ($lcm_db_version_current < 6) {
 		lcm_query("ALTER TABLE lcm_author DROP cookie_oubli");
-		lcm-query("ALTER TABLE lcm_author ADD cookie_recall char(3) default 'no' NOT NULL");
+		lcm_query("ALTER TABLE lcm_author ADD cookie_recall char(3) default 'no' NOT NULL");
 		upgrade_db_version (6);
 	}
 
