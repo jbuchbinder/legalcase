@@ -38,7 +38,7 @@ if ($step == 6) {
 	include_lcm('inc_meta');
 	include_lcm('inc_access');
 
-	if ($login) {
+	if ($username) {
 		// If the login name already exists, this provides a way to reset
 		// an administrator's account.
 		$name_first  = addslashes($name_first);
@@ -47,16 +47,17 @@ if ($step == 6) {
 		$login       = addslashes($login);
 
 		$query = "SELECT id_author FROM lcm_author WHERE username=\"$login\"";
-		$result = lcm_query_db($query);
+		$result = lcm_query($query);
 
-		unset($id_auteur);
-		while ($row = lcm_fetch_array($result)) $id_author = $row['id_author'];
+		unset($id_author);
+		while ($row = lcm_fetch_array($result))
+			$id_author = $row['id_author'];
 
 		$mdpass = md5($pass);
 		$htpass = generer_htpass($pass); // generate htpass [ML] not sure what for!
 
 		// Update main author information
-		if ($id_auteur) {
+		if ($id_author) {
 			$query = "UPDATE lcm_author 
 						SET name_first = \"$name_first\", 
 							name_middle = \"$name_middle\", 
@@ -79,6 +80,11 @@ if ($step == 6) {
 
 		// insert email as main system administrator
 		write_meta('email_sysadmin', $email);
+	} else {
+
+		// TODO: We should test if any users exist at all, because it would
+		// leave the system in a unusable state...
+
 	}
 
 	include_lcm('inc_defaults');
@@ -132,10 +138,9 @@ else if ($step == 5) {
 	echo aide ("install5");
 
 	// [ML: included below] echo "<p>"._T('texte_informations_personnelles_2')." ";
-
 	$trad = "<span style='font-size: 80%;'>[<acronym title='translate!'>T</acronym>]</span>";
 
-	if (! $numrows) {
+	if ($numrows) {
 		echo ("<p>" . $trad . '(Note: If this is a re-installation and your administrator access is still working, you can leave these fields empty)</p>' . "\n");
 		// echo _T('info_laisser_champs_vides');
 	}
