@@ -325,7 +325,7 @@ function install_html_end() {
 // Commonly used visual functions
 //
 
-function get_date_inputs($name = 'select', $date) {
+function get_date_inputs($name = 'select', $date = '') {
 	// TODO: Add global variables (optional) in my_options.php to 
 	// modify the date range.
 
