@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.86 2005/02/22 16:00:32 antzi Exp $
+	$Id: case_det.php,v 1.87 2005/02/22 17:30:37 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -68,8 +68,7 @@ if ($case > 0) {
 		// Show tabs
 		$groups = array('general','clients','followups','attachments');
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 0 );
-		//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
-		show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
+		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
 		switch ($tab) {
 			//
