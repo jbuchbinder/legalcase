@@ -723,6 +723,7 @@ function get_time_interval_inputs($name = 'select', $time, $table = false) {
 		$ret .= "</td>\n"
 			. "</table>\n";
 
+	return $ret;
 }
 
 // Returns an array with valid CSS files for themes (lcm_ui_*.css)
