@@ -19,6 +19,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // D
+'date_format' => 'l, dS F Y',
 'directories_bad_rights' => 'The following directories do not have write permission',
 'directories_bad_rights_cause' => 'To change this, use your SSH/SFTP client in order to set access permissions for each of these directories. The procedure is detailed in the install guide.',
 'directories_continue' => 'Once you are ready, you can reload this page.',

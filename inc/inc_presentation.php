@@ -136,20 +136,20 @@ function lcm_page_start($title = "") {
 							<li><a href=\"edit_client.php\" class=\"main_nav_btn\">Add Client</a></li>
 							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
 							<li>Edit <abbr title=\"User Interface\">UI</abbr> preferences</li>\n";
-	
+
 	if ($connect_status == 'admin') {
 		// TODO: Provide better name
 		echo "\t\t\t\t\t\t\t<li><a href=\"config_site.php\">Site conf</a></li>\n";
 		echo "\t\t\t\t\t\t\t<li><abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">Archives</abbr></li>\n";
 		echo "\t\t\t\t\t\t\t<li><abbr title=\"Generate reports on all cases (admin only)\">Reports</abbr></li>\n";
 	}
-							
+
 	echo "
 						</ul>
 					</div>
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\">Calendar</div>
-						<p class=\"nav_column_text\">". date("l, dS F Y") ."</p>
+						<p class=\"nav_column_text\">". date(_T('date_format')) ."</p>
 					</div>
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\">Next 7 meetings</div>
