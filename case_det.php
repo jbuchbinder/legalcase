@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.108 2005/03/17 15:56:53 mlutfy Exp $
+	$Id: case_det.php,v 1.109 2005/03/18 08:16:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -204,27 +204,27 @@ if ($case > 0) {
 				//
 				// Show case client(s)
 				//
-				$html_show = false;
-				$html = '<table border="0" width="99%" class="tbl_usr_dtl">' . "\n";
-		
 				$q="SELECT cl.id_client, cl.name_first, cl.name_middle, cl.name_last
 					FROM lcm_case_client_org as clo, lcm_client as cl
 					WHERE id_case = $case AND clo.id_client = cl.id_client";
 		
 				$result = lcm_query($q);
+				$header_shown = false;
+
+				if (lcm_num_rows($result)) {
+					$header_shown = true;
+					echo '<table border="0" width="99%" class="tbl_usr_dtl">' . "\n";
+				}
 		
 				while ($row = lcm_fetch_array($result)) {
-					$html .= "<tr>\n";
-					$html .= '<td width="25" align="center"><img src="images/jimmac/stock_person.png" alt="" height="16" width="16" /></td>' . "\n";
-					$html .= '<td><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
-					$html .=  clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last']);
-					$html .= "</a></td>\n";
-		
-					if ($edit)
-						$html .= '<td><a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">' . _T('edit') . '</a></td>' . "\n";
-		
-					$html .= "</tr>\n";
-					$html_show = true;
+					echo "<tr>\n";
+					echo '<td width="25" align="center">';
+					echo '<img src="images/jimmac/stock_person.png" alt="" height="16" width="16" />';
+					echo '</td>' . "\n";
+					echo '<td><a style="display: block" href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
+					echo  get_person_name($row);
+					echo "</a></td>\n";
+					echo "</tr>\n";
 				}
 		
 				//
@@ -235,25 +235,26 @@ if ($case > 0) {
 					WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
 		
 				$result = lcm_query($q);
-		
-				while ($row = lcm_fetch_array($result)) {
-					$html .= "<tr>\n";
-					$html .= '<td width="25" align="center"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
-					$html .= '<td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
-					$html .= clean_output($row['name']);
-					$html .= "</a></td>\n";
-		
-					if ($edit)
-						$html .= '<td><a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">' . _T('edit') . '</a></td>' . "\n";
-		
-					$html .= "</tr>\n";
-					$html_show = true;
+
+				if (lcm_num_rows($result)) {
+					if (! $header_shown) {
+						echo '<table border="0" width="99%" class="tbl_usr_dtl">' . "\n";
+						$header_shown = true;
+					}
 				}
 		
-				$html .= "</table>\n\n";
+				while ($row = lcm_fetch_array($result)) {
+					echo "<tr>\n";
+					echo '<td width="25" align="center"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
+					echo '<td><a style="display: block;" href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
+					echo clean_output($row['name']);
+					echo "</a></td>\n";
 		
-				if ($html_show)
-					echo $html;
+					echo "</tr>\n";
+				}
+		
+				if ($header_shown)
+					echo "</table>\n\n";
 		
 				if ($add) {
 					echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
@@ -261,8 +262,8 @@ if ($case > 0) {
 				}
 		
 				echo "</fieldset>";
-				
 				break;
+
 			//
 			// Case appointments
 			//
