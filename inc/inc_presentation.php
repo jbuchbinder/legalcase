@@ -692,7 +692,7 @@ function get_time_interval_inputs($name = 'select', $time, $table = false) {
 	if ($table)
 		$ret .= "<td><!-- " . _T('select_time_hour') . "<br/ -->\n";
 
-	$ret .= "<select $dis name=\"" . $name . "_hour\" id=\"" . $name . "_hour\" align=\"right\">\n";
+	$ret .= "<select $dis name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\">\n";
 
 	for ($i = 0; $i < 24; $i++) {
 		$default = ($i == $default_hour ? ' selected="selected"' : '');
