@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.172 2005/03/19 15:37:47 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.173 2005/03/21 08:30:54 makaveev Exp $
 */
 
 //
@@ -625,12 +625,14 @@ function help_page_start($page_title) {
 	
 	echo "\n\t\t". '</ul>
 	</div>
-	<div id="hlp_cont"><h2>' . $page_title . "</h2>\n";
+	<div id="hlp_cont"><h2>' . $page_title . "</h2>
+		<div class=\"hlp_data\">";
 
 }
 
 function help_page_end() {
 	echo "</div>
+	</div>
 </div>
 </body>
 </html>";
