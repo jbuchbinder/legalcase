@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.46 2005/03/18 14:37:43 mlutfy Exp $
+	$Id: install.php,v 1.47 2005/03/18 14:55:58 mlutfy Exp $
 */
 
 session_start();
@@ -189,8 +189,11 @@ if ($step == 5) {
 		// Test if an administrator already exists
 		$number_admins = get_number_admins();
 
-		if (! $number_admins)
-			$_SESSION['errors'] = _T('install_warning_no_admins_exist');
+		if (! $number_admins) {
+			$_SESSION['errors']['generic'] = _T('install_warning_no_admins_exist');
+			header("Location: install.php?step=4");
+			exit;
+		}
 	}
 
 	$site_address = read_meta('site_address');
@@ -230,6 +233,9 @@ if ($step == 5) {
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
+
+	$_SESSION['errors'] = array();
+	$_SESSION['usr'] = array();
 
 	write_metas();
 	install_html_end();
