@@ -666,9 +666,10 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 }
 
 function get_time_interval_inputs($name = 'select', $time, $table = false) {
+	
 	$days = (int) ($time / 86400);
-	$hours = (int) ($time / 3600);
-	$minutes = (int) round($time / 300) * 5;
+	$hours = (int) ( ($time % 86400) / 3600);
+	$minutes = (int) round( ($time % 3600) / 300) * 5;
 	
 	// If name is empty, disable fields
 	$dis = (($name) ? '' : 'disabled');
@@ -680,8 +681,9 @@ function get_time_interval_inputs($name = 'select', $time, $table = false) {
 		
 	// Days
 	if ($table)
-		$ret .= "<tr>\n"
-			. "<td><!-- " . _T('select_time_days') . "<br/ -->\n";
+		$ret .= "<tr>\n<td>\n"
+		. "<!-- " . _T('select_time_days') . "<br/ -->\n";
+	
 	$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
 	$ret .= " d, ";
 			
@@ -690,12 +692,13 @@ function get_time_interval_inputs($name = 'select', $time, $table = false) {
 
 	// Hour
 	if ($table)
-		$ret .= "<td><!-- " . _T('select_time_hour') . "<br/ -->\n";
+		$ret .= "<td>\n"
+		. "<!-- " . _T('select_time_hour') . "<br/ -->\n";
 
 	$ret .= "<select $dis name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\">\n";
 
 	for ($i = 0; $i < 24; $i++) {
-		$default = ($i == $default_hour ? ' selected="selected"' : '');
+		$default = ($i == $hours ? ' selected="selected"' : '');
 		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">$i</option>\n";
 	}
 
@@ -707,11 +710,13 @@ function get_time_interval_inputs($name = 'select', $time, $table = false) {
 
 	// Minutes
 	if ($table)
-		$ret .= "<td><!-- " . _T('select_time_minutes') . "<br/ -->\n";
+		$ret .= "<td>\n"
+		. "<!-- " . _T('select_time_minutes') . "<br/ -->\n";
+	
 	$ret .= "<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
 
 	for ($i = 0; $i < 60; $i += 5) {
-		$default = ($i == $default_minutes ? ' selected="selected"' : '');
+		$default = ($i == $minutes ? ' selected="selected"' : '');
 		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
 	}
 
