@@ -214,10 +214,22 @@ table.tbl_data td {
 	padding: 4px;
 }
 
-td.tbl_head {
+td.tbl_head, th.tbl_head {
 	font-weight: bold;
 }
 
 table.tbl_usr_dtl td {
 	font-size: 12px;
+}
+
+td.heading, th.heading {
+	font-size: 12px;
+}
+
+p.normal_text {
+	font-size: 12px;
+}
+
+a.content_link {
+	text-decoration: underline;
 }

@@ -153,7 +153,7 @@ table.tbl_data td {
 	border-left: 1px solid #def;
 }
 
-td.tbl_head {
+td.tbl_head, th.tbl_head {
 	background-color: #eef6ff;
 	font-weight: bold;
 }
@@ -180,6 +180,11 @@ table.tbl_usr_dtl td {
 	color: #036;
 }
 
-td.heading {
+td.heading, th.heading {
 	background-color: #6e8595;
+	color: #fff;
+}
+
+a.content_link {
+	color: #036;
 }
