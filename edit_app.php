@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.1 2005/02/11 16:20:11 antzi Exp $
+	$Id: edit_app.php,v 1.2 2005/02/11 18:43:46 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -291,14 +291,23 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		}
 		echo "\t\t\t$q\n";
 		// List rest of the clients to add
-		$q = "SELECT lcm_client.id_client,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.id_org,lcm_org.name
-			FROM lcm_app_client_org
-			RIGHT JOIN lcm_client USING (id_client)
-			RIGHT JOIN lcm_org USING (id_org)
-			WHERE id_app=" . $_SESSION['app_data']['id_app'] . "
-				AND lcm_client.id_client=lcm_app_client_org.id_client";
+		$q = "SELECT c.id_client,c.name_first,c.name_last,co.id_org,o.name
+			FROM lcm_client AS c
+			LEFT JOIN lcm_client_org AS co USING (id_client)
+			LEFT JOIN lcm_org AS o ON (co.id_org=o.id_org)
+			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=" . $_SESSION['app_data']['id_app'] . ")
+			WHERE id_app IS NULL";
+		
 		$result = lcm_query($q);
-		echo "\t\t\t</td></tr>\n";
+		echo "\t\t\t<select name=\"client\">\n";
+		echo "\t\t\t\t<option selected>- Select client -</option>\n";
+		while ($row = lcm_fetch_array($result)) {
+			echo "\t\t\t\t<option value=\"" . $row['id_client'] . ':' . $row['id_org'] . '">'
+				. join(' ',array($row['name_first'],$row['name_middle'],$row['name_last']))
+				. ($row['name'] ? ' of ' . $row['name'] : '')
+				. "</option>\n";
+		}
+		echo "\t\t\t</select></td></tr>\n";
 
 		echo "	</table>\n";
 
