@@ -111,22 +111,28 @@ function upgrade_database($old_db_version) {
 
 		if (! $site_address) {
 			global $HTTP_SERVER_VARS, $HTTP_HOST;
-	
+
 			// Replace www.site.net/foo/name.php -> www.site.net/foo/
 			$site_address = $HTTP_SERVER_VARS['REQUEST_URI'];
 			if (!$site_address) $site_address = $_ENV['PHP_SELF']; // [ML] unsure
 			$site_address = preg_replace("/\/[^\/]+\.php$/", "/", $site_address);
 			$site_address = 'http://' . $HTTP_HOST /* $GLOBALS['SERVER_NAME'] */ . $site_address;
-	
+
 			write_meta('site_address', $site_address);
 		}
 
 		// Added 'trash' and 'suspended'
-		lcm_query("ALTER TABLE lcm_author 
+		lcm_query("ALTER TABLE lcm_author
 			CHANGE status status ENUM('admin', 'normal', 'external', 'trash', 'waiting', 'suspended')
 			DEFAULT 'normal' NOT NULL");
 
 		upgrade_db_version (8);
+	}
+
+	if ($lcm_db_version_current < 9) {
+		// Add 'gender' field to the clients
+		lcm_query("ALTER TABLE lcm_client ADD gender ENUM('female','male') DEFAULT 'male' NOT NULL AFTER 'address'");
+		upgrade_db_version (9);
 	}
 
 /* [ML] I'm leaving this because it can provide us with interesting ideas

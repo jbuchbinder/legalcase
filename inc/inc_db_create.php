@@ -126,6 +126,7 @@ function create_database() {
 		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		citizen_number text NOT NULL,
 		address text NOT NULL,
+		gender ENUM('female','male') DEFAULT 'male' NOT NULL,
 		civil_status decimal(2) DEFAULT 0 NOT NULL,
 		income decimal(2) DEFAULT 0 NOT NULL,
 		PRIMARY KEY id_client (id_client))";
