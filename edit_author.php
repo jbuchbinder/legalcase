@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.34 2005/03/24 10:16:56 mlutfy Exp $
+	$Id: edit_author.php,v 1.35 2005/03/24 13:23:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -94,7 +94,10 @@ echo show_all_errors($_SESSION['errors']);
 <form name="edit_author" method="post" action="upd_author.php">
 	<input name="id_author" type="hidden" id="id_author" value="<?php echo $usr['id_author']; ?>"/>
 	<input name="email_exists" type="hidden" id="email_exists" value="<?php echo $usr['email_exists']; ?>"/>
-	<input name="ref_edit_author" type="hidden" id="ref_edit_author" value="<?php echo $usr['ref_edit_author']; ?>"/>
+	<input name="ref_edit_author" type="hidden" id="ref_edit_author" value="<?php 
+			$ref_link = new Link($usr['ref_edit_author']);
+			echo $ref_link->getUrl();
+		?>"/>
 
 	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
 		<?php
