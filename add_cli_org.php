@@ -2,6 +2,10 @@
 
 include('inc/inc.php');
 
+// Clean the POST values
+$org = intval($_POST['org']);
+foreach ($_POST['clients'] as $key=>$value) $clients[$key] = intval($value);
+
 if (($org>0) && ($clients)) {
 	foreach($clients as $client) {
 		// Prepare query
@@ -13,6 +17,7 @@ if (($org>0) && ($clients)) {
 	}
 }
 
-header("Location: $ref_sel_cli_org");
+//header("Location: $ref_sel_cli_org");
+header("Location: org_det.php?org=$org");
 
 ?>
