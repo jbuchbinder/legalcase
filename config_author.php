@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.47 2005/02/04 12:39:25 antzi Exp $
+	$Id: config_author.php,v 1.48 2005/02/04 21:26:32 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -139,8 +139,8 @@ function show_author_form() {
 			<td align="left" valign="top">
 				<input type="hidden" name="old_mode" id="old_mode" value="<?php echo $prefs['mode'] ?>" />
 				<select name="sel_mode" class="sel_frm">
-<?php
-	$interface_modes = array("normal", "technical");
+<?php	// [AG] Exactly these names have to be used in the code to avoid changing in every place where the preference is checked
+	$interface_modes = array("simple", "extended"); 
 	foreach ($interface_modes as $ifm) {
 		$selected_mode = ($ifm == $prefs['mode'] ? " selected='selected'" : '');
 		echo "<option value='" . $ifm . "'" . $selected_mode . ">"
