@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.28 2005/01/21 09:48:53 mlutfy Exp $
+	$Id: inc_filters.php,v 1.29 2005/01/21 15:43:38 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -80,6 +80,8 @@ function format_date($timestamp = '', $format = 'full') {
 	$my_date = _T('date_format_' . $format, array(
 				'day_name' => _T('date_wday_' . ($day_of_w + 0)),
 				'month_name' => _T('date_month_' . ($dd[1] + 0)),
+				'month_short' => _T('date_month_short_' .($dd[1] + 0)),
+				'month' => ($dd[1] + 0),
 				'day_order' => _T('date_day_' . $dd[2]),
 				'day' => ($dd[2] + 0),
 				'year' => $dd[0],
