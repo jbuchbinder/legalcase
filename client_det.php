@@ -18,32 +18,29 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.11 2005/01/14 14:15:41 mlutfy Exp $
+	$Id: client_det.php,v 1.12 2005/01/18 16:03:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include('inc/inc_acc.php');
 
+$client = intval($_REQUEST['client']);
 
-if ($client>0) {
-	// Prepare query
+if ($client > 0) {
 	$q="SELECT *
 		FROM lcm_client
-		WHERE lcm_client.id_client=$client";
+		WHERE lcm_client.id_client = $client";
 
-	// Do the query
 	$result = lcm_query($q);
 
-	// Process the output of the query
 	if ($row = lcm_fetch_array($result)) {
-
-	/* Saved for future use
-		// Check for access rights
-		if (!($row['public'] || allowed($client,'r'))) {
-			die("You don't have permission to view this client details!");
-		}
-		$edit = allowed($client,'w');
-	*/
+		/* Saved for future use
+			// Check for access rights
+			if (!($row['public'] || allowed($client,'r'))) {
+				die("You don't have permission to view this client details!");
+			}
+			$edit = allowed($client,'w');
+		*/
 
 		$edit = true;
 
@@ -57,6 +54,21 @@ if ($client>0) {
 
 		// Show client details
 		lcm_page_start(_T('title_client_view') . ' ' . $row['name_first'] . ' ' .  $row['name_middle'] . ' ' . $row['name_last']);
+
+		if (isset($_SESSION['client']['attach_case'])) {
+			$q = "SELECT title
+					FROM lcm_case
+					WHERE id_case = " . intval($_SESSION['client']['attach_case']);
+			$result = lcm_query($q);
+
+			while ($row = lcm_fetch_array($result)) {
+				echo '<p>' . 'The client was created and attached to the case: ' 
+					. '<a href="case_det.php?case=' . $_SESSION['client']['attach_case'] . '">' 
+					. $row['title'] 
+					. "</a></p>\n";
+			}
+		}
+		
 		echo '<fieldset class="info_box">';
 		echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_view_general') . "</div>\n";
 
@@ -86,13 +98,14 @@ if ($client>0) {
 			<th class="heading">&nbsp;</th>
 		    </tr>';
 
+		//
 		// Show organisation(s)
-		$q="SELECT lcm_org.id_org,name
-			FROM lcm_client_org,lcm_org
-			WHERE id_client=$client
-				AND lcm_client_org.id_org=lcm_org.id_org";
+		//
+		$q = "SELECT lcm_org.id_org,name
+				FROM lcm_client_org,lcm_org
+				WHERE id_client=$client
+					AND lcm_client_org.id_org=lcm_org.id_org";
 
-		// Do the query
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
@@ -108,6 +121,35 @@ if ($client>0) {
 			echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">Add organisation(s)</a><br />";
 
 		echo "<br /></fieldset>";
+
+		//
+		// Show 5 recent cases - why 5? - [ML] because I'm lazy
+		//
+		$q = "SELECT clo.id_case, c.title, c.date_creation
+				FROM lcm_case_client_org as clo, lcm_case as c
+				WHERE id_client = " . $client . "
+				AND clo.id_case = c.id_case
+				LIMIT 5";
+
+		$result = lcm_query($q);
+		$html = "";
+		$cpt = 0;
+
+		while ($row = lcm_fetch_array($result)) {
+			$html .= '<tr><td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' 
+				. '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">' 
+				.  $row['title'] 
+				. '</a></td></tr>' . "\n";
+		}
+
+		if ($html) {
+			echo '<fieldset class="info_box">' . "\n";
+			echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_recent_cases') . "</div>\n";
+			echo "<table>\n";
+			echo $html;
+			echo "</table>\n";
+			echo "</fieldset>\n";
+		}
 
 	} else die("There's no such client!");
 } else die("Which client?");
