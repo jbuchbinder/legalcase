@@ -16,7 +16,7 @@ if ($lcm_db_version <> $current_version) {
 	
 	echo "\n<!-- Hide possibly confusing error messages: \n";
 	echo "\t** Upgrading from $current_version to $lcm_db_version **\n";
-	$log = upgrade_database($installed_db_version);
+	$log = upgrade_database($current_version);
 	echo "-->\n";
 
 	if ($log) {
