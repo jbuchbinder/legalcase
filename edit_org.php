@@ -45,7 +45,6 @@ if (empty($errors)) {
 
 lcm_page_start("Edit organisation details");
 ?>
-
 <h1>Edit organisation information:</h1>
 <form action="upd_org.php" method="POST">
 	<table><caption><h3>Organisation details</h3></caption>
@@ -54,7 +53,7 @@ lcm_page_start("Edit organisation details");
 			<td><?php echo $org_data['id_org']; ?>
 			<input type="hidden" name="id_org" value="<?php echo $org_data['id_org']; ?>"></td></tr>
 		<tr><td>Name:</td>
-			<td><textarea name="name" rows="1"><?php echo htmlspecialchars($org_data['name']); ?></textarea></td></tr>
+			<td><input name="name" value="<?php echo htmlspecialchars($org_data['name']); ?>"></td></tr>
 		<tr><td>Created on:</td>
 			<td><input name="date_creation" value="<?php echo $org_data['date_creation']; ?>">
 			<?php echo f_err('date_creation',$errors); ?></td></tr>
@@ -62,7 +61,8 @@ lcm_page_start("Edit organisation details");
 			<td><input name="date_update" value="<?php echo $org_data['date_update']; ?>">
 			<?php echo f_err('date_update',$errors); ?></td></tr>
 		<tr><td>Address:</td>
-			<td><input name="address" value="<?php echo htmlspecialchars($org_data['address']); ?>"></td></tr>
+			<td><textarea name="address" cols="50" rows="3"><?php
+			echo htmlspecialchars($org_data['address']); ?></textarea></td></tr>
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>

@@ -68,7 +68,7 @@ lcm_page_start("Edit client details");
 		<tr><td>Citizen number:</td>
 			<td><input name="citizen_number" value="<?php echo $client_data['citizen_number']; ?>"></td></tr>
 		<tr><td>Address:</td>
-			<td><input name="address" value="<?php echo htmlspecialchars($client_data['address']); ?>"></td></tr>
+			<td><textarea name="address" rows=3><?php echo htmlspecialchars($client_data['address']); ?></textarea></td></tr>
 		<tr><td>Civil status:</td>
 			<td><input name="civil_status" value="<?php echo $client_data['civil_status']; ?>"></td></tr>
 		<tr><td>Income:</td>

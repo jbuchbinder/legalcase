@@ -22,7 +22,7 @@ if ($row = mysql_fetch_array($result)) {
 	echo 'Alledged crime: ' . $row['alledged_crime'] . "<br>\n";
 	echo 'Status: ' . $row['status'] . "<br>\n";
 
-	?><h2>Clients in this case:</h2><br>
+	?><h2>Clients in this case:</h2>
 
 	<table border>
 	<caption>Organizations:</caption>
