@@ -54,16 +54,6 @@ if ($set_ecran) {
 }
 if (!$spip_ecran) $spip_ecran = "etroit";
 
-
-// Unlock articles
-/* [ML NOT NECESSARY]
-if ($debloquer_article) {
-	if ($debloquer_article <> 'tous')
-		$where_id = "AND id_article=".intval($debloquer_article);
-	$query = "UPDATE spip_articles SET auteur_modif='0' WHERE auteur_modif=$connect_id_auteur $where_id";
-	spip_query ($query);
-} */
-
 // deux globales (compatibilite ascendante)
 $options      = $prefs['options'];
 $spip_display = $prefs['display'];
@@ -181,13 +171,13 @@ switch ($prefs['couleur']) {
 
 write_metas();
 
-$version_installee = (double) read_meta('version_lcm');
-if ($version_installee <> $lcm_version) {
+$installed_version = (double) read_meta('version_lcm');
+if ($installed_version <> $lcm_version) {
 	lcm_page_start();
-	if (!$version_installee)
-		$version_installee = _T('info_anterieur');
+	if (!$installed_version)
+		$installed_version = _T('info_anterieur');
 
-	echo "<p>[ML] Installed version = $version_installee ; lcm_version = $lcm_version </p>"; // FIXME
+	echo "<p>[ML] Installed version = $installed_version ; lcm_version = $lcm_version </p>"; // FIXME
 	echo "<blockquote><blockquote><h4><font color='red'>"._T('info_message_technique')."</font><br> "._T('info_procedure_maj_version')."</h4>
 	"._T('info_administrateur_site_01')." <a href='upgrade.php3'>"._T('info_administrateur_site_02')."</a></blockquote></blockquote><p>";
 
@@ -236,15 +226,6 @@ function tester_rubrique_vide($id_rubrique) {
 //
 // Fetch the administration cookie
 $cookie_admin = $HTTP_COOKIE_VARS['lcm_admin'];
-
-// Delete a section
-// [ML] FIXME change this
-if ($supp_rubrique = intval($supp_rubrique) AND $connect_statut == '0minirezo' AND acces_rubrique($supp_rubrique)) {
-	$query = "DELETE FROM spip_rubriques WHERE id_rubrique=$supp_rubrique";
-	$result = spip_query($query);
-
-	calculer_rubriques();
-}
 
 
 ?>
