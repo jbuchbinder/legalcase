@@ -196,6 +196,8 @@ function lcm_page_start($title = "", $css_files = "") {
 				
 					<!-- Start of 'main_column' content -->
 					<h3 class=\"content_head\">". $title ."</h3>
+					<!-- [KM] Just a small experiment how the future breadcrumb will look like -->
+					<div id=\"breadcrumb\"><a href=\"#\" title=\"Test link\">Home</a> &gt; <a href=\"#\" title=\"Test link\">Page1</a> &gt; <a href=\"#\" title=\"Test link\">Subpage1</a> &gt; Subsubpage1</div>
 	";
 }
 
