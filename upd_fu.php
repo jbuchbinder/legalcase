@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.31 2005/02/10 09:12:08 antzi Exp $
+	$Id: upd_fu.php,v 1.32 2005/03/06 14:37:31 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -113,6 +113,8 @@ if (count($_SESSION['errors'])) {
 			die("You don't have permission to add information to this case!");
 
 		// Update case status
+		$status = '';
+		$stage = '';
 		switch ($_SESSION['fu_data']['type']) {
 			case 'conclusion' :
 				$status = 'closed';
@@ -128,12 +130,13 @@ if (count($_SESSION['errors'])) {
 			case 'merge' :
 				$status = 'merged';
 				break;
-			default: $status = '';
+			case 'stage_change' :
+				$stage = $_POST['new_stage'];
 		}
 		
-		if ($status) {
+		if ($status || $stage) {
 			$q = "UPDATE lcm_case
-					SET status='$status'
+					SET " . ($status ? "status='$status'" : '') . ($status && $stage ? ',' : '') . ($stage ? "stage='$stage'" : '') . "
 					WHERE id_case=$id_case";
 			$result = lcm_query($q);
 		}
