@@ -17,6 +17,8 @@
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: filter_det.php,v 1.4 2004/12/11 10:45:49 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -50,8 +52,9 @@ if ($filter > 0) {
 //
 //	List the conditions in the filter
 //
-		echo '<h3>Filter conditions:</h3>';
-		echo (($row['type'] == 'AND') ? 'All' : 'Any') . " of the conditions has to be fulfilled to show data in the report.<br />\n";
+		echo "<h3>Filter conditions:</h3>\n";
+		echo "<p class='normal_text'>\n";
+		echo "(" . (($row['type'] == 'AND') ? 'All' : 'Any') . " of the conditions has to be fulfilled to show data in the report)<br />\n";
 		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
 		echo "<tr><th class='heading'>#</th>
 	<th class='heading'>Field</th>
