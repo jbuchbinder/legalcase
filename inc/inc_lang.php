@@ -81,8 +81,12 @@ function lcm_set_language_from_browser() {
 function translate_string($code, $args) {
 	global $lcm_lang;
 	global $debug;
+	global $debug_tr;
 
 	$highlight = false;
+
+	if (isset($debug_tr))
+		$highlight = $debug_tr;
 	
 	if (isset($_REQUEST['debug_tr']))
 		$highlight = $_REQUEST['debug_tr'];
