@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.43 2005/02/22 11:05:06 antzi Exp $
+	$Id: inc.php,v 1.44 2005/02/22 15:59:04 antzi Exp $
 */
 
 // Test if LCM is installed
@@ -42,11 +42,12 @@ if (! @file_exists('inc/data/inc_meta_cache.php'))
 // Preferences for presentation
 // Can be done from any screen, but for now most is in config_author.php
 // The presence of author_ui_modified assumed that all other form variables are set.
+// [AG] added author_advanced_settings_modified to split settings into tabs
 //
-if (isset($_REQUEST['author_ui_modified'])) {
-	// Set prefs_mod to true if prefs need to be saved in DB
-	$prefs_mod = false;
+// Clear preferences modified flag
+$prefs_mod = false;
 
+if (isset($_REQUEST['author_ui_modified'])) {
 	// [ML] This is very important (but dirty hack) to change the language
 	// from config_author.php but passing by lcm_cookie.php
 	if (isset($_REQUEST['sel_language']))
@@ -86,6 +87,22 @@ if (isset($_REQUEST['author_ui_modified'])) {
 		}
 	}
 
+	// Set rows per page preference
+	if (intval($_REQUEST['page_rows']) > 0) {
+		$prefs['page_rows'] = intval($_REQUEST['page_rows']);
+		$prefs_mod = true;
+	}
+
+	// Set font size
+	if ($_REQUEST['font_size'] != $_REQUEST['old_font_size']) {
+		if ($font_size == 'small_font' || $font_size == 'medium_font' || $font_size == 'large_font') {
+			$prefs['font_size'] = $font_size;
+			$prefs_mod = true;
+		}
+	}
+}
+
+if (isset($_REQUEST['author_advanced_settings_modified'])) {
 	// Set normal/advanced UI mode preference
 	if ($_REQUEST['sel_mode'] != $_REQUEST['old_mode']) {
 		if ($_REQUEST['sel_mode'] == 'simple' || $_REQUEST['sel_mode'] == 'extended') {
@@ -109,27 +126,13 @@ if (isset($_REQUEST['author_ui_modified'])) {
 			$prefs_mod = true;
 		}
 	}
+}
 
-	// Set rows per page preference
-	if (intval($_REQUEST['page_rows']) > 0) {
-		$prefs['page_rows'] = intval($_REQUEST['page_rows']);
-		$prefs_mod = true;
-	}
-
-	// Set font size
-	if ($_REQUEST['font_size'] != $_REQUEST['old_font_size']) {
-		if ($font_size == 'small_font' || $font_size == 'medium_font' || $font_size == 'large_font') {
-			$prefs['font_size'] = $font_size;
-			$prefs_mod = true;
-		}
-	}
-
-	// Update user preferences if modified
-	if ($prefs_mod) {
-		lcm_query("UPDATE lcm_author
-					SET   prefs = '".addslashes(serialize($prefs))."'
-					WHERE id_author = " . $author_session['id_author']);
-	}
+// Update user preferences if modified
+if ($prefs_mod) {
+	lcm_query("UPDATE lcm_author
+				SET   prefs = '".addslashes(serialize($prefs))."'
+				WHERE id_author = " . $author_session['id_author']);
 }
 
 //
