@@ -1,18 +1,19 @@
 <?php
 
-// Ce fichier ne sera execute qu'une fois
-if (defined("_ECRIRE_INC_LANG")) return;
-define("_ECRIRE_INC_LANG", "1");
+// 
+// Execute this file only once
+if (defined('_INC_LANG')) return;
+define('_INC_LANG', '1');
 
-include_lcm("inc_meta");
+include_lcm('inc_meta');
 
 //
 // Ecrire un fichier cache langue
 //
 function ecrire_cache_lang($lang, $module) {
-	include_ecrire('inc_filtres.php3');
+	include_lcm('inc_filtres');
 
-	$fichier_lang = $module.'_'.$lang.'.php3';
+	$fichier_lang = $module.'_'.$lang.'.php';
 	if ($t = @fopen('CACHE/lang_'.$fichier_lang.'_'.@getmypid(), "wb")) {
 		@fwrite($t, "<"."?php\n\n// Ceci est le CACHE d'un fichier langue spip\n\n");
 		if (is_array($cache = $GLOBALS['cache_lang'][$lang])) {
@@ -47,19 +48,19 @@ function ecrire_caches_langues() {
 //
 // Charger un fichier langue
 //
-function charger_langue($lang, $module = 'spip', $forcer = false) {
+function charger_langue($lang, $module = 'lcm', $forcer = false) {
 	global $dir_ecrire, $flag_ecrire;
 
-	$fichier_lang = 'lang/'.$module.'_'.$lang.'.php3';
+	$fichier_lang = 'lang/'.$module.'_'.$lang.'.php';
 	$fichier_lang_exists = @file_exists($dir_ecrire.$fichier_lang);
 
 	// chercher dans le fichier cache ?
 	if (!$flag_ecrire AND $fichier_lang_exists) {
-		if (!$forcer AND @file_exists('CACHE/lang_'.$module.'_'.$lang.'.php3')
-		AND (@filemtime('CACHE/lang_'.$module.'_'.$lang.'.php3') > @filemtime('ecrire/lang/'.$module.'_'.$lang.'.php3'))
-		AND (@filemtime('CACHE/lang_'.$module.'_'.$lang.'.php3') > @filemtime('ecrire/lang/perso.php3'))) {
+		if (!$forcer AND @file_exists('CACHE/lang_'.$module.'_'.$lang.'.php')
+		AND (@filemtime('CACHE/lang_'.$module.'_'.$lang.'.php') > @filemtime('ecrire/lang/'.$module.'_'.$lang.'.php'))
+		AND (@filemtime('CACHE/lang_'.$module.'_'.$lang.'.php') > @filemtime('ecrire/lang/perso.php'))) {
 			$GLOBALS['idx_lang'] = 'i18n_'.$module.'_'.$lang;
-			return include_local('CACHE/lang_'.$module.'_'.$lang.'.php3');
+			return include_local('CACHE/lang_'.$module.'_'.$lang.'.php');
 		}
 		else $GLOBALS['cache_lang_modifs'][$module][$lang] = true;
 	}
@@ -68,20 +69,20 @@ function charger_langue($lang, $module = 'spip', $forcer = false) {
 		$GLOBALS['idx_lang']='i18n_'.$module.'_'.$lang;
 		include_ecrire ($fichier_lang);
 	} else {
-		// si le fichier de langue du module n'existe pas, on se rabat sur
-		// le francais, qui *par definition* doit exister, et on copie le
-		// tableau 'fr' dans la var liee a la langue
-		$fichier_lang = 'lang/'.$module.'_fr.php3';
+		// If the language file of the module does not exist, we fallback
+		// on English, which *by definition* must exist. We then recopy the
+		// 'en' table in the variable related to the requested language
+		$fichier_lang = 'lang/'.$module.'_en.php';
 		if (@file_exists($dir_ecrire.$fichier_lang)) {
-			$GLOBALS['idx_lang']='i18n_'.$module.'_fr';
+			$GLOBALS['idx_lang']='i18n_'.$module.'_en';
 			include_ecrire ($fichier_lang);
 		}
-		$GLOBALS['i18n_'.$module.'_'.$lang] = $GLOBALS['i18n_'.$module.'_fr'];
+		$GLOBALS['i18n_'.$module.'_'.$lang] = $GLOBALS['i18n_'.$module.'_en'];
 	}
 
 	// surcharge perso
-	if (@file_exists($dir_ecrire.'lang/perso.php3')) {
-		include($dir_ecrire.'lang/perso.php3');
+	if (@file_exists($dir_ecrire.'lang/perso.php')) {
+		include($dir_ecrire.'lang/perso.php');
 	}
 
 }
@@ -129,14 +130,14 @@ function regler_langue_navigateur() {
 
 
 //
-// Traduire une chaine internationalisee
+// Translate a string
 //
 function traduire_chaine($code, $args) {
 	global $spip_lang, $flag_ecrire;
 	global $cache_lang;
 
-	// liste des modules a parcourir
-	$modules = array('spip');
+	// list of modules to process
+	$modules = array('lcm');
 	if (strpos($code, ':')) {
 		if (ereg("^([a-z/]+):(.*)$", $code, $regs)) {
 			$modules = explode("/",$regs[1]);
@@ -144,7 +145,7 @@ function traduire_chaine($code, $args) {
 		}
 	}
 
-	// parcourir tous les modules jusqu'a ce qu'on trouve
+	// go thgough all the modules until we find our string
 	while (!$text AND (list(,$module) = each ($modules))) {
 		$var = "i18n_".$module."_".$spip_lang;
 		if (!$GLOBALS[$var]) charger_langue($spip_lang, $module);
@@ -157,21 +158,22 @@ function traduire_chaine($code, $args) {
 		$text = $GLOBALS[$var][$code];
 	}
 
-	// langues pas finies ou en retard (eh oui, c'est moche...)
-	if ($spip_lang<>'fr') {
+	// languages which are not finished or late  (...)
+	if ($spip_lang<>'en') {
 		$text = ereg_replace("^<(NEW|MODIF)>","",$text);
 		if (!$text) {
 			$spip_lang_temp = $spip_lang;
-			$spip_lang = 'fr';
+			$spip_lang = 'en';
 			$text = traduire_chaine($code, $args);
 			$spip_lang = $spip_lang_temp;
 		}
 	}
 
-	// inserer les variables
+	// insert the variables into the strings
 	if (!$args) return $text;
 	while (list($name, $value) = each($args))
 		$text = str_replace ("@$name@", $value, $text);
+
 	return $text;
 }
 
@@ -487,7 +489,7 @@ function verifier_lang_url() {
 	if ($HTTP_GET_VARS['lang']) $lang_demandee = $HTTP_GET_VARS['lang'];
 
 	// Verifier que la langue demandee existe
-	include_ecrire('inc_lang.php3');
+	include_lcm('inc_lang'); // [ML] XXX strange, we are in inc_lang...
 	lang_select($lang_demandee);
 	$lang_demandee = $spip_lang;
 
@@ -553,7 +555,7 @@ function init_langues() {
 	if (!$all_langs || !$langue_site || $flag_ecrire) {
 		if (!$d = @opendir($dir_ecrire.'lang')) return;
 		while ($f = readdir($d)) {
-			if (ereg('^spip_([a-z_]+)\.php3?$', $f, $regs))
+			if (ereg('^lcm_([a-z_]+)\.php?$', $f, $regs))
 				$toutes_langs[] = $regs[1];
 		}
 		closedir($d);
@@ -565,12 +567,13 @@ function init_langues() {
 			$all_langs = $all_langs2;
 			if (!$langue_site) {
 				// Initialisation : le francais par defaut, sinon la premiere langue trouvee
-				if (ereg(',fr,', ",$all_langs,")) $langue_site = 'fr';
+				// Initialisation: French by default, 
+				if (ereg(',en,', ",$all_langs,")) $langue_site = 'en';
 				else list(, $langue_site) = each($toutes_langs);
-				if (defined("_ECRIRE_INC_META"))
+				if (defined("_INC_META"))
 					ecrire_meta('langue_site', $langue_site);
 			}
-			if (defined("_ECRIRE_INC_META")) {
+			if (defined("_INC_META")) {
 				ecrire_meta('langues_proposees', $all_langs);
 				ecrire_metas();
 			}
