@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.5 2005/03/13 16:37:24 mlutfy Exp $
+	$Id: archive.php,v 1.6 2005/03/16 08:26:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -29,8 +29,13 @@ include_lcm('inc_filters');
 if ($GLOBALS['author_session']['status'] != 'admin') 
 	die("You don't have the right to list all cases!");
 
+$find_case_string = '';
+if (isset($_REQUEST['find_case_string'])) {
+	$find_case_string = $_REQUEST['find_case_string'];
+
 // Show page start
 lcm_page_start(_T('title_archives'));
+show_find_box('case', $find_case_string);
 
 // Show tabs
 $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
@@ -42,8 +47,6 @@ show_tabs_links($tabs,0);
 $q = "SELECT DISTINCT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author
 		WHERE (lcm_case.id_case=lcm_case_author.id_case";
-
-$find_case_string = $_REQUEST['find_case_string'];
 
 // Add search criteria if any
 if (strlen($find_case_string) > 1) {
@@ -74,12 +77,6 @@ if ($list_pos >= $number_of_rows)
 if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
-
-echo '<form name="frm_find_case" class="search_form" action="all_cases.php" method="post">' . "\n";
-echo _T('input_search_case') . "&nbsp;";
-echo '<input type="text" name="find_case_string" size="10" class="search_form_txt" value="' .  $find_case_string . '" />';
-echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
-echo "</form>\n";
 
 // Process the output of the query
 show_listcase_start();
