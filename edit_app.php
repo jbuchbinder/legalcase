@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.13 2005/03/02 16:03:02 mlutfy Exp $
+	$Id: edit_app.php,v 1.14 2005/03/02 16:15:48 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -276,7 +276,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		$q = "SELECT lcm_author.id_author,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
 			FROM lcm_author
 			LEFT JOIN lcm_author_app
-			USING (id_author)
+			ON (lcm_author.id_author=lcm_author_app.id_author AND id_app=" . $_SESSION['app_data']['id_app'] . ")
 			WHERE id_app IS NULL";
 		$result = lcm_query($q);
 //		echo "\t\t<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"POST\">\n";
