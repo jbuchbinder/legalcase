@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.198 2005/04/04 08:30:02 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.199 2005/04/04 10:16:25 mlutfy Exp $
 */
 
 //
@@ -1107,7 +1107,7 @@ function show_list_start($headers = array()) {
 	echo "</tr>\n";
 }
 
-function show_list_end($current_pos = 0, $number_of_rows = 0) {
+function show_list_end($current_pos = 0, $number_of_rows = 0, $allow_show_all = false) {
 	global $prefs;
 
 	echo "</table>\n";
@@ -1122,14 +1122,19 @@ function show_list_end($current_pos = 0, $number_of_rows = 0) {
 		return;
 	}
 
+	$link = new Link();
+	$pos = $link->getVar('list_pos');
+	$link->delVar('list_pos');
+
+	// If we are showing "All" items, do not show navigation
+	if ($pos == 'all')
+		return '';
+
 	echo "<table border='0' align='center' width='99%' class='page_numbers'>\n";
 	echo '<tr><td align="left" width="15%">';
 
 	// Previous page
 	if ($current_pos > 0) {
-		$link = new Link();
-		$link->delVar('list_pos');
-
 		if ($current_pos > $prefs['page_rows'])
 			$link->addVar('list_pos', $current_pos - $prefs['page_rows']);
 
@@ -1159,6 +1164,10 @@ function show_list_end($current_pos = 0, $number_of_rows = 0) {
 				echo '<a href="' . $link->getUrl() . '" class="content_link">' . ($i+1) . '</a> ';
 			}
 		}
+
+		$link->delVar('list_pos');
+		$link->addVar('list_pos', 'all');
+		echo '<a href="' . $link->getUrl() . '" class="content_link">' . _T('listnav_link_show_all') . '</a>';
 	}
 
 	echo "</td>\n";
