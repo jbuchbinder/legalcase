@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.49 2005/03/18 15:02:45 mlutfy Exp $
+	$Id: inc_filters.php,v 1.50 2005/03/18 22:01:35 antzi Exp $
 */
 
 // Execute this file only once
@@ -543,7 +543,7 @@ function affdate_base($numdate, $vue) {
 
 	if ($jour == 0)
 		$jour = '';
-	else if ($jourth = _T('date_day'.$jour))
+	else if ($jourth = _T('date_day_'.$jour))
 			$jour = $jourth;
 
 	$mois = intval($mois);
