@@ -1,0 +1,91 @@
+.box_error {
+	border: 2px solid #ff0000;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.box_warning {
+	border: 2px solid #ffff00;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.box_success {
+	border: 1px solid #00ff00;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+/* not used (and does not work) */
+.logo {
+	background-image: url('images/lcm/logo_lcm-170.png');
+	border: 0;
+}
+
+textarea {
+	width: 100%;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+a {
+	text-decoration: none; 
+}
+
+a:hover {
+	color:#FF9900; 
+	text-decoration: underline;
+}
+
+.forml {
+	width: 100%; 
+	background-color: #FFCC66;
+	background-position: center bottom; 
+	float: none; 
+	color: #000000
+}
+
+.formo {
+	width: 100%; 
+	background-color: #FFF0E0; 
+	background-position: center bottom; 
+	weight: bold; 
+	float: none; 
+	color: #000000
+}
+
+.fondl {
+	background-color: #FFCC66;
+	background-position: center bottom; 
+	float: none; 
+	color: #000000
+}
+
+.fondo {
+	background-color: #FFF0E0; 
+	background-position: center bottom; 
+	float: none; 
+	color: #000000
+}
+
+.fondf {
+	background-color: #FFFFFF; 
+	border-style: solid; 
+	border-width: 1; 
+	border-color: #E86519;
+	color: #E86519
+}
+
+.serif {
+	font-family: Georgia, Garamond, Times New Roman, serif;
+}
