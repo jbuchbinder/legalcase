@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.89 2005/02/24 10:48:08 antzi Exp $
+	$Id: case_det.php,v 1.90 2005/02/25 22:18:14 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -66,7 +66,7 @@ if ($case > 0) {
 		echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
 
 		// Show tabs
-		$groups = array('general','clients','followups','attachments');
+		$groups = array('general','clients','followups','times','attachments');
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 0 );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
@@ -324,9 +324,34 @@ if ($case > 0) {
 				
 				break;
 			//
-			// Case attachments
+			// Time spent on case by authors
 			//
 			case 3 :
+				$q = "SELECT	name_first,
+						name_middle,
+						name_last,
+						sum(UNIX_TIMESTAMP(lcm_followup.date_end)-UNIX_TIMESTAMP(lcm_followup.date_start)) as time
+					FROM	lcm_case_author,
+						lcm_author,
+						lcm_followup
+					WHERE	lcm_case_author.id_author=lcm_author.id_author
+						AND lcm_case_author.id_case=$case
+						AND lcm_case_author.id_case=lcm_followup.id_case
+						AND lcm_case_author.id_author=lcm_followup.id_author
+						AND UNIX_TIMESTAMP(lcm_followup.date_end) > 0
+					GROUP BY lcm_case_author.id_case";
+				$result = lcm_query($q);
+				while ($row = lcm_fetch_array($result)) {
+					echo njoin(array($row['name_first'],$row['name_middle'],$row['name_last']));
+					echo ' - ';
+					echo sprintf('%.2f hours',($row['time'] / 3600));
+					echo "<br />\n";
+				}
+				break;
+			//
+			// Case attachments
+			//
+			case 4 :
 				// Attach new file form
 				if ($add) {
 					echo '<fieldset class="info_box">';
