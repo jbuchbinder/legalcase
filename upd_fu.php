@@ -33,7 +33,7 @@ if (count($errors)) {
     $fl="date_start='" . clean_input($fu_data['date_start']) . "',
 		date_end='" . clean_input($fu_data['date_end']) . "',
 		type='" . clean_input($fu_data['type']) . "',
-		description='" . clean_input($fu_data['description']) . ",
+		description='" . clean_input($fu_data['description']) . "',
     	sumbilled='" . clean_input($fu_data['sumbilled']);
 
     if ($id_followup>0) {
