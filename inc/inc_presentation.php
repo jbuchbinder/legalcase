@@ -123,6 +123,7 @@ function lcm_page_start($title = "") {
 					<div id=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\">Main menu</div>
 						<ul id=\"nav_menu_list\">
+							<li><a href=\"listcases.php\">My cases</a></li>
 							<li>Add/Edit Client</li>
 							<li>Add/Edit Case</li>
 							<li>Edit <abbr title=\"User Interface\">UI</abbr> preferences</li>

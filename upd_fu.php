@@ -32,9 +32,14 @@ if (count($errors)) {
     $fl.=",sumbilled='$sumbilled'";
 
     if ($id_followup>0) {
+		// Check access rights
+		if (!allowed($id_case,'e')) die("You don't have permission to modify this case's information!");
 		// Prepare query
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup=$id_followup";
     } else {
+		// Check access rights
+		if (!allowed($id_case,'w')) die("You don't have permission to add information to this case!");
+		// Prepare query
 		$q="INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
     }
 
