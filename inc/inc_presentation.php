@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.201 2005/04/04 14:30:02 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.202 2005/04/04 14:37:17 mlutfy Exp $
 */
 
 //
@@ -1174,9 +1174,11 @@ function show_list_end($current_pos = 0, $number_of_rows = 0, $allow_show_all = 
 			}
 		}
 
-		$link->delVar('list_pos');
-		$link->addVar('list_pos', 'all');
-		echo '<a href="' . $link->getUrl() . '" class="content_link">' . _T('listnav_link_show_all') . '</a>';
+		if ($allow_show_all) {
+			$link->delVar('list_pos');
+			$link->addVar('list_pos', 'all');
+			echo '<a href="' . $link->getUrl() . '" class="content_link">' . _T('listnav_link_show_all') . '</a>';
+		}
 	}
 
 	echo "</td>\n";
