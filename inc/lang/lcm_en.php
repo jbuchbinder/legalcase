@@ -16,6 +16,16 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'add_and_go_to_details' => 'Add &amp; go to details',
 'add_and_open_new' => 'Add &amp; open new',
 'add_user_case' => 'Add user to the case',
+'app_input_authors' => 'Participant authors:',
+'app_input_clients' => 'Participant clients:',
+'app_input_date_end' => 'End:',
+'app_input_date_start' => 'Start:',
+'app_input_description' => 'Description:',
+'app_input_reminder_offset' => 'Remind me:',
+'app_input_reminder_time' => 'Remind me at:',
+'app_input_time_length' => 'Duration:',
+'app_input_title' => 'Title:',
+'app_input_type' => 'Type:',
 'archives_tab_all_cases' => 'All cases',
 'archives_tab_export' => 'Export',
 'archives_tab_import' => 'Import',
@@ -77,9 +87,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_organisations' => 'Organisations:',
 'case_input_status' => 'Status:',
 'case_input_title' => 'Title:',
+'case_subtitle_appointments' => 'Appointments',
+'case_subtitle_attachments' => 'Attached documents',
 'case_subtitle_clients' => 'Case clients',
 'case_subtitle_followups' => 'Case follow-ups',
 'case_subtitle_general' => 'General case information',
+'case_subtitle_times' => 'Time spent on the case by it\'s authors',
 'case_tab_appointments' => 'Appointments',
 'case_tab_attachments' => 'Attachments',
 'case_tab_clients' => 'Clients',
@@ -222,6 +235,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // I
+'info_appointment_involving' => 'Involving:',
+'info_appointment_to_case' => 'Appointment to case:',
 'info_followup_case' => 'Case:',
 'info_followup_involving' => 'Involving:',
 'info_followup_to_case' => 'To case:',
@@ -282,6 +297,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
+'kw_appointments_court_session_title' => 'Court session',
+'kw_appointments_meeting_title' => 'Meeting',
+'kw_appointments_phone_conversation_title' => 'Phone conversation',
 'kw_civilstatus_divorced_title' => 'Divorced or seperated',
 'kw_civilstatus_married_title' => 'Married or cohabiting',
 'kw_civilstatus_single_title' => 'Single',
