@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.9 2005/01/18 22:55:04 antzi Exp $
+	$Id: sel_client.php,v 1.10 2005/01/18 23:04:07 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -29,6 +29,14 @@ $case = intval($_GET['case']);
 if (! $case)
 	die("There's no such case!");
 
+// Show case overview
+$q = "SELECT title
+		FROM lcm_case
+		WHERE id_case=$case";
+$result = lcm_query($q);
+
+if ($case_data = lcm_fetch_array($result))
+	echo 'to be added to case "' . $case_data['title'] . "<br />\n";
 //
 // Show only clients who are not already in the case
 // Extract the clients on the case, then put them in a "not in" list
@@ -96,7 +104,7 @@ if ($list_pos>0)
 		<tr>
 			<th class="heading">&nbsp;</th>
 			<th class="heading" width="350">Client name</th>
-			<th class="heading">&nbsp;</th>
+			<th class="heading">Action</th>
 		</tr>
 <?php
 
@@ -104,7 +112,7 @@ if ($list_pos>0)
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show checkbox
 	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] . "></td>\n";
+	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] . "'></td>\n";
 	// Show client name
 	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo highlight_matches(clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' '
