@@ -19,9 +19,6 @@
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 */
 
-// Test settings
-//$GLOBALS['list_len'] = 3;
-
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
@@ -29,8 +26,6 @@ include_lcm('inc_filters');
 $q = "SELECT id_author,name_first,name_middle,name_last,status
 		FROM lcm_author
 		WHERE (1";
-
-// $GLOBALS['author_session']['id_author'];
 
 // Add search criteria if any
 if (strlen($find_author_string)>1) {
