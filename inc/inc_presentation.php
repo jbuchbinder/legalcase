@@ -63,6 +63,13 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 		if ($f)
 			echo "\t" . '<link rel="stylesheet" type="text/css" href="styles/lcm_' . $f . '.css" />' . "\n";
 	
+	// linking the alternate CSS files with smaller and larger font size
+	
+	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_smallfonts.css\" title=\"small_font\" />\n";
+	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_largefonts.css\" title=\"large_font\" />\n";
+	
+	echo "\t<script type=\"text/javascript\" language=\"JavaScript\" src=\"inc/ss_switcher.js\"></script>\n";
+				
 	echo "</head>\n";
 
 	// right-to-left (Arabic, Hebrew, Farsi, etc. -- even if not supported at the moment)
