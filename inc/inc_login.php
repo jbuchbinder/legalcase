@@ -169,6 +169,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		if ($flag_challenge_md5)
 			echo '<script type="text/javascript" src="inc/md5.js"></script>';
 
+		echo "\n";
 		echo '<form name="form_login" action="lcm_cookie.php" method="post"';
 
 		if ($flag_challenge_md5)
@@ -178,10 +179,10 @@ function login($cible, $prive = 'prive', $message_login='') {
 				this.session_password.value = \"\"; }'";
 
 		echo ">\n";
-		echo "<div class='main_login_box' style='text-align:".$GLOBALS["lcm_lang_left"].";'>";
+		echo "<div class='main_login_box' style='text-align:".$GLOBALS["lcm_lang_left"].";'>\n";
 
 		if ($erreur) 
-			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . " $erreur</b></div><p>";
+			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . " $erreur</b></div><br />\n";
 
 		if ($flag_challenge_md5) {
 			// If javascript is active, we pass the login in the hidden field
