@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.29 2005/03/24 13:56:47 mlutfy Exp $
+	$Id: listclients.php,v 1.30 2005/03/29 15:36:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,6 +42,16 @@ if (strlen($find_client_string)>1) {
 			OR (name_last LIKE '%$find_client_string%'))";
 }
 
+// Sort clients by ID
+$order_set = false;
+$order_id = '';
+if (isset($_REQUEST['order_id']))
+	if ($_REQUEST['order_id'] == 'ASC' || $_REQUEST['order_id'] == 'DESC') {
+		$order_id = $_REQUEST['order_id'];
+		$q .= " ORDER BY id_client " . $order_id;
+		$order_set = true;
+	}
+
 // Sort clients by first name
 // [ML] I know, problably more logical by last name, but we do not split the columns
 // later we can sort by any column if we need to
@@ -50,7 +60,8 @@ if (isset($_REQUEST['order_name_first']))
 	if ($_REQUEST['order_name_first'] == 'ASC' || $_REQUEST['order_name_first'] == 'DESC')
 		$order_name_first = $_REQUEST['order_name_first'];
 
-$q .= " ORDER BY name_first " . $order_name_first;
+$q .= ($order_set ? " , " : " ORDER BY ");
+$q .= " name_first " . $order_name_first;
 
 $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
@@ -74,6 +85,9 @@ show_listclient_start();
 
 for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	echo "<tr>\n";
+	echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
+		. $row['id_client']
+		. "</td>\n";
 	echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
 	echo '<a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
