@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_auth.php,v 1.9 2005/03/22 13:07:10 mlutfy Exp $
+	$Id: sel_auth.php,v 1.10 2005/03/22 13:37:50 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -78,6 +78,19 @@ $q .= " ORDER BY name_first " . $order_name;
 $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
 
+// Check for correct start position of the list
+$list_pos = 0;
+if (isset($_REQUEST['list_pos']))
+	$list_pos = $_REQUEST['list_pos'];
+
+if ($list_pos >= $number_of_rows)
+	$list_pos = 0;
+
+// Position to the page info start
+if ($list_pos > 0)
+	if (!lcm_data_seek($result,$list_pos))
+		lcm_panic("Error seeking position $list_pos in the result");
+
 // Check if any author(s) available for selection
 if (lcm_num_rows($result) > 0)
 	lcm_page_start("Select users(s)"); // TRAD
@@ -92,7 +105,6 @@ show_context_case_involving($case);
 show_context_end();
 
 show_find_box('author', $find_author_string, '__self__');
-
 echo '<form action="add_auth.php" method="post">' . "\n";
 
 $headers = array();
@@ -101,10 +113,9 @@ $headers[0]['order'] = 'no_order';
 $headers[1]['title'] = _Th('person_input_name');
 $headers[1]['order'] = 'order_name';
 
-$list_pos = get_list_pos($result);
 show_list_start($headers);
 
-for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+for ($i = 0; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	echo "<tr>\n";
 	echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
 	echo '<input type="checkbox" name="authors[]" value="' . $row['id_author'] . '" />';

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.15 2005/03/18 09:48:13 mlutfy Exp $
+	$Id: sel_client.php,v 1.16 2005/03/22 13:37:50 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -95,7 +95,7 @@ if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
 
-show_find_box('client', $find_client_string);
+show_find_box('client', $find_client_string, '__self__');
 echo '<form action="add_client.php" method="post">' . "\n";
 
 $headers[0]['title'] = "";
