@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listfilters.php,v 1.6 2004/12/16 15:12:13 makaveev Exp $
+	$Id: listfilters.php,v 1.7 2005/03/02 17:29:17 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -121,7 +121,7 @@ if ($next_pos<$number_of_rows) {
 
 echo "</td>\n\t</tr>\n</table>\n";
 ?>
-<br /><a href="edit_filter.php?filter=0" class="create_new_lnk">Create new filter</a><br />
+<a href="edit_filter.php?filter=0" class="create_new_lnk">Create new filter</a><br /><br />
 <?php
 lcm_page_end();
 ?>

@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.9 2005/02/15 08:32:13 mlutfy Exp $
+	$Id: listorgs.php,v 1.10 2005/03/02 17:29:17 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -62,8 +62,8 @@ for($cnt = 0; $row = lcm_fetch_array($result); $cnt++) {
 
 ?>
 </table>
-<br /><a href="edit_org.php" class="create_new_lnk">Add new organisation</a>
-
+<a href="edit_org.php" class="create_new_lnk">Add new organisation</a>
+<br /><br />
 <?php
 lcm_page_end();
 ?>

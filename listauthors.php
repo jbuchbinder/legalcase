@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.21 2004/12/16 15:12:13 makaveev Exp $
+	$Id: listauthors.php,v 1.22 2005/03/02 17:29:17 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -134,7 +134,7 @@ echo "</td>\n\t</tr>\n</table>\n";
 
 // Show add auhor button
 if ($GLOBALS['author_session']['status'] == 'admin')
-	echo '<br /><a href="edit_author.php?author=0" class="create_new_lnk">Add author</a><br />';
+	echo '<a href="edit_author.php?author=0" class="create_new_lnk">Add author</a><br /><br />';
 
 lcm_page_end();
 ?>

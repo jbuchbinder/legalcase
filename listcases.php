@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.44 2005/03/02 17:15:42 antzi Exp $
+	$Id: listcases.php,v 1.45 2005/03/02 17:29:17 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -130,7 +130,7 @@ if ($next_pos<$number_of_rows) {
 
 echo "</td>\n\t</tr>\n</table>\n";
 ?>
-<br /><a href="edit_case.php?case=0" class="create_new_lnk">Open new case</a>
+<a href="edit_case.php?case=0" class="create_new_lnk">Open new case</a>
 <br /><br />
 <?php
 lcm_page_end();

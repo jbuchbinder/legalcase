@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.23 2005/02/15 08:32:13 mlutfy Exp $
+	$Id: listclients.php,v 1.24 2005/03/02 17:29:17 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -131,7 +131,8 @@ if ($next_pos<$number_of_rows) {
 }
 echo "</td>\n\t</tr>\n</table>\n";
 ?>
-<br /><a href="edit_client.php" class="create_new_lnk">Add new client</a>
+<a href="edit_client.php" class="create_new_lnk">Add new client</a>
+<br /><br />
 <?php
 lcm_page_end();
 ?>
