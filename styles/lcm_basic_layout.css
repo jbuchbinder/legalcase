@@ -67,6 +67,10 @@ body {
 	float: right;
 }
 
+#footer {
+	font-size: 11px;
+}
+
 #user_info_box_large_screen {
 	position: absolute;
 	top: 5px;
@@ -145,6 +149,7 @@ hr.hair_line {
 }
 
 .nav_column_menu_head {
+	font-size: 12px;
 	padding: 4px;
 	text-align: left;
 }
@@ -223,7 +228,7 @@ input.search_form_txt {
 	font-size: 12px;
 }
 
-input.search_form_btn {
+input.search_form_btn, button.simple_form_btn {
 	font-size: 11px;
 	font-weight: bold;
 }
@@ -262,6 +267,7 @@ table.tbl_data td {
 
 td.tbl_head, th.tbl_head {
 	font-weight: bold;
+	font-size: 12px;
 }
 
 table.tbl_usr_dtl td {

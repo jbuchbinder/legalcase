@@ -22,7 +22,6 @@
 	border: 1px solid #369;
 	background-color: #def;
 	text-align: center;
-	font-size: 11px;
 	color: #036;
 	line-height: 1.5;
 }
@@ -52,7 +51,6 @@ hr.hair_line {
 .nav_column_menu_head {
 	background-color: #369;
 	border-bottom: 1px solid #036;
-	font-size: 12px;
 	font-weight: bold;
 	color: #fff;
 }
@@ -97,23 +95,18 @@ a.prefs_bold_lnk, a.prefs_normal_lnk {
 	color: #f60;
 }
 
-
-
 /* Form elements */
 
 form.search_form {
-	font-size: 11px;
 	color: #036;
 }
 
 input.search_form_txt {
-	font-size: 12px;
 	background-color: #fff;
 	border: 1px solid #369;
 }
 
 input.search_form_btn, button.simple_form_btn {
-	font-size: 11px;
 	border: 1px solid #036;
 	background-color: #369;
 	color: #fff;
@@ -121,13 +114,12 @@ input.search_form_btn, button.simple_form_btn {
 }
 
 textarea.frm_tarea {
-	font-size: 12px;
 	background-color: #fff;
 	border: 1px solid #369;
 }
 
 select.sel_frm {
-	font-size: 12px;
+	
 }
 
 /* ------------------------------- */
@@ -174,7 +166,6 @@ table.tbl_usr_dtl {
 }
 
 table.tbl_usr_dtl td {
-	font-size: 12px;
 	border-right: 1px dashed #6e8595;
 	border-bottom: 1px dashed #6e8595;
 	color: #036;
