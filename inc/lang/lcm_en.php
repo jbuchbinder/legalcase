@@ -70,10 +70,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'error_no_edit_permission' => 'You don\'t have permission to edit this case!',
 'error_no_read_permission' => 'You don\'t have permission to view this case!',
 'error_no_such_case' => 'There\'s no such case!',
+'error_no_such_user' => 'There is no such user in the database. How did you get in?',
 
 
 // I
 'info_free_software' => 'Free software <a href=\'http://www.lcm.ngo-bg.org/en\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\'>GPL licence</a>.',
+'info_greetings' => 'Good day',
 'info_more_than_five' => '(More than 5 characters)',
 'info_more_than_three' => '(More than 3 characters)',
 'info_name_of_person' => 'Name',
@@ -138,6 +140,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_prefer_no_cookie' => '<b>If you prefer to refuse the cookies</b>, there is another connection method (less secure) at your disposal:',
 'login_register' => 'Register with the site',
 'login_remain_logged_on' => 'Remain logged-on for a few days',
+'login_title_login' => 'Login',
 'login_without_cookie' => 'Identification without cookie',
 
 
@@ -155,12 +158,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_back_to_site' => 'Back to the site entrance',
 'pass_close_this_window' => 'Close this window',
 'pass_enter_name_and_email' => 'Enter here your name and e-mail address. You will receive your personal identifier shortly by e-mail.',
+'pass_info_automated_msg' => '(this is an automated message)',
 'pass_info_enter_email' => 'Enter below the e-mail address with which you registered previously. You will receive an e-mail explaining how you can retreive your access.',
+'pass_info_here_info' => 'Here are your identifiers to enter the site "@site_name@" (@site_address@):',
+'pass_info_identifier_mail' => 'Your new identifier has just been sent to you by e-mail and should arrive shortly.',
 'pass_info_moderated' => 'New registrations required the approval of the system administrator. You will get a response by e-mail as soon as possible.',
 'pass_info_why_register' => 'To use the legal case management system, you must create a personnal account. You can register to the site by entering your e-mail address below.',
 'pass_more_than_5_or_random' => '(More than 5 characters. If left empty, a random password will be generated and sent to you by e-mail.)',
 'pass_title_forgotten_password' => 'Forgotten password',
+'pass_title_personal_identifier' => 'Personal identifiers',
 'pass_title_register' => 'Register with the site',
+'pass_warning_mail_failure' => 'Mail problem: the identifier could not be sent. Please contact the site administrator by e-mail (@email_admin@).',
 'pass_warning_no_action' => 'There\'s nothing I can do. How about coffee?',
 'public' => 'Public',
 
