@@ -128,10 +128,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_login' => 'Login',
 'login_other_identifier' => 'connect with another identifier',
 'login_password' => 'Password',
-'login_password_forgotten' => 'password forgotten?',
+'login_password_forgotten' => 'Password forgotten?',
 'login_password_incorrect' => 'Incorrect login or password.',
 'login_prefer_no_cookie' => '<b>If you prefer to refuse the cookies</b>, there is another connection method (less secure) at your disposal:',
-'login_register' => 'register',
+'login_register' => 'Register with the site',
 'login_remain_logged_on' => 'Remain logged-on for a few days',
 'login_without_cookie' => 'Identification without cookie',
 
@@ -147,6 +147,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // P
 'parameter' => 'Parameter',
+'pass_back_to_site' => 'Back to the site entrance',
+'pass_close_this_window' => 'Close this window',
+'pass_info_enter_email' => 'Enter below the e-mail address with which you registered previously. You will receive an e-mail explaining how you can retreive your access.',
+'pass_title_forgotten_password' => 'Forgotten password',
+'pass_title_register' => 'Register with the site',
 'public' => 'Public',
 
 
