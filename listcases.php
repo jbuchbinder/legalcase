@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.39 2005/02/07 17:57:06 antzi Exp $
+	$Id: listcases.php,v 1.40 2005/02/10 19:14:37 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -48,6 +48,9 @@ if (strlen($find_case_string)>0) {
 }
 
 $q .= ")";
+
+// Sort cases by creation date
+$q .= " ORDER BY date_creation DESC";
 
 // Do the query
 $result = lcm_query($q);
