@@ -21,9 +21,10 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.45 2005/03/18 13:42:24 mlutfy Exp $
+	$Id: install.php,v 1.46 2005/03/18 14:37:43 mlutfy Exp $
 */
 
+session_start();
 
 include('inc/inc_version.php');
 include_lcm('inc_presentation');
@@ -92,8 +93,6 @@ if ($step == 5) {
 	include_lcm('inc_meta');
 	include_lcm('inc_access');
 
-	session_start();
-
 	$_SESSION['usr'] = array();
 	$_SESSION['errors'] = array();
 
@@ -105,19 +104,28 @@ if ($step == 5) {
 		$_SESSION['usr']['username']    = addslashes($_REQUEST['username']);
 		$_SESSION['usr']['email']       = addslashes($_REQUEST['email']);
 
-		// First and last name are mandatory
-		if (! $_SESSION['usr']['name_first'])
-			$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . _T('warning_field_mandatory');
-		
-		if (! $_SESSION['usr']['name_last'])
-			$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . _T('warning_field_mandatory');
+		// Test mandatory fields, sorry for the ugly code
+		$mandatory = array(
+			'name_first' => 'person_input',
+			'name_last'  => 'person_input',
+			'username'   => 'authoredit_input',
+			'email'      => 'input',
+			'password'   => 'authorconf_input',
+			'password_confirm' => 'authorconf_input');
+
+		foreach ($mandatory as $mn => $str) {
+			if (! $_REQUEST[$mn])
+				$_SESSION['errors'][$mn] = _T($str . '_' . $mn) . ' ' . _T('warning_field_mandatory');
+		}
+
+		if ($_REQUEST['password'] != $_REQUEST['password_confirm'])
+			$_SESSION['errors']['password'] = _T('login_warning_password_dont_match');
 
 		if (count($_SESSION['errors'])) {
 			header("Location: install.php?step=4");
 			exit;
 		}
 
-		// TODO: This should use inc_auth_db.php
 		$query = "SELECT id_author FROM lcm_author WHERE username='" . $_SESSION['usr']['username'] . "'";
 		$result = lcm_query($query);
 
@@ -125,15 +133,12 @@ if ($step == 5) {
 		while ($row = lcm_fetch_array($result))
 			$id_author = $row['id_author'];
 
-		$mdpass = md5($_REQUEST['pass']);
-
 		// If user exists, allow to reset a forgotten password, which is possible
 		// by deleting inc_connect.php and re-installing (it does not affect the DB).
 		$query = "SET name_first = '" . $_SESSION['usr']['name_first'] . "', 
 					name_middle = '" . $_SESSION['usr']['name_middle'] . "', 
 					name_last = '" . $_SESSION['usr']['name_last'] . "', 
 					username = '" . $_SESSION['usr']['username'] . "', 
-					password = '" . $mdpass . "', 
 					alea_actuel = '', 
 					alea_futur = FLOOR(32000*RAND()), 
 					status = 'admin'";
@@ -147,7 +152,30 @@ if ($step == 5) {
 			$id_author = lcm_insert_id();
 		}
 
+		//
+		// Set password
+		//
+		$class_auth = 'Auth_db';
+		include_lcm('inc_auth_db');
+		$auth = new $class_auth;
+
+		if (! $auth->init()) {
+			lcm_log("pass change: failed auth init: " . $auth->error);
+			$_SESSION['errors']['password'] = $auth->error;
+			return;
+		}
+
+		if (! $auth->newpass($id_author, $_SESSION['usr']['username'], $_REQUEST['password']))
+			$_SESSION['errors']['password'] = $auth->error;
+
+		if (count($_SESSION['errors'])) {
+			header("Location: install.php?step=4");
+			exit;
+		}
+
+		//
 		// Set e-mail for author
+		//
 		if ($_SESSION['usr']['email']) {
 			include_lcm('inc_contacts');
 
@@ -203,17 +231,12 @@ if ($step == 5) {
 		. "</div>\n";
 	echo "</form>\n";
 
-	session_destroy();
-
 	write_metas();
-
 	install_html_end();
 }
 
 else if ($step == 4) {
 	install_html_start();
-
-	session_start();
 
 	echo "<h3><small>" . _T('install_step_four') . "</small> "
 		. _T('install_title_admin_account') . "</h3>\n";
@@ -226,31 +249,35 @@ else if ($step == 4) {
 		. ' ' . lcm_help('install_personal') . "</p>\n";
 
 	if (isset($_SESSION['errors']))
-		show_all_errors($_SESSION['errors']);
-
+		echo show_all_errors($_SESSION['errors']);
+	
 	echo "<form action='install.php' method='post'>\n";
 	echo "<input type='hidden' name='step' value='5' />\n";
 
 	// Your contact information
 	echo "<fieldset class=\"fs_box\">\n";
-	echo "<p><b>". _T('info_your_contact_information') . "</b></p>\n";
+	echo "<p><b>" . _T('info_your_contact_information') . "</b></p>\n";
 
 	// [ML] Altough not most problematic, could be better. But if someone
 	// fixes here, please fix lcm_pass.php also (function print_registration_form())
+	$name_first = (isset($_SESSION['usr']['name_first']) ?  $_SESSION['usr']['name_first'] : '');
 	echo "<table border='0' cellpadding='0' cellspacing='5'><tr>\n";
 	echo "<td>
 			<strong><label for='name_first'>" . f_err_star('name_first') . _T('person_input_name_first') . "</label></strong><br />
 			<input type='text' style='width: 100%;' id='name_first' name='name_first' value='$name_first' size='15' class='txt_lmnt' />
 		</td>\n";
+
+	$name_last = (isset($_SESSION['usr']['name_last']) ?  $_SESSION['usr']['name_last'] : '');
 	echo "<td>
-			<strong><label for='name_last'>" . _T('person_input_name_last') . "</label></strong><br />
+			<strong><label for='name_last'>" . f_err_star('name_last') . _T('person_input_name_last') . "</label></strong><br />
 			<input style='width: 100%;' type='text' id='name_last' name='name_last' value='$name_last' size='15' class='txt_lmnt' />
 		</td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "<td colspan='2'>";
 
-	echo "<p><b><label for='email'>" . _T('input_email') . "</label></b><br />\n";
+	$email = (isset($_SESSION['usr']['email']) ?  $_SESSION['usr']['email'] : '');
+	echo "<p><b><label for='email'>" . f_err_star('email') . _T('input_email') . "</label></b><br />\n";
 	echo "<input style='width: 100%;' type='text' id='email' name='email' value=\"$email\" size='40' class='txt_lmnt' /></p>\n";
 
 	echo "</td>\n";
@@ -260,23 +287,24 @@ else if ($step == 4) {
 	// Identifiers
 	echo "<p><b>" . _T('input_connection_identifiers') . "</b></p>\n";
 
+	$username = (isset($_SESSION['usr']['username']) ?  $_SESSION['usr']['username'] : '');
 	echo "<table border='0' cellpadding='0' cellspacing='5'>\n";
 	echo "<tr>\n";
 	echo "<td>";
-	echo "<b><label for='username'>" . _T('authoredit_input_username') . "</label></b> \n";
+	echo "<b><label for='username'>" . f_err_star('username') . _T('authoredit_input_username') . "</label></b> \n";
 	echo "<small>" . _T('info_more_than_three') . "</small><br />\n";
 	echo "<input style='width: 100%;' type='text' id='username' name='username' value='$username' size='40' class='txt_lmnt' />\n";
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>";
-	echo "<p><b><label for='pass'>" . _T('authorconf_input_password') . "</label></b> \n";
+	echo "<p><b><label for='password'>" . f_err_star('password') . _T('authorconf_input_password') . "</label></b> \n";
 	echo "<small>" . _T('info_more_than_five')."</small><br />\n";
-	echo "<input style='width: 100%;' type='password' id='pass' name='pass' value='' size='40' class='txt_lmnt' /></p>\n";
+	echo "<input style='width: 100%;' type='password' id='password' name='password' value='' size='40' class='txt_lmnt' /></p>\n";
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>";
-	echo "<p><b><label for='pass'>" . _T('authorconf_input_password_confirm') . "</label></b> \n";
-	echo "<input style='width: 100%;' type='password_confirm' id='pass' name='pass_confirm' value='' size='40' class='txt_lmnt' /></p>\n";
+	echo "<p><b><label for='password_confirm'>" . f_err_star('password') . _T('authorconf_input_password_confirm') . "</label></b> \n";
+	echo "<input style='width: 100%;' type='password' id='password_confirm' name='password_confirm' value='' size='40' class='txt_lmnt' /></p>\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
@@ -290,6 +318,9 @@ else if ($step == 4) {
 	echo "</form>";
 
 	install_html_end();
+
+	$_SESSION['errors'] = array();
+	$_SESSION['usr'] = array();
 }
 
 else if ($step == 3) {
