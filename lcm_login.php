@@ -13,7 +13,7 @@ include_lcm('inc_login');
 lcm_html_start(_T('login_acces_prive'));
 
 global $spip_lang_right;
-$lcm_site_name = read_meta('nom_site');
+$lcm_site_name = read_meta('site_name');
 
 echo "<p>&nbsp;</p>\n";
 echo "<center><table width='400'><tr><td width='400'>\n";
