@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.45 2005/02/24 14:52:07 mlutfy Exp $
+	$Id: inc.php,v 1.46 2005/02/24 15:10:21 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -80,6 +80,15 @@ if (isset($_REQUEST['author_ui_modified'])) {
 			$prefs_mod = true;
 		}
 	}
+
+	// [ML] This is very important (but dirty hack) to change the language
+	// from config_author.php but passing by lcm_cookie.php
+	// It must be called last, because FORM values will be lost in the redirect
+	if (isset($_REQUEST['sel_language']))
+		$lang = $_REQUEST['sel_language'];
+	else
+		$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
+	
 }
 
 if (isset($_REQUEST['author_advanced_settings_modified'])) {
@@ -106,27 +115,6 @@ if (isset($_REQUEST['author_advanced_settings_modified'])) {
 			$prefs_mod = true;
 		}
 	}
-
-	// [ML] This is very important (but dirty hack) to change the language
-	// from config_author.php but passing by lcm_cookie.php
-	// It must be called last, because FORM values will be lost in the redirect
-	if (isset($_REQUEST['sel_language']))
-		$lang = $_REQUEST['sel_language'];
-	else
-		$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
-	
-	if (isset($lang) AND $lang <> $lcm_lang /* $author_session['lang'] */) {
-		// Boomerang via lcm_cookie to set a cookie and do all the dirty work
-		// The REQUEST_URI should always be set, and point to the current page
-		// we are being sent to (Ex: from config_author.php to listcases.php).
-		// [ML] I used $lcm_lang because there are rare cases where the cookie
-		// can disagree with $author_session['lang'] (e.g. login one user, set
-		// cookie, logout, login other user, conflict).
-		// [ML] Added $ref because some forms such as config_author.php expect it
-		$ref = (isset($_REQUEST['referer']) ? '&referer=' . $_REQUEST['referer'] : '');
-		header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" . $_SERVER['REQUEST_URI'] . $ref);
-		exit;
-	}
 }
 
 // Update user preferences if modified
@@ -134,6 +122,19 @@ if ($prefs_mod) {
 	lcm_query("UPDATE lcm_author
 				SET   prefs = '".addslashes(serialize($prefs))."'
 				WHERE id_author = " . $author_session['id_author']);
+}
+
+if (isset($lang) AND $lang <> $lcm_lang) {
+	// Boomerang via lcm_cookie to set a cookie and do all the dirty work
+	// The REQUEST_URI should always be set, and point to the current page
+	// we are being sent to (Ex: from config_author.php to listcases.php).
+	// [ML] I used $lcm_lang because there are rare cases where the cookie
+	// can disagree with $author_session['lang'] (e.g. login one user, set
+	// cookie, logout, login other user, conflict).
+	// [ML] Added $ref because some forms such as config_author.php expect it
+	$ref = (isset($_REQUEST['referer']) ? '&referer=' . $_REQUEST['referer'] : '');
+	header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" . $_SERVER['REQUEST_URI'] . $ref);
+	exit;
 }
 
 //
