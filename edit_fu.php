@@ -36,7 +36,7 @@ if (empty($errors)) {
 			session_register("followup");
 
 		// Debug code
-		echo "<!-- Followup: " . $followup . ", intval=" . intval($followup) . "-->\n";
+		echo "<!-- _GET: " . $_GET['followup'] . ", followup: " . $followup . ", intval=" . intval($followup) . "-->\n";
 
 		// Fetch the details on the specified follow-up
 		$q="SELECT *
