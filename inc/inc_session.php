@@ -30,9 +30,10 @@ function hash_env() {
 function fichier_session($id_session, $alea) {
 	if (ereg("^([0-9]+_)", $id_session, $regs))
 		$id_auteur = $regs[1];
+
 	$fichier_session = 'session_'.$id_auteur.md5($id_session.' '.$alea).'.php';
 	$fichier_session = 'data/'.$fichier_session;
-	if (!$GLOBALS['flag_ecrire']) $fichier_session = 'ecrire/'.$fichier_session;
+
 	return $fichier_session;
 }
 
@@ -54,7 +55,7 @@ function ajouter_session($auteur, $id_session) {
 		fputs($f, $texte);
  		fclose($f);
 	} else {
-		echo "cannot write in $fichier_session"; // [ML] DEBUG
+		lcm_log("cannot write in $fichier_session"); // [ML] DEBUG
 		@header("Location: lcm_test_dirs.php");
 		exit;
 	}
