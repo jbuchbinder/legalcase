@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.6 2004/11/25 15:18:52 mlutfy Exp $
+	$Id: edit_author.php,v 1.7 2004/12/02 21:42:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -103,9 +103,9 @@ else lcm_page_start("New author");
 
 	foreach ($contacts as $c) {
 		// Translate title of contact type only if translation exists
-		$title = _T('kw_contacts_' . $c['name'] . '_title');
-		if ($title == 'kw_contacts_' . $c['name'] . '_title')
-			$title = $c['name'];
+		$title = _T($c['title']);
+		if ($title == $c['title'])
+			$title = $c['title'];
 
 		echo '<tr><td align="right" valign="top">' . $title .  "\n";
 		echo '<td align="left" valign="top">';
@@ -136,8 +136,14 @@ else lcm_page_start("New author");
 					echo '<select name="contact_type[]" id="contact_type_' . $cpt . '">' . "\n";
 					echo "<option value=''>" . "- select contact type -" . "</option>\n";
 					foreach ($system_kwg['contacts']['keywords'] as $contact) {
-						if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main')
-							echo "<option value='" . $contact['name'] . "'>" .  $contact['title'] . "</option>\n";
+						if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main') {
+							// Translate title of contact type only if translation exists
+							$title = _T($contact['title']);
+							if ($title == $contact['title'])
+								$title = $contact['title'];
+
+							echo "<option value='" . $contact['name'] . "'>" .  $title . "</option>\n";
+						}
 					}
 					echo "</select>\n";
 
