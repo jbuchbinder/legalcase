@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.13 2005/02/03 12:06:56 antzi Exp $
+	$Id: rep_det.php,v 1.14 2005/02/03 12:39:15 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -121,7 +121,7 @@ echo "</p></fieldset>";
 			if ($edit) echo '</a>';
 			echo "</td>\n";
 
-			//Display column groupping
+			//Display column grouping
 			echo '<td>';
 			echo ($column['col_group'] ? $column['col_group'] : "None");
 			echo "</td>\n";
@@ -203,6 +203,15 @@ echo "</p></fieldset>";
 			if ($table) echo "\t\t\t\t</optgroup>\n";
 			echo "\t\t\t</select></td>\n";
 			echo "\t\t</tr>\n";
+
+			// Get grouping setting
+			echo "\t\t<tr><th class='heading'>Grouping</th>\n";
+			echo "\t\t\t<td><select name='sort'>\n";
+			echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
+			echo "\t\t\t\t<option label='Count' value='COUNT'>COUNT</option>\n";
+			echo "\t\t\t\t<option label='Sum' value='SUM'>SUM</option>\n";
+			echo "\t\t\t</select></td>\n";
+			echo "\t\t</tr>";
 
 			// Get sort setting
 			echo "\t\t<tr><th class='heading'>Sorting</th>\n";
