@@ -1,6 +1,7 @@
 <?php
 
 include('inc/inc.php');
+include_lcm('inc_lang');
 
 if (($case>0) && ($clients)) {
 	foreach($clients as $client) {
