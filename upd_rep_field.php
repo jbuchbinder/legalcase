@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.3 2005/02/07 16:06:44 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.4 2005/02/09 16:07:56 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,6 +26,10 @@ include('inc/inc.php');
 // Clean the POST values
 $rep = intval($_REQUEST['rep']);
 // $order = intval($_REQUEST['order']);
+
+// After returning to the page referer, jump to a specific place
+// Ex: #line, #column, #filter, etc.
+$ref_tag = "";
 
 if (isset($_REQUEST['remove'])) {
 	$remove = $_REQUEST['remove']; // = { 'column', 'line' }
@@ -41,6 +45,7 @@ if (isset($_REQUEST['remove'])) {
 					AND id_column = " . $id_column;
 	
 		lcm_query($query);
+		$ref_tag = "#column";
 	} else if ($remove == 'line') {
 		$id_line = intval($_REQUEST['id_line']);
 	
@@ -52,22 +57,23 @@ if (isset($_REQUEST['remove'])) {
 					AND id_line = " . $id_line;
 	
 		lcm_query($query);
+		$ref_tag = "#line";
 	}
 
 }
 
 if (isset($_REQUEST['add'])) {
-	$add = $_REQUEST['add']; // = { 'column', 'line' }
+	$add = $_REQUEST['add']; // = { 'column', 'line', 'filter' }
+	$id_field = intval($_REQUEST['id_field']);
+
+	if (! $id_field)
+		die ("add column: missing valid 'id_field'");
 
 	if ($add == 'column') {
-		$id_field = intval($_REQUEST['id_field']);
 		$order = intval($_REQUEST['order']);
 		$header = clean_input($_REQUEST['header']);
 		$sort = clean_input($_REQUEST['sort']);
 	
-		if (! $id_field)
-			die ("add column: missing valid 'id_field'");
-
 		// TODO: Add "position"
 
 		$query = "INSERT INTO lcm_rep_col
@@ -78,16 +84,12 @@ if (isset($_REQUEST['add'])) {
 					sort = '$sort'";
 	
 		lcm_query($query);
+		$ref_tag = "#column";
 	} else if ($add == 'line') {
-		$id_field = intval($_REQUEST['id_field']);
+		// TODO: Add "position"
 		// $order = intval($_REQUEST['order']);
 		// $header = clean_input($_REQUEST['header']);
 		// $sort = clean_input($_REQUEST['sort']);
-	
-		if (! $id_field)
-			die ("add column: missing valid 'id_field'");
-
-		// TODO: Add "position"
 
 		$query = "INSERT INTO lcm_rep_line
 				SET id_report = $rep,
@@ -95,6 +97,16 @@ if (isset($_REQUEST['add'])) {
 		// TODO: Add sort_type, col_order, total, ...
 	
 		lcm_query($query);
+		$ref_tag = "#line";
+	} else if ($add == 'filter') {
+		$query = "INSERT INTO lcm_rep_filter
+				SET id_report = $rep,
+					id_field = $id_field,
+					type = '',
+					value = ''";
+
+		lcm_query($query);
+		$ref_tag = "#filter";
 	}
 
 }
@@ -109,6 +121,7 @@ if (isset($_REQUEST['select_col_type']) && isset($_REQUEST['select_col_name'])) 
 		lcm_query($query);
 	// }
 
+	$ref_tag = "#column";
 }
 
 if (isset($_REQUEST['select_line_type']) && isset($_REQUEST['select_line_name'])) {
@@ -121,6 +134,7 @@ if (isset($_REQUEST['select_line_type']) && isset($_REQUEST['select_line_name'])
 		lcm_query($query);
 	// }
 
+	$ref_tag = "#line";
 }
 
 if (isset($_REQUEST['unselect_col'])) {
@@ -130,6 +144,7 @@ if (isset($_REQUEST['unselect_col'])) {
 			WHERE id_report = " . $rep;
 	
 	lcm_query($query);
+	$ref_tag = "#column";
 }
 
 if (isset($_REQUEST['unselect_line'])) {
@@ -139,8 +154,8 @@ if (isset($_REQUEST['unselect_line'])) {
 			WHERE id_report = " . $rep;
 	
 	lcm_query($query);
+	$ref_tag = "#line";
 }
-
 
 /*
 if (($rep>0) && ($order)) {
@@ -159,6 +174,6 @@ if (($rep>0) && ($order)) {
 
 } */
 
-header("Location: " . $GLOBALS['HTTP_REFERER']);
+header("Location: " . $GLOBALS['HTTP_REFERER'] . $ref_tag);
 
 ?>
