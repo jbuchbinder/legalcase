@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.25 2004/12/17 10:48:03 antzi Exp $
+	$Id: upd_case.php,v 1.26 2004/12/17 11:27:52 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -118,7 +118,7 @@ if (count($errors)) {
 		$q .= $author_data['name_first'];
 		$q .= (($author_data['name_middle']) ? ' ' . $author_data['name_middle'] : '');
 		$q .= (($author_data['name_last']) ? ' ' . $author_data['name_last'] : '');
-		$q .= " created and auto-assigned to the case',date_start=NOW()";
+		$q .= " created the case and is auto-assigned to it',date_start=NOW()";
 		$result = lcm_query($q);
 
 		// Set case date_assigned to NOW()
