@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.13 2005/03/23 09:35:40 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.14 2005/03/24 12:49:38 mlutfy Exp $
 */
 
 
@@ -505,7 +505,7 @@ function http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre)
 
 	// [ML] I had a problem centering the name of month, so I removed the 'width="100%"'
 	// but I know it's still ugly now, so if you have any ideas, feel free to fix :-)
-	$gadget .= "<table cellpadding='0' cellspacing='5' border='0'align='center'>\n";
+	$gadget .= "<table cellpadding='0' cellspacing='5' border='0' align='center'>\n";
 	$gadget .= "<tr>\n<td valign='top' width='33%'>"
 		// previous month
 		. http_calendrier_agenda($mois-1, $annee, $jour, $mois, $annee, $GLOBALS['afficher_bandeau_calendrier_semaine'], $script,$ancre) 
