@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: attach_file.php,v 1.6 2005/03/22 14:25:32 antzi Exp $
+	$Id: attach_file.php,v 1.7 2005/03/22 15:22:18 antzi Exp $
 */
 
 include("inc/inc.php");
@@ -28,14 +28,14 @@ include_lcm('inc_filters');
 $case = intval($_POST['case']);
 $client = intval($_POST['client']);
 $org = intval($_POST['org']);
-$description = clean_input($_POST['description']);
 
 if (isset($_FILES['filename'])) {
 //	print_r($_FILES['filename']);
-	$user_file = $_FILES['filename'];
-	$filename = $user_file['tmp_name'];
+	$_SESSION['user_file'] = $_FILES['filename'];
+	$_SESSION['user_file']['description'] = clean_input($_POST['description']);
+	$filename = $_SESSION['user_file']['tmp_name'];
 //	echo $filename;
-	if (is_uploaded_file($filename)) {
+	if (is_uploaded_file($filename) && $_SESSION['user_file']['size'] > 0) {
 		$file = fopen($filename,"r");
 		$file_contents = fread($file, filesize($filename));
 		$file_contents = clean_input($file_contents);
@@ -43,30 +43,30 @@ if (isset($_FILES['filename'])) {
 		if ($case > 0) {
 			$q = "INSERT INTO lcm_case_attachment
 				SET	id_case=$case,
-					filename='" . $user_file['name'] . "',
-					type='" . $user_file['type'] . "',
-					size=" . $user_file['size'] . ",
-					description='$description',
+					filename='" . $_SESSION['user_file']['name'] . "',
+					type='" . $_SESSION['user_file']['type'] . "',
+					size=" . $_SESSION['user_file']['size'] . ",
+					description='" . $_SESSION['user_file']['description'] . "',
 					content='$file_contents',
 					date_attached=NOW()
 				";
 		} else if ($client > 0) {
 			$q = "INSERT INTO lcm_client_attachment
 				SET	id_client=$client,
-					filename='" . $user_file['name'] . "',
-					type='" . $user_file['type'] . "',
-					size=" . $user_file['size'] . ",
-					description='$description',
+					filename='" . $_SESSION['user_file']['name'] . "',
+					type='" . $_SESSION['user_file']['type'] . "',
+					size=" . $_SESSION['user_file']['size'] . ",
+					description='" . $_SESSION['user_file']['description'] . "',
 					content='$file_contents',
 					date_attached=NOW()
 				";
 		} else if ($org > 0) {
 			$q = "INSERT INTO lcm_org_attachment
 				SET	id_org=$org,
-					filename='" . $user_file['name'] . "',
-					type='" . $user_file['type'] . "',
-					size=" . $user_file['size'] . ",
-					description='$description',
+					filename='" . $_SESSION['user_file']['name'] . "',
+					type='" . $_SESSION['user_file']['type'] . "',
+					size=" . $_SESSION['user_file']['size'] . ",
+					description='" . $_SESSION['user_file']['description'] . "',
 					content='$file_contents',
 					date_attached=NOW()
 				";
@@ -74,16 +74,22 @@ if (isset($_FILES['filename'])) {
 
 		$result = lcm_query($q);
 
+		$user_file = array();
+
 	} else {
 		// Handle errors
-		$cause = array(	UPLOAD_ERR_OK		=> 'The file was uploaded successfully!',
-				UPLOAD_ERR_INI_SIZE	=> 'The file size exceeds the "upload_max_filesize" directive in php.ini.',
-				UPLOAD_ERR_FORM_SIZE	=> 'The file size exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
-				UPLOAD_ERR_PARTIAL	=> 'The file was uploaded only partially.',
-				UPLOAD_ERR_NO_FILE	=> 'No file was uploaded!',
-				UPLOAD_ERR_NO_TMP_DIR	=> 'Missing a temporary folder.');
-		$_SESSION['errors'] = array('file' => $cause[$user_file['error']]);
-		// . ' uploading file ' . $user_file['name'] . '!');
+		if ($_SESSION['user_file']['error'] > 0) {
+			$cause = array(	UPLOAD_ERR_OK		=> 'The file was uploaded successfully!',
+					UPLOAD_ERR_INI_SIZE	=> 'The file size exceeds the "upload_max_filesize" directive in php.ini.',
+					UPLOAD_ERR_FORM_SIZE	=> 'The file size exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
+					UPLOAD_ERR_PARTIAL	=> 'The file was uploaded only partially.',
+					UPLOAD_ERR_NO_FILE	=> 'No file was uploaded!',
+					UPLOAD_ERR_NO_TMP_DIR	=> 'Missing a temporary folder.');
+			$_SESSION['errors'] = array('file' => $cause[$_SESSION['user_file']['error']]);
+		} else {
+			$_SESSION['errors'] = array('file' => 'Empty file or access denied!');
+		}
+		// . ' uploading file ' . $_SESSION['user_file']['name'] . '!');
 	}
 }
 
