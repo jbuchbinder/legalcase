@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.21 2005/01/21 00:52:20 antzi Exp $
+	$Id: upd_fu.php,v 1.22 2005/01/25 22:10:19 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -69,7 +69,7 @@ elseif (!$fu_data['end_year'] || !$fu_data['end_month'] || !$fu_data['end_day'])
 }
 
 if (count($errors)) {
-    header("Location: $HTTP_REFERER");
+    header("Location: " . $GLOBALS['HTTP_REFERER']);
     exit;
 } else {
     $fl="date_start='" . clean_input($fu_data['date_start']) . "',
@@ -83,6 +83,8 @@ if (count($errors)) {
 		if (!allowed($id_case,'e')) die("You don't have permission to modify this case's information!");
 		// Prepare query
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup=$id_followup";
+		// Do the query
+		if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
     } else {
 		// Check access rights
 		if (!allowed($id_case,'w')) die("You don't have permission to add information to this case!");
@@ -112,18 +114,16 @@ if (count($errors)) {
 		}
 		// Prepare query to add the new follow-up
 		$q="INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
+
+		// Do the query
+		if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
+
+		// Get the new follow-up ID
+		$id_followup = lcm_insert_id();
     }
 
-    // Do the query
-    if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
-    //echo $q;
-
-    // Clear the session
-	// [ML] errors must be shown first
-	// session_destroy();
-
-    // Send user back to add/edit page's referer
-    header('Location: ' . $fu_data['ref_edit_fu']);
+    // Send user back to add/edit page's referer or (default) to followup detail page
+    header('Location: ' . ($fu_data['ref_edit_fu'] ? $fu_data['ref_edit_fu'] : "fu_det.php?followup=$id_followup");
 }
 
 ?>
