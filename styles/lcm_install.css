@@ -38,6 +38,16 @@ textarea {
 	margin-bottom: 1em;
 }
 
+h1 {
+	font-size: 120%;
+	font-family: Verdana,Arial,Sans,sans-serif;
+	color: #970038;
+}
+
+h3 {
+	font-size: 110%;
+}
+
 a {
 	text-decoration: none; 
 }
