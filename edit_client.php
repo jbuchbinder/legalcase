@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.17 2004/12/10 10:09:24 antzi Exp $
+	$Id: edit_client.php,v 1.18 2004/12/10 10:17:56 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -26,12 +26,12 @@ include_lcm('inc_filters');
 
 $client = intval($_GET['client']); // To be sure that we get exaclty the GET value
 
-$client_data = array();
 session_start();
 
 if (empty($errors)) {
     // Clear form data
-    $client_data = array('referer' => $HTTP_REFERER);
+    $client_data = array();
+	$client_data['referer'] = $HTTP_REFERER;
 
 	if ($client>0) {
 		// Register client as session variable
