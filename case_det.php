@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.63 2005/01/13 13:45:34 mlutfy Exp $
+	$Id: case_det.php,v 1.64 2005/01/13 13:51:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -47,7 +47,7 @@ if ($case > 0) {
 		$admin = ($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'a');
 
 		// Show case details
-		lcm_page_start(_T('case_details') . ": " . $row['title']);
+		lcm_page_start(_T('title_case_details') . " " . $row['title']);
 		
 		echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
 		
