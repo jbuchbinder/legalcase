@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.175 2005/03/21 15:11:43 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.176 2005/03/22 11:55:57 mlutfy Exp $
 */
 
 //
@@ -68,8 +68,55 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 	echo "$meta\n";
 
 	// The 'antifocus' is used to erase default titles such as "New appointment"
+	// other functions are used in calendar functions (taken from Spip's presentation.js)
 	echo "<script type='text/javascript'><!--
-			var title_antifocus = false;
+		var title_antifocus = false;
+
+		var memo_obj = new Array();
+
+		function findObj(n) { 
+			var p, i, x;
+
+			// Check if we have not already memorised this elements
+			if (memo_obj[n]) {
+				return memo_obj[n];
+			}       
+
+			d = document; 
+			if((p = n.indexOf(\"?\"))>0 && parent.frames.length) {
+				d = parent.frames[n.substring(p+1)].document; 
+				n = n.substring(0,p);
+			}       
+			if(!(x = d[n]) && d.all) {
+				x = d.all[n]; 
+			}       
+			for (i = 0; !x && i<d.forms.length; i++) {
+				x = d.forms[i][n];
+			}       
+			for(i=0; !x && d.layers && i<d.layers.length; i++) x =
+				findObj(n,d.layers[i].document);
+			if(!x && document.getElementById) x = document.getElementById(n); 
+
+			// Memorise the element
+			memo_obj[n] = x;
+
+			return x;
+		}
+
+		function setvisibility (objet, status) {
+			element = findObj(objet);
+			if (element.style.visibility != status)
+				element.style.visibility = status; 
+		}
+
+		function lcm_show(objet) {
+			setvisibility(objet, 'visible');
+		}
+
+		function lcm_hide(objet) {
+			setvisibility(objet, 'hidden');
+		}
+
 		//--></script>\n";
 	
 	echo "	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_basic_layout.css\" media=\"screen\" />
@@ -1143,7 +1190,7 @@ function show_list_end($current_pos = 0, $number_of_rows = 0) {
 // see listclients.php for example
 function show_listclient_start() {
 	$headers = array();
-	$headers[0]['title'] = "Name"; // TRAD
+	$headers[0]['title'] = _Th('person_input_name');
 	$headers[0]['order']  = 'order_name_first';
 	$headers[0]['default'] = 'ASC';
 
@@ -1165,24 +1212,24 @@ function show_listcase_start() {
 	$headers[$cpt]['order'] = 'no_order';
 	$cpt++;
 
-	$headers[$cpt]['title'] = 'Date creation'; // TRAD
+	$headers[$cpt]['title'] = _Th('time_input_date_creation');
 	$headers[$cpt]['order'] = 'case_order';
 	$headers[$cpt]['default'] = 'DESC';
 	$cpt++;
 
-	$headers[$cpt]['title'] = 'Title'; // TRAD
+	$headers[$cpt]['title'] = _Th('case_input_title');
 	$headers[$cpt]['order'] = 'no_order';
 	$cpt++;
 
 	if ($case_court_archive == 'yes') {
-		$headers[$cpt]['title'] = 'Court archive'; // TRAD
+		$headers[$cpt]['title'] = _Th('case_input_court_archive');
 		$headers[$cpt]['order'] = 'no_order';
 		$cpt++;
 	}
 
 	// XXX actually, it would be nice to be able to order..
 	// but this would require us to put numbers in status names
-	$headers[$cpt]['title'] = 'Status'; // TRAD
+	$headers[$cpt]['title'] = _Th('case_input_status');
 	$headers[$cpt]['order'] = 'no_order';
 
 	show_list_start($headers);
