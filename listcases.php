@@ -18,7 +18,7 @@ $result = lcm_query($q);
 
 ?>
 
-<table border>
+<table border='1' align='center'>
 <tr><th colspan="2">Case description</th></tr>
 <?php
 // Process the output of the query
