@@ -471,9 +471,8 @@ function use_language_of_visitor() {
 	if (isset($GLOBALS['author_session']['lang']))
 		lcm_set_language($GLOBALS['author_session']['lang']);
 
-	if ($cookie_lang = $HTTP_COOKIE_VARS['lcm_lang'])
-		lcm_set_language($cookie_lang);
-
+	if (isset($HTTP_COOKIE_VARS['lcm_lang']))
+		lcm_set_language($HTTP_COOKIE_VARS['lcm_lang']);
 }
 
 //
