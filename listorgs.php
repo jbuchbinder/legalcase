@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.7 2004/11/24 15:21:48 makaveev Exp $
+	$Id: listorgs.php,v 1.8 2005/02/04 10:17:35 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -40,21 +40,28 @@ $result = lcm_query($q);
 
 // Output table tags
 ?>
-<table class="tbl_usr_dtl">
+<table class="tbl_usr_dtl" width="99%" border="0">
 	<tr>
 		<th class="heading">Organisation name</th>
 		<th class="heading">&nbsp;</th>
 	</tr>
 <?php
+//[KM] Simple counter that helps to change the row background from dark to light
+// Maybe this is not the best way but it works :)
+$cnt = 0;
 while ($row = lcm_fetch_array($result)) {
 ?>
 	<tr>
-		<td><a href="org_det.php?org=<?php echo $row['id_org'] . '" class="content_link">';
+		<?php echo "<td class='tbl_cont_" . ($cnt % 2 ? "dark" : "light") . "'>"; ?>
+		<a href="org_det.php?org=<?php echo $row['id_org'] . '" class="content_link">';
 		echo highlight_matches(clean_output($row['name']),$find_org_string);
 ?></td>
-		<td><a href="edit_org.php?org=<?php echo $row['id_org']; ?>" class="content_link">Edit</a></td>
+		<?php echo "<td class='tbl_cont_" . ($cnt % 2 ? "dark" : "light") . "'>"; ?>
+		<a href="edit_org.php?org=<?php echo $row['id_org']; ?>" class="content_link">Edit</a></td>
 	</tr>
 <?php
+// [KM] 
+$cnt++;
 }
 ?>
 </table>

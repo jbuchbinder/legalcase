@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.20 2004/12/16 15:12:13 makaveev Exp $
+	$Id: listclients.php,v 1.21 2005/02/04 10:17:35 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -70,11 +70,11 @@ if ($list_pos>0)
 	</tr>
 <?php
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	echo "\t<tr><td><a href=\"client_det.php?client=" . $row['id_client'] . '" class="content_link">';
+	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'><a href=\"client_det.php?client=" . $row['id_client'] . '" class="content_link">';
 	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
 	echo highlight_matches($fullname,$find_client_string);
 ?></td>
-		<td><a href="edit_client.php?client=<?php echo $row['id_client']; ?>" class="content_link">Edit</a></td>
+		<?php echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"; ?><a href="edit_client.php?client=<?php echo $row['id_client']; ?>" class="content_link">Edit</a></td>
 	</tr>
 <?php
 }
