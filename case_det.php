@@ -26,10 +26,12 @@ if ($case > 0) {
 
 		// Show case details
 		lcm_page_start(_T('case_details') . ": " . $row['title']);
-
+		
+		echo "<p class='normal_text'>";
+		
 		if ($edit)
-			echo ' [<a href="edit_case.php?case=' . $row['id_case'] . '">' . _T('edit_case_information') . '</a>]';
-		echo "<p class='normal_text'>\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
+			echo '[<a href="edit_case.php?case=' . $row['id_case'] . '" class="content_link"><strong>' . _T('edit_case_information') . '</strong></a>]<br /><br />';
+		echo "\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
 
 		// Show users, assigned to the case
 		echo _T('case_user_s') . ': ';
@@ -41,12 +43,12 @@ if ($case > 0) {
 		$authors = lcm_query($q);
 		// Show the results
 		while ($user = lcm_fetch_array($authors)) {
-			if ($admin) echo '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '">';
+			if ($admin) echo '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
 			echo clean_output($user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last']);
 			if ($admin) echo '</a>';
 			echo '; ';
 		}
-		if ($admin) echo '[<a href="sel_auth.php?case=' . $case . '">' . _T('add_user_case') . '</a>]';
+		if ($admin) echo '[<a href="sel_auth.php?case=' . $case . '" class="content_link">' . _T('add_user_case') . '</a>]';
 		echo "<br>\n";
 		echo _T('court_archive_id') . ': ' . clean_output($row['id_court_archive']) . "<br>\n";
 		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
@@ -80,14 +82,14 @@ if ($case > 0) {
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . clean_output($row['name']) . "</a></td>\n";
+			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">' . clean_output($row['name']) . "</a></td>\n";
 			if ($edit)
-				echo '<td><a href="edit_org.php?org=' . $row['id_org'] . '">' . _T('edit') . '</a></td>';
+				echo '<td><a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">' . _T('edit') . '</a></td>';
 			echo "</tr>\n";
 		}
 
 		if ($add)
-			echo "<tr><td><a href=\"sel_org.php?case=$case\">" . _T('add_organisation_s') . "</a></td><td>&nbsp;</td></tr>";
+			echo "<tr><td><a href=\"sel_org.php?case=$case\" class=\"content_link\"><strong>" . _T('add_organisation_s') . "</strong></a></td><td>&nbsp;</td></tr>";
 
 		echo "\t\t</table><br>\n\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
 		echo "\t\t<th class='heading'>" . _T('clients') . ":</th>\n\t\t<th class='heading'>&nbsp;</th>";
@@ -104,11 +106,11 @@ if ($case > 0) {
 			echo  clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last']);
 			echo "</td>\n";
 			if ($edit)
-				echo '<td><a href="edit_client.php?client=' . $row['id_client'] . '">' . _T('edit') . '</a></td>';
+				echo '<td><a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">' . _T('edit') . '</a></td>';
 			echo "</tr>\n";
 		}
 		if ($add)
-			echo "<tr><td><a href=\"sel_client.php?case=$case\">" . _T('add_client_s') . "</a></td><td>&nbsp;</td></tr>\n";
+			echo "<tr><td><a href=\"sel_client.php?case=$case\" class=\"content_link\"><strong>" . _T('add_client_s') . "</strong></a></td><td>&nbsp;</td></tr>\n";
 
 		echo "\t\t</table><br>\n";
 
@@ -136,11 +138,11 @@ if ($case > 0) {
 		else $short_description = substr($row['description'],0,30) . '...';
 		echo '<td>' . clean_output($short_description) . '</td>';
 		if ($edit)
-			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . '</a></td>';
+			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '" class="content_link">' . _T('Edit') . '</a></td>';
 		echo "</tr>\n";
 	}
 	if ($add)
-		echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\">" . _T('new_followup') . "</a></td><td>&nbsp;</td></tr>\n";
+		echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\" class=\"content_link\"><strong>" . _T('new_followup') . "</strong></a></td><td>&nbsp;</td></tr>\n";
 
 	echo "\t</table>\n";
 
