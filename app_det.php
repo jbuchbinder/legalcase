@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.9 2005/03/15 13:28:47 makaveev Exp $
+	$Id: app_det.php,v 1.10 2005/03/18 23:07:20 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -93,6 +93,10 @@ if ($row = lcm_fetch_array($result)) {
 		echo join(', ',$clients);
 		echo "<br />\n";
 	}
+
+	// Show edit appointment button
+	if ($row['id_author'] == $GLOBALS['author_session']['id_author'])
+		echo '<br /><a href="edit_app.php?app=' . $row['id_app'] . '" class="create_new_lnk">' . 'Edit this appointment' . "</a><br />\n"; // TRAD
 
 	if ($row['id_case'] > 0) {
 //		echo '<br />';
