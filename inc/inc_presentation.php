@@ -210,6 +210,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 			echo '<a href="listapps.php">'. _T('menu_agenda') . '</a>
 				</div>
 			</div>';
+	$events = false;
 
 	// Show appointments for today
 	$q = "SELECT lcm_app.id_app,start_time,type,title
@@ -222,6 +223,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	$result = lcm_query($q);
 
 	if (lcm_num_rows($result) > 0) {
+		$events = true;
 		echo "<p class=\"nav_column_text\">
 					<strong>Today</strong><br />\n";
 		while ($row=lcm_fetch_array($result)) {
@@ -246,6 +248,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	$result = lcm_query($q);
 
 	if (lcm_num_rows($result)>0) {
+		$events = true;
 		echo "<p class=\"nav_column_text\">
 				<strong>Next appointments</strong><br />\n";
 		while ($row=lcm_fetch_array($result)) {
@@ -255,7 +258,9 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 		//					8:30 - Meeting with Mr. Johnson<br /><br />
 		//					10:00 - At the court
 		echo "						</p>\n";
-	} else {
+	}
+
+	if (!$events) {
 		echo '<p class="nav_column_text">' . "No events" . "</p>\n";
 	}
 
