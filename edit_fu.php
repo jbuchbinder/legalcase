@@ -175,7 +175,23 @@ echo "</ul>\n";
 			<td><textarea name="description" rows="15" cols="40" class="frm_tarea"><?php
 			echo clean_output($fu_data['description']); ?></textarea></td></tr>
 		<tr><td>Sum billed:</td>
-			<td><input name="sumbilled" value="<?php echo clean_output($fu_data['sumbilled']); ?>" class="search_form_txt"></td></tr>
+			<td><input name="sumbilled" value="<?php echo
+			clean_output($fu_data['sumbilled']); ?>" class="search_form_txt" size='10' />
+			<?php 
+				// [ML] If we do this we may as well make a function
+				// out of it, but not sure where to place it :-)
+				// This code is also in config_site.php
+				$currency = read_meta('currency');
+				if (empty($currency)) {
+					$current_lang = $GLOBALS['lang'];
+					$GLOBALS['lang'] = read_meta('default_language');
+					$currency = _T('currency_default_format');
+					$GLOBALS['lang'] = $current_lang;
+				}
+			
+				echo htmlspecialchars($currency);
+			?>
+			</td></tr>
 	</table>
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
 
