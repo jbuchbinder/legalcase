@@ -3,6 +3,8 @@
 include('inc/inc.php');
 lcm_page_start("Select organisation(s)");
 
+$case = intval($_GET['case']);
+
 if ($case>0) {
 	// Prepare query
 	$q = "SELECT *
@@ -28,7 +30,7 @@ if ($case>0) {
 	$result = lcm_query($q);
 ?>
 <form action="add_org.php" method="post">
-<h3>List if organisations</h3>
+	<h3>List if organisations</h3>
 	<table border="0" class="tbl_usr_dtl">
 		<tr>
 			<th class="heading">&nbsp;</th>
@@ -53,7 +55,7 @@ if ($case>0) {
 		</tr>
 	</table>
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
-	<input type="hidden" name="ref_sel_org" value="<?php echo $HTTP_REFERER ?>">
+	<input type="hidden" name="ref_sel_org" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
 	<button name="submit" type="submit" value="submit">Add organisation(s) to the case</button>
 	<button name="reset" type="reset" value="reset">Clear selected</button>
 </form>
