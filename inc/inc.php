@@ -12,7 +12,7 @@ include_lcm('inc_auth');
 include_lcm('inc_presentation');
 include_lcm('inc_text');
 include_lcm('inc_filters');
-include_lcm('inc_calendar');
+// include_lcm('inc_calendar'); [ML] not used
 
 if (!@file_exists('data/inc_meta_cache.php'))
 	write_metas();
