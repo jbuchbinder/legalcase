@@ -38,7 +38,7 @@ function charger_langue($lang, $module = 'lcm', $forcer = false) {
 function changer_langue($lang) {
 	global $all_langs, $spip_lang_rtl, $spip_lang_right, $spip_lang_left, $spip_lang_dir, $spip_dir_lang;
 
-	$liste_langues = $all_langs.','.lire_meta('langues_multilingue');
+	$liste_langues = $all_langs.','.read_meta('langues_multilingue');
 
  	if ($lang && ereg(",$lang,", ",$liste_langues,")) {
 		$GLOBALS['lcm_lang'] = $lang;
@@ -321,7 +321,7 @@ function changer_typo($lang = '', $source = '') {
 	}
 
 	if (!$lang)
-		$lang = lire_meta('langue_site');
+		$lang = read_meta('langue_site');
 
 	$lang_typo = lang_typo($lang);
 	$lang_dir = lang_dir($lang);
@@ -360,7 +360,7 @@ function menu_languages($nom_select = 'var_lang_lcm', $default = '', $texte = ''
 		// the languages, instead, the function parameters should be changed.
 		$nom_select = 'var_lang_lcm';
 	} else {
-		$langues = explode(',', lire_meta('langues_multilingue'));
+		$langues = explode(',', read_meta('langues_multilingue'));
 	}
 
 	if (count($langues) <= 1) return;
@@ -427,7 +427,7 @@ function verifier_lang_url() {
 	global $HTTP_GET_VARS, $HTTP_COOKIE_VARS, $lcm_lang, $clean_link;
 
 	// quelle langue est demandee ?
-	$lang_demandee = lire_meta('langue_site');
+	$lang_demandee = read_meta('langue_site');
 	if ($HTTP_COOKIE_VARS['lcm_lang_ecrire']) $lang_demandee = $HTTP_COOKIE_VARS['lcm_lang_ecrire'];
 	if ($HTTP_COOKIE_VARS['lcm_lang']) $lang_demandee = $HTTP_COOKIE_VARS['lcm_lang'];
 	if ($HTTP_GET_VARS['lang']) $lang_demandee = $HTTP_GET_VARS['lang'];
@@ -439,7 +439,7 @@ function verifier_lang_url() {
 
 	// Renvoyer si besoin
 	if (!($HTTP_GET_VARS['lang']<>'' AND $lang_demandee == $HTTP_GET_VARS['lang'])
-	AND !($HTTP_GET_VARS['lang']=='' AND $lang_demandee == lire_meta('langue_site')))
+	AND !($HTTP_GET_VARS['lang']=='' AND $lang_demandee == read_meta('langue_site')))
 	{
 		$destination = $clean_link;
 		$destination->addvar('lang', $lang_demandee);
@@ -487,8 +487,8 @@ function init_languages() {
 	global $all_langs, $langue_site, $cache_lang, $cache_lang_modifs;
 	global $pile_langues, $lang_typo, $lang_dir;
 
-	$all_langs = lire_meta('langues_proposees');
-	$langue_site = lire_meta('langue_site');
+	$all_langs = read_meta('langues_proposees');
+$langue_site = read_meta('langue_site');
 	$cache_lang = array();
 	$cache_lang_modifs = array();
 	$pile_langues = array();

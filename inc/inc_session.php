@@ -38,7 +38,7 @@ function fichier_session($id_session, $alea) {
 // Add a session for the specified author
 //
 function ajouter_session($auteur, $id_session) {
-	$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere'));
+	$fichier_session = fichier_session($id_session, read_meta('alea_ephemere'));
 	$vars = array('id_author', 'name_first', 'name_middle', 'name_last', 'username', 'email', 'status', 'lang', 'ip_change', 'hash_env');
 
 	$texte = "<"."?php\n";
@@ -65,14 +65,14 @@ function verifier_session($id_session) {
 	// Test with the current alea
 	$ok = false;
 	if ($id_session) {
-		$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere'));
+		$fichier_session = fichier_session($id_session, read_meta('alea_ephemere'));
 		if (@file_exists($fichier_session)) {
 			include($fichier_session);
 			$ok = true;
 		}
 		else {
 			// Else, check with the previous alea
-			$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere_ancien'));
+			$fichier_session = fichier_session($id_session, read_meta('alea_ephemere_ancien'));
 			if (@file_exists($fichier_session)) {
 				// Renouveler la session (avec l'alea courant)
 				include($fichier_session);
@@ -96,11 +96,11 @@ function verifier_session($id_session) {
 // Delete a session
 //
 function supprimer_session($id_session) {
-	$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere'));
+	$fichier_session = fichier_session($id_session, read_meta('alea_ephemere'));
 	if (@file_exists($fichier_session)) {
 		@unlink($fichier_session);
 	}
-	$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere_ancien'));
+	$fichier_session = fichier_session($id_session, read_meta('alea_ephemere_ancien'));
 	if (@file_exists($fichier_session)) {
 		@unlink($fichier_session);
 	}
@@ -150,7 +150,7 @@ function zap_sessions ($id_author, $zap) {
 	// Do not delete yourself by accident
 	// [ML] This does not seem necessary.
 	if ($s = $GLOBALS['lcm_session'])
-		$fichier_session = fichier_session($s, lire_meta('alea_ephemere'));
+		$fichier_session = fichier_session($s, read_meta('alea_ephemere'));
 
 	$dir = opendir($dirname);
 	$t = time();
