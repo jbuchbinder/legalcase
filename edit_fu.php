@@ -35,6 +35,9 @@ if (empty($errors)) {
 	    if (!session_is_registered("followup"))
 			session_register("followup");
 
+		// Debug code
+		echo "<!-- Followup: " . intval($followup) . "-->\n";
+		
 		// Fetch the details on the specified follow-up
 		$q="SELECT *
 			FROM lcm_followup
@@ -49,7 +52,7 @@ if (empty($errors)) {
 		} else die("There's no such follow-up!");
 
 		// Check for access rights
-		if (!allowed($fu_data['id_case'],'e')) 
+		if (!allowed($fu_data['id_case'],'e'))
 			die("You don't have permission to edit this case's information!");
 	} else {
 		if ($case > 0) {
