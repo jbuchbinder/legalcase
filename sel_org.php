@@ -1,42 +1,64 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: sel_org.php,v 1.8 2005/03/18 09:48:13 mlutfy Exp $
+*/
+
 include('inc/inc.php');
 lcm_page_start("Select organisation(s)");
 
-$case = intval($_GET['case']);
+$case = intval($_REQUEST['case']);
 
-if ($case>0) {
-	// Prepare query
-	$q = "SELECT *
-		  FROM lcm_case_client_org
-		  WHERE id_case=$case";
+if (! $case > 0)
+	die("There's no such case!");
 
-	// Do the query
-	$result = lcm_query($q);
+$q = "SELECT *
+	FROM lcm_case_client_org
+	WHERE id_case=$case";
 
-	// Prepare list query
-	$q = "SELECT id_org,name
-		  FROM lcm_org
-		  WHERE id_org NOT IN (0";
+$result = lcm_query($q);
 
-	// Process the output of the query
-	while ($row = lcm_fetch_array($result)) {
-		// Add org in NOT IN list
-		$q .= ',' . $row['id_org'];
-	}
-	$q .= ')';
+$q = "SELECT id_org,name
+	  FROM lcm_org
+	  WHERE id_org NOT IN (0";
 
-	// Do the query
-	$result = lcm_query($q);
+// Add org in NOT IN list
+while ($row = lcm_fetch_array($result)) 
+	$q .= ',' . $row['id_org'];
+
+$q .= ')';
+
+$result = lcm_query($q);
+
+show_context_start();
+show_context_case_title($case);
+show_context_case_involving($case);
+show_context_end();
+
 ?>
 <form action="add_org.php" method="post">
-	<!-- [AG] Duplicate header -->
-	<!--h3>List if organisations</h3-->
+
 	<table border="0" class="tbl_usr_dtl">
 		<tr>
 			<th class="heading">&nbsp;</th>
-			<th class="heading" width="350">Organisation name</th>
-			<th class="heading">&nbsp;</th>
+			<th class="heading" width="350"><?php echo "Organisation name"; /* TRAD */ ?></th>
 		</tr>
 <?php
 	while ($row = lcm_fetch_array($result)) {
@@ -44,27 +66,23 @@ if ($case>0) {
 		<tr>
 			<td><input type="checkbox" name="orgs[]" value="<?php echo $row['id_org']; ?>"></td>
 			<td><?php echo $row['name']; ?></td>
-			<td><a href="edit_org.php?org=<?php echo $row['id_org']; ?>" class="content_link">Edit</a></td>
 		</tr>
 <?php
 	}
 ?>
 		<tr>
-			<td></td>
-			<td><a href="edit_org.php" class="content_link">Add new organisation</a></td>
-			<td></td>
+			<td>&nbsp;</td>
+			<td><a href="edit_org.php" class="content_link"><?php echo "Add new organisation"; /* TRAD */ ?></a></td>
 		</tr>
 	</table>
+
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
 	<input type="hidden" name="ref_sel_org" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
-	<button name="submit" type="submit" value="submit" class="simple_form_btn">Add organisation(s) to the case</button>
-	<button name="reset" type="reset" value="reset" class="simple_form_btn">Clear selected</button>
+	<p><button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button></p>
+
 </form>
 <?php
 
-} else {
-	die("There's no such case!");
-}
-
 lcm_page_end();
+
 ?>

@@ -18,14 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.14 2005/03/18 08:59:20 mlutfy Exp $
+	$Id: sel_client.php,v 1.15 2005/03/18 09:48:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
-$case = intval($_GET['case']);
+$case = intval($_REQUEST['case']);
 
-if (! $case)
+if (! $case > 0)
 	die("There's no such case!");
 
 // Get case data
@@ -77,7 +77,12 @@ $q2 .= " ORDER BY name_first " . $order_name;
 
 $result = lcm_query($q2);
 
-lcm_page_start("Select client(s) for case: #" . $case_data['id_case'] . " " . $case_data['title']); // TRAD
+lcm_page_start("Select client(s)"); // TRAD
+
+show_context_start();
+show_context_case_title($case);
+show_context_case_involving($case);
+show_context_end();
 
 // Get the number of rows in the result
 $number_of_rows = lcm_num_rows($result);
@@ -128,7 +133,7 @@ show_list_end($list_pos, $number_of_rows);
 
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
 	<input type="hidden" name="ref_sel_client" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
-	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button>
+	<p><button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button></p>
 </form>
 
 <?php
