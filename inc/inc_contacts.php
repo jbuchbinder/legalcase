@@ -72,12 +72,15 @@ function add_contact($type_person, $id, $type_contact, $value) {
 function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 	// XXX FIXME TODO very temporary untill we solved this issue..
 	if ($type_contact == 'email')
-		$type_contact = 1;
-	else
-		echo "Wrong get_contact_author type ($type_contact)";
+//		$type_contact = 1;
+//		[AG] I assume that 'email' means any e-mail contact type
+//		If not, $type_contact should be set here to what 'email' means
+		$type_contact = array('email_main','email_alternate');
+//	else
+//		echo "Wrong get_contact_author type ($type_contact)";
 
 	$id = intval($id);
-	$type_contact = intval($type_contact);
+//	$type_contact = intval($type_contact);
 	$value = addslashes($value);
 
 	$query = "SELECT id_contact
@@ -87,11 +90,32 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 	if ($type_person)
 		$query .= " AND (type_person = '$type_person')";
 
-	if ($type_contact)
-		$query .= " AND (type_contact = $type_contact)";
-
 	if ($id)
 		$query .= " AND (id_of_person = $id)";
+
+	if ($type_contact) {
+		// [AG] Let's try this - we accept for $type_contact integer, string or array of integers or strings
+		// Thus we can specify more flexible searches
+		switch (gettype($type_contact)) {
+			case "string":
+				$type_contact = get_contact_type_id($type_contact);
+			case "integer":
+				$query .= " AND (type_contact = $type_contact)";
+				break;
+			case "array":
+				$qs = '';
+				foreach ($type_contact as $tc) {
+					if (gettype($tc)=='string') $tc = get_contact_type_id($tc);
+					$tc = intval($tc);
+					$qs .= ($qs ? ',' : '') . $tc;
+				}
+				$query .= " AND (type_contact IN ($qs)";
+				break;
+			default:
+				echo "Wrong is_existing_contact type_contact ($type_contact)";
+		}
+
+	}
 
 	$query .= ")";
 
