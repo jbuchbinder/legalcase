@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.18 2005/02/10 10:04:11 antzi Exp $
+	$Id: set_case_status.php,v 1.19 2005/03/06 14:36:34 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -92,7 +92,7 @@ switch ($status) {
 		echo show_all_errors($_SESSION['errors']);
 		
 		// Write form
-		echo "<form action='upd_fu.php' method='POST'>
+		echo "<form action='upd_fu.php' method='post'>
 	<table class='tbl_usr_dtl' width='99%'>
 		<tr><td>$date_title</td>
 			<td>";
