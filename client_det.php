@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.14 2005/02/08 20:18:16 antzi Exp $
+	$Id: client_det.php,v 1.15 2005/02/08 20:30:09 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -68,7 +68,10 @@ if ($client > 0) {
 					. "</a></p>\n";
 			}
 		}
-		
+
+		//
+		// Show client general information
+		//
 		echo '<fieldset class="info_box">';
 		echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_view_general') . "</div>\n";
 
@@ -88,6 +91,38 @@ if ($client > 0) {
 		
 		echo "<br /></fieldset>\n";
 			
+		//
+		// Show client contacts (if any)
+		//
+		$hide_emails = read_meta('hide_emails');
+		$contacts = get_contacts('client', $row['id_client']);
+
+		$html = '<fieldset class="info_box">';
+		$html .= '<div class="prefs_column_menu_head">' . _T('client_subtitle_contacts') . "</div>\n";
+
+		$html = '';
+		$html .= '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
+		$html .= '<tr><th class="heading" colspan="2">' . "Contacts:" . '</th></tr>' . "\n";
+
+		$i = 0;
+		foreach($contacts as $c) {
+			if (! ($hide_emails == 'yes' && $c['name'] == 'email_main' && $author_session['status'] != 'admin')) {
+				$html .= "\t<tr>";
+				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . "</td>";
+				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $c['value'] . "</td>";
+				$html .= "</tr>\n";
+				$i++;
+			}
+		}
+
+		$html .= "</table><br /></fieldset>\n";
+
+		if ($i > 0)
+			echo $html;
+
+		//
+		// Show client associated organisations
+		//
 		echo '<fieldset class="info_box">';
 		echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_associated_org') . "</div>\n";
 
