@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.40 2005/03/28 10:44:44 mlutfy Exp $
+	$Id: upd_case.php,v 1.41 2005/03/28 13:20:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -41,7 +41,8 @@ if (!$_SESSION['case_data']['title'])
 if (count($_SESSION['errors'])) {
     header("Location: $HTTP_REFERER");
     exit;
-} else {
+}
+
 	//$cl = '(id_case,title,id_court_archive,date_creation,date_assignment,legal_reason,alledged_crime,status)';
 	//$vl = "($id_case,'$title','$id_court_archive','$date_creation',";
 	//$vl .= "'$date_assignment','$legal_reason','$alledged_crime','$status')";
@@ -95,6 +96,8 @@ if (count($_SESSION['errors'])) {
 			$q = "UPDATE lcm_case SET $fl,$public_access_rights WHERE id_case=$id_case";
 		else
 			$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
+
+		$result = lcm_query($q);
 	} else {
 		// This is new case
 		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,$public_access_rights";
@@ -131,14 +134,12 @@ if (count($_SESSION['errors'])) {
 				SET date_assignment=NOW()
 				WHERE id_case=$id_case";
 
-		// Last query is executed outside this block, so don't put lcm_query() for it!
+		$result = lcm_query($q);
 	}
 
-	// Some advanced ideas for future use
-	//$q="INSERT INTO lcm_case SET id_case=$id_case,$fl ON DUPLICATE KEY UPDATE $fl";
-	//$q="INSERT INTO lcm_case $cl VALUES $vl ON DUPLICATE KEY UPDATE $fl";
-
-	$result = lcm_query($q);
+	// Keywords
+	include_lcm('inc_keywords');
+	update_keywords_request('case', $id_case);
 
 	// [ML] I don't understand why: header("Location: $ref_edit_case");
 	// [AG] Because "edit_case" could be invoked from diferent places i.e. edit existing case or add new or other.
@@ -181,5 +182,5 @@ if (count($_SESSION['errors'])) {
 	}
 
 	header("Location: " . $send_to);
-}
+
 ?>
