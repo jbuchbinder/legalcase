@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$ Id: case_det.php Exp $
+	$Id: case_det.php,v 1.49 2004/12/17 12:00:54 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -49,13 +49,13 @@ if ($case > 0) {
 
 		// Show case details
 		lcm_page_start(_T('case_details') . ": " . $row['title']);
-		
+
 		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>About this case</div><p class='normal_text'>";
-		
+
 		//Edit case link was here!
-		
+
 		echo "\n" . _T('case_id') . ": " . $row['id_case'] . "<br>\n";
-		
+
 		// Show users, assigned to the case
 		echo _T('case_user_s') . ': ';
 		$q = "SELECT id_case,lcm_author.id_author,name_first,name_middle,name_last
@@ -76,15 +76,15 @@ if ($case > 0) {
 		}
 
 		//echo "</ul>";
-		
+
 		//Add user to the case link was here
-		
+
 		echo "<br />\n";
 		echo _T('court_archive_id') . ': ' . clean_output($row['id_court_archive']) . "<br>\n";
 		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
 
 		// [ML] FIXME: Not very clear how this should work
-		echo "<!-- " . $row['date_assignment'] . "-->\n";
+		echo "<!-- " . var_dump($row) . "-->\n";
 		if ($row['date_assignment'])
 			echo _T('assignment_date') . ': ' .  format_date($row['date_assignment']) . "<br>\n";
 		else
