@@ -550,9 +550,15 @@ ul.list_events {
 	width: 147px;
 }   
 
+/* Can be used fot blank */
+
 ul.list_events li { 
 	float: left;
 	list-style-type: none;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	width: 20px;
+	height: 20px;
 }   
 
 ul.list_events li a {
@@ -564,8 +570,6 @@ ul.list_events li a {
 	text-decoration: none;
 	text-align: center;
 	color: #036;
-	border-right: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
 }   
 
 ul.list_events li a:hover {
@@ -577,6 +581,20 @@ ul.list_events li a.week_day {
 	background: #efefef;
 	color: #333;
 }   
+
+/* Today's date */
+
+ul.list_events li a.today { 
+	background: #def;
+	color: #369;
+}
+
+/* Shows days with appointments */
+
+ul.list_events li a.app_day { 
+	background: #efefef;
+	color: #333;
+}
 
 /* Used in the navigation bar at the top of the calendar */
 div.cal_navigation {
