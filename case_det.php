@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.123 2005/03/28 21:35:42 antzi Exp $
+	$Id: case_det.php,v 1.124 2005/03/29 09:52:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -131,6 +131,9 @@ if ($case > 0) {
 				echo _T('case_input_legal_reason') . ' ' . clean_output($row['legal_reason']) . "<br />\n";
 				if ($case_alledged_crime == 'yes')
 					echo _T('case_input_alledged_crime') . ' ' . clean_output($row['alledged_crime']) . "<br />\n";
+
+				include_lcm('inc_keywords');
+				show_all_keywords('case', $row['id_case']);
 
 				// Show case status
 				if ($edit) {
