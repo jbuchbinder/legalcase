@@ -72,7 +72,7 @@ if ($case > 0) {
 		while ($row = lcm_fetch_array($result)) {
 			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . $row['name'] . "</a></td>\n<td>";
 			if ($edit)
-				echo '<a href="edit_org.php?org=' . $row['id_org'] . '">' _T('edit') . '</a>';
+				echo '<a href="edit_org.php?org=' . $row['id_org'] . '">' . _T('edit') . '</a>';
 			echo "</td></tr>\n";
 		}
 
