@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.15 2005/03/21 09:52:07 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.16 2005/03/29 06:26:34 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -54,7 +54,7 @@ function get_unique_username($username) {
 // If only a cookie (p) was provided, show the form to reset the password
 // If a cookie + password were provided, reset the password.
 function reset_pass($my_p, $my_password = 0) {
-	$my_p = addslashes($my_p);
+	$my_p = clean_input($my_p);
 	$my_pass_forgotten = 'yes';
 	$errors = array();
 
@@ -124,7 +124,7 @@ function send_cookie_by_email($my_email) {
 		return;
 	}
 
-	$my_email = addslashes($my_email);
+	$my_email = clean_input($my_email);
 
 	// Find the ID + info of the author
 	$res = lcm_query("SELECT id_of_person, username, status, password
@@ -172,8 +172,7 @@ function send_cookie_by_email($my_email) {
 				. "</p></div>\n";
 		}
 	} else {
-		lcm_log("INTERNAL: Missing id_of_person for " .  addslashes($my_email));
-		die("INTERNAL: Missing id_of_person for " .  addslashes($my_email));
+		lcm_panic("Missing id_of_person for " .  $my_email);
 	}
 }
 
@@ -199,10 +198,10 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 
 	install_html_start(_T('pass_title_register'), 'login');
 
-	if (!$email) {
-		lcm_log("INTERNAL: Missing email in send_registration_form");
-		die("INTERNAL: Missing email in send_registration_form");
-	}
+	if (! $email)
+		lcm_panic("INTERNAL: Missing email in send_registration_form");
+
+	$email = clean_input($email);
 
 	// There is a risk that an author changes his e-mail after his account
 	// is created, to the e-mail of another person, and therefore block the
@@ -210,7 +209,7 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 	// person to hijack the account, so it would be a stupid DoS.
 	$query = "SELECT id_of_person, status FROM lcm_contact as c, lcm_author as a
 		WHERE c.id_of_person = a.id_author
-		AND value=\"" . addslashes($email) . "\"
+		AND value = '" . $email . "'
 		AND type_person = 'author'
 		AND type_contact = " . $system_kwg['contacts']['keywords']['email_main']['id_keyword']; // XXX
 
@@ -238,19 +237,19 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 	include_lcm('inc_access');
 	include_lcm('inc_mail');
 
-	$username = get_unique_username($username);
+	$username = get_unique_username(clean_input($username));
 	$pass = create_random_password(8, $username);
 	$mdpass = md5($pass);
 
 	// TODO: If subscriptions moderated, send cookie + email to sysadmin
 	lcm_query("INSERT INTO lcm_author (name_first, name_last, username, password, status) "
-			. "VALUES ('".addslashes($name_first)."', '".addslashes($name_last)."', '$username', '$mdpass', 'normal')");
+			. "VALUES ('".clean_input($name_first)."', '".clean_input($name_last)."', '$username', '$mdpass', 'normal')");
 
 	$id_author = lcm_insert_id();
 
 	// Add e-mail to lcm_contact
 	lcm_query("INSERT INTO lcm_contact (type_person, type_contact, id_of_person, value)
-			VALUES ('author', " . $system_kwg['contacts']['keywords']['email_main']['id_keyword'] . ", $id_author, '" .  addslashes($email) . "')");
+			VALUES ('author', " . $system_kwg['contacts']['keywords']['email_main']['id_keyword'] . ", $id_author, '" .  $email . "')");
 
 	// Prepare the e-mail to send to the user
 	$site_name = read_meta('site_name');
@@ -326,17 +325,13 @@ use_language_of_visitor();
 $open_subscription = read_meta("site_open_subscription");
 unset($error);
 
-if ($p) {
-	reset_pass($p, $password);
+if ($_REQUEST['p']) {
+	reset_pass($_REQUEST['p'], $_REQUEST['password']);
 }
 
-else if ($user_email) {
-	send_cookie_by_email($user_email);
+else if ($_REQUEST['user_email']) {
+	send_cookie_by_email($_REQUEST['user_email']);
 }
-
-else if ($pass_forgotten == 'yes') {
-	print_pass_forgotten_form();
-} 
 
 else if ($open_subscription == 'yes' || $open_subscription == 'moderated') {
 	if ($email) {
@@ -344,11 +339,10 @@ else if ($open_subscription == 'yes' || $open_subscription == 'moderated') {
 	} else {
 		print_registration_form($email);
 	}
-} else {
-	install_html_start(_T('title_error'), 'login');
-	echo "<div class='box_error'>\n";
-	echo "<p>" . _T('pass_warning_no_action') . "</p>";
-	echo "</div>\n";
+}
+
+else {
+	print_pass_forgotten_form();
 }
 
 echo "<p align='right'>
