@@ -74,6 +74,20 @@ body {
 	text-align: right;
 }
 
+#breadcrumb {
+	font-size: 10px;
+	border-top: 1px dashed #ccc;
+	border-bottom: 1px dashed #ccc;
+	background-color: #efefef;
+	margin-bottom: 10px;
+	padding: 2px 5px 2px 5px;
+}
+
+#breadcrumb a {
+	color: #000;
+	text-decoration: underline;
+}
+
 .clearing {
 	height: 0;
 	clear: both;
