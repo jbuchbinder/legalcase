@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.99 2005/03/06 14:35:10 antzi Exp $
+	$Id: case_det.php,v 1.100 2005/03/08 11:46:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -63,7 +63,8 @@ if ($case > 0) {
 		// Show case details
 		lcm_page_start(_T('title_case_details') . " " . $row['title']);
 
-		echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
+		// [ML] This will probably never be implemented
+		// echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>"; // TRAD
 
 		// Show tabs
 		$groups = array('general' => _T('case_tab_general'),
@@ -81,13 +82,13 @@ if ($case > 0) {
 			//
 			case 'general' :
 				echo "<fieldset class='info_box'>";
-				echo "<div class='prefs_column_menu_head'>" . _T('case_subtitle_general') . "</div>";
+				echo "<div class='prefs_column_menu_head'>"
+					. "<div style='float: right'>" . lcm_help('cases_intro') . "</div>"
+					. _T('case_subtitle_general') 
+					. "</div>";
 				echo "<p class='normal_text'>";
 		
 				// Edit case link was here!
-		
-				// [AG] Case ID irrelevant to the user
-				//echo "\n" . _T('case_input_id') . " " . $row['id_case'] . "<br>\n";
 		
 				// Show users, assigned to the case
 				// TODO: use case_input_authors if many authors
@@ -99,9 +100,6 @@ if ($case > 0) {
 		
 				$authors = lcm_query($q);
 		
-				// Show the results
-				//echo "<ul class=\"simple_list\">\n";
-		
 				$q = '';
 				while ($user = lcm_fetch_array($authors)) {
 					if ($q) $q .= "; \n";
@@ -111,36 +109,41 @@ if ($case > 0) {
 				}
 				echo "$q<br />\n";
 		
-				//echo "</ul>";
-		
 				// Add user to the case link was here
+
+				// [ML] Added ID back, since it was requested by users/testers
+				// as a way to cross-reference paper documentation
+				echo "\n" . _T('case_input_id') . " " . $row['id_case'] . "<br>\n";
 		
 				if ($case_court_archive == 'yes')
 					echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br>\n";
 				echo _T('case_input_date_creation') . ' ' . format_date($row['date_creation']) . "<br>\n";
 		
 				if ($case_assignment_date == 'yes') {
-					// [ML] FIXME: Not very clear how this should work
+					// [ML] Case is assigned/unassigned when authors are added/remove
+					// + case is auto-assigned when created, so the 'else' should not happen
 					if ($row['date_assignment'])
-						echo _T('case_input_date_assigned') . ' ' .  format_date($row['date_assignment']) . "<br>\n";
+						echo _T('case_input_date_assigned') . ' ' . format_date($row['date_assignment']) . "<br />\n";
 					else
-						echo _T('case_input_date_assigned') . ' ' . "Click to assign (?)<br/>\n";
+						echo _T('case_input_date_assigned') . ' ' . "Click to assign<br/>\n";
 				}
 		
-				echo _T('case_input_legal_reason') . ' ' . clean_output($row['legal_reason']) . "<br>\n";
+				echo _T('case_input_legal_reason') . ' ' . clean_output($row['legal_reason']) . "<br />\n";
 				if ($case_alledged_crime == 'yes')
-					echo _T('case_input_alledged_crime') . ' ' . clean_output($row['alledged_crime']) . "<br>\n";
+					echo _T('case_input_alledged_crime') . ' ' . clean_output($row['alledged_crime']) . "<br />\n";
 
 				// Show case status
 				if ($edit) {
 					// Change status form
 					echo "<form action='set_case_status.php' method='get'>\n";
+					echo "<input type='hidden' name='case' value='$case' />\n";
+
 					echo "\t" . _T('case_input_status') . "&nbsp;";
-					echo "<input type='hidden' name='case' value='$case'>\n";
 					echo "\t<select name='status' class='sel_frm'>\n";
 					$statuses = array('draft','open','suspended','closed','merged');
 					foreach ($statuses as $s)
-						echo "\t\t<option" .  (($s == $row['status']) ? ' selected' : '') . ">$s</option>\n";
+						echo "\t\t<option" .  (($s == $row['status']) ? '
+						selected' : '') . ">" . _T('case_status_option_' . $s) . "</option>\n";
 					echo "\t</select>\n";
 					echo "\t<button type='submit' name='submit' value='set_status' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 					echo "</form>\n";
@@ -192,22 +195,17 @@ if ($case > 0) {
 				// Main table for attached organisations and clients
 				//
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_clients') . '</div>';
+				echo '<div class="prefs_column_menu_head">'
+					. "<div style='float: right'>" . lcm_help('clients_intro') . "</div>"
+					. _T('case_subtitle_clients') 
+					. '</div>';
 				echo '<p class="normal_text">';
-		
-				//echo '<table border="1" width="99%">' . "\n";
-				//echo '<tr><td align="left" valign="top" width="50%">' . "\n";
 		
 				//
 				// Show case client(s)
 				//
 				$html_show = false;
 				$html = '<table border="0" width="99%" class="tbl_usr_dtl">' . "\n";
-				//$html .= "<tr>\n";
-				/*
-				$html .= '<th class="heading" colspan="3">' . _T('case_input_clients') . '</th>';
-				$html .= '</tr>' . "\n";
-				*/
 		
 				$q="SELECT cl.id_client, cl.name_first, cl.name_middle, cl.name_last
 					FROM lcm_case_client_org as clo, lcm_client as cl
@@ -262,8 +260,6 @@ if ($case > 0) {
 					echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a><br /><br />";
 				}
 		
-				//echo "</td></tr></table>\n\n";
-				
 				echo "</fieldset>";
 				
 				break;
@@ -272,7 +268,10 @@ if ($case > 0) {
 			//
 			case 'appointments' :
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_appointments') . '</div>';
+				echo '<div class="prefs_column_menu_head">' 
+					. "<div style='float: right'>" . lcm_help('agenda_intro') . "</div>"
+					. _T('case_subtitle_appointments') 
+					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 
 				$q = "SELECT *
@@ -285,12 +284,12 @@ if ($case > 0) {
 				if ($number_of_rows) {
 					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 					echo "\t<tr>";
-					echo '<th class="heading">Start time</th>';
-					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Duration' ) . '</th>';
-					echo '<th class="heading">Type</th>';
-					echo '<th class="heading">Title</th>';
-					echo '<th class="heading">Reminder</th>';
-					echo '<th class="heading">Action</th>';
+					echo '<th class="heading">Start time</th>'; // TRAD
+					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Duration' ) . '</th>'; // TRAD
+					echo '<th class="heading">Type</th>'; // TRAD
+					echo '<th class="heading">Title</th>'; // TRAD
+					echo '<th class="heading">Reminder</th>'; // TRAD
+					echo '<th class="heading">Action</th>'; // TRAD
 					echo "</tr>\n";
 				
 					// Check for correct start position of the list
@@ -310,10 +309,10 @@ if ($case > 0) {
 					for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 						echo "\t<tr>";
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. date('d.m.y H:i',strtotime($row['start_time'])) . '</td>';
+							. date('d.m.y H:i',strtotime($row['start_time'])) . '</td>'; // FIXME [ML] use format_date for i18n
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. ( ($prefs['time_intervals'] == 'absolute') ?
-								date('d.m.y H:i',strtotime($row['end_time'])) :
+								date('d.m.y H:i',strtotime($row['end_time'])) : /* FIXME [ML] */
 								format_time_interval(strtotime($row['end_time']) - strtotime($row['start_time']),
 											($prefs['time_intervals_notation'] == 'hours_only') )
 							) . '</td>';
@@ -321,7 +320,7 @@ if ($case > 0) {
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. '<a href="app_det.php?app=' . $row['id_app'] . '">' . $row['title'] . '</a></td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. date('d.m.y H:i',strtotime($row['reminder'])) . '</td>';
+							. date('d.m.y H:i',strtotime($row['reminder'])) . '</td>'; // FIXME [ML]
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. '<a href="edit_app.php?app=' . $row['id_app'] . '">' . _T('edit') . '</a></td>';
 						echo "</tr>\n";
@@ -346,7 +345,7 @@ if ($case > 0) {
 						// Show page numbers with direct links
 						$list_pages = ceil($number_of_rows / $prefs['page_rows']);
 						if ($list_pages>1) {
-							echo 'Go to page: ';
+							echo 'Go to page: '; // TRAD
 							for ($i=0 ; $i<$list_pages ; $i++) {
 								if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
 								else {
@@ -365,7 +364,7 @@ if ($case > 0) {
 						if ($next_pos<$number_of_rows) {
 							echo "<a href=\"case_det.php?case=$case&amp;tab=appointments&amp;list_pos=$next_pos";
 							if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-							echo '" class="content_link">Next ></a>';
+							echo '" class="content_link">Next ></a>'; // TRAD
 						}
 						
 						echo "</td>\n\t</tr>\n</table>\n";
@@ -373,7 +372,7 @@ if ($case > 0) {
 				
 				}
 
-				echo "<br /><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">New appointment</a><br /><br />\n";
+				echo "<br /><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">New appointment</a><br /><br />\n"; // TRAD
 
 				break;
 			//
@@ -381,7 +380,10 @@ if ($case > 0) {
 			//
 			case 'followups' :
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_followups') . '</div>';
+				echo '<div class="prefs_column_menu_head">' 
+					. "<div style='float: right'>" . lcm_help('clients_followups') . "</div>"
+					. _T('case_subtitle_followups') 
+					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 			
 				echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
@@ -398,7 +400,7 @@ if ($case > 0) {
 				}
 			//	echo _T('date') .
 				echo "</th>";
-				echo "<th class='heading'>" . 'Author' . "</th>";
+				echo "<th class='heading'>" . 'Author' . "</th>"; // TRAD
 				echo "<th class='heading'>"
 					. _T( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>";
 				echo "<th class='heading'>" . _T('type') . "</th>";
@@ -517,8 +519,8 @@ if ($case > 0) {
 			
 				echo "\n\n\t<table border='0' class='tbl_usr_dtl' width='99%'>";
 				echo "\t\t<tr>";
-				echo "<th class='heading'>" . 'Author' . "</th>";
-				echo "<th class='heading'>" . 'Time spent on the case' . "</th>";
+				echo "<th class='heading'>" . 'Author' . "</th>"; // TRAD
+				echo "<th class='heading'>" . 'Time spent on the case' . "</th>"; // TRAD
 				echo "</tr>\n";
 
 				// Show table contents & calculate total
@@ -537,7 +539,6 @@ if ($case > 0) {
 				echo format_time_interval($total_time,($prefs['time_intervals_notation'] == 'hours_only'));
 				echo "</strong></td></tr>\n";
 
-				// Close table
 				echo "\t</table>\n</p></fieldset>\n";
 				break;
 			//
@@ -554,6 +555,7 @@ if ($case > 0) {
 				$i = lcm_num_rows($result);
 				if ($i > 0) {
 					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
+					// TRAD ++
 					echo "\t<tr><th class=\"heading\">Filename</th>
 						<th class=\"heading\">Type</th>
 						<th class=\"heading\">Size</th>
@@ -573,14 +575,14 @@ if ($case > 0) {
 
 				// Attach new file form
 				if ($add) {
-					echo '<div class="prefs_column_menu_head">' . 'Add new document' . '</div>';
+					echo '<div class="prefs_column_menu_head">' . 'Add new document' . '</div>'; // TRAD
 					echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
 					echo "<input type=\"hidden\" name=\"case\" value=\"$case\" />\n";
 					echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
-					echo '<strong>Filename:</strong><br /><input type="file" name="filename" size="65" />' . "\n";
+					echo '<strong>Filename:</strong><br /><input type="file" name="filename" size="40" />' . "\n"; // TRAD
 					echo "<br />\n";
-					echo '<strong>Description:</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n";
-					echo '<input type="submit" name="submit" value="Attach" class="search_form_btn" />' . "\n";
+					echo '<strong>Description:</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n"; // TRAD
+					echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 					echo "</form>\n";
 				}
 
