@@ -18,10 +18,11 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_help.php,v 1.3 2005/02/02 09:29:40 mlutfy Exp $
+	$Id: lcm_help.php,v 1.4 2005/03/07 13:56:33 mlutfy Exp $
 */
 
-include('inc/inc.php');
+include('inc/inc_version.php');
+include('inc/inc_presentation.php');
 
 $code = $_REQUEST['code'];
 $error_section = false;
