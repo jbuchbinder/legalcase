@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.58 2005/03/04 23:48:21 antzi Exp $
+	$Id: edit_case.php,v 1.59 2005/03/13 16:35:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -91,6 +91,8 @@ $attach_client = 0;
 if (!$existing && isset($_REQUEST['attach_client'])) {
 	$attach_client = intval($_REQUEST['attach_client']);
 
+	/* [ML] Better to remove this and show clients in listcase instead
+	   + make 'title' optional.
 	if ($attach_client) {
 		// Fetch name of the client
 		$query = "SELECT name_first, name_middle, name_last
@@ -109,17 +111,29 @@ if (!$existing && isset($_REQUEST['attach_client'])) {
 		} else {
 			die("No such client #" . $attach_client);
 		}
-	}
+	} */
 }
 
 // Start page and title
 if ($existing) lcm_page_start(_T('title_case_edit'));
 else lcm_page_start(_T('title_case_new'));
 
-echo lcm_help("case_edit");
+echo "<div style='float: right'>" . lcm_help("case_edit") . "</div>";
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
+
+if ($attach_client) {
+	echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
+	$query = "SELECT id_client, name_first, name_middle, name_last
+				FROM lcm_client
+				WHERE id_client = " . $attach_client;
+	$result = lcm_query($query);
+	while ($row = lcm_fetch_array($result))  // should be only once
+		echo '<li style="list-style-type: none;">' . _T('case_input_for_client') . " " . get_person_name($row) . "</li>\n";
+	
+	echo "</ul>\n";
+}
 
 // Start edit case form
 echo "\n<form action=\"upd_case.php\" method=\"post\">
@@ -171,9 +185,12 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "\t\t</tr>\n";
 
 	// Case stage
-	echo "\t\t<tr><td>" . _T('case_input_status') . "</td>\n";
-	echo "\t\t\t<td><select name='stage' class='sel_frm'>\n";
 	global $system_kwg;
+	if (! $_SESSION['case_data']['stage'])
+		$_SESSION['case_data']['stage'] = $system_kwg['stage']['suggest'];
+
+	echo "\t\t<tr><td>" . _T('case_input_stage') . "</td>\n";
+	echo "\t\t\t<td><select name='stage' class='sel_frm'>\n";
 	foreach($system_kwg['stage']['keywords'] as $kw) {
 		$sel = ($kw['name'] == $_SESSION['case_data']['stage'] ? ' selected="selected"' : '');
 		echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
@@ -220,11 +237,13 @@ if ($_SESSION['case_data']['id_case']) {
 	} else {
 		// More buttons for 'extended' mode
 		if ($prefs['mode'] == 'extended') {
-			echo '<button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+			echo '<p><button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 			echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
-			echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n"; }
-		else	// Less buttons in simple mode
-			echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+			echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') .  "</button></p>\n";
+		} else {
+			// Less buttons in simple mode
+			echo '<p><button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
+		}
 	}
 
 	// [ML] if ($existing)
