@@ -6,11 +6,9 @@ if (defined('_INC_VERSION')) return;
 define('_INC_VERSION', '1');
 
 
-// *********** traiter les variables ************
-// Magic quotes : on n'en veut pas sur la base,
-// et on nettoie les GET/POST/COOKIE le cas echeant
-//
-
+// *********** clean the variables **************
+// Magic quotes: we don't want any in the database,
+// and we clean GET/POST/COOKIE in consequence.
 function magic_unquote($table) {
 	if (is_array($GLOBALS[$table])) {
 	        reset($GLOBALS[$table]);
@@ -34,13 +32,13 @@ if ($unquote_gpc) {
 //
 // Dirty against the register_globals to 'Off' (PHP 4.1.x)
 //
-
 $INSECURE = array();
 
 function feed_globals($table, $insecure = true, $ignore_variables_contexte = false) {
 	global $INSECURE;
 
-	// ignorer des cookies qui contiendraient du contexte 
+	// ignore cookies which could include context information
+	// [ML] To remove?
 	$is_contexte = array('id_parent'=>1, 'id_rubrique'=>1, 'id_article'=>1, 'id_auteur'=>1,
 		'id_breve'=>1, 'id_forum'=>1, 'id_secteur'=>1, 'id_syndic'=>1, 'id_syndic_article'=>1,
 		'id_mot'=>1, 'id_groupe'=>1, 'id_document'=>1, 'date'=>1, 'lang'=>1);
@@ -63,12 +61,12 @@ feed_globals('HTTP_POST_VARS');
 feed_globals('HTTP_SERVER_VARS', false);
 
 
+// With register_globals to Off in PHP4, we need to use the new
+// HTTP_POST_FILES variable for the uploaded files (does not work
+// under PHP3). 
 //
-// Avec register_globals a Off sous PHP4, il faut utiliser
-// la nouvelle variable HTTP_POST_FILES pour les fichiers uploades
-// (pas valable sous PHP3)
-//
-
+// [ML] LCM may need attached files in the future, so I will leave
+// this for now.
 function feed_post_files($table) {
 	global $INSECURE;
 	if (is_array($GLOBALS[$table])) {
@@ -83,12 +81,10 @@ function feed_post_files($table) {
 feed_post_files('HTTP_POST_FILES');
 
 
-
-//
+//  ************************************
 // 	*** Default configuration of LCM ***
 //
-// The following parameters can be overriden via
-// inc/my_options.php.
+// The following parameters can be overriden via inc/my_options.php.
 //
 
 // Prefix of tables in the database
@@ -100,7 +96,7 @@ $table_prefix = 'lcm';
 $cookie_prefix = 'lcm';
 $cookie_path = '';
 
-// Path of templates (for report generation)
+// Template path (for report generation)
 $dossier_squelettes = 'tpl';
 
 // Should we authorize LCM to compress the pages on the fly when
@@ -108,12 +104,12 @@ $dossier_squelettes = 'tpl';
 $auto_compress = true;
 
 // [ML] This will probably not be used
-// creation des vignettes avec image magick en ligne de commande : mettre
-// le chemin complet '/bin/convert' (Linux) ou '/sw/bin/convert' (fink/Mac OS X)
-// Note : preferer GD2 ou le module php imagick s'ils sont disponibles
+// creation of thumbnails with ImageMagick on the command line: put the
+// complete path '/bin/convert' (Linux) or '/sw/bin/convert' (fink/Mac OS X)
+// Note : better to use GD2 or the php module imagick if they are available
 $convert_command = 'convert';
 
-// Should we debug in data/lcm.log ? (not very often used)
+// Should we debug in data/lcm.log ?
 $debug = true;
 
 // Should MySQL run in debug mode?
@@ -122,18 +118,16 @@ $mysql_debug = true;
 // Should MySQL queries be profiled (chronometer) ?
 $mysql_profile = false;
 
-// faut-il faire des connexions completes rappelant le nom du serveur et de
-// la base MySQL ? (utile si vos squelettes appellent d'autres bases MySQL)
+// Should we make full connection requests including the server name and
+// the database name? (useful if you plan adding extentions which make
+// requests to other SQL databases)
 $mysql_rappel_connexion = false;
 
 // Shoud non-translated strings be shown in red?
 $test_i18n = false;
 
-// Should non-breakable spaces be shown in grey? (only for French, and will
-// most likely be removed)
-$activer_revision_nbsp = false;
-
 // Activate management of "extras"? (see inc/inc_extra.php for more information)
+// [ML] This is not used for now
 $champs_extra = false;
 $champs_extra_proposes = false;
 
@@ -153,20 +147,19 @@ $ignore_remote_user = false;
 if (@file_exists('inc/my_options.php'))
 	include('inc/my_options.php');
 
-// Current version of LCM (TODO: change var name)
-$spip_version = 0.1;
+// Current version of LCM
 $lcm_version = 0.1;
 
-// Current version of LCM shown on screen (TODO: change var name)
-$spip_version_affichee = "0.1 alpha 1 CVS";
+// Current version of LCM shown on screen
 $lcm_version_shown = "0.1 alpha 1 CVS";
 
 // Current version of LCM with cvs tags
-if (ereg('Name: v(.*) ','$Name:  $', $regs)) $spip_version_affichee = $regs[1];
+if (ereg('Name: v(.*) ','$Name:  $', $regs)) $lcm_version_shown = $regs[1];
 
 
 // Don't show silly warnings
-error_reporting(E_ALL ^ E_NOTICE);
+// [ML] For now, until the first beta, better to keep them
+// error_reporting(E_ALL ^ E_NOTICE);
 
 // ** Security **
 $auteur_session = '';
@@ -259,30 +252,16 @@ if ($cookie_prefix != 'lcm') {
 
 //
 // Information about the web hosting
-// [ML] This will probably be removed TODO
+// [ML] alot was removed
 //
 
-$hebergeur = '';
-$login_hebergeur = '';
-$os_serveur = '';
-
-
-// Altern
-if (ereg('altern\.com$', $SERVER_NAME)) {
-	$hebergeur = 'altern';
-	ereg('([^.]*\.[^.]*)$', $HTTP_HOST, $regs);
-	$login_hebergeur = ereg_replace('[^a-zA-Z0-9]', '_', $regs[1]);
-}
-// Free
-else if (ereg('^/([^/]*)\.free.fr/', $REQUEST_URI, $regs)) {
-	$hebergeur = 'free';
-	$login_hebergeur = $regs[1];
-}
+$os_server = '';
 
 if (eregi('\(Win', $HTTP_SERVER_VARS['SERVER_SOFTWARE']))
-	$os_serveur = 'windows';
+	$os_server = 'windows';
 
-// Droits d'acces maximum par defaut
+// By default, set maximum access rights
+// [ML] This will require auditing..
 @umask(0);
 
 
@@ -296,7 +275,6 @@ if (!$REQUEST_URI) {
 	if (!strpos($REQUEST_URI, '?') && $QUERY_STRING)
 		$REQUEST_URI .= '?'.$QUERY_STRING;
 }
-$dir_ecrire = (ereg("/inc/", $GLOBALS['REQUEST_URI'])) ? '' : 'inc/';
 
 if (!$PATH_TRANSLATED) {
 	if ($SCRIPT_FILENAME) $PATH_TRANSLATED = $SCRIPT_FILENAME;
@@ -382,10 +360,10 @@ function spip_query($query) {
 }
 
 //
-// Infos de config PHP
+// PHP configuration information
 //
 
-// cf. liste des sapi_name - http://fr.php.net/php_sapi_name
+// cf. list of sapi_name - http://www.php.net/php_sapi_name
 $php_module = (($flag_sapi_name AND eregi("apache", @php_sapi_name())) OR
 	ereg("^Apache.* PHP", $SERVER_SOFTWARE));
 $php_cgi = ($flag_sapi_name AND eregi("cgi", @php_sapi_name()));
@@ -427,30 +405,22 @@ function tester_upload() {
 	return $GLOBALS['flag_upload'];
 }
 
-function tester_accesdistant() {
-	global $hebergeur;
-	$test_acces = true;
-	return $test_acces;
-}
-
 
 //
-// Reglage de l'output buffering : si possible, generer une sortie
-// compressee pour economiser de la bande passante
-//
-
+// Setup of buffered output: if possible, generate a compressed output
+// to save bandwith
 if ($auto_compress && $flag_obgz) {
 	$use_gz = true;
 
-	// si un buffer est deja ouvert, stop
+	// if a buffer is already open, stop
 	if (ob_get_contents())
 		$use_gz = false;
 
-	// si la compression est deja commencee, stop
+	// if the compression is already started, stop
 	else if (@ini_get("zlib.output_compression") || @ini_get("output_handler"))
 		$use_gz = false;
 
-	// special bug de proxy
+	// special proxy bug
 	else if (eregi("NetCache|Hasd_proxy", $HTTP_VIA))
 		$use_gz = false;
 
@@ -480,9 +450,8 @@ class Link {
 	var $t_vars, $t_var_idx, $t_var_cnt;
 
 	//
-	// Contructeur : a appeler soit avec l'URL du lien a creer,
-	// soit sans parametres, auquel cas l'URL est l'URL courante
-	//
+	// Constructor: Create a new URL, optionally with parameters.
+	// If no URL is given, the current one is unsed.
 	function Link($url = '', $reentrant = false) {
 		static $link = '';
 
@@ -586,28 +555,22 @@ class Link {
 	}
 
 	//
-	// Effacer toutes les variables
-	//
-
+	// Erase all the variables
 	function clearVars() {
 		$this->vars = '';
 		$this->arrays = '';
 	}
 
 	//
-	// Effacer une variable
-	//
-
+	// Erase only one variable
 	function delVar($name) {
 		unset($this->vars[$name]);
 		unset($this->arrays[$name]);
 	}
 
 	//
-	// Ajouter une variable
-	// (si aucune valeur n'est specifiee, prend la valeur globale actuelle)
-	//
-
+	// Add one variable
+	// (if not value is provided, we take the global value of the variable)
 	function addVar($name, $value = '__global__') {
 		if ($value == '__global__') $value = $GLOBALS[$name];
 		if (is_array($value))
@@ -621,10 +584,8 @@ class Link {
 	}
 
 	//
-	// Ajouter une variable de session
-	// (variable dont la valeur est transmise d'un lien a l'autre)
-	//
-
+	// Add a session variable
+	// (variable whose value is transmitted from one URL to another)
 	function addSessionVar($name, $value) {
 		$this->addVar('s_'.$name, $value);
 	}
@@ -634,11 +595,9 @@ class Link {
 	}
 
 	//
-	// Ajouter une variable temporaire
-	// (variable dont le nom est arbitrairement long, et dont la valeur
-	// est transmise de lien en lien dans la limite de cinq variables)
-	//
-
+	// Add a temporary variable
+	// (variable whose name is arbitrarely long, and whose value is
+	// transmitted from link to link. Limited to 5 variables)
 	function addTmpVar($name, $value) {
 		$this->_addTmpHash('t_'.substr(md5($name), 0, 4), $value);
 	}
@@ -666,9 +625,7 @@ class Link {
 	}
 
 	//
-	// Recuperer l'URL correspondant au lien
-	//
-
+	// Fetch the URL assiciated with the link
 	function getUrl($anchor = '') {
 		$url = $this->file;
 		if (!$url) $url = './';
@@ -695,10 +652,8 @@ class Link {
 	}
 
 	//
-	// Recuperer le debut de formulaire correspondant au lien
-	// (tag ouvrant + entrees cachees representant les variables)
-	//
-
+	// Fetch the beginning of the form associated with the link
+	// (opening tag + hidden variables representing the variables)
 	function getForm($method = 'get', $anchor = '', $enctype = '') {
 		if ($anchor) $anchor = '#'.$anchor;
 		$form = "<form method='$method' action='".$this->file.$anchor."'";
@@ -726,18 +681,14 @@ class Link {
 	}
 
 	//
-	// Recuperer l'attribut href="<URL>" correspondant au lien
-	//
-
+	// Fetch the attribut href="<URL>" associated with the link
 	function getHref($anchor = '') {
 		return 'href="'.$this->getUrl($anchor).'"';
 	}
 }
 
 //
-// Creer un lien et retourner directement le href="<URL>" correspondant
-//
-
+// Create a link and return directly the associated href="<URL>"
 function newLinkHref($url) {
 	$link = new Link($url);
 	return $link->getHref();
@@ -749,24 +700,19 @@ function newLinkUrl($url) {
 }
 
 //
-// Recuperer la valeur d'une variable de session sur la page courante
-//
-
+// Fetch the value of a session variable in the current page
 function getSessionVar($name) {
 	return $GLOBALS['this_link']->getSessionVar($name);
 }
 
 //
-// Recuperer la valeur d'une variable temporaire sur la page courante
-//
-
+// Fetch the value of a temporary variable in the current page
 function getTmpVar($name) {
 	return $GLOBALS['this_link']->getTmpVar($name);
 }
 
 
-// Lien vers la page demandee et lien nettoye ne contenant que des id_objet
-
+// Link to the currently requested page and clean it so that it has only id_objects
 $this_link = new Link();
 
 $clean_link = $this_link;
@@ -774,7 +720,9 @@ $clean_link->delVar('submit');
 $clean_link->delVar('recalcul');
 if (count($GLOBALS['HTTP_POST_VARS'])) {
 	$clean_link->clearVars();
-	$vars = array('id_article', 'coll', 'id_breve', 'id_rubrique', 'id_syndic', 'id_mot', 'id_auteur', 'var_login'); // il en manque probablement ?
+	// There are surely missing..
+	// [ML] This may cause bugs!! XXX
+	$vars = array('id_article', 'coll', 'id_breve', 'id_rubrique', 'id_syndic', 'id_mot', 'id_auteur', 'var_login');
 	while (list(,$var) = each($vars)) {
 		if (isset($$var)) {
 			$clean_link->addVar($var, $$var);
@@ -786,7 +734,6 @@ if (count($GLOBALS['HTTP_POST_VARS'])) {
 
 //
 // Read the cached meta information
-//
 $inc_meta_cache = 'data/inc_meta_cache.php';
 if (@file_exists($inc_meta_cache) AND !defined('_INC_META_CACHE')  AND !defined('_INC_META')) {
 	include_data('inc_meta_cache');
@@ -806,12 +753,12 @@ if (!defined('_INC_META_CACHE')) {
 }
 
 
-// Verifier la conformite d'une ou plusieurs adresses email
+// Verify the confirmity of one or many email adresses
 function email_valide($adresse) {
 	$adresses = explode(',', $adresse);
 	if (is_array($adresses)) {
 		while (list(, $adresse) = each($adresses)) {
-			// nettoyer certains formats
+			// clean certain formats
 			// "Marie Toto <Marie@toto.com>"
 			$adresse = eregi_replace("^[^<>\"]*<([^<>\"]+)>$", "\\1", $adresse);
 			// RFC 822
@@ -840,13 +787,14 @@ function _L($text) {
 		return $text;
 }
 
-// Langue principale du site
+// Main language of the site
 $langue_site = lire_meta('langue_site');
 if (!$langue_site) include_lcm('inc_lang');
 $lcm_lang = $langue_site;
 
 
 // Nommage bizarre des tables d'objets
+// [ML] should not be used
 function table_objet($type) {
 	if ($type == 'syndic' OR $type == 'forum')
 		return $type;
@@ -856,8 +804,7 @@ function table_objet($type) {
 
 
 //
-// Enregistrement des evenements
-//
+// Journal of events
 function lcm_log($message, $type = 'lcm') {
 	$pid = '(pid '.@getmypid().')';
 	if (!$ip = $GLOBALS['REMOTE_ADDR']) $ip = '-';
@@ -884,50 +831,51 @@ function lcm_log($message, $type = 'lcm') {
 }
 
 //
-// Savoir si on peut lancer de gros calculs, et eventuellement poser un lock
-// Resultat : true=vas-y ; false=stop
-//
+// Check wheter we can launch large calculations, and eventually place a lock
+// Results: true = go ahead with operation, false = stop
+// 
+// [ML] This should not be needed - perhaps before generating reports, so I
+// will leave it for now.
 function timeout($lock=false, $action=true, $connect_mysql=true) {
 	static $ok = true;
-	global $db_ok, $dir_ecrire;
+	global $db_ok;
 
-	// Fichier lock hebergeur ?  (age maxi, 10 minutes)
-	$timeoutfile = $dir_ecrire.'data/lock';
+	// Has the hosting provided put a lock? (maximum age, 10 minutes)
+	$timeoutfile = 'data/lock';
 	if (@file_exists($timeoutfile)
 	AND ((time() - @filemtime($timeoutfile)) < 600)) {
-		spip_debug ("lock hebergeur $timeoutfile");
+		lcm_debug ("lock hebergeur $timeoutfile");
 		return $ok = false;
 	}
 
-	// Ne rien faire ?
+	// Nothing to do?
 	if (!$action || !$ok)
 		return $ok;
 
 	$ok = false;
 
-	// Base connectee ?
+	// Database connected?
 	if ($connect_mysql) {
 		include_ecrire('inc_connect.php');
 		if (!$db_ok)
 			return false;
 
-		// Verrou demande ?
+		// Lock requested?
 		if ($lock) {
-			spip_debug("test lock mysql $lock");
+			lcm_debug("test lock mysql $lock");
 			if (!spip_get_lock($lock)) {
-				spip_debug ("lock mysql $lock");
+				lcm_debug ("lock mysql $lock");
 				return false;
 			}
 		}
 	}
 
-	// C'est bon
+	// Go ahead
 	return true;
 }
 
 //
-// Tests sur le nom du butineur
-//
+// Tests on the name of the browser
 function verif_butineur() {
 	global $HTTP_USER_AGENT, $browser_name, $browser_version, $browser_description, $browser_rev;
 	ereg("^([A-Za-z]+)/([0-9]+\.[0-9]+) (.*)$", $HTTP_USER_AGENT, $match);
@@ -946,13 +894,13 @@ function verif_butineur() {
 		$browser_version = $match[1];
 	}
 	else if (eregi("mozilla", $browser_name) AND $browser_version >= 5) {
-		// Numero de version pour Mozilla "authentique"
+		// Authentic Mozilla version
 		if (ereg("rv:([0-9]+\.[0-9]+)", $browser_description, $match))
 			$browser_rev = doubleval($match[1]);
-		// Autres Gecko => equivalents 1.4 par defaut (Galeon, etc.)
+		// Other Geckos => equivalent to 1.4 by default (Galeon, etc.)
 		else if (strpos($browser_description, "Gecko") and !strpos($browser_description, "KHTML"))
 			$browser_rev = 1.4;
-		// Machins quelconques => equivalents 1.0 par defaut (Konqueror, etc.)
+		// Random versions => equivalent to 1.0 by default (Konqueror, etc.)
 		else $browser_rev = 1.0;
 	}
 
@@ -960,13 +908,13 @@ function verif_butineur() {
 }
 
 
-function spip_debug($message) {
+function lcm_debug($message) {
 	if ($GLOBALS['debug'])
 		lcm_log($message);
 }
 
 
-// En mode debug, logger l'URI appelante (pas efficace, c'est vraiment pour debugguer !)
+// In debug mode, log the calling URI (not very efficient, it's only for debugging!)
 if ($debug)
 	lcm_log("$REQUEST_METHOD: ".$GLOBALS['REQUEST_URI']);
 
