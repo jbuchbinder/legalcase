@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.63 2005/02/10 20:23:25 antzi Exp $
+	$Id: edit_fu.php,v 1.64 2005/02/24 14:50:12 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -197,7 +197,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 					$interval = ( ($_SESSION['fu_data']['date_end']!='0000-00-00 00:00:00') ?
 							strtotime($_SESSION['fu_data']['date_end']) - strtotime($_SESSION['fu_data']['date_start']) : 0);
 					echo _T('calendar_info_time') . ' ';
-					echo get_time_interval_inputs($name, $interval);
+					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 					echo f_err_star('date_end',$errors);
 				} ?>
 			</td>
