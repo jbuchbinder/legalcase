@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.187 2005/03/24 15:30:53 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.188 2005/03/28 21:35:42 antzi Exp $
 */
 
 //
@@ -1405,7 +1405,8 @@ function show_attachments_list($type, $id_type) {
 
 	$q = "SELECT * 
 			FROM lcm_" . $type . "_attachment 
-			WHERE id_" . $type . " = " . intval($id_type);
+			WHERE content IS NOT NULL
+			AND id_" . $type . " = " . intval($id_type);
 
 	$result = lcm_query($q);
 	$i = lcm_num_rows($result);
@@ -1417,6 +1418,7 @@ function show_attachments_list($type, $id_type) {
 		echo '<th class="heading">' . _Th('file_input_type') . "</th>\n";
 		echo '<th class="heading">' . _Th('file_input_size') . "</th>\n";
 		echo '<th class="heading">' . _Th('file_input_description') . "</th>\n";
+		echo '<th class="heading">' . "</th>\n";
 		echo "</tr>\n";
 
 		for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
@@ -1427,6 +1429,11 @@ function show_attachments_list($type, $id_type) {
 			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
 			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
 			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
+
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
+			if ( ($GLOBALS['author_session']['status'] == 'admin') ||
+			     (($row['id_author'] == $GLOBALS['author_session']['id_author']) && ($type == 'case' ? allowed($id_type,'e') : true)) )
+				echo '<label for="id_rem_file' . $row['id_attachment'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_file' . $row['id_attachment'] . '" name="rem_file[]" value="' . $row['id_attachment'] . '" /></td>';	// TRAD
 			echo "</tr>\n";
 		}
 
@@ -1441,8 +1448,8 @@ function show_attachments_upload($type, $id_type, $filename='', $description='')
 
 	echo '<div class="prefs_column_menu_head">' . 'Add new document' . "</div>\n"; // TRAD
 
-	echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
-	echo '<input type="hidden" name="' . $type . '" value="' . $id_type . '" />' . "\n";
+//	echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+//	echo '<input type="hidden" name="' . $type . '" value="' . $id_type . '" />' . "\n";
 	echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
 
 	echo '<strong>' . _Ti('file_input_name') . "</strong><br />";
@@ -1450,8 +1457,8 @@ function show_attachments_upload($type, $id_type, $filename='', $description='')
 
 	echo '<strong>' . _Ti('file_input_description') . "</strong><br />\n";
 	echo '<input type="text" name="description" class="search_form_txt" value="' . $description . '" />&nbsp;' . "\n";
-	echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
-	echo "</form>\n";
+//	echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
+//	echo "</form>\n";
 }
 
 ?>

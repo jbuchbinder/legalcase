@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: attach_file.php,v 1.10 2005/03/28 20:40:53 antzi Exp $
+	$Id: attach_file.php,v 1.11 2005/03/28 21:35:41 antzi Exp $
 */
 
 include("inc/inc.php");
@@ -29,7 +29,28 @@ $case = intval($_POST['case']);
 $client = intval($_POST['client']);
 $org = intval($_POST['org']);
 
-if (isset($_FILES['filename'])) {
+if ($case > 0) {
+	$type = 'case';
+	$id_type = $case;
+} else if ($client > 0) {
+	$type = 'client';
+	$id_type = $client;
+} else if ($org > 0) {
+	$type = 'org';
+	$id_type = $org;
+} else die("Attach file to what?");	// TRAD
+
+$_SESSION['errors'] = array();
+
+//print_r($_POST);
+if (isset($_POST['rem_file']) && is_array($_POST['rem_file']) && (count($_POST['rem_file']) > 0) ) {
+	$rem_files = join(',',$_POST['rem_file']);
+	$result = lcm_query("UPDATE lcm_{$type}_attachment
+				SET date_removed=NOW(),content=NULL
+				WHERE id_$type=$id_type
+				AND id_attachment IN ($rem_files)");
+}
+if (strlen($_FILES['filename']['name']) > 0) {
 //	print_r($_FILES['filename']);
 	$_SESSION['user_file'] = $_FILES['filename'];
 	$_SESSION['user_file']['description'] = clean_input($_POST['description']);
@@ -38,39 +59,18 @@ if (isset($_FILES['filename'])) {
 	if (is_uploaded_file($filename) && $_SESSION['user_file']['size'] > 0) {
 		$file = fopen($filename,"r");
 		$file_contents = fread($file, filesize($filename));
-		$file_contents = (get_magic_quotes_gpc() ? $file_contents : addslashes($file_contents));
+		$file_contents = addslashes($file_contents);
 
-		if ($case > 0) {
-			$q = "INSERT INTO lcm_case_attachment
-				SET	id_case=$case,
-					filename='" . $_SESSION['user_file']['name'] . "',
-					type='" . $_SESSION['user_file']['type'] . "',
-					size=" . $_SESSION['user_file']['size'] . ",
-					description='" . $_SESSION['user_file']['description'] . "',
-					content='$file_contents',
-					date_attached=NOW()
-				";
-		} else if ($client > 0) {
-			$q = "INSERT INTO lcm_client_attachment
-				SET	id_client=$client,
-					filename='" . $_SESSION['user_file']['name'] . "',
-					type='" . $_SESSION['user_file']['type'] . "',
-					size=" . $_SESSION['user_file']['size'] . ",
-					description='" . $_SESSION['user_file']['description'] . "',
-					content='$file_contents',
-					date_attached=NOW()
-				";
-		} else if ($org > 0) {
-			$q = "INSERT INTO lcm_org_attachment
-				SET	id_org=$org,
-					filename='" . $_SESSION['user_file']['name'] . "',
-					type='" . $_SESSION['user_file']['type'] . "',
-					size=" . $_SESSION['user_file']['size'] . ",
-					description='" . $_SESSION['user_file']['description'] . "',
-					content='$file_contents',
-					date_attached=NOW()
-				";
-		} else die("Attach file to what?");
+		$q = "INSERT INTO lcm_{$type}_attachment
+			SET	id_$type=$id_type,
+				id_author=" . $GLOBALS['author_session']['id_author'] . ",
+				filename='" . $_SESSION['user_file']['name'] . "',
+				type='" . $_SESSION['user_file']['type'] . "',
+				size=" . $_SESSION['user_file']['size'] . ",
+				description='" . $_SESSION['user_file']['description'] . "',
+				content='$file_contents',
+				date_attached=NOW()
+			";
 
 		$result = lcm_query($q);
 
@@ -84,10 +84,10 @@ if (isset($_FILES['filename'])) {
 					UPLOAD_ERR_FORM_SIZE	=> 'The file size exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
 					UPLOAD_ERR_PARTIAL	=> 'The file was uploaded only partially.',
 					UPLOAD_ERR_NO_FILE	=> 'No file was uploaded!',
-					UPLOAD_ERR_NO_TMP_DIR	=> 'Missing a temporary folder.');
-			$_SESSION['errors'] = array('file' => $cause[$_SESSION['user_file']['error']]);
+					UPLOAD_ERR_NO_TMP_DIR	=> 'Missing a temporary folder.');	// TRAD
+			$_SESSION['errors']['file'] = $cause[$_SESSION['user_file']['error']];
 		} else {
-			$_SESSION['errors'] = array('file' => 'Empty file or access denied!');
+			$_SESSION['errors']['file'] = 'Empty file or access denied!';	// TRAD
 		}
 		// . ' uploading file ' . $_SESSION['user_file']['name'] . '!');
 	}
