@@ -57,8 +57,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // C
-'calendar_info_date' => '<NEW>Date',
-'calendar_info_time' => '<NEW>Time',
+'calendar_info_date' => 'Дата',
+'calendar_info_time' => 'Време',
 'case_input_alledged_crime' => 'Предполагаемо престъпление:',
 'case_input_author' => 'Автор:',
 'case_input_authors' => 'Автори:',
@@ -130,6 +130,16 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_month_8' => 'август',
 'date_month_9' => 'септември',
 'date_month_short_1' => 'яну',
+'date_month_short_10' => 'окт',
+'date_month_short_11' => 'ное',
+'date_month_short_12' => 'дек',
+'date_month_short_2' => 'фев',
+'date_month_short_3' => 'март',
+'date_month_short_4' => 'апр',
+'date_month_short_5' => 'май',
+'date_month_short_6' => 'юни',
+'date_month_short_7' => 'юли',
+'date_month_short_8' => 'авг',
 'date_month_short_9' => 'дек',
 'date_time_format' => 'Y-m-d H:i:s',
 'date_wday_0' => 'неделя',
@@ -171,15 +181,15 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'filter_id' => 'Идентификатор на филтър',
 'filter_title' => 'Заглавие',
 'filter_type' => 'Логика на условията',
-'fu_input_date_end' => '<NEW>End:',
-'fu_input_date_start' => '<NEW>Start:',
-'fu_input_description' => '<NEW>Description:',
-'fu_input_sum_billed' => '<NEW>Sum billed:',
-'fu_input_type' => '<NEW>Type:',
+'fu_input_date_end' => 'Край:',
+'fu_input_date_start' => 'Начало:',
+'fu_input_description' => 'Описание:',
+'fu_input_sum_billed' => 'Таксувана сума:',
+'fu_input_type' => 'Вид:',
 
 
 // I
-'info_followup_case' => '<NEW>Case:',
+'info_followup_case' => 'Казус:',
 'info_followup_involving' => 'Включва:',
 'info_followup_to_case' => 'Към дело:',
 'info_free_software' => 'Свободен софтуер, <a href="http://www.lcm.ngo-bg.org/en" class="prefs_normal_lnk">разпространяван</a> под <a href="http://www.gnu.org/licenses/gpl.html" class="prefs_normal_lnk">Общ публичен лиценз (GPL)</a>.',
@@ -299,6 +309,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'new_followup' => 'Ново продължение',
 
 
+// O
+'org_input_name' => 'Име:',
+'org_subtitle_representatives' => 'Представители на организацията',
+'org_subtitle_view_general' => 'Обща информация',
+
+
 // P
 'parameter' => 'Параметър',
 'pass_back_to_site' => 'Обратно към входа към сайта',
@@ -362,6 +378,18 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_info_self_registration' => 'Могат ли потребителите сами да се регистрират на този сайт?',
 'siteconf_info_site_desc' => 'Често се показва под името на сайта. Не се показва при отчети.',
 'siteconf_info_site_name' => 'Това се показва при влизането на потребителя в системата, при генерираните отчети и т.н.',
+'siteconf_input_access_read_choice' => '<NEW>By default, who can consult the information related to a new case?',
+'siteconf_input_access_read_choice_private' => '<NEW>Only authors assigned to a case and administrators can consult its information (for privacy).',
+'siteconf_input_access_read_choice_public' => '<NEW>Any author can consult the information related to cases of other authors, even if they are not assigned on the case (for cooperation and transparency).',
+'siteconf_input_access_read_global' => '<NEW>Impose the above setting as a site policy?',
+'siteconf_input_access_read_global_no' => '<NEW>No, any author assigned on the case (and with "edit" rights) can modify the read access.',
+'siteconf_input_access_read_global_yes' => '<NEW>Yes, only administrators can modify the read access.',
+'siteconf_input_access_write_choice' => '<NEW>By default, who can contribute information to a new case?',
+'siteconf_input_access_write_choice_private' => '<NEW>Only authors assigned to a case and administrators can contribute to it.',
+'siteconf_input_access_write_choice_public' => '<NEW>Any author can contribute information to cases of other authors, even if they are not assigned on the case.',
+'siteconf_input_access_write_global' => '<NEW>Impose the above setting as a site policy?',
+'siteconf_input_access_write_global_no' => '<NEW>No, any author assigned on the case (and with "edit" rights) can modify the write access.',
+'siteconf_input_access_write_global_yes' => '<NEW>Yes, only administrators can modify the write access.',
 'siteconf_input_admin_email' => 'Адрес на ел. поща на администратора:',
 'siteconf_input_alledged_crime' => 'Предполагаемо престъпление',
 'siteconf_input_assignment_date' => 'Дата на задаване',
