@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.41 2005/02/20 22:03:31 antzi Exp $
+	$Id: listcases.php,v 1.42 2005/02/28 11:38:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -73,65 +73,24 @@ if ($list_pos>0)
 
 // Debuging code
 echo "<!-- Page rows:" . $prefs['page_rows'] . "-->\n";
-?>
 
-<!-- [ML:FIXME] I'm not sure about the CSS classes -->
-<table border='0' align='center' class='tbl_usr_dtl' width='99%'>
-	<tr>
-		<th class="heading">#</th>
-		<th class="heading">Title</th>
-<?php	if ($case_court_archive == 'yes') {
-?>		<th class="heading">Court archive</th>
-<?php	}
-?>		<th colspan="3" class="heading">Status</th>
-	</tr>
-<?php
 // Process the output of the query
-for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	$ac_read = allowed($row['id_case'],'r');
-	$ac_edit = allowed($row['id_case'], 'e');
+show_listcase_start();
 
-	echo "<tr>";
+for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
+	$action = '';
 
-	// Case ID
-	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if ($ac_read) echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
-	echo highlight_matches($row['id_case'],$find_case_string);
-	if ($ac_read) echo '</a>';
-	echo "</td>\n";
+	if (allowed($item['id_case'],'w'))
+		$action = '<a href=""edit_fu.php?case=' . $row['id_case'] . '" class="content_link">'
+			. "Add followup"
+			. '</a>';
 
-	// Title
-	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if ($ac_read) echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
-	echo highlight_matches(clean_output($row['title']),$find_case_string);
-	if (allowed($row['id_case'],'r')) echo '</a>';
-	echo "</td>\n";
-	
-	// Court archive ID
-	if ($case_court_archive == 'yes') {
-		echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-		echo highlight_matches(clean_output($row['id_court_archive']),$find_case_string);
-		echo "</td>\n";
-	}
-	
-	// Status
-	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $row['status'] . "</td>\n";
-	
-	/*
-	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if (allowed($row['id_case'],'e'))
-		echo '<a href="edit_case.php?case=' . $row['id_case'] . '" class="content_link">Edit case</a>';
-	echo "</td>\n";
-	*/
-
-	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if (allowed($row['id_case'],'w'))
-		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">Add followup</a>';
-	echo "</td></tr>\n";
+	show_listcase_item($row, $i, $action);
 }
 
+show_listcase_end();
+
 ?>
-</table>
 
 <table border='0' align='center' width='99%' class='page_numbers'>
 	<tr><td align="left" width="15%"><?php
