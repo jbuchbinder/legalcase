@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.25 2005/01/19 15:10:51 mlutfy Exp $
+	$Id: inc_filters.php,v 1.26 2005/01/20 10:06:47 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -65,49 +65,21 @@ function format_date($timestamp = '', $format = 'full') {
 	if (is_numeric($timestamp))
 		$timestamp = strftime("%Y-%m-%d %H:%M:%S", $timestamp);
 
-	if ($timestamp) {
-		// Reacts strangely when date is 00:00:00
-		if (preg_match('/0000-.*/', $timestamp))
-			return '';
+	// Reacts strangely when date is 00:00:00
+	if (preg_match('/0000-.*/', $timestamp))
+		return '';
 
-		$dd = recup_date($timestamp);
-		$day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
+	$dd = recup_date($timestamp);
+	$day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
 
-		$my_date = _T('date_format_full', array(
-							'day_name' => _T('date_wday_' . ($day_of_w + 0)),
-							'month_name' => _T('date_month_' . ($dd[1] + 0)),
-							'day_order' => _T('date_day_' . $dd[2]),
-							'day' => ($dd[2] + 0),
-							'year' => $dd[0]));
+	$my_date = _T('date_format_' . $format, array(
+				'day_name' => _T('date_wday_' . ($day_of_w + 0)),
+				'month_name' => _T('date_month_' . ($dd[1] + 0)),
+				'day_order' => _T('date_day_' . $dd[2]),
+				'day' => ($dd[2] + 0),
+				'year' => $dd[0]));
 
-		return $my_date;
-
-		/*
-		$newtime = strtotime($timestamp);
-
-		if ($newtime != -1) {
-			lcm_debug("Converted $timestamp to $newtime (" .  date(_T('date_format'), $newtime) . ")");
-			$timestamp = $newtime;
-		} else {
-			lcm_log("WARNING: Received strange date format: $timestamp");
-			return '';
-		}
-		*/
-	} else if ($timestamp) {
-		lcm_log(lcm_getbacktrace());
-		lcm_log("numeric time format received");
-
-		return date($format, $timestamp);
-	} else {
-
-
-	}
-
-	if (! $format) 
-		$format = _T('date_format');
-
-	lcm_log("format date = " . $format);
-
+	return $my_date;
 }
 
 // Error display function
