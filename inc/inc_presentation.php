@@ -134,7 +134,7 @@ function lcm_page_start($title = "", $css_files = "") {
 				<div id=\"navigation_menu_column\">
 				<!-- Start of navigation_menu_column content -->
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\">Main menu</div>
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" />&nbsp;Main menu</div>
 						<ul id=\"nav_menu_list\">
 							<li><a href=\"listcases.php\" class=\"main_nav_btn\">Recent cases</a></li>
 							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
@@ -151,7 +151,7 @@ function lcm_page_start($title = "", $css_files = "") {
 	if ($connect_status == 'admin') {
 		echo "		
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\">Administration</div>
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" />&nbsp;Administration</div>
 						<ul id=\"nav_menu_list\">
 							<li><a href=\"config_site.php\" class=\"main_nav_btn\">Site configuration</a></li>
 							<li><a href=\"archives.php\" class=\"main_nav_btn\">Archives (<abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">not ready yet</abbr>)</a></li>
@@ -162,7 +162,7 @@ function lcm_page_start($title = "", $css_files = "") {
 
 	echo "
 					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\">Calendar</div>
+						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_insert_table-16.png\" />&nbsp;Calendar</div>
 						<p class=\"nav_column_text\">". format_date() ."</p>
 					</div>
 					<!-- [ML] Keeping this so that testers see what features
@@ -238,7 +238,7 @@ if($prefs['screen'] == "wide")
 {
 		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
-			<div class=\"prefs_column_menu_head\">Profile</div>
+			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_exec-16.png\" />&nbsp;Profile</div>
 			<p class=\"prefs_column_text\"><strong>Name: </strong>"
 				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
 				. $author_session['name_first'] . ' '
@@ -247,7 +247,7 @@ if($prefs['screen'] == "wide")
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ My preferences ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ Logout ]</a>
 			</p>
-			<div class=\"prefs_column_menu_head\">Search <img height='24' width='24' border='0' src=\"images/lcm/search.gif\" /></div>
+			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\" />&nbsp;Search</div>
 			<p class=\"prefs_column_text\">
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
 			Find case<br />
