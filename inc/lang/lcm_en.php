@@ -45,7 +45,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // D
 'date' => 'Date',
-'date_format' => 'l, dS F Y',
+'date_format' => 'l, jS F Y',
 'date_format_short' => 'd-m-y',
 'date_month_1' => 'January',
 'date_month_10' => 'October',
