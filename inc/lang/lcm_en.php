@@ -296,6 +296,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_this_way' => 'You are registered... this way...',
 'login_title_login' => 'Login',
 'login_warning_already_exists' => 'The username already exists.',
+'login_warning_connection_failed' => 'Connnection failed.',
+'login_warning_connection_failed1' => 'You identified yourself with the identifier <b>@username@</b>, but it does not exist in the database (anymore). It is possible that a database backup was recently imported into the system and that your username has changed.',
+'login_warning_connection_failed2' => 'Please try to reconnect.',
 'login_warning_too_short' => 'The username must be at least 3 characters.',
 'login_without_cookie' => 'Identification without cookie',
 
