@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.34 2005/01/17 14:45:15 mlutfy Exp $
+	$Id: install.php,v 1.35 2005/01/25 11:11:10 mlutfy Exp $
 */
 
 
@@ -281,7 +281,7 @@ else if ($step == 4) {
 	// Comment out possible errors because the creation of new tables
 	// over an already installed system is not a problem. Besides, we do
 	// additional error reporting.
-	echo "<!-- \n\n";
+	echo "<div style='display: none;'>\n";
 
 	// TODO: Error checking
 	if ($db_choice == "new_lcm") {
@@ -301,7 +301,7 @@ else if ($step == 4) {
 
 	if (empty($install_log)) {
 		// Test if the software was already installed
-		@lcm_query_db("SELECT COUNT(*) FROM lcm_meta");
+		lcm_query("SELECT COUNT(*) FROM lcm_meta");
 		$already_installed = !lcm_sql_errno();
 		$old_lcm_version = 'NONE';
 
@@ -329,6 +329,7 @@ else if ($step == 4) {
 			global $system_keyword_groups;
 			$system_keyword_groups = array();
 
+			include_lcm('inc_meta');
 			include_lcm('inc_keywords_default');
 			create_groups($system_keyword_groups);
 
@@ -348,7 +349,8 @@ else if ($step == 4) {
 		echo "* . . . . . .\n\n";
 	}
 
-	echo "--> \n\n";
+	// echo "--> \n\n";
+	echo "</div>\n"; // end of invisible div
 
 	if (! empty($install_log)) {
 		echo "<div class='box_error'>\n";
@@ -487,11 +489,10 @@ else if ($step == 2) {
 
 	echo "\n<!--\n";
 		$link = lcm_connect_db_test($db_address, $db_login, $db_password);
-		$db_connect = lcm_sql_errno();
-		echo "SQL ERRNO: $db_connect\n";
+		$error = (lcm_sql_errno() ? lcm_sql_error() : '');
 	echo "\n-->\n";
 
-	if (($db_connect == "0") && $link) {
+	if (! $error && $link) {
 		echo "<div class='box_success'>\n";
 		echo "\t<b>" . _T('install_connection_succeeded') . "</b>\n";
 		echo "</div>\n";
@@ -510,6 +511,7 @@ else if ($step == 2) {
 	} else {
 		echo "<div class='box_error'>\n";
 		echo "\t<b>"._T('warning_sql_connection_failed') . "</b>\n";
+		echo "\t<p><code>" . $error . "</code></p>\n";
 		echo "\t<p>"._T('install_info_go_back_verify_data') . "\n";
 		echo "\t<p><small>" .  _T('install_info_sql_connection_failed') .  "</small></p>\n";
 		echo "</div>\n\n";
