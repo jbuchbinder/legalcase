@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.64 2005/02/24 14:50:12 antzi Exp $
+	$Id: edit_fu.php,v 1.65 2005/02/24 15:16:25 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -171,7 +171,7 @@ echo show_all_errors($_SESSION['errors']);
 $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 ?>
 
-<form action="upd_fu.php" method="POST">
+<form action="upd_fu.php" method="post">
 	<table class="tbl_usr_dtl" width="99%">
 		<tr><td><?php echo _T('fu_input_date_start'); ?></td>
 			<td><?php echo _T('calendar_info_date') . ' ';  
@@ -179,7 +179,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				echo get_date_inputs($name, $_SESSION['fu_data']['date_start'], false);
 				echo ' ' . _T('calendar_info_time') . ' ';
 				echo get_time_inputs($name, $_SESSION['fu_data']['date_start']);
-				echo f_err_star('date_start',$errors); ?>
+				echo f_err_star('date_start', $errors); ?>
 			</td>
 		</tr>
 		<tr><td><?php echo (($prefs['time_intervals'] == 'absolute') ? _T('fu_input_date_end') : _T('fu_input_time_length')); ?></td>
