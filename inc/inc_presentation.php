@@ -439,7 +439,12 @@ if($prefs['screen'] == "narrow")
 	</table>
 	</div><br />";
 }
-	echo "<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ". _T('info_free_software') ."</div>\n";
+	echo "<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ";
+	echo _T('info_free_software', 
+			array(
+				'distributed' => '<a href="http://www.lcm.ngo-bg.org/" class="prefs_normal_lnk">' . _T('info_free_software1') . '</a>',
+				'license' => lcm_help_string('about#license', _T('info_free_software2'))))
+		. "</div>\n";
 
 	//
 	// Language choice (temporarely put here by [ML])
@@ -499,16 +504,30 @@ function install_html_end() {
 // Help
 //
 
-function lcm_help($code) {
+function lcm_help($code, $anchor = '') {
 	global $lcm_lang;
 
 	$topic = _T('help_title_' . $code);
+	if ($anchor) $anchor = '#' . $anchor;
 
-	return '<div align="right"><a href="lcm_help.php?code=' . $code . '" target="lcm_help" ' 
+	return '<a href="lcm_help.php?code=' . $code . $anchor .'" target="lcm_help" ' 
 		. 'onclick="javascript:window.open(this.href, \'lcm_help\', \'scrollbars=yes, resizable=yes, width=740, height=580\'); return false;">'
 		. '<img src="images/lcm/help.png" alt="help: ' . $topic . '" '
 		. 'title="help: ' . $topic . '" width="12" height="12" border="0" align="middle" /> '
-		. "</a></div>\n"; 
+		. "</a>\n";
+}
+
+// shows help link for a string rather than for icon (see GPL notice in install + footer)
+function lcm_help_string($code, $string, $anchor = '') {
+	global $lcm_lang;
+
+	$topic = _T('help_title_' . $code);
+	if ($anchor) $anchor = '#' . $anchor;
+
+	return '<a class="prefs_normal_lnk" href="lcm_help.php?code=' . $code . $anchor . '" target="lcm_help" ' 
+		. 'onclick="javascript:window.open(this.href, \'lcm_help\', \'scrollbars=yes, resizable=yes, width=740, height=580\'); return false;">'
+		. $string
+		. "</a>";
 }
 
 
