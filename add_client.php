@@ -3,6 +3,10 @@
 include('inc/inc.php');
 include_lcm('inc_lang');
 
+// Clean the POST values
+$case = intval($_POST['case']);
+foreach ($_POST['clients'] as $key=>$value) $clients[$key] = intval($value);
+
 if (($case>0) && ($clients)) {
 	foreach($clients as $client) {
 		// Prepare query
@@ -14,6 +18,7 @@ if (($case>0) && ($clients)) {
 	}
 }
 
-header("Location: $ref_sel_client");
+//header("Location: $ref_sel_client");
+header("Location: case_det.php?case=$case");
 
 ?>
