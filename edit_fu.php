@@ -30,20 +30,17 @@ if (empty($errors)) {
     // Clear form data
     $fu_data = array('ref_edit_fu'=>$HTTP_REFERER);
 
-	if (isset($_GET['followup'])) $followup=intval($_GET['followup']);
+	if (isset($_GET['followup'])) {
+		$followup=intval($_GET['followup']);
 
-	if (isset($followup)) {
 		// Register followup as session variable
 	    if (!session_is_registered("followup"))
 			session_register("followup");
 
-		// Debug code
-		echo "<!-- _GET: " . $_GET['followup'] . ", followup: " . $followup . ", intval=" . intval($followup) . "-->\n";
-
 		// Fetch the details on the specified follow-up
 		$q="SELECT *
 			FROM lcm_followup
-			WHERE id_followup=" . intval($followup);
+			WHERE id_followup=$followup";
 
 		$result = lcm_query($q);
 
@@ -57,7 +54,9 @@ if (empty($errors)) {
 		if (!allowed($fu_data['id_case'],'e'))
 			die("You don't have permission to edit this case's information!");
 	} else {
-		if ($case > 0) {
+		if ($_GET['case'] > 0) {
+			$case = intval($_GET['case']);
+
 			// Check for access rights
 			if (!allowed($case,'w'))
 				die("You don't have permission to add information to this case!");
@@ -84,7 +83,7 @@ echo '<ul style="padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2;">';
 // Name of case
 $query = "SELECT title
 		FROM lcm_case
-		WHERE id_case = " . intval($case);
+		WHERE id_case=$case";
 
 $result = lcm_query($query);
 while ($row = lcm_fetch_array($result))  // should be only once
