@@ -279,14 +279,6 @@ a.add_lnk {
 	font-weight: bold;
 	text-decoration: none;
 	-moz-border-radius: 5px;
-	/* for the theme */
-	background-color: #ccc;
-	color: #000;
-	border: 1px solid #333;
-}
-
-a.add_lnk:hover {
-	background-color: #efefef;
 }
 
 a.create_new_lnk {
@@ -297,14 +289,6 @@ a.create_new_lnk {
 	font-weight: bold;
 	text-decoration: none;
 	-moz-border-radius: 5px;
-	/* for the theme */
-	background-color: #ccc;
-	color: #000;
-	border: 1px solid #333;
-}
-
-a.create_new_lnk:hover {
-	background-color: #efefef;
 }
 
 a.edit_lnk {
@@ -315,14 +299,6 @@ a.edit_lnk {
 	font-weight: bold;
 	text-decoration: none;
 	-moz-border-radius: 5px;
-	/* for the theme */
-	background-color: #ccc;
-	color: #000;
-	border: 1px solid #333;
-}
-
-a.edit_lnk:hover {
-	background-color: #efefef;
 }
 
 a.run_lnk {
@@ -333,14 +309,6 @@ a.run_lnk {
 	font-weight: bold;
 	text-decoration: none;
 	-moz-border-radius: 5px;
-	/* for the theme */
-	background-color: #ccc;
-	color: #000;
-	border: 1px solid #333;
-}
-
-a.run_lnk:hover {
-	background-color: #efefef;
 }
 
 a.prefs_myprefs {
@@ -350,15 +318,6 @@ a.prefs_myprefs {
 	font-size: 11px;
 	font-weight: bold;
 	text-decoration: none;
-	/* -moz-border-radius: 5px; */
-	/* for the theme */
-	background-color: #ccc;
-	color: #000;
-	border: 1px solid #333;
-}
-
-a.prefs_myprefs:hover {
-	background-color: #efefef;
 }
 
 a.prefs_logout {
@@ -368,13 +327,4 @@ a.prefs_logout {
 	font-size: 11px;
 	font-weight: bold;
 	text-decoration: none;
-	/* -moz-border-radius: 5px; */
-	/* for the theme */
-	background-color: #ccc;
-	color: #000;
-	border: 1px solid #333;
-}
-
-a.prefs_logout:hover {
-	background-color: #efefef;
 }
