@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.26 2005/01/20 10:06:47 mlutfy Exp $
+	$Id: inc_filters.php,v 1.27 2005/01/21 00:51:07 antzi Exp $
 */
 
 // Execute this file only once
@@ -70,7 +70,10 @@ function format_date($timestamp = '', $format = 'full') {
 		return '';
 
 	$dd = recup_date($timestamp);
-	$day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
+//	$day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
+// [AG] The above always returns 0 for me (Windows 2K server?).
+// The following works, but Sunday is day 0 instead of 7
+	$day_of_w = date("w", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
 
 	$my_date = _T('date_format_' . $format, array(
 				'day_name' => _T('date_wday_' . ($day_of_w + 0)),
