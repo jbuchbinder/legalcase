@@ -2,7 +2,6 @@
 
 include('inc/inc.php');
 include_lcm('inc_acc');
-lcm_page_start("Select users(s)");
 
 if ($case>0) {
 	if (allowed($case,'a')) {
@@ -28,6 +27,14 @@ if ($case>0) {
 
 		// Do the query
 		$result = lcm_query($q);
+
+		// Check if any author(s) available for selection
+		if (lcm_num_rows($result)>0)
+			lcm_page_start("Select users(s)");
+		else {
+			header('Location: ' . $HTTP_REFERER);
+			exit;
+		}
 	?>
 	<form action="add_auth.php" method="post">
 	<h3>List of users</h3>
