@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.131 2005/04/05 10:35:55 antzi Exp $
+	$Id: case_det.php,v 1.132 2005/04/05 14:02:15 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -99,14 +99,26 @@ if ($case > 0) {
 				$authors = lcm_query($q);
 		
 				$q = '';
+				
 				while ($user = lcm_fetch_array($authors)) {
+				if(!$admin)
 					if ($q) $q .= "; \n";
-					if ($admin) $q .= '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
+					
+					if ($admin) $q .= '<tr><td><a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
 					$q .= clean_output(get_person_name($user));
-					if ($admin) $q .= '</a>';
+					if ($admin) $q .= '</a></td><td><a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" title="View author access rights on this case"><img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" /></a></td><td><a href="author_det.php?author='. $user['id_author'] .'" title="View author details"><img src="images/jimmac/stock_edit-16.png" width="16" height="16" border="0" /></a></td></tr>'; // TRAD
 				}
-				echo "$q<br />\n";
-		
+				
+				if($admin)
+					echo "<table border=\"0\" class=\"tbl_usr_dtl\">\n";
+				
+				echo "$q\n";
+				
+				if($admin)
+					echo "</table>\n";
+				
+				echo "<br />";
+				
 				// [ML] Added ID back, since it was requested by users/testers
 				// as a way to cross-reference paper documentation
 				echo "\n" . _Ti('case_input_id') . $row['id_case'] . "<br />\n";
