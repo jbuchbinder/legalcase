@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.14 2005/03/03 16:16:54 mlutfy Exp $
+	$Id: keywords.php,v 1.15 2005/03/04 11:49:54 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -158,32 +158,29 @@ function show_keyword_id($id_keyword) {
 	lcm_page_start("Keyword: " . $kw['name']);
 	echo show_all_errors($_SESSION['errors']);
 	
+	echo '<fieldset class="info_box">';
+	
 	echo '<form action="keywords.php" method="post">' . "\n";
 	
 	echo '<input type="hidden" name="action" value="update_keyword" />' . "\n";
 	echo '<input type="hidden" name="id_keyword" value="' . $id_keyword . '" />' . "\n";
 	echo '<input type="hidden" name="kwg_type" value="' . $kw['type'] . '" />' . "\n";
 	
-	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
-	echo "<tr>\n";
-	echo "<tr>\n";
-	echo "<td colspan='2'>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "<br />\n";
-	echo "<input type='text' style='width:99%;' id='kw_title' name='kw_title' value='" .  $kw['title'] . "' class='search_form_txt' />\n";
-	echo "</td>\n";
-	echo "<tr></tr>\n";
-	echo "<td colspan='2'>" . _T('keywords_input_description') . "<br />\n";
-	echo "<textarea id='kw_desc' name='kw_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
+	echo f_err_star('title', $_SESSION['errors']) ."<strong>". _T('keywords_input_title') . "</strong><br />\n";
+	echo "<input type='text' id='kw_title' name='kw_title' value='" .  $kw['title'] . "' class='search_form_txt' />\n";
+	echo '<br /><br />';
+	echo "<strong>" . _T('keywords_input_description') . "</strong><br />\n";
+	echo "<textarea id='kw_desc' name='kw_desc' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
 	echo $kw['description'];
 	echo "</textarea>\n";
-	echo "</td>\n";
-	echo "</tr>\n";
-	echo "</table>\n\n";
-
-	echo "<p>" . "Can authors use this keyword? (otherwise it will be hidden)" . get_yes_no('kw_ac_author', $kw['ac_author']) . "</p>\n";
+	
+	echo "<p>" . "Can authors use this keyword? (otherwise it will be hidden)<br />" . get_yes_no('kw_ac_author', $kw['ac_author']) . "</p>\n";
 
 	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 	echo "</form>\n";
-
+	
+	echo '</fieldset>';
+	
 	// destroy error messages
 	$_SESSION['errors'] = array();
 
