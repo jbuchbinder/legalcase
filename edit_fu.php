@@ -60,28 +60,32 @@ lcm_page_start("Edit follow-up");
 
 <form action="upd_fu.php" method="POST">
 <table><caption>Details of follow-up:</caption>
-<tr><th>Parameter</th><th>Value</th></tr>
-<INPUT type="hidden" name="id_followup" value="<?php echo $fu_data['id_followup']; ?>">
-<INPUT type="hidden" name="id_case" value="<?php echo $fu_data['id_case']; ?>">
-<tr><td>Start date:</td><td><INPUT name="date_start" value="<?php echo $fu_data['date_start']; ?>">
-<?php echo f_err('date_start',$errors); ?></td></tr>
-<tr><td>End date:</td><td><INPUT name="date_end" value="<?php echo $fu_data['date_end']; ?>">
-<?php echo f_err('date_end',$errors); ?></td></tr>
-<tr><td>Type:</td><td><SELECT name="type" size="1"><OPTION selected><?php echo $fu_data['type']; ?></OPTION>
-<?php
-foreach($types as $item) {
-    if ($item != $fu_data['type']) {
-	echo "<OPTION>$item</OPTION>\n";
-    }
-}
-?>
-</SELECT></td></tr>
-<tr><td>Description:</td><td><textarea name="description" rows="5" cols="30">
-<?php echo $fu_data['description']; ?></textarea></td></tr>
-<tr><td>Sum billed:</td><td><input name="sumbilled" value="<?php echo $fu_data['sumbilled']; ?>"></td></tr>
+	<tr><th>Parameter</th><th>Value</th></tr>
+	<tr><td>Start date:</td>
+		<td><INPUT name="date_start" value="<?php echo $fu_data['date_start']; ?>">
+			<?php echo f_err('date_start',$errors); ?></td></tr>
+	<tr><td>End date:</td>
+		<td><INPUT name="date_end" value="<?php echo $fu_data['date_end']; ?>">
+		<?php echo f_err('date_end',$errors); ?></td></tr>
+	<tr><td>Type:</td>
+		<td><SELECT name="type" size="1"><OPTION selected><?php echo $fu_data['type']; ?></OPTION>
+		<?php
+		foreach($types as $item) {
+			if ($item != $fu_data['type']) {
+			echo "<OPTION>$item</OPTION>\n";
+			}
+		} ?>
+		</SELECT></td></tr>
+	<tr><td>Description:</td>
+		<td><textarea name="description" rows="5" cols="30">
+		<?php echo $fu_data['description']; ?></textarea></td></tr>
+	<tr><td>Sum billed:</td>
+		<td><input name="sumbilled" value="<?php echo $fu_data['sumbilled']; ?>"></td></tr>
 </table>
 <BUTTON name="submit" type="submit" value="submit">Save</BUTTON>
 <BUTTON name="reset" type="reset">Reset</BUTTON>
+<INPUT type="hidden" name="id_followup" value="<?php echo $fu_data['id_followup']; ?>">
+<INPUT type="hidden" name="id_case" value="<?php echo $fu_data['id_case']; ?>">
 <INPUT type="hidden" name="referer" value="<?php echo $fu_data['referer']; ?>">
 </form>
 
