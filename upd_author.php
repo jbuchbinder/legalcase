@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.6 2004/12/10 22:07:11 antzi Exp $
+	$Id: upd_author.php,v 1.7 2005/01/10 15:39:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -51,6 +51,63 @@ if (count($errors)) {
 }
 
 //
+// Change password (if requested)
+//
+
+global $author_session;
+
+if ($usr['usr_new_passwd']) {
+	// FIXME: include auth type according to 'auth_type' field in DB
+	// default on 'db' if field not present/set.
+	$class_auth = 'Auth_db';
+	include_lcm('inc_auth_db');
+
+	$auth = new $class_auth;
+
+	if (! $auth->init()) {
+		// TODO: make error
+		lcm_log("pass change: failed auth init, signal 'internal error'.");
+	}
+
+	if ($author_session['status'] == 'admin') {
+		// If admin, do not check existing password (reset pass for users)
+		if ($usr['usr_new_passwd'] == $usr['usr_retype_passwd']) {
+			$result = $auth->newpass($usr['username'], $usr['usr_new_passwd'], $author_session);
+			lcm_log("pass change: result = " . $result);
+		} else {
+			// TODO: Make error: passwords do not match
+		}
+	} else {
+		// If user, confirm existing password before changing it
+		$valid_oldpass = false;
+
+		// Try to validate with the MD5s
+		if (isset($_REQUEST['session_password_md5']) &&
+			isset($_REQUEST['next_session_password_md5'])) 
+		{
+			$valid_oldpass = $auth->validate_md5_challenge($usr['session_password_md5'], $usr['next_session_password_md5']);
+		}
+
+		// If it didn't work, fallback on cleartext
+		if (! $valid_oldpass) {
+			$valid_oldpass = $auth->validate_pass_cleartext($usr['username'], $usr['usr_old_passwd']);
+		}
+
+		if ($valid_oldpass) {
+			$valid_newpass = $auth->newpass($usr['username'], $usr['usr_new_passwd'], $author_session);
+
+			if (! $valid_newpass) {
+				// TODO return error: $this->get_error() ? generic error?
+				lcm_log("new pass failed 001");
+			}
+		} else {
+			// TODO: return error: could not validate current password
+			lcm_log("pass change: could not validate current password");
+		}
+	}
+}
+
+//
 // No errors, update database
 //
 
@@ -61,9 +118,10 @@ $fl = "id_author=" . $usr['id_author'] . ",username='" . clean_input($usr['usern
 . ",status='" . clean_input($usr['status']) . "'"
 . ",date_update=NOW()";
 
+
 if ($usr['id_author'] > 0) {
 	// Check access rights
-	if (($GLOBALS['author_session']['status'] != 'admin') && ($GLOBALS['author_session']['id_author'] != $usr['id_author']))
+	if (($author_session['status'] != 'admin') && ($author_session['id_author'] != $usr['id_author']))
 		die("You don't have permission to change author's information!");
 	else {
 		$q = "UPDATE lcm_author SET $fl WHERE id_author=" . $usr['id_author'];
@@ -98,7 +156,7 @@ if (isset($_REQUEST['contact_value'])) {
 			// - for e-mail: is address unique?
 			if (! is_existing_contact('author', $usr['id_author'], 'email_main', $contacts[$cpt])) { // [AG] Could we use $usr['email_exists'] instead?
 				// Not existing as author email_main yet
-//				if (is_existing_contact('author', 0, 'email_main', $usr['email'])) { // $usr['email'] is set only if author has email_main, which conflicts with the previous condition
+//				if (is_existing_contact('author', 0, 'email_main', $usr['email'])) // $usr['email'] is set only if author has email_main, which conflicts with the previous condition
 				if (is_existing_contact('author', 0, 'email_main', $contacts[$cpt])) {
 					// email exists, and is associated to someone else
 					// [AG] as it's email_main, so we add nothing to preserve its uniqueness
