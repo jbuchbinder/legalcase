@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.8 2005/02/03 11:56:57 mlutfy Exp $
+	$Id: edit_rep.php,v 1.9 2005/02/08 08:50:17 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -84,28 +84,23 @@ else
 if (isset($_SESSION['errors'])) 
 	echo show_all_errors($_SESSION['errors']);
 
-echo "\n<form action='upd_rep.php' method='post'>
-	<table class='tbl_usr_dtl' width='99%'>\n";
+echo "<fieldset class=\"info_box\">\n";
+
+echo "\n<form action='upd_rep.php' method='post'>\n";
 
 if ($rep_data['id_report']) {
-	echo "\t<tr><td>" . _T('report_id') . ":</td><td>" . $rep_data['id_report'] . "
-		<input type=\"hidden\" name=\"id_report\" value=\"" .  $rep_data['id_report'] . "\"></td></tr>\n";
+	echo "<strong>". _T('report_id') . ":</strong>&nbsp;" . $rep_data['id_report'] . "
+		<input type=\"hidden\" name=\"id_report\" value=\"" .  $rep_data['id_report'] . "\">&nbsp;|&nbsp;\n";
 }
 
-echo "
-	<tr><td>" . _T('author_id') . ":</td><td>" . $rep_data['id_author'] . "
-		<input type=\"hidden\" name=\"id_author\" value=\"" . $rep_data['id_author'] . "\"></td></tr>
-	<tr><td>" . f_err_star('title', $_SESSION['errors']) . _T('rep_title') . ":</td>
-		<td><input name=\"title\" value=\"" . clean_output($rep_data['title']) . "\" class=\"search_form_txt\"></td>
-	</tr>\n";
-
-echo "<tr>\n";
+echo "<strong>". _T('author_id') . ":</strong>&nbsp;" . $rep_data['id_author'] . "
+		<input type=\"hidden\" name=\"id_author\" value=\"" . $rep_data['id_author'] . "\"><br /><br />" . f_err_star('title', $_SESSION['errors']) ."<strong>". _T('rep_title') . ":</strong><br /><input name=\"title\" value=\"" . clean_output($rep_data['title']) . "\" class=\"search_form_txt\">\n";
 
 // Description
-echo '<td colspan="2">' . "<p>Description:</p>\n";
+echo '<br /><br />' . "<strong>Description:</strong><br />\n";
 echo '<textarea name="description" rows="5" cols="40" class="frm_tarea">';
 echo $rep_data['description'];
-echo "</textarea>\n";
+echo "</textarea><br /><br />\n";
 
 //	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
 //		echo "\t<tr><td>" . _T('public') . "</td>
@@ -137,7 +132,7 @@ echo "</textarea>\n";
 //<?php
 //	}
 
-echo "</table>\n";
+//echo "</table>\n";
 
 // Validation buttons
 echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
@@ -151,6 +146,8 @@ if ($prefs['mode'] == 'extended') {
 
 echo '<input type="hidden" name="ref_edit_rep" value="' . $rep_data['ref_edit_rep'] . '">' . "\n";
 echo '</form>' . "\n";
+
+echo "</fieldset>";
 
 // Clear errors
 $_SESSION['errors'] = array();
