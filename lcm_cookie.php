@@ -164,18 +164,19 @@ if ($cookie_session) {
 if ($var_lang_lcm) {
 	include_lcm('inc_lang');
 	include_lcm('inc_session');
-	$verif = verifier_visiteur();
+
+	$valid_author = verifier_visiteur();
 
 	if (lcm_set_language($var_lang_lcm)) {
 		lcm_setcookie('lcm_lang', $var_lang_lcm, time() + 365 * 24 * 3600);
 
-		$id_author = $GLOBALS['author_session']['id_author'];
-
-		// Save language preference only if we are installed
-		if (@file_exists('inc/config/inc_connect.php')) {
+		// Save language preference only if we are installed and if author connected
+		if ($valid_author && @file_exists('inc/config/inc_connect.php')) {
 			include_lcm('inc_admin');
 
-			lcm_query("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_author);
+			lcm_query("UPDATE lcm_author 
+					SET lang = '" . addslashes($var_lang_lcm) . "' 
+					WHERE id_author = " . $GLOBALS['author_session']['id_author']);
 			$author_session['lang'] = $var_lang_lcm;
 			lcm_add_session($author_session, $lcm_session);
 		}
