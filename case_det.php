@@ -80,10 +80,10 @@ if ($case > 0) {
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . clean_output($row['name']) . "</a></td>\n<td>";
+			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . clean_output($row['name']) . "</a></td>\n";
 			if ($edit)
-				echo '<a href="edit_org.php?org=' . $row['id_org'] . '">' . _T('edit') . '</a>';
-			echo "</td></tr>\n";
+				echo '<td><a href="edit_org.php?org=' . $row['id_org'] . '">' . _T('edit') . '</a></td>';
+			echo "</tr>\n";
 		}
 
 		if ($add)
@@ -102,10 +102,10 @@ if ($case > 0) {
 		while ($row = lcm_fetch_array($result)) {
 			echo '<tr><td>';
 			echo  clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last']);
-			echo "</td>\n<td>";
+			echo "</td>\n";
 			if ($edit)
-				echo '<a href="edit_client.php?client=' . $row['id_client'] . '">' . _T('edit') . '</a>';
-			echo "</td></tr>\n";
+				echo '<td><a href="edit_client.php?client=' . $row['id_client'] . '">' . _T('edit') . '</a></td>';
+			echo "</tr>\n";
 		}
 		if ($add)
 			echo "<tr><td><a href=\"sel_client.php?case=$case\">" . _T('add_client_s') . "</a></td><td></td></tr>\n";
