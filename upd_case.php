@@ -82,13 +82,15 @@ if (count($errors)) {
 	// Proceed accoring to the button type
 	switch ($submit) {
 		case 'addnew':
-			header("Location: edit_case.php?case=0&ref=$ref_edit_case");
+//			header("Location: edit_case.php?case=0&ref=$ref_edit_case");
+			header("Location: edit_case.php?case=0&ref=" . $case_data['referer']);
 			break;
 		case 'adddet':
 			header("Location: case_det.php?case=$id_case");
 			break;
 		default :
-			header("Location: $ref_edit_case");
+//			header("Location: $ref_edit_case");
+			header("Location: " . $case_data['referer']);
 	}
 }
 ?>

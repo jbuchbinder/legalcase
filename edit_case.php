@@ -12,7 +12,11 @@ session_start();
 if (empty($errors)) {
 
     // Clear form data
-    $case_data = array('referer'=>$HTTP_REFERER);
+    $case_data = array();
+
+	// Set the returning page
+	if (isset($ref)) $case_data['referer'] = $ref;
+	else $case_data['referer'] = $HTTP_REFERER;
 
 	$existing = ($case > 0);
 
@@ -128,9 +132,10 @@ else lcm_page_start(_T('new_case'));
 	}
 	echo '	<button name="reset" type="reset">' . _T('reset') . "</button>\n";
 //		<input type="hidden" name="date_creation" value="' .  $case_data['date_creation'] . '">
-	echo '	<input type="hidden" name="ref_edit_case" value="';
-	if ($ref) echo $ref;
-	else echo $HTTP_REFERER;
+	echo '	<input type="hidden" name="referer" value="' . $case_data['referer'];
+//	echo '	<input type="hidden" name="ref_edit_case" value="';
+//	if ($ref) echo $ref;
+//	else echo $HTTP_REFERER;
 	echo '">
 </form>
 
