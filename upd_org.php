@@ -32,16 +32,16 @@ if (count($errors)) {
     header("Location: $HTTP_REFERER");
     exit;
 } else {
-	$ol="name='" . clean_input($org_data['name']) . "',
-		date_creation='" . clean_input($org_data['date_creation']) . "',
-		date_update='" . clean_input($org_data['date_update']) . "',
-		address='" . clean_input($org_data['address']) . "'";
+	$ol="name='" . clean_input($org_data['name']) . "'," .
+//		date_creation='" . clean_input($org_data['date_creation']) . "',
+//		date_update='" . clean_input($org_data['date_update']) . "',
+		"address='" . clean_input($org_data['address']) . "'";
 
     if ($id_org>0) {
 		// Prepare query
-		$q="UPDATE lcm_org SET $ol WHERE id_org=$id_org";
+		$q="UPDATE lcm_org SET date_update=NOW(),$ol WHERE id_org=$id_org";
     } else {
-		$q="INSERT INTO lcm_org SET id_org=0,$ol";
+		$q="INSERT INTO lcm_org SET id_org=0,date_creation=NOW(),$ol";
     }
 
     // Do the query
