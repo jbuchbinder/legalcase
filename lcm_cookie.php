@@ -116,7 +116,7 @@ if ($essai_login == 'oui') {
 	if ($ok) $ok = $auth->lire();
 
 	if ($ok) {
-		$auth->activer();
+		$auth->activate();
 
 		if ($auth->login AND $auth->statut == 'admin') // force cookies for admins
 			$cookie_admin = "@".$auth->login;
