@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.79 2005/03/30 09:37:04 mlutfy Exp $
+	$Id: edit_fu.php,v 1.80 2005/03/30 20:30:52 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -204,9 +204,14 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			else
 				$default_fu = $system_kwg['followups']['suggest'];
 
-			foreach($system_kwg['followups']['keywords'] as $kw) {
-				$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
-				echo "<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
+			$opts = array();
+			foreach($system_kwg['followups']['keywords'] as $kw)
+				$opts[$kw['name']] = _T($kw['title']);
+			asort($opts);
+
+			foreach($opts as $k => $opt) {
+				$sel = ($k == $default_fu ? ' selected="selected"' : '');
+				echo "<option value='$k'$sel>$opt</option>\n";
 			}
 
 			?>
