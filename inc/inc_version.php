@@ -120,7 +120,7 @@ $sql_profile = false;
 // Should we make full connection requests including the server name and
 // the database name? (useful if you plan adding extentions which make
 // requests to other SQL databases)
-$mysql_rappel_connexion = false;
+$mysql_recall_link = false;
 
 // Shoud non-translated strings be shown in red?
 $test_i18n = false;
@@ -138,6 +138,7 @@ $champs_extra_proposes = false;
 $ignore_auth_http = false;
 $ignore_remote_user = false;
 
+
 //
 // *** End of configuration ***
 //
@@ -153,11 +154,11 @@ $lcm_version = 0.21;
 $lcm_version_shown = "0.2.1";
 
 // Current version of LCM database
-$lcm_db_version = 9;
+$lcm_db_version = 10;
 
-// Don't show silly warnings
-// [ML] For now, until the first beta, better to keep them
-// error_reporting(E_ALL ^ E_NOTICE);
+// Error reporting
+// error_reporting(E_ALL); // [ML] recommended for debug
+error_reporting(E_ALL ^ E_NOTICE); // PHP default
 
 // ** Security **
 $author_session = '';
@@ -285,16 +286,9 @@ if (!$PATH_TRANSLATED) {
 // Management of inclusion and information on directories
 //
 
-$included_files = '';
+$included_files = array();
 
 function include_local($file) {
-	if ($GLOBALS['included_files'][$file]) return;
-	include($file);
-	$GLOBALS['included_files'][$file] = 1;
-}
-
-function include_ecrire($file) {
-	$file = "inc/$file";
 	if ($GLOBALS['included_files'][$file]) return;
 	include($file);
 	$GLOBALS['included_files'][$file] = 1;
@@ -303,7 +297,8 @@ function include_ecrire($file) {
 function include_lcm($file) {
 	$lcmfile = 'inc/' . $file . '.php';
 
-	if ($GLOBALS['included_files'][$lcmfile]) return;
+	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
+		return;
 
 	if (! @file_exists($lcmfile)) {
 		lcm_log("CRITICAL: file for include_lcm does not exist: " . $lcmfile);
@@ -317,7 +312,8 @@ function include_lcm($file) {
 function include_config($file) {
 	$lcmfile = 'inc/config/' . $file . '.php';
 
-	if ($GLOBALS['included_files'][$lcmfile]) return;
+	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
+		return;
 
 	if (! @file_exists($lcmfile)) {
 		lcm_log("CRITICAL: file for include_config does not exist: " . $lcmfile);
@@ -331,7 +327,8 @@ function include_config($file) {
 function include_data($file) {
 	$lcmfile = 'inc/data/' . $file . '.php';
 
-	if ($GLOBALS['included_files'][$lcmfile]) return;
+	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
+		return;
 
 	if (! @file_exists($lcmfile)) {
 		lcm_log("CRITICAL: file for include_data does not exist: " . $lcmfile);
@@ -423,9 +420,11 @@ if ($auto_compress && $flag_obgz) {
 	else if (@ini_get("zlib.output_compression") || @ini_get("output_handler"))
 		$use_gz = false;
 
+	/* [ML] HTTP_VIA does not always exist?
 	// special proxy bug
 	else if (eregi("NetCache|Hasd_proxy", $HTTP_VIA))
 		$use_gz = false;
+	*/
 
 	// special bug Netscape Win 4.0x
 	else if (eregi("Mozilla/4\.0[^ ].*Win", $HTTP_USER_AGENT))
@@ -457,6 +456,7 @@ class Link {
 	// If no URL is given, the current one is unsed.
 	function Link($url = '', $reentrant = false) {
 		static $link = '';
+		$vars = '';
 
 		// If root link not defined, create it
 		if (!$link && !$reentrant) {
@@ -505,7 +505,8 @@ class Link {
 			$url = $GLOBALS['REQUEST_URI'];
 			$url = substr($url, strrpos($url, '/') + 1);
 			if (!$url) $url = "./";
-			if (count($GLOBALS['HTTP_POST_VARS'])) $vars = $GLOBALS['HTTP_POST_VARS'];
+			if (count($GLOBALS['HTTP_POST_VARS']))
+				$vars = $GLOBALS['HTTP_POST_VARS'];
 		}
 		$v = split('[\?\&]', $url);
 		list(, $this->file) = each($v);
@@ -802,6 +803,7 @@ function lcm_log($message, $type = 'lcm') {
 	if (!$ip = $GLOBALS['REMOTE_ADDR']) $ip = '-';
 	$message = date("M d H:i:s") . " $ip $pid " . ereg_replace("\n*$", "\n", $message);
 	$logfile = "log/" . $type . ".log";
+	$rotate = false;
 
 	// Keep about 20Kb of data per file, on 4 files (.1, .2, .3)
 	// generates about 80Kb in total per log type.
