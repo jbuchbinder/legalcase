@@ -16,17 +16,14 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_filter.php,v 1.7 2005/01/21 15:51:15 mlutfy Exp $
+	$Id: edit_filter.php,v 1.8 2005/02/09 11:00:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
-
-// Initiate session
-// [ML] now in inc_auth session_start();
 
 if (empty($errors)) {
 
@@ -95,14 +92,17 @@ else lcm_page_start(_T('new_filter'));
 			<input type=\"hidden\" name=\"id_filter\" value=\"" .  $filter_data['id_filter'] . "\"></td></tr>\n";
 	}
 	// Show author ID
+	/* [ML] not useful
 	echo "
 		<tr><td>" . _T('author_id') . ":</td><td>" . $filter_data['id_author'] . "
 			<input type=\"hidden\" name=\"id_author\" value=\"" . $filter_data['id_author'] . "\"></td></tr>";
+	*/
+
 	// Show filter title
 	echo"
 		<tr><td>" . _T('filter_title') . ":</td>
 			<td><input name=\"title\" value=\"" . clean_output($filter_data['title']) . "\" class=\"search_form_txt\">";
-	echo f_err('title',$errors) . "</td></tr>";
+	echo f_err('title', $errors) . "</td></tr>";
 	echo"
 		<tr><td>" . _T('filter_type') . ":</td>
 			<td><select name=\"type\">
@@ -142,22 +142,20 @@ else lcm_page_start(_T('new_filter'));
 
 	echo "</table>\n";
 
+	echo "<br />\n";
+
 	// Different buttons for edit existing and for new case
-	if ($existing) {
-		echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-	} else {
+	echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+
+	if ($existing && $prefs['mode'] == 'extended') {
 		echo '	<button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('button_validate') . '</button>
 	<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . '</button>
 	<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n";
+		echo '	<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
 	}
 
-//	if ($existing)
-		echo '	<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
+	echo '<input type="hidden" name="ref_edit_filter" value="' . $filter_data['ref_edit_filter'] . '">' . "\n";
+	echo "</form>\n";
 
-	echo '	<input type="hidden" name="ref_edit_filter" value="' . $filter_data['ref_edit_filter'];
-	echo '">
-</form>
-
-';
 	lcm_page_end();
 ?>
