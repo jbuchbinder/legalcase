@@ -199,6 +199,7 @@ function lcm_page_end($credits = '') {
 	global $connect_id_auteur;
 
 	global $author_session;
+	global $find_org_string;
 	global $find_case_string;
 	global $find_client_string;
 
@@ -231,16 +232,22 @@ function lcm_page_end($credits = '') {
 			</p>
 			<div class=\"prefs_column_menu_head\">Search</div>
 			<p class=\"prefs_column_text\">
+			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"POST\">
+			Find case<br />
+			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\"";
+	if (isset($find_case_string)) echo " value='$find_case_string'";
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			</form>
 			<form name=\"frm_find_client\" class=\"search_form\" action=\"listclients.php\" method=\"POST\">
 			Find client<br />
 			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\"";
 	if (isset($find_client_string)) echo " value='$find_client_string'";
 	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
 			</form>
-			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"POST\">
-			Find case<br />
-			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\"";
-	if (isset($find_case_string)) echo " value='$find_case_string'";
+			<form name=\"frm_find_client\" class=\"search_form\" action=\"listorgs.php\" method=\"POST\">
+			Find organisation<br />
+			<input type=\"text\" name=\"find_org_string\" size=\"10\" class=\"search_form_txt\"";
+	if (isset($find_org_string)) echo " value='$find_org_string'";
 	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
 			</form>
 			</p>
