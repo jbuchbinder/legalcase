@@ -114,10 +114,10 @@ $auto_compress = true;
 $convert_command = 'convert';
 
 // Should we debug in data/lcm.log ? (not very often used)
-$debug = false;
+$debug = true;
 
 // Should MySQL run in debug mode?
-$mysql_debug = false;
+$mysql_debug = true;
 
 // Should MySQL queries be profiled (chronometer) ?
 $mysql_profile = false;
@@ -154,12 +154,12 @@ if (@file_exists('inc/my_options.php'))
 	include('inc/my_options.php');
 
 // Current version of LCM (TODO: change var name)
-// Stored in decimal form in order to make easier comparisons between versions
-// (used to update the database format while upgrades)
-$spip_version = 1.732;
+$spip_version = 0.1;
+$lcm_version = 0.1;
 
 // Current version of LCM shown on screen (TODO: change var name)
 $spip_version_affichee = "0.1 alpha 1 CVS";
+$lcm_version_shown = "0.1 alpha 1 CVS";
 
 // Current version of LCM with cvs tags
 if (ereg('Name: v(.*) ','$Name:  $', $regs)) $spip_version_affichee = $regs[1];
@@ -223,7 +223,7 @@ $flag_gd = $flag_ImageGif || $flag_ImageJpeg || $flag_ImagePng;
 // Apply the cookie prefix
 //
 function spip_setcookie ($name='', $value='', $expire=0, $path='AUTO', $domain='', $secure='') {
-	$name = ereg_replace ('^spip', $GLOBALS['cookie_prefix'], $name);
+	$name = ereg_replace ('^lcm', $GLOBALS['cookie_prefix'], $name);
 	if ($path == 'AUTO') $path=$GLOBALS['cookie_path'];
 
 	if ($secure)
@@ -364,20 +364,12 @@ function include_data($file) {
 $flag_connect = @file_exists('config/inc_connect.php');
 
 function spip_query($query) { // TODO FIXME ML
-	include_lcm("inc_db_mysql");
+	include_lcm('inc_db_mysql');
 
 	if ($GLOBALS['flag_connect']) {
-		include_config("inc_connect");
-		if (!$GLOBALS['db_ok'])
-			return;
-		if ($GLOBALS['spip_connect_version'] < 0.1) {
-			if (!$GLOBALS['flag_ecrire']) {
-				$GLOBALS['db_ok'] = false;
-				return;
-			}
-			@Header("Location: upgrade.php?reinstall=oui");
-			exit;
-		}
+		include_config('inc_connect');
+		// [ML] if (!$GLOBALS['db_ok'])
+		//	return;
 	}
 	return lcm_query_db($query);
 }
@@ -825,14 +817,14 @@ function email_valide($adresse) {
 
 
 //
-// Traduction des textes de SPIP
+// Translation of LCM texts
 //
 function _T($text, $args = '') {
 	include_lcm('inc_lang');
 	return traduire_chaine($text, $args);
 }
 
-// chaines en cours de traduction
+// Strings in the process of being translated
 function _L($text) {
 	if ($GLOBALS['test_i18n'])
 		return "<span style='color:red;'>$text</span>";
@@ -962,12 +954,12 @@ function verif_butineur() {
 
 function spip_debug($message) {
 	if ($GLOBALS['debug'])
-		spip_log($message);
+		lcm_log($message);
 }
 
 
 // En mode debug, logger l'URI appelante (pas efficace, c'est vraiment pour debugguer !)
 if ($debug)
-	spip_debug("$REQUEST_METHOD: ".$GLOBALS['REQUEST_URI']);
+	lcm_log("$REQUEST_METHOD: ".$GLOBALS['REQUEST_URI']);
 
 ?>
