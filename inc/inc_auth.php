@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.20 2005/01/17 09:02:38 mlutfy Exp $
+	$Id: inc_auth.php,v 1.21 2005/01/17 13:58:22 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -167,6 +167,9 @@ function auth() {
 		$result = lcm_query($query);
 		$connect_status = 'normal';
 	}
+
+	// PHP sessions are started here, and stopped at logout
+	session_start();
 
 	return true;
 }
