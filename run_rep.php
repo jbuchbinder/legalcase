@@ -55,6 +55,9 @@ while ($row = lcm_fetch_array($result)) {
 		$sl .= $row['table_name'] . '.' . $row['field_name'] . " " . $row['sort'];
 		$sl_text .= ( $sl_text ? ', "' : '"' ) . $row['description'] . '"';
 	}
+	if ($row['total']) {
+		$totals[$row['order']] = 0;
+	}
 }
 
 // Get report filters
@@ -118,29 +121,43 @@ if (in_array('lcm_case',$ta) && in_array('lcm_author',$ta)) {
 	$wl .= ' AND lcm_case.id_case=lcm_case_author.id_case AND lcm_author.id_author=lcm_case_author.id_author';
 }
 
+// Convert array of table names into string list
 $tl = implode(',',$ta);
 
+// Get report data
 $q = "SELECT $fl\n\tFROM $tl\n\tWHERE ($wl)\n\tORDER BY $sl";
 $result = lcm_query($q);
 
+// Diagnostic: show query into HTML
 echo "<!-- query is: '$q' -->\n";
 
+// Show report data
 if (lcm_num_rows($result)>0) {
 	if ($sl_text) echo "Sorted by: $sl_text<br>\n";
 	if ($filter_text) echo "Filters applied: $filter_text<br>\n";
 	echo "<table border='0' class='tbl_usr_dtl'>\n";
 	echo "\t<tr>\n";
+	// Show column headers
 	for ($i=0; $i<mysql_num_fields($result); $i++) {
 		echo "\t\t<th class='heading'>" . mysql_field_name($result,$i) . "</th>\n";
 	}
 	echo "\t</tr>\n";
+	// Show report data rows
 	while ($row = lcm_fetch_array($result)) {
-		echo "\t<tr>";
+		echo "\t<tr>\n";
 		for ($j=0; $j<$i; $j++) {
 			echo "\t\t<td>" . $row[$j] . "</td>\n";
+			if (isset($totals[$j+1])) $totals[$j+1] += $row[$j];
 		}
 		echo "\t</tr>\n";
 	}
+	// Show totals (if any)
+	echo "\t<tr>\n";
+	for ($i=0; $i<mysql_num_fields($result); $i++) {
+		echo "\t\t<td>" . ($totals[$i+1] ? '<strong>' . $totals[$i+1] . '</strong>' : '') . "</td>\n";
+	}
+	echo "\t</tr>\n";
+
 	echo "</table>";
 }
 
