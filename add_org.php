@@ -13,6 +13,7 @@ if (($case>0) && ($orgs)) {
 	}
 }
 
-header("Location: $ref_sel_org");
+//header("Location: $ref_sel_org");
+header("Location: case_det.php?case=$case");
 
 ?>
