@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.171 2005/03/19 15:10:29 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.172 2005/03/19 15:37:47 mlutfy Exp $
 */
 
 //
@@ -1002,6 +1002,23 @@ function show_tabs_links($tab_list, $selected='', $sel_link=false) {
 	echo "</ul>";
 	echo "</div>";
 	echo "\n\n";
+}
+
+function get_list_pos($result) {
+	$list_pos = 0;
+	
+	if (isset($_REQUEST['list_pos']))
+		$list_pos = $_REQUEST['list_pos'];
+	
+	if ($list_pos >= $number_of_rows)
+		$list_pos = 0;
+	
+	// Position to the page info start
+	if ($list_pos > 0)
+		if (!lcm_data_seek($result, $list_pos))
+			lcm_panic("Error seeking position $list_pos in the result");
+	
+	return $list_pos;
 }
 
 function show_list_start($headers = array()) {
