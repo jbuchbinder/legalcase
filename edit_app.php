@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.18 2005/03/10 17:53:57 antzi Exp $
+	$Id: edit_app.php,v 1.19 2005/03/11 16:04:51 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -359,8 +359,10 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 </form>
 
 <?php
-	// Clear the errors, in case user jumps to other 'edit' page
-	$_SESSION['errors'] = array();
 
-	lcm_page_end();
+lcm_page_end();
+
+// Clear the errors, in case user jumps to other 'edit' page
+$_SESSION['errors'] = array();
+
 ?>
