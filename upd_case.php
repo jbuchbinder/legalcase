@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.24 2004/12/17 10:40:36 antzi Exp $
+	$Id: upd_case.php,v 1.25 2004/12/17 10:48:03 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -103,6 +103,7 @@ if (count($errors)) {
 				ac_read=1,
 				ac_write=1,
 				ac_admin=1";
+		$result = lcm_query($q);
 
 		// Get author information
 		$q = "SELECT *
@@ -111,7 +112,7 @@ if (count($errors)) {
 		$result = lcm_query($q);
 		$author_data = lcm_fetch_array($result);
 
-		// Add 'assigned' followup to the case
+		// Add 'assignment' followup to the case
 		$q = "INSERT INTO lcm_followup
 				SET id_followup=0,id_case=$id_case,type='assignment',description='";
 		$q .= $author_data['name_first'];
@@ -124,7 +125,8 @@ if (count($errors)) {
 		$q = "UPDATE lcm_case
 				SET date_assignment=NOW()
 				WHERE id_case=$id_case";
-		$result = lcm_query($q);
+
+		// Last query is executed outside this block, so don't put lcm_query() for it!
 	}
 
 	// Some advanced ideas for future use
