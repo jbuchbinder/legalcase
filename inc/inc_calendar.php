@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.18 2005/03/28 07:28:44 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.19 2005/03/30 08:23:08 mlutfy Exp $
 */
 
 
@@ -445,7 +445,6 @@ function http_calendrier_navigation($jour, $mois, $annee, $partie_cal, $echelle,
 				 "cal-today.gif",
 				 $condition ? " style='-moz-opacity: 0.3; filter: alpha(opacity=30)'" : "",
 				 _T("calendar_button_now"));
-	$retour .= "</span>&nbsp;";
 
 	// Button: Previous month
 	if ($args_pred)
@@ -458,6 +457,8 @@ function http_calendrier_navigation($jour, $mois, $annee, $partie_cal, $echelle,
 		$retour .= http_href(($script . "type=$type&echelle=$echelle&$args_suiv$ancre"),
 				     http_img_pack("fleche-right.png",  '&gt;&gt;&gt;', "style='behavior: url(win_png.htc)' width='12' height='12'"),
 				     _T('listnav_link_next'));
+
+	$retour .= "</span>&nbsp;";
   	$retour .= "&nbsp;&nbsp;";
 
 	// Current month name
@@ -537,12 +538,12 @@ function http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre)
 // Shows the banner of a calendar for a given day
 function http_calendrier_navigation_jour($jour,$mois,$annee, $partie_cal, $echelle, $script, $nav)
 {
-  $today=getdate(time());
-  $jour_today = $today["mday"];
-  $mois_today = $today["mon"];
-  $annee_today = $today["year"];
-   return
-     http_calendrier_navigation($jour, $mois, $annee, $partie_cal, $echelle,
+	$today=getdate(time());
+	$jour_today = $today["mday"];
+	$mois_today = $today["mon"];
+	$annee_today = $today["year"];
+	return "<!-- http_calendrier_navigation_jour() -->\n"
+		. http_calendrier_navigation($jour, $mois, $annee, $partie_cal, $echelle,
 				(nom_jour("$annee-$mois-$jour") . " " .
 				 affdate_jourcourt("$annee-$mois-$jour")),
 				$script,
@@ -1264,40 +1265,36 @@ function http_calendrier_journee($jour_today,$mois_today,$annee_today, $date){
 	$mois = mois($date);
 	$annee = annee($date);
 	if ($prefs['screen'] == "wide") {
-//		$largeur_table = 974;
-//		$largeur_gauche = 200;
-//		$largeur_centre = $largeur_table - 2 * ($largeur_gauche + 20);
 		$largeur_table = '98%';
 		$largeur_gauche = '25%';
 		$largeur_centre = '50%';
 	} else {
-//		$largeur_table = 750;
-//		$largeur_gauche = 100;
-//		$largeur_centre = $largeur_table - ($largeur_gauche + 20);
 		$largeur_table = '98%';
 		$largeur_gauche = '30%';
 		$largeur_centre = '70%';
 	}
 		
-	$retour = "<table cellpadding=0 cellspacing=0 border=0 width='$largeur_table'><tr>";
-//	$retour = "<table cellpadding=0 cellspacing=0 border=0 width='98%'><tr>";
-	
+	$retour = "<!-- http_calendrier_journee() -->\n"
+		. '<table cellpadding="0" cellspacing="0" border="0" width="' . $largeur_table . '">' 
+		. "<tr>\n";
+
+	// If wide screen, show mini version of the previous day (left)
 	if ($prefs['screen'] == "wide") {
 		$retour .= "<td width='$largeur_gauche' class='verdana1' valign='top'>" .
-//		$retour .= "<td width='25%' class='verdana1' valign='top'>" .
 			"<div style='height: 29px;'>&nbsp;</div>".
 			http_calendrier_jour($jour-1,$mois,$annee, "col") .
 			"</td>\n<td width='20'>&nbsp;</td>\n";
 	}
+
+	// Show today (center)
 	$retour .= "\n<td width='$largeur_centre' valign='top'>"  .
-//	$retour .= "\n<td width='50%' valign='top'>"  .
 		"<div>" .
 		http_calendrier_navigation_jour($jour,$mois,$annee, $GLOBALS['echelle'], 'calendar.php', '') .
 		"</div>".
 		http_calendrier_jour($jour,$mois,$annee, "wide") .
 		'</td>';
 		
-		# afficher en reduction le tableau du jour suivant
+	// Show a mini version of the next day (right)
 	$retour .= "\n<td width='20'>&nbsp;</td>" .
 			"\n<td width='$largeur_gauche' class='verdana1' valign='top'>" .
 //			"\n<td width='25%' class='verdana1' valign='top'>" .
@@ -1321,42 +1318,36 @@ function http_calendrier_init_jour($date, $echelle,  $partie_cal, $script){
 	$annee_today = $today["year"];
 
 	if ($prefs['screen'] == "wide") {
-//		$largeur_table = 974;
-//		$largeur_gauche = 200;
-//		$largeur_centre = $largeur_table - 2 * ($largeur_gauche + 20);
 		$largeur_table = '98%';
 		$largeur_gauche = '25%';
 		$largeur_centre = '50%';
 	} else {
-//		$largeur_table = 750;
-//		$largeur_gauche = 100;
-//		$largeur_centre = $largeur_table - ($largeur_gauche + 20);
 		$largeur_table = '98%';
 		$largeur_gauche = '30%';
 		$largeur_centre = '70%';
 	}
 		
-	$retour =
-//		"<div>&nbsp;</div>" .
-		"<table cellpadding='0' cellspacing='0' border='0' width='$largeur_table'><tr>";
-//	$retour = "<div>&nbsp;</div><table cellpadding='0' cellspacing='0' border='0' width='98%'><tr>";
+	$retour = "<!-- http_calendrier_init_jour() -->\n";
+
+	// Show navigation banner at top of screen
+	$retour .= "<div>" . http_calendrier_navigation_jour($jour,$mois,$annee, $partie_cal, $echelle, $script, ''). "</div>\n";
+
+	$retour .= "<table cellpadding='0' cellspacing='0' border='0' width='$largeur_table'><tr>";
 	
+	// Show mini of previous day (if any -- left)
 	if ($prefs['screen'] == "wide") {
 		$retour .= "<td width='$largeur_gauche' style='font-size: 10px' valign='top'>" .
-//		$retour .= "<td width='25%' style='font-family: Arial, Sans, sans-serif; font-size: 10px' valign='top'>" .
 			"<div style='height: 29px;'>&nbsp;</div>".
 		  http_calendrier_jour($jour-1,$mois,$annee, "col", $partie_cal, $echelle, 0, $script) .
 			"</td>\n<td width='20'>&nbsp;</td>\n";
 	}
+
+	// Today (center)
 	$retour .= "\n<td width='$largeur_centre' valign='top'>"  .
-//	$retour .= "\n<td width='50%' valign='top'>"  .
-		"<div>" .
-	  http_calendrier_navigation_jour($jour,$mois,$annee, $partie_cal, $echelle, $script, '') .
-		"</div>".
 	  http_calendrier_jour($jour,$mois,$annee, "wide", $partie_cal, $echelle, 0, $script) .
 		'</td>';
 		
-		# afficher en reduction le tableau du jour suivant
+	// Show mini of next day (right)
 	$retour .= "\n<td width='20'>&nbsp;</td>" .
 			"\n<td width='$largeur_gauche' style='font-size: 10px' valign='top'>" .
 //			"\n<td width='25%' style='font-family: Arial, Sans, sans-serif; font-size: 10px' valign='top'>" .
@@ -1401,8 +1392,9 @@ function http_calendrier_init_semaine($date, $echelle, $partie_cal, $script)
 			'';
 }
 
-function http_calendrier_jour($jour,$mois,$annee,$large = "wide", $partie_cal, $echelle, $le_message = 0, $script =  'calendar.php') {
-  global $spip_lang_rtl, $bleu, $vert,$jaune;
+function http_calendrier_jour($jour,$mois,$annee,$large = "wide", $partie_cal, $echelle, $le_message = 0, $script =  'calendar.php')
+{
+	global $spip_lang_rtl, $bleu, $vert,$jaune;
 	global $calendrier_message_fermeture;
 	
 
@@ -1439,7 +1431,7 @@ function http_calendrier_jour($jour,$mois,$annee,$large = "wide", $partie_cal, $
 	if ($jour_semaine == 0) $bgcolor = "#e0e0e0";
 
 	if ($large == "col" ) {
-	  $entete = "<div align='center' style='padding: 5px;'><b style='font-size: 10px'>" .
+	  $my_header = "<div align='center' style='padding: 5px;'><b style='font-size: 10px'>" .
 	    http_href("$script?type=jour&jour=$jour&mois=$mois&annee=$annee",
 				 affdate_jourcourt("$annee-$mois-$jour"),
 				 '',
@@ -1447,12 +1439,15 @@ function http_calendrier_jour($jour,$mois,$annee,$large = "wide", $partie_cal, $
 	    "</b></div>";
 	}
 	else {
-	  if (($large == "wide") && !_DIR_RESTREINT)
-			$entete = "<div align='center' style='padding: 5px;'>" .
-			'<a href="edit_app.php?time=' . rawurlencode("$annee-$mois-$jour") . '">Create new appointment</a>' . /* TRAD */
+	  if ($large == "wide")
+			$my_header = "<div align='center' style='padding: 5px;'>" .
+			'<a class="content_link" href="edit_app.php?time=' . rawurlencode("$annee-$mois-$jour") . '">' 
+			. '<img src="images/jimmac/stock_edit-16.png" border="0" width="16" '
+			. 'height="16" alt="' . "Create new appointment" . '" title="' . "Create new appointment" . '" />'
+			. 'Create new appointment</a>' . /* TRAD */
 			"</div>\n";
 		else
-			$entete = '';
+			$my_header = '';
 	}
 
 	list($articles, $breves, $messages) =
@@ -1473,7 +1468,7 @@ function http_calendrier_jour($jour,$mois,$annee,$large = "wide", $partie_cal, $
 	// faute de fermeture en PHP...
 	$calendrier_message_fermeture = $le_message;
 
-	return $entete .
+	return $my_header .
 		"\n<div style='position: relative; color: #666666; " .
 		"height: ${dimjour}px; " .
 		"font-size: ${fontsize}px;".
