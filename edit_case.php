@@ -17,8 +17,6 @@ if (empty($errors)) {
 	$existing = ($case > 0);
 
 	if ($existing) {
-		lcm_page_start(_T('edit_case_details'));
-
 		// Check access rights
 		if (!allowed($case,'e')) die(_T('error_no_edit_permission'));
 
@@ -41,8 +39,6 @@ if (empty($errors)) {
 		$admin = allowed($case,'a');
 
 	} else {
-		lcm_page_start(_T('new_case'));
-
 		// Set default values for the new case
 		$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
 		$case_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
@@ -53,6 +49,10 @@ if (empty($errors)) {
 
 	}
 }
+
+// Start the page with the proper title
+if ($existing) lcm_page_start(_T('edit_case_details'));
+else lcm_page_start(_T('new_case'));
 
 	echo "\n<form action=\"upd_case.php\" method=\"POST\">
 		<table>
