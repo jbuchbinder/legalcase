@@ -82,8 +82,13 @@ function show_author_form() {
 <?php
 	$themes = get_theme_list();
 	foreach ($themes as $t) {
+		// If a theme has no translation, show only the file name
+		$name = _T('authorconf_input_theme_' . $t);
+		if ($name == 'authorconf_input_theme_' . $t)
+			$name = $t;
+
 		$selected = ($t == $prefs['theme'] ? " selected='selected'" : '');
-		echo "<option value='" . $t . "'" . $selected . ">" . _T('authorconf_input_theme_' . $t) . "</option>\n";
+		echo "<option value='" . $t . "'" . $selected . ">" . $name . "</option>\n";
 	}
 ?>
 				</select>
