@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.40 2005/01/20 22:00:14 antzi Exp $
+	$Id: edit_fu.php,v 1.41 2005/01/21 00:52:20 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -157,14 +157,16 @@ echo show_all_errors($_SESSION['errors']);
 
 <form action="upd_fu.php" method="POST">
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td>Start date:</td>
-			<td><?php echo get_date_inputs('start', $fu_data['date_start'], false); ?><?php
-			echo f_err('date_start',$errors); ?>
+		<tr><td>Start:</td>
+			<td>Date <?php echo get_date_inputs('start', $fu_data['date_start'], false); ?>
+				Time <?php echo get_time_inputs('start', $fu_data['date_start']); ?><?php
+			echo f_err_star('date_start',$errors);?>
 			</td>
 		</tr>
-		<tr><td>End date:</td>
-			<td><?php echo get_date_inputs('end', $fu_data['date_end']); ?><?php
-			echo f_err('date_end',$errors); ?>
+		<tr><td>End:</td>
+			<td>Date <?php echo get_date_inputs('end', $fu_data['date_end']); ?>
+				Time <?php echo get_time_inputs('end', $fu_data['date_end']); ?><?php
+			echo f_err_star('date_end',$errors); ?>
 		</tr>
 		<tr><td>Type:</td>
 			<td><select name="type" size="1">
