@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.19 2005/01/11 16:13:04 mlutfy Exp $
+	$Id: edit_author.php,v 1.20 2005/01/12 14:34:15 mlutfy Exp $
 */
 
 session_start();
@@ -203,7 +203,7 @@ echo show_all_errors($_SESSION['errors']);
 		<tr>
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_connectionidentifiers'); ?></h4></td>
 		</tr>
-		<tr><td align="right" valign="top"><?php echo f_err_star('username', $_SESSION['errors']) . _T('authoredit_input_login'); ?></td>
+		<tr><td align="right" valign="top"><?php echo f_err_star('username', $_SESSION['errors']) . _T('authoredit_input_username'); ?></td>
 			<td align="left" valign="top">
 
 		<?php
