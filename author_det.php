@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.12 2005/03/24 16:28:57 mlutfy Exp $
+	$Id: author_det.php,v 1.13 2005/03/30 07:43:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -64,6 +64,7 @@ if ($author > 0) {
 
 				echo '<p class="normal_text">';
 				echo _Ti('authoredit_input_id') . $author_data['id_author'] . "<br />\n";
+				echo _Ti('person_input_name') . get_person_name($author_data) . "<br />\n";
 				echo _Ti('authoredit_input_status') . _T('authoredit_input_status_' . $author_data['status']) . "<br />\n";
 
 				echo "</p>\n";
