@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.5 2004/12/11 11:18:29 antzi Exp $
+	$Id: rep_det.php,v 1.6 2004/12/11 16:12:35 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -40,16 +40,19 @@ if ($rep > 0) {
 		// Show report details
 		lcm_page_start("Report details: " . $row['title']);
 
+		$edit = (($GLOBALS['author_session']['status'] == 'admin') ||
+			($row['id_author'] == $GLOBALS['author_session']['id_author']));
+
 		//echo "<p class='normal_text'>";
 		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report details</div><p class='normal_text'>";
 
-		if (true)
+		if ($edit)
 			echo '<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="edit_lnk">Edit this report</a>&nbsp;';
 		echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="run_lnk">Run this report</a><br /><br />';
 		echo "\nReport ID: " . $row['id_report'] . "<br>\n";
 		echo "Created on: " . $row['date_creation'] . "<br>\n";
 		echo "Last update: " . $row['date_update'] . "<br>\n";
-		
+
 		echo "</p><br /></fieldset>";
 //
 //	List the columns in the report
@@ -61,6 +64,8 @@ if ($rep > 0) {
 	<th class='heading'>Header</th>
 	<th class='heading'>Contents</th>
 	<th class='heading'>Sorting</th>
+	<th class='heading'>Total</th>
+	<th class='heading'>Action</th>
 </tr>";
 
 		// Show fields included in this report
@@ -73,17 +78,24 @@ if ($rep > 0) {
 		$cols = lcm_query($q);
 		// Show the results
 		while ($column = lcm_fetch_array($cols)) {
+			// Display column order
 			echo '<tr><td>' . $column['col_order'] . "</td>\n";
+
+			// Display column header
 			echo '<td>';
-			if (true) echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
+			if ($edit) echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
 			echo clean_output($column['header']);
-			if (true) echo '</a>';
+			if ($edit) echo '</a>';
 			echo "</td>\n";
+
+			// Display column description
 			echo '<td>';
-			if (true) echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
+			if ($edit) echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
 			echo clean_output($column['description']);
-			if (true) echo '</a>';
+			if ($edit) echo '</a>';
 			echo "</td>\n";
+
+			//Display sort setting
 			echo '<td>';
 			switch ($column['sort']) {
 				case 'asc':
@@ -94,6 +106,16 @@ if ($rep > 0) {
 					break;
 				default:
 					echo "None";
+			}
+			echo "</td>\n";
+
+			// Display total setting
+			echo '<td>' . (($column['total']) ? 'Yes' : 'No') . "</td>\n";
+
+			// Display allowed actions
+			echo '<td>';
+			if ($edit) {
+				echo "<a href='rem_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "'>Remove</a>";
 			}
 			echo "</td>\n";
 			echo "</tr>\n";
