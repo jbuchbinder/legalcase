@@ -31,7 +31,6 @@ if ($site_desc)
 	echo "<br /><span style='font-size: 80%; font-weight: normal;'>" . $site_desc .  "</span>";
 
 echo "</h3>\n\n";
-echo "<div align='" . $lcm_lang_right . "'>" . menu_languages() . "</div>\n\n";
 
 login('');
 

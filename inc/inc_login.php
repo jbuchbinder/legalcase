@@ -178,7 +178,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 				this.session_password.value = \"\"; }'";
 
 		echo ">\n";
-		echo "<div style='border: 1px solid #000000; padding: 10px; text-align:".$GLOBALS["lcm_lang_left"].";'>";
+		echo "<div class='main_login_box' style='text-align:".$GLOBALS["lcm_lang_left"].";'>";
 
 		if ($erreur) 
 			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . _T('typo_column') . " $erreur</b></div><p>";
@@ -187,7 +187,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 			// If javascript is active, we pass the login in the hidden field
 			echo "<script type=\"text/javascript\"><!--\n" . 
 				"document.write('" . addslashes(_T('login_login')) .  _T('typo_column') . " <b>$login</b><br/>" .
-				"<font size=\\'2\\'>[<a href=\\'lcm_cookie.php?cookie_admin=no&amp;url=".rawurlencode($action)."\\'>" . _T('login_other_identifier') . "</a>]</font>');\n" .
+				"<font size=\\'2\\'><a href=\\'lcm_cookie.php?cookie_admin=no&amp;url=".rawurlencode($action)."\\' class=\\'link_btn\\'>" . _T('login_other_identifier') . "</a></font>');\n" .
 				"//--></script>\n";
 		 	echo "<input type='hidden' name='session_login_hidden' value='$login' />";
 
@@ -222,7 +222,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		// Ask only for the login/username
 		$action = quote_amp($action);
 		echo "<form name='form_login' action='$action' method='post'>\n";
-		echo "<div style='border: 1px solid #000000; padding: 10px; text-align:" . $GLOBALS["lcm_lang_left"] . ";'>";
+		echo "<div class='main_login_box' style='text-align:" . $GLOBALS["lcm_lang_left"] . ";'>";
 
 		if ($erreur)
 			echo "<span style='color:red;'><b>" . _T('login_access_denied') .  _T('typo_column') . " $erreur</b></span><p />";
@@ -231,7 +231,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "<input type='text' name='var_login' class='forml' value=\"\" size='40' />\n";
 
 		echo "<input type='hidden' name='var_url' value='$url' />\n";
-		echo "<div align='right'><input class='button_login' type='submit' value='"._T('button_validate')."'/></div>\n";
+		echo "<div align='right'><input class='button_login' type='submit' value='"._T('button_validate')."' /></div>\n";
 		echo "</div>";
 		echo "</form>";
 	}
@@ -255,10 +255,12 @@ function login($cible, $prive = 'prive', $message_login='') {
 	if ($open_subscription == 'open' || $open_subscription == 'moderated')
 		echo " [<a $pass_popup>" . _T('login_register').'</a>]';
 
+	echo "<div class='lang_combo_box'>". menu_languages() ."</div>\n";
+
 	// button for "forgotten password"
 	include_lcm('inc_mail');
 	if (tester_mail()) {
-		echo ' [<a href="lcm_pass.php?pass_forgotten=yes" target="lcm_pass" onclick="' ."javascript:window.open(this.href, 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=280'); return false;\">" ._T('login_password_forgotten').'</a>]'; 
+		echo '<a href="lcm_pass.php?pass_forgotten=yes" target="lcm_pass" onclick="' ."javascript:window.open(this.href, 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=280'); return false;\" class=\"link_btn\">" ._T('login_password_forgotten').'</a>';
 	}
 
 	echo "</div>\n";

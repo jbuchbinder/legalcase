@@ -1,18 +1,42 @@
+body {
+	background-color: #efefef;
+}
+
+h3 {
+	border: 1px solid #f60;
+	background: #fff;
+	padding: 10px;
+	color: #333;
+}
+
 .button_login {
-	background-color: #ffcc66;
-	color: #000000;
+	background-color: #ccc;
+	border: 1px solid #999;
+	color: #333;
+	font-weight: bold;
+	margin-top: 10px;
+	font-size: 12px;
+}
+
+.lang_combo_box {
+	border: 1px dashed #999;
+	margin-bottom: 10px;
+	padding: 10px 0px 5px 0px;
 }
 
 a:link, a:visited, a:active {
 	text-decoration: none;
-	background-color: #ffffff;
-	color: #e86519;
+	color: #f60;
 }
 
 a:hover {
 	text-decoration: underline;
-	background-color: #ffffff;
-	color: #ff9900;
+	color: #f60;
+}
+
+a.link_btn {
+	background: url("../images/lcm/lcm_right_arrow.gif") no-repeat left center;
+	padding-left: 7px;
 }
 
 #login_screen {
@@ -22,13 +46,23 @@ a:hover {
 }
 
 #login_main {
-	font-family: Verdana,arial,helvetica,sans-serif;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
+	color: #333;
+}
+
+.main_login_box {
+	border: 1px solid #999;
+	padding: 10px;
+	font-size: 12px;
+	background-color: #fff;
 }
 
 input[type=text], input[type=password] {
 	width: 100%; 
-	background-color: #FFDDAA;
+	background-color: #def;
+	border: 1px solid #369;
+	color: #036;
 }
 
 /* This should be placed in some global CSS file */
