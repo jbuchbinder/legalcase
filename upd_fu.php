@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.38 2005/03/30 17:37:28 antzi Exp $
+	$Id: upd_fu.php,v 1.39 2005/03/31 11:33:08 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -107,7 +107,9 @@ if ( !(strlen($_SESSION['fu_data']['description']) > 0) )
 if (count($_SESSION['errors'])) {
     header("Location: " . $GLOBALS['HTTP_REFERER']);
     exit;
-} else {
+}
+
+
 	// global $author_session;
 
 	$fl="	date_start   = '" . clean_input($_SESSION['fu_data']['date_start']) . "',
@@ -118,15 +120,15 @@ if (count($_SESSION['errors'])) {
 
 	if ($id_followup>0) {
 		// Check access rights
-		if (!allowed($_SESSION['fu_data']['id_case'],'e')) die("You don't have permission to modify this case's information!");	// TRAD
+		if (!allowed($_SESSION['fu_data']['id_case'],'e')) 
+			lcm_panic("You don't have permission to modify this case's information. (" . $_SESSION['fu_data']['id_case'] . ")");
 
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
-		if (!($result = lcm_query($q)))
-			lcm_panic("$q <br />\nError ".lcm_errno().": ".lcm_error());	// TRAD
+		$result = lcm_query($q);
 	} else {
 		// Check access rights
 		if (!allowed($_SESSION['fu_data']['id_case'],'w'))
-			die("You don't have permission to add information to this case!");	// TRAD
+			lcm_panic("You don't have permission to add information to this case. (" . $_SESSION['fu_data']['id_case'] . ")");
 
 		// Get the current case stage
 		$q = "SELECT stage FROM lcm_case WHERE id_case=" . $_SESSION['fu_data']['id_case'];
@@ -134,7 +136,7 @@ if (count($_SESSION['errors'])) {
 		if ($row = lcm_fetch_array($result)) {
 			$case_stage = $row['stage'];
 		} else {
-			die("There is no such case!");	// TRAD
+			lcm_panic("There is no such case (" . $_SESSION['fu_data']['id_case'] . ")");
 		}
 
 		// Update case status
@@ -181,17 +183,16 @@ if (count($_SESSION['errors'])) {
 
 		// Set relation to the parent appointment, if any
 		if (! empty($_SESSION['fu_data']['id_app'])) {
-			$q = "INSERT INTO lcm_app_fu SET id_app=" . $_SESSION['fu_data']['id_app']
-				. ", id_followup=$id_followup, relation='parent'";
-			if (!($result = lcm_query($q))) 
-				lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
+			$q = "INSERT INTO lcm_app_fu 
+					SET id_app=" . $_SESSION['fu_data']['id_app'] . ",
+						id_followup=$id_followup, relation='parent'";
+			$result = lcm_query($q);
 		}
 	}
 
-	// Send user back to add/edit page's referer or (default) to followup detail page
-	header('Location: ' . ($_SESSION['fu_data']['ref_edit_fu'] ? $_SESSION['fu_data']['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));
+// Send user back to add/edit page's referer or (default) to followup detail page
+header('Location: ' . ($_SESSION['fu_data']['ref_edit_fu'] ? $_SESSION['fu_data']['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));
 	
-	exit;
-}
+exit;
 
 ?>
