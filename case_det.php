@@ -144,13 +144,13 @@ if ($case > 0) {
 	for ($i = 0 ; ($row = lcm_fetch_array($result)) ; $i++) {
 		// Show followup
 		echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-		echo highlight_matches(clean_output(date(_T('date_format_short'),strtotime($row['date_start'])))) . "</td>\n";
+		echo highlight_matches(clean_output(date(_T('date_format_short'),strtotime($row['date_start']))),$find_fu_string) . "</td>\n";
 		echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-		echo highlight_matches(clean_output($row['type'])) . "</td>\n";
+		echo highlight_matches(clean_output($row['type']),$find_fu_string) . "</td>\n";
 		if (strlen($row['description'])<30) $short_description = $row['description'];
 		else $short_description = substr($row['description'],0,30) . '...';
 		echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-		echo highlight_matches(clean_output($short_description)) . "</td>\n";
+		echo highlight_matches(clean_output($short_description),$find_fu_string) . "</td>\n";
 		if ($edit)
 			echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"
 			. '<a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . "</a></td>\n";
