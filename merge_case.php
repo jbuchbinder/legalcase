@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: merge_case.php,v 1.1 2005/01/14 14:02:25 antzi Exp $
+	$Id: merge_case.php,v 1.2 2005/01/19 09:14:40 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -142,7 +142,8 @@ $q = "UPDATE lcm_case SET status='merged' WHERE id_case=$case";
 $result = lcm_query($q)
 
 // Clear the session
-session_destroy();
+// [ML] why? session_destroy();
+
 
 // Send user back to add/edit page's referer
 header("Location: $ref_edit_fu");

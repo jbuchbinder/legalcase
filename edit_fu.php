@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.38 2005/01/10 15:38:19 mlutfy Exp $
+	$Id: edit_fu.php,v 1.39 2005/01/19 09:14:40 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,7 +26,7 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 // Initiate session
-session_start();
+// [ML] now in inc_auth session_start();
 
 if (empty($errors)) {
     // Clear form data

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep.php,v 1.2 2004/12/11 11:18:29 antzi Exp $
+	$Id: upd_rep.php,v 1.3 2005/01/19 09:14:40 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,7 +26,7 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 // Start session
-session_start();
+// [ML] inc_auth session_start();
 
 // Register $errors array - just in case
 if (!session_is_registered("errors"))
@@ -95,7 +95,8 @@ if (count($errors)) {
 	$result = lcm_query($q);
 
     // Clear the session
-    session_destroy();
+	// [ML] errors must be shown first
+	// session_destroy();
 
 	//header("Location: rep_det.php?rep=$id_report");
 

@@ -18,14 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.15 2004/12/10 10:34:15 antzi Exp $
+	$Id: edit_org.php,v 1.16 2005/01/19 09:14:40 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
 // Initiate session
-session_start();
+// [ML] now in inc_auth session_start();
 
 // Initialise variables
 $org = intval($_GET['org']);
