@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.36 2005/03/24 13:42:47 mlutfy Exp $
+	$Id: edit_author.php,v 1.37 2005/03/30 07:30:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -95,7 +95,7 @@ echo show_all_errors($_SESSION['errors']);
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_personalinfo'); ?></h4></td>
 		</tr>
 
-		<tr><td align="right" valign="top"><?php echo f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first'); ?></td>
+		<tr><td align="left" valign="top"><?php echo f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first'); ?></td>
 			<td align="left" valign="top"><input name="name_first" type="text" class="search_form_txt" id="name_first" size="35" value="<?php echo clean_output($user['name_first']); ?>"/></td>
 		</tr>
 
@@ -104,14 +104,14 @@ echo show_all_errors($_SESSION['errors']);
 			if ($user['name_middle'] || read_meta('client_name_middle') == 'yes') {
 		?>
 
-		<tr><td align="right" valign="top"><?php echo _T('person_input_name_middle'); ?></td>
+		<tr><td align="left" valign="top"><?php echo _T('person_input_name_middle'); ?></td>
 			<td align="left" valign="top"><input name="name_middle" type="text" class="search_form_txt" id="name_middle" size="35" value="<?php echo clean_output($user['name_middle']); ?>"/></td>
 		</tr>
 
 		<?php
 			}
 		?>
-		<tr><td align="right" valign="top"><?php echo f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last'); ?></td>
+		<tr><td align="left" valign="top"><?php echo f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last'); ?></td>
 			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($user['name_last']); ?>"/></td>
 		</tr>
 <?php
@@ -136,7 +136,7 @@ echo show_all_errors($_SESSION['errors']);
 		<tr>
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_connectionidentifiers'); ?></h4></td>
 		</tr>
-		<tr><td align="right" valign="top"><?php echo f_err_star('username', $_SESSION['errors']) . _T('authoredit_input_username'); ?></td>
+		<tr><td align="left" valign="top"><?php echo f_err_star('username', $_SESSION['errors']) . _T('authoredit_input_username'); ?></td>
 			<td align="left" valign="top">
 
 		<?php
@@ -178,18 +178,18 @@ echo show_all_errors($_SESSION['errors']);
 				if ($user['id_author'] && $author_session['status'] != 'admin') {
 					echo '
 		<tr>
-			<td align="right" valign="top">' . f_err_star('password_current', $_SESSION['errors']) . _T('authorconf_input_password_current') . '</td>
+			<td align="left" valign="top">' . f_err_star('password_current', $_SESSION['errors']) . _T('authorconf_input_password_current') . '</td>
 			<td align="left" valign="top"><input name="usr_old_passwd" type="password" class="search_form_txt" id="usr_old_passwd" size="35" /></td>
 		</tr>' . "\n";
 				}
 		?>
 		
 		<tr>
-			<td align="right" valign="top"><?php echo f_err_star('password_confirm', $_SESSION['errors']) . _T('authorconf_input_password_new'); ?></td>
+			<td align="left" valign="top"><?php echo f_err_star('password_confirm', $_SESSION['errors']) . _T('authorconf_input_password_new'); ?></td>
 			<td align="left" valign="top"><input name="usr_new_passwd" type="password" class="search_form_txt" id="usr_new_passwd" size="35" /></td>
 		</tr>
 		<tr>
-			<td align="right" valign="top"><?php echo f_err_star('password_confirm', $_SESSION['errors']) . _T('authorconf_input_password_confirm'); ?></td>
+			<td align="left" valign="top"><?php echo f_err_star('password_confirm', $_SESSION['errors']) . _T('authorconf_input_password_confirm'); ?></td>
 			<td align="left" valign="top"><input name="usr_retype_passwd" type="password" class="search_form_txt" id="usr_retype_passwd" size="35" /></td>
 		</tr>
 
@@ -197,7 +197,7 @@ echo show_all_errors($_SESSION['errors']);
 			} /* is_newpass_allowed() */
 		?>
 
-		<tr><td align="right" valign="top"><?php echo _Ti('authoredit_input_status'); ?></td>
+		<tr><td align="left" valign="top"><?php echo _Ti('authoredit_input_status'); ?></td>
 			<td align="left" valign="top">
 			
 <?php
