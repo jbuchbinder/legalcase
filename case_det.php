@@ -180,7 +180,7 @@ if ($case > 0) {
 	$result = lcm_query($q);
 
 	// Set the length of short followup title
-	$title_length = (($prefs['screen'] == "wide") ? 48 : 120);
+	$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
 
 	// Process the output of the query
 	while ($row = lcm_fetch_array($result)) {
