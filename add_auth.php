@@ -2,6 +2,7 @@
 
 include('inc/inc.php');
 include('inc/inc_acc.php');
+include_lcm('inc_lang');
 
 if ($case>0) {
 	if ($authors) {
@@ -12,14 +13,11 @@ if ($case>0) {
 					SET id_case=$case,id_author=$author";
 
 				// Do the query
-				if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
+				if (!($result = lcm_query($q))) die("$q<br>\n" . _T('Error') . " " . lcm_errno() . ": " . lcm_error());
 			}
-		} else die("You don't have permission to add access rights to this case!");
+		} else die(_T('error_add_auth_no_rights'));
 	}
-} else die("Which case?");
-
-// Close connection
-// mysql_close($db);
+} else die(_T('which_case'));
 
 header("Location: $ref_sel_auth");
 
