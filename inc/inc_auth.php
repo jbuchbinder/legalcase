@@ -112,7 +112,7 @@ function auth() {
 		// XXX [ML] if some preferences are absent from $prefs,
 		// we can set them here.
 
-		if (! $prefs['page_rows']) 
+		if ($prefs['page_rows'] < 1) 
 			$prefs['page_rows'] = 15;
 	}
 	else {
