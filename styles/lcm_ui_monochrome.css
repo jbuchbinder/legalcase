@@ -180,3 +180,64 @@ td.heading, th.heading {
 a.content_link {
 	color: #333;
 }
+
+/* Some buttons */
+a.add_lnk {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+a.add_lnk:hover {
+	background-color: #efefef;
+}
+
+a.create_new_lnk {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+a.create_new_lnk:hover {
+	background-color: #efefef;
+}
+
+a.edit_lnk {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+a.edit_lnk:hover {
+	background-color: #efefef;
+}
+
+a.run_lnk {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+a.run_lnk:hover {
+	background-color: #efefef;
+}
+
+a.prefs_myprefs {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+a.prefs_myprefs:hover {
+	background-color: #efefef;
+}
+
+a.prefs_logout {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+a.prefs_logout:hover {
+	background-color: #efefef;
+}

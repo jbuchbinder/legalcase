@@ -160,3 +160,64 @@ td.heading, th.heading {
 a.content_link {
 	color: #600;
 }
+
+/* Some buttons */
+a.add_lnk {
+	background-color: #d7dabd;
+	color: #600;
+	border: 1px solid #666633;
+}
+
+a.add_lnk:hover {
+	background-color: #e7e7d6;
+}
+
+a.create_new_lnk {
+	background-color: #d7dabd;
+	color: #600;
+	border: 1px solid #666633;
+}
+
+a.create_new_lnk:hover {
+	background-color: #e7e7d6;
+}
+
+a.edit_lnk {
+	background-color: #d7dabd;
+	color: #600;
+	border: 1px solid #666633;
+}
+
+a.edit_lnk:hover {
+	background-color: #e7e7d6;
+}
+
+a.run_lnk {
+	background-color: #d7dabd;
+	color: #600;
+	border: 1px solid #666633;
+}
+
+a.run_lnk:hover {
+	background-color: #e7e7d6;
+}
+
+a.prefs_myprefs {
+	background-color: #d7dabd;
+	color: #600;
+	border: 1px solid #666633;
+}
+
+a.prefs_myprefs:hover {
+	background-color: #e7e7d6;
+}
+
+a.prefs_logout {
+	background-color: #d7dabd;
+	color: #600;
+	border: 1px solid #666633;
+}
+
+a.prefs_logout:hover {
+	background-color: #e7e7d6;
+}
