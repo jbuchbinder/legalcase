@@ -62,7 +62,7 @@ if ($existing) lcm_page_start(_T('edit_case_details'));
 else lcm_page_start(_T('new_case'));
 
 	echo "\n<form action=\"upd_case.php\" method=\"POST\">
-		<table>
+		<table class=\"tbl_usr_dtl\">
 			<!-- caption>" . _T('case_details') . "</caption -->
 			<!-- tr><th>" . _T('parameter') . "</th><th>" . _T('value') .  "</th></tr -->\n";
 	if ($case_data['id_case']) {

@@ -43,7 +43,7 @@ lcm_page_start("Edit client details");
 
 <!-- [ML:redundant] h1>Edit client information:</h1 -->
 <form action="upd_client.php" method="post">
-	<table><!-- caption>Client details</caption -->
+	<table class="tbl_usr_dtl"><!-- caption>Client details</caption -->
 		<!-- [ML:tech-talk] tr><th>Parameter</th><th>Value</th></tr -->
 <?php
 	if($client_data['id_client']) {
