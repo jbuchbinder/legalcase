@@ -1,8 +1,8 @@
 <?php
 
 // Execute this file only once
-if (defined("_INC_UPGRADE")) return;
-define("_INC_UPGRADE", "1");
+if (defined("_INC_DB_UPGRADE")) return;
+define("_INC_DB_UPGRADE", "1");
 
 include('inc/inc_version.php');
 include_lcm('inc_meta');
