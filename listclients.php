@@ -48,9 +48,9 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	echo '<a href="edit_client.php?client=' . $row['id_client'] . ">Edit</a></td>\n\t</tr>\n";
 }
 
-echo "</table>
+echo '</table>
 
-<p><a href="edit_client.php">Add new client</a></p>";
+<p><a href="edit_client.php">Add new client</a></p>';
 
 // Show link to previous page
 if ($list_pos>0) {
