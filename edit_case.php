@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.70 2005/03/28 13:54:50 mlutfy Exp $
+	$Id: edit_case.php,v 1.71 2005/03/29 09:16:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -215,59 +215,7 @@ if ($_SESSION['case_data']['id_case']) {
 
 	// Keywords already attached
 	include_lcm('inc_keywords');
-
-	if ($_SESSION['case_data']['id_case']) {
-		$current_kws = get_keywords_applied_to('case', $_SESSION['case_data']['id_case']);
-	
-		foreach ($current_kws as $kw) {
-			$kwg = get_kwg_from_id($kw['id_group']);
-		
-			echo "<tr>\n";
-			echo "<td>" . f_err_star('FIXME') . _Ti($kwg['title'])
-				. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
-
-			echo "<td>";
-			echo "<select name='FIXME'>"; // FIXME
-
-			$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
-			foreach ($kw_for_kwg as $kw1) {
-				$sel = ($kw1['id_keyword'] == $kw['id_keyword'] ? ' selected="selected"' : '');
-				echo '<option value="">' . $kw1['title'] . "</option>\n"; // FIXME
-			}
-
-			echo "</select>\n";
-			echo "</td>\n";
-			echo "</tr>\n";
-		}
-	}
-
-	// New keywords
-	$kwg_for_case = get_kwg_all('case', true);
-	$cpt_kw = 0;
-
-	foreach ($kwg_for_case as $kwg) {
-		echo "<tr>\n";
-		echo '<td>' . f_err_star('keyword_' . $cpt_kw) . _Ti($kwg['title']) 
-			. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
-
-		$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
-		if (count($kw_for_kwg)) {
-			echo "<td>";
-			echo '<input type="hidden" name="new_kwg_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
-			echo '<select name="new_keyword_value[]">';
-
-			foreach ($kw_for_kwg as $kw)
-				echo '<option value="' . $kw['id_keyword'] . '">' . _T($kw['title']) . "</option>\n";
-
-			echo "</select>\n";
-			echo "</td>\n";
-		} else {
-			// This should not happen, we should get only non-empty groups
-		}
-		
-		echo "</tr>\n";
-		$cpt_kw++;
-	}
+	show_edit_keywords_form('case', $_SESSION['case_data']['id_case']);
 
 	// Case status
 	echo '<tr><td><label for="input_status">' . _T('case_input_status') . "</label></td>\n";
