@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: add_rep_col.php,v 1.3 2004/12/11 11:18:29 antzi Exp $
+	$Id: add_rep_col.php,v 1.4 2005/02/07 13:00:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,15 +33,15 @@ $sort = clean_input($_POST['sort']);
 
 if (($rep>0) && ($field)) {
 	// Change order of the columns to be left behind the new one
-	$q = "UPDATE lcm_rep_cols
-			SET lcm_rep_cols.col_order=lcm_rep_cols.col_order+1
+	$q = "UPDATE lcm_rep_col
+			SET lcm_rep_col.col_order=lcm_rep_col.col_order+1
 			WHERE (id_report=$rep
-				AND lcm_rep_cols.col_order>=$order)";
+				AND lcm_rep_col.col_order>=$order)";
 	$result = lcm_query($q);
 
 	// Insert new column info
-	$q = "INSERT INTO lcm_rep_cols
-			SET id_report=$rep,id_field=$field,lcm_rep_cols.col_order=$order,header='$header',sort='$sort'";
+	$q = "INSERT INTO lcm_rep_col
+			SET id_report=$rep,id_field=$field,lcm_rep_col.col_order=$order,header='$header',sort='$sort'";
 	$result = lcm_query($q);
 }
 

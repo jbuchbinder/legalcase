@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rem_rep_col.php,v 1.2 2004/12/11 16:43:03 antzi Exp $
+	$Id: rem_rep_col.php,v 1.3 2005/02/07 13:00:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,13 +30,13 @@ $order = intval($_GET['order']);
 
 if (($rep>0) && ($order)) {
 	// Remove the column
-	$q = "DELETE FROM lcm_rep_cols
+	$q = "DELETE FROM lcm_rep_col
 			WHERE id_report=$rep
 			AND col_order=$order";
 	$result = lcm_query($q);
 
 	// Change order of the rest of the columns
-	$q = "UPDATE lcm_rep_cols
+	$q = "UPDATE lcm_rep_col
 			SET col_order=col_order-1
 			WHERE (id_report=$rep
 				AND col_order>$order)";

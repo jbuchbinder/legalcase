@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: move_rep_col.php,v 1.2 2004/12/14 13:14:02 antzi Exp $
+	$Id: move_rep_col.php,v 1.3 2005/02/07 13:00:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,13 +33,13 @@ $new = intval($_GET['new']);
 if (($rep>0) && ($old) && ($new) && ($old!=$new)) {
 	// Change order of the columns between old and new order
 	if ($old>$new) {
-		$q = "UPDATE lcm_rep_cols
+		$q = "UPDATE lcm_rep_col
 				SET col_order=col_order+1
 				WHERE (id_report=$rep
 					AND col_order>=$new
 					AND col_order<$old)";
 	} else {
-		$q = "UPDATE lcm_rep_cols
+		$q = "UPDATE lcm_rep_col
 				SET col_order=col_order-1
 				WHERE (id_report=$rep
 					AND col_order<=$new
@@ -48,7 +48,7 @@ if (($rep>0) && ($old) && ($new) && ($old!=$new)) {
 	$result = lcm_query($q);
 
 	// Update the column
-	$q = "UPDATE lcm_rep_cols
+	$q = "UPDATE lcm_rep_col
 			SET col_order=$new
 			WHERE id_report=$rep
 			AND id_column=$col";
