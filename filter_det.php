@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: filter_det.php,v 1.7 2005/01/12 08:55:40 makaveev Exp $
+	$Id: filter_det.php,v 1.8 2005/02/10 08:49:05 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -43,28 +43,34 @@ if ($filter > 0) {
 		if (($GLOBALS['author_session']['status'] == 'admin') ||
 			($row['id_author'] == $GLOBALS['author_session']['id_author'])) $edit = true;
 
-		echo "<p class='normal_text'>";
-
+		//echo "<p class='normal_text'>";
+		
+		echo "<fieldset class=\"info_box\">\n";
+		
+		echo "\nFilter ID: " . $row['id_filter'] . "<br />\n";
+		echo "Created on: " . $row['date_creation'] . "<br />\n";
+		echo "Last update: " . $row['date_update'] . "<br />\n";
+		echo "Conditions logic: " . $row['type'] . "<br />\n";
+		
 		if ($edit)
-			echo '<a href="edit_filter.php?filter=' . $row['id_filter'] . '" class="edit_lnk">Edit this filter</a><br />';
-		echo "\nFilter ID: " . $row['id_filter'] . "<br>\n";
-		echo "Created on: " . $row['date_creation'] . "<br>\n";
-		echo "Last update: " . $row['date_update'] . "<br>\n";
-		echo "Conditions logic: " . $row['type'] . "<br>\n";
-
+			echo '<br /><a href="edit_filter.php?filter=' . $row['id_filter'] . '" class="edit_lnk">Edit this filter</a><br /><br />';
+		
+		echo "</fieldset>\n";
 //
 //	List the conditions in the filter
-//
-		echo "<h3>Filter conditions:</h3>\n";
+//		
+		echo "<fieldset class=\"info_box\">\n";
+
+		echo "<h4>Filter conditions:</h4>\n";
 		echo "<p class='normal_text'>\n";
 		echo "(" . (($row['type'] == 'AND') ? 'All' : 'Any') . " of the conditions has to be fulfilled to show data in the report)<br />\n";
-		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
+		echo "\n\t\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 		echo "<tr><th class='heading'>#</th>
-	<th class='heading'>Field</th>
-	<th class='heading'>Condition</th>
-	<th class='heading'>Value</th>
-	<th class='heading'>Action</th>
-</tr>";
+				<th class='heading'>Field</th>
+				<th class='heading'>Condition</th>
+				<th class='heading'>Value</th>
+				<th class='heading'>Action</th>
+			</tr>";
 
 		// Show fields included in this filter
 		$q = "SELECT lcm_filter_conds.*,lcm_fields.description
@@ -91,7 +97,7 @@ if ($filter > 0) {
 			echo "</tr>\n";
 			$last_order = $condition['cond_order']+1;
 		}
-		echo "\t\t</table><br>\n";
+		echo "\t\t</table><br />\n";
 
 //
 //	Display add new condition form
@@ -99,7 +105,7 @@ if ($filter > 0) {
 		if (true) {
 			echo "<form action='add_filter_cond.php' method='POST'>\n";
 			echo "\t<input type='hidden' name='filter' value='$filter' />\n";
-			echo "\t<table border='0' class='tbl_usr_dtl'>\n";
+			echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
 			// Get condition order
 			echo "\t\t<tr><th class='heading'>Position</th><td>\n";
@@ -146,10 +152,13 @@ if ($filter > 0) {
 			echo "\t\t\t<td><input type='text' name='value' class='search_form_txt' /></td></tr>\n";
 
 			echo "\t</table>\n";
-			echo "\t<button type='submit' class='simple_form_btn'>Add condition</button>\n";
+			echo "\t<br /><button type='submit' class='simple_form_btn'>Add condition</button>\n";
 			echo "</form>\n";
 		}
-		echo "<br>\n";
+		
+		//echo "<br />\n";
+		
+		echo "</fieldset>\n";
 
 	} // End of check if such filter exists in the database
 

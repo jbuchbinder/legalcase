@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_filter.php,v 1.8 2005/02/09 11:00:09 mlutfy Exp $
+	$Id: edit_filter.php,v 1.9 2005/02/10 08:49:05 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -82,14 +82,15 @@ if (empty($errors)) {
 if ($existing) lcm_page_start(_T('edit_filter_details'));
 else lcm_page_start(_T('new_filter'));
 
+	echo "<fieldset class=\"info_box\">\n";
 	// Show filter data form
 	echo "\n<form action='upd_filter.php' method='POST'>
-		<table class='tbl_usr_dtl'>
+		<!-- table class='tbl_usr_dtl' -->
 			<input type=\"hidden\" name=\"ref_edit_filter\" value=\"" .  $filter_data['ref_edit_filter'] . "\">\n";
 	// Show filter ID if available
 	if ($filter_data['id_filter']) {
-		echo "\t<tr><td>" . _T('filter_id') . ":</td><td>" . $filter_data['id_filter'] . "
-			<input type=\"hidden\" name=\"id_filter\" value=\"" .  $filter_data['id_filter'] . "\"></td></tr>\n";
+		echo "\t<!-- tr><td -->" . _T('filter_id') . ":<!-- /td><td -->" . $filter_data['id_filter'] . "
+			<input type=\"hidden\" name=\"id_filter\" value=\"" .  $filter_data['id_filter'] . "\"><!-- /td></tr -->\n";
 	}
 	// Show author ID
 	/* [ML] not useful
@@ -99,16 +100,14 @@ else lcm_page_start(_T('new_filter'));
 	*/
 
 	// Show filter title
-	echo"
-		<tr><td>" . _T('filter_title') . ":</td>
-			<td><input name=\"title\" value=\"" . clean_output($filter_data['title']) . "\" class=\"search_form_txt\">";
-	echo f_err('title', $errors) . "</td></tr>";
-	echo"
-		<tr><td>" . _T('filter_type') . ":</td>
-			<td><select name=\"type\">
+	echo "<strong>". _T('filter_title') . ":</strong><br /><input name=\"title\" value=\"" . clean_output($filter_data['title']) . "\" class=\"search_form_txt\">";
+	echo f_err('title', $errors);
+	
+	echo "<br /><br /><strong>" . _T('filter_type') . ":</strong>
+			<br /><select name=\"type\" class=\"sel_frm\">
 				<option" . (($filter_data['type']=='AND') ? ' selected' : '') . ">AND</option>
 				<option" . (($filter_data['type']=='OR') ? ' selected' : '') . ">OR</option>
-			</select></td></tr>";
+			</select><br />";
 
 //	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
 //		echo "\t<tr><td>" . _T('public') . "</td>
@@ -140,7 +139,7 @@ else lcm_page_start(_T('new_filter'));
 //<?php
 //	}
 
-	echo "</table>\n";
+	//echo "</table>\n";
 
 	echo "<br />\n";
 
@@ -156,6 +155,8 @@ else lcm_page_start(_T('new_filter'));
 
 	echo '<input type="hidden" name="ref_edit_filter" value="' . $filter_data['ref_edit_filter'] . '">' . "\n";
 	echo "</form>\n";
-
+	
+	echo "</fieldset>";
+	
 	lcm_page_end();
 ?>

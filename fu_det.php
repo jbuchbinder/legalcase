@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.8 2005/02/10 07:19:02 makaveev Exp $
+	$Id: fu_det.php,v 1.9 2005/02/10 08:49:05 makaveev Exp $
 */
 
 include('inc/inc.php');

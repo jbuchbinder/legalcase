@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.18 2005/02/09 16:03:33 mlutfy Exp $
+	$Id: rep_det.php,v 1.19 2005/02/10 08:49:05 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -124,7 +124,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 			echo "<tr>\n";
 			echo "<td>" . $line['description'] . "</td>\n";
 			echo "<td><a href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
-				. "remove=line" . "&amp;" . "id_line=" . $line['id_line'] . "'>" . "Remove" . "</a></td>\n";
+				. "remove=line" . "&amp;" . "id_line=" . $line['id_line'] . "' class='content_link'>" . "Remove" . "</a></td>\n";
 			echo "</tr>\n";
 			array_push($my_fields, $line['id_field']);
 		}
@@ -151,7 +151,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 		echo "<input name='add' value='line' type='hidden' />\n";
 
 		echo "<p class='normal_text'>Add an item: ";
-		echo "<select name='id_field'>";
+		echo "<select name='id_field' class='sel_frm'>";
 
 		while ($row = lcm_fetch_array($result)) {
 			echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
@@ -167,7 +167,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
 	echo "<p class='normal_text'>Select source: ";
 	echo "<input name='select_line_type' value='table' type='hidden' />\n";
-	echo "<select name='select_line_name'>
+	echo "<select name='select_line_name' class='sel_frm'>
 			<option value='author'>Author</option>
 			<option value='case'>Case</option>
 			<option value='client'>Client</option>
@@ -187,7 +187,7 @@ echo "</fieldset>\n";
 		echo '<a name="column"></a>' . "\n";
 		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report columns</div><p class='normal_text'>";
 		//echo '<h3>Report columns:</h3>';
-		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
+		echo "\n\t\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 		echo "<tr><th class='heading'>#</th>
 	<th class='heading'>Header</th>
 	<th class='heading'>Table</th>
@@ -275,11 +275,11 @@ echo "</fieldset>\n";
 		if ($edit) {
 			echo "<form action='add_rep_col.php' method='POST'>\n";
 			echo "\t<input type='hidden' name='rep' value='$rep' />\n";
-			echo "\t<table border='0' class='tbl_usr_dtl'>\n";
+			echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
 			// Get column order
 			echo "\t\t<tr><th class='heading'>Position</th><td>\n";
-			echo "\t\t\t<select name='order'>\n";
+			echo "\t\t\t<select name='order' class='sel_frm'>\n";
 			$i = 1;
 			while ($i<$last_order) {
 				echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n";
@@ -296,7 +296,7 @@ echo "</fieldset>\n";
 
 			// Get field from list
 			echo "\t\t<tr><th class='heading'>Contents</th>\n";
-			echo "\t\t\t<td><select name='field'>\n";
+			echo "\t\t\t<td><select name='field' class='sel_frm'>\n";
 			echo "\t\t\t\t<option selected disabled label='' value=''>-- Select column content from the list --</option>";
 			$q = "SELECT * FROM lcm_fields ORDER BY table_name,description";
 			$fields = lcm_query($q);
@@ -317,7 +317,7 @@ echo "</fieldset>\n";
 
 			// Get grouping setting
 			echo "\t\t<tr><th class='heading'>Grouping</th>\n";
-			echo "\t\t\t<td><select name='sort'>\n";
+			echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
 			echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
 			echo "\t\t\t\t<option label='Count' value='COUNT'>COUNT</option>\n";
 			echo "\t\t\t\t<option label='Sum' value='SUM'>SUM</option>\n";
@@ -326,7 +326,7 @@ echo "</fieldset>\n";
 
 			// Get sort setting
 			echo "\t\t<tr><th class='heading'>Sorting</th>\n";
-			echo "\t\t\t<td><select name='sort'>\n";
+			echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
 			echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
 			echo "\t\t\t\t<option label='Ascending' value='asc'>Ascending</option>\n";
 			echo "\t\t\t\t<option label='Descending' value='desc'>Descending</option>\n";
@@ -346,7 +346,7 @@ echo "</fieldset>\n";
 
 		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report filters</div><p class='normal_text'>";
 		//echo '<h3>Report filters:</h3>';
-		echo "\n\t<table border='0' class='tbl_usr_dtl'>\n";
+		echo "\n\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 		echo "\t\t<tr><th class='heading'>Description</th></tr>\n";
 
 		// Show filters included in this report
@@ -373,11 +373,11 @@ echo "</fieldset>\n";
 		if (true) {
 			echo "<form action='add_rep_filter.php' method='POST'>\n";
 			echo "\t<input type='hidden' name='rep' value='$rep' />\n";
-			echo "\t<table border='0' class='tbl_usr_dtl'>\n";
+			echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
 			// Get filter from list
 			echo "\t\t<tr><th class='heading'>Filter</th>\n";
-			echo "\t\t\t<td><select name='filter'>\n";
+			echo "\t\t\t<td><select name='filter' class='sel_frm'>\n";
 			echo "\t\t\t\t<option selected disabled label='' value=''>-- Select filter from the list --</option>\n";
 			$q = "SELECT * FROM lcm_filter ORDER BY title";
 			$filters = lcm_query($q);
