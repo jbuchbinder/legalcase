@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.63 2005/03/21 14:41:32 mlutfy Exp $
+	$Id: inc_version.php,v 1.64 2005/03/22 13:15:58 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -693,10 +693,11 @@ class Link {
 	//
 	// Fetch the beginning of the form associated with the link
 	// (opening tag + hidden variables representing the variables)
-	function getForm($method = 'get', $anchor = '', $enctype = '') {
+	function getForm($method = 'get', $anchor = '', $enctype = '', $class = '') {
 		if ($anchor) $anchor = '#'.$anchor;
 		$form = "<form method='$method' action='".$this->file.$anchor."'";
 		if ($enctype) $form .= " enctype='$enctype'";
+		if ($class) $form .= " class='$class'";
 		$form .= ">\n";
 		$vars = $this->getAllVars();
 		if (is_array($vars)) {
