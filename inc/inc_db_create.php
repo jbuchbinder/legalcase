@@ -25,7 +25,9 @@ function log_if_not_duplicate_table($errno) {
 // http://www.lcm.ngo-bg.org/article2.html
 //
 // [AG] Upon database format change DO NOT FORGET
-// to increase $lcm_db_version found in inc_version
+// to increase $lcm_db_version found in inc_version.
+// Also, add the queries to apply the changes into
+// upgrade_database() in inc_db_upgrade
 
 function create_database() {
 	global $lcm_db_version;
