@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.16 2005/03/21 16:31:17 mlutfy Exp $
+	$Id: fu_det.php,v 1.17 2005/04/01 16:51:39 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -56,12 +56,25 @@ show_context_case_involving($case);
 
 // Show parent appointment, if any
 // [ML] todo put in inc_presentation
-$q = "SELECT lcm_app.* FROM lcm_app_fu,lcm_app WHERE lcm_app_fu.id_followup=$followup AND lcm_app_fu.id_app=lcm_app.id_app";
+$q = "SELECT lcm_app.* FROM lcm_app_fu,lcm_app WHERE lcm_app_fu.id_followup=$followup AND lcm_app_fu.id_app=lcm_app.id_app AND lcm_app_fu.relation='child'";
 $res_app = lcm_query($q);
 if ($app = lcm_fetch_array($res_app)) {
 	echo '<li style="list-style-type: none;">' . _T('fu_input_parent_appointment') . ' ';
 	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _T(get_kw_title($app['type']))
 		. ' (' . $app['title'] . ') from ' . format_date($app['start_time']) . "</a></li>\n"; // TRAD
+}
+
+// Show child appointment, if any
+$q = "SELECT lcm_app.* FROM lcm_app_fu,lcm_app WHERE lcm_app_fu.id_followup=$followup AND lcm_app_fu.id_app=lcm_app.id_app AND lcm_app_fu.relation='parent'";
+$res_app = lcm_query($q);
+if ($app = lcm_fetch_array($res_app)) {
+	echo '<li style="list-style-type: none;">' . _T('fu_input_child_appointment') . ' ';
+	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _T(get_kw_title($app['type']))
+		. ' (' . $app['title'] . ') from ' . format_date($app['start_time']) . "</a></li>\n"; // TRAD
+} else {
+	// Show create appointment from followup
+	echo '<li style="list-style-type: none;"><br /><a href="edit_app.php?case=' . $case . '&amp;followup=' . $followup
+		. '" class="create_new_lnk">Create new appointment from this followup' . "</a><br /></li>\n";	// TRAD
 }
 
 show_context_end();
