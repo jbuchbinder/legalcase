@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.11 2004/12/21 16:31:55 makaveev Exp $
+	$Id: edit_author.php,v 1.12 2005/01/07 10:27:11 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -127,7 +127,7 @@ else lcm_page_start("New author");
 
 		if ($c['name'] != 'email_main')
 			//echo '<acronym title="Show icon with garbage bin to delete the contact?">Del?</acronym>';
-			echo "&nbsp;<img src=\"images/jimmac/stock_trash-16.png\" width=\"16\" height=\"16\" alt=\"Delete?\" />";
+			echo "&nbsp;<img src=\"images/jimmac/stock_trash-16.png\" width=\"16\" height=\"16\" alt=\"Delete?\" title=\"Delete?\" />&nbsp;<input type=\"checkbox\" name=\"del_contact[]\" />";
 
 		echo "</td>\n</tr>\n";
 
