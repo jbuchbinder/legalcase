@@ -20,14 +20,14 @@ body {
 }
 
 #wrapper {
-	background: url("../images/right_back_orange.gif") repeat-y right;
+	background: url(../images/right_back_orange.gif) repeat-y right;
 }
 
 #container {
 	width: 100%;
 	float: left;
 	margin-right: -200px;
-	background: url("../images/right_back_orange.gif") repeat-y right;
+	background: url(../images/right_back_orange.gif) repeat-y right;
 }
 
 #content {
@@ -74,9 +74,18 @@ body {
 /* Other visual settings - font, colors, sizes, boxes */
 /* ================================================== */
 
+h1.lcm_main_head {
+	position: relative;
+	width: 650px;
+	color: #f60;
+	margin: 0px;
+	padding-top: 15px;
+	left: 85px;
+}
+
 .lcm_slogan {
 	position: relative;
-	top: 53px;
+	top: 0px;
 	left: 150px;
 	color: #666;
 	font-size: 11px;
