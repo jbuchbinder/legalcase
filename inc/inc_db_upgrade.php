@@ -135,6 +135,36 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (9);
 	}
 
+	if ($lcm_db_version_current < 10) {
+		$query = "CREATE TABLE lcm_keyword (
+			id_keyword bigint(21) NOT NULL auto_increment,
+			id_group bigint(21) NOT NULL DEFAULT 0,
+			name text NOT NULL DEFAULT '',
+			title text NOT NULL DEFAULT '',
+			description text NOT NULL DEFAULT '',
+			ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
+			PRIMARY KEY (id_keyword))";
+		
+		$result = lcm_query($query);
+
+		$query = "CREATE TABLE lcm_keyword_group (
+			id_group bigint(21) NOT NULL auto_increment,
+			name text NOT NULL,
+			title text NOT NULL DEFAULT '',
+			description text NOT NULL DEFAULT '',
+			type ENUM('case', 'followup', 'client', 'org', 'author'),
+			policy ENUM('optional', 'recommended', 'mandatory') DEFAULT 'optional',
+			suggest text NOT NULL DEFAULT '',
+			quantity ENUM('one', 'many') DEFAULT 'one',
+			ac_admin ENUM('Y', 'N') DEFAULT 'Y',
+			ac_author ENUM('Y', 'N') DEFAULT 'Y',
+			PRIMARY KEY (id_group))";
+	
+		$result = lcm_query($query);
+
+		upgrade_db_version (10);
+	}
+
 /* [ML] I'm leaving this because it can provide us with interesting ideas
 	if ($lcm_version_current < 0.98) {
 		lcm_query("ALTER TABLE spip_forum DROP INDEX id_forum");

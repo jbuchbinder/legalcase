@@ -46,9 +46,10 @@ function create_database() {
 	// + DONE lcm_contact
 	// + TODO lcm_courtfinal
 	// + TODO lcm_appelation
-	// + TODO lcm_keyword
+	// + DONE lcm_keyword
 	// + TODO lcm_keyword_group
-	// + TODO lcm_client_keywords
+	// + TODO lcm_client_keyword
+	// + TODO lcm_case_keyword
 	// - DONE lcm_case_client_org
 	// - DONE lcm_case_author
 
@@ -141,19 +142,47 @@ function create_database() {
 		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		address text NOT NULL,
 		PRIMARY KEY id_org (id_org))";
-	$result = lcm_query($query);
 
+	$result = lcm_query($query);
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_contact (
 		id_contact bigint(21) NOT NULL auto_increment,
 		type_person ENUM('author', 'client', 'org') DEFAULT 'author' NOT NULL,
-		id_of_person bigint(21) DEFAULT '0' NOT NULL,
+		id_of_person bigint(21) DEFAULT 0 NOT NULL,
 		value text NOT NULL,
 		type_contact tinyint(2) DEFAULT 0 NOT NULL,
 		PRIMARY KEY id_contact (id_contact))";
-	$result = lcm_query($query);
 
+	$result = lcm_query($query);
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_keyword (
+		id_keyword bigint(21) NOT NULL auto_increment,
+		id_group bigint(21) NOT NULL DEFAULT 0,
+		name text NOT NULL DEFAULT '',
+		title text NOT NULL DEFAULT '',
+		description text NOT NULL DEFAULT '',
+		ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
+		PRIMARY KEY (id_keyword))";
+	
+	$result = lcm_query($query);
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_keyword_group (
+		id_group bigint(21) NOT NULL auto_increment,
+		name text NOT NULL,
+		title text NOT NULL DEFAULT '',
+		description text NOT NULL DEFAULT '',
+		type ENUM('case', 'followup', 'client', 'org', 'author'),
+		policy ENUM('optional', 'recommended', 'mandatory') DEFAULT 'optional',
+		quantity ENUM('one', 'many') DEFAULT 'one',
+		suggest text NOT NULL DEFAULT '',
+		ac_admin ENUM('Y', 'N') DEFAULT 'Y',
+		ac_author ENUM('Y', 'N') DEFAULT 'Y',
+		PRIMARY KEY (id_group))";
+
+	$result = lcm_query($query);
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	//
