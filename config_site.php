@@ -63,8 +63,8 @@ function show_config_form() {
 	echo "<p><small>" . _T('siteconf_info_default_lang') . "</small></p>\n";
 	echo "<p>" . menu_languages('default_language', $default_language) . "\n";
 
-	echo "<p><b>" . _T('siteconf_input_email_admin') . "</b></p>\n";
-	echo "<p><small>" . _T('siteconf_info_email_admin') . "</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_admin_email') . "</b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_admin_email') . "</small></p>\n";
 	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40'/></p>\n";
 	echo "</td>\n</tr>\n</table>\n";
 
