@@ -84,6 +84,7 @@ if ($case > 0) {
 		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
 
 		// [ML] FIXME: Not very clear how this should work
+		echo "<!-- " . $row['date_assignment'] . "-->\n";
 		if ($row['date_assignment'])
 			echo _T('assignment_date') . ': ' .  format_date($row['date_assignment']) . "<br>\n";
 		else
