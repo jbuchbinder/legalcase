@@ -18,58 +18,65 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.45 2005/03/02 17:29:17 antzi Exp $
+	$Id: listcases.php,v 1.46 2005/03/13 15:18:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
-// Read site preferences
-$case_court_archive = read_meta('case_court_archive');
+lcm_page_start(_T('title_my_cases'));
+
+// For "find case"
+$find_case_string = '';
+
+if (isset($_REQUEST['find_case_string'])) {
+	$find_case_string = $_REQUEST['find_case_string'];
+
+	echo '<form name="frm_find_case" class="search_form" action="listcases.php" method="get">' . "\n";
+	echo _T('input_search_case') . "&nbsp;";
+	echo '<input type="text" name="find_case_string" size="10" class="search_form_txt" value="' .  $find_case_string . '" />';
+	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
+	echo "</form>\n";
+}
 
 // Select cases of which the current user is author
-$q = "SELECT c.id_case, title, id_court_archive, status, public, pub_write
+$q = "SELECT c.id_case, title, id_court_archive, status, public, pub_write, date_creation
 		FROM lcm_case as c, lcm_case_author as a
 		WHERE (c.id_case = a.id_case
 			AND a.id_author = " . $GLOBALS['author_session']['id_author'];
 
-// Add search criteria if any
-$find_case_string = '';
-
-if (isset($_REQUEST['find_case_string']))
-	$find_case_string = $_REQUEST['find_case_string'];
-	
-if (strlen($find_case_string)>0) {
-	$q .= " AND ( (c.id_case LIKE '%$find_case_string%') OR (c.title LIKE '%$find_case_string%') OR (id_court_archive LIKE '%$find_case_string%') )";
-	lcm_page_start("Cases, containing '$find_case_string':");
-} else {
-	lcm_page_start(_T('title_my_cases'));
+if (strlen($find_case_string) > 0) {
+	$q .= " AND ( (c.id_case LIKE '%$find_case_string%')
+				OR (c.title LIKE '%$find_case_string%') 
+				OR (id_court_archive LIKE '%$find_case_string%') )";
 }
 
 $q .= ")";
 
 // Sort cases by creation date
-$q .= " ORDER BY date_creation DESC";
+$case_order = 'DESC';
+if (isset($_REQUEST['case_order']))
+	if ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'DESC')
+		$case_order = $_REQUEST['case_order'];
 
-// Do the query
+$q .= " ORDER BY date_creation " . $case_order;
+
 $result = lcm_query($q);
 
-// Get the number of rows in the result
-$number_of_rows = lcm_num_rows($result);
-
 // Check for correct start position of the list
+$number_of_rows = lcm_num_rows($result);
 $list_pos = 0;
 
 if (isset($_REQUEST['list_pos']))
 	$list_pos = $_REQUEST['list_pos'];
 
-if ($list_pos>=$number_of_rows) $list_pos = 0;
+if ($list_pos >= $number_of_rows) $list_pos = 0;
 
 // Position to the page info start
-if ($list_pos>0)
+if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
-		die("Error seeking position $list_pos in the result");
+		lcm_panic("Error seeking position $list_pos in the result");
 
 // Debuging code
 echo "<!-- Page rows:" . $prefs['page_rows'] . "-->\n";
@@ -80,10 +87,12 @@ show_listcase_start();
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
 	$action = '';
 
+	/* [ML] Let's show other info instead
 	if (allowed($item['id_case'],'w'))
 		$action = '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">'
 			. "Add followup"
 			. '</a>';
+	*/
 
 	show_listcase_item($row, $i, $action);
 }
@@ -93,13 +102,16 @@ show_listcase_end();
 ?>
 
 <table border='0' align='center' width='99%' class='page_numbers'>
-	<tr><td align="left" width="15%"><?php
+	<tr><td align="left" width="15%">
+
+<?php
+
 // Show link to previous page
-if ($list_pos>0) {
+if ($list_pos > 0) {
 	echo '<a href="listcases.php?list_pos=';
 	echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-	echo '" class="content_link">< Prev</a> ';
+	echo '" class="content_link">' . "< Prev" . '</a> '; // TRAD
 }
 
 echo "</td>\n\t\t<td align='center' width='70%'>";
@@ -107,7 +119,7 @@ echo "</td>\n\t\t<td align='center' width='70%'>";
 // Show page numbers with direct links
 $list_pages = ceil($number_of_rows / $prefs['page_rows']);
 if ($list_pages>1) {
-	echo 'Go to page: ';
+	echo 'Go to page: '; // TRAD
 	for ($i=0 ; $i<$list_pages ; $i++) {
 		if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
 		else {
@@ -125,12 +137,13 @@ $next_pos = $list_pos + $prefs['page_rows'];
 if ($next_pos<$number_of_rows) {
 	echo "<a href=\"listcases.php?list_pos=$next_pos";
 	if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-	echo '" class="content_link">Next ></a>';
+	echo '" class="content_link">' . "Next >" . '</a>'; // TRAD
 }
 
 echo "</td>\n\t</tr>\n</table>\n";
 ?>
-<a href="edit_case.php?case=0" class="create_new_lnk">Open new case</a>
+<p><a href="edit_case.php?case=0" class="create_new_lnk">Open new case</a></p>
+<p><a href="edit_client.php" class="create_new_lnk">Register new client</a></p>
 <br /><br />
 <?php
 lcm_page_end();
