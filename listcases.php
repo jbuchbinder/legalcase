@@ -22,11 +22,14 @@ $result = lcm_query($q);
 <tr><th colspan="2">Case description</th></tr>
 <?php
 // Process the output of the query
-while ($row = mysql_fetch_array($result)) {
+while ($row = lcm_fetch_array($result)) {
 	// Show case title
-	echo '<tr><td><a href="case_det.php?case=' . $row['id_case'] . '">'. $row['title'] . "</a></td>\n";
+	echo '<tr><td>';
+	if (allowed($row['id_case'],'r')) {
+		echo '<a href="case_det.php?case=' . $row['id_case'] . '">' . $row['title'] . "</a></td>\n";
+	} else echo $row['title'] . "</td>\n";
 	echo '<td>';
-	if (allowed($row['id_case'],"rw"))
+	if (allowed($row['id_case'],'e'))
 		echo '<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a>';
 	echo "</td></tr>\n";
 }

@@ -126,7 +126,7 @@ if ($case>0) {
 	$result = lcm_query($q);
 
 	// Process the output of the query
-	while ($row = lcm_fetch_assoc($result)) {
+	while ($row = lcm_fetch_array($result)) {
 		// Show followup
 		echo '<tr><td>' . $row['date_start'] . '</td><td>' . $row['type'] . '</td><td>' . $row['description'] . '</td><td>';
 		if ($edit)

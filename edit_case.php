@@ -1,12 +1,17 @@
 <?php
 
 include('inc/inc.php');
+include('inc/inc_acc.php');
+
 lcm_page_start("Edit case details");
 
 // Create empty case data
 $case_data=array();
 
 if ($case>0) {
+	// Check access rights
+	if (!allowed($case,'e')) die("You don't have permission to edit this case!");
+
 	// Prepare query
 	$q = "SELECT *
 		  FROM lcm_case
@@ -16,7 +21,7 @@ if ($case>0) {
 	$result = lcm_query($q);
 
 	// Process the output of the query
-	if ($row = mysql_fetch_array($result)) {
+	if ($row = lcm_fetch_array($result)) {
 		// Get case details
 		foreach ($row as $key => $value) {
 			$case_data[$key] = $value;
@@ -42,7 +47,7 @@ if ($case>0) {
 		<tr><td>Court archive:</td>
 			<td><input name="id_court_archive" value="<?php echo htmlspecialchars($case_data['id_court_archive']); ?>"></td></tr>
 		<tr><td>Date created:</td>
-			<td><input name="date_creation" value="<?php echo $case_data['date_creation']; ?>"></td></tr>
+			<td><?php echo $case_data['date_creation']; ?></td></tr>
 		<tr><td>Date assigned:</td>
 			<td><input name="date_assignment" value="<?php echo $case_data['date_assignment']; ?>"></td></tr>
 		<tr><td>Legal reason:</td>
@@ -52,10 +57,12 @@ if ($case>0) {
 		<tr><td>Case status:</td>
 			<td><input name="status" value="<?php echo $case_data['status']; ?>"></td></tr>
 		<tr><td>Public:</td>
-			<td><input name="public" value="<?php echo $case_data['public']; ?>"></td></tr>
+			<td><input type="checkbox" name="public" value="yes"<?php
+			if ($case_data['public']) echo ' checked'; ?>></td></tr>
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>
+	<input type="hidden" name="date_creation" value="<?php echo $case_data['date_creation']; ?>">
 	<input type="hidden" name="ref_edit_case" value="<?php echo $HTTP_REFERER ?>">
 </form>
 

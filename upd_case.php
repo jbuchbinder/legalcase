@@ -1,6 +1,7 @@
 <?php
 
 include('inc/inc.php');
+include('inc/inc_acc.php');
 
 //$cl='(id_case,title,id_court_archive,date_creation,date_assignment,legal_reason,alledged_crime,status)';
 //$vl="($id_case,'$title','$id_court_archive','$date_creation','$date_assignment','$legal_reason','$alledged_crime','$status')";
@@ -10,17 +11,21 @@ $fl = "title='$title',
 		date_assignment='$date_assignment',
 		legal_reason='$legal_reason',
 		alledged_crime='$alledged_crime',
-		status='$status',
-		public='$public'";
+		status='$status',";
+if ($public) $fl .= "public=1";
+else $fl .= "public=0";
 
 if ($id_case>0) {
+	// Check access rights
+	if (!allowed($id_case,'e')) die("You don't have permission to change this case's information!");
+
 	// Update the existing case
 	$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
 } else {
 	// Insert new case row
 	$q = "INSERT INTO lcm_case SET id_case=0,$fl";
-	$result = mysql_query($q);
-	$id_case = mysql_insert_id();
+	$result = lcm_query($q);
+	$id_case = lcm_insert_id();
 
 	// Insert new case_author relation
 	$q = "INSERT INTO lcm_case_author SET
@@ -36,7 +41,7 @@ if ($id_case>0) {
 
 
 // Do the query
-$result=mysql_query($q);
+$result=lcm_query($q);
 
 // Close connection
 // mysql_close($db);
