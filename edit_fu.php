@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.72 2005/03/17 14:44:50 mlutfy Exp $
+	$Id: edit_fu.php,v 1.73 2005/03/18 09:19:02 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -144,79 +144,10 @@ else
 	lcm_page_start("New follow-up"); // TRAD
 
 // Show a bit of background on the case
-
-echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
-
-// Name of case
-$query = "SELECT id_case, title
-		FROM lcm_case
-		WHERE id_case = $case";
-
-$result = lcm_query($query);
-while ($row = lcm_fetch_array($result))  // should be only once
-	echo '<li style="list-style-type: none;">' 
-		. _T('fu_input_for_case') . " " 
-		. '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">'
-		. $row['title']
-		. '</a>'
-		. "</li>\n";
-
-// We dump all the clients and org in the same array, then show
-// them on screen in a more densed way
-// Could be more esthetic or ergonomic, but works for now..
-$query = "SELECT cl.id_client, name_first, name_middle, name_last
-			FROM lcm_case_client_org as cco, lcm_client as cl
-			WHERE cco.id_case=$case
-			  AND cco.id_client = cl.id_client";
-
-$result = lcm_query($query);
-$numrows = lcm_num_rows($result);
-$current = 0;
-
-$all_clients = array();
-
-while ($all_clients[] = lcm_fetch_array($result));
-
-$query = "SELECT org.name, cco.id_client, org.id_org
-			FROM lcm_case_client_org as cco, lcm_org as org
-			WHERE cco.id_case=$case
-			  AND cco.id_org = org.id_org";
-
-$result = lcm_query($query);
-$numrows += lcm_num_rows($result);
-
-// TODO: It would be nice to have the name of the contact for that
-// organisation, if any, but then again, not the end of the world.
-// (altough I we make a library of common functions, it will defenitely
-// be a good thing to have)
-while ($all_clients[] = lcm_fetch_array($result));
-
-if ($numrows > 0)
-	echo '<li style="list-style-type: none;">' . _T('fu_input_involving_clients') . " ";
-
-foreach ($all_clients as $client) {
-	if ($client['id_client']) {
-		echo '<a href="client_det.php?client=' . $client['id_client'] . '" class="content_link">'
-			. $client['name_first'] . ' ' . $client['name_middle'] . ' ' . $client['name_last']
-			. '</a>';
-
-		if (++$current < $numrows)
-			echo ", ";
-	} else if ($client['id_org']) {
-		echo '<a href="org_det.php?org=' . $client['id_org'] . '" class="content_link">'
-			. $client['name']
-			. '</a>';
-
-		if (++$current < $numrows)
-			echo ", ";
-	}
-
-}
-
-if ($numrows > 0)
-	echo "</li>\n";
-
-echo "</ul>\n";
+show_context_start();
+show_context_case_title($case);
+show_context_case_involving($case);
+show_context_end();
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
