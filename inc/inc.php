@@ -53,7 +53,6 @@ if ($page_rows) {
 	$prefs['page_rows'] = $page_rows;
 	$prefs_mod = true;
 }
-$GLOBALS['list_len'] = $prefs['page_rows'];
 
 // Update user preferences if modified
 if ($prefs_mod) {
