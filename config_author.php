@@ -223,15 +223,6 @@ function apply_author_ui_change() {
 		array_push($log, "Theme set to " . $sel_theme . ", was " . $old_theme . ".");
 
 	//
-	// Change rows per page preference
-	//
-
-	if ($page_rows) {
-		$prefs['page_rows'] = $page_rows;
-		$prefs_mod = true;
-	}
-
-	//
 	// Show changes on screen
 	//
 	if (! empty($log)) {

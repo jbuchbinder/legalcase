@@ -31,8 +31,8 @@ else
 	$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
 
 if ($lang AND $lang <> $author_session['lang'] AND lcm_set_language($lang)) {
-	lcm_query("UPDATE lcm_author 
-				SET   lang = '".addslashes($lang)."' 
+	lcm_query("UPDATE lcm_author
+				SET   lang = '".addslashes($lang)."'
 				WHERE id_author  = " .$author_session['id_author']);
 	$author_session['lang'] = $lang;
 	lcm_add_session($author_session, $lcm_session);
@@ -46,6 +46,13 @@ if ($sel_theme) {
 		$prefs['theme'] = ($sel_theme);
 		$prefs_mod = true;
 	}
+}
+
+// Change rows per page preference
+if ($page_rows) {
+	$prefs['page_rows'] = $page_rows;
+	$prefs_mod = true;
+	$GLOBALS['list_len'] = $page_rows;
 }
 
 // Update user preferences if modified
