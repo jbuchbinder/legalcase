@@ -69,7 +69,7 @@ if ($list_pos>0)
 ?> />&nbsp;<input type="submit" name="submit" value="Search" class="search_form_btn" />
 </form>
 
-<table border='1' align='center' class='tbl_data'>
+<table border='1' width='99%' align='center' class='tbl_data'>
 <tr><th class='tbl_head'>Name</th><th class='tbl_head'>Status</th><th class='tbl_head'>Action</th></tr>
 <?php
 // Process the output of the query
