@@ -57,6 +57,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // C
+'calendar_info_date' => '<NEW>Date',
+'calendar_info_time' => '<NEW>Time',
 'case_input_alledged_crime' => 'Предполагаемо престъпление:',
 'case_input_author' => 'Автор:',
 'case_input_authors' => 'Автори:',
@@ -114,7 +116,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_day_9' => '9ти',
 'date_format' => 'l, jS F Y',
 'date_format_full' => '<span style=\'text-transform: capitalize;\'>@day_name@</span>, @day@ @month_name@ @year@&nbsp;г., @hours@:@mins@&nbsp;ч.',
-'date_format_short' => 'dd.mm.yy',
+'date_format_short' => '@day@ @month_short@ @year@&nbsp;г., @hours@:@mins@&nbsp;ч.',
 'date_month_1' => 'януари',
 'date_month_10' => 'октомври',
 'date_month_11' => 'ноември',
@@ -127,6 +129,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_month_7' => 'юли',
 'date_month_8' => 'август',
 'date_month_9' => 'септември',
+'date_month_short_1' => 'яну',
+'date_month_short_9' => 'дек',
 'date_time_format' => 'Y-m-d H:i:s',
 'date_wday_0' => 'неделя',
 'date_wday_1' => 'понеделник',
@@ -167,6 +171,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'filter_id' => 'Идентификатор на филтър',
 'filter_title' => 'Заглавие',
 'filter_type' => 'Логика на условията',
+'fu_input_date_end' => '<NEW>End:',
+'fu_input_date_start' => '<NEW>Start:',
+'fu_input_description' => '<NEW>Description:',
+'fu_input_sum_billed' => '<NEW>Sum billed:',
+'fu_input_type' => '<NEW>Type:',
 
 
 // I

@@ -57,6 +57,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // C
+'calendar_info_date' => 'Date',
+'calendar_info_time' => 'Time',
 'case_input_alledged_crime' => 'Alledged crime:',
 'case_input_author' => 'Author:',
 'case_input_authors' => 'Authors:',
@@ -114,7 +116,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_day_9' => '9th',
 'date_format' => 'l, jS F Y',
 'date_format_full' => '@day_name@, @day_order@ @month_name@ @year@, @hours@H@mins@',
-'date_format_short' => 'd-m-y',
+'date_format_short' => '@day@ @month_short@ @year@, @hours@h@mins@',
 'date_month_1' => 'January',
 'date_month_10' => 'October',
 'date_month_11' => 'November',
@@ -127,6 +129,18 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_month_7' => 'July',
 'date_month_8' => 'August',
 'date_month_9' => 'September',
+'date_month_short_1' => 'Jan',
+'date_month_short_10' => 'Oct',
+'date_month_short_11' => 'Nov',
+'date_month_short_12' => 'Dec',
+'date_month_short_2' => 'Feb',
+'date_month_short_3' => 'Mar',
+'date_month_short_4' => 'Apr',
+'date_month_short_5' => 'May',
+'date_month_short_6' => 'Jun',
+'date_month_short_7' => 'Jul',
+'date_month_short_8' => 'Aug',
+'date_month_short_9' => 'Sep',
 'date_time_format' => 'Y-m-d H:i:s',
 'date_wday_0' => 'Sunday',
 'date_wday_1' => 'Monday',
@@ -167,6 +181,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'filter_id' => 'Filter ID',
 'filter_title' => 'Title',
 'filter_type' => 'Conditions logic',
+'fu_input_date_end' => 'End:',
+'fu_input_date_start' => 'Start:',
+'fu_input_description' => 'Description:',
+'fu_input_sum_billed' => 'Sum billed:',
+'fu_input_type' => 'Type:',
 
 
 // I
