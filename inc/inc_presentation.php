@@ -511,8 +511,8 @@ function fin_grand_cadre(){
 function install_html_start($title = 'AUTO') {
 	global $spip_lang_rtl;
 
-	if ($title=='AUTO')
-		$title=_T('info_installation_legal_case_management');
+	if ($title == 'AUTO')
+		$title = _T('install_title_installation_start');
 
 	if (!$charset = read_meta('charset'))
 		$charset = 'utf-8';
@@ -556,7 +556,7 @@ function install_html_start($title = 'AUTO') {
  * They are used by install.php and lcm_test_dirs.php
  */
 function install_html_end() {
-	echo "\n<!-- START install_html_start() -->\n";
+	echo "\n<!-- START install_html_end() -->\n";
 	echo "
 	</td></tr></table>
 	</center>
