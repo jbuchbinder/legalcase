@@ -18,7 +18,7 @@ include_lcm('inc_filters');
 include_lcm('inc_calendar');
 
 if (!@file_exists('data/inc_meta_cache.php'))
-	ecrire_metas();
+	write_metas();
 
 
 //
@@ -193,28 +193,28 @@ if ($installed_version <> $lcm_version) {
 //
 
 if (!$adresse_site) {
-	$nom_site_spip = lire_meta("nom_site");
-	$adresse_site = lire_meta("adresse_site");
+	$nom_site_spip = read_meta("nom_site");
+	$adresse_site = read_meta("adresse_site");
 }
 if (!$activer_breves){
-	$activer_breves = lire_meta("activer_breves");
-	$articles_mots = lire_meta("articles_mots");
+	$activer_breves = read_meta("activer_breves");
+	$articles_mots = read_meta("articles_mots");
 }
 
 if (!$activer_statistiques){
-	$activer_statistiques = lire_meta("activer_statistiques");
+	$activer_statistiques = read_meta("activer_statistiques");
 }
 
 if (!$nom_site_spip) {
 	$nom_site_spip = _T('info_mon_site_spip');
-	ecrire_meta("nom_site", $nom_site_spip);
-	ecrire_metas();
+	write_meta("nom_site", $nom_site_spip);
+	write_metas();
 }
 
 if (!$adresse_site) {
 	$adresse_site = "http://$HTTP_HOST".substr($REQUEST_URI, 0, strpos($REQUEST_URI, "/ecrire"));
-	ecrire_meta("adresse_site", $adresse_site);
-	ecrire_metas();
+	write_meta("adresse_site", $adresse_site);
+	write_metas();
 }
 
 
