@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.42 2005/03/15 14:50:45 mlutfy Exp $
+	$Id: install.php,v 1.43 2005/03/15 15:25:23 mlutfy Exp $
 */
 
 
@@ -208,39 +208,57 @@ else if ($step == 4) {
 
 	// Your contact information
 	echo "<fieldset class=\"fs_box\">\n";
-	echo "<div><b><label>". _T('info_your_contact_information') . "</label></b><br />\n";
+	echo "<p><b><label>". _T('info_your_contact_information') . "</label></b></p>\n";
 
 	// [ML] Altough not most problematic, could be better. But if someone
 	// fixes here, please fix lcm_pass.php also (function print_registration_form())
-	echo "<table border='0'><tr>\n";
+	echo "<table border='0' cellpadding='0' cellspacing='5'><tr>\n";
 	echo "<td>
 			<strong><label for='name_first'>" . _T('person_input_name_first') . "</label></strong><br />
-			<input type='text' id='name_first' name='name_first' value='$name_first' size='20' class='txt_lmnt' />
+			<input type='text' style='width: 100%;' id='name_first' name='name_first' value='$name_first' size='15' class='txt_lmnt' />
 		</td>\n";
 	echo "<td>
 			<strong><label for='name_last'>" . _T('person_input_name_last') . "</label></strong><br />
-			<input type='text' id='name_last' name='name_last' value='$name_last' size='20' class='txt_lmnt' />
+			<input style='width: 100%;' type='text' id='name_last' name='name_last' value='$name_last' size='15' class='txt_lmnt' />
 		</td>\n";
-	echo "</tr></table>\n\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td colspan='2'>";
 
-	echo "<div><b><label for='email'>" . _T('input_email') . "</label></b><br />\n";
-	echo "<input type='text' id='email' name='email' value=\"$email\" size='40' class='txt_lmnt' /></div>\n";
+	echo "<p><b><label for='email'>" . _T('input_email') . "</label></b><br />\n";
+	echo "<input style='width: 100%;' type='text' id='email' name='email' value=\"$email\" size='40' class='txt_lmnt' /></p>\n";
+
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "</table>\n\n";
 	echo "</fieldset>\n\n";
 
 	// Identifiers
-	echo "<br /><fieldset class=\"fs_box\">\n";
-	echo "<div><b>" . _T('input_connection_identifiers') . "</b><br />\n";
-	echo "<b><label for='username'>" . _T('login_login') . "</label></b><br />\n";
+	echo "<br />";
+	echo "<fieldset class=\"fs_box\">\n";
+	echo "<p><b>" . _T('input_connection_identifiers') . "</b></p>\n";
+
+	echo "<table border='0' cellpadding='0' cellspacing='5'>\n";
+	echo "<tr>\n";
+	echo "<td>";
+	echo "<b><label for='username'>" . _T('login_login') . "</label></b> \n";
 	echo "<small>" . _T('info_more_than_three') . "</small><br />\n";
-	echo "<input type='text' id='username' name='username' value='$username' size='40' class='txt_lmnt' /></div>\n";
+	echo "<input style='width: 100%;' type='text' id='username' name='username' value='$username' size='40' class='txt_lmnt' />\n";
+	echo "</td>\n";
+	echo "</tr><tr>\n";
+	echo "<td>";
 
 	// TODO XXX
 	// - Confirm the password?
 	// - Error check if no authors and none created?
 
-	echo "<div><b><label for='pass'>" . _T('login_password') . "</label></b><br />\n";
+	echo "<p><b><label for='pass'>" . _T('login_password') . "</label></b> \n";
 	echo "<small>" . _T('info_more_than_five')."</small><br />\n";
-	echo "<input type='password' id='pass' name='pass' value='$pass' size='40' class='txt_lmnt' /></div>\n";
+	echo "<input style='width: 100%;' type='password' id='pass' name='pass' value='$pass' size='40' class='txt_lmnt' /></p>\n";
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "</table>\n";
+
 	echo "</fieldset>\n\n";
 
 	echo "<br /><div align='$lcm_lang_right'>"
@@ -264,7 +282,7 @@ else if ($step == 3) {
 	// Comment out possible errors because the creation of new tables
 	// over an already installed system is not a problem. Besides, we do
 	// additional error reporting.
-	echo "<div style='display: none;'>\n";
+	echo "<!-- \n";
 
 	if ($_REQUEST['db_choice'] == "__manual__") {
 		$sel_db = $_REQUEST['manual_db'];
@@ -323,7 +341,7 @@ else if ($step == 3) {
 	echo "* . . . . . .\n\n";
 
 	// echo "--> \n\n";
-	echo "</div>\n"; // end of invisible div
+	echo " -->\n"; // end of 'hidden errors'
 
 	if (! empty($install_log)) {
 		echo "<div class='box_error'>\n";
