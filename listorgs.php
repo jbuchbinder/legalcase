@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.15 2005/03/24 14:23:27 mlutfy Exp $
+	$Id: listorgs.php,v 1.16 2005/03/29 15:45:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -37,13 +37,24 @@ $q = "SELECT id_org,name
 if (strlen($find_org_string) > 1)
 	$q .= " WHERE (name LIKE '%$find_org_string%')";
 
+// Sort orgs by ID
+$order_set = false;
+$order_id = '';
+if (isset($_REQUEST['order_id']))
+	if ($_REQUEST['order_id'] == 'ASC' || $_REQUEST['order_id'] == 'DESC') {
+		$order_id = $_REQUEST['order_id'];
+		$q .= " ORDER BY id_org " . $order_id;
+		$order_set = true;
+	}
+
 // Sort organisations by name
 $order_name = 'ASC';
 if (isset($_REQUEST['order_name']))
 	if ($_REQUEST['order_name'] == 'ASC' || $_REQUEST['order_name'] == 'DESC')
 		$order_name = $_REQUEST['order_name'];
 
-$q .= " ORDER BY name " . $order_name;
+$q .= ($order_set ? " , " : " ORDER BY ");
+$q .= " name " . $order_name;
 
 $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
@@ -67,14 +78,22 @@ if ($list_pos > 0)
 $cpt = 0;
 $headers = array();
 
-$headers[0]['title'] = _Th('org_input_name');
-$headers[0]['order'] = 'order_name';
-$headers[0]['default'] = 'ASC';
+$headers[0]['title'] = "#";
+$headers[0]['order'] = 'order_id';
+$headers[0]['default'] = '';
+
+$headers[1]['title'] = _Th('org_input_name');
+$headers[1]['order'] = 'order_name';
+$headers[1]['default'] = 'ASC';
+$headers[1]['width'] = '99%';
 
 show_list_start($headers);
 
 for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	echo "<tr>\n";
+	echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
+		. $row['id_org']
+		. "</td>\n";
 	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo '<a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['name']), $find_org_string);
