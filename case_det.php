@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.54 2004/12/17 17:04:50 antzi Exp $
+	$Id: case_det.php,v 1.55 2004/12/17 17:54:30 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -100,7 +100,7 @@ if ($case > 0) {
 			echo "\t\t<option" .  (($s == $row['status']) ? ' selected' : '') . ">$s</option>\n";
 		echo "\t</select>\n";
 		echo "\t<input type='submit' name='submit' value='Set case status'>\n";
-		echo "</form><br>\n";
+		echo "</form>\n";
 
 		echo _T('public') . ': ' . _T('Read') . '=';
 		if ($row['public']) echo 'Yes';
