@@ -737,7 +737,6 @@ if (count($GLOBALS['HTTP_POST_VARS'])) {
 }
 
 
-//
 // Read the cached meta information
 $inc_meta_cache = 'inc/data/inc_meta_cache.php';
 if (@file_exists($inc_meta_cache) AND !defined('_INC_META_CACHE')  AND !defined('_INC_META')) {
@@ -751,15 +750,7 @@ if (!defined('_INC_META_CACHE')) {
 		global $meta;
 		return $meta[$name];
 	}
-	function lire_meta($name) {
-		global $meta;
-		return $meta[$name];
-	}
 	function read_meta_upd($name) {
-		global $meta_upd;
-		return $meta_upd[$name];
-	}
-	function lire_meta_maj($name) {
 		global $meta_upd;
 		return $meta_upd[$name];
 	}
@@ -807,40 +798,31 @@ if (!$langue_site) include_lcm('inc_lang');
 $lcm_lang = $langue_site;
 
 
-// Nommage bizarre des tables d'objets
-// [ML] should not be used
-function table_objet($type) {
-	if ($type == 'syndic' OR $type == 'forum')
-		return $type;
-	else
-		return $type.'s';
-}
-
-
-//
 // Journal of events
 function lcm_log($message, $type = 'lcm') {
 	$pid = '(pid '.@getmypid().')';
 	if (!$ip = $GLOBALS['REMOTE_ADDR']) $ip = '-';
-
-	$message = date("M d H:i:s")." $ip $pid "
-		.ereg_replace("\n*$", "\n", $message);
-
+	$message = date("M d H:i:s") . " $ip $pid " . ereg_replace("\n*$", "\n", $message);
 	$logfile = "log/" . $type . ".log";
-	if (@filesize($logfile) > 10*1024) {
+
+	// Keep about 20Kb of data per file, on 4 files (.1, .2, .3)
+	// generates about 80Kb in total per log type.
+	if (@filesize($logfile) > 20 * 1024) {
 		$rotate = true;
 		$message .= "[-- rotate --]\n";
 	}
+	
 	$f = @fopen($logfile, "ab");
 	if ($f) {
 		fputs($f, $message);
 		fclose($f);
 	}
+	
 	if ($rotate) {
-		@unlink($logfile.'.3');
-		@rename($logfile.'.2',$logfile.'.3');
-		@rename($logfile.'.1',$logfile.'.2');
-		@rename($logfile,$logfile.'.1');
+		@unlink($logfile . '.3');
+		@rename($logfile . '.2', $logfile . '.3');
+		@rename($logfile . '.1', $logfile . '.2');
+		@rename($logfile, $logfile . '.1');
 	}
 }
 
