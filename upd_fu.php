@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.25 2005/01/26 22:13:12 mlutfy Exp $
+	$Id: upd_fu.php,v 1.26 2005/02/02 18:51:23 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -80,8 +80,7 @@ if (count($_SESSION['errors'])) {
 } else {
 	global $author_session;
 
-    $fl="id_author   =  " . $author_session['id_author'] . ",
-		date_start   = '" . clean_input($fu_data['date_start']) . "',
+    $fl="	date_start   = '" . clean_input($fu_data['date_start']) . "',
 		date_end     = '" . clean_input($fu_data['date_end']) . "',
 		type         = '" . clean_input($fu_data['type']) . "',
 		description  = '" . clean_input($fu_data['description']) . "',
@@ -126,7 +125,7 @@ if (count($_SESSION['errors'])) {
 		}
 		
 		// Add the new follow-up
-		$q = "INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
+		$q = "INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,id_author=" . $author_session['id_author'] . ",$fl";
 
 		if (!($result = lcm_query($q))) 
 			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
