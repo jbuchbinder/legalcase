@@ -18,12 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.18 2005/01/17 14:49:23 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.19 2005/01/19 10:40:53 mlutfy Exp $
 */
 
 // Execute this file only once
 if (defined('_INC_AUTH_DB')) return;
 define('_INC_AUTH_DB', '1');
+
+include_lcm('inc_filters');
 
 class Auth_db {
 	var $nom, $username, $md5pass, $md5next, $alea_futur, $statut;
@@ -130,7 +132,7 @@ class Auth_db {
 			return false;
 
 		// Check for password size
-		if (strlen(utf8_decode($pass)) <= 5) {
+		if (strlen(lcm_utf8_decode($pass)) <= 5) {
 			$this->error = _T('pass_warning_too_short');
 			return false;
 		}
@@ -170,7 +172,7 @@ class Auth_db {
 			return false;
 
 		// Check for username size
-		if (strlen(utf8_decode($new_username)) <= 3) {
+		if (strlen(lcm_utf8_decode($new_username)) <= 3) {
 			$this->error = _T('login_warning_too_short');
 			return false;
 		}
