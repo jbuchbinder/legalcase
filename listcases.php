@@ -26,7 +26,7 @@ include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
-$q = "SELECT lcm_case.id_case,title,public,pub_write
+$q = "SELECT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author
 		WHERE (lcm_case.id_case=lcm_case_author.id_case
 			AND lcm_case_author.id_author=" . $GLOBALS['author_session']['id_author'];
@@ -64,10 +64,11 @@ if ($list_pos>0)
 for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show case title
 	echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	
+
 	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '">';
 	echo highlight_matches(clean_output($row['title']),$find_case_string);
 	if (allowed($row['id_case'],'r')) echo '</a>';
+	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $row['status']
 	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (allowed($row['id_case'],'e'))
 		echo '<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a>';
