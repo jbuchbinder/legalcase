@@ -24,14 +24,19 @@ function hash_env() {
 //
 // Calculate the name of the session file
 //
-function fichier_session($id_session, $alea) {
+function get_session_file($id_session, $alea) {
 	if (ereg("^([0-9]+_)", $id_session, $regs))
 		$id_author = $regs[1];
 
-	$fichier_session = 'session_'.$id_author.md5($id_session.' '.$alea).'.php';
-	$fichier_session = 'inc/data/'.$fichier_session;
+	$session_file = 'session_'.$id_author.md5($id_session.' '.$alea).'.php';
+	$session_file = 'inc/data/'.$session_file;
 
-	return $fichier_session;
+	return $session_file;
+}
+
+function fichier_session($id_session, $alea) {
+	lcm_log("fichier_session: deprecated, call get_session_file() instead");
+	return get_session_file($id_session, $alea);
 }
 
 //
@@ -100,15 +105,20 @@ function verifier_session($id_session) {
 //
 // Delete a session
 //
+function delete_session($id_session) {
+	$session_file = fichier_session($id_session, read_meta('alea_ephemere'));
+	if (@file_exists($session_file)) {
+		@unlink($session_file);
+	}
+	$session_file = fichier_session($id_session, read_meta('alea_ephemere_ancien'));
+	if (@file_exists($session_file)) {
+		@unlink($session_file);
+	}
+}
+
 function supprimer_session($id_session) {
-	$fichier_session = fichier_session($id_session, read_meta('alea_ephemere'));
-	if (@file_exists($fichier_session)) {
-		@unlink($fichier_session);
-	}
-	$fichier_session = fichier_session($id_session, read_meta('alea_ephemere_ancien'));
-	if (@file_exists($fichier_session)) {
-		@unlink($fichier_session);
-	}
+	lcm_log("supprimer_session: deprecated, call delete_session() instead");
+	return delete_session($id_session);
 }
 
 //
@@ -154,7 +164,7 @@ function creer_uniqid() {
 // This function deletes all the sessions belonging to the author.
 // We also take the opportunity to delete sessions older than 48 hours.
 //
-function zap_sessions ($id_author, $zap) {
+function zap_sessions($id_author, $zap) {
 	$dirname = 'inc/data/';
 
 	// Do not delete yourself by accident
