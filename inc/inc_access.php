@@ -4,9 +4,6 @@ if (defined('_INC_ACCES')) return;
 define('_INC_ACCES', '1');
 
 
-$GLOBALS['htaccess'] = 'inc/.htaccess';
-$GLOBALS['htpasswd'] = 'inc/data/.htpasswd';
-
 function create_random_password($length = 8, $salt = "") {
 	$seed = (double) (microtime() + 1) * time();
 	mt_srand($seed);
@@ -44,40 +41,6 @@ function creer_pass_aleatoire($lenght = 8, $salt = "") {
 	return create_random_password($length, $salt);
 }
 
-
-//
-// low-security : un ensemble de fonctions pour gerer de l'identification
-// faible via les URLs (suivi RSS, iCal...)
-//
-function low_sec($id_auteur) {
-	if (!$id_auteur = intval($id_auteur)) return; // jamais trop prudent ;)
-	$query = "SELECT * FROM spip_auteurs WHERE id_auteur = $id_auteur";
-	$result = lcm_query($query);
-
-	if ($row = lcm_fetch_array($result)) {
-		$low_sec = $row["low_sec"];
-		if (!$low_sec) {
-			$low_sec = creer_pass_aleatoire();
-			lcm_query("UPDATE spip_auteurs SET low_sec = '$low_sec' WHERE id_auteur = $id_auteur");
-		}
-		return $low_sec;
-	}
-}
-
-function afficher_low_sec ($id_auteur, $action='') {
-	return substr(md5($action.low_sec($id_auteur)),0,8);
-}
-
-function verifier_low_sec ($id_auteur, $cle, $action='') {
-	return ($cle == afficher_low_sec($id_auteur, $action));
-}
-
-function effacer_low_sec($id_auteur) {
-	lcm_query("UPDATE spip_auteurs SET low_sec = '' WHERE id_auteur = $id_auteur");
-}
-
-
-
 function initialiser_sel() {
 	global $htsalt;
 
@@ -85,70 +48,7 @@ function initialiser_sel() {
 }
 
 
-function ecrire_logins($fichier, $tableau_logins) {
-	reset($tableau_logins);
-
-	while(list($login, $htpass) = each($tableau_logins)) {
-		if ($login && $htpass) {
-			fputs($fichier, "$login:$htpass\n");
-		}
-	}
-}
-
-
-// DEPRECATED, will be removed
-function ecrire_acces() {
-	global $htaccess, $htpasswd;
-
-	lcm_log("Call to deprecated function. Should not be called at all!");
-
-	// if .htaccess exists, bypass spip_meta
-	if ((read_meta('creer_htpasswd') == 'non') AND !@file_exists($htaccess)) {
-		@unlink($htpasswd);
-		@unlink($htpasswd."-admin");
-		return;
-	}
-
-	$query = "SELECT login, htpass FROM spip_auteurs WHERE statut != '5poubelle' AND statut!='6forum'";
-	$result = lcm_query_db($query);	// warning, we must first connect to the database (since it is used by install.php)
-	$logins = array();
-	while($row = lcm_fetch_array($result)) $logins[$row['login']] = $row['htpass'];
-
-	$fichier = @fopen($htpasswd, "w");
-	if ($fichier) {
-		ecrire_logins($fichier, $logins);
-		fclose($fichier);
-	} else {
-		// [ML] This is confusing, since this function is probably called by
-		// the install.php at "step == 6", but lcm_test_dirs.php will send
-		// back the user to "step == 1". (Altough nothing catastrophic, since
-		// I fell on this only because of a programming bug.)
-		@header ("Location: lcm_test_dirs.php");
-		exit;
-	}
-
-	$query = "SELECT login, htpass FROM spip_auteurs WHERE statut = 'admin'";
-	$result = lcm_query_db($query);
-
-	$logins = array();
-	while($row = lcm_fetch_array($result)) $logins[$row['login']] = $row['htpass'];
-
-	$fichier = fopen("$htpasswd-admin", "w");
-	ecrire_logins($fichier, $logins);
-	fclose($fichier);
-}
-
-
-// DEPRECATED
-function generer_htpass($pass) {
-	global $htsalt, $flag_crypt;
-
-	lcm_log("Call to deprecated function. Should not be called at all!");
-	if ($flag_crypt) return crypt($pass, $htsalt);
-	else return '';
-}
-
-
+// initialize salt
 initialiser_sel();
 
 
