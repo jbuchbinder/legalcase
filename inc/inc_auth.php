@@ -133,9 +133,9 @@ function auth() {
 		include_lcm('inc_presentation');
 		include_lcm('inc_text');
 
-		install_debut_html(_T('avis_erreur_connexion'));
+		install_html_start(_T('avis_erreur_connexion'));
 		echo "<br><br><p>"._T('texte_inc_auth_1', array('auth_login' => $auth_login))." <A HREF='lcm_cookie.php?logout=$auth_login'>".  _T('texte_inc_auth_2')."</A>"._T('texte_inc_auth_3');
-		install_fin_html();
+		install_html_end();
 		exit;
 	}
 
