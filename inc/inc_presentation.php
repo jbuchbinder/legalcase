@@ -228,13 +228,16 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 		$events = true;
 		echo "<p class=\"nav_column_text\">
 					<strong>Today</strong><br />\n";
+		echo "</p>\n";
+		echo "<ul class=\"small_agenda\">\n";
 		while ($row=lcm_fetch_array($result)) {
-			echo "<a href=\"app_det.php?app=" . $row['id_app'] . "\">"
-				. heures($row['start_time']) . ':' . minutes($row['start_time']) . " - " . $row['title'] . "</a><br />\n";
+			echo "<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
+				. heures($row['start_time']) . ':' . minutes($row['start_time']) . " - " . $row['title'] . "</a></li>\n";
 		}
 		//					9:30 - Meeting with Mr. Smith<br /><br />
 		//					11:00 - At the court
-		echo "</p>\n";
+		//echo "</p>\n";
+		echo "</ul>\n";
 		echo "<hr class=\"hair_line\" />\n";
 	}
 
@@ -253,13 +256,17 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 		$events = true;
 		echo "<p class=\"nav_column_text\">
 				<strong>Next appointments</strong><br />\n";
+		echo "						</p>\n";
+		
+		echo "<ul class=\"small_agenda\">\n";
 		while ($row=lcm_fetch_array($result)) {
-			echo "							<a href=\"app_det.php?app=" . $row['id_app'] . "\">"
-				. format_date($row['start_time'],'short') . " - " . $row['title'] . "</a><br />\n";
+			echo "							<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
+				. format_date($row['start_time'],'short') . " - " . $row['title'] . "</a></li>\n";
 		}
+		echo "</ul>\n";
 		//					8:30 - Meeting with Mr. Johnson<br /><br />
 		//					10:00 - At the court
-		echo "						</p>\n";
+		//echo "						</p>\n";
 	}
 
 	if (!$events) {
