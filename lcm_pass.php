@@ -273,18 +273,20 @@ function print_registration_form() {
 	echo "<form method='get' action='$url' style='border: 0px; margin: 0px;'>\n";
 
 	echo "<fieldset><label><b>". _T('info_your_contact_information') . "</b><br></label>\n";
-	echo "<b>". _T('info_name_of_person') . "</b><br>\n";
 
+	// [ML] Altough not most problematic, could be better. But if someone
+	// fixes here, please fix lcm_pass.php also (function print_registration_form())
 	echo "<table border='0'>\n";
 	echo "<tr>\n";
-	echo "<td><small><label for='name_first'>" . _T('enter_name_first') .  "</label></small></td>\n";
-	// echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
-	echo "<td><small><label for='name_last'>" . _T('enter_name_last') . "</label></small></td>\n";
-	echo "</tr><tr>\n";
-	echo "<td><input type='text' id='name_first' name='name_first' class='formo' value='$name_first' size='20'></td>\n";
-	// echo "<td><input type='text' id='name_middle' name='name_middle' class='formo' value='$name_middle' size='20'></td>\n";
-	echo "<td><input type='text' id='name_last' name='name_last' class='formo' value='$name_last' size='20'></td>\n";
-	echo "<tr>\n";
+	echo "<td>
+			<small><label for='name_first'>" . _T('person_input_name_first') . "</label></small><br />
+			<input type='text' id='name_first' name='name_first' class='formo' value='$name_first' size='20'>
+		</td>\n";
+	echo "<td>
+			<small><label for='name_last'>" . _T('person_input_name_last') . "</label></small><br />
+			<input type='text' id='name_last' name='name_last' class='formo' value='$name_last' size='20'>
+		</td>\n";
+	echo "</tr>\n";
 	echo "</table>\n";
 
 	echo "<b><label for='email'>" . _T('input_email') . "</label></b><br>";

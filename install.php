@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.38 2005/03/07 16:52:09 mlutfy Exp $
+	$Id: install.php,v 1.39 2005/03/08 08:17:54 mlutfy Exp $
 */
 
 
@@ -47,6 +47,10 @@ function put_text_in_textbox($text) {
 	$textbox .= "</form>\n";
 
 	return $textbox;
+}
+
+function is_create_db_allowed() {
+	// TODO (well, is it worth it?)
 }
 
 //
@@ -196,8 +200,7 @@ else if ($step == 5) {
 
 	echo "<!-- Number of administrators: " . $number_admins . " -->\n";
 
-	echo "<p>" . _T('install_info_new_account_1') . "</p>\n";
-	// echo help ("install5");
+	echo "<p>" . _T('install_info_new_account_1') . ' ' . lcm_help('install_personal') . "</p>\n";
 
 	if ($numrows)
 		echo "<p>" . _T('install_info_new_account_2') . "</p>\n";
@@ -208,17 +211,18 @@ else if ($step == 5) {
 	// Your contact information
 	echo "<fieldset>\n";
 	echo "<div><b><label>". _T('info_your_contact_information') . "</label></b><br />\n";
-	echo "<b>". _T('info_name_of_person') . "</b></div>\n\n";
 
+	// [ML] Altough not most problematic, could be better. But if someone
+	// fixes here, please fix lcm_pass.php also (function print_registration_form())
 	echo "<table border='0'><tr>\n";
-	echo "<td><small><label for='name_first'>" . _T('enter_name_first') . "</label></small></td>\n";
-	// [ML] Too many fields on screen. Middle name can be filled later, if necessary
-	// [ML] echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
-	echo "<td><small><label for='name_last'>" . _T('enter_name_last') . "</label></small></td>\n";
-	echo "</tr><tr>\n";
-	echo "<td><input type='text' id='name_first' name='name_first' value='$name_first' size='20' /></td>\n";
-	// [ML] echo "<td><input type='text' id='name_middle' name='name_middle' value='$name_middle' size='20' /></td>\n";
-	echo "<td><input type='text' id='name_last' name='name_last' value='$name_last' size='20' /></td>\n";
+	echo "<td>
+			<strong><label for='name_first'>" . _T('person_input_name_first') . "</label></strong><br />
+			<input type='text' id='name_first' name='name_first' value='$name_first' size='20' />
+		</td>\n";
+	echo "<td>
+			<strong><label for='name_last'>" . _T('person_input_name_last') . "</label></strong><br />
+			<input type='text' id='name_last' name='name_last' value='$name_last' size='20' />
+		</td>\n";
 	echo "</tr></table>\n\n";
 
 	echo "<div><b><label for='email'>" . _T('input_email') . "</label></b><br />\n";
@@ -460,7 +464,7 @@ else if ($step == 3) {
 	if (!$checked) echo " checked='checked'";
 	echo " />";
 	
-	echo "<label for='new_db'>" . _T('install_create_new_database') .. "</label><br />\n";
+	echo "<label for='new_db'>" . _T('install_create_new_database') . "</label><br />\n";
 	echo "<input type='text' name='table_new' value='lcm' size='20' /></li>\n";
 	echo "</ul>\n";
 	echo "</fieldset>\n";
