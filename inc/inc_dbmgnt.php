@@ -127,8 +127,9 @@ function create_database() {
 	$query = "CREATE TABLE lcm_case_author (
 		id_case bigint(21) DEFAULT '0' NOT NULL,
 		id_author bigint(21) DEFAULT '0' NOT NULL,
-		read tinyint(1) NOT NULL default '0',
+		read tinyint(1) NOT NULL default '1',
 		write tinyint(1) NOT NULL default '0',
+		admin tinyint(1) NOT NULL default '0',
 		KEY id_case (id_case),
 		KEY id_author (id_author))";
 	$result = lcm_query($query);

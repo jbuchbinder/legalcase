@@ -31,7 +31,7 @@ if (empty($errors)) {
 		$result = lcm_query($q);
 
 		// Process the output of the query
-		if ($row = mysql_fetch_array($result)) {
+		if ($row = lcm_fetch_array($result)) {
 			// Get client details
 			foreach($row as $key=>$value) {
 				$client_data[$key] = $value;
