@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.20 2005/03/24 10:37:06 mlutfy Exp $
+	$Id: edit_org.php,v 1.21 2005/03/25 13:41:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -110,19 +110,18 @@ show_edit_contacts_form('org', $_SESSION['org_data']['id_org']);
 
 echo "</table>\n";
 
-echo '<input type="hidden" name="ref_edit_org" value="' . $_SESSION['org_data']['ref_edit_org'] . '">' . "\n";
+echo '<input type="hidden" name="ref_edit_org" value="' . $_SESSION['org_data']['ref_edit_org'] . '" />' . "\n";
 echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
 
 if ($org && $prefs['mode'] == 'extended')
 	echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>' . "\n";
 
-?>
-</fieldset>
-</form>
+echo "</form>\n";
 
-<?php
-	// Clear errors, in case user 'jumps' to other edit page
-	$_SESSION['errors'] = array();
+// Clear errors and form data
+$_SESSION['errors'] = array();
+$_SESSION['org_data'] = array();
 
-	lcm_page_end();
+lcm_page_end();
+
 ?>
