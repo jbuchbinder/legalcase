@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.13 2005/03/21 14:54:16 mlutfy Exp $
+	$Id: listorgs.php,v 1.14 2005/03/22 12:30:42 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -49,7 +49,18 @@ $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
-$list_pos = get_list_pos($result);
+$list_pos = 0;
+
+if (isset($_REQUEST['list_pos']))
+	$list_pos = $_REQUEST['list_pos'];
+
+if ($list_pos >= $number_of_rows)
+	$list_pos = 0;
+
+// Position to the page info start
+if ($list_pos > 0)
+	if (!lcm_data_seek($result,$list_pos))
+		lcm_panic("Error seeking position $list_pos in the result");
 
 // Output table tags
 // Not worth creating show_listorgs_*() for now
