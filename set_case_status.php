@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.11 2005/01/19 00:52:17 antzi Exp $
+	$Id: set_case_status.php,v 1.12 2005/02/07 19:04:24 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -28,6 +28,9 @@ include_lcm('inc_filters');
 // Get input values
 $case = intval($_GET['case']);
 $status = clean_input($_GET['status']);
+
+// Get site preferences
+$fu_sum_billed = read_meta('fu_sum_billed');
 
 if (!($case>0)) die("Which case?");
 
@@ -89,28 +92,30 @@ switch ($status) {
 		</tr>
 		<tr><td valign='top'>Description:</td>
 			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
-		</tr>
-		<tr><td>Sum billed:</td>
+		</tr>\n";
+		if ($fu_sum_billed == 'yes') {
+			echo "\t\t<tr><td>Sum billed:</td>
 			<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
-		// [ML] If we do this we may as well make a function
-		// out of it, but not sure where to place it :-)
-		// This code is also in config_site.php
-		$currency = read_meta('currency');
-		if (empty($currency)) {
-			$current_lang = $GLOBALS['lang'];
-			$GLOBALS['lang'] = read_meta('default_language');
-			$currency = _T('currency_default_format');
-			$GLOBALS['lang'] = $current_lang;
-		}
+			// [ML] If we do this we may as well make a function
+			// out of it, but not sure where to place it :-)
+			// This code is also in config_site.php
+			$currency = read_meta('currency');
+			if (empty($currency)) {
+				$current_lang = $GLOBALS['lang'];
+				$GLOBALS['lang'] = read_meta('default_language');
+				$currency = _T('currency_default_format');
+				$GLOBALS['lang'] = $current_lang;
+			}
 
-		echo htmlspecialchars($currency);
-		echo "</td>
-		</tr>
-	</table>
+			echo htmlspecialchars($currency);
+			echo "</td>
+		</tr>\n";
+		}
+		echo "\t</table>
 	<button name='submit' type='submit' value='submit' class='simple_form_btn'>" . _T('button_validate') . "</button>
 	<input type='hidden' name='id_case' value='$case'>
 	<input type='hidden' name='ref_edit_fu' value='" . $GLOBALS['HTTP_REFERER'] . "'>
-</form>";
+</form>\n";
 
 		lcm_page_end();
 		break;
@@ -143,24 +148,26 @@ switch ($status) {
 		</tr>
 		<tr><td valign='top'>Description:</td>
 			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
-		</tr>
-		<tr><td>Sum billed:</td>
+		</tr>\n";
+		if ($fu_sum_billed == 'yes') {
+			echo "\t\t<tr><td>Sum billed:</td>
 			<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
-		// [ML] If we do this we may as well make a function
-		// out of it, but not sure where to place it :-)
-		// This code is also in config_site.php
-		$currency = read_meta('currency');
-		if (empty($currency)) {
-			$current_lang = $GLOBALS['lang'];
-			$GLOBALS['lang'] = read_meta('default_language');
-			$currency = _T('currency_default_format');
-			$GLOBALS['lang'] = $current_lang;
-		}
+			// [ML] If we do this we may as well make a function
+			// out of it, but not sure where to place it :-)
+			// This code is also in config_site.php
+			$currency = read_meta('currency');
+			if (empty($currency)) {
+				$current_lang = $GLOBALS['lang'];
+				$GLOBALS['lang'] = read_meta('default_language');
+				$currency = _T('currency_default_format');
+				$GLOBALS['lang'] = $current_lang;
+			}
 
-		echo htmlspecialchars($currency);
-		echo "</td>
-		</tr>
-	</table>
+			echo htmlspecialchars($currency);
+			echo "</td>
+		</tr>\n";
+		}
+		echo "\t</table>
 	<button name='submit' type='submit' value='submit' class='simple_form_btn'>" . _T('button_validate') . "</button>
 	<input type='hidden' name='id_case' value='$case'>
 	<input type='hidden' name='ref_edit_fu' value='" . $GLOBALS['HTTP_REFERER'] . "'>
@@ -197,24 +204,26 @@ switch ($status) {
 		</tr>
 		<tr><td valign='top'>Description:</td>
 			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
-		</tr>
-		<tr><td>Sum billed:</td>
-			<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
-		// [ML] If we do this we may as well make a function
-		// out of it, but not sure where to place it :-)
-		// This code is also in config_site.php
-		$currency = read_meta('currency');
-		if (empty($currency)) {
-			$current_lang = $GLOBALS['lang'];
-			$GLOBALS['lang'] = read_meta('default_language');
-			$currency = _T('currency_default_format');
-			$GLOBALS['lang'] = $current_lang;
-		}
+		</tr>\n";
+		if ($fu_sum_billed == 'yes') {
+			echo "\t\t<tr><td>Sum billed:</td>
+				<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
+			// [ML] If we do this we may as well make a function
+			// out of it, but not sure where to place it :-)
+			// This code is also in config_site.php
+			$currency = read_meta('currency');
+			if (empty($currency)) {
+				$current_lang = $GLOBALS['lang'];
+				$GLOBALS['lang'] = read_meta('default_language');
+				$currency = _T('currency_default_format');
+				$GLOBALS['lang'] = $current_lang;
+			}
 
-		echo htmlspecialchars($currency);
-		echo "</td>
-		</tr>
-	</table>
+			echo htmlspecialchars($currency);
+			echo "</td>
+		</tr>\n";
+		}
+		echo "\t</table>
 	<button name='submit' type='submit' value='submit' class='simple_form_btn'>" . _T('button_validate') . "</button>
 	<input type='hidden' name='id_case' value='$case'>
 	<input type='hidden' name='ref_edit_fu' value='" . $GLOBALS['HTTP_REFERER'] . "'>
@@ -274,24 +283,26 @@ switch ($status) {
 		// Description
 		echo "		<tr><td valign='top'>Description:</td>
 			<td><textarea name='description' rows='15' cols='40' class='frm_tarea'></textarea></td>
-		</tr>
-		<tr><td>Sum billed:</td>
+		</tr>\n";
+		if ($fu_sum_billed == 'yes') {
+			echo "\t\t<tr><td>Sum billed:</td>
 			<td><input name='sumbilled' value='0' class='search_form_txt' size='10' />";
-		// [ML] If we do this we may as well make a function
-		// out of it, but not sure where to place it :-)
-		// This code is also in config_site.php
-		$currency = read_meta('currency');
-		if (empty($currency)) {
-			$current_lang = $GLOBALS['lang'];
-			$GLOBALS['lang'] = read_meta('default_language');
-			$currency = _T('currency_default_format');
-			$GLOBALS['lang'] = $current_lang;
-		}
+			// [ML] If we do this we may as well make a function
+			// out of it, but not sure where to place it :-)
+			// This code is also in config_site.php
+			$currency = read_meta('currency');
+			if (empty($currency)) {
+				$current_lang = $GLOBALS['lang'];
+				$GLOBALS['lang'] = read_meta('default_language');
+				$currency = _T('currency_default_format');
+				$GLOBALS['lang'] = $current_lang;
+			}
 
-		echo htmlspecialchars($currency);
-		echo "</td>
-		</tr>
-	</table>
+			echo htmlspecialchars($currency);
+			echo "</td>
+		</tr>\n";
+		}
+		echo "\t</table>
 	<button name='submit' type='submit' value='submit' class='simple_form_btn'>" . _T('button_validate') . "</button>
 	<input type='hidden' name='id_case' value='$case'>
 	<input type='hidden' name='ref_edit_fu' value='" . $GLOBALS['HTTP_REFERER'] . "'>
@@ -299,6 +310,12 @@ switch ($status) {
 
 		lcm_page_end();
 		break;
+//
+// All other statuses
+//
+	default:
+		header('Location: ' . $GLOBALS['HTTP_REFERER']);
+
 }
 
 ?>
