@@ -821,6 +821,27 @@ function get_theme_list() {
 	return $list;
 }
 
+// Returns a "select" with choice of yes/no
+function get_yes_no($name, $value = '') {
+	$ret = '';
+
+	$yes = ($value == 'yes' ? ' selected="selected"' : '');
+	$no = ($value == 'no' ? ' selected="selected"' : '');
+	$other = ($yes || $no ? '' : ' selected="selected"');
+
+	// until we format with tables, better to keep the starting space
+	$ret .= ' <select name="' . $name . '" class="sel_frm">' . "\n";
+	$ret .= '<option value="yes"' . $yes . '>' . _T('info_yes') . '</option>';
+	$ret .= '<option value="no"' . $no . '>' . _T('info_no') . '</option>';
+
+	if ($other)
+		$ret .= '<option value=""' . $other . '> </option>';
+
+	$ret .= '</select>' . "\n";
+
+	return $ret;
+}
+
 // Show tabs
 function show_tabs($tab_list, $selected, $url_base) {
 // $tab_list = array( tab1_key => tab1_name, ... )
