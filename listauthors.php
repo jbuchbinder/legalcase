@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.25 2005/03/21 16:34:18 mlutfy Exp $
+	$Id: listauthors.php,v 1.26 2005/03/23 10:56:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -40,7 +40,17 @@ if (strlen($find_author_string)>1) {
 
 $q .= ")";
 
-// Sort clients by first name
+// Sort authors by status
+$order_set = false;
+$order_status = '';
+if (isset($_REQUEST['order_status']))
+	if ($_REQUEST['order_status'] == 'ASC' || $_REQUEST['order_status'] == 'DESC') {
+		$order_status = $_REQUEST['order_status'];
+		$q .= " ORDER BY status " . $order_status;
+		$order_set = true;
+	}
+
+// Sort authors by name_first
 // [ML] I know, problably more logical by last name, but we do not split the columns
 // later we can sort by any column if we need to
 $order_name_first = 'ASC';
@@ -48,7 +58,8 @@ if (isset($_REQUEST['order_name_first']))
 	if ($_REQUEST['order_name_first'] == 'ASC' || $_REQUEST['order_name_first'] == 'DESC')
 		$order_name_first = $_REQUEST['order_name_first'];
 
-$q .= " ORDER BY name_first " . $order_name_first;
+$q .= ($order_set ? " , " : " ORDER BY ");
+$q .= " name_first " . $order_name_first;
 
 $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
@@ -67,9 +78,10 @@ show_find_box('author', $find_author_string);
 $headers = array();
 $headers[0]['title'] = _Th('person_input_name');
 $headers[0]['order'] = 'order_name_first';
-$headers[0]['default'] = 'asc';
+$headers[0]['default'] = 'ASC';
 $headers[1]['title'] = _Th('authoredit_input_status');
-$headers[1]['order'] = 'no_order';
+$headers[1]['order'] = 'order_status';
+$headers[1]['default'] = '';
 
 show_list_start($headers);
 
