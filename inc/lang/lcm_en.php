@@ -18,6 +18,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'add_user_case' => 'Add user to the case',
 'app_input_authors' => 'Participant authors:',
 'app_input_clients' => 'Participant clients:',
+'app_input_created_by' => 'Created by:',
 'app_input_date_end' => 'End:',
 'app_input_date_start' => 'Start:',
 'app_input_description' => 'Description:',
@@ -29,8 +30,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'app_input_title' => 'Title:',
 'app_input_type' => 'Type:',
 'archives_tab_all_cases' => 'All cases',
-'archives_tab_export' => 'Export',
-'archives_tab_import' => 'Import',
+'archives_tab_export' => 'Backup',
+'archives_tab_import' => 'Restore',
 'author_id' => 'Author ID',
 'authorconf_button_change_password' => 'Change password',
 'authorconf_button_update_preferences' => 'Save preferences',
@@ -84,9 +85,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'button_reset' => 'Reset',
 'button_search' => 'Search',
 'button_validate' => 'Validate',
+'button_zoom' => 'zoom',
 
 
 // C
+'calendar_button_afternoon' => 'afternoon (p.m.)',
+'calendar_button_daily' => 'daily calendar',
+'calendar_button_fullday' => 'entire day',
+'calendar_button_monthly' => 'monthly calendar',
+'calendar_button_morning' => 'morning (a.m.)',
+'calendar_button_now' => 'Today',
+'calendar_button_weekly' => 'weekly calendar',
 'calendar_info_date' => 'Date',
 'calendar_info_time' => 'Time',
 'case_button_add_client' => 'Add a client',
@@ -579,10 +588,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // T
+'time_input_date_creation' => 'Creation date:',
 'time_input_date_end' => 'End:',
 'time_input_date_start' => 'Start:',
 'time_input_duration' => 'Duration:',
 'time_input_length' => 'Length:',
+'time_input_time_at' => 'at',
 'title_app_edit' => 'Edit appointment',
 'title_app_new' => 'New appointment',
 'title_archives' => 'Archives',
@@ -592,6 +603,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_case_edit' => 'Edit case details',
 'title_case_new' => 'New case',
 'title_client_edit' => 'Edit client:',
+'title_client_list' => 'List of clients',
 'title_client_new' => 'New client',
 'title_client_view' => 'Client:',
 'title_error' => 'Error',
