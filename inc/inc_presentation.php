@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.160 2005/03/14 09:46:54 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.161 2005/03/16 08:11:23 mlutfy Exp $
 */
 
 //
@@ -986,89 +986,43 @@ function show_tabs_links($tab_list, $selected='', $sel_link=false) {
 	echo "\n\n";
 }
 
-function show_listcase_start() {
-	$case_court_archive = read_meta('case_court_archive');
-
+function show_list_start($headers = array()) {
 	echo '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
 	echo "<tr>\n";
-	echo '<th class="heading">' . '#' . '</th>'; // TRAD
 
-	// Date creation + order asc/desc
-	$cur_sort_order = 'DESC';
-	if (isset($_REQUEST['case_order']) && ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'ASC'))
-		$cur_sort_order = $_REQUEST['case_order'];
+	foreach($headers as $h) {
+		echo "<th>";
 
-	$new_sort_order = ($cur_sort_order == 'DESC' ? 'ASC' : 'DESC');
-	$sort_link = new Link();
-	$sort_link->addVar('case_order', $new_sort_order);
-
-	echo '<th class="heading">';
-	echo '<a href="' . $sort_link->getUrl() . '" class="content_link">' .  "Date creation" . '</a>'; // TRAD
-
-	if ($cur_sort_order == 'ASC')
-		echo '<img src="images/lcm/asc_desc_arrow.gif" alt="" />';
-	else
-		echo '<img src="images/lcm/desc_asc_arrow.gif" alt="" />';
-
-	echo '</th>';
-	echo '<th class="heading">' . "Title" . '</th>'; // TRAD
-
-	if ($case_court_archive == 'yes')
-		echo '<th class="heading">' . "Court archive" . '</th>'; // TRAD
-	
-	echo '<th colspan="2" class="heading">' . "Status" . '</th>'; // TRAD
-	echo "</tr>\n";
-}
-
-function show_listcase_item($item, $cpt, $custom = '') {
-	$case_court_archive = read_meta('case_court_archive');
-
-	$ac_read = allowed($item['id_case'],'r');
-	$ac_edit = allowed($item['id_case'], 'e');
-	$css = ($cpt %2 ? "dark" : "light");
-
-	echo "<tr>\n";
-
-	// Case ID
-	echo "<td class='tbl_cont_" . $css . "'>";
-	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
-	echo highlight_matches($item['id_case'],$find_case_string);
-	if ($ac_read) echo '</a>';
-	echo "</td>\n";
-
-	// Date creation
-	echo "<td class='tbl_cont_" . $css . "'>";
-	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
-	echo format_date($item['date_creation'], 'short');
-	if ($ac_read) echo '</a>';
-	echo "</td>\n";
-
-	// Title
-	echo "<td class='tbl_cont_" . $css . "'>";
-	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
-	echo highlight_matches(clean_output($item['title']),$find_case_string);
-	if (allowed($item['id_case'],'r')) echo '</a>';
-	echo "</td>\n";
-	
-	// Court archive ID
-	if ($case_court_archive == 'yes') {
-		echo "<td class='tbl_cont_" . $css . "'>";
-		echo highlight_matches(clean_output($item['id_court_archive']),$find_case_string);
-		echo "</td>\n";
+		if ($h['order'] && $h['order'] != 'no_order') {
+			$ovar = $h['order'];
+			$cur_sort_order = $h['default'];
+			if (isset($_REQUEST[$ovar]) && ($_REQUEST[$ovar] == 'ASC' || $_REQUEST[$ovar] == 'DESC'))
+				$cur_sort_order = $_REQUEST[$ovar];
+		
+			$new_sort_order = ($cur_sort_order == 'DESC' ? 'ASC' : 'DESC');
+			$sort_link = new Link();
+			$sort_link->addVar($ovar, $new_sort_order);
+		
+			echo '<a href="' . $sort_link->getUrl() . '" class="content_link">';
+			echo $h['title'];
+			echo "</a>";
+		
+			if ($cur_sort_order == 'ASC')
+				echo '<img src="images/lcm/asc_desc_arrow.gif" alt="" />';
+			else
+				echo '<img src="images/lcm/desc_asc_arrow.gif" alt="" />';
+		
+		} else {
+			echo $h['title'];
+		}
+		
+		echo "</th>";
 	}
-	
-	// Status
-	echo "<td class='tbl_cont_" . $css . "'>" . $item['status'] . "</td>\n";
-	
-	// Actions / custom html
-	echo "<td class='tbl_cont_" . $css . "'>";
-	echo $custom;
-	echo "</td>\n";
 
 	echo "</tr>\n";
 }
 
-function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
+function show_list_end($current_pos = 0, $number_of_rows = 0) {
 	global $prefs;
 
 	echo "</table>\n";
@@ -1136,6 +1090,106 @@ function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
+}
+
+// see listclients.php for example
+function show_listclient_start() {
+	$headers = array();
+	$headers[0]['title'] = "Name"; // TRAD
+	$headers[0]['order']  = 'order_name_first';
+	$headers[0]['default'] = 'ASC';
+
+	show_list_start($headers);
+}
+
+function show_listclient_end($current_pos = 0, $number_of_rows = 0) {
+	show_list_end($current_pos, $number_of_rows);
+}
+
+// see listcases.php for example
+function show_listcase_start() {
+	$case_court_archive = read_meta('case_court_archive');
+
+	$cpt = 0;
+	$headers = array();
+
+	$headers[$cpt]['title'] = '#'; // TRAD
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+
+	$headers[$cpt]['title'] = 'Date creation'; // TRAD
+	$headers[$cpt]['order'] = 'case_order';
+	$headers[$cpt]['default'] = 'DESC';
+	$cpt++;
+
+	$headers[$cpt]['title'] = 'Title'; // TRAD
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+
+	if ($case_court_archive == 'yes') {
+		$headers[$cpt]['title'] = 'Court archive'; // TRAD
+		$headers[$cpt]['order'] = 'no_order';
+		$cpt++;
+	}
+
+	// XXX actually, it would be nice to be able to order..
+	// but this would require us to put numbers in status names
+	$headers[$cpt]['title'] = 'Status'; // TRAD
+	$headers[$cpt]['order'] = 'no_order';
+
+	show_list_start($headers);
+}
+
+function show_listcase_item($item, $cpt, $custom = '') {
+	$case_court_archive = read_meta('case_court_archive');
+
+	$ac_read = allowed($item['id_case'],'r');
+	$ac_edit = allowed($item['id_case'], 'e');
+	$css = ($cpt %2 ? "dark" : "light");
+
+	echo "<tr>\n";
+
+	// Case ID
+	echo "<td class='tbl_cont_" . $css . "'>";
+	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
+	echo highlight_matches($item['id_case'],$find_case_string);
+	if ($ac_read) echo '</a>';
+	echo "</td>\n";
+
+	// Date creation
+	echo "<td class='tbl_cont_" . $css . "'>";
+	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
+	echo format_date($item['date_creation'], 'short');
+	if ($ac_read) echo '</a>';
+	echo "</td>\n";
+
+	// Title
+	echo "<td class='tbl_cont_" . $css . "'>";
+	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
+	echo highlight_matches(clean_output($item['title']),$find_case_string);
+	if (allowed($item['id_case'],'r')) echo '</a>';
+	echo "</td>\n";
+	
+	// Court archive ID
+	if ($case_court_archive == 'yes') {
+		echo "<td class='tbl_cont_" . $css . "'>";
+		echo highlight_matches(clean_output($item['id_court_archive']),$find_case_string);
+		echo "</td>\n";
+	}
+	
+	// Status
+	echo "<td class='tbl_cont_" . $css . "'>" . $item['status'] . "</td>\n";
+	
+	// Actions / custom html
+	echo "<td class='tbl_cont_" . $css . "'>";
+	echo $custom;
+	echo "</td>\n";
+
+	echo "</tr>\n";
+}
+
+function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
+	show_list_end($current_pos, $number_of_rows);
 }
 
 function show_find_box($type, $string) {
