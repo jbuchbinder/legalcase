@@ -58,22 +58,22 @@ if ($p = addslashes($p)) {
 				WHERE cookie_recall = '$p'");
 
 			$username = $row['username'];
-			$error = "<b>"._T('pass_nouveau_enregistre')."</b>".
-			"<p>"._T('pass_rappel_login', array('username' => $username));
+			$error = "<b>" . _T('pass_nouveau_enregistre') . "</b>"
+				. "<p>"._T('pass_rappel_login', array('username' => $username));
 		} else {
 			install_html_start(_T('pass_nouveau_pass'), 'login');
 			echo "<p><br>";
-			echo "<form action='spip_pass.php3' method='post'>";
+			echo "<form action='lcm_pass.php' method='post'>";
 			echo "<input type='hidden' name='p' value='" . htmlspecialchars($p) . "'>";
 			echo _T('pass_choix_pass') . "<br>\n";
 			echo "<input type='password' name='pass' value=''>";
-			echo '  <input type=submit class="fondl" name="validate" value="'._T('pass_ok').'"></div></form>';
-			install_fin_html();
+			echo '<input type=submit class="fondl" name="validate" value="'._T('pass_ok').'"></div></form>';
+			install_html_end();
 			exit;
 		}
-	}
-	else
+	} else {
 		$error = _T('pass_erreur_code_inconnu');
+	}
 }
 
 // Send a cookie by e-mail which will later allow the user to
