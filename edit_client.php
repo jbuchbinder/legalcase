@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.40 2005/03/23 16:28:06 mlutfy Exp $
+	$Id: edit_client.php,v 1.41 2005/03/23 18:58:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -119,10 +119,13 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 			</td></tr>
 
 <?php
-	echo "<tr>\n";
-	echo '<td>' . "Created on:" . '</td>'; // TRAD
-	echo '<td>' . format_date($client_data['date_creation'], 'short') . '</td>';
-	echo "</tr>\n";
+
+	if ($client_data['id_client']) {
+		echo "<tr>\n";
+		echo '<td>' . _Ti('time_input_date_creation') . '</td>';
+		echo '<td>' . format_date($client_data['date_creation'], 'short') . '</td>';
+		echo "</tr>\n";
+	}
 
 	if ($client_citizen_number == 'yes') {
 		echo "<tr>\n";
@@ -177,39 +180,6 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	}
 
 	//
-	// Organisations this client represents
-	//
-	echo "\t<tr>";
-	echo '<td colspan="2" align="center" valign="middle" class="heading">';
-	echo '<h4>' . _T('client_subtitle_organisations') . '</h4>';
-	echo '</td>';
-	echo "</tr>\n";
-	$q = "SELECT name FROM lcm_client_org, lcm_org WHERE id_client=" . $client_data['id_client'] . " AND lcm_client_org.id_org=lcm_org.id_org";
-	$result = lcm_query($q);
-	$orgs = array();
-	while ($row = lcm_fetch_array($result)) {
-		$orgs[] = $row['name'];
-	}
-	echo "\t<tr><td>" . 'Representative of:' . '</td><td>' . join(', ',$orgs) . (count($orgs)>0 ? '&nbsp;' : ''); // TRAD
-	$q = "SELECT lcm_org.id_org,name,id_client
-		FROM lcm_org
-		LEFT JOIN lcm_client_org
-		ON (id_client=" . $client_data['id_client'] . "
-		AND lcm_org.id_org=lcm_client_org.id_org)
-		WHERE id_client IS NULL";
-	$result = lcm_query($q);
-	if (lcm_num_rows($result) > 0) {
-		echo "\t\t<select name=\"new_org\">\n";
-		echo "\t\t\t<option selected='selected' value=\"0\">- Select organisation -</option>\n"; // TRAD
-		while ($row = lcm_fetch_array($result)) {
-			echo "\t\t\t<option value=\"" . $row['id_org'] . '">' . $row['name'] . "</option>\n";
-		}
-		echo "\t\t</select>\n";
-		echo "\t\t<button name=\"submit\" type=\"submit\" value=\"add_org\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
-	}
-	echo "\t</td></tr>\n";
-
-	//
 	// Contacts (e-mail, phones, etc.)
 	//
 	
@@ -230,41 +200,6 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	$contacts_other = get_contacts('client', $client_data['id_client'], 'email_main,address_main', 'not');
 	$contacts = get_contacts('client', $client_data['id_client']);
 
-/*
-	function print_existing_contact($c, $num) {
-		echo '<tr><td align="right" valign="top">' . _T($c['title']) . "\n";
-		echo '<td align="left" valign="top">';
-	
-		echo '<input name="contact_id[]" id="contact_id_' . $num . '" '
-			. 'type="hidden" value="' . $c['id_contact'] . '" />' . "";
-		echo '<input name="contact_type[]" id="contact_type_' . $num . '" '
-			. 'type="hidden" value="' . $c['type_contact'] . '" />' . "";
-
-		// [ML] Removed spaces (nbsp) between elements, or it causes the layout
-		// to show on two lines when using a large font.
-		echo '<input name="contact_value[]" id="contact_value_' . $num . '" type="text" '
-			. 'class="search_form_txt" size="35" value="' . clean_output($c['value']) . '"/>';
-		echo f_err('email', $_SESSION['errors']) . "";
-
-		echo '<label for="id_del_contact' . $num . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" /></label>&nbsp;<input type="checkbox" id="id_del_contact' . $num . '" name="del_contact_' . $c['id_contact'] . '"/>';
-
-		echo "</td>\n</tr>\n\n";
-
-	}
-
-	// For new specific type of contact, such as 'email_main', 'address_main'
-	function print_new_contact($type_kw, $type_name, $num_new) {
-		echo '<tr><td align="right" valign="top">' . _T("kw_contacts_" . $type_kw . "_title") . "\n";
-		echo '<td align="left" valign="top">';
-		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $num_new . '" '
-			. 'type="hidden" value="' . $type_name . '" />' . "\n";
-
-		echo '<input name="new_contact_value[]" id="new_contact_value_' . $num_new . '" type="text" '
-			. 'class="search_form_txt" size="35" value=""/>&nbsp;';
-		
-		echo "</td>\n</tr>\n\n";
-	}
-*/
 /*	
 	// First show the main address
 	foreach ($contacts_addrmain as $contact) {
@@ -310,7 +245,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 			
 			<?php
 				echo f_err_star('new_contact_' . $cpt_new, $_SESSION['errors']);
-				echo "Add contact";
+				echo "Add contact"; // TRAD
 			?>
 			
 			</td>
@@ -320,7 +255,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 					global $system_kwg;
 
 					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '" class="sel_frm">' . "\n";
-					echo "<option value=''>" . "- select contact type -" . "</option>\n";
+					echo "<option value=''>" . "- select contact type -" . "</option>\n"; // TRAD
 
 					foreach ($system_kwg['contacts']['keywords'] as $contact) {
 					//	if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main') {
@@ -343,9 +278,46 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 				</div>
 			</td>
 		</tr>
+	<?php
+
+	//
+	// Organisations this client represents
+	//
+	echo "\t<tr>";
+	echo '<td colspan="2" align="center" valign="middle" class="heading">';
+	echo '<h4>' . _T('client_subtitle_organisations') . '</h4>';
+	echo '</td>';
+	echo "</tr>\n";
+	$q = "SELECT name FROM lcm_client_org, lcm_org WHERE id_client=" . $client_data['id_client'] . " AND lcm_client_org.id_org=lcm_org.id_org";
+	$result = lcm_query($q);
+	$orgs = array();
+	while ($row = lcm_fetch_array($result)) {
+		$orgs[] = $row['name'];
+	}
+	echo "\t<tr><td>" . 'Representative of:' . '</td><td>' . join(', ',$orgs) . (count($orgs)>0 ? '&nbsp;' : ''); // TRAD
+	$q = "SELECT lcm_org.id_org,name,id_client
+		FROM lcm_org
+		LEFT JOIN lcm_client_org
+		ON (id_client=" . $client_data['id_client'] . "
+		AND lcm_org.id_org=lcm_client_org.id_org)
+		WHERE id_client IS NULL";
+	$result = lcm_query($q);
+	if (lcm_num_rows($result) > 0) {
+		echo "\t\t<select name=\"new_org\">\n";
+		echo "\t\t\t<option selected='selected' value=\"0\">- Select organisation -</option>\n"; // TRAD
+		while ($row = lcm_fetch_array($result)) {
+			echo "\t\t\t<option value=\"" . $row['id_org'] . '">' . $row['name'] . "</option>\n";
+		}
+		echo "\t\t</select>\n";
+		echo "\t\t<button name=\"submit\" type=\"submit\" value=\"add_org\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
+	}
+	echo "\t</td></tr>\n";
+
+?>
+
 	</table>
-	<br />
-	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
+
+	<p><button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button></p>
 	<input type="hidden" name="ref_edit_client" value="<?php echo $HTTP_REFERER ?>" />
 </form>
 
