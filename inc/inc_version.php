@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.64 2005/03/22 13:15:58 mlutfy Exp $
+	$Id: inc_version.php,v 1.65 2005/03/23 15:25:36 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -31,23 +31,26 @@ define('_INC_VERSION', '1');
 // and we clean GET/POST/COOKIE in consequence.
 function magic_unquote($table) {
 	if (is_array($GLOBALS[$table])) {
-	        reset($GLOBALS[$table]);
-	        while (list($key, $val) = each($GLOBALS[$table])) {
-	        	if (is_string($val))
+		reset($GLOBALS[$table]);
+		while (list($key, $val) = each($GLOBALS[$table])) {
+			if (is_string($val))
 				$GLOBALS[$table][$key] = stripslashes($val);
-	        }
+		}
 	}
 }
 
+// [ML] I think that this is absolutely without impact because
+// we use PHP >= 4.1. Still, I don't feel like breaking anything
+// at the moment, so I will leave it.
 @set_magic_quotes_runtime(0);
-$unquote_gpc = @get_magic_quotes_gpc();
+if (@get_magic_quotes_gpc()) {
+	magic_unquote('_GET');
+	magic_unquote('_POST');
+	magic_unquote('_COOKIE');
 
-if ($unquote_gpc) {
-	magic_unquote('HTTP_GET_VARS');
-	magic_unquote('HTTP_POST_VARS');
-	magic_unquote('HTTP_COOKIE_VARS');
+	if (@ini_get('register_globals'))
+		magic_unquote('GLOBALS');
 }
-
 
 //
 // Dirty against the register_globals to 'Off' (PHP 4.1.x)
@@ -83,21 +86,20 @@ feed_globals('HTTP_SERVER_VARS', false);
 // With register_globals to Off in PHP4, we need to use the new
 // HTTP_POST_FILES variable for the uploaded files (does not work
 // under PHP3). 
-//
-// [ML] LCM may need attached files in the future, so I will leave
-// this for now.
+/* [ML] Not useful, we depend on PHP >= 4.1 anyway, therefore we use $_FILES
 function feed_post_files($table) {
 	global $INSECURE;
 	if (is_array($GLOBALS[$table])) {
-	        reset($GLOBALS[$table]);
-	        while (list($key, $val) = each($GLOBALS[$table])) {
-	                $GLOBALS[$key] = $INSECURE[$key] = $val['tmp_name'];
-	                $GLOBALS[$key.'_name'] = $INSECURE[$key.'_name'] = $val['name'];
-	        }
+		reset($GLOBALS[$table]);
+		while (list($key, $val) = each($GLOBALS[$table])) {
+			$GLOBALS[$key] = $INSECURE[$key] = $val['tmp_name'];
+			$GLOBALS[$key.'_name'] = $INSECURE[$key.'_name'] = $val['name'];
+		}
 	}
 }
 
 feed_post_files('HTTP_POST_FILES');
+*/
 
 
 //  ************************************
