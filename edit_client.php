@@ -49,7 +49,7 @@ lcm_page_start("Edit client details");
 	if($client_data['id_client']) {
 		echo "<tr><td>Client ID:</td>\n";
 		echo "<td>" . $client_data['id_client']
-			. '<input type="hidden" name="id_client" value="' .  $client_data['id_client']; '"></td></tr>' . "\n";
+			. '<input type="hidden" name="id_client" value="' . $client_data['id_client'] . '"></td></tr>' . "\n";
 	}
 ?>
 		<tr><td>First name:</td>
