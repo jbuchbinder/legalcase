@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.11 2005/03/22 15:33:13 antzi Exp $
+	$Id: app_det.php,v 1.12 2005/03/23 10:27:42 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,30 +35,32 @@ $q = "SELECT lcm_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.n
 $result = lcm_query($q);
 
 if ($row = lcm_fetch_array($result)) {
-	lcm_page_start('Appointment details:' . ' ' . $row['title']);
+	lcm_page_start('Appointment details:' . ' ' . $row['title']); // TRAD
 
 	echo '<fieldset class="info_box">';
 //	echo '<div class="prefs_column_menu_head">' . _T('app_subtitle_general') . '</div>';
 	echo "<p class=\"normal_text\">\n";
 	
-	echo "Start time: " . format_date($row['start_time'],'short') . "<br />\n";
+	echo _Ti('time_input_date_start') . format_date($row['start_time'],'short') . "<br />\n";
 	$end_time = vider_date($row['end_time']);
 	$reminder = vider_date($row['reminder']);
 	if ($prefs['time_intervals'] == 'absolute') {
-		echo "End time: " . $row['end_time'] . "<br />\n";
-		echo "Reminder: " . $row['reminder'] . "<br />\n";
+		echo _Ti('time_input_date_end') . format_date($row['end_time'], 'short') . "<br />\n";
+		echo _Ti('app_input_reminder_time') . format_date($row['reminder'], 'short') . "<br />\n"; // TRAD
 	} else {
 		$duration = ($end_time ? strtotime($row['end_time']) - strtotime($row['start_time']) : 0);
-		echo "Duration: " . format_time_interval($duration,($prefs['time_intervals_notation'] == 'hours_only')) . "<br />\n";
+		echo _Ti('app_input_time_length') . format_time_interval($duration,($prefs['time_intervals_notation'] == 'hours_only')) . "<br />\n"; // TRAD
 		$reminder_offset = ($reminder ? strtotime($row['start_time']) - strtotime($row['reminder']) : 0);
-		echo "Reminder: " . format_time_interval($reminder_offset,($prefs['time_intervals_notation'] == 'hours_only')) . " before start time<br />\n";
+		echo _Ti('app_input_reminder_time') . format_time_interval($reminder_offset,($prefs['time_intervals_notation'] == 'hours_only')) . " before start time<br />\n"; // TRAD
 	}
-	echo "Type: " . $row['type'] . "<br />\n";
-	echo "Title: " . $row['title'] . "<br />\n";
-	echo "Description: " . $row['description'] . "<br />\n";
-	echo "Created by: " . njoin(array($row['name_first'],$row['name_middle'],$row['name_last'])) . "<br />\n";
+
+	echo _Ti('app_input_type') . $row['type'] . "<br />\n";
+	echo _Ti('app_input_title') . $row['title'] . "<br />\n";
+	echo _Ti('app_input_description') . $row['description'] . "<br />\n";
+
+	echo _Ti('app_input_created_by') . get_person_name($row) . "<br />\n"; // TRAD
 	if ($row['case_title'])
-		echo 'In connection with case: <a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">' . $row['case_title'] , "</a><br />\n";
+		echo 'In connection with case: <a href="case_det.php?case=' .  $row['id_case'] . '" class="content_link">' . $row['case_title'] , "</a><br />\n"; // TRAD
 
 	// Show appointment participants
 	$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
@@ -67,11 +69,13 @@ if ($row = lcm_fetch_array($result)) {
 			AND lcm_author_app.id_author=lcm_author.id_author)";
 	$res_author = lcm_query($q);
 	if (lcm_num_rows($res_author)>0) {
-		echo "Participants: ";
+		echo "Participants: "; // TRAD
 		$participants = array();
+
 		while ($author = lcm_fetch_array($res_author)) {
-			$participants[] = njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
+			$participants[] = get_person_name($author);
 		}
+
 		echo join(', ',$participants);
 		echo "<br />\n";
 	}
@@ -85,11 +89,11 @@ if ($row = lcm_fetch_array($result)) {
 	$res_client = lcm_query($q);
 
 	if (lcm_num_rows($res_client)>0) {
-		echo "Clients: ";
+		echo _Ti('app_input_clients');
 		$clients = array();
 		while ($client = lcm_fetch_array($res_client))
-			$clients[] = njoin(array($client['name_first'],$client['name_middle'],$client['name_last']))
-				. ( ($client['id_org'] > 0) ? " of " . $client['name'] : '');
+			$clients[] = get_person_name($client)
+				. ( ($client['id_org'] > 0) ? " of " . $client['name'] : ''); // TRAD
 		echo join(', ',$clients);
 		echo "<br />\n";
 	}
@@ -114,7 +118,7 @@ if ($row = lcm_fetch_array($result)) {
 				$short_description = $fu['description'];
 			else
 				$short_description = substr($fu['description'],0,$title_length) . '...';
-			echo '<br />Followup:' . ' <a href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description;
+			echo '<br />Followup:' . ' <a href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description; // TRAD
 		} else {
 			// Show create followup from appointment
 			echo '<br /><a href="edit_fu.php?case=' . $row['id_case'] . '&amp;app=' . $row['id_app']
@@ -123,7 +127,7 @@ if ($row = lcm_fetch_array($result)) {
 		echo "</a><br />\n";
 
 		// Show link back to the case details
-		echo '<br /><a href="case_det.php?case=' . $row['id_case'] . '&amp;tab=appointments" class="back_lnk">' . 'To case appointments' . "</a><br />\n";
+		echo '<br /><a href="case_det.php?case=' . $row['id_case'] . '&amp;tab=appointments" class="back_lnk">' . 'To case appointments' . "</a><br />\n"; // TRAD
 	}
 
 	echo "<br /></p>";
