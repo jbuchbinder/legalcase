@@ -104,11 +104,10 @@ function lcm_page_start($title = "", $css_files = "") {
 	// Most of the header/navigation html
 	//
 	
-	echo "
-	<a href='summary.php'><div id='header'>
+	echo "<div id='header'><a href='summary.php'>
 		<h1 class='lcm_main_head'>" . $site_name . "</h1>
 		<div class='lcm_slogan'>" . $site_desc . "</div>
-	</div></a>";
+	</a></div>";
 	
 	/*
 	if($prefs['screen'] == "narrow")
@@ -133,7 +132,7 @@ function lcm_page_start($title = "", $css_files = "") {
 			<!-- This is the navigation column, usually used for menus and brief information -->
 				<div id=\"navigation_menu_column\">
 				<!-- Start of navigation_menu_column content -->
-					<div id=\"nav_menu_box\">
+					<div class=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;"
 							. _T('menu_main') . "</div>
 						<ul id=\"nav_menu_list\">
@@ -152,7 +151,7 @@ function lcm_page_start($title = "", $css_files = "") {
 
 	if ($connect_status == 'admin') {
 		echo "		
-					<div id=\"nav_menu_box\">
+					<div class=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_admin') . "</div>
 						<ul id=\"nav_menu_list\">
 							<li><a href=\"config_site.php\" class=\"main_nav_btn\">" . _T('menu_admin_siteconf') . "</a></li>
@@ -165,14 +164,14 @@ function lcm_page_start($title = "", $css_files = "") {
 	}
 
 	echo "
-					<div id=\"nav_menu_box\">
+					<div class=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_insert_table-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_calendar') . "</div>
 						<p class=\"nav_column_text\">". format_date() ."</p>
 					</div>
 					<!-- [ML] Keeping this so that testers see what features
 					to expect, but I put the opacity low to insist that it is
 					not ready. Who knows whether it works in MSIE. -->
-					<div id=\"nav_menu_box\" style='-moz-opacity: 0.45; filter: alpha(opacity=45);'>
+					<div class=\"nav_menu_box\" style='-moz-opacity: 0.45; filter: alpha(opacity=45);'>
 						<div class=\"nav_column_menu_head\">Next 7 meetings (demo)</div>
 						<p style='font-size: 70%;'><b>This feature is not ready yet.</b></p>
 						<p class=\"nav_column_text\">

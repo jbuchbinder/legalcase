@@ -129,7 +129,7 @@ hr.hair_line {
 /* The main navigation column settings */
 /* ---------------------------------------------- */
 
-#nav_menu_box {
+.nav_menu_box {
 	margin: 0px 5px 5px 0px;
 	text-align: left;
 }

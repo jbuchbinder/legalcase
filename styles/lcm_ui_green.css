@@ -44,7 +44,7 @@ hr.hair_line {
 /* The main navigation column settings */
 /* ---------------------------------------------- */
 
-#nav_menu_box {
+.nav_menu_box {
 	border: 1px solid #999;
 	background-color: #eee;
 }
