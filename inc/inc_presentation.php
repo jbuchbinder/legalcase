@@ -59,28 +59,6 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
 	}
 	
-	//[KM] This is my suggestion of the problem with style switcher
-	//There is one file for the layout and others for the themes
-	/*
-	switch($prefs['theme'])
-	{
-	    case "blue":
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" />\n";
-	    break;
-	    
-	    case "orange":
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" />\n";
-	    break;
-	    
-	    case "monochrome":
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" />\n";
-	    break;
-	    
-	    default:
-	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
-	    break;
-	} */
-
 	// It is the responsability of the function caller to make sure that
 	// the filename does not cause problems...
 	$css_files_array = explode(",", $css_files);
@@ -95,14 +73,10 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 }
 
 function lcm_page_start($title = "", $css_files = "") {
-	// [ML] Yes, too many globals. I will clean this later.
-	global $couleur_foncee; // dark color
-	global $couleur_claire; // light
-	global $adresse_site;
 	global $connect_id_auteur;
 	global $connect_status;
 	global $auth_can_disconnect, $connect_login;
-	global $options, $spip_display, $spip_ecran;
+	global $options;
 	global $lcm_lang, $lcm_lang_rtl, $lcm_lang_left, $lcm_lang_right;
 	global $clean_link;
 
@@ -208,21 +182,14 @@ function lcm_page_start($title = "", $css_files = "") {
 // Footer of the interface
 // XXX You may want to use lcm_page_end() instead
 function lcm_html_end() {
-	
-	//[KM] Font tags are generally not recommended since we have CSS which defines the font family,
-	//different sizes, colors, letter spacing and some other font properties
-	
-	//echo "</font>";
-
 	// Create a new session cookie if the IP changed
-	// [ML] FIXME update paths and names
+	// An image is sent, which then calls lcm_cookie.php with Javascript
 	if ($GLOBALS['lcm_session'] && $GLOBALS['author_session']['ip_change']) {
-		echo "<img name='img_session' src='img_pack/rien.gif' width='0' height='0'>\n";
+		echo "<img name='img_session' src='images/lcm/nothing.gif' width='0' height='0' />\n";
 		echo "<script type='text/javascript'><!-- \n";
 		echo "document.img_session.src='lcm_cookie.php?change_session=oui';\n";
 		echo "// --></script>\n";
 	}
-	
 	
 	flush();
 }
@@ -236,11 +203,6 @@ function lcm_page_end($credits = '') {
 	global $find_org_string;
 	global $find_case_string;
 	global $find_client_string;
-
-	///
-	// Insert FOOTER stuff here
-	// Ignore the rest after this for now.
-	//
 
 	//[KM] The bottom of a single page
 	//
@@ -290,7 +252,8 @@ function lcm_page_end($credits = '') {
 		</div>
 		<div class=\"clearing\">&nbsp;</div>
 	</div>
-<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ". _T('info_free_software') ."</div>\n";
+
+	<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ". _T('info_free_software') ."</div>\n";
 
 	//
 	// Language choice (temporarely put here by [ML])
@@ -421,9 +384,6 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 		$ret .= "</td>\n"
 			. "</tr>\n"
 			. "</table>\n";
-
-	if ($date)
-		$ret .= "<!-- date = $date -->\n";
 
 	return $ret;
 }
