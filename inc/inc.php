@@ -16,6 +16,7 @@ include_lcm('inc_filters');
 // [ML] include_lcm("inc_layer");
 // [ML] include_lcm("inc_rubriques");
 include_lcm('inc_calendar');
+include_lcm('inc_db_upgrade');
 
 if (!@file_exists('data/inc_meta_cache.php'))
 	write_metas();
@@ -188,7 +189,7 @@ if ($installed_version <> $lcm_version) {
 
 // Database version management
 //$lcm_db_version_current = read_meta('lcm_db_version');
-upgrade_database(); 
+upgrade_database();
 
 //
 // Management of the global configuration of the site
