@@ -22,6 +22,11 @@ if(!session_is_registered("fu_data"))
 foreach($_POST as $key => $value)
     $fu_data[$key]=$value;
 
+// Convert day, month, year to date
+$fu_data['date_start'] = date('Y-m-d H:i:s',strtotime($fu_data['start_year'] . '-' . $fu_data['start_month'] . '-' . $fu_data['start_day']));
+$fu_data['date_end'] = date('Y-m-d H:i:s',strtotime($fu_data['end_year'] . '-' . $fu_data['end_month'] . '-' . $fu_data['end_day']));
+
+
 // Check submitted information
 if (strtotime($fu_data['date_start'])<0) { $errors['date_start']='Invalid start date!'; }
 if (strtotime($fu_data['date_end'])<0) { $errors['date_end']='Invalid end date!'; }
