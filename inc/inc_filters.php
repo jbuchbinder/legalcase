@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.23 2005/01/11 15:58:19 mlutfy Exp $
+	$Id: inc_filters.php,v 1.24 2005/01/19 12:46:16 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -117,6 +117,16 @@ function clean_output($string) {
 	} else {
 		return htmlspecialchars($string);
 	}
+}
+
+// Dirty hack: utf8_decode is mainly used for strlen(),
+// so if it is not installed, it's not such a big problem.
+// Use with care!
+function lcm_utf8_decode($string) {
+	if (function_exists("utf8_decode"))
+		return utf8_decode($string);
+	else
+		return $string;
 }
 
 /* ********************************************************
