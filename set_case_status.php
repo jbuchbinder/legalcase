@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.13 2005/02/08 09:01:45 antzi Exp $
+	$Id: set_case_status.php,v 1.14 2005/02/10 08:32:26 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -79,6 +79,9 @@ switch ($status) {
 		// Start the page
 		lcm_page_start($page_title);
 
+		// Show the errors (if any)
+		echo show_all_errors($_SESSION['errors']);
+		
 		// Write form
 		echo "<form action='upd_fu.php' method='POST'>
 	<table class='tbl_usr_dtl' width='99%'>
