@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.11 2005/03/07 11:13:56 mlutfy Exp $
+	$Id: fu_det.php,v 1.12 2005/03/09 14:47:18 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -130,7 +130,7 @@ echo "</ul>\n";
 		<tr><td><?php echo _T('fu_input_type'); ?></td>
 			<td><?php echo _T('kw_followups_' . $fu_data['type'] . '_title'); ?></td></tr>
 		<tr><td valign="top"><?php echo _T('fu_input_description'); ?></td>
-			<td><?php echo clean_output($fu_data['description']);
+			<td><?php echo nl2br(clean_output($fu_data['description']));
 				echo "</td></tr>\n";
 
 				// Read the policy settings
