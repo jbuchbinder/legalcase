@@ -205,19 +205,6 @@ if (!$activer_statistiques){
 	$activer_statistiques = read_meta("activer_statistiques");
 }
 
-if (!$nom_site_spip) {
-	$nom_site_spip = _T('info_mon_site_spip');
-	write_meta("nom_site", $nom_site_spip);
-	write_metas();
-}
-
-if (!$adresse_site) {
-	$adresse_site = "http://$HTTP_HOST".substr($REQUEST_URI, 0, strpos($REQUEST_URI, "/ecrire"));
-	write_meta("adresse_site", $adresse_site);
-	write_metas();
-}
-
-
 function tester_rubrique_vide($id_rubrique) {
 	lcm_log("Call of deprecated function: tester_rubrique_vide");
 	return true;
