@@ -74,7 +74,6 @@ function show_config_form_general() {
 	echo "\t<input type='hidden' name='panel' value='general'/>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	// XXX fix css, this was just a test
 	echo "<div class='prefs_column_menu_head'><label for='site_name'>" . _T('siteconf_input_site_name') . "</label></div>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_site_name') . "</small></p>\n";
 	echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
@@ -82,7 +81,7 @@ function show_config_form_general() {
 	echo "<div class='prefs_column_menu_head'><label for='site_desc'>" . _T('siteconf_input_site_desc') . "</label></div>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_site_desc') . "</small></p>\n";
 	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40' class='search_form_txt' /></p>\n";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate1' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
@@ -92,7 +91,7 @@ function show_config_form_general() {
 	echo "<div class='prefs_column_menu_head'><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></div>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_admin_email') . "</small></p>\n";
 	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40' class='search_form_txt' /></p>\n";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate2' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 }
 
@@ -107,85 +106,69 @@ function show_config_form_collab() {
 	echo "\t<input type='hidden' name='conf_modified_collab' value='yes'/>\n";
 	echo "\t<input type='hidden' name='panel' value='collab'/>\n";
 	
-	echo "<fieldset class='conf_info_box'>\n";
-	
-	echo "<div class=\"prefs_column_menu_head\">". _T('siteconf_subtitle_collab_work') ."</div>";
-	
-	echo "<p><small class=\"sm_11\">This only applies to new cases. Wording of this page needs fixing.</small></p>\n";
+	echo '<fieldset class="conf_info_box">' . "\n";
+	echo '<div class="prefs_column_menu_head">' . _T('siteconf_subtitle_collab_work') . "</div>\n";
 
 	// READ ACCESS
-	echo "<p><b>Read access to cases</b></p>\n";
-
-	echo "<p>Who can view case information?<br>
-		<small class=\"sm_11\">(Cases usually have one or many authors specifically assigned to them. It is assumed that assigned authors can consult the case and it's follow-ups, but what about authors who are not assigned to the case?)</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_access_read_choice') . "</b></p>\n";
 
 	echo "<ul>";
-	// If by default read set to public (case_default_read == yes)
+	// If case_default_read == 'yes' (public)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_1' value='yes'";
-	if ($case_default_read) echo " checked";
-	echo "><label for='case_default_read_1'>Any author can view the case information of other authors, even if they are not on the case (better cooperation).</label></input></li>\n";
+	if ($case_default_read) echo ' checked="checked"';
+	echo "><label for='case_default_read_1'>" .  _T('siteconf_input_access_read_choice_public') . "</label></input></li>\n";
 
-	// If by default read not set to public (case_default_read != yes)
+	// If case_default_read != 'yes' (private)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_2' value=''";
-	if (!$case_default_read) echo " checked";
-	echo "><label for='case_default_read_2'>Only authors assigned to a case can view its information and follow-ups (better privacy).</label></input></li>\n";
+	if (!$case_default_read) echo ' checked="checked"';
+	echo "><label for='case_default_read_2'>" . _T('siteconf_input_access_read_choice_private') . "</label></input></li>\n";
 	echo "</ul>\n";
 
 	// READ ACCESS POLICY
-	echo "<p><b>Read access global policy</b></p>\n";
-
-	echo "<p>Who can change the read access to a case?<br>
-		<small class=\"sm_11\">(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_access_read_global') . "</b></p>\n";
 
 	echo "<ul>";
 	// Anyone can change the setting (case_read_always != yes)
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_2' value=''";
-	if (!$case_read_always) echo " checked";
-	echo "><label for='case_read_always_2'>Any author assigned to the case (and with the right to edit the case).</label></input></li>\n";
+	echo '<li style="list-style-type: none;"><input type="radio" name="case_read_always" id="case_read_always_2" value=""';
+	if (!$case_read_always) echo ' checked="checked"';
+	echo '><label for="case_read_always_2">' . _T('siteconf_input_access_read_global_no') . "</label></input></li>\n";
 
 	// Only the admin can change the setting (case_read_always == yes)
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_1' value='yes'";
-	if ($case_read_always) echo " checked";
-	echo "><label for='case_read_always_1'>Site administrators only.</label></input></li>\n";
-
+	echo '<li style="list-style-type: none;"><input type="radio" name="case_read_always" id="case_read_always_1" value="yes"';
+	if ($case_read_always) echo ' checked="checked"';
+	echo '><label for="case_read_always_1">' . _T('siteconf_input_access_read_global_yes') . "</label></input></li>\n";
 	echo "</ul>\n";
 
 	echo "<hr>\n";
 
 	// WRITE ACCESS
-	echo "<p><b>Write access to cases</b></p>\n";
-
-	echo "<p>Who can write information in the cases?<br>
-		<small class=\"sm_11\">(Cases usually have one or many authors specifically assigned to them. It is assumed that only assigned authors can add follow-up information to the case, but what about authors who are not assigned to the case?)</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_access_write_choice') . "</b></p>\n";
 
 	echo "<ul>";
 	// If by default write set to public (case_default_write == 'yes')
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_1' value='yes'";
-	if ($case_default_write) echo " checked";
-	echo "><label for='case_default_write_1'>Any author can write the case information of other authors, even if they are not on the case (better cooperation).</label></input></li>\n";
+	if ($case_default_write) echo ' checked="checked"';
+	echo '><label for="case_default_write_1">' . _T('siteconf_input_access_write_choice_public') . "</label></input></li>\n";
 
 	// If by default write not set to public (case_default_write != 'yes')
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_2' value=''";
-	if (!$case_default_write) echo " checked";
-	echo "><label for='case_default_write_2'>Only authors assigned to a case can write its information and follow-ups (better privacy).</label></input></li>\n";
+	if (!$case_default_write) echo ' checked="checked"';
+	echo '><label for="case_default_write_2">' . _T('siteconf_input_access_write_choice_private') . "</label></input></li>\n";
 	echo "</ul>\n";
 
 	// WRITE ACCESS POLICY
-	echo "<p><b>Write access global policy</b></p>\n";
-
-	echo "<p>Who can change the write access to a case?<br>
-		<small class=\"sm_11\">(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_access_write_global') . "</b></p>\n";
 
 	echo "<ul>";
 	// Anyone can change the setting (case_write_always != yes)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_2' value=''";
-	if (!$case_write_always) echo " checked";
-	echo "><label for='case_write_always_2'>Any author assigned to the case (and with the right to edit the case).</label></input></li>\n";
+	if (!$case_write_always) echo ' checked="checked"';
+	echo '><label for="case_write_always_2">' . _T('siteconf_input_access_write_global_no') . "</label></input></li>\n";
 
 	// Only the admin can change the setting (case_write_always == yes)
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value='yes'";
-	if ($case_write_always) echo " checked";
-	echo "><label for='case_write_always_1'>Site administrators only.</label></input></li>\n";
+	if ($case_write_always) echo ' checked="checked"';
+	echo '><label for="case_write_always_1">' . _T('siteconf_input_access_write_global_yes') . "</label></input></li>\n";
 	echo "</ul>\n";
 	echo "</fieldset>";
 
@@ -202,23 +185,23 @@ function show_config_form_collab() {
 
 	// moderated
 	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_2' value='moderated'";
-	if ($site_open_subscription == 'moderated') echo " checked='checked'";
+	if ($site_open_subscription == 'moderated') echo ' checked="checked"';
 	echo " /><label for='site_open_subscription_2'>" . _T('siteconf_input_selfreg_moderated') . "</label></input></li>\n";
 
 	// un-moderated (yes)
 	echo "<li style='list-style-type: none;'>";
 	echo "<input type='radio' name='site_open_subscription' id='site_open_subscription_1' value='yes'";
-	if ($site_open_subscription == 'yes') echo " checked='checked'";
+	if ($site_open_subscription == 'yes') echo ' checked="checked"';
 	echo " /><label for='site_open_subscription_1'>" . _T('siteconf_input_selfreg_yes') . "</label></input></li>\n";
 
 	// no
 	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_3' value='no'";
-	if ($site_open_subscription == 'no') echo " checked='checked'";
+	if ($site_open_subscription == 'no') echo ' checked="checked"';
 	echo "><label for='site_open_subscription_3'>" . _T('siteconf_input_selfreg_no') . "</label></input></li>\n";
 
 	echo "</ul>\n";
 	echo "</fieldset>";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate3' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 
 }
 
@@ -248,7 +231,7 @@ function show_config_form_regional() {
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_currency') . "</small></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_warning_currency') . "</small></p>\n";
 	echo "<p align='center'><input type='text' id='currency' name='currency' value='$currency' size='5' class='search_form_txt' /></p>\n";
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate4' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
@@ -256,7 +239,7 @@ function show_config_form_regional() {
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_available_languages') . "</small></p>\n";
 	// echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
 
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate5' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 }
 
@@ -315,7 +298,7 @@ function show_config_form_policy() {
 		. "</tr>\n";
 	echo "</table>\n";
 
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate6' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	// ** CASES
@@ -338,7 +321,7 @@ function show_config_form_policy() {
 		. "</td></tr>\n";
 	echo "</table>\n";
 
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate6' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 	// ** FOLLOW-UPS
@@ -355,7 +338,7 @@ function show_config_form_policy() {
 		. "</td></tr>\n";
 	echo "</table>\n";
 
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate7' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 
 }
