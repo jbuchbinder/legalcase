@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.30 2005/03/18 16:28:42 mlutfy Exp $
+	$Id: edit_author.php,v 1.31 2005/03/21 14:23:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -27,8 +27,13 @@ include_lcm('inc_contacts');
 
 global $author_session;
 $usr = array(); // form data
-$statuses = array('admin', 'normal', 'external', 'trash', 'waiting', 'suspended');
 $author = intval($_GET['author']);
+
+$statuses = array('admin', 'normal', 'external', 'trash'); // , 'suspended'
+
+$meta_subscription = read_meta('site_open_subscription');
+if ($meta_subscription == 'moderated' || $meta_subscription == 'yes')
+	array_push($statuses, 'waiting');
 
 // Set the returning page
 if (isset($ref)) $usr['ref_edit_author'] = $ref;
@@ -288,7 +293,7 @@ echo show_all_errors($_SESSION['errors']);
 			} /* is_newpass_allowed() */
 		?>
 
-		<tr><td align="right" valign="top"><?php echo "Status:"; /* TRAD */ ?></td>
+		<tr><td align="right" valign="top"><?php echo _Ti('authoredit_input_status'); ?></td>
 			<td align="left" valign="top">
 			
 <?php
@@ -299,7 +304,7 @@ echo show_all_errors($_SESSION['errors']);
 
 				foreach ($statuses as $s) {
 					echo "\t\t\t\t<option value=\"$s\""
-						. (($s == $usr['status']) ? ' selected="selected"' : '') . ">$s</option>\n";
+						. (($s == $usr['status']) ? ' selected="selected"' : '') . ">" . _T('authoredit_input_status_' . $s) . "</option>\n";
 				}
 
 				echo "</select>\n";
