@@ -5,32 +5,41 @@
 if (defined('_INC_META')) return;
 define('_INC_META', '1');
 
-// ********8
+// ********
 // [ML] WARNING: Don't include inc_meta unless you cannot
 // do without. Bad usage of inc_meta can cause strange bugs
 // in the installation and in inc_lang.php
-// ********8
+// ********
 
 
-// read metas
-function lire_metas() {
-	global $meta, $meta_maj;
+function read_metas() {
+	global $meta, $meta_upd;
 
 	$meta = '';
-	$meta_maj = '';
+	$meta_upd = '';
 	$query = 'SELECT name, value, upd FROM lcm_meta';
 	$result = lcm_query($query);
 	while ($row = spip_fetch_array($result)) {
 		$nom = $row['name'];
 		$meta[$nom] = $row['value'];
-		$meta_maj[$nom] = $row['upd'];
+		$meta_upd[$nom] = $row['upd'];
 	}
 }
 
-// write metas
+// old function for read_metas
+function lire_metas() {
+	return read_metas();
+}
+
+function write_meta($name, $value) {
+	$value = addslashes($value);
+	lcm_query("REPLACE lcm_meta (name, value) VALUES ('$name', '$value')");
+}
+
+// old function for write_meta
 function ecrire_meta($nom, $valeur) {
-	$valeur = addslashes($valeur);
-	lcm_query("REPLACE lcm_meta (name, value) VALUES ('$nom', '$valeur')");
+	lcm_log("use of deprecated function ecrire_meta");
+	return write_meta($nom, $valeur);
 }
 
 // delete metas
@@ -39,28 +48,37 @@ function effacer_meta($nom) {
 }
 
 //
-// Mettre a jour le fichier cache des metas
+// Update the cache file for the meta informations
+// Don't forget to call this function after write_meta() and erase_meta()!
 //
-// Ne pas oublier d'appeler cette fonction apres ecrire_meta() et effacer_meta() !
-//
-function ecrire_metas() {
-	global $meta, $meta_maj, $flag_ecrire;
+function write_metas() {
+	global $meta, $meta_upd;
 
-	lire_metas();
+	read_metas();
 
 	$s = '<'.'?php
 
 if (defined("_INC_META_CACHE")) return;
 define("_INC_META_CACHE", "1");
 
-function lire_meta($nom) {
+function read_meta($nom) {
 	global $meta;
-	return $meta[$nom];
+	return $meta[$name];
 }
 
-function lire_meta_maj($nom) {
-	global $meta_maj;
-	return $meta_maj[$nom];
+// old read_meta function (to remove eventually)
+function lire_meta($name) {
+	return read_meta($name);
+}
+
+function read_meta_upd($name) {
+	global $meta_upd;
+	return $meta_upd[$name];
+}
+
+// old read_meta_upd function (to remove eventually)
+function lire_meta_maj($name) {
+	return read_meta_upd($name);
 }
 
 ';
@@ -73,27 +91,27 @@ function lire_meta_maj($nom) {
 		}
 		$s .= "\n";
 	}
-	if ($meta_maj) {
-		reset($meta_maj);
-		while (list($key, $val) = each($meta_maj)) {
+	if ($meta_upd) {
+		reset($meta_upd);
+		while (list($key, $val) = each($meta_upd)) {
 			$key = addslashes($key);
-			$s .= "\$GLOBALS['meta_maj']['$key'] = '$val';\n";
+			$s .= "\$GLOBALS['meta_upd']['$key'] = '$val';\n";
 		}
 		$s .= "\n";
 	}
 	$s .= '?'.'>';
 
-	$fichier_meta_cache = 'inc/data/inc_meta_cache.php';
-	@unlink($fichier_meta_cache);
-	$fichier_meta_cache_w = $fichier_meta_cache.'-'.@getmypid();
-	$f = @fopen($fichier_meta_cache_w, "wb");
+	$file_meta_cache = 'inc/data/inc_meta_cache.php';
+	@unlink($file_meta_cache);
+	$file_meta_cache_w = $file_meta_cache.'-'.@getmypid();
+	$f = @fopen($file_meta_cache_w, "wb");
 	if ($f) {
 		$r = @fputs($f, $s);
 		@fclose($f);
 		if ($r == strlen($s))
-			@rename($fichier_meta_cache_w, $fichier_meta_cache);
+			@rename($file_meta_cache_w, $file_meta_cache);
 		else
-			@unlink($fichier_meta_cache_w);
+			@unlink($file_meta_cache_w);
 	} else {
 		global $connect_statut;
 		if ($connect_statut == 'admin')
@@ -101,7 +119,11 @@ function lire_meta_maj($nom) {
 	}
 }
 
+// old deprecated function, to remove soon
+function ecrire_metas() {
+	return write_metas();
+}
 
-lire_metas();
+read_metas();
 
 ?>
