@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.161 2005/03/16 08:11:23 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.162 2005/03/16 15:44:18 makaveev Exp $
 */
 
 //
@@ -991,7 +991,7 @@ function show_list_start($headers = array()) {
 	echo "<tr>\n";
 
 	foreach($headers as $h) {
-		echo "<th>";
+		echo "<th class=\"heading\">";
 
 		if ($h['order'] && $h['order'] != 'no_order') {
 			$ovar = $h['order'];
