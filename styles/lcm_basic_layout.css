@@ -14,7 +14,7 @@ body {
 /* ============================================================ */
 
 #header {
-	min-height: 83px;
+	height: 83px;
 	text-align: left;
 	clear: both;
 }
@@ -138,10 +138,12 @@ ul.tabs_list li a {
 /* ================================================== */
 
 a.balance_link {
-	float: left;
-	display: block;
+	position: absolute;
+	top: 5px;
+	left: 5px;
 	width: 85px;
-	height: 78px;
+	height: 80px;
+	display: block;
 	text-decoration: none;
 }
 
@@ -509,6 +511,16 @@ ul.err_list li {
 
 .page_numbers td {
 	
+}
+
+/* Info boxes(bubbles) */
+
+.small_help_box {
+	border: 1px solid #ccc;
+	background: #efefef url("../images/jimmac/stock_draw-callouts.png") no-repeat 2px 0px;
+	font-size: 11px;
+	padding: 5px 5px 5px 30px;
+	margin: 10px 5px 10px 5px;
 }
 
 /* For the Small/Normal/Large Font size list */
