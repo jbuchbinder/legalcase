@@ -74,7 +74,7 @@ class Auth_db {
 
 	function activer() {
 		lcm_log("use of deprecated function: activer, use activate instead");
-		return this->activate();
+		return $this->activate();
 	}
 }
 
