@@ -9,12 +9,9 @@ if (($org>0) && ($clients)) {
 			SET id_org=$org,id_client=$client";
 
 		// Do the query
-		if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
+		if (!($result = lcm_query($q))) die("$q<br>\n" . _T('title_error') . " " . lcm_errno() . ": " . lcm_error());
 	}
 }
-
-// Close connection
-// mysql_close($db);
 
 header("Location: $ref_sel_cli_org");
 
