@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.30 2005/03/13 16:44:29 mlutfy Exp $
+	$Id: client_det.php,v 1.31 2005/03/14 10:07:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -188,6 +188,7 @@ if ($client > 0) {
 				// Show recent cases
 				// [AG] Since this info is on separate tab, they could be more, i.e. $prefs['page_rows']
 				//
+
 				$q = "SELECT clo.id_case, c.title, c.date_creation, c.id_court_archive, c.status
 						FROM lcm_case_client_org as clo, lcm_case as c
 						WHERE id_client = " . $client . "
@@ -200,9 +201,21 @@ if ($client > 0) {
 						$case_order = $_REQUEST['case_order'];
 				
 				$q .= " ORDER BY c.date_creation " . $case_order;
-				$q .= " LIMIT " . $prefs['page_rows']; // [ML] should use list next/prev stuff
 		
 				$result = lcm_query($q);
+				$number_of_rows = lcm_num_rows($result);
+				$list_pos = 0;
+				
+				if (isset($_REQUEST['list_pos']))
+					$list_pos = $_REQUEST['list_pos'];
+				
+				if ($list_pos >= $number_of_rows)
+					$list_pos = 0;
+				
+				// Position to the page info start
+				if ($list_pos > 0)
+					if (!lcm_data_seek($result,$list_pos))
+						lcm_panic("Error seeking position $list_pos in the result");
 
 				if (lcm_num_rows($result)) {
 					echo '<fieldset class="info_box">' . "\n";
@@ -213,7 +226,7 @@ if ($client > 0) {
 						show_listcase_item($row1, $cpt);
 					}
 
-					show_listcase_end();
+					show_listcase_end($list_pos, $number_of_rows);
 					echo "</fieldset>\n";
 				}
 
