@@ -53,18 +53,17 @@ function reset_pass($my_p, $my_password) {
 	}
 
 	// Check whether there was a password provided and it is acceptable
-	$continue_pass = true;
+	$change_pass = true;
 
 	if (! $my_password)
-		$continue_pass = false;
-
-	if (strlen(utf8_decode($my_password)) <= 5) {
+		$change_pass = false;
+	else if (strlen(utf8_decode($my_password)) <= 5) {
 		install_html_start(_T('pass_title_new_pass'), 'login');
 		$error = "<p>" . _T('pass_warning_too_short') . "</p>\n";
-		$continue_pass = false;
+		$change_pass = false;
 	}
 
-	if ($continue_pass) {
+	if ($change_pass) {
 		$mdpass = md5($my_password);
 
 		lcm_query("UPDATE lcm_author
@@ -86,7 +85,8 @@ function reset_pass($my_p, $my_password) {
 		echo "<input type='password' class='fondo' name='password' id='password' size='30' value=''> ";
 		echo '<input type="submit" class="fondl" name="validate" value="' . _T('button_validate') . "\">\n";
 		echo "</fieldset>\n";
-		echo "</p></div></form>\n";
+		echo "</p></form>\n";
+
 		echo "<script type=\"text/javascript\"><!--
 				document.form_newpass.password.focus();
 				//--></script>\n";
@@ -178,7 +178,7 @@ function print_pass_forgotten_form() {
 			//--></script>\n";
 }
 
-function send_registration_by_email($email) {
+function send_registration_by_email($email, $username, $name_first, $name_last) {
 	install_html_start(_T('pass_title_register'), 'login');
 
 	if (!$email) {
@@ -198,8 +198,6 @@ function send_registration_by_email($email) {
 
 	$result = lcm_query($query);
 
-	echo "<div>\n";
-
 	// Test if the user already exists
 	if ($row = lcm_fetch_array($result)) {
 		$id_author = $row['id_of_person'];
@@ -207,11 +205,11 @@ function send_registration_by_email($email) {
 
 		unset ($continue);
 		if ($status == 'trash')
-			echo "<b>" . _T('pass_registration_denied') . "</b>\n";
+			echo "<div class='box_error'>" . _T('pass_registration_denied') . "</div>\n";
 		else if ($status == 'nouveau') {
 			lcm_query("DELETE FROM lcm_author WHERE id_author=$id_author");
 		} else {
-			echo "<b>" . _T('pass_already_registered') . "</b>";
+			echo "<div class='box_error'>" . _T('pass_warning_already_registered') . "</div>\n";
 			return;
 		}
 	}
@@ -259,7 +257,6 @@ function send_registration_by_email($email) {
 			.  _T('pass_warning_mail_failure', array('email_admin' => $email_admin))
 			. "</p></div>\n";
 	}
-	echo "</div>";
 }
 
 // Show form to enter mail
@@ -322,7 +319,11 @@ else if ($pass_forgotten == 'yes') {
 } 
 
 else if ($open_subscription == 'yes' || $open_subscription == 'moderated') {
-	print_registration_form($email);
+	if ($email) {
+		send_registration_by_email($email, $username, $name_first, $name_last);
+	} else {
+		print_registration_form($email);
+	}
 } else {
 	install_html_start(_T('title_error'), 'login');
 	echo "<div class='box_error'>\n";
