@@ -665,6 +665,66 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 	return $ret;
 }
 
+function get_time_interval_inputs($name = 'select', $time, $table = false) {
+	$days = (int) ($time / 86400);
+	$hours = (int) ($time / 3600);
+	$minutes = (int) ($time / 60);
+	
+	// If name is empty, disable fields
+	$dis = (($name) ? '' : 'disabled');
+
+	$ret = '';
+
+	if ($table)
+		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n";
+		
+	// Days
+	if ($table)
+		$ret .= "<tr>\n"
+			. "<td><!-- " . _T('select_time_days') . "<br/ -->\n";
+	$ret .= "<input $dis name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
+			
+	// Hour
+	if ($table)
+		$ret .= "<tr>\n"
+			. "<td><!-- " . _T('select_time_hour') . "<br/ -->\n";
+
+	$ret .= "<select $dis name=\"" . $name . "_hour\" id=\"" . $name . "_hour\" align=\"right\">\n";
+
+	for ($i = 0; $i < 24; $i++) {
+		$default = ($i == $default_hour ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">";
+		if ($hours24) {
+			$ret .= $i;
+		} else {
+			$ret .= gmdate('g a',($i * 3600));
+		}
+		$ret .= "</option>\n";
+	}
+
+	$ret .= "</select>";
+
+	if ($table)
+		$ret .= "</td>\n";
+
+	// Minutes
+	if ($table)
+		$ret .= "<td><!-- " . _T('select_time_minutes') . "<br/ -->\n";
+	$ret .= ":<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
+
+	for ($i = 0; $i < 60; $i += 5) {
+		$default = ($i == $default_minutes ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
+	}
+
+	$ret .= "</select>";
+
+	if ($table)
+		$ret .= "</td>\n"
+			. "</table>\n";
+
+}
+
 // Returns an array with valid CSS files for themes (lcm_ui_*.css)
 function get_theme_list() {
 	$list = array();
