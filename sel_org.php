@@ -30,7 +30,8 @@ if ($case>0) {
 	$result = lcm_query($q);
 ?>
 <form action="add_org.php" method="post">
-	<h3>List if organisations</h3>
+	<!-- [AG] Duplicate header -->
+	<!--h3>List if organisations</h3-->
 	<table border="0" class="tbl_usr_dtl">
 		<tr>
 			<th class="heading">&nbsp;</th>
