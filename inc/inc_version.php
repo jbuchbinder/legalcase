@@ -307,7 +307,7 @@ function include_lcm($file) {
 	if ($GLOBALS['included_files'][$lcmfile]) return;
 
 	if (! @file_exists($lcmfile)) {
-		lcm_log("CRITIAL: file for include_lcm does not exist: " . $lcmfile);
+		lcm_log("CRITICAL: file for include_lcm does not exist: " . $lcmfile);
 		if ($GLOBALS['debug']) echo lcm_getbacktrace();
 	}
 	
@@ -321,7 +321,7 @@ function include_config($file) {
 	if ($GLOBALS['included_files'][$lcmfile]) return;
 
 	if (! @file_exists($lcmfile)) {
-		lcm_log("CRITIAL: file for include_config does not exist: " . $lcmfile);
+		lcm_log("CRITICAL: file for include_config does not exist: " . $lcmfile);
 		if ($GLOBALS['debug']) echo lcm_getbacktrace();
 	}
 	
@@ -335,7 +335,7 @@ function include_data($file) {
 	if ($GLOBALS['included_files'][$lcmfile]) return;
 
 	if (! @file_exists($lcmfile)) {
-		lcm_log("CRITIAL: file for include_data does not exist: " . $lcmfile);
+		lcm_log("CRITICAL: file for include_data does not exist: " . $lcmfile);
 		if ($GLOBALS['debug']) echo lcm_getbacktrace();
 	}
 	
