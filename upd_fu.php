@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.29 2005/02/08 16:35:19 antzi Exp $
+	$Id: upd_fu.php,v 1.30 2005/02/09 12:29:16 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -91,22 +91,22 @@ if (count($_SESSION['errors'])) {
     header("Location: " . $GLOBALS['HTTP_REFERER']);
     exit;
 } else {
-	global $author_session;
+	// global $author_session;
 
-    $fl="	date_start   = '" . clean_input($_SESSION['fu_data']['date_start']) . "',
+	$fl="	date_start   = '" . clean_input($_SESSION['fu_data']['date_start']) . "',
 		date_end     = '" . clean_input($_SESSION['fu_data']['date_end']) . "',
 		type         = '" . clean_input($_SESSION['fu_data']['type']) . "',
 		description  = '" . clean_input($_SESSION['fu_data']['description']) . "',
 		sumbilled    = '" . clean_input($_SESSION['fu_data']['sumbilled']) . "'";
 
-    if ($id_followup>0) {
+	if ($id_followup>0) {
 		// Check access rights
 		if (!allowed($id_case,'e')) die("You don't have permission to modify this case's information!");
 
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
 		if (!($result = lcm_query($q)))
 			lcm_panic("$q <br />\nError ".lcm_errno().": ".lcm_error());
-    } else {
+	} else {
 		// Check access rights
 		if (!allowed($id_case,'w'))
 			die("You don't have permission to add information to this case!");
@@ -138,7 +138,7 @@ if (count($_SESSION['errors'])) {
 		}
 		
 		// Add the new follow-up
-		$q = "INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,id_author=" . $author_session['id_author'] . ",$fl";
+		$q = "INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,id_author=" . $GLOBALS['author_session']['id_author'] . ",$fl";
 
 		if (!($result = lcm_query($q))) 
 			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
