@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.88 2005/02/22 17:42:56 antzi Exp $
+	$Id: case_det.php,v 1.89 2005/02/24 10:48:08 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -253,18 +253,19 @@ if ($case > 0) {
 					<tr><th class='heading'>";
 				switch ($fu_order) {
 					case 'ASC':
-						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 						break;
 					case 'DESC':
-						echo "<a href='case_det.php?case=$case&amp;fu_order=ASC&amp;tab=2' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=ASC&amp;tab=2' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
 						break;
 					default:
-						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 				}
 			//	echo _T('date') .
 				echo "</th>";
+				echo "<th class='heading'>"
+					. _T( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>";
 				echo "<th class='heading'>" . _T('type') . "</th>";
-				echo "<th class='heading'>" . _T('time') . "</th>";
 				echo "<th class='heading'>" . _T('description') . "</th>";
 				echo "<th class='heading'>&nbsp;</th></tr>\n";
 			
@@ -286,22 +287,20 @@ if ($case > 0) {
 				while ($row = lcm_fetch_array($result)) {
 					// Show followup
 					echo '<tr><td>' . format_date($row['date_start'], 'short') . '</td>';
-					echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
 					
 					// Time
 					echo '<td>';
 					$fu_date_end = vider_date($row['date_end']);
-					$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
-					
-					$fu_days = (int) ($fu_time / 86400);
-					$fu_hours = (int) ( ($fu_time % 86400) / 3600);
-					$fu_minutes = (int) ( ($fu_time % 3600) / 60);
-			
-					echo ($fu_days ? $fu_days . 'd ' : '');
-					echo ($fu_hours ? $fu_hours . 'h ' : '');
-					echo ($fu_minutes ? $fu_minutes . 'm' : '');
-			
+					if ($prefs['time_intervals'] == 'absolute') {
+						if ($fu_date_end) echo format_date($row['date_end'],'short');
+					} else {
+						$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
+						echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
+					}
 					echo '</td>';
+
+					// Type
+					echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
 			
 					// Description
 					if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
