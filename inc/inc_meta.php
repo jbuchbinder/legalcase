@@ -2,8 +2,8 @@
 
 //
 // Ce fichier ne sera execute qu'une fois
-if (defined("_ECRIRE_INC_META")) return;
-define("_ECRIRE_INC_META", "1");
+if (defined("_INC_META")) return;
+define("_INC_META", "1");
 
 function lire_metas() {
 	global $meta, $meta_maj;
@@ -40,8 +40,8 @@ function ecrire_metas() {
 
 	$s = '<'.'?php
 
-if (defined("_ECRIRE_INC_META_CACHE")) return;
-define("_ECRIRE_INC_META_CACHE", "1");
+if (defined("_INC_META_CACHE")) return;
+define("_INC_META_CACHE", "1");
 
 function lire_meta($nom) {
 	global $meta;
@@ -72,7 +72,7 @@ function lire_meta_maj($nom) {
 	}
 	$s .= '?'.'>';
 
-	$fichier_meta_cache = ($flag_ecrire ? '' : 'ecrire/') . 'data/inc_meta_cache.php3';
+	$fichier_meta_cache = 'data/inc_meta_cache.php';
 	@unlink($fichier_meta_cache);
 	$fichier_meta_cache_w = $fichier_meta_cache.'-'.@getmypid();
 	$f = @fopen($fichier_meta_cache_w, "wb");
@@ -86,7 +86,7 @@ function lire_meta_maj($nom) {
 	} else {
 		global $connect_statut;
 		if ($connect_statut == '0minirezo')
-			echo "<h4 font color=red>"._T('texte_inc_meta_1')." <a href='../spip_test_dirs.php3'>"._T('texte_inc_meta_2')."</a> "._T('texte_inc_meta_3')."&nbsp;</h4>\n";
+			echo "<h4 font color=red>"._T('texte_inc_meta_1')." <a href='lcm_test_dirs.php'>"._T('texte_inc_meta_2')."</a> "._T('texte_inc_meta_3')."&nbsp;</h4>\n";
 	}
 }
 
