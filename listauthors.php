@@ -60,7 +60,7 @@ if ($list_pos>0)
 
 // Search form
 ?>
-<form name="frm_find_author" class="search_form" action="listauthor.php" method="post">
+<form name="frm_find_author" class="search_form" action="listauthors.php" method="post">
 	Find author:&nbsp;<input type="text" name="find_author_string" size="10" class="search_form_txt"<?php
 
 //	if (isset($find_author_string)) echo " value='$find_author_string'";
