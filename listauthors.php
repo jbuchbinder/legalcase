@@ -77,8 +77,8 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 	// Show author name
 	echo "<tr><td class='tbl_data'>";
 //	if ( ) echo '<a href=".php?author=' . $row['id_author'] . '">';
-	echo clean_output(highlight_matches($row['name_first'] . ' ' . $row['name_middle'] . ' '
-		. $row['name_last'],$find_author_string));
+	echo highlight_matches(clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' '
+		. $row['name_last']),$find_author_string);
 //	if ( ) echo '</a>';
 	echo "</td>\n<td class='tbl_data'>";
 	echo clean_output($row['status']);
