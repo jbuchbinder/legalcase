@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.21 2005/02/18 12:32:08 makaveev Exp $
+	$Id: client_det.php,v 1.22 2005/02/22 18:01:58 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -59,8 +59,7 @@ if ($client > 0) {
 		// Show tabs
 		$groups = array('general','contacts','organisations','cases');
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 0 );
-		//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
-		show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
+		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
 		if (isset($_SESSION['client']['attach_case'])) {
 			$q = "SELECT title
