@@ -62,7 +62,7 @@ if ($cookie_test_failed == 'yes') {
 	lcm_setcookie('lcm_session', 'cookie_test_failed');
 	$link = new Link("lcm_login.php?var_cookie_failed=yes");
 	$link->addVar("var_url", $cible->getUrl());
-	@header("Location: ".$link->getUrl());
+	@header("Location: ".$link->getUrlForHeader());
 	exit;
 }
 
@@ -192,7 +192,7 @@ if ($var_lang_lcm) {
 // Under Apache, cookies with a redirection work
 // Else, we do a HTTP refresh
 if (ereg("^Apache", $SERVER_SOFTWARE)) {
-	@header("Location: " . $cible->getUrl());
+	@header("Location: " . $cible->getUrlForHeader());
 } else {
 	@header("Refresh: 0; url=" . $cible->getUrl());
 	echo "<html><head>";
