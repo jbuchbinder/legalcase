@@ -129,7 +129,7 @@ if ($case > 0) {
 	// Process the output of the query
 	while ($row = lcm_fetch_array($result)) {
 		// Show followup
-		echo '<tr><td>' . clean_output($row['date_start']) . '</td>';
+		echo '<tr><td>' . clean_output(date(_T('date_format_short'),strtotime($row['date_start']))) . '</td>';
 		echo '<td>' . clean_output($row['type']) . '</td>';
 		echo '<td>' . clean_output($row['description']) . '</td>';
 		if ($edit)
