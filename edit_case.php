@@ -56,9 +56,16 @@ if ($existing) {
 			<td><input name="alledged_crime" value="<?php echo htmlspecialchars($case_data['alledged_crime']); ?>"></td></tr>
 		<tr><td>Case status:</td>
 			<td><input name="status" value="<?php echo $case_data['status']; ?>"></td></tr>
+	</table>
+	<table>
+		<tr><td></td>
+			<td>Read</td>
+			<td>Write</td></tr>
 		<tr><td>Public:</td>
 			<td><input type="checkbox" name="public" value="yes"<?php
 			if ($case_data['public']) echo ' checked'; ?>></td></tr>
+			<td><input type="checkbox" name="pub_write" value="yes"<?php
+			if ($case_data['pub_write']) echo ' checked'; ?>></td></tr>
 	</table>
 <?php
 

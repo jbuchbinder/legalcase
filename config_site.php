@@ -56,12 +56,12 @@ function show_config_form() {
 <small>(Cases usually have one or many authors specifically assigned to them. It is assumed that assigned authors can consult the case and it's follow-ups, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_1' value=true";
-	if ($case_default_read=='true') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_1' value='1'";
+	if ($case_default_read) echo " checked";
 	echo "><label for='case_default_read_1'>Any author can view the case information of other authors, even if they are not on the case (better cooperation).</label></input></li>\n";
 
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_2' value=false";
-	if ($case_default_read=='false') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_2' value=''";
+	if (!$case_default_read) echo " checked";
 	echo "><label for='case_default_read_2'>Only authors assigned to a case can view its information and follow-ups (better privacy).</label></input></li>\n";
 	echo "</ul>\n";
 
@@ -71,11 +71,11 @@ function show_config_form() {
 <small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_1' value=false";
-	if ($case_read_always=='false') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_1' value=''";
+	if (!$case_read_always) echo " checked";
 	echo "><label for='case_read_always_1'>Yes</label></input></li>\n";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_2' value=true";
-	if ($case_read_always=='true') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_2' value='1'";
+	if ($case_read_always) echo " checked";
 	echo "><label for='case_read_always_2'>No, except if they have administrative rights.</label></input></li>\n";
 	echo "</ul>\n";
 
@@ -88,12 +88,12 @@ function show_config_form() {
 <small>(Cases usually have one or many authors specifically assigned to them. It is assumed that only assigned authors can add follow-up information to the case, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_1' value=true";
-	if ($case_default_write=='true') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_1' value='1'";
+	if ($case_default_write) echo " checked";
 	echo "><label for='case_default_write_1'>Any author can write the case information of other authors, even if they are not on the case (better cooperation).</label></input></li>\n";
 
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_2' value=false";
-	if ($case_default_write=='false') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_2' value=''";
+	if (!$case_default_write) echo " checked";
 	echo "><label for='case_default_write_2'>Only authors assigned to a case can write its information and follow-ups (better privacy).</label></input></li>\n";
 	echo "</ul>\n";
 
@@ -103,11 +103,11 @@ function show_config_form() {
 <small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value=false";
-	if ($case_write_always=='false') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value=''";
+	if (!$case_write_always) echo " checked";
 	echo "><label for='case_write_always_1'>Yes</label></input></li>\n";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_2' value=true";
-	if ($case_write_always=='true') echo " checked";
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_2' value='1'";
+	if ($case_write_always) echo " checked";
 	echo "><label for='case_write_always_2'>No, except if they have administrative rights.</label></input></li>\n";
 	echo "</ul>\n";
 
@@ -161,7 +161,7 @@ function apply_conf_changes() {
 	if ($case_default_read != read_meta('case_default_read')) {
 		write_meta('case_default_read',$case_default_read);
 		$entry = "Read access to cases set to '<tt>";
-		if ($case_default_read=='true') $entry .= "public";
+		if ($case_default_read) $entry .= "public";
 		else $entry .= "restricted";
 		$entry .= "</tt>'";
 		array_push($log, $entry);
@@ -171,7 +171,7 @@ function apply_conf_changes() {
 	if ($case_default_write != read_meta('case_default_write')) {
 		write_meta('case_default_write',$case_default_write);
 		$entry = "Write access to cases set to '<tt>";
-		if ($case_default_write=='true') $entry .= "public";
+		if ($case_default_write) $entry .= "public";
 		else $entry .= "restricted";
 		$entry .= "</tt>'";
 		array_push($log, $entry);
@@ -181,7 +181,7 @@ function apply_conf_changes() {
 	if ($case_read_always != read_meta('case_read_always')) {
 		write_meta('case_read_always',$case_read_always);
 		$entry = "Read access policy can by changed by <tt>";
-		if ($case_read_always=='true') $entry .= "admin only";
+		if ($case_read_always) $entry .= "admin only";
 		else $entry .= "everybody";
 		$entry .= "</tt>";
 		array_push($log, $entry);
@@ -191,7 +191,7 @@ function apply_conf_changes() {
 	if ($case_write_always != read_meta('case_write_always')) {
 		write_meta('case_write_always',$case_write_always);
 		$entry = "Write access policy can be changed by <tt>";
-		if ($case_write_always=='true') $entry .= "admin only";
+		if ($case_write_always) $entry .= "admin only";
 		else $entry .= "everybody";
 		$entry .= "</tt>";
 		array_push($log, $entry);
