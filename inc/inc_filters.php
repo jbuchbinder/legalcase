@@ -712,7 +712,7 @@ function ajoute_popup_multi($langue_demandee, $trads, $texte) {
 	while (list($lang,$bloc) = each($trads)) {
 		if ($lang != $langue_demandee)
 			$survol .= "[$lang] ".supprimer_tags(couper($bloc,20))."\n";
-		$texte_popup .= "<br /><b>".traduire_nom_langue($lang)."</b> ".ereg_replace("\n+","<br />", supprimer_tags(couper(propre($bloc),200)));
+		$texte_popup .= "<br /><b>".translate_language_name($lang)."</b> ".ereg_replace("\n+","<br />", supprimer_tags(couper(propre($bloc),200)));
 	}
 
 	if ($survol) {
