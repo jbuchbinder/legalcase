@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.27 2005/01/21 00:51:07 antzi Exp $
+	$Id: inc_filters.php,v 1.28 2005/01/21 09:48:53 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -70,9 +70,11 @@ function format_date($timestamp = '', $format = 'full') {
 		return '';
 
 	$dd = recup_date($timestamp);
-//	$day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
-// [AG] The above always returns 0 for me (Windows 2K server?).
-// The following works, but Sunday is day 0 instead of 7
+	$tt = recup_time($timestamp);
+
+	// [AG] strftime() always returns 0 for me (Windows 2K server?).
+	// The following works, but Sunday is day 0 instead of 7
+	// $day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
 	$day_of_w = date("w", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
 
 	$my_date = _T('date_format_' . $format, array(
@@ -80,7 +82,9 @@ function format_date($timestamp = '', $format = 'full') {
 				'month_name' => _T('date_month_' . ($dd[1] + 0)),
 				'day_order' => _T('date_day_' . $dd[2]),
 				'day' => ($dd[2] + 0),
-				'year' => $dd[0]));
+				'year' => $dd[0],
+				'hours' => $tt[0],
+				'mins' => $tt[1]));
 
 	return $my_date;
 }
@@ -136,7 +140,7 @@ function lcm_utf8_decode($string) {
 		return $string;
 }
 
-function recup_date($numdate){
+function recup_date($numdate) {
 	if (! $numdate) return '';
 
 	if (ereg('([0-9]{1,2})/([0-9]{1,2})/([0-9]{1,2})', $numdate, $regs)) {
@@ -163,6 +167,18 @@ function recup_date($numdate){
 
 	return array($year, $month, $day);
 }
+
+function recup_time($numdate) {
+	if (!$numdate) return '';
+
+	if (ereg('([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})', $numdate, $regs)) {
+		$hours = $regs[1];
+		$minutes = $regs[2];
+		$seconds = $regs[3];
+	}
+	return array($hours, $minutes, $seconds);
+}
+
 
 
 /* ********************************************************
@@ -353,17 +369,6 @@ function vider_date($letexte) {
 	if (ereg("^0000-00-00", $letexte)) return;
 	if (ereg("^1970-01-01", $letexte)) return;	// eviter le bug GMT-1
 	return $letexte;
-}
-
-function recup_heure($numdate){
-	if (!$numdate) return '';
-
-	if (ereg('([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})', $numdate, $regs)) {
-		$heures = $regs[1];
-		$minutes = $regs[2];
-		$secondes = $regs[3];
-	}
-	return array($heures, $minutes, $secondes);
 }
 
 function heures($numdate) {
