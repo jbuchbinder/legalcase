@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.46 2005/02/24 15:10:21 mlutfy Exp $
+	$Id: inc.php,v 1.47 2005/03/28 12:30:10 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -144,15 +144,15 @@ if (isset($lang) AND $lang <> $lcm_lang) {
 $installed_db_version = read_meta('lcm_db_version');
 
 if ($installed_db_version <> $lcm_db_version) {
-	lcm_page_start("Database upgrade", "install");
+	lcm_page_start("Database upgrade"); // TRAD
 	if (! isset($installed_version))
 		$installed_version = "old version";
 
 	echo "<div class='box_warning'>\n";
 	echo "<p><b>" . _T('title_technical_message') . _T('typo_column') . "</b> The
-		format of the database has changed. <a href='lcm_upgrade.php'>To
+		format of the database has changed. <a class='content_link' href='lcm_upgrade.php'>To
 		proceed with the automatic upgrade, click here</a>. You are also
-		encouraged to make a backup before proceeding.</p>\n";
+		encouraged to make a backup before proceeding.</p>\n"; // TRAD
 	echo "</div>\n";
 
 	lcm_page_end();
