@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.32 2005/03/21 16:23:59 mlutfy Exp $
+	$Id: client_det.php,v 1.33 2005/03/24 14:20:24 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -54,11 +54,10 @@ if ($client > 0) {
 
 		// Show tabs
 		$groups = array(
-					'general' => _T('client_tab_general'),
-					'contacts' => _T('client_tab_contacts'),
-					'organisations' => _T('client_tab_organisations'),
-					'cases' => _T('client_tab_cases'),
-					'attachments' => _T('client_tab_attachments'));
+					'general' => _T('generic_tab_general'),
+					'organisations' => _T('generic_tab_org'),
+					'cases' => _T('generic_tab_cases'),
+					'attachments' => _T('generic_tab_documents'));
 
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
@@ -83,7 +82,7 @@ if ($client > 0) {
 				// Show client general information
 				//
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_view_general') . "</div>\n";
+				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_general') . "</div>\n";
 		
 				echo '<p class="normal_text">';
 				echo _T('client_input_id') . ' ' . $row['id_client'] . "<br/>\n";
@@ -99,23 +98,14 @@ if ($client > 0) {
 				// [ML] echo 'Last update date: ' . $row['date_update'] . "<br/>\n";
 				echo "</p>\n";
 		
-				if ($edit)
-					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "<br /><br /></p>\n";
-		
-				echo "</fieldset>\n";
-				break;
-			case 'contacts':
 				//
 				// Show client contacts (if any)
 				//
 				$hide_emails = read_meta('hide_emails');
 				$contacts = get_contacts('client', $row['id_client']);
 		
-				$html = '<fieldset class="info_box">';
-				$html .= '<div class="prefs_column_menu_head">' . _T('client_subtitle_contacts') . "</div>\n";
-		
-				$html .= '<table border="0" class="tbl_usr_dtl">' . "\n";
-				//$html .= '<tr><th class="heading" colspan="2">' . "Contacts:" . '</th></tr>' . "\n";
+				$html = '<div class="prefs_column_menu_head">' . _T('generic_subtitle_contacts') . "</div>\n";
+				$html .= '<table border="0" class="tbl_usr_dtl" width="100%">' . "\n";
 		
 				$i = 0;
 				foreach($contacts as $c) {
@@ -138,10 +128,15 @@ if ($client > 0) {
 					}
 				}
 		
-				$html .= "</table><br /></fieldset>\n";
+				$html .= "</table><br />\n";
 		
 				if ($i > 0)
 					echo $html;
+
+				if ($edit)
+					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "<br /><br /></p>\n";
+
+				echo "</fieldset>\n";
 				break;
 			case 'organisations':
 				//
