@@ -16,7 +16,7 @@ function allowed($case,$access) {
 		$q = "SELECT *
 				FROM lcm_case_author
 				WHERE (id_case=$case
-					AND id_author=" . $GLOBALS['connect_id_auteur'] . ")";
+					AND id_author=" . $GLOBALS['author_session']['id_author'] . ")";
 
 		// Do the query
 		$result = lcm_query($q);
