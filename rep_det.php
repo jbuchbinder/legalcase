@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.17 2005/02/07 16:06:44 mlutfy Exp $
+	$Id: rep_det.php,v 1.18 2005/02/09 16:03:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -51,6 +51,19 @@ if (! $rep_info) {
 	exit;
 }
 
+//
+// TEMPORARY patch
+// Since col_src_name/type are not currently stored, calculate them
+//
+
+$q = "SELECT f.table_name
+		FROM lcm_fields as f, lcm_rep_col as c
+		WHERE f.id_field = c.id_field";
+
+$result = lcm_query($q);
+$tmp_info = lcm_fetch_array($result);
+
+$rep_info['col_src_name'] = $tmp_info['table_name'];
 
 //
 // Show info on the report
@@ -177,6 +190,7 @@ echo "</fieldset>\n";
 		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
 		echo "<tr><th class='heading'>#</th>
 	<th class='heading'>Header</th>
+	<th class='heading'>Table</th>
 	<th class='heading'>Contents</th>
 	<th class='heading'>Group</th>
 	<th class='heading'>Sort</th>
@@ -185,7 +199,7 @@ echo "</fieldset>\n";
 </tr>";
 
 		// Show fields included in this report
-		$q = "SELECT lcm_rep_col.*,lcm_fields.description
+		$q = "SELECT lcm_rep_col.*,lcm_fields.description, lcm_fields.table_name
 			FROM lcm_rep_col,lcm_fields
 			WHERE (id_report=$rep
 				AND lcm_rep_col.id_field=lcm_fields.id_field)
@@ -203,6 +217,11 @@ echo "</fieldset>\n";
 			if ($edit) echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
 			echo clean_output($column['header']);
 			if ($edit) echo '</a>';
+			echo "</td>\n";
+
+			// Display column table (temporary, [ML])
+			echo '<td>';
+			echo $column['table_name'];
 			echo "</td>\n";
 
 			// Display column description
@@ -384,6 +403,103 @@ echo "</fieldset>\n";
 		echo "<br />\n";
 		
 		echo "</p></fieldset>";
+
+
+//
+// [ML] Experimental filters
+//
+
+echo '<a name="filter"></a>' . "\n";
+echo "<fieldset class='info_box'>";
+echo "<div class='prefs_column_menu_head'>" . "Report experimental filters" . "</div>\n";
+
+// List filters attached to this report
+$query = "SELECT *
+			FROM lcm_rep_filter as v, lcm_fields as f
+			WHERE id_report = " . $rep . "
+			AND f.id_field = v.id_field";
+
+$result = lcm_query($query);
+
+if (lcm_num_rows($result)) {
+	echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+
+	while ($filter = lcm_fetch_array($result)) {
+		echo "<tr>\n";
+		echo "<td>" . $filter['field_name'] . "</td>\n";
+
+		// Type of filter
+		echo "<td>";
+		// if (! $filter['type']) {
+
+		switch ($filter['filter']) {
+			case 'number':
+				echo "<select name='filter_type'>\n";
+				echo "<option value='num_eq'>" . "Equals" . "</option>\n";
+				echo "<option value='num_lt'>" . "Less than" . "</option>\n";
+				echo "<option value='num_gt'>" . "Greater than" . "</option>\n";
+				echo "</select>\n";
+				break;
+			case 'date':
+				echo "<select name='filter_type'>\n";
+				echo "<option value='date_in'>" . "In interval" . "</option>\n";
+				echo "<option value='date_lt'>" . "Before" . "</option>\n";
+				echo "<option value='date_gt'>" . "After" . "</option>\n";
+				echo "<option value='date_year'>" . "In year" . "</option>\n";
+				echo "<option value='date_month'>" . "In month" . "</option>\n";
+				echo "<option value='date_week'>" . "In week" . "</option>\n";
+				echo "<option value='date_day'>" . "In day" . "</option>\n";
+				echo "</select>\n";
+				break;
+			default:
+				lcm_panic("Internal error: wrong filter type");
+		}
+
+
+		// }
+		
+		echo "</td>\n";
+
+		// Link for "Remove"
+		echo "<td><a href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
+			. "remove=filter" . "&amp;" . "id_filter=" . $filter['id_filter'] . "'>" . "Remove" . "</a></td>\n";
+		echo "</tr>\n";
+	}
+
+	echo "</table>\n";
+}
+
+
+// List all available fields in selected tables for report
+$query = "SELECT *
+			FROM lcm_fields
+			WHERE (table_name = 'lcm_" . $rep_info['line_src_name'] . "'
+			 OR table_name = '" /* lcm_" . */ . $rep_info['col_src_name'] . "')
+			AND filter != 'none'";
+
+echo "<!-- QUERY: $query -->\n";
+
+$result = lcm_query($query);
+
+if (lcm_num_rows($result)) {
+	echo "<form action='upd_rep_field.php' name='frm_line_additem' method='get'>\n";
+	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+	echo "<input name='add' value='filter' type='hidden' />\n";
+
+	echo "<p class='normal_text'>Filter based on this field: ";
+	echo "<select name='id_field'>\n";
+
+	while ($row = lcm_fetch_array($result)) {
+		echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
+	}
+		
+	echo "</select>\n";
+	echo "<button class='simple_form_btn' name='validate_filter_addfield'>" . _T('button_validate') . "</button>\n";
+	echo "</p>\n";
+	echo "</form>\n";
+}
+
+echo "</fieldset>\n";
 
 	lcm_page_end();
 
