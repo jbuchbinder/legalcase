@@ -15,7 +15,7 @@ include_lcm('inc_text');
 // gerer l'auth http
 function auth_http($cible, $essai_auth_http) {
 	if ($essai_auth_http == 'oui') {
-		include_ecrire('inc_session.php3');
+		include_lcm('inc_session');
 		if (!verifier_php_auth()) {
 			$url = quote_amp(urlencode($cible->getUrl()));
 			$page_erreur = "<b>"._T('login_connexion_refusee')."</b><p />"._T('login_login_pass_incorrect')."<p />[<a href='./'>"._T('login_retour_site')."</a>] [<a href='./lcm_cookie.php?essai_auth_http=oui&amp;url=$url'>"._T('login_nouvelle_tentative')."</a>]";
@@ -29,8 +29,8 @@ function auth_http($cible, $essai_auth_http) {
 	}
 	// si demande logout auth_http
 	else if ($essai_auth_http == 'logout') {
-		include_ecrire('inc_session.php3');
-		ask_php_auth("<b>"._T('login_deconnexion_ok')."</b><p />"._T('login_verifiez_navigateur')."<p />[<a href='./'>"._T('login_retour_public')."</a>] [<a href='./spip_cookie.php3?essai_auth_http=oui&amp;redirect=ecrire'>"._T('login_test_navigateur')."</a>] [<a href='ecrire/'>"._T('login_espace_prive')."</a>]");
+		include_lcm('inc_session');
+		ask_php_auth("<b>"._T('login_deconnexion_ok')."</b><p />"._T('login_verifiez_navigateur')."<p />[<a href='./'>"._T('login_retour_public')."</a>] [<a href='./lcm_cookie.php?essai_auth_http=oui&amp;redirect=ecrire'>"._T('login_test_navigateur')."</a>] [<a href='ecrire/'>"._T('login_espace_prive')."</a>]");
 		exit;
 	}
 }
@@ -68,7 +68,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 
 	global $auteur_session;
 	global $lcm_session, $PHP_AUTH_USER, $ignore_auth_http;
-	global $spip_admin;
+	global $lcm_admin;
 	global $php_module;
 	global $clean_link;
 
@@ -104,7 +104,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 
 	// Le login est memorise dans le cookie d'admin eventuel
 	if (!$login) {
-		if (ereg("^@(.*)$", $spip_admin, $regs))
+		if (ereg("^@(.*)$", $lcm_admin, $regs))
 			$login = $regs[1];
 	} else if ($login == '-1')
 		$login = '';
@@ -198,7 +198,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		if ($flag_challenge_md5) {
 			// If javascript is active, we pass the login in the hidden field
 			echo "<script type=\"text/javascript\"><!--\n" . 
-				"document.write('".addslashes(_T('login_login'))." <b>$login</b> <br .><font size=\\'2\\'>[<a href=\\'lcm_cookie.php3?cookie_admin=non&amp;url=".rawurlencode($action)."\\'>"._T('login_autre_identifiant')."</a>]</font>');\n" .
+				"document.write('".addslashes(_T('login_login'))." <b>$login</b> <br .><font size=\\'2\\'>[<a href=\\'lcm_cookie.php?cookie_admin=non&amp;url=".rawurlencode($action)."\\'>"._T('login_autre_identifiant')."</a>]</font>');\n" .
 				"//--></script>\n";
 			echo "<input type='hidden' name='session_login_hidden' value='$login' />";
 
@@ -243,7 +243,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	echo "<script type=\"text/javascript\"><!--\n" . $js_focus . "\n//--></script>\n";
 
 	if ($echec_cookie == "oui" AND $php_module AND !$ignore_auth_http) {
-		echo "<form action='spip_cookie.php3' method='get'>";
+		echo "<form action='lcm_cookie.php' method='get'>";
 		echo "<fieldset>\n<p>";
 		echo _T('login_preferez_refuser')." \n";
 		echo "<input type='hidden' name='essai_auth_http' value='oui'/> ";
@@ -252,7 +252,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "</fieldset></form>\n";
 	}
 
-	echo "\n<div align='center' style='font-size: 12px;' >"; // debut du pied de login
+	echo "\n<div align='center' style='font-size: 12px;' >"; // start of the login footer
 
 	$inscriptions_ecrire = (lire_meta("accepter_inscriptions") == "oui");
 	if ((!$prive AND (lire_meta('accepter_visiteurs') == 'oui') OR (lire_meta('forums_publics') == 'abo')) OR ($prive AND $inscriptions_ecrire)) 
