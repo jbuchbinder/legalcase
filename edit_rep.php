@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.4 2005/01/19 09:14:40 mlutfy Exp $
+	$Id: edit_rep.php,v 1.5 2005/01/21 15:51:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -69,7 +69,10 @@ if (empty($errors)) {
 	} else {
 		// Set default values for the new report
 		$rep_data['id_author'] = $GLOBALS['author_session']['id_author'];
-		$rep_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
+
+		// [ML] Not used, and should be format_date($date, 'short')
+		// $rep_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
+
 		//$rep_data['public'] = read_meta('case_default_read');
 		//$rep_data['pub_write'] = read_meta('case_default_write');
 
