@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.17 2005/03/24 14:45:53 mlutfy Exp $
+	$Id: org_det.php,v 1.18 2005/03/24 14:50:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -64,7 +64,7 @@ if ($row = lcm_fetch_array($result)) {
 		//
 		case 'general':
 			echo '<fieldset class="info_box">';
-			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_view_general') . "</div>\n";
+			echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_general') . "</div>\n";
 			echo '<p class="normal_text">';
 		
 			//		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
@@ -91,7 +91,7 @@ if ($row = lcm_fetch_array($result)) {
 		//
 		case 'representatives' :
 			echo '<fieldset class="info_box">';
-			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_representatives') . "</div><br />\n";
+			echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_representatives') . "</div><br />\n";
 
 			// Show organisation representative(s)
 			$q = "SELECT cl.id_client, name_first, name_middle, name_last
@@ -162,7 +162,7 @@ if ($row = lcm_fetch_array($result)) {
 
 			if (lcm_num_rows($result)) {
 				echo '<fieldset class="info_box">' . "\n";
-				echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_cases') . "</div>\n";
+				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_cases') . "</div>\n";
 				show_listcase_start();
 
 				for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
@@ -179,7 +179,7 @@ if ($row = lcm_fetch_array($result)) {
 		//
 		case 'attachments' :
 			echo '<fieldset class="info_box">';
-			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_attachments') . '</div>';
+			echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_documents') . '</div>';
 			echo "<p class=\"normal_text\">\n";
 
 			// List of attached files
