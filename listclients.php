@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.28 2005/03/21 16:37:07 mlutfy Exp $
+	$Id: listclients.php,v 1.29 2005/03/24 13:56:47 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -78,6 +78,7 @@ for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) 
 	echo '<a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
 	echo highlight_matches($fullname, $find_client_string);
+	echo "</a>\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 }
