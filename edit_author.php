@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.18 2005/01/11 13:11:47 mlutfy Exp $
+	$Id: edit_author.php,v 1.19 2005/01/11 16:13:04 mlutfy Exp $
 */
 
 session_start();
@@ -203,7 +203,7 @@ echo show_all_errors($_SESSION['errors']);
 		<tr>
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_connectionidentifiers'); ?></h4></td>
 		</tr>
-		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_login'); ?></td>
+		<tr><td align="right" valign="top"><?php echo f_err_star('username', $_SESSION['errors']) . _T('authoredit_input_login'); ?></td>
 			<td align="left" valign="top">
 
 		<?php
@@ -219,7 +219,12 @@ echo show_all_errors($_SESSION['errors']);
 				lcm_log("ERROR: failed to initialize auth method");
 			}
 
-			if ($auth->is_newusername_allowed($usr['username'], $author_session)) {
+			// Some authentication methods might not allow the username to be 
+			// changed. Also, it is generally better not to allow users to
+			// change their username. Show the fields only if it is possible.
+			echo '<input name="username_old" type="hidden" id="username_old" value="' . clean_output($usr['username']) .'"/>';
+
+			if ($auth->is_newusername_allowed($usr['id_author'], $usr['username'], $author_session)) {
 				echo '<input name="username" type="text" class="search_form_txt" id="username" size="35" value="' . clean_output($usr['username']) .'"/>';
 			} else {
 				echo '<input type="hidden" name="username" value="' . clean_output($usr['username']) . '"/>';
@@ -233,7 +238,7 @@ echo show_all_errors($_SESSION['errors']);
 		<?php
 			// Some authentication methods might not allow the password
 			// to be changed. Show the fields only if it is possible.
-			if ($auth->is_newpass_allowed($usr['username'], $author_session)) {
+			if ($auth->is_newpass_allowed($usr['id_author'], $usr['username'], $author_session)) {
 				// Do not request 'current password' if new author or admin
 				if ($usr['id_author'] && $author_session['status'] != 'admin') {
 					echo '
@@ -261,7 +266,9 @@ echo show_all_errors($_SESSION['errors']);
 			<td align="left" valign="top">
 			
 <?php
-			if ($author_session['status'] == 'admin') {
+			echo '<input type="hidden" name="status_old" value="' . $usr['status'] . '"/>' . "\n";
+
+			if ($author_session['status'] == 'admin' && $usr['id_author'] != $author_session['id_author']) {
 				echo '<select name="status" class="sel_frm" id="status">' . "\n";
 
 				foreach ($statuses as $s) {
@@ -271,6 +278,7 @@ echo show_all_errors($_SESSION['errors']);
 
 				echo "</select>\n";
 			} else {
+				echo '<input type="hidden" name="status" value="' . $usr['status'] . '"/>' . "\n";
 				echo $usr['status'];
 			}
 ?>
@@ -281,6 +289,7 @@ echo show_all_errors($_SESSION['errors']);
 		</tr>
 	</table>
 </form>
+
 <?php
 
 lcm_page_end();
