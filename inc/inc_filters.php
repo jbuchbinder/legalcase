@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.46 2005/03/17 13:51:30 mlutfy Exp $
+	$Id: inc_filters.php,v 1.47 2005/03/18 04:57:15 antzi Exp $
 */
 
 // Execute this file only once
@@ -352,6 +352,37 @@ function textebrut($texte) {
 	return $texte;
 }
 
+// Fabrique une balise A, avec un href conforme au validateur W3C
+// attention au cas ou la href est du Javascript avec des "'"
+
+function http_href($href, $clic, $title='', $style='', $class='', $evt='') {
+	return '<a href="' .
+		str_replace('&', '&amp;', $href) .
+		'"' .
+		(!$title ? '' : ("\ntitle=\"" . supprimer_tags($title)."\"")) .
+		(!$style ? '' : ("\nstyle=\"" . $style . "\"")) .
+		(!$class ? '' : ("\nclass=\"" . $class . "\"")) .
+		($evt ? "\n$evt" : '') .
+		'>' .
+		$clic .
+		'</a>';
+}
+
+// produit une balise img avec un champ alt d'office (et different) si vide
+// attention le htmlentities et la traduction doivent etre appliques avant.
+
+function http_img_pack($img, $alt, $att, $title='') {
+	static $num = 0;
+	return "<img src='" . _DIR_IMG_PACK . $img
+		. ("'\nalt=\"" . ($alt ? $alt : ('img_pack' . $num++)) . '" ')
+		. ($title ? " title=\"$title\"" : '')
+		. $att . " />";
+}
+
+function http_href_img($href, $img, $att, $title='', $style='', $class='', $evt='') {
+	return  http_href($href, http_img_pack($img, $title, $att), $title, $style, $class, $evt);
+}
+
 // Corrige les caracteres degoutants utilises par les Windozeries
 function corriger_caracteres($texte) {
 	static $trans;
@@ -496,12 +527,12 @@ function affdate_base($numdate, $vue) {
 
 	if ($jour == 0)
 		$jour = '';
-	else if ($jourth = _T('date_jnum'.$jour))
+	else if ($jourth = _T('date_day'.$jour))
 			$jour = $jourth;
 
 	$mois = intval($mois);
 	if ($mois > 0 AND $mois < 13) {
-		$nommois = _T('date_mois_'.$mois);
+		$nommois = _T('date_month_'.$mois);
 		if ($jour)
 			$jourmois = _T('date_de_mois_'.$mois, array('j'=>$jour, 'nommois'=>$nommois));
 	}
@@ -560,11 +591,12 @@ function affdate_base($numdate, $vue) {
 		if (!$mois OR !$jour) return '';
 		$nom = mktime(1,1,1,$mois,$jour,$annee);
 		$nom = 1+date('w',$nom);
-		return _T('date_jour_'.$nom);
+		return _T('date_wday_'.$nom);
 
 	case 'mois_annee':
 		if ($avjc) return $annee;
-		return trim(_T('date_fmt_mois_annee', array('mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee)));
+		// return trim(_T('date_fmt_mois_annee', array('mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee)));
+		return $nommois . ' ' . $annee;
 
 	case 'annee':
 		return $annee;
