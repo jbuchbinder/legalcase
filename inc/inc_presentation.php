@@ -67,7 +67,16 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	//$link->addVar('right', $GLOBALS['spip_lang_right']);
 	//echo $link->getUrl(). '">' . "\n";
 	
-	echo "\t<link rel='stylesheet' href='styles/lcm_styles.css' type='text/css' />\n";
+	//echo "\t<link rel='stylesheet' href='styles/lcm_styles.css' type='text/css' />\n";
+	
+	//[KM]
+	//This is the basic and the alternative style sheets
+	//Some colors maybe are confusing but I will fix that later
+	
+	echo "<link rel=\"stylesheet\" href=\"styles/lcm_ui_default.css\" type=\"text/css\" />\n";
+	echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
+	echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
+	echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
 
 	// It is the responsability of the function caller to make sure that
 	// the filename does not cause problems...
