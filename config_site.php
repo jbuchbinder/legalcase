@@ -32,6 +32,7 @@ function show_config_form() {
 	// *** INFO SITE
 	$site_name = read_meta('site_name');
 	$site_desc = read_meta('site_description');
+	$site_address = read_meta('site_address');
 	$default_language = read_meta('default_language');
 	$email_sysadmin = read_meta('email_sysadmin');
 
@@ -53,6 +54,9 @@ function show_config_form() {
 	echo "<p><b>Site description:</b></p>\n";
 	echo "<p><small>Often shown under the site name, except on reports.</small></p>\n";
 	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40'/></p>\n";
+
+	echo "<p><b>Site Internet or network location:</b></p>\n";
+	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40'/></p>\n";
 
 	echo "<p><b>Default language:</b></p>\n";
 	echo "<p><small>Language to use if a language could not be detected or chosen (such as for new users).</small></p>\n";
@@ -180,6 +184,7 @@ function apply_conf_changes() {
 
 	global $site_name;
 	global $site_desc;
+	global $site_address;
 	global $default_language;
 	global $case_default_read;
 	global $case_default_write;
@@ -204,6 +209,14 @@ function apply_conf_changes() {
 	if ($old_desc != $site_desc) {
 		write_meta('site_description', $site_desc);
 		array_push($log, "Description of site set to '<tt>$site_desc</tt>', was '<tt>$old_desc</tt>'.");
+	}
+
+	// Site address (Internet or LAN)
+	$old_address = read_meta('site_address');
+
+	if ($old_address != $site_address) {
+		write_meta('site_address', $site_address);
+		array_push($log, "Site Internet or network address set to '<tt>$site_address</tt>', was '<tt>$old_address</tt>'.");
 	}
 
 	// Default language
