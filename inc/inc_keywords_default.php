@@ -211,7 +211,7 @@ $system_keyword_groups = array (
 				"description" => "kw_income_unknown_description",
 				"ac_author" => "Y"),
 			array (
-				"name" => "single",
+				"name" => "low",
 				"title" => "kw_income_low_title",
 				"description" => "kw_income_low_description",
 				"ac_author" => "Y"),
