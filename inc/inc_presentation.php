@@ -11,9 +11,15 @@ include_lcm('inc_lang');
 
 use_language_of_visitor();
 
+/*
+ * [ML] Ok, this file really is a mess.
+ * I have not had time to clean it out yet, but just assume that we
+ * won't use it for now as most of it are helper functions for HTML
+ * code generation.
+ */
 
 //
-// Aide
+// Help
 //
 function aide($aide='') {
 	global $couleur_foncee, $lcm_lang, $spip_lang_rtl;
@@ -30,7 +36,7 @@ function aide($aide='') {
 
 
 //
-// affiche un bouton imessage
+// Shows an imessage button
 //
 function bouton_imessage($destinataire, $row = '') {
 	// si on passe "force" au lieu de $row, on affiche l'icone sans verification
@@ -71,8 +77,7 @@ function bouton_imessage($destinataire, $row = '') {
 
 }
 
-// Faux HR, avec controle de couleur
-
+// Fake HR, with color control
 function hr($color, $retour = false) {
 	$ret = "<div style='height: 1px; margin-top: 5px; padding-top: 5px; border-top: 1px solid $color;'></div>";
 	
@@ -81,9 +86,7 @@ function hr($color, $retour = false) {
 }
 
 
-//
-// Cadres
-//
+// Frames (start)
 function debut_cadre($style, $icone = "", $fonction = "", $titre = "") {
 	global $spip_display, $spip_lang_left;
 	static $accesskey = 97; // a
@@ -127,6 +130,7 @@ function debut_cadre($style, $icone = "", $fonction = "", $titre = "") {
 }
 
 
+// Frames (end)
 function fin_cadre($style="") {
 	if ($style == "e") $ret = "</div>";
 	$ret .= "</div></div></div>\n";
@@ -214,9 +218,7 @@ function fin_cadre_trait_couleur($return = false){
 
 
 
-//
-// une boite alerte
-//
+// an alert box
 function debut_boite_alerte() {
 	echo "<p><table cellpadding='6' border='0'><tr><td width='100%' bgcolor='red'>";
 	echo "<table width='100%' cellpadding='12' border='0'><tr><td width='100%' bgcolor='white'>";
@@ -228,27 +230,16 @@ function fin_boite_alerte() {
 }
 
 
-//
-// une boite info
-//
+// an information box
 function debut_boite_info() {
-/*	global $couleur_claire,  $couleur_foncee;
-	echo "&nbsp;<p><div style='border: 1px dashed #666666;'><table cellpadding='5' cellspacing='0' border='0' width='100%' style='border-left: 1px solid $couleur_foncee; border-top: 1px solid $couleur_foncee; border-bottom: 1px solid white; border-bottom: 1px solid white' background=''>";
-	echo "<tr><td bgcolor='$couleur_claire' width='100%'>";
-	echo "<font face='Verdana,Arial,Sans,sans-serif' size='2' color='#333333'>";
-	*/
-	
 	echo "<div class='cadre-info'>";
 }
 
 function fin_boite_info() {
-	//echo "</font></td></tr></table></div>\n\n";
 	echo "</div>";
 }
 
-//
-// une autre boite
-//
+// yet another box
 function bandeau_titre_boite($titre, $afficher_auteurs, $boite_importante = true) {
 	global $couleur_foncee;
 	if ($boite_importante) {
@@ -271,9 +262,8 @@ function bandeau_titre_boite($titre, $afficher_auteurs, $boite_importante = true
 	echo "</TD>";
 	echo "</TR>";
 }
-//
-// une autre boite
-//
+
+// .. and another box
 function bandeau_titre_boite2($titre, $logo="", $fond="white", $texte="black") {
 	global $spip_lang_left, $spip_display;
 	
@@ -290,10 +280,7 @@ function bandeau_titre_boite2($titre, $logo="", $fond="white", $texte="black") {
 }
 
 
-//
-// La boite raccourcis
-//
-
+// The shortcut box (raccourci(s) == shortcut)
 function debut_raccourcis() {
 	echo "<div>&nbsp;</div>";
 	creer_colonne_droite();
