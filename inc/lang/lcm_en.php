@@ -32,7 +32,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'archives_tab_all_cases' => 'All cases',
 'archives_tab_export' => 'Backup',
 'archives_tab_import' => 'Restore',
-'author_id' => 'Author ID',
+'author_input_id' => 'Author ID:',
+'author_subtitle_cases' => 'Cases involving @author@',
+'author_subtitle_followups' => 'Latest follow-ups by @author@',
+'author_subtitle_reports' => 'Activity reports for @author@',
 'authorconf_button_change_password' => 'Change password',
 'authorconf_button_update_preferences' => 'Save preferences',
 'authorconf_input_font_size' => 'Text size:',
@@ -127,12 +130,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_subtitle_followups' => 'Case follow-ups',
 'case_subtitle_general' => 'General case information',
 'case_subtitle_times' => 'Total time spent on the case',
-'case_tab_appointments' => 'Appointments',
-'case_tab_attachments' => 'Attachments',
-'case_tab_clients' => 'Clients',
-'case_tab_followups' => 'Follow-ups',
-'case_tab_general' => 'General',
-'case_tab_times' => 'Times',
 'case_warning_no_title' => 'Please enter a case title.',
 'client_input_id' => 'Client ID:',
 'client_subtitle_associated_org' => 'Related organisations',
@@ -141,11 +138,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_subtitle_contacts' => 'Contacts',
 'client_subtitle_organisations' => 'Organisations',
 'client_subtitle_view_general' => 'General information',
-'client_tab_attachments' => 'Attachments',
-'client_tab_cases' => 'Cases',
-'client_tab_contacts' => 'Contacts',
-'client_tab_general' => 'General',
-'client_tab_organisations' => 'Organisations',
 'creation_date' => 'Creation date',
 'currency_default_format' => '€',
 'currency_format_placement' => '@currency@@money@',
@@ -255,7 +247,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'filter_type' => 'Conditions logic',
 'format_date_full' => '@day_name@, @day_order@ @month_name@ @year@',
 'format_date_short' => '@day@ @month_short@ @year@',
-'format_datetime_full' => '@day_name@, @day_order@ @month_name@ @year@, @hours@H@mins@',
+'format_datetime_full' => '@day_name@, @day_order@ @month_name@ @year@, @hours@h@mins@',
 'format_datetime_short' => '@day@ @month_short@ @year@, @hours@h@mins@',
 'format_time_short' => '@hours@:@mins@',
 'fu_input_date_end' => 'End:',
@@ -266,6 +258,20 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'fu_input_sum_billed' => 'Sum billed:',
 'fu_input_time_length' => 'Time spent on activity:',
 'fu_input_type' => 'Type:',
+
+
+// G
+'generic_subtitle_contacts' => 'Contacts',
+'generic_subtitle_general' => 'General information',
+'generic_tab_agenda' => 'Agenda',
+'generic_tab_cases' => 'Cases',
+'generic_tab_clients' => 'Clients',
+'generic_tab_documents' => 'Documents',
+'generic_tab_followups' => 'Follow-ups',
+'generic_tab_general' => 'General',
+'generic_tab_org' => 'Organisations',
+'generic_tab_reports' => 'Reports',
+'generic_tab_representatives' => 'Representatives',
 
 
 // H
@@ -471,10 +477,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'org_subtitle_cases' => 'Cases involving this organisation',
 'org_subtitle_representatives' => 'Organisation representatives',
 'org_subtitle_view_general' => 'General information',
-'org_tab_attachments' => 'Attachments',
-'org_tab_cases' => 'Cases',
-'org_tab_general' => 'General',
-'org_tab_representatives' => 'Representatives',
 
 
 // P
