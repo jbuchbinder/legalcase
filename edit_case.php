@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.61 2005/03/17 15:42:52 mlutfy Exp $
+	$Id: edit_case.php,v 1.62 2005/03/19 14:49:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -145,7 +145,7 @@ if ($attach_client)
 
 if ($_SESSION['case_data']['id_case']) {
 	echo "\t<tr><td>" . _T('case_input_id') . "</td><td>" . $_SESSION['case_data']['id_case']
-		. "<input type=\"hidden\" name=\"id_case\" value=\"" .  $_SESSION['case_data']['id_case'] . "\"></td></tr>\n";
+		. "<input type=\"hidden\" name=\"id_case\" value=\"" . $_SESSION['case_data']['id_case'] . "\" /></td></tr>\n";
 }
 
 	echo '<tr><td><label for="input_title">'
@@ -153,7 +153,7 @@ if ($_SESSION['case_data']['id_case']) {
 		. "</label></td>\n";
 	echo '<td><input size="35" name="title" id="input_title" value="'
 		. clean_output($_SESSION['case_data']['title'])
-		. '" class="search_form_txt">';
+		. '" class="search_form_txt" />';
 	echo "</td></tr>\n";
 	
 	// Court archive ID
@@ -161,7 +161,7 @@ if ($_SESSION['case_data']['id_case']) {
 		echo '<tr><td><label for="input_id_court_archive">' . _T('case_input_court_archive') . "</label></td>\n";
 		echo '<td><input size="35" name="id_court_archive" id="input_id_court_archive" value="'
 			. clean_output($_SESSION['case_data']['id_court_archive']) 
-			. '" class="search_form_txt"></td></tr>' . "\n";
+			. '" class="search_form_txt" /></td></tr>' . "\n";
 	}
 
 	// Legal reason
@@ -191,7 +191,7 @@ if ($_SESSION['case_data']['id_case']) {
 	$statuses = ($existing ? array('draft','open','suspended','closed','merged') : array('draft','open') );
 
 	foreach ($statuses as $s)
-		echo "<option" .  (($s == $_SESSION['case_data']['status']) ? ' selected' : '') . ">$s</option>\n";
+		echo "<option" .  (($s == $_SESSION['case_data']['status']) ? ' selected="selected"' : '') . ">$s</option>\n";
 
 	echo "</select></td>\n";
 	echo "</tr>\n";
@@ -222,6 +222,7 @@ if ($_SESSION['case_data']['id_case']) {
 			if ($_SESSION['case_data']['public'])
 				echo ' checked="checked"';
 
+			echo " />";
 			echo '<label for="case_public_read">' . _T('case_input_collaboration_read') . "</label></li>\n";
 		}
 
@@ -232,6 +233,7 @@ if ($_SESSION['case_data']['id_case']) {
 			if ($_SESSION['case_data']['pub_write'])
 				echo ' checked="checked"';
 
+			echo " />";
 			echo '<label for="case_public_write">' . _T('case_input_collaboration_write') . "</label></li>\n";
 		}
 
