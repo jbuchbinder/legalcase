@@ -16,11 +16,11 @@ use_language_of_visitor();
 // Aide
 //
 function aide($aide='') {
-	global $couleur_foncee, $lcm_lang, $spip_lang_rtl, $dir_ecrire;
+	global $couleur_foncee, $lcm_lang, $spip_lang_rtl;
 
 	if (!$aide) return;
 
-	return "&nbsp;&nbsp;<a class='aide' href=\"".$dir_ecrire."aide_index.php3?aide=$aide&var_lang=$lcm_lang\" target=\"spip_aide\" ".
+	return "&nbsp;&nbsp;<a class='aide' href=\"help_index.php?aide=$aide&var_lang=$lcm_lang\" target=\"spip_aide\" ".
 		"onclick=\"javascript:window.open(this.href, 'spip_aide', 'scrollbars=yes, ".
 		"resizable=yes, width=740, height=580'); return false;\"><img ".
 		"src=\"images/lcm/help.png\" alt=\""._T('info_image_aide')."\" ".
@@ -2610,7 +2610,7 @@ function fin_html() {
 
 
 function lcm_page_end($credits='') {
-	global $spip_version_affichee;
+	global $lcm_version_shown;
 	global $connect_id_auteur;
 	global $multi_popup;
 
@@ -2635,7 +2635,7 @@ function lcm_page_end($credits='') {
 	debut_grand_cadre();
 
 	echo "<div align='right' class='verdana2'>";
-	echo "<b>LCM $spip_version_affichee</b> ";
+	echo "<b>LCM $lcm_version_shown</b> ";
 	echo _T('info_copyright');
 
 	echo "<br>"._T('info_copyright_doc');
