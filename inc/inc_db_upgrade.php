@@ -230,7 +230,7 @@ function upgrade_database() {
 		// Forum par defaut "en dur" dans les spip_articles
 		// -> non, prio (priori), pos (posteriori), abo (abonnement)
 		include_ecrire ("inc_meta.php3");
-		$accepter_forum = substr(lire_meta("forums_publics"),0,3) ;
+		$accepter_forum = substr(read_meta("forums_publics"),0,3) ;
 		$query = "ALTER TABLE spip_articles CHANGE accepter_forum accepter_forum CHAR(3) NOT NULL";
 		$result = lcm_query($query);
 		$query = "UPDATE spip_articles SET accepter_forum='$accepter_forum' WHERE accepter_forum != 'non'";

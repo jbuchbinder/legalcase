@@ -1,9 +1,7 @@
 <?php
 
-//
-// Ce fichier ne sera execute qu'une fois
-if (defined("_INC_ACCES")) return;
-define("_INC_ACCES", "1");
+if (defined('_INC_ACCES')) return;
+define('_INC_ACCES', '1');
 
 
 $GLOBALS['htaccess'] = 'inc/.htaccess';
@@ -92,7 +90,7 @@ function ecrire_acces() {
 	global $htaccess, $htpasswd;
 
 	// if .htaccess exists, bypass spip_meta
-	if ((lire_meta('creer_htpasswd') == 'non') AND !@file_exists($htaccess)) {
+	if ((read_meta('creer_htpasswd') == 'non') AND !@file_exists($htaccess)) {
 		@unlink($htpasswd);
 		@unlink($htpasswd."-admin");
 		return;
