@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_conditions.php,v 1.2 2004/12/11 11:18:29 antzi Exp $
+	$Id: inc_conditions.php,v 1.3 2005/02/10 08:40:20 makaveev Exp $
 */
 
 // Execute this file only once
@@ -38,7 +38,7 @@ $GLOBALS['condition_types'] = array(1 => 'IS EQUAL TO',
 function select_condition($name,$sel=0) {
 	global $condition_types;
 
-	$html = "<select name='$name'>\n";
+	$html = "<select name='$name' class='sel_frm'>\n";
 
 	foreach($condition_types as $key => $val) {
 		$html .= "<option " . (($key == $sel) ? 'selected ' : '') . "value=$key>$val</option>\n";
