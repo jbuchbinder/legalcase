@@ -38,7 +38,7 @@ if (empty($errors)) {
 		// Fetch the details on the specified follow-up
 		$q="SELECT *
 			FROM lcm_followup
-			WHERE id_followup= " . intval($followup);
+			WHERE id_followup=" . intval($followup);
 
 		$result = lcm_query($q);
 
@@ -77,7 +77,7 @@ else
 echo '<ul style="padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2;">';
 
 // Name of case
-$query = "SELECT title 
+$query = "SELECT title
 		FROM lcm_case
 		WHERE id_case = " . intval($case);
 
@@ -124,7 +124,7 @@ foreach ($all_clients as $client) {
 			. $client['name_first'] . ' ' . $client['name_middle'] . ' ' . $client['name_last']
 			. '</a>';
 
-		if (++$current < $numrows) 
+		if (++$current < $numrows)
 			echo ", ";
 	} else if ($client['id_org']) {
 		echo '<a href="org_det.php?org=' . $client['id_org'] . '" class="content_link">'
