@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: merge_case.php,v 1.2 2005/01/19 09:14:40 mlutfy Exp $
+	$Id: merge_case.php,v 1.3 2005/02/07 21:04:24 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -41,7 +41,7 @@ if (!allowed($case,'w')) die("You don't have permission to add information to th
 
 // Add "merged to" follow-up to the old case
 $q = "INSERT INTO lcm_followup SET id_followup=0,id_case=$case,date_start=NOW(),type=$type,sumbilled=$sumbilled";
-$result = lcm_query($q)
+$result = lcm_query($q);
 
 // Create new case if $destination is 0
 if ($destination==0) {
