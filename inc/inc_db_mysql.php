@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.18 2005/03/18 16:02:35 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.19 2005/03/28 10:51:01 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -55,17 +55,16 @@ function lcm_query_db($query) {
 		echo " -> <font color='blue'>".sprintf("%3f", $dt)."</font> ($tt)</small><p>\n";
 	}
 
-	if ($my_debug AND lcm_sql_errno()) {
+	if ($my_debug)
+		lcm_log("QUERY: $query\n", "mysql");
+
+	if (lcm_sql_errno()) {
 		$s = lcm_sql_error();
 		$error = _T('warning_sql_query_failed') . "<br />\n" . htmlentities($query) . "<br />\n";
 		$error .= "&laquo; " . htmlentities($s) . " &raquo;<br />";
-		echo $error;
-		echo lcm_getbacktrace();
+		lcm_panic($error);
 	}
 
-	if ($my_debug)
-		lcm_log("QUERY: $query\n", "mysql");
-	
 	return $result;
 }
 
