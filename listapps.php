@@ -18,12 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.12 2005/03/25 11:23:21 mlutfy Exp $
+	$Id: listapps.php,v 1.13 2005/03/30 16:11:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
-lcm_page_start('Agenda'); // TRAD
+lcm_page_start(_T('title_agenda_list'));
 
 $q = "SELECT lcm_app.*
 	FROM lcm_author_app,lcm_app
@@ -47,19 +47,9 @@ if ($number_of_rows) {
 			array( 'title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ), 'order' => 'no_order'),
 			array( 'title' => _Th('app_input_type'), 'order' => 'no_order'),
 			array( 'title' => _Th('app_input_title'), 'order' => 'no_order'),
-			array( 'title' => 'Reminder', 'order' => 'no_order'));	// TRAD
+			array( 'title' => _Th('app_input_reminder'), 'order' => 'no_order'));
 	show_list_start($headers);
 
-/*	echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
-	echo "\t<tr>";
-	echo '<th class="heading">' . _Th('time_input_date_start') . '</th>';
-	echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ) . '</th>';
-	echo '<th class="heading">' . _Th('app_input_type') . '</th>';
-	echo '<th class="heading">' . _Th('app_input_title'). '</th>';
-	echo '<th class="heading">Reminder</th>'; // TRAD 
-	echo '<th class="heading">Action</th>'; // TRAD
-	echo "</tr>\n";
-*/
 	// Check for correct start position of the list
 	$list_pos = 0;
 	
@@ -71,7 +61,7 @@ if ($number_of_rows) {
 	// Position to the page info start
 	if ($list_pos>0)
 		if (!lcm_data_seek($result,$list_pos))
-			lcm_panic("Error seeking position $list_pos in the result");	// TRAD
+			lcm_panic("Error seeking position $list_pos in the result");
 	
 	// Show page of the list
 	for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
@@ -81,7 +71,7 @@ if ($number_of_rows) {
 
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 			. ( ($prefs['time_intervals'] == 'absolute') ?
-				date('d.m.y H:i',strtotime($row['end_time'])) :
+				format_date($row['end_time'], 'short') :
 				format_time_interval(strtotime($row['end_time']) - strtotime($row['start_time']),
 							($prefs['time_intervals_notation'] == 'hours_only') )
 			) . '</td>';
@@ -96,7 +86,7 @@ if ($number_of_rows) {
 	show_list_end($list_pos, $number_of_rows);
 }
 
-echo '<p><a href="edit_app.php?app=0" class="create_new_lnk">New appointment</a></p>'; // TRAD
+echo '<p><a href="edit_app.php?app=0" class="create_new_lnk">' . _T('app_button_new') . '</a></p>';
 
 lcm_page_end();
 
