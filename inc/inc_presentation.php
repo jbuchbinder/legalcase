@@ -644,17 +644,15 @@ function fin_grand_cadre(){
  * Header function for the installation
  * They are used by install.php and lcm_test_dirs.php
  */
-function install_html_start($title = 'AUTO') {
+function install_html_start($title = 'AUTO', $css_files = "") {
 	global $spip_lang_rtl;
-
 
 	if ($title == 'AUTO')
 		$title = _T('install_title_installation_start');
 
-	lcm_html_start($title, "install");
+	$css_files = ($css_files ? $css_files . ",install" : "install");
 
-/*
-*/
+	lcm_html_start($title, $css_files);
 
 	echo "\t<br/>\n";
 	echo "\t<div align='center'>\n";
