@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.4 2005/01/21 03:15:58 antzi Exp $
+	$Id: fu_det.php,v 1.5 2005/01/21 09:21:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -121,9 +121,9 @@ echo "</ul>\n";
 
 	<table class="tbl_usr_dtl" width="99%">
 		<tr><td>Start:</td>
-			<td><?php echo $fu_data['date_start']; ?></td></tr>
+			<td><?php echo format_date($fu_data['date_start']); ?></td></tr>
 		<tr><td>End:</td>
-			<td><?php echo $fu_data['date_end']; ?></td></tr>
+			<td><?php echo format_date($fu_data['date_end']); ?></td></tr>
 		<tr><td>Type:</td>
 			<td><?php echo $fu_data['type']; ?></td></tr>
 		<tr><td valign="top">Description:</td>
