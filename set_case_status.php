@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.16 2005/02/10 09:08:11 antzi Exp $
+	$Id: set_case_status.php,v 1.17 2005/02/10 09:15:44 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -96,7 +96,7 @@ switch ($status) {
 	<table class='tbl_usr_dtl' width='99%'>
 		<tr><td>$date_title</td>
 			<td>";
-		echo _T('calendar_info_date');
+		echo _T('calendar_info_date') . ' ';
 		echo get_date_inputs('start', $date_start, false);
 		echo ' ' . _T('calendar_info_time') . ' ';
 		echo get_time_inputs('start', $date_start);
@@ -155,7 +155,7 @@ switch ($status) {
 	<table class="tbl_usr_dtl" width="99%">
 		<tr><td>Close:</td>
 			<td>';
-		echo _T('calendar_info_date');
+		echo _T('calendar_info_date') . ' ';
 		echo get_date_inputs('start', $date_start, false);
 		echo ' ' . _T('calendar_info_time') . ' ';
 		echo get_time_inputs('start', $date_start);
@@ -214,7 +214,7 @@ switch ($status) {
 	<table class="tbl_usr_dtl" width="99%">
 		<tr><td>Suspension:</td>
 			<td>';
-		echo _T('calendar_info_date');
+		echo _T('calendar_info_date') . ' ';
 		echo get_date_inputs('start', $date_start, false);
 		echo ' ' . _T('calendar_info_time') . ' ';
 		echo get_time_inputs('start', $date_start);
@@ -273,7 +273,7 @@ switch ($status) {
 	<table class="tbl_usr_dtl" width="99%">
 		<tr><td>Merge:</td>
 			<td>';
-		echo _T('calendar_info_date');
+		echo _T('calendar_info_date') . ' ';
 		echo get_date_inputs('start', $date_start, false);
 		echo ' ' . _T('calendar_info_time') . ' ';
 		echo get_time_inputs('start', $date_start);
