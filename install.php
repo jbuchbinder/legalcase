@@ -15,7 +15,10 @@ use_language_of_visitor();
 if (@file_exists('inc/config/inc_connect.php')) {
 	install_html_start();
 	// forbidden area
-	echo "<p><font face='Verdana,Arial,Sans,sans-serif' size='4'>"._T('avis_espace_interdit')."</font>";
+	echo "<div style='font-size: 130%; font-family: sans-serif; border: 2px solid #ff0000; padding: 0.5em;'>\n";
+	echo "\t<p>" . _T('warning_forbidden_area') . "</p>\n";
+	echo "\t<p>" . _T('title_software_article') . " " . _T('warning_already_installed') . "</p>\n";
+	echo "</div>\n";
 	install_html_end();
 
 	exit;
