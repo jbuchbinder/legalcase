@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.26 2005/02/02 18:51:23 antzi Exp $
+	$Id: upd_fu.php,v 1.27 2005/02/04 21:59:59 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -55,23 +55,28 @@ else
 	$fu_data['date_start'] = date('Y-m-d H:i:s', $unix_date_start);
 
 // date_end
-// Set to default empty date if all fields empty
-if (!($fu_data['end_year'] || $fu_data['end_month'] || $fu_data['end_day']))
-	$fu_data['date_end'] = '0000-00-00 00:00:00';
-	// Report error if some of the fields empty
-elseif (!$fu_data['end_year'] || !$fu_data['end_month'] || !$fu_data['end_day']) {
-	$_SESSION['errors']['date_end'] = 'Partial end date!';
-	$fu_data['date_end'] = ($fu_data['end_year'] ? $fu_data['end_year'] : '0000') . '-'
-						. ($fu_data['end_month'] ? $fu_data['end_month'] : '00') . '-'
-						. ($fu_data['end_day'] ? $fu_data['end_day'] : '00') . ' 00:00:00';
+if ($prefs['time_intervals']=='absolute') {
+	// Set to default empty date if all fields empty
+	if (!($fu_data['end_year'] || $fu_data['end_month'] || $fu_data['end_day']))
+		$fu_data['date_end'] = '0000-00-00 00:00:00';
+		// Report error if some of the fields empty
+	elseif (!$fu_data['end_year'] || !$fu_data['end_month'] || !$fu_data['end_day']) {
+		$_SESSION['errors']['date_end'] = 'Partial end date!';
+		$fu_data['date_end'] = ($fu_data['end_year'] ? $fu_data['end_year'] : '0000') . '-'
+							. ($fu_data['end_month'] ? $fu_data['end_month'] : '00') . '-'
+							. ($fu_data['end_day'] ? $fu_data['end_day'] : '00') . ' 00:00:00';
+	} else {
+		// Join fields and check resulting date
+		$unix_date_end = strtotime($fu_data['end_year'] . '-' . $fu_data['end_month'] . '-' . $fu_data['end_day']);
+	
+		if ($unix_date_end<0)
+			$_SESSION['errors']['date_end'] = 'Invalid end date!';
+		else 
+			$fu_data['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
+	}
 } else {
-	// Join fields and check resulting date
-	$unix_date_end = strtotime($fu_data['end_year'] . '-' . $fu_data['end_month'] . '-' . $fu_data['end_day']);
-
-	if ($unix_date_end<0)
-		$_SESSION['errors']['date_end']='Invalid end date!';
-	else 
-		$fu_data['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
+	$unix_date_end = $unix_date_start + $fu_data['delta_days'] * 86400 + $fu_data['delta_hours'] * 3600 + $fu_data['delta_minutes'] * 60;
+	$fu_data['date_end'] = date('Y-m-d H:i:s', $unix_date_end);
 }
 
 if (count($_SESSION['errors'])) {
