@@ -90,7 +90,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // I
 'info_followup_involving' => '<NEW>Involving:',
 'info_followup_to_case' => '<NEW>To case:',
-'info_free_software' => '<NEW>Free software <a href=\'http://www.lcm.ngo-bg.org/en\' class=\'prefs_normal_lnk\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\' class=\'prefs_normal_lnk\'>GPL licence</a>.',
+'info_free_software' => 'Свободен софтуер, <a href=\\\\\\\\\\\\\\\'http://www.lcm.ngo-bg.org/en\\\\\\\\\\\\\\\' class=\\\\\\\\\\\\\\\'prefs_normal_lnk\\\\\\\\\\\\\\\'>разпространяван</a> под <a href=\\\\\\\\\\\\\\\'http://www.gnu.org/licenses/gpl.html\\\\\\\\\\\\\\\' class=\\\\\\\\\\\\\\\'prefs_normal_lnk\\\\\\\\\\\\\\\'>лиценза GPL</a>.',
 'info_greetings' => '<NEW>Good day',
 'info_more_than_five' => '<NEW>(More than 5 characters)',
 'info_more_than_three' => '<NEW>(More than 3 characters)',
@@ -104,7 +104,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_connection_login' => '<NEW>Connection login',
 'install_connection_password' => '<NEW>Connection password',
 'install_connection_succeeded' => '<NEW>Connection succeeded.',
-'install_create_new_database' => '<NEW><B>Create</b> a new database',
+'install_create_new_database' => '<NEW>Create a new database',
 'install_database_address' => '<NEW>Database address',
 'install_database_install_failed' => '<NEW>Go back to the previous page, select another database or create a new one. Verify the information provided by your host.',
 'install_database_installed_ok' => '<NEW>Your database is now ready to use.',
