@@ -50,18 +50,43 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	// Style sheets
 	//
 
+	// [ML] This alternative allows the user to create custom themes
+	// without touching the PHP code.
+
 	if (@file_exists("styles/lcm_ui_" . $prefs['theme'] . ".css")) {
-	    echo '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_ui_' . $prefs['theme'] . '".css\' />' . "\n";
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_" . $prefs['theme'] . ".css\" />\n";
 	} else {
-	    echo '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_ui_default.css" />' . "\n";
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
 	}
+	
+	//[KM] This is my suggestion of the problem with style switcher
+	//There is one file for the layout and others for the themes
+	/*
+	switch($prefs['theme'])
+	{
+	    case "blue":
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" />\n";
+	    break;
+	    
+	    case "orange":
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" />\n";
+	    break;
+	    
+	    case "monochrome":
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" />\n";
+	    break;
+	    
+	    default:
+	    echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_default.css\" />\n";
+	    break;
+	} */
 
 	// It is the responsability of the function caller to make sure that
 	// the filename does not cause problems...
 	$css_files_array = explode(",", $css_files);
 	foreach ($css_files_array as $f)
 		if ($f)
-			echo "\t" . '<link rel="stylesheet" type="text/css" href="styles/lcm_' . $f . '.css" />' . "\n";
+			echo "\t<link rel='stylesheet' type='text/css' href='styles/lcm_$f.css' />\n";
 	
 	echo "</head>\n";
 
@@ -107,10 +132,10 @@ function lcm_page_start($title = "", $css_files = "") {
 	//
 	
 	echo "
-	<div id='header'>
+	<a href='summary.php'><div id='header'>
 		<h1 class='lcm_main_head'>" . $site_name . "</h1>
 		<div class='lcm_slogan'>" . $site_desc . "</div>
-	</div>
+	</div></a>
 	<div id='wrapper'>
 		<div id=\"container\">
 			<div id=\"content\">
@@ -123,7 +148,7 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listcases.php\" class=\"main_nav_btn\">Recent cases</a></li>
 							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
-							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">Organisations</a></li>
+							<li><a href=\"edit_client.php\" class=\"main_nav_btn\">New Client</a></li>
 							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>
 							<!-- li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li-->\n";
 	echo "
@@ -176,7 +201,7 @@ function lcm_page_start($title = "", $css_files = "") {
 					<h3 class=\"content_head\">". $title ."</h3>
 
 					<!-- [ML] Added by matt, who likes to mess up clean CSS -->
-					<div align='left'>
+					<!-- <div align='left'> -->
 	";
 }
 
@@ -220,7 +245,7 @@ function lcm_page_end($credits = '') {
 	//[KM] The bottom of a single page
 	//
 	echo "
-				</div> <!-- align left -->
+				<!-- </div> --> <!-- align left -->
 
 				<!-- End of 'main_column' content -->
 				</div>
