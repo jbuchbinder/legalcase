@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.86 2005/04/05 14:42:35 mlutfy Exp $
+	$Id: edit_fu.php,v 1.87 2005/04/05 14:48:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -251,7 +251,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		if (!isset($_GET['followup'])) {
 			echo "<!-- Add appointment? -->\n";
 			echo '<p class="normal_text">';
-			echo '<input type="checkbox" name="add_appointment" id="box_new_app" onclick="setvisibility(\'new_app\', \'flip\')"; />';
+			echo '<input type="checkbox" name="add_appointment" id="box_new_app" onclick="display_block(\'new_app\', \'flip\')"; />';
 			echo '<label for="box_new_app">' . 'Add a future activity for this follow-up.' . '</label>'; // TRAD
 			echo "</p>\n";
 
