@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: merge_case.php,v 1.4 2005/02/07 21:07:26 antzi Exp $
+	$Id: merge_case.php,v 1.5 2005/02/07 21:26:11 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -29,7 +29,7 @@ include_lcm('inc_filters');
 $type = clean_input($_POST['type']);
 $destination = intval($_POST['destination']);
 $case = intval($_POST['id_case']);
-$sumbilled = $_POST['sumbilled'];
+$sumbilled = ($_POST['sumbilled'] ? $_POST['sumbilled'] : 0);
 $ref_edit_fu = clean_input($_POST['ref_edit_fu']);
 
 // Check incoming data
