@@ -391,7 +391,7 @@ if($prefs['screen'] == "wide") {
 
 if($prefs['screen'] == "narrow")
 {
-	echo '<div id="footer">
+	echo '<div id="footer_narrow">
 	<div class="prefs_column_menu_head">' .  _T('menu_search') . "</div>
 	<p class=\"prefs_column_text\">
 	<table border=\"0\" align=\"center\" width=\"100%\">
