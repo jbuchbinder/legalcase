@@ -45,13 +45,12 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
 	echo highlight_matches($fullname,$find_client_string);
 	echo "</td>\n\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo "<a href="edit_client.php?client=<?php echo $row['id_client']; ?>">Edit</a></td>\n\t</tr>";
+	echo '<a href="edit_client.php?client=' . $row['id_client'] . ">Edit</a></td>\n\t</tr>\n";
 }
-?>
-</table>
 
-<p><a href="edit_client.php">Add new client</a></p>
-<?php
+echo "</table>
+
+<p><a href="edit_client.php">Add new client</a></p>";
 
 // Show link to previous page
 if ($list_pos>0) {
