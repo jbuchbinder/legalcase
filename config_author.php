@@ -299,7 +299,7 @@ if ($author_ui_modified || $author_password_modified)
 //		header('Retry-After: 30');
 		exit;
 	} else show_changes();
-}
+
 
 lcm_page_start("Update profile");
 
