@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.23 2005/01/25 22:54:43 antzi Exp $
+	$Id: upd_fu.php,v 1.24 2005/01/26 22:05:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -49,23 +49,30 @@ foreach($_POST as $key => $value)
 $unix_date_start = strtotime($fu_data['start_year'] . '-' . $fu_data['start_month'] . '-' . $fu_data['start_day'] . ' ' .
 							 $fu_data['start_hour'] . ':' . $fu_data['start_minutes'] . ':' .
 							 (isset($fu_data['start_seconds']) ? $fu_data['start_seconds'] : '00'));
-if ($unix_date_start<0) $errors['date_start']='Invalid start date!';
-else $fu_data['date_start'] = date('Y-m-d H:i:s',$unix_date_start);
+
+if ($unix_date_start<0)
+	$_SESSION['errors']['date_start'] = 'Invalid start date!';
+else 
+	$fu_data['date_start'] = date('Y-m-d H:i:s', $unix_date_start);
 
 // date_end
 // Set to default empty date if all fields empty
-if (!($fu_data['end_year'] || $fu_data['end_month'] || $fu_data['end_day'])) $fu_data['date_end'] = '0000-00-00 00:00:00';
-// Report error if some of the fields empty
+if (!($fu_data['end_year'] || $fu_data['end_month'] || $fu_data['end_day']))
+	$fu_data['date_end'] = '0000-00-00 00:00:00';
+	// Report error if some of the fields empty
 elseif (!$fu_data['end_year'] || !$fu_data['end_month'] || !$fu_data['end_day']) {
-	$errors['date_end']='Partial end date!';
+	$_SESSION['errors']['date_end'] = 'Partial end date!';
 	$fu_data['date_end'] = ($fu_data['end_year'] ? $fu_data['end_year'] : '0000') . '-'
 						. ($fu_data['end_month'] ? $fu_data['end_month'] : '00') . '-'
 						. ($fu_data['end_day'] ? $fu_data['end_day'] : '00') . ' 00:00:00';
 } else {
-// Join fields and check resulting date
+	// Join fields and check resulting date
 	$unix_date_end = strtotime($fu_data['end_year'] . '-' . $fu_data['end_month'] . '-' . $fu_data['end_day']);
-	if ($unix_date_end<0) $errors['date_end']='Invalid end date!';
-	else $fu_data['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
+
+	if ($unix_date_end<0)
+		$errors['date_end']='Invalid end date!';
+	else 
+		$fu_data['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
 }
 
 if (count($errors)) {
@@ -81,13 +88,15 @@ if (count($errors)) {
     if ($id_followup>0) {
 		// Check access rights
 		if (!allowed($id_case,'e')) die("You don't have permission to modify this case's information!");
-		// Prepare query
+
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup=$id_followup";
-		// Do the query
-		if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
+		if (!($result = lcm_query($q)))
+			lcm_panic("$q <br />\nError ".lcm_errno().": ".lcm_error());
     } else {
 		// Check access rights
-		if (!allowed($id_case,'w')) die("You don't have permission to add information to this case!");
+		if (!allowed($id_case,'w'))
+			die("You don't have permission to add information to this case!");
+
 		// Update case status
 		switch ($fu_data['type']) {
 			case 'conclusion' :
@@ -106,24 +115,26 @@ if (count($errors)) {
 				break;
 			default: $status = '';
 		}
+		
 		if ($status) {
 			$q = "UPDATE lcm_case
 					SET status='$status'
 					WHERE id_case=$id_case";
 			$result = lcm_query($q);
 		}
-		// Prepare query to add the new follow-up
-		$q="INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
+		
+		// Add the new follow-up
+		$q = "INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
 
-		// Do the query
-		if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
+		if (!($result = lcm_query($q))) 
+			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
 
-		// Get the new follow-up ID
 		$id_followup = lcm_insert_id();
     }
 
     // Send user back to add/edit page's referer or (default) to followup detail page
     header('Location: ' . ($fu_data['ref_edit_fu'] ? $fu_data['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));
+	exit;
 }
 
 ?>
