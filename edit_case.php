@@ -95,24 +95,23 @@ else lcm_page_start(_T('new_case'));
 				<table>
 				<tr>\n";
 
-		if (read_meta('case_read_always') || $admin) echo "			<td>" . _T('read') . "</td>\n";
-		if (read_meta('case_write_always') || $admin) echo "			<td>" . _T('write') . "</td>\n";
+		if (!read_meta('case_read_always') || $admin) echo "			<td>" . _T('read') . "</td>\n";
+		if (!read_meta('case_write_always') || $admin) echo "			<td>" . _T('write') . "</td>\n";
 
-		echo "\n</tr><tr>\n";
+		echo "</tr><tr>\n";
 
-		if (read_meta('case_read_always') || $admin) {
+		if (!read_meta('case_read_always') || $admin) {
 			echo '			<td><input type="checkbox" name="public" value="yes"';
 			if ($case_data['public']) echo ' checked';
 			echo "></td>\n";
 		}
 
-		if (read_meta('case_write_always') || $admin) {
+		if (!read_meta('case_write_always') || $admin) {
 			echo '			<td><input type="checkbox" name="pub_write" value="yes"';
 			if ($case_data['pub_write']) echo ' checked';
 			echo "></td>\n";
 		}
-?>
-				</tr>
+?>				</tr>
 				</table>
 			</td>
 		</tr>
