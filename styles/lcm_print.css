@@ -1,0 +1,951 @@
+/* ============================= */
+/* Layout for the LCM UI  */
+/* ============================= */
+
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	margin: 5px;
+	padding: 0px;
+	text-align: center;
+}
+
+/* ============================================================ */
+/* Main layout settings, builded using tableless CSS technology */
+/* ============================================================ */
+
+#header {
+	min-height: 83px;
+	text-align: left;
+	clear: both;
+}
+
+/* Maybe will be removed later */
+#wrapper_wide {
+	
+}
+
+#wrapper_narrow {
+	
+}
+
+#container_wide {
+	width: 100%;
+	float: left;
+	margin-right: -200px;
+}
+
+#container_narrow {
+	
+}
+
+#content_wide {
+	margin-right: 200px;
+}
+
+#content_narrow {
+
+}
+
+#main_column {
+	margin-left: 170px;
+	background-color: #fff;
+	margin-right: 5px;
+	text-align: left;
+}
+
+#navigation_menu_column {
+	/* test */
+	display: none;
+	background-color: #fff;
+	text-align: center;
+	width: 170px;
+	float: left;
+}
+
+#prefs_column {
+	/* test */
+	display: none;
+	width: 200px;
+	text-align: left;
+	float: right;
+}
+
+#footer {
+	font-size: 11px;
+}
+
+#user_info_box_large_screen {
+	position: absolute;
+	top: 0px;
+	right: 10px;
+	width: 250px;
+	text-align: right;
+}
+
+#breadcrumb {
+	border-top: 1px dashed #ccc;
+	border-bottom: 1px dashed #ccc;
+	background-color: #efefef;
+	margin-bottom: 10px;
+	padding: 2px 5px 2px 5px;
+}
+
+#breadcrumb a {
+	color: #000;
+	text-decoration: underline;
+}
+
+/* ------------------- [Tabs list] ------------------- */
+
+.tabs {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	height: 26px;
+}
+
+ul.tabs_list {
+	padding: 0;
+	margin: 0;
+	height: 25px;
+}
+
+ul.tabs_list li {
+	list-style-type: none;
+	float: left;
+	margin: 0px 0px 0px 5px;
+	line-height: 25px;
+	height: 25px;
+}
+
+ul.tabs_list li.active {
+	list-style-type: none;
+	float: left;
+	margin: 0px 0px 0px 5px;
+	padding: 0px 3px 0px 3px;
+	line-height: 25px;
+	height: 25px;
+}
+
+ul.tabs_list li a {
+	padding: 0px 3px 0px 3px;
+	text-decoration: none;
+	display: block;
+}
+
+.clearing {
+	height: 0;
+	clear: both;
+}
+
+/* ================================================== */
+/* Other visual settings - font, colors, sizes, boxes */
+/* ================================================== */
+
+h1.lcm_main_head {
+	position: relative;
+	width: 650px;
+	margin: 0px;
+	padding-top: 15px;
+	left: 85px;
+}
+
+.lcm_slogan {
+	position: relative;
+	top: 0px;
+	left: 150px;
+	color: #666;
+	font-size: 11px;
+	width: 350px;
+}
+
+a.head_ttl_link, a.head_subttl_link {
+	text-decoration: none;
+	display: block;
+}
+
+a.head_subttl_link {
+	color: #666;
+}
+
+a, p, div, h1, h2, h3, strong, input, select, option, form, textarea, td, table, th {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+h3 {
+	margin: 5px 0px 5px 0px;
+}
+
+hr.hair_line {
+	border: 0px;
+	margin: 0px;
+	width: 100%;
+	height: 1px;
+}
+
+/* ----------------------------------------------- */
+/* The main navigation column settings */
+/* ---------------------------------------------- */
+
+.nav_menu_box {
+	margin: 0px 5px 5px 0px;
+	text-align: left;
+}
+
+.nav_column_menu_head {
+	padding: 4px;
+	text-align: left;
+}
+
+ul.nav_menu_list {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+ul.nav_menu_list li {
+	margin: 0px;
+	line-height: 2;
+}
+
+p.nav_column_text {
+	margin: 4px;
+	margin-bottom: 10px;
+}
+
+/* Buttons-like effect */
+
+a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
+	text-decoration: none;
+	display: block;
+	padding-left: 22px;
+	background: url("../images/lcm/main_nav_sq_out.gif") no-repeat 3px 3px;
+}
+
+a.main_nav_btn:hover {
+	text-decoration: none;
+	display: block;
+	padding-left: 22px;
+	background: url("../images/lcm/main_nav_sq_over.gif") no-repeat 3px 3px;
+}
+
+/* --------------------------------- */
+/* The right column settings */
+/* --------------------------------- */
+
+.prefs_column_menu_head {
+	font-weight: bold;
+	padding: 4px;
+	text-align: left;
+}
+
+p.prefs_column_text {
+	margin: 4px;
+	margin-bottom: 10px;
+}
+
+a.prefs_bold_lnk {
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a.prefs_normal_lnk {
+	font-weight: normal;
+	text-decoration: underline;
+}
+
+/* Form elements */
+
+form.search_form {
+	margin: 4px 4px 10px 4px;
+}
+
+td input.search_form_txt, td select.sel_frm, td textarea {
+	width: 85%;
+}
+
+fieldset input.search_form_txt, fieldset textarea, fieldset select.sel_frm {
+	width: 60%;
+}
+
+input.search_form_txt {
+	
+}
+
+input.search_form_btn, button.simple_form_btn {
+	font-weight: bold;
+}
+
+textarea.frm_tarea {
+	
+}
+
+select.sel_frm {
+	
+}
+
+/* ------------------------------- */
+/* Content column settings */
+/* ------------------------------ */
+
+h3.content_head {
+	text-transform: uppercase;
+	text-align: left;
+	margin-top: 0px;
+	margin-bottom: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 2px 0px 2px 0px;
+	width: 99%;
+}
+
+h4 {
+	text-transform: uppercase;
+	text-align: left;
+	margin: 5px 0px 5px 0px;
+	padding: 0px;
+}
+
+table.tbl_data td {
+	text-align: left;
+	padding: 4px;
+}
+
+td.tbl_head, th.tbl_head {
+	font-weight: bold;
+}
+
+table.tbl_usr_dtl td, table.tbl_usr_dtl th{
+	padding: 3px;
+}
+
+table.tbl_usr_dtl, table.tbl_data {
+	border-collapse: collapse;
+}
+
+td.heading, th.heading {
+	
+}
+
+p.normal_text {
+	
+}
+
+a.content_link {
+	text-decoration: underline;
+}
+
+fieldset.conf_info_box, fieldset.info_box {
+	margin: 0em 0em 1em 0em;
+	padding: 0.5em;
+	-moz-border-radius: 10px;
+}
+
+small.sm_11 {
+	
+}
+
+ul.simple_list li {
+	
+}
+
+ul.wo_blt li {
+	list-style-type: none;
+}
+
+a.add_lnk {
+	padding: 4px 4px 4px 22px;
+	margin-left: 5px;
+	background: url("../images/jimmac/stock_attach-16.png") no-repeat 2px 4px;
+	font-weight: bold;
+	text-decoration: none;
+	-moz-border-radius: 5px;
+}
+
+a.create_new_lnk {
+	padding: 4px 4px 4px 22px;
+	margin-left: 5px;
+	background: url("../images/jimmac/stock_new-16.png") no-repeat 2px 4px;
+	font-weight: bold;
+	text-decoration: none;
+	-moz-border-radius: 5px;
+}
+
+a.edit_lnk {
+	padding: 4px 4px 4px 22px;
+	margin-left: 5px;
+	background: url("../images/jimmac/stock_edit-16.png") no-repeat 2px 4px;
+	font-weight: bold;
+	text-decoration: none;
+	-moz-border-radius: 5px;
+}
+
+a.run_lnk {
+	padding: 4px 4px 4px 22px;
+	margin-left: 5px;
+	background: url("../images/jimmac/stock_jump-to-16.png") no-repeat 2px 4px;
+	font-weight: bold;
+	text-decoration: none;
+	-moz-border-radius: 5px;
+}
+
+a.prefs_myprefs {
+	padding: 2px 4px 2px 20px;
+	margin-left: 1px;
+	background: url("../images/jimmac/stock_preferences-16.png") no-repeat 2px 2px;
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a.prefs_logout {
+	padding: 2px 4px 2px 20px;
+	margin-left: 1px;
+	background: url("../images/jimmac/stock_exit-16.png") no-repeat 2px 2px;
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+/* Go to page bar */
+.page_numbers {
+	margin-top: 5px;
+}
+
+.page_numbers td {
+	
+}
+
+/* For the Small/Normal/Large Font size list */
+
+ul.font_size_buttons {
+	margin: 0px 0px 0px 10px;
+	padding: 0;
+}
+
+ul.font_size_buttons li {
+	float: left;
+	list-style: none;
+	margin-right: 10px;
+}
+
+ul.font_size_buttons li a {
+	display: block;
+	width: 25px;
+	height: 20px;
+	text-decoration: none;
+	border: 1px solid #000;
+	color: #000;
+	background-color: #fff;
+	font-weight: bold;
+	text-align: center;
+}
+
+a.set_fnt_sz {
+	text-decoration: none;
+	color: #000;
+	font-weight: bold;
+	border: 1px solid #000;
+}
+
+
+/* Help pages styles */
+
+h1.hlp_h1 {
+	text-align: left;
+	border-bottom: 1px solid #333;
+	margin: 0;
+	padding: 5px 0px 5px 0px;
+	color: #333;
+}
+
+h2.hlp_h2 {
+	text-align: left;
+	margin: 0;
+	padding: 5px;
+}
+
+#hlp_big_box {
+	text-align: left;
+	border-bottom: 1px solid #333;
+}
+
+#hlp_menu {
+	float: left;
+	text-align: left;
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+}
+
+#hlp_menu ul {
+	margin: 5px 0px 0px 0px;
+	padding: 0;
+	border-top: 1px solid #ccc;
+}
+
+#hlp_menu ul li {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px solid #ccc;
+	font-size: 11px;
+}
+
+#hlp_menu ul li a {
+	width: 160px;
+	line-height: 25px;
+	text-decoration: none;
+	background-color: #fff;
+	display: block;
+	color: #333;
+}
+
+#hlp_menu ul li a:hover {
+	background-color: #efefef;
+}
+
+#hlp_cont {
+	margin-left: 3px;
+	height: 380px;
+	overflow: auto;
+	border-left: 1px solid #333;
+	padding: 0px 15px 15px 15px;
+}
+
+/* ================================ */
+/* Monochrome theme for the LCM UI  */
+/* ================================ */
+
+#header {
+	background: url("../images/lcm/lcm_logo_mono.png") no-repeat left;
+}
+
+#wrapper_wide {
+	background: url("../images/lcm/right_back_mono.gif") repeat-y right;
+}
+
+#container_wide {
+	background: url("../images/lcm/right_back_mono.gif") repeat-y right;
+}
+
+#prefs_column {
+	background-color: #efefef;
+}
+
+#footer {
+	border: 1px solid #ccc;
+	background-color: #efefef;
+	text-align: center;
+	color: #333;
+	line-height: 1.5;
+}
+
+/* ================================================== */
+/* Other visual settings - font, colors, sizes, boxes */
+/* ================================================== */
+
+h1.lcm_main_head, a.head_ttl_link {
+	color: #000;
+}
+
+hr.hair_line {
+	color: #ccc;
+	background-color: #333;
+}
+
+/* ----------------------------------------------- */
+/* The main navigation column settings */
+/* ---------------------------------------------- */
+
+.nav_menu_box {
+	border: 1px solid #000;
+	background-color: #fff;
+}
+
+.nav_column_menu_head {
+	background-color: #ccc;
+	border-bottom: 1px solid #000;
+	font-weight: bold;
+	color: #000;
+}
+
+ul.nav_menu_list li {
+	border-bottom: 1px solid #000;
+}
+
+p.nav_column_text {
+	color: #000;
+}
+
+/* Buttons-like effect */
+
+a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
+	color: #000;
+}
+
+a.main_nav_btn:hover {
+	color: #666;
+}
+
+/* --------------------------------- */
+/* The right column settings */
+/* --------------------------------- */
+
+.prefs_column_menu_head {
+	background-color: #ccc;
+	color: #333;
+}
+
+p.prefs_column_text {
+	color: #000;
+}
+
+a.prefs_bold_lnk, a.prefs_normal_lnk {
+	color: #333;
+}
+
+/* Form elements */
+
+form.search_form {
+	color: #333;
+}
+
+input.search_form_txt {
+	background-color: #fff;
+	border: 1px solid #666;
+}
+
+input.search_form_btn, button.simple_form_btn {
+	border: 1px solid #666;
+	background-color: #ccc;
+	color: #666;
+	font-weight: bold;
+}
+
+textarea.frm_tarea {
+	background-color: #fff;
+	border: 1px solid #666;
+}
+
+select.sel_frm {
+	
+}
+
+/* ------------------------------- */
+/* Content column settings */
+/* ------------------------------ */
+
+h3.content_head {
+	color: #000;
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
+	background-color: #efefef;
+}
+
+h4 {
+	color: #000;
+}
+
+/* ------------------- [Tabs list] ------------------- */
+
+.tabs {
+	background: #fff url("../images/lcm/mono_tabs_back_div.gif") repeat-x bottom;
+}
+
+ul.tabs_list li {
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+}
+
+ul.tabs_list li.active {
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+	background: #fff url("../images/lcm/mono_tabs_back_active.gif") repeat-x bottom;
+	font-weight: bold;
+}
+
+ul.tabs_list li a {
+	background: url("../images/lcm/mono_tabs_back_inactive.gif") repeat-x bottom;
+}
+
+ul.tabs_list li, ul.tabs_list li.active, ul.tabs_list li a {
+	color: #000;
+}
+
+table.tbl_data {
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #ccc;
+}
+
+table.tbl_data td {
+	color: #000;
+	border-left: 1px solid #ccc;
+}
+
+td.tbl_head, th.tbl_head {
+	background-color: #ddd;
+	font-weight: bold;
+}
+
+td.tbl_cont_dark {
+	background-color: #efefef;
+}
+
+td.tbl_cont_light {
+	background-color: #fff;
+}
+
+/* Update profile form */
+
+table.tbl_usr_dtl {
+	border-top: 1px solid #ccc;
+	/* border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc; */
+}
+
+table.tbl_usr_dtl td, table.tbl_usr_dtl th {
+	border-bottom: 1px solid #ccc;
+}
+
+td.heading, th.heading {
+	background-color: #efefef;
+	color: #000;
+}
+
+a.content_link {
+	color: #333;
+}
+
+/* Some buttons */
+a.add_lnk {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+/*
+a.add_lnk:hover {
+	background-color: #efefef;
+}
+*/
+
+a.create_new_lnk {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+/*
+a.create_new_lnk:hover {
+	background-color: #efefef;
+}
+*/
+
+a.edit_lnk {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+/*
+a.edit_lnk:hover {
+	background-color: #efefef;
+}
+*/
+
+a.run_lnk {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+/*
+a.run_lnk:hover {
+	background-color: #efefef;
+}
+*/
+
+a.prefs_myprefs {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+/*
+a.prefs_myprefs:hover {
+	background-color: #efefef;
+}
+*/
+
+a.prefs_logout {
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+/*
+a.prefs_logout:hover {
+	background-color: #efefef;
+}
+*/
+
+fieldset.conf_info_box, fieldset.info_box {
+	border: 1px solid #999;
+}
+
+#breadcrumb {
+	font-size: 10px;
+}
+
+/* tabs */
+
+ul.tabs_list li {
+	font-size: 11px;
+}
+
+ul.tabs_list li.active {
+	font-size: 11px;
+}
+
+.nav_column_menu_head {
+	font-size: 12px;
+}
+
+ul.nav_menu_list li {
+	font-size: 11px;
+}
+
+p.nav_column_text {
+	font-size: 11px;
+}
+
+/* Buttons-like effect */
+
+#main_column .prefs_column_menu_head {
+	font-size: 12px;
+}
+
+.prefs_column_menu_head {
+	font-size: 12px;
+}
+
+p.prefs_column_text {
+	font-size: 11px;
+}
+
+a.prefs_bold_lnk {
+	font-size: 10px;
+}
+
+a.prefs_normal_lnk {
+	font-size: 10px;
+}
+
+/* Form elements */
+
+#main_column form.search_form {
+	font-size: 11px;
+}
+
+#main_column input.search_form_txt {
+	font-size: 12px;
+}
+
+#main_column input.search_form_btn,#main_column button.simple_form_btn {
+	font-size: 11px;
+}
+
+#main_column textarea.frm_tarea {
+	font-size: 12px;
+}
+
+#main_column select.sel_frm {
+	font-size: 12px;
+}
+
+form.search_form {
+	font-size: 11px;
+}
+
+input.search_form_txt {
+	font-size: 12px;
+}
+
+input.search_form_btn,button.simple_form_btn {
+	font-size: 11px;
+}
+
+textarea.frm_tarea {
+	font-size: 12px;
+}
+
+select.sel_frm {
+	font-size: 12px;
+}
+
+/* ------------------------------- */
+/* Content column settings */
+/* ------------------------------ */
+
+h3.content_head {
+	/* font-size: 100%; */
+}
+
+h4 {
+	/* font-size: 100%; */
+}
+
+table.tbl_data td {
+	font-size: 12px;
+}
+
+td.tbl_head, th.tbl_head {
+	font-size: 12px;
+}
+
+table.tbl_usr_dtl td {
+	font-size: 12px;
+}
+
+td.heading, th.heading {
+	font-size: 12px;
+}
+
+p.normal_text {
+	font-size: 12px;
+}
+
+fieldset.conf_info_box, fieldset.info_box {
+	font-size: 12px;
+}
+
+small.sm_11 {
+	font-size: 11px;
+}
+
+ul.simple_list li {
+	font-size: 12px;
+}
+
+a.add_lnk,a.create_new_lnk,a.edit_lnk,a.run_lnk {
+	font-size: 11px;
+}
+
+/* Go to page bar */
+
+.page_numbers td {
+	font-size: 11px;
+}
+
+/* For the Small/Normal/Large Font size list */
+
+ul.font_size_buttons li a {
+	font-size: 11px;
+}
+
+a.set_fnt_sz {
+	font-size: 11px;
+}
