@@ -6,26 +6,23 @@ include_lcm('inc_meta');
 include_lcm('inc_presentation');
 include_lcm('inc_session');
 include_lcm('inc_filters');
-// include_lcm('inc_texte');
-include_lcm('inc_meta');
+include_lcm('inc_text'); // what for?
 include_lcm('inc_mail');
-include_lcm('inc_access');
-
-// include_local('inc-formulaires.php3');
+include_lcm('inc_access'); // may be limited to only a few parts
 
 use_language_of_site();
 use_language_of_visitor();
 
-$open_subscribtion = (lire_meta("site_open_subscribtion") == "yes") ;
+$open_subscription = read_meta("site_open_subscription");
 unset($error);
 
-// Using the cookie (which was sent by e-mail), reset the password
+// Using the cookie (which was sent by e-mail) to reset the password
 if ($p = addslashes($p)) {
 	$pass_forgotten = 'yes';
 
 	$res = lcm_query("SELECT * 
 				FROM lcm_author
-				WHERE cookie_recall='$p' AND status<>'trash' AND password<>''");
+				WHERE cookie_recall='$p' AND status <> 'trash' AND password <> ''");
 
 	if ($row = lcm_fetch_array($res)) {
 		if ($pass) {
@@ -33,18 +30,18 @@ if ($p = addslashes($p)) {
 			$htpass = generer_htpass($pass);
 
 			lcm_query("UPDATE lcm_author
-				SET htpass='$htpass', password='$mdpass', alea_actuel='', cookie_recall = ''
+				SET cookie_recall = '', htpass='$htpass', password='$mdpass', alea_actuel=''
 				WHERE cookie_recall = '$p'");
 
-			$login = $row['login'];
+			$username = $row['username'];
 			$error = "<b>"._T('pass_nouveau_enregistre')."</b>".
-			"<p>"._T('pass_rappel_login', array('login' => $login));
+			"<p>"._T('pass_rappel_login', array('username' => $username));
 		} else {
 			install_html_start(_T('pass_nouveau_pass'));
 			echo "<p><br>";
 			echo "<form action='spip_pass.php3' method='post'>";
-			echo "<input type='hidden' name='p' value='".htmlspecialchars($p)."'>";
-			echo _T('pass_choix_pass')."<br>\n";
+			echo "<input type='hidden' name='p' value='" . htmlspecialchars($p) . "'>";
+			echo _T('pass_choix_pass') . "<br>\n";
 			echo "<input type='password' name='pass' value=''>";
 			echo '  <input type=submit class="fondl" name="oubli" value="'._T('pass_ok').'"></div></form>';
 			install_fin_html();
@@ -99,22 +96,98 @@ if ($pass_forgotten == 'yes') {
 		echo '<input type="hidden" name="pass_forgotten" value="yes">';
 		echo '<input type=submit class="fondl" name="oubli" value="'._T('button_validate').'"></div></form>';
 	}
-} else if ($open_subscription) {
-	// debut presentation
-	install_html_start(_T('pass_vousinscrire'));
-	echo "<p>";
+} else if ($open_subscription == 'yes' || $open_subscription == 'moderated') {
+	install_html_start(_T('pass_title_register'));
 
-	if ($open_subscription)
-		echo _T('pass_espace_prive_bla');
-	else
-		echo _T('pass_forum_bla');
-	echo "\n<p>";
+	echo "<p>" . _T('pass_info_why_register') . "</p>\n";
 
-	echo formulaire_inscription(($open_subscription)? 'redac' : 'forum');
-}
-else {
-	install_html_start(_T('pass_erreur'));
-	echo "<p>" . _T('pass_rien_a_faire_ici') . "</p>";
+	if ($mail_inscription && $nom_inscription) {
+		$query = "SELECT * FROM lcm_author WHERE email='".addslashes($mail_inscription)."'"; // XXX
+		$result = lcm_query($query);
+
+		$res = "<div class='reponse_formulaire'>";
+
+		// Test if the user already exists
+	 	if ($row = lcm_fetch_array($result)) {
+			$id_auteur = $row['id_author'];
+			$statut = $row['status'];
+
+			unset ($continue);
+			if ($statut == 'trash')
+				$res .= "<b>"._T('form_forum_access_refuse')."</b>";
+			else if ($statut == 'nouveau') {
+				spip_query ("DELETE FROM spip_auteurs WHERE id_auteur=$id_auteur");
+				$continue = true;
+			} else
+				$res .= "<b>"._T('form_forum_email_deja_enregistre')."</b>";
+		} else
+			$continue = true;
+
+		// Send identifiers by e-mail
+		if ($continue) {
+			include_lcm('inc_access');
+			$pass = creer_pass_aleatoire(8, $mail_inscription);
+			$login = test_login($mail_inscription);
+			$mdpass = md5($pass);
+			$htpass = generer_htpass($pass);
+			spip_query("INSERT INTO spip_auteurs (nom, email, login, pass, statut, htpass) ". "VALUES ('".addslashes($nom_inscription)."', '".addslashes($mail_inscription)."', '$login', '$mdpass', '$statut', '$htpass')");
+			ecrire_acces();
+
+			$site_name = read_meta("site_name");
+			$adresse_site = read_meta("adresse_site"); // XXX
+
+			$message = _T('form_forum_message_auto')."\n\n"._T('form_forum_bonjour')."\n\n";
+			if ($type == 'forum') {
+				$message .= _T('form_forum_voici1', array('nom_site_spip' => $nom_site_spip, 'adresse_site' => $adresse_site)) . "\n\n";
+			}
+			else {
+				$message .= _T('form_forum_voici2', array('nom_site_spip' => $nom_site_spip, 'adresse_site' => $adresse_site)) . "\n\n";
+			}
+			$message .= "- "._T('form_forum_login')." $login\n";
+			$message .= "- "._T('form_forum_pass')." $pass\n\n";
+
+			if (envoyer_mail($mail_inscription, "[$nom_site_spip] "._T('form_forum_identifiants'), $message)) {
+			  $res .=  _T('form_forum_identifiant_mail');
+			}
+			else {
+				$res .= _T('form_forum_probleme_mail');
+			}
+		}
+		$res .= "</div>";
+	} else {
+		// Show form to enter mail
+		$link = new Link;
+		$url = $link->getUrl();
+		$url = quote_amp($url);
+
+	  	echo "<form method='get' action='$url' style='border: 0px; margin: 0px;'>\n";
+
+		echo "<fieldset><label><b>". _T('info_your_contact_information') . "</b><br></label>\n";
+		echo "<b>". _T('info_name_of_person') . "</b><br>\n";
+
+		echo "<table border='0'>\n";
+		echo "<tr>\n";
+		echo "<td><small><label for='name_first'>" . _T('enter_name_first') .  "</label></small></td>\n";
+		echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
+		echo "<td><small><label for='name_last'>" . _T('enter_name_last') . "</label></small></td>\n";
+		echo "</tr><tr>\n";
+		echo "<td><input type='text' id='name_first' name='name_first' class='formo' value='$name_first' size='20'></td>\n";
+		echo "<td><input type='text' id='name_middle' name='name_middle' class='formo' value='$name_middle' size='20'></td>\n";
+		echo "<td><input type='text' id='name_last' name='name_last' class='formo' value='$name_last' size='20'></td>\n";
+		echo "<tr>\n";
+		echo "</table>\n";
+
+		echo "<b><label for='email'>" . _T('input_email') . "</label></b><br>";
+		echo "<input type='text' id='email' name='email' class='formo' value=\"$email\" size='40'></fieldset><p>\n";
+
+		 echo "<div align=\"right\"><input type=\"submit\" name='Validate' class='fondl' value=\""._T('button_validate')."\" /></div>";
+	  	echo "</form>\n";
+	}
+} else {
+	install_html_start(_T('title_error'), 'install'); // XXX [ML] note to self: stop calling install.css
+	echo "<div class='box_error'>\n";
+	echo "<p>" . _T('pass_warning_no_action') . "</p>";
+	echo "</div>\n";
 }
 
 echo "<p align='right'>
