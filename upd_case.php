@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.23 2004/12/17 09:34:56 antzi Exp $
+	$Id: upd_case.php,v 1.24 2004/12/17 10:40:36 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -94,6 +94,7 @@ if (count($errors)) {
 		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,status='open',$public_access_rights";
 		$result = lcm_query($q);
 		$id_case = lcm_insert_id();
+		$id_author = $GLOBALS['author_session']['id_author'];
 
 		// Insert new case_author relation
 		$q = "INSERT INTO lcm_case_author SET
@@ -116,7 +117,7 @@ if (count($errors)) {
 		$q .= $author_data['name_first'];
 		$q .= (($author_data['name_middle']) ? ' ' . $author_data['name_middle'] : '');
 		$q .= (($author_data['name_last']) ? ' ' . $author_data['name_last'] : '');
-		$q .= " assigned to the case',date_start=NOW()";
+		$q .= " created and auto-assigned to the case',date_start=NOW()";
 		$result = lcm_query($q);
 
 		// Set case date_assigned to NOW()
