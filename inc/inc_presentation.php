@@ -202,20 +202,49 @@ function lcm_page_start($title = "", $css_files = "") {
 					<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_reminder-16.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_agenda') . "</div>
 					<!-- [ML] Keeping this so that testers see what features
 					to expect, but I put the opacity low to insist that it is
-					not ready. Who knows whether it works in MSIE. -->
-					<div style='-moz-opacity: 0.45; filter: alpha(opacity=45);'>
+					not ready. Who knows whether it works in MSIE. -->\n";
+	// Show appointments for today
+	$q = "SELECT lcm_app.id_app,start_time,type,title
+		FROM lcm_app, lcm_author_app as a
+		WHERE (a.id_author=" . $GLOBALS['author_session']['id_author'] . "
+			AND lcm_app.id_app=a.id_app
+			AND start_time LIKE '" . date('Y-m-d') ."%')
+		ORDER BY reminder ASC";
+	$result = lcm_query($q);
+	if (lcm_num_rows($result)>0) {
+		echo "					<div style='-moz-opacity: 0.45; filter: alpha(opacity=45);'>
 						<p class=\"nav_column_text\">
-							<strong>Today</strong><br />
-							9:30 - Meeting with Mr. Smith<br /><br />
-							11:00 - At the court
-						</p>
-						<hr class=\"hair_line\" />
-						<p class=\"nav_column_text\">
-							<strong>Tomorrow (28.09.2004)</strong><br />
-							8:30 - Meeting with Mr. Johnson<br /><br />
-							10:00 - At the court
-						</p>
-					</div>
+							<strong>Today</strong><br />\n";
+		while ($row=lcm_fetch_array($result)) {
+			echo "							<a href=\"app_det.php?app=" . $row['id_app'] . "\">"
+				. heures($row['start_time']) . ':' . minutes($row['start_time']) . " - " . $row['title'] . "</a><br />\n";
+		}
+		//					9:30 - Meeting with Mr. Smith<br /><br />
+		//					11:00 - At the court
+		echo "						</p>
+						<hr class=\"hair_line\" />\n";
+	}
+	// Show next appointments
+	$q = "SELECT lcm_app.id_app,start_time,type,title
+		FROM lcm_app, lcm_author_app as a
+		WHERE (a.id_author=" . $GLOBALS['author_session']['id_author'] . "
+			AND lcm_app.id_app=a.id_app
+			AND start_time>='" . date('Y-m-d H:i:s',((int) ceil(time()/86400)) * 86400) ."')
+		ORDER BY reminder ASC
+		LIMIT 5";
+	$result = lcm_query($q);
+	if (lcm_num_rows($result)>0) {
+		echo "						<p class=\"nav_column_text\">
+							<strong>Next appointments</strong><br />\n";
+		while ($row=lcm_fetch_array($result)) {
+			echo "							<a href=\"app_det.php?app=" . $row['id_app'] . "\">"
+				. format_date($row['start_time'],'short') . " - " . $row['title'] . "</a><br />\n";
+		}
+		//					8:30 - Meeting with Mr. Johnson<br /><br />
+		//					10:00 - At the court
+		echo "						</p>\n";
+	}
+	echo "					</div>
 					</div>
 				<!-- End of \"navigation_menu_column\" content -->
 				</div>

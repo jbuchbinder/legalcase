@@ -20,6 +20,11 @@ $system_keyword_groups = array (
 		"ac_author" => "Y",
 		"keywords" => array(
 			array (
+				"name" => "opening",
+				"title" => "kw_followups_opening_title",
+				"description" => "kw_followups_opening_description",
+				"ac_author" => "Y"),
+			array (
 				"name" => "assignment",
 				"title" => "kw_followups_assignment_title",
 				"description" => "kw_followups_assignment_description",
@@ -30,6 +35,11 @@ $system_keyword_groups = array (
 				"description" => "kw_followups_suspension_description",
 				"ac_author" => "Y"),
 			array (
+				"name" => "resumption",
+				"title" => "kw_followups_resumption_title",
+				"description" => "kw_followups_resumption_description",
+				"ac_author" => "Y"),
+			array (
 				"name" => "delay",
 				"title" => "kw_followups_delay_title",
 				"description" => "kw_followups_delay_description",
@@ -38,6 +48,16 @@ $system_keyword_groups = array (
 				"name" => "conclusion",
 				"title" => "kw_followups_conclusion_title",
 				"description" => "kw_followups_conclusion_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "reopening",
+				"title" => "kw_followups_reopening_title",
+				"description" => "kw_followups_reopening_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "merge",
+				"title" => "kw_followups_merge_title",
+				"description" => "kw_followups_merge_description",
 				"ac_author" => "Y"),
 			array (
 				"name" => "consultation",
@@ -102,6 +122,35 @@ $system_keyword_groups = array (
 				"name" => "address_main",
 				"title" => "kw_contacts_addressmain_title",
 				"description" => "kw_contacts_addressmain_description",
+				"ac_author" => "Y")
+		)
+	),
+	
+	"appointments" => array(
+		"name" => "appointments",
+		"title" => "kwg_appointments_title",
+		"description" => "kwg_appointments_description",
+		"type" => "system",
+		"policy" => "optional",
+		"quantity" => "many",
+		"suggest" => "meeting",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array(
+			array (
+				"name" => "meeting",
+				"title" => "kw_appointments_meeting_title",
+				"description" => "kw_appointments_meeting_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "phone_conversation",
+				"title" => "kw_appointments_phone_conversation_title",
+				"description" => "kw_appointments_phone_conversation_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "court_session",
+				"title" => "kw_appointments_court_session_title",
+				"description" => "kw_appointments_court_session_description",
 				"ac_author" => "Y")
 		)
 	)

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.35 2005/02/10 16:15:07 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.36 2005/02/11 16:20:12 antzi Exp $
 */
 
 // Execute this file only once
@@ -441,7 +441,48 @@ function upgrade_database($old_db_version) {
 
 		upgrade_db_version (20);
 	}
+	
+	if ($lcm_db_version_current < 21) {
+		lcm_query("CREATE TABLE lcm_app (
+			id_app bigint(21) NOT NULL auto_increment,
+			id_case bigint(21) NOT NULL default '0',
+			id_author bigint(21) NOT NULL default '0',
+			type varchar(255) NOT NULL default '',
+			title varchar(255) NOT NULL default '',
+			description text NOT NULL,
+			start_time datetime NOT NULL default '0000-00-00 00:00:00',
+			end_time datetime NOT NULL default '0000-00-00 00:00:00',
+			reminder datetime NOT NULL default '0000-00-00 00:00:00',
+			date_creation datetime NOT NULL default '0000-00-00 00:00:00',
+			date_update datetime NOT NULL default '0000-00-00 00:00:00',
+			PRIMARY KEY  (id_app),
+			KEY id_case (id_case),
+			KEY id_author (id_author),
+			KEY type (type),
+			FULLTEXT KEY title (title),
+			FULLTEXT KEY description (description))");
 
+		lcm_query("CREATE TABLE lcm_app_client_org (
+			id_app bigint(21) NOT NULL default '0',
+			id_client bigint(21) NOT NULL default '0',
+			id_org bigint(21) NOT NULL default '0',
+			KEY id_app (id_app,id_client,id_org))");
+		
+		lcm_query("CREATE TABLE lcm_app_fu (
+			id_app bigint(21) NOT NULL default '0',
+			id_followup bigint(21) NOT NULL default '0',
+			relation enum('parent','child') NOT NULL default 'parent',
+			KEY id_app (id_app,id_followup))");
+		
+		lcm_query("CREATE TABLE lcm_author_app (
+			id_author bigint(21) NOT NULL default '0',
+			id_app bigint(21) NOT NULL default '0',
+			KEY id_author (id_author,id_app))");
+		
+		lcm_query("");
+		
+		upgrade_db_version (21);
+	}
 	return $log;
 }
 
