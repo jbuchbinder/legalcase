@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.4 2005/03/06 22:43:51 antzi Exp $
+	$Id: app_det.php,v 1.5 2005/03/09 13:17:05 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -35,7 +35,7 @@ $q = "SELECT lcm_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.n
 $result = lcm_query($q);
 
 if ($row = lcm_fetch_array($result)) {
-	lcm_page_start('Appointment details:' . $row['title']);
+	lcm_page_start('Appointment details:' . ' ' . $row['title']);
 
 	echo '<fieldset class="info_box">';
 //	echo '<div class="prefs_column_menu_head">' . _T('app_subtitle_general') . '</div>';
@@ -91,6 +91,12 @@ if ($row = lcm_fetch_array($result)) {
 				. ( ($client['id_org'] > 0) ? " of " . $client['name'] : '');
 		echo join(', ',$clients);
 		echo "<br />\n";
+	}
+
+	if ($row['id_case'] > 0) {
+		// Show create followup from appointment
+		echo '<br /><a href="edit_fu.php?case=' . $row['id_case'] . '&amp;app=' . $row['id_app']
+			. "\">Create new followup from this appointment</a><br /><br />\n";
 	}
 
 	echo "</p>";
