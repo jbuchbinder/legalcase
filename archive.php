@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.2 2005/02/17 09:44:52 antzi Exp $
+	$Id: archive.php,v 1.3 2005/02/24 16:22:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,20 +30,14 @@ if ($GLOBALS['author_session']['status'] != 'admin')
 	die("You don't have the right to list all cases!");
 
 // Show page start
-lcm_page_start("Archives");
+lcm_page_start(_T('title_archives'));
 
 // Show tabs
-$tabs = array(	array('name' => 'All cases','url' => 'archive.php'),
-		array('name' => 'Export DB','url' => 'export_db.php'),
-		array('name' => 'Import DB','url' => 'import_db.php')
+$tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
+		array('name' => _T('archives_tab_export'), 'url' => 'export_db.php'),
+		array('name' => _T('archives_tab_import'), 'url' => 'import_db.php')
 	);
 show_tabs_links($tabs,0);
-
-// This should be shown in other tabs
-/*echo "<p>This will go into tabs: ";
-echo '<a href="export_db.php" class="content_link">' . "Export DB" . "</a>, ";
-echo '<a href="import_db.php" class="content_link">' . "Import DB" . "</a>";
-echo "</p>\n";*/
 
 $q = "SELECT DISTINCT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author
