@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.36 2005/03/01 08:55:57 mlutfy Exp $
+	$Id: config_site.php,v 1.37 2005/03/03 15:49:36 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -244,26 +244,6 @@ function show_config_form_regional() {
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate5' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
-}
-
-function get_yes_no($name, $value = '') {
-	$ret = '';
-
-	$yes = ($value == 'yes' ? ' selected="selected"' : '');
-	$no = ($value == 'no' ? ' selected="selected"' : '');
-	$other = ($yes || $no ? '' : ' selected="selected"');
-
-	// until we format with tables, better to keep the starting space
-	$ret .= ' <select name="' . $name . '" class="sel_frm">' . "\n";
-	$ret .= '<option value="yes"' . $yes . '>' . _T('info_yes') . '</option>';
-	$ret .= '<option value="no"' . $no . '>' . _T('info_no') . '</option>';
-
-	if ($other)
-		$ret .= '<option value=""' . $other . '> </option>';
-
-	$ret .= '</select>' . "\n";
-
-	return $ret;
 }
 
 function show_config_form_policy() {
