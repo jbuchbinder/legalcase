@@ -53,6 +53,9 @@ if (empty($errors)) {
 		// Check for access rights
 		if (!allowed($fu_data['id_case'],'e'))
 			die("You don't have permission to edit this case's information!");
+
+		// Set the case ID, to which this followup belongs
+		$case = $fu_data['id_case'];
 	} else {
 		if ($_GET['case'] > 0) {
 			$case = intval($_GET['case']);
@@ -94,7 +97,7 @@ while ($row = lcm_fetch_array($result))  // should be only once
 // Could be more esthetic or ergonomic, but works for now..
 $query = "SELECT cl.id_client, name_first, name_middle, name_last
 			FROM lcm_case_client_org as cco, lcm_client as cl
-			WHERE cco.id_case = " . intval($case) . "
+			WHERE cco.id_case=$case
 			  AND cco.id_client = cl.id_client";
 
 $result = lcm_query($query);
@@ -107,7 +110,7 @@ while ($all_clients[] = lcm_fetch_array($result));
 
 $query = "SELECT org.name, cco.id_client, org.id_org
 			FROM lcm_case_client_org as cco, lcm_org as org
-			WHERE cco.id_case = " . intval($case) . "
+			WHERE cco.id_case=$case
 			  AND cco.id_org = org.id_org";
 
 $result = lcm_query($query);
