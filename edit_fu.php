@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.47 2005/01/25 22:47:47 antzi Exp $
+	$Id: edit_fu.php,v 1.48 2005/01/25 22:52:20 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -64,6 +64,7 @@ if (empty($errors)) {
 		// Set the case ID, to which this followup belongs
 		$case = $fu_data['id_case'];
 	} else {
+		unset($followup);
 		if ($_GET['case'] > 0) {
 			$case = intval($_GET['case']);
 
@@ -232,7 +233,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			}
 		echo "	</table>\n";
 
-		if ($followup) {
+		if (isset($followup)) {
 			echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 			if ($prefs['mode'] == 'extended')
 				echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
