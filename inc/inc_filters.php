@@ -64,11 +64,20 @@ function f_err($fn, $errors) {
 }
 
 // Cleans user input string from 'dangerous' characters
-function clean($string) {
+function clean_input($string) {
 	if (get_magic_quotes_gpc()) {
 		return $string;
 	} else {
 		return addslashes($string);
+	}
+}
+
+// Cleans text to be send out
+function clean_output($string) {
+	if (get_magic_quotes_runtime()) {
+		return htmlspecialchars(stripslashes($string));
+	} else {
+		return htmlspecialchars($string);
 	}
 }
 
