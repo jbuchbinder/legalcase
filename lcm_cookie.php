@@ -16,17 +16,17 @@ if ($logout_public) {
 		$url = 'index.php';
 }
 
-// rejoue le cookie pour renouveler spip_session
+// rejoue le cookie pour renouveler lcm_session
 if ($change_session == 'oui') {
-	if (verifier_session($spip_session)) {
+	if (verifier_session($lcm_session)) {
 		// Attention : seul celui qui a le bon IP a le droit de rejouer,
 		// ainsi un eventuel voleur de cookie ne pourrait pas deconnecter
 		// sa victime, mais se ferait deconnecter par elle.
 		if ($auteur_session['hash_env'] == hash_env()) {
 			$auteur_session['ip_change'] = false;
 			$cookie = creer_cookie_session($auteur_session);
-			supprimer_session($spip_session);
-			spip_setcookie('spip_session', $cookie);
+			supprimer_session($lcm_session);
+			spip_setcookie('lcm_session', $cookie);
 		}
 		@header('Content-Type: image/gif');
 		@header('Expires: 0');
@@ -48,23 +48,23 @@ if ($essai_auth_http AND !$ignore_auth_http) {
 
 // tentative de logout
 if ($logout) {
-	include_ecrire("inc_session.php3");
+	include_lcm('inc_session');
 	verifier_visiteur();
 	if ($auteur_session['login'] == $logout) {
-		spip_query("UPDATE spip_auteurs SET en_ligne = DATE_SUB(NOW(),INTERVAL 6 MINUTE) WHERE id_auteur = ".$auteur_session['id_auteur']);
-		if ($spip_session) {
-			zap_sessions($auteur_session['id_auteur'], true);
-			spip_setcookie('spip_session', $spip_session, time() - 3600 * 24);
+		// [ML] NOT USED spip_query("UPDATE lcm_author SET en_ligne = DATE_SUB(NOW(),INTERVAL 6 MINUTE) WHERE id_author = ".$auteur_session['id_author']);
+		if ($lcm_session) {
+			zap_sessions($auteur_session['id_author'], true);
+			spip_setcookie('lcm_session', $lcm_session, time() - 3600 * 24);
 		}
 		if ($PHP_AUTH_USER AND !$ignore_auth_http) {
-			include_local ("inc-login.php3");
+			include_local ("inc-login.php"); // [ML] XXX
 			auth_http($cible, 'logout');
 		}
 		unset ($auteur_session);
 	}
 
-	if (!$url)	// ecrire
-		@Header("Location: ./spip_login.php");
+	if (!$url)
+		@Header("Location: ./lcm_login.php");
 	else
 		@Header("Location: $url");
 	exit;
@@ -75,16 +75,16 @@ if ($logout) {
 // puis de passer a spip_login qui diagnostiquera l'echec de cookie
 // le cas echeant.
 if ($test_echec_cookie == 'oui') {
-	spip_setcookie('spip_session', 'test_echec_cookie');
-	$link = new Link("spip_login.php?var_echec_cookie=oui");
+	spip_setcookie('lcm_session', 'test_echec_cookie');
+	$link = new Link("lcm_login.php?var_echec_cookie=oui");
 	$link->addVar("var_url", $cible->getUrl());
 	@header("Location: ".$link->getUrl());
 	exit;
 }
 
-// Tentative de login
+// Attempt to login
 unset ($cookie_session);
-if ($essai_login == "oui") {
+if ($essai_login == 'oui') {
 	// Recuperer le login en champ hidden
 	if ($session_login_hidden AND !$session_login)
 		$session_login = $session_login_hidden;
@@ -92,16 +92,21 @@ if ($essai_login == "oui") {
 	$login = $session_login;
 	$pass = $session_password;
 
-	// Essayer differentes methodes d'authentification
-	$auths = array('spip');
-	include_ecrire('inc_connect.php3'); // pour savoir si ldap est present 
+	// Try different authentication methods, starting with "db" (database)
+	$auths = array('db');
+
+	// Test if LDAP is available
+	include_config('inc_connect'); 
 	if ($ldap_present) $auths[] = 'ldap';
+
+	// Add other methods here (with associated inc/inc_auth_NAME.php)
+	// ...
 
 	$ok = false;
 	reset($auths);
 	while (list(, $nom_auth) = each($auths)) {
-		include_ecrire("inc_auth_".$nom_auth.".php3");
-		$classe_auth = "Auth_".$nom_auth;
+		include_lcm('inc_auth_'.$nom_auth);
+		$classe_auth = 'Auth_'.$nom_auth;
 		$auth = new $classe_auth;
 		if ($auth->init()) {
 			// Essayer les mots de passe md5
@@ -117,22 +122,22 @@ if ($essai_login == "oui") {
 	if ($ok) {
 		$auth->activer();
 
-		if ($auth->login AND $auth->statut == '0minirezo') // force le cookie pour les admins
+		if ($auth->login AND $auth->statut == 'admin') // force cookies for admins
 			$cookie_admin = "@".$auth->login;
 
-		$query = "SELECT * FROM spip_auteurs WHERE login='".addslashes($auth->login)."'";
+		$query = "SELECT * FROM lcm_author WHERE username='".addslashes($auth->login)."'";
 		$result = spip_query($query);
 		if ($row_auteur = spip_fetch_array($result))
 			$cookie_session = creer_cookie_session($row_auteur);
 
-		if (ereg("ecrire/", $cible->getUrl())) {
+		// [ML] if (ereg("ecrire/", $cible->getUrl())) {
 			$cible->addVar('bonjour','oui');
-		}
-	}
-	else {
+		// }
+	} else {
 		if (ereg("ecrire/", $cible->getUrl())) {
-			$cible = new Link("./spip_login.php");
+			$cible = new Link("./lcm_login.php");
 		}
+
 		$cible->addVar('var_login', $login);
 		if ($session_password || $session_password_md5)
 			$cible->addVar('var_erreur', 'pass');
@@ -142,26 +147,25 @@ if ($essai_login == "oui") {
 
 
 // cookie d'admin ?
-if ($cookie_admin == "non") {
-	spip_setcookie('spip_admin', $spip_admin, time() - 3600 * 24);
+if ($cookie_admin == 'non') {
+	spip_setcookie('lcm_admin', $spip_admin, time() - 3600 * 24);
 	$cible->delVar('var_login');
 	$cible->addVar('var_login', '-1');
 }
 else if ($cookie_admin AND $spip_admin != $cookie_admin) {
-	spip_setcookie('spip_admin', $cookie_admin, time() + 3600 * 24 * 14);
+	spip_setcookie('lcm_admin', $cookie_admin, time() + 3600 * 24 * 14);
 }
 
 // cookie de session ?
 if ($cookie_session) {
 	if ($session_remember == 'oui')
-		spip_setcookie('spip_session', $cookie_session, time() + 3600 * 24 * 14);
+		spip_setcookie('lcm_session', $cookie_session, time() + 3600 * 24 * 14);
 	else
-		spip_setcookie('spip_session', $cookie_session);
+		spip_setcookie('lcm_session', $cookie_session);
 
 	$prefs = ($row_auteur['prefs']) ? unserialize($row_auteur['prefs']) : array();
 	$prefs['cnx'] = ($session_remember == 'oui') ? 'perma' : '';
-	spip_query ("UPDATE spip_auteurs SET prefs = '".addslashes(serialize($prefs))."' WHERE id_auteur = ".$row_auteur['id_auteur']);
-
+	spip_query ("UPDATE lcm_author SET prefs = '".addslashes(serialize($prefs))."' WHERE id_author = ".$row_auteur['id_author']);
 }
 
 // changement de langue espace public
@@ -169,7 +173,7 @@ if ($var_lang) {
 	include_lcm('inc_lang');
 
 	if (changer_langue($var_lang)) {
-		spip_setcookie('spip_lang', $var_lang, time() + 365 * 24 * 3600);
+		spip_setcookie('lcm_lang', $var_lang, time() + 365 * 24 * 3600);
 		$cible->delvar('lang');
 		$cible->addvar('lang', $var_lang);
 	}
@@ -179,18 +183,23 @@ if ($var_lang) {
 if ($var_lang_ecrire) {
 	include_lcm('inc_lang');
 	include_lcm('inc_session');
-	verifier_visiteur();
+	$verif = verifier_visiteur();
 
 	if (changer_langue($var_lang_ecrire)) {
-		spip_setcookie('spip_lang_ecrire', $var_lang_ecrire, time() + 365 * 24 * 3600);
-		spip_setcookie('spip_lang', $var_lang_ecrire, time() + 365 * 24 * 3600);
+		spip_setcookie('lcm_lang_ecrire', $var_lang_ecrire, time() + 365 * 24 * 3600);
+		spip_setcookie('lcm_lang', $var_lang_ecrire, time() + 365 * 24 * 3600);
+
+		// [ML] Strange, if I don't do this, id_auteur stays null,
+		// and I have no idea where the variable should have been initialized
+		$id_auteur = $GLOBALS['auteur_session']['id_author'];
 
 		if (@file_exists('config/inc_connect.php')) {
 			include_lcm('inc_admin');
+				$cible->addvar('test', '123_' .  $GLOBALS['auteur_session']['id_author'] . '_' . $verif);
 			if (verifier_action_auteur('var_lang_ecrire', $valeur, $id_auteur)) {
-				spip_query ("UPDATE spip_auteurs SET lang = '".addslashes($var_lang_ecrire)."' WHERE id_auteur = ".$id_auteur);
+				spip_query ("UPDATE lcm_author SET lang = '".addslashes($var_lang_ecrire)."' WHERE id_author = ".$id_auteur);
 				$auteur_session['lang'] = $var_lang_ecrire;
-				ajouter_session($auteur_session, $spip_session);	// enregistrer dans le fichier de session
+				ajouter_session($auteur_session, $lcm_session);	// enregistrer dans le fichier de session
 			}
 		}
 
