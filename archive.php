@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.8 2005/03/21 11:51:28 mlutfy Exp $
+	$Id: archive.php,v 1.9 2005/03/22 12:27:58 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,7 +35,7 @@ if (isset($_REQUEST['find_case_string']))
 
 // Show page start
 lcm_page_start(_T('title_archives'));
-show_find_box('case', $find_case_string);
+show_find_box('case', $find_case_string, "archive.php");
 
 // Show tabs
 $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
@@ -82,8 +82,7 @@ if ($list_pos > 0)
 show_listcase_start();
 
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	$action = '<a href="edit_fu.php?case=' . $row['id_case'] . '" class="content_link">Add followup</a>';
-	show_listcase_item($row, $i, $action);
+	show_listcase_item($row, $i);
 }
 
 show_listcase_end($list_pos, $number_of_rows);
