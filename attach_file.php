@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: attach_file.php,v 1.5 2005/03/15 04:34:30 antzi Exp $
+	$Id: attach_file.php,v 1.6 2005/03/22 14:25:32 antzi Exp $
 */
 
 include("inc/inc.php");
@@ -74,7 +74,17 @@ if (isset($_FILES['filename'])) {
 
 		$result = lcm_query($q);
 
-	} else die('Error #' . $user_file['error'] . ' uploading file ' . $user_file['name'] . '!');
+	} else {
+		// Handle errors
+		$cause = array(	UPLOAD_ERR_OK		=> 'The file was uploaded successfully!',
+				UPLOAD_ERR_INI_SIZE	=> 'The file size exceeds the "upload_max_filesize" directive in php.ini.',
+				UPLOAD_ERR_FORM_SIZE	=> 'The file size exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
+				UPLOAD_ERR_PARTIAL	=> 'The file was uploaded only partially.',
+				UPLOAD_ERR_NO_FILE	=> 'No file was uploaded!',
+				UPLOAD_ERR_NO_TMP_DIR	=> 'Missing a temporary folder.');
+		$_SESSION['errors'] = array('file' => $cause[$user_file['error']]);
+		// . ' uploading file ' . $user_file['name'] . '!');
+	}
 }
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
