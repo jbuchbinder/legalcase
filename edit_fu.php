@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.58 2005/02/08 17:34:47 antzi Exp $
+	$Id: edit_fu.php,v 1.59 2005/02/09 12:13:21 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -75,6 +75,7 @@ if (empty($_SESSION['errors'])) {
 
 			// Setup default values
 			$_SESSION['fu_data']['id_case'] = $case; // Link to the case
+			$_SESSION['fu_data']['id_author'] = $GLOBALS['author_session']['id_author']; // Assign new followup to it's author
 			$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 			$_SESSION['fu_data']['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 		} else {
@@ -262,6 +263,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 	<input type="hidden" name="id_followup" value="<?php echo $_SESSION['fu_data']['id_followup']; ?>">
 	<input type="hidden" name="id_case" value="<?php echo $_SESSION['fu_data']['id_case']; ?>">
+	<input type="hidden" name="id_author" value="<?php echo $_SESSION['fu_data']['id_author']; ?>">
 	<input type="hidden" name="ref_edit_fu" value="<?php echo $_SESSION['fu_data']['ref_edit_fu']; ?>">
 </form>
 
