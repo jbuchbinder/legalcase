@@ -1,5 +1,30 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	Note: This file was initially based on SPIP's ecrire/inc_calendrier.php3
+	(http://www.spip.net).
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the 
+	Free Software Foundation; either version 2 of the License, or (at your 
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but 
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along 
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: inc_calendar.php,v 1.10 2005/03/22 11:18:47 mlutfy Exp $
+*/
+
+
 // Execute only once
 if (defined("_INC_CALENDAR")) return;
 define("_INC_CALENDAR", "1");
@@ -701,10 +726,10 @@ function http_calendrier_clics($year, $month, $day, $clic, $script)
 {
 	//  global $bleu, $jaune, $vert;
 
-	// [ML] XXX TODO should be an icon
 	// return '<a href="edit_app.php">Create new appointment</a>'; // TRAD
 	return http_href("$script?type=jour&jour=$day&mois=$month&annee=$year", $clic)
-		. '<a href="edit_app.php?time=' . rawurlencode("$year-$month-$day") . '">New</a>'; // TRAD
+		. '&nbsp;<a href="edit_app.php?time=' . rawurlencode("$year-$month-$day") . '">'
+		. '<img src="images/jimmac/stock_edit-16.png" border="0" width="16" height="16" alt="New appointment for: DATE (fixme)" title="New appointment for: DATE (fixme)" />' . '</a>'; // TRAD
 }
 
 // Shows events of a week
