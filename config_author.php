@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.53 2005/02/24 23:50:58 antzi Exp $
+	$Id: config_author.php,v 1.54 2005/03/01 10:27:53 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -171,7 +171,7 @@ function show_author_form($tab) {
 	$interface_modes = array("simple", "extended"); 
 	foreach ($interface_modes as $ifm) {
 		$selected_mode = ($ifm == $prefs['mode'] ? " selected='selected'" : '');
-		echo "<option value='" . $ifm . "'" . $selected_mode . ">"
+		echo "\t\t\t\t\t<option value='" . $ifm . "'" . $selected_mode . ">"
 			. _T('authorconf_input_ui_level_' . $ifm)
 			. "</option>\n";
 	}
@@ -189,7 +189,7 @@ function show_author_form($tab) {
 	$time_intervals = array("absolute", "relative");
 	foreach ($time_intervals as $ti) {
 		$selected_ti = ($ti == $prefs['time_intervals'] ? " selected='selected'" : '');
-		echo "<option value='" . $ti . "'" . $selected_ti . ">"
+		echo "\t\t\t\t\t<option value='" . $ti . "'" . $selected_ti . ">"
 			. _T('authorconf_input_time_interval_' . $ti)
 			. "</option>\n";
 	}
@@ -207,7 +207,7 @@ function show_author_form($tab) {
 	$time_intervals_notation = array("hours_only", "floatdays_hours_minutes", "floatdays_floathours_minutes");
 	foreach ($time_intervals_notation as $tin) {
 		$selected_tin = ($tin == $prefs['time_intervals_notation'] ? " selected='selected'" : '');
-		echo "<option value='" . $tin . "'" . $selected_tin . ">"
+		echo "\t\t\t\t\t<option value='" . $tin . "'" . $selected_tin . ">"
 			. _T('authorconf_input_time_intervals_notation_' . $tin)
 			. "</option>\n";
 	}
