@@ -1,7 +1,7 @@
 <?php
 
-if (defined("_ECRIRE_INC_BASE")) return;
-define("_ECRIRE_INC_BASE", "1");
+if (defined('_INC_DBMGNT')) return;
+define('_INC_DBMGNT', '1');
 
 include_lcm('inc_access');
 
@@ -38,22 +38,21 @@ function create_database() {
 	$result = lcm_create_table('followup', $query);
 
 	// * author *
-	// XXX too many extra fields
+	// [ML] XXX too many extra fields
 	$query = "id_author bigint(21) NOT NULL auto_increment,
+		id_office bigint(21) DEFAULT 1 NOT NULL,
 		name_first text NOT NULL,
 		name_middle text NOT NULL,
 		name_last text NOT NULL,
-		email tinytext NOT NULL,
-		date_creation datetime NOT NULL,
-		date_update datetime NOT NULL,
-		adress_home text NOT NULL,
-		phone_office text NOT NULL,
-		phone_mobile text NOT NULL,
-		phone_home text NOT NULL,
-		login VARCHAR(255) BINARY NOT NULL,
-		pass tinytext NOT NULL,
+		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		username VARCHAR(255) BINARY NOT NULL,
+		password tinytext NOT NULL,
+		lang VARCHAR(10) DEFAULT '' NOT NULL,
+		prefs tinytext NOT NULL,
+		status ENUM('admin', 'normal', 'external') DEFAULT 'normal' NOT NULL,
+
 		low_sec tinytext NOT NULL,
-		status VARCHAR(255) NOT NULL,
 		maj TIMESTAMP,
 		pgp BLOB NOT NULL,
 		htpass tinyblob NOT NULL,
@@ -61,12 +60,11 @@ function create_database() {
 		messagerie VARCHAR(3) NOT NULL,
 		alea_actuel tinytext NOT NULL,
 		alea_futur tinytext NOT NULL,
-		prefs tinytext NOT NULL,
 		cookie_oubli tinytext NOT NULL,
-		lang VARCHAR(10) DEFAULT '' NOT NULL,
 		extra longblob NULL,
+
 		PRIMARY KEY (id_author),
-		KEY login (login),
+		KEY username (username),
 		KEY status (status),
 		KEY lang (lang)";
 	$result = lcm_create_table('author', $query);
