@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.50 2005/03/18 22:01:35 antzi Exp $
+	$Id: inc_filters.php,v 1.51 2005/03/22 02:19:43 antzi Exp $
 */
 
 // Execute this file only once
@@ -550,7 +550,8 @@ function affdate_base($numdate, $vue) {
 	if ($mois > 0 AND $mois < 13) {
 		$nommois = _T('date_month_'.$mois);
 		if ($jour)
-			$jourmois = _T('date_de_mois_'.$mois, array('j'=>$jour, 'nommois'=>$nommois));
+//			$jourmois = _T('date_de_mois_'.$mois, array('j'=>$jour, 'nommois'=>$nommois));	// TRAD
+			$jourmois = $jour . ' ' . $nommois;
 	}
 
 	if ($annee < 0) {
@@ -568,28 +569,35 @@ function affdate_base($numdate, $vue) {
 			if (($mois == 9 AND $jour >= 21) OR $mois > 9) $saison = 4;
 			if (($mois == 12 AND $jour >= 21) OR $mois > 12) $saison = 1;
 		}
-		return _T('date_saison_'.$saison);
+		return _T('date_saison_'.$saison);	// TRAD
 
 	case 'court':
 		if ($avjc) return $annee;
 		$a = date('Y');
 		if ($annee < ($a - 100) OR $annee > ($a + 100)) return $annee;
-		if ($annee != $a) return _T('date_fmt_mois_annee', array ('mois'=>$mois, 'nommois'=>ucfirst($nommois), 'annee'=>$annee));
-		return _T('date_fmt_jour_mois', array ('jourmois'=>$jourmois, 'jour'=>$jour, 'mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
+//		if ($annee != $a) return _T('date_fmt_mois_annee', array ('mois'=>$mois, 'nommois'=>ucfirst($nommois), 'annee'=>$annee));	// TRAD
+//		return _T('date_fmt_jour_mois', array('jourmois'=>$jourmois, 'jour'=>$jour, 'mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee)); // TRAD
+		if ($annee != $a) return $mois . ' ' . $annee;
+		return $jourmois;
 
 	case 'jourcourt':
 		if ($avjc) return $annee;
 		$a = date('Y');
 		if ($annee < ($a - 100) OR $annee > ($a + 100)) return $annee;
-		if ($annee != $a) return _T('date_fmt_jour_mois_annee', array ('jourmois'=>$jourmois, 'jour'=>$jour, 'mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
-		return _T('date_fmt_jour_mois', array ('jourmois'=>$jourmois, 'jour'=>$jour, 'mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
+//		if ($annee != $a) return _T('date_fmt_jour_mois_annee', array ('jourmois'=>$jourmois, 'jour'=>$jour, 'mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
+		if ($annee != $a) return $jourmois . ' ' . $annee;
+//		return _T('date_fmt_jour_mois', array ('jourmois'=>$jourmois, 'jour'=>$jour, 'mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
+		return $jourmois;
 
 	case 'entier':
 		if ($avjc) return $annee;
-		if ($jour)
-			return _T('date_fmt_jour_mois_annee', array ('jourmois'=>$jourmois, 'jour'=>$jour, 'mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
-		else
-			return _T('date_fmt_mois_annee', array ('mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
+		if ($jour) {
+//			return _T('date_fmt_jour_mois_annee', array ('jourmois'=>$jourmois, 'jour'=>$jour, 'mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
+			return $jourmois . ' ' . $annee;
+		} else {
+//			return _T('date_fmt_mois_annee', array ('mois'=>$mois, 'nommois'=>$nommois, 'annee'=>$annee));
+			return $mois . ' ' . $annee;
+		}
 
 	case 'nom_mois':
 		return $nommois;
@@ -606,7 +614,8 @@ function affdate_base($numdate, $vue) {
 	case 'nom_jour':
 		if (!$mois OR !$jour) return '';
 		$nom = mktime(1,1,1,$mois,$jour,$annee);
-		$nom = 1+date('w',$nom);
+//		$nom = 1+date('w',$nom);
+		$nom = date('w',$nom);
 		return _T('date_wday_'.$nom);
 
 	case 'mois_annee':
