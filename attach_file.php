@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: attach_file.php,v 1.4 2005/03/12 17:54:57 antzi Exp $
+	$Id: attach_file.php,v 1.5 2005/03/15 04:34:30 antzi Exp $
 */
 
 include("inc/inc.php");
@@ -27,6 +27,7 @@ include_lcm('inc_filters');
 // Get POST values
 $case = intval($_POST['case']);
 $client = intval($_POST['client']);
+$org = intval($_POST['org']);
 $description = clean_input($_POST['description']);
 
 if (isset($_FILES['filename'])) {
@@ -52,6 +53,16 @@ if (isset($_FILES['filename'])) {
 		} else if ($client > 0) {
 			$q = "INSERT INTO lcm_client_attachment
 				SET	id_client=$client,
+					filename='" . $user_file['name'] . "',
+					type='" . $user_file['type'] . "',
+					size=" . $user_file['size'] . ",
+					description='$description',
+					content='$file_contents',
+					date_attached=NOW()
+				";
+		} else if ($org > 0) {
+			$q = "INSERT INTO lcm_org_attachment
+				SET	id_org=$org,
 					filename='" . $user_file['name'] . "',
 					type='" . $user_file['type'] . "',
 					size=" . $user_file['size'] . ",
