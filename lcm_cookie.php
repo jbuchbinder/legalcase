@@ -127,18 +127,15 @@ if ($essai_login == 'oui') {
 		if ($row_auteur = lcm_fetch_array($result))
 			$cookie_session = creer_cookie_session($row_auteur);
 
-		// [ML] if (ereg("ecrire/", $cible->getUrl())) {
-			$cible->addVar('bonjour','oui');
-		// }
+		$cible->addVar('bonjour','oui');
 	} else {
-		if (ereg("ecrire/", $cible->getUrl())) {
-			$cible = new Link("./lcm_login.php");
-		}
+		$cible = new Link("lcm_login.php");
 
 		$cible->addVar('var_login', $login);
+		$cible->addVar('var_url', urldecode($url));
+
 		if ($session_password || $session_password_md5)
 			$cible->addVar('var_erreur', 'pass');
-		$cible->addVar('var_url', urldecode($url));
 	}
 }
 
