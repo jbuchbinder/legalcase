@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.68 2005/03/09 15:26:24 antzi Exp $
+	$Id: edit_fu.php,v 1.69 2005/03/10 16:51:37 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -85,7 +85,7 @@ if (empty($_SESSION['errors'])) {
 				$result = lcm_query($q);
 				if ($row = lcm_fetch_array($result)) {
 					$_SESSION['fu_data']['description'] = 'Following the ' . _T(get_kw_title($row['type']))
-						. ' (' . $row['title'] . ') from ' . format_date($row['start_time']);
+						. ' (' . $row['title'] . ') from ' . unhtmlentities(format_date($row['start_time']));
 					
 					// Show appointment participants
 					$participants = array();
