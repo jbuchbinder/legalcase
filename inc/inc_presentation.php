@@ -199,6 +199,7 @@ function lcm_page_end($credits = '') {
 	global $connect_id_auteur;
 
 	global $author_session;
+	global $find_case_string;
 
 	///
 	// Insert FOOTER stuff here
@@ -233,9 +234,11 @@ function lcm_page_end($credits = '') {
 			Find client<br />
 			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\" />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
 			</form>
-			<form name=\"frm_find_case\" class=\"search_form\">
+			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"POST\">
 			Find case<br />
-			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\" />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\"";
+	if (isset($find_case_string)) echo " value='$find_case_string'";
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
 			</form>
 			</p>
 <!-- End of \"prefs_column\" content -->
