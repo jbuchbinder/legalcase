@@ -4,6 +4,7 @@ if (defined('_INC_DB_CREATE')) return;
 define('_INC_DB_CREATE', '1');
 
 // [ML] Is this needed?  XXX
+// [AG] I don't see any reason for it.
 include_lcm('inc_access');
 
 function log_if_not_duplicate_table($errno) {
@@ -22,6 +23,9 @@ function log_if_not_duplicate_table($errno) {
 
 // For details on the various fields, see:
 // http://www.lcm.ngo-bg.org/article2.html
+//
+// [AG] Upon database format change DO NOT FORGET
+// to increase $lcm_db_version found in inc_version
 
 function create_database() {
 	global $lcm_db_version;
@@ -34,14 +38,14 @@ function create_database() {
 	// - DONE lcm_case
 	// - DONE lcm_followup
 	// - DONE lcm_author
-	// - DONE lcm_client 
+	// - DONE lcm_client
 	// - DONE lcm_org
 	// - DONE lcm_client_org
 	// + TODO lcm_courtfinal
-	// + TODO lcm_appelation 
-	// + TODO lcm_keyword 
+	// + TODO lcm_appelation
+	// + TODO lcm_keyword
 	// + TODO lcm_keyword_group
-	// + TODO lcm_client_keywords 
+	// + TODO lcm_client_keywords
 	// - DONE lcm_case_client_org
 	// - DONE lcm_case_author
 
