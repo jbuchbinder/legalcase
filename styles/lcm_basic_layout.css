@@ -578,33 +578,32 @@ ul.list_events li a.week_day {
 	color: #333;
 }   
 
-/* [ML] The following are temporary until we find something better */
-div.navigation-calendrier {
+/* Used in the navigation bar at the top of the calendar */
+div.cal_navigation {
 	color: white;
-	font-family: verdana, arial, sans,sans-serif;
 	font-size: 14px;
 	padding: 2px;
 	-moz-border-radius-topleft: 8px;
 	-moz-border-radius-topright: 8px;
 }
 
-div.navigation-calendrier img {
+div.cal_navigation img {
 	border: 0px;
 	vertical-align: middle;
 	margin: 1px;
 }
 
-a.calendrier-annee {
+/* Used in the floating calendar over "now" icon */
+a.cal_yearview {
 	background-color: #aaaaaa;
 	padding: 3px;
 	margin: 1px;
-	font-family: verdana, arial, sans,sans-serif;
 	font-size: 10px;
-	font-weight: bold;
+	/* font-weight: bold; */
 	color: white;
 	-moz-border-radius: 5px;
 }
-a.calendrier-annee:hover {
+a.cal_yearview:hover {
 	color: black;
 	background-color: white;
 }
