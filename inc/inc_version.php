@@ -152,8 +152,9 @@ $lcm_version = 0.10;
 // Current version of LCM shown on screen
 $lcm_version_shown = "0.1";
 
-if ($debug)
-	$lcm_version_shown .= " $Date: 2004/10/20 10:25:30 $";
+// Current version of LCM with cvs tags (if any)
+if (ereg('Name: v(.*) ', '$Name:  $', $regs))
+	$lcm_version_shown = $regs[1];
 
 
 // Don't show silly warnings
