@@ -2,6 +2,10 @@
 
 include('inc/inc.php');
 
+// Clean the POST values
+$case = intval($_POST['case']);
+foreach ($_POST['orgs'] as $key=>$value) $orgs[$key] = intval($value);
+
 if (($case>0) && ($orgs)) {
 	foreach($orgs as $org) {
 		// Prepare query
