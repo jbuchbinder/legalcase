@@ -24,11 +24,9 @@ use_language_of_visitor();
 // Presentation of the interface, headers and "<head></head>".
 // XXX You may want to use lcm_page_start() instead.
 function lcm_html_start($title = "AUTO", $css_files = "") {
-	global $couleur_foncee, $couleur_claire, $couleur_lien, $couleur_lien_off;
-	global $flag_ecrire;
 	global $spip_lang_rtl, $spip_lang_left;
 	global $mode;
-	global $connect_status, $connect_toutes_rubriques;
+	global $connect_status;
 	
 	$lcm_site_name = entites_html(read_meta("nom_site"));
 	$title = textebrut(typo($title));
@@ -55,24 +53,10 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	<title>". ($lcm_site_name ? $lcm_site_name ." | " : '') . $title ."</title>
 	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />\n";
 
-	// [ML] We might need something similar 
-	// (to calculate some colors in the CSS depending on variables)
-	// [ML] couleur_claire == light color, couleur_foncee == dark color
-	
-	//[KM]
-	//$link = new Link('lcm_css_basic.php');
-	//$link->addVar('couleur_claire', $couleur_claire);
-	//$link->addVar('couleur_foncee', $couleur_foncee);
-	//$link->addVar('left', $GLOBALS['spip_lang_left']);
-	//$link->addVar('right', $GLOBALS['spip_lang_right']);
-	//echo $link->getUrl(). '">' . "\n";
-	
-	//echo "\t<link rel='stylesheet' href='styles/lcm_styles.css' type='text/css' />\n";
-	
-	//[KM]
-	//This is the basic and the alternative style sheets
-	//Some colors maybe are confusing but I will fix that later
-	
+	//
+	// Style sheets
+	//
+
 	echo "<link rel=\"stylesheet\" href=\"styles/lcm_ui_default.css\" type=\"text/css\" />\n";
 	echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
 	echo "<link rel=\"alternate stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
