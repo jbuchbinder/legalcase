@@ -56,28 +56,30 @@ if ($list_pos>0)
 		die("Error seeking position $list_pos in the result");
 ?>
 
-<table border='1' align='center' class='tbl_data'>
-<tr><th colspan="3" class='tbl_head'>Case description</th></tr>
+<!-- [ML:FIXME] I'm not sure about the CSS classes -->
+<table border='0' align='center' class='tbl_data' width='99%'>
+<!-- [ML] tr><th colspan="3" class='tbl_head'>Case description</th></tr -->
 <?php
 // Process the output of the query
 for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show case title
-	echo "<tr><td class='tbl_data'>";
+	echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	
 	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '">';
 	echo clean_output(highlight_matches($row['title'],$find_case_string));
 	if (allowed($row['id_case'],'r')) echo '</a>';
-	echo "</td>\n<td class='tbl_data'>";
+	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (allowed($row['id_case'],'e'))
 		echo '<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a>';
-	echo "</td>\n<td class='tbl_data'>";
+	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (allowed($row['id_case'],'w'))
 		echo '<a href="edit_fu.php?case=' . $row['id_case'] . '">Add followup</a>';
 	echo "</td></tr>\n";
 }
 
 ?>
-<tr><td colspan="3"><a href="edit_case.php?case=0">Open new case</a></td></tr>
 </table>
+<p align='right'><a href="edit_case.php?case=0">Open new case</a></p>
 
 <?php
 
