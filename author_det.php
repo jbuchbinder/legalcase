@@ -18,13 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.15 2005/04/04 10:34:07 mlutfy Exp $
+	$Id: author_det.php,v 1.16 2005/04/04 11:35:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_contacts');
 
-// Initialise variables
+global $prefs;
 $author = intval($_REQUEST['author']);
 
 if ($author > 0) {
@@ -49,7 +49,10 @@ if ($author > 0) {
 				'times' => _T('generic_tab_reports'));
 				// [ML] better not to support this, high risk of abuse // 'attachments' => _T('generic_tab_documents'));
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
-		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
+
+		// [ML] $_SERVER['REQUEST_URI']);
+		// [ML] Forcing 'author_det.php' else some vars really get carried for nothing (see fu tab + dates)
+		show_tabs($groups,$tab, "author_det.php?author=$author"); 
 
 		switch ($tab) {
 			//
@@ -200,20 +203,27 @@ if ($author > 0) {
 				
 				if (isset($_REQUEST['list_pos']))
 					$list_pos = $_REQUEST['list_pos'];
+
+				if (is_numeric($list_pos)) {
+					if ($list_pos >= $number_of_rows)
+						$list_pos = 0;
 				
-				if ($list_pos >= $number_of_rows)
-					$list_pos = 0;
+					// Position to the page info start
+					if ($list_pos > 0)
+						if (!lcm_data_seek($result,$list_pos))
+							lcm_panic("Error seeking position $list_pos in the result");
 				
-				// Position to the page info start
-				if ($list_pos > 0 && $list_pos != 'all')
-					if (!lcm_data_seek($result,$list_pos))
-						lcm_panic("Error seeking position $list_pos in the result");
+					$show_all = false;
+				} elseif ($list_pos == 'all') {
+					$show_all = true;
+				}
 			
 				// Set the length of short followup title
 				$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
 
 				// Process the output of the query
-				for ($i = 0 ; (($i<$prefs['page_rows'] || $list_pos == 'all') && ($row = lcm_fetch_array($result))); $i++) {
+				// [ML] I don't know if I'm drinking too much coffee, but "$list_pos == 'all'" would always return 1
+				for ($i = 0; (($i < $prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result)); $i++) {
 					echo "<tr>\n";
 					$td = '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">';
 					
