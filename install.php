@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.41 2005/03/15 13:27:40 mlutfy Exp $
+	$Id: install.php,v 1.42 2005/03/15 14:50:45 mlutfy Exp $
 */
 
 
@@ -73,6 +73,8 @@ if (@file_exists('inc/config/inc_connect.php')) {
 // Main installation steps
 //
 
+$step = $_REQUEST['step'];
+
 if ($step == 5) {
 	install_html_start();
 
@@ -88,13 +90,13 @@ if ($step == 5) {
 	include_lcm('inc_meta');
 	include_lcm('inc_access');
 
-	if ($username) {
+	if ($_REQUEST['username']) {
 		// If the login name already exists, this provides a way to reset
 		// an administrator's account.
-		$name_first  = addslashes($name_first);
-		$name_middle = addslashes($name_middle);
-		$name_last   = addslashes($name_last);
-		$username    = addslashes($username);
+		$name_first  = addslashes($_REQUEST['name_first']);
+		$name_middle = addslashes($_REQUEST['name_middle']);
+		$name_last   = addslashes($_REQUEST['name_last']);
+		$username    = addslashes($_REQUEST['username']);
 
 		// XXX TODO: This should use inc_auth_db.php
 
@@ -105,7 +107,7 @@ if ($step == 5) {
 		while ($row = lcm_fetch_array($result))
 			$id_author = $row['id_author'];
 
-		$mdpass = md5($pass);
+		$mdpass = md5($_REQUEST['pass']);
 
 		// Update main author information
 		if ($id_author) {
@@ -247,17 +249,6 @@ else if ($step == 4) {
 
 	echo "</form>";
 
-	/* [ML] Not used for now
-	if ($flag_ldap AND !$ldap_present) {
-		echo "<div style='border: 1px solid #404040; padding: 10px; text-align: left;'>";
-		echo "<b>"._T('info_authentification_externe')."</b>";
-		echo "<p>"._T('texte_annuaire_ldap_1');
-		echo "<form action='install.php' method='post'>";
-		echo "<input type='hidden' name='step' value='ldap1'>";
-		echo "<div align='$lcm_lang_right'><input type='submit' name='Next' value=\""._T('bouton_acces_ldap')."\">";
-		echo "</form>";
-	} */
-
 	install_html_end();
 }
 
@@ -275,71 +266,61 @@ else if ($step == 3) {
 	// additional error reporting.
 	echo "<div style='display: none;'>\n";
 
-	// TODO: Error checking
-	if ($db_choice == "new_lcm") {
-		$sel_db = $table_new;
-		$link = lcm_connect_db($db_address, 0, $db_login, $db_password);
-		@lcm_query_db("CREATE DATABASE $sel_db");
+	if ($_REQUEST['db_choice'] == "__manual__") {
+		$sel_db = $_REQUEST['manual_db'];
+	} else {
+		$sel_db = $_REQUEST['db_choice'];
+	}
 
-		if (lcm_sql_errno()) {
-			$install_log = lcm_sql_error();
-		} else {
-			$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db, $link);
+	$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db);
+
+	// Test if the software was already installed
+	lcm_query("SELECT COUNT(*) FROM lcm_meta");
+	$already_installed = !lcm_sql_errno();
+	$old_lcm_version = 'NONE';
+
+	if ($already_installed) {
+		// Find the current database version
+		$old_lcm_db_version = 0;
+		$query = "SELECT value FROM lcm_meta WHERE name = 'lcm_db_version'";
+		$result = lcm_query_db($query);
+		while ($row = lcm_fetch_array($result))
+			$old_lcm_db_version = $row['value'];
+
+		// Check if upgrade is needed
+		if ($old_lcm_db_version < $lcm_db_version) {
+			// Upgrade the existing database
+			include_lcm('inc_db_upgrade');
+			$upgrade_log  = upgrade_database($old_lcm_db_version);
 		}
 	} else {
-		$sel_db = $db_choice;
-		$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db);
+		// Create database from scratch
+		include_lcm('inc_db_create');
+		$install_log .= create_database();
+
+		// Do not remove, or variables won't be declared
+		// Silly PHP.. we should use other mecanism instead
+		global $system_keyword_groups;
+		$system_keyword_groups = array();
+
+		include_lcm('inc_meta');
+		include_lcm('inc_keywords_default');
+		create_groups($system_keyword_groups);
+
+		write_metas();
 	}
 
-	if (empty($install_log)) {
-		// Test if the software was already installed
-		lcm_query("SELECT COUNT(*) FROM lcm_meta");
-		$already_installed = !lcm_sql_errno();
-		$old_lcm_version = 'NONE';
+	include_lcm('inc_db_test');
+	$structure_ok = lcm_structure_test();
 
-		if ($already_installed) {
-			// Find the current database version
-			$old_lcm_db_version = 0;
-			$query = "SELECT value FROM lcm_meta WHERE name = 'lcm_db_version'";
-			$result = lcm_query_db($query);
-			while ($row = lcm_fetch_array($result))
-				$old_lcm_db_version = $row['value'];
-
-			// Check if upgrade is needed
-			if ($old_lcm_db_version < $lcm_db_version) {
-				// Upgrade the existing database
-				include_lcm('inc_db_upgrade');
-				$upgrade_log  = upgrade_database($old_lcm_db_version);
-			}
-		} else {
-			// Create database from scratch
-			include_lcm('inc_db_create');
-			$install_log .= create_database();
-
-			// Do not remove, or variables won't be declared
-			// Silly PHP.. we should use other mecanism instead
-			global $system_keyword_groups;
-			$system_keyword_groups = array();
-
-			include_lcm('inc_meta');
-			include_lcm('inc_keywords_default');
-			create_groups($system_keyword_groups);
-
-			write_metas();
-		}
-
-		include_lcm('inc_db_test');
-		$structure_ok = lcm_structure_test();
-
-		// To simplify error listings
-		echo "\n\n";
-		echo "* . . . . . .\n";
-		echo "* Existing: " . ($already_installed ? 'Yes (' . $old_lcm_version .  ')' : 'No') . "\n";
-		echo "* Install: " . ($install_log ? 'ERROR(S), see listing' : 'INSTALL OK') . "\n";
-		echo "* Upgrade: " . ($upgrade_log ? 'UPGRADED OK' : 'UPGRADE FAILED') . "\n";
-		echo "* Integrity: " . ($structure_ok ? 'STRUCTURE OK' : 'VALIDATION FAILED') . "\n";
-		echo "* . . . . . .\n\n";
-	}
+	// To simplify error listings
+	echo "\n\n";
+	echo "* . . . . . .\n";
+	echo "* Existing: " . ($already_installed ? 'Yes (' . $old_lcm_version .  ')' : 'No') . "\n";
+	echo "* Install: " . ($install_log ? 'ERROR(S), see listing' : 'INSTALL OK') . "\n";
+	echo "* Upgrade: " . ($upgrade_log ? 'UPGRADED OK' : 'UPGRADE FAILED') . "\n";
+	echo "* Integrity: " . ($structure_ok ? 'STRUCTURE OK' : 'VALIDATION FAILED') . "\n";
+	echo "* . . . . . .\n\n";
 
 	// echo "--> \n\n";
 	echo "</div>\n"; // end of invisible div
@@ -360,8 +341,7 @@ else if ($step == 3) {
 		echo put_text_in_textbox($upgrade_log);
 	} else if (! $structure_ok) {
 		echo "<div class='box_error'>\n";
-		// TODO TRANSLATE
-		echo "\t<p> STRUCTURE PROBLEM </p>\n";
+		echo "\t<p> STRUCTURE PROBLEM </p>\n"; // TRAD
 		echo "</div>\n";
 	} else {
 		// Everything OK
@@ -430,7 +410,8 @@ else if ($step == 2) {
 	$result = lcm_list_databases($db_address, $db_login, $db_password);
 
 	echo "<fieldset class='fs_box'>\n";
-	echo "<p><b><label>" . _T('install_select_database') . "</label></b></p>";
+	echo "<p><b><label>" . _T('install_select_database') . "</label></b> "
+		. lcm_help('install_database', 'database') . "</p>";
 
 	echo "<!-- " . count($result) . " -->\n";
 
@@ -454,7 +435,6 @@ else if ($step == 2) {
 
 		echo $listdbtxt;
 		echo "</ul>\n";
-		echo "<p>" . _T('info_or') . " ... </p>\n";
 	} else {
 		echo "<div class='box_warning'>\n";
 		echo "<p><b>" . _T('install_warning_no_databases_1') . "</b></p>\n";
@@ -467,20 +447,22 @@ else if ($step == 2) {
 			echo "<li><input name=\"db_choice\" value=\"" . $db_login . "\" type='radio' id='stand' checked='checked' />";
 			echo "<label for='stand'>" . $db_login . "</label><br />\n";
 			echo "</li></ul>";
-			echo "<p>" . _T('info_or') . " ... </p>\n";
+			echo "<p align='left'>" . _T('info_or') . " ... </p>\n";
 			$checked = true;
 		}
-	}
 
-	echo "<ul class=\"simple_list\">";
-	echo "<li><input name='db_choice' value='new_lcm' type='radio' id='new_db'";
-	if (!$checked) echo " checked='checked'";
-	echo " />";
-	
-	echo "<label for='new_db'>" . _T('install_create_new_database') . "</label><br />\n";
-	echo "<input type='text' name='table_new' value='lcm' size='20' class='txt_lmnt' /></li>\n";
-	echo "</ul>\n";
-	echo "</fieldset>\n";
+		echo '<ul class="simple_list">';
+		echo '<li><input name="db_choice" value="__manual__" type="radio" id="manual_db_checkbox"';
+		if (!$checked) echo ' checked="checked"';
+		echo " />\n";
+		
+		echo "<label for='manual_db_checkbox'>" . _T('install_enter_name_manually') . "</label><br />\n";
+
+		echo "<label for='manual_db'>" . _T('install_input_database_name') . "</label>\n";
+		echo "<input type='text' name='manual_db' id='manual_db' value='' size='20' class='txt_lmnt' /></li>\n";
+		echo "</ul>\n";
+		echo "</fieldset>\n";
+	}
 
 	echo "<br /><div align='$lcm_lang_right'>"
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
@@ -489,48 +471,6 @@ else if ($step == 2) {
 
 	install_html_end();
 }
-
-/* [ML] useless and confusing -- 
-
-else if ($step == 2) {
-	install_html_start();
-
-	echo "<h3><small>" . _T('install_step_two') . "</small> "
-		. _T('install_title_connection_attempt') . "</h3>\n";
-
-	echo "\n<!--\n";
-		$link = lcm_connect_db_test($db_address, $db_login, $db_password);
-		$error = (lcm_sql_errno() ? lcm_sql_error() : '');
-	echo "\n-->\n";
-
-	if (! $error && $link) {
-		echo "<div class='box_success'>\n";
-		echo "<strong>" . _T('install_connection_succeeded') . "</strong>\n";
-		echo "</div>\n";
-
-		echo "<p>" . _T('install_next_step') . "</p>\n";
-
-		echo '<form action="install.php" method="post">' . "\n";
-		echo '<input type="hidden" name="step" value="3" />' . "\n";
-		echo '<input type="hidden" name="db_address" value="' . $db_address . '" />' . "\n";
-		echo '<input type="hidden" name="db_login" value="' . $db_login . '" />' . "\n";
-		echo '<input type="hidden" name="db_password" value="' . $db_password .'" />' . "\n";
-
-		echo "<div align='$lcm_lang_right'>"
-			. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
-			. "</div>\n";
-		echo "</form>\n";
-	} else {
-		echo "<div class='box_error'>\n";
-		echo "<strong>" . _T('warning_sql_connection_failed') . "</strong>\n";
-		echo "<p><code>" . $error . "</code></p>\n";
-		echo "<p>"._T('install_info_go_back_verify_data') . ' ' . lcm_help('install_connection') . "</p>\n";
-		echo "<p><small>" . _T('install_info_sql_connection_failed') . "</small></p>\n";
-		echo "</div>\n\n";
-	}
-
-	install_html_end();
-} */
 
 else if ($step == 1) {
 	install_html_start();
@@ -628,228 +568,5 @@ else if (!$step) {
 
 	install_html_end();
 }
-
-
-//
-// Steps for LDAP installation
-// [ML] For now, lets ignore this
-//
-
-else if ($step == 'ldap5') {
-	install_html_start();
-
-	include_ecrire('inc_connect_install.php3');
-	include_ecrire('inc_meta.php3');
-	write_meta("ldap_statut_import", $statut_ldap);
-	write_metas();
-
-	echo "<b>"._T('info_ldap_ok')."</b>";
-	echo "<p>"._T('info_terminer_installation');
-
-	echo "<form action='install.php' method='post'>";
-	echo "<input type='hidden' name='step' value='5'>";
-
-	echo "<div align='$lcm_lang_right'><input type='submit' name='Next' value='"._T('button_next')." >>'>";
-
-	echo "</form>";
-}
-
-else if ($step == 'ldap4') {
-	install_html_start();
-
-	if (!$base_ldap) $base_ldap = $base_ldap_text;
-
-	$ldap_link = @ldap_connect("$adresse_ldap", "$port_ldap");
-	@ldap_bind($ldap_link, "$login_ldap", "$pass_ldap");
-
-	// Try to validate the path provided
-	$r = @ldap_compare($ldap_link, $base_ldap, "objectClass", "");
-	$fail = (ldap_errno($ldap_link) == 32);
-
-	if ($fail) {
-		echo "<BR><FONT FACE='Verdana,Arial,Sans,sans-serif' size=3>"._T('info_chemin_acces_annuaire')."</B></FONT>";
-		echo "<P>";
-
-		echo "<B>"._T('avis_operation_echec')."</B> "._T('avis_chemin_invalide_1')." (<tt>".htmlspecialchars($base_ldap);
-		echo "</tt>) "._T('avis_chemin_invalide_2');
-	}
-	else {
-		echo "<BR><FONT FACE='Verdana,Arial,Sans,sans-serif' size=3>"._T('info_reglage_ldap')."</FONT>";
-		echo "<P>";
-
-		$conn = join('', file("inc_connect_install.php3"));
-		if ($p = strpos($conn, '?'.'>')) 
-			$conn = substr($conn, 0, $p);
-		if (!strpos($conn, 'spip_connect_ldap')) {
-			$conn .= "function spip_connect_ldap() {\n";
-			$conn .= "\t\$GLOBALS['ldap_link'] = @ldap_connect(\"$adresse_ldap\",\"$port_ldap\");\n";
-			$conn .= "\t@ldap_bind(\$GLOBALS['ldap_link'],\"$login_ldap\",\"$pass_ldap\");\n";
-			$conn .= "\treturn \$GLOBALS['ldap_link'];\n";
-			$conn .= "}\n";
-			$conn .= "\$GLOBALS['ldap_base'] = \"$base_ldap\";\n";
-			$conn .= "\$GLOBALS['ldap_present'] = true;\n";
-		}
-		$conn .= "?".">";
-		$myFile = fopen("inc_connect_install.php3", "wb");
-		fputs($myFile, $conn);
-		fclose($myFile);
-
-		echo "<p><form action='install.php' method='post'>";
-		echo "<input type='hidden' name='step' value='ldap5'>";
-		echo "<fieldset><label><B>"._T('info_statut_utilisateurs_1')."</B></label><BR>";
-		echo _T('info_statut_utilisateurs_2')." ";
-		echo "<p>";
-		echo "<input type='radio' name='statut_ldap' value=\"external\" id='external'>";
-		echo "<label for='visit'><b>"._T('info_visiteur_1')."</b></label> "._T('info_visiteur_2')."<br />";
-		echo "<input type='radio' name='statut_ldap' value=\"normal\" id='normal' CHECKED>";
-		echo "<label for='redac'><b>"._T('info_redacteur_1')."</b></label> "._T('info_redacteur_2')."<br />";
-		echo "<input type='radio' name='statut_ldap' value=\"admin\" id='admin'>";
-		echo "<label for='admin'><b>"._T('info_administrateur_1')."</b></label> "._T('info_administrateur_2')."<br />";
-	
-		echo "<DIV align='$lcm_lang_right'><input type='submit' name='Next' value='"._T('button_next')." >>'>";
-
-		echo "</FORM>";
-	}
-
-	install_html_end();
-}
-
-else if ($step == 'ldap3') {
-	install_html_start();
-
-	echo "<BR><FONT FACE='Verdana,Arial,Sans,sans-serif' size=3>"._T('info_chemin_acces_1')."</FONT>";
-
-	echo "<P>"._T('info_chemin_acces_2');
-
-	$ldap_link = @ldap_connect("$adresse_ldap", "$port_ldap");
-	@ldap_bind($ldap_link, "$login_ldap", "$pass_ldap");
-
-	$result = @ldap_read($ldap_link, "", "objectclass=*", array("namingContexts"));
-	$info = @ldap_get_entries($ldap_link, $result);
-
-	echo "<form action='install.php' method='post'>";
-	echo "<input type='hidden' name='step' value='ldap4'>";
-	echo "<input type='hidden' name='adresse_ldap' value=\"$adresse_ldap\">";
-	echo "<input type='hidden' name='port_ldap' value=\"$port_ldap\">";
-	echo "<input type='hidden' name='login_ldap' value=\"$login_ldap\">";
-	echo "<input type='hidden' name='pass_ldap' value=\"$pass_ldap\">";
-
-	echo "<fieldset>";
-
-	$checked = false;
-
-	if (is_array($info) AND $info["count"] > 0) {
-		echo "<P>"._T('info_selection_chemin_acces');
-		echo "<UL>";
-		$n = 0;
-		for ($i = 0; $i < $info["count"]; $i++) {
-			$names = $info[$i]["namingcontexts"];
-			if (is_array($names)) {
-				for ($j = 0; $j < $names["count"]; $j++) {
-					$n++;
-					echo "<input name=\"base_ldap\" value=\"".htmlspecialchars($names[$j])."\" type='radio' id='tab$n'";
-					if (!$checked) {
-						echo " CHECKED";
-						$checked = true;
-					}
-					echo ">";
-					echo "<label for='tab$n'>".htmlspecialchars($names[$j])."</label><BR>\n";
-				}
-			}
-		}
-		echo "</UL>";
-		echo _T('info_ou')." ";
-	}
-	echo "<input name=\"base_ldap\" value=\"\" type='radio' id='manuel'";
-	if (!$checked) {
-		echo " CHECKED";
-		$checked = true;
-	}
-	echo ">";
-	echo "<label for='manuel'>"._T('entree_chemin_acces')."</label> ";
-	echo "<input type='text' name='base_ldap_text' value=\"ou=users, dc=mon-domaine, dc=com\" size='40'></fieldset><P>";
-
-	echo "<DIV align='$lcm_lang_right'><input type='submit' name='Next' value='"._T('button_next')." >>'>";
-	echo "</FORM>";
-
-	install_html_end();
-}
-
-else if ($step == 'ldap2') {
-	install_html_start();
-
-	echo "<br /><font face='Verdana,Arial,Sans,sans-serif' size='3'>"._T('titre_connexion_ldap')."</font>";
-	echo "<p>";
-
-	$ldap_link = @ldap_connect("$adresse_ldap", "$port_ldap");
-	$r = @ldap_bind($ldap_link, "$login_ldap", "$pass_ldap");
-
-	if ($ldap_link && ($r || !$login_ldap)) {
-		echo "<B>"._T('info_connexion_ldap_ok');
-
-		echo "<form action='install.php' method='post'>";
-		echo "<input type='hidden' name='step' value='ldap3'>";
-		echo "<input type='hidden' name='adresse_ldap' value=\"$adresse_ldap\">";
-		echo "<input type='hidden' name='port_ldap' value=\"$port_ldap\">";
-		echo "<input type='hidden' name='login_ldap' value=\"$login_ldap\">";
-		echo "<input type='hidden' name='pass_ldap' value=\"$pass_ldap\">";
-
-		echo "<div align='$lcm_lang_right'><input type='submit' name='Next' value='"._T('button_next')." >>'>";
-		echo "</form>";
-	}
-	else {
-		echo "<B>"._T('avis_connexion_ldap_echec_1')."</B>";
-		echo "<P>"._T('avis_connexion_ldap_echec_2');
-		echo "<br />"._T('avis_connexion_ldap_echec_3');
-	}
-
-	install_html_end();
-}
-
-else if ($step == 'ldap1') {
-	install_html_start();
-
-	echo "<br /><font face='Verdana,Arial,Sans,sans-serif' size=3>"._T('titre_connexion_ldap')."</font>";
-
-	echo "<P>"._T('entree_informations_connexion_ldap');
-
-	$adresse_ldap = 'localhost';
-	$port_ldap = 389;
-
-	// Recuperer les anciennes donnees (si presentes)
-	if (@file_exists("inc_connect_install.php3")) {
-		$s = @join('', @file("inc_connect_install.php3"));
-		if (ereg('ldap_connect\("(.*)","(.*)"\)', $s, $regs)) {
-			$adresse_ldap = $regs[1];
-			$port_ldap = $regs[2];
-		}
-	}
-
-	echo "<p><form action='install.php' method='post'>";
-	echo "<input type='hidden' name='step' value='ldap2'>";
-	echo "<fieldset><label><b>"._T('entree_adresse_annuaire')."</b><br /></label>";
-	echo _T('texte_adresse_annuaire_1')."<br />";
-	echo "<input type='text' name='adresse_ldap' value=\"$adresse_ldap\" size='20'><p>";
-
-	echo "<label><b>" . _T('entree_port_annuaire') . "</b><br /></label>";
-	echo _T('texte_port_annuaire') . "<br />";
-	echo "<input type='text' name='port_ldap' value=\"$port_ldap\" size='20'><P></fieldset>";
-
-	echo "<p><fieldset>";
-	echo _T('texte_acces_ldap_anonyme_1')." ";
-	echo "<label><b>"._T('entree_login_ldap')."</b><br /></label>";
-	echo _T('texte_login_ldap_1')."<br>";
-	echo "<input type='text' name='login_ldap' value=\"\" size='40'><p>";
-
-	echo "<label><b>"._T('entree_passe_ldap')."</b><br></label>";
-	echo "<input type='password' name='pass_ldap' value=\"\" size='40'></fieldset>";
-
-	echo "<p><div align='$lcm_lang_right'><input type='submit' name='Next' value='"._T('button_next')." >>'></div>";
-
-	echo "</form>";
-
-	install_html_end();
-}
-
 
 ?>
