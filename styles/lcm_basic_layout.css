@@ -570,12 +570,15 @@ ul.list_events li a {
 	text-decoration: none;
 	text-align: center;
 	color: #036;
+	background: #fff;
 }   
 
+/*
 ul.list_events li a:hover {
 	background: #def;
 	color: #f60;
-}   
+} 
+*/
 
 ul.list_events li a.week_day { 
 	background: #efefef;
@@ -587,6 +590,7 @@ ul.list_events li a.week_day {
 ul.list_events li a.today { 
 	background: #def;
 	color: #369;
+	font-weight: bold;
 }
 
 /* Shows days with appointments */
