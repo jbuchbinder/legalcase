@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.42 2005/02/04 21:17:50 antzi Exp $
+	$Id: inc.php,v 1.43 2005/02/22 11:05:06 antzi Exp $
 */
 
 // Test if LCM is installed
@@ -98,6 +98,14 @@ if (isset($_REQUEST['author_ui_modified'])) {
 	if ($_REQUEST['sel_time_intervals'] != $_REQUEST['old_time_intervals']) {
 		if ($_REQUEST['sel_time_intervals'] == 'absolute' || $_REQUEST['sel_time_intervals'] == 'relative') {
 			$prefs['time_intervals'] = $_REQUEST['sel_time_intervals'];
+			$prefs_mod = true;
+		}
+	}
+
+	// Set intervals notation
+	if ($_REQUEST['sel_time_intervals_notation'] != $_REQUEST['old_time_intervals_notation']) {
+		if (in_array($_REQUEST['sel_time_intervals_notation'],array("hours_only", "floatdays_hours_minutes", "floatdays_floathours_minutes"))) {
+			$prefs['time_intervals_notation'] = $_REQUEST['sel_time_intervals_notation'];
 			$prefs_mod = true;
 		}
 	}

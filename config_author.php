@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.48 2005/02/04 21:26:32 antzi Exp $
+	$Id: config_author.php,v 1.49 2005/02/22 11:05:12 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -151,8 +151,9 @@ function show_author_form() {
 				</select>
 			</td>
 		</tr>
-	    <tr>
-	    	<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_time_intervals') ?></td>
+	<!-- Absolute/relative time intervals setting -->
+		<tr>
+			<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_time_intervals') ?></td>
 			<td align="left" valign="top">
 				<input type="hidden" name="old_time_intervals" id="old_time_intervals" value="<?php echo $prefs['time_intervals'] ?>" />
 				<select name="sel_time_intervals" class="sel_frm">
@@ -168,6 +169,25 @@ function show_author_form() {
 				</select>
 			</td>
 		</tr>
+	<!-- Relative time intervals notation setting (hours only / float days,hours,minutes / float days, float hours, minutes) -->
+		<tr>
+			<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_time_intervals_notation') ?></td>
+			<td align="left" valign="top">
+				<input type="hidden" name="old_time_intervals_notation" id="old_time_intervals_notation" value="<?php echo $prefs['time_intervals_notation'] ?>" />
+				<select name="sel_time_intervals_notation" class="sel_frm">
+<?php
+	$time_intervals_notation = array("hours_only", "floatdays_hours_minutes", "floatdays_floathours_minutes");
+	foreach ($time_intervals_notation as $tin) {
+		$selected_tin = ($tin == $prefs['time_intervals_notation'] ? " selected='selected'" : '');
+		echo "<option value='" . $tin . "'" . $selected_tin . ">"
+			. _T('authorconf_input_time_intervals_notation_' . $tin)
+			. "</option>\n";
+	}
+?>
+				</select>
+			</td>
+		</tr>
+	<!-- Submit button -->
 		<tr>
 			<td colspan="2" align="center" valign="middle">
 				<input type="submit" name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
