@@ -307,8 +307,10 @@ function include_lcm($file) {
 
 	if ($GLOBALS['included_files'][$lcmfile]) return;
 
-	if (! @file_exists($lcmfile))
+	if (! @file_exists($lcmfile)) {
 		lcm_log("CRITIAL: file for include_lcm does not exist: " . $lcmfile);
+		if ($GLOBALS['debug']) echo lcm_getbacktrace();
+	}
 	
 	include($lcmfile);
 	$GLOBALS['included_files'][$lcmfile] = 1;
@@ -319,8 +321,10 @@ function include_config($file) {
 
 	if ($GLOBALS['included_files'][$lcmfile]) return;
 
-	if (! @file_exists($lcmfile))
+	if (! @file_exists($lcmfile)) {
 		lcm_log("CRITIAL: file for include_config does not exist: " . $lcmfile);
+		if ($GLOBALS['debug']) echo lcm_getbacktrace();
+	}
 	
 	include($lcmfile);
 	$GLOBALS['included_files'][$lcmfile] = 1;
@@ -331,8 +335,10 @@ function include_data($file) {
 
 	if ($GLOBALS['included_files'][$lcmfile]) return;
 
-	if (! @file_exists($lcmfile))
+	if (! @file_exists($lcmfile)) {
 		lcm_log("CRITIAL: file for include_data does not exist: " . $lcmfile);
+		if ($GLOBALS['debug']) echo lcm_getbacktrace();
+	}
 	
 	include($lcmfile);
 	$GLOBALS['included_files'][$lcmfile] = 1;
@@ -905,6 +911,48 @@ function verif_butineur() {
 	}
 
 	if (!$browser_name) $browser_name = "Mozilla";
+}
+
+// Based from the comments in:
+// http://www.php.net/manual/fr/function.debug-backtrace.php
+function lcm_getbacktrace()
+{
+	$s = '';
+	$MAXSTRLEN = 64;
+
+	$s = '<pre align=left>';
+	$traceArr = debug_backtrace();
+	array_shift($traceArr);
+	$tabs = sizeof($traceArr)-1;
+	foreach($traceArr as $arr) {
+		for ($i=0; $i < $tabs; $i++) $s .= ' &nbsp; ';
+		$tabs -= 1;
+		$s .= '<font face="Courier New,Courier">';
+		if (isset($arr['class'])) $s .= $arr['class'].'.';
+		$args = array();
+		if(!empty($arr['args'])) foreach($arr['args'] as $v)
+		{
+			if (is_null($v)) $args[] = 'null';
+			else if (is_array($v)) $args[] = 'Array['.sizeof($v).']';
+			else if (is_object($v)) $args[] = 'Object:'.get_class($v);
+			else if (is_bool($v)) $args[] = $v ? 'true' : 'false';
+			else
+			{
+				$v = (string) @$v;
+				$str = htmlspecialchars(substr($v,0,$MAXSTRLEN));
+				if (strlen($v) > $MAXSTRLEN) $str .= '...';
+				$args[] = "\"".$str."\"";
+			}
+		}
+		$s .= $arr['function'].'('.implode(', ',$args).')</font>';
+		$Line = (isset($arr['line'])? $arr['line'] : "unknown");
+		$File = (isset($arr['file'])? $arr['file'] : "unknown");
+		$s .= sprintf("<font color='#993333' size='-1'> # line %4d, file: %s</font>", $Line, $File, $File);
+		$s .= "\n";
+	}
+
+	$s .= '</pre>';
+	return $s;
 }
 
 
