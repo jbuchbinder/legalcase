@@ -101,6 +101,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'edit' => 'Редактиране',
 'edit_case_details' => 'Редактиране на информация за делото',
 'edit_case_information' => 'Редактиране на информация по делото',
+'edit_filter_details' => '<NEW>Edit filter details',
+'edit_rep_details' => '<NEW>Edit report details',
 'enter_name_first' => 'Име',
 'enter_name_last' => 'Фамилия',
 'enter_name_middle' => 'Презиме',
@@ -111,6 +113,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'error_no_read_permission' => 'Нямате права да разглеждате това дело!',
 'error_no_such_case' => 'Няма такова дело!',
 'error_no_such_user' => 'Няма такъв потребител в базата данни. Как влязохте?',
+
+
+// F
+'filter_id' => '<NEW>Filter ID',
+'filter_title' => '<NEW>Title',
+'filter_type' => '<NEW>Conditions logic',
 
 
 // I
@@ -170,6 +178,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
+'kw_contacts_addressmain_title' => '<NEW>Home address',
+'kw_contacts_emailalternate_title' => '<NEW>E-mail (alternate)',
+'kw_contacts_emailmain_title' => '<NEW>E-mail',
+'kw_contacts_phonehome_title' => '<NEW>Phone (home)',
+'kw_contacts_phonemobile_title' => '<NEW>Phone (mobile)',
+'kw_contacts_phoneoffice_title' => '<NEW>Phone (office)',
 'kw_followups_assignment_title' => '<NEW>Assignment',
 'kw_followups_conclusion_title' => '<NEW>Conclusion',
 'kw_followups_consultation_title' => '<NEW>Consultation',
@@ -203,7 +217,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // M
 'menu_admin' => '<NEW>Administration',
 'menu_admin_archives' => 'Архиви',
-'menu_admin_keywords' => '<NEW>Keywords',
+'menu_admin_filters' => '<NEW>Filters',
+'menu_admin_keywords' => 'Ключови думи',
 'menu_admin_reports' => '<NEW>Reports',
 'menu_admin_siteconf' => '<NEW>Site configuration',
 'menu_calendar' => '<NEW>Calendar',
@@ -268,6 +283,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // R
 'read' => 'прочетено',
+'rep_title' => '<NEW>Title',
+'report_id' => '<NEW>Report ID',
 
 
 // S
