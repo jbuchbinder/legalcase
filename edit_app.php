@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.2 2005/02/11 18:43:46 antzi Exp $
+	$Id: edit_app.php,v 1.3 2005/02/22 23:02:42 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -26,6 +26,15 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 $admin = ($GLOBALS['author_session']['status']=='admin');
+
+// Check if page is self-called to add author or client
+if (isset($_POST['submit'])) {
+	switch ($_POST['submit']) {
+		case 'add_author':
+			
+			$_SESSION['errors'][] = "An author was added to the appointment.";
+	}
+}
 
 if (empty($_SESSION['errors'])) {
 	// Clear form data
@@ -266,6 +275,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			USING (id_author)
 			WHERE id_app IS NULL";
 		$result = lcm_query($q);
+		echo "\t\t<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"POST\">\n";
 		echo "\t\t\t<select name=\"author\">\n";
 		echo "\t\t\t\t<option selected>- Select author -</option>\n";
 		while ($row = lcm_fetch_array($result)) {
@@ -274,13 +284,15 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				. "</option>\n";
 		}
 		echo "\t\t\t</select></td></tr>\n";
+		echo "\t\t\t<button name=\"submit\" type=\"submit\" value=\"add_author\" class=\"simple_form_btn\">" . 'Add' . "</button>\n";
+		echo "\t\t</form>\n";
 		
 		// Appointment participants - clients
 		echo "\t\t<tr><td valign=\"top\">Participant clients:</td><td>";
 		$q = "SELECT lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
 			FROM lcm_client,lcm_app_client_org
 			LEFT JOIN lcm_org USING (id_org)
-			WHERE id_app=" . $_SESSION['app_data']['id_app'] . "
+			WHERE id_app=" . ( $_SESSION['app_data']['id_app'] ? $_SESSION['app_data']['id_app'] : 0 ) . "
 				AND lcm_client.id_client=lcm_app_client_org.id_client";
 		$result = lcm_query($q);
 		$q = '';
@@ -295,7 +307,8 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			FROM lcm_client AS c
 			LEFT JOIN lcm_client_org AS co USING (id_client)
 			LEFT JOIN lcm_org AS o ON (co.id_org=o.id_org)
-			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=" . $_SESSION['app_data']['id_app'] . ")
+			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=";
+		$q .= ( $_SESSION['app_data']['id_app'] ? $_SESSION['app_data']['id_app'] : 0 ) . ")
 			WHERE id_app IS NULL";
 		
 		$result = lcm_query($q);
