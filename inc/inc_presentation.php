@@ -187,6 +187,8 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listreps.php\" class=\"main_nav_btn\">" . _T('menu_admin_reports') . " <abbr title=\"Manage reports (admin only)\"></abbr></a></li>
 							<li><a href=\"listfilters.php\" class=\"main_nav_btn\">" . _T('menu_admin_filters') . " <abbr title=\"Manage filters (admin only)\"></abbr></a></li>
 							<li><a href=\"keywords.php\" class=\"main_nav_btn\">" .  _T('menu_admin_keywords') . "</a></li>
+							<li><a href=\"export_db.php\" class=\"main_nav_btn\">" .  _T('menu_admin_export_db') . "</a></li>
+							<li><a href=\"import_db.php\" class=\"main_nav_btn\">" .  _T('menu_admin_import_db') . "</a></li>
 						</ul>
 					</div>\n";
 	}
