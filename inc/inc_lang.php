@@ -372,16 +372,16 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 		$default = $GLOBALS['lcm_lang'];
 
 	if ($select_name == 'var_lang_lcm_all') {
-		$langues = explode(',', $GLOBALS['all_langs']);
+		$languages = explode(',', $GLOBALS['all_langs']);
 		// [ML] XXX because I need a normal var_lang_lcm, but with all 
 		// the languages, instead, the function parameters should be changed.
 		$select_name = 'var_lang_lcm';
 	} else {
-		$langues = explode(',', read_meta('available_languages'));
+		$languages = explode(',', read_meta('available_languages'));
 	}
 
 	// We do not offer a choice if there is only one language installed
-	if (count($langues) <= 1)
+	if (count($languages) <= 1)
 		return;
 
 	$lien = $GLOBALS['clean_link'];
@@ -400,7 +400,6 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 			$ret .= $text;
 
 		$style = "class='forml' style='vertical-align: top; max-height: 24px; margin-bottom: 5px; width: 120px;'";
-		// $style = "class='verdana1' style='background-color: $couleur_foncee; max-height: 24px; border: 1px solid white; color: white; width: 100px;'";
 
 		$postcomplet = new Link($post);
 		if ($target) $postcomplet->addvar('url', $target);
@@ -412,8 +411,8 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 		$ret .= "\n<select class='forml' name='$select_name'>\n";
 	}
 
-	sort($langues);
-	while (list(, $l) = each ($langues)) {
+	sort($languages);
+	while (list(, $l) = each ($languages)) {
 		if ($l == $default) {
 			$selected = ' selected';
 		} else {
@@ -428,7 +427,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 	$ret .= "</select>\n";
 
 	if ($select_name == 'var_lang_lcm') {
-		$ret .= "<noscript><INPUT TYPE='submit' NAME='Valider' VALUE='&gt;&gt;' class='spip_bouton' $style></noscript>";
+		$ret .= "<noscript><input type='submit' name='Validate' value='&gt;&gt;'></noscript>";
 		$ret .= "</form>";
 	} 
 
