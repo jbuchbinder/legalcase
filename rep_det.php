@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.14 2005/02/03 12:39:15 antzi Exp $
+	$Id: rep_det.php,v 1.15 2005/02/07 12:50:20 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,10 +42,9 @@ $q="SELECT *
 	WHERE id_report = $rep";
 
 $result = lcm_query($q);
+$rep_info = lcm_fetch_array($result);
 
-$row = lcm_fetch_array($result);
-
-if (! $row) {
+if (! $rep_info) {
 	lcm_page_start(_T('title_error'));
 	echo "<p>The report does not exist (ID = " . $rep . ").</p>";
 	lcm_page_end();
@@ -53,30 +52,177 @@ if (! $row) {
 }
 
 //
+// Update matrix line type/name, if requested
+//
+if (isset($_REQUEST['matrix_line_type']) && isset($_REQUEST['matrix_line_name'])) {
+	// Update only if not already set, or it will create mess
+	if (! ($rep_info['line_src_type'] && $rep_info['line_src_name'])) {
+		$query = "UPDATE lcm_report
+					SET line_src_type = '" . $_REQUEST['matrix_line_type'] . "',
+						line_src_name = '" . $_REQUEST['matrix_line_name'] .  "'";
+
+		lcm_query($query);
+
+		// Refresh lcm_report info
+		$q = "SELECT *
+				FROM lcm_report
+				WHERE id_report = $rep";
+
+		$result = lcm_query($q);
+		$rep_info = lcm_fetch_array($result);
+	}
+}
+
+//
+// Remove matrix line type/name
+//
+if (isset($_REQUEST['del_line_src_type'])) {
+	$query = "UPDATE lcm_report
+			SET line_src_type = '',
+				line_src_name = ''
+			WHERE id_report = " . $rep_info['id_report'];
+	
+	lcm_query($query);
+
+	// Refresh lcm_report info
+	$q = "SELECT *
+			FROM lcm_report
+			WHERE id_report = $rep";
+
+	$result = lcm_query($q);
+	$rep_info = lcm_fetch_array($result);
+}
+
+//
+// Add matrix line type/name, if requested
+//
+if (isset($_REQUEST['matrix_line_additem'])) {
+	$query = "INSERT INTO lcm_rep_line (id_report, id_field, sort_type, col_order) "
+			. "VALUES (" . $rep_info['id_report'] . ", " 
+			. 	$_REQUEST['matrix_line_additem'] . ", 'none', '0')";
+	
+	lcm_query($query);
+}
+
+//
+// Remove matrix line type/name, if requested
+//
+if (isset($_REQUEST['matrix_line_delitem'])) {
+	$query = "DELETE FROM lcm_rep_line
+				WHERE id_report = " . $rep_info['id_report'] . "
+					AND id_line = " . $_REQUEST['matrix_line_delitem'];
+	
+	lcm_query($query);
+}
+
+//
 // Show info on the report
 //
 
-lcm_page_start("Report details: " . $row['title']);
+lcm_page_start("Report details: " . $rep_info['title']);
 
 $edit = (($GLOBALS['author_session']['status'] == 'admin') ||
-		($row['id_author'] == $GLOBALS['author_session']['id_author']));
+		($rep_info['id_author'] == $GLOBALS['author_session']['id_author']));
 
 echo "<fieldset class='info_box'>";
 echo "<div class='prefs_column_menu_head'>" . "Report details" . "</div>\n";
 
-if ($row['description'])
-	echo '<p class="normal_text">' . $row['description'] . '</p>' . "\n";
+if ($rep_info['description'])
+	echo '<p class="normal_text">' . $rep_info['description'] . '</p>' . "\n";
 
 echo "<p class='normal_text'>";
-echo "Created on: " . format_date($row['date_creation']) . "<br/>\n";
-echo "Last update: " . format_date($row['date_update']) . "<br/>\n";
+echo "Created on: " . format_date($rep_info['date_creation']) . "<br/>\n";
+echo "Last update: " . format_date($rep_info['date_update']) . "<br/>\n";
 echo "<br />\n";
 
 if ($edit)
-	echo '<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="edit_lnk">' . "Edit this report" . '</a>&nbsp;';
+	echo '<a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . "Edit this report" . '</a>&nbsp;';
 
-echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="run_lnk">Run this report</a><br /><br />';
+echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">Run this report</a><br /><br />';
 echo "</p></fieldset>";
+
+//
+// Matrix line
+//
+
+echo "<fieldset class='info_box'>";
+echo "<div class='prefs_column_menu_head'>" . "Matrix line" . "</div>\n";
+
+// Extract source type, if any
+if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
+	echo "<p class='normal_text'>Source: " . $rep_info['line_src_type'] . " -> " . $rep_info['line_src_name'];
+
+	// Show list of fields for line, if any
+	$my_fields = array();
+	$query = "SELECT rl.id_line, f.id_field, f.description 
+		FROM lcm_rep_line as rl, lcm_fields as f
+		WHERE id_report = " . $rep_info['id_report'] . "
+			AND rl.id_field = f.id_field
+		ORDER BY col_order ASC";
+
+	$result_lines = lcm_query($query);
+
+	if (lcm_num_rows($result_lines)) {
+		echo "</p>\n";
+		echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+
+		while ($line = lcm_fetch_array($result_lines)) {
+			echo "<tr>\n";
+			echo "<td>" . $line['description'] . "</td>\n";
+			echo "<td><a href='rep_det.php?rep=" . $rep_info['id_report'] . "&amp;matrix_line_delitem=" . $line['id_line'] . "'>" . "Remove" . "</a></td>\n";
+			echo "</tr>\n";
+			array_push($my_fields, $line['id_field']);
+		}
+
+		echo "</table>\n";
+	} else {
+		// Allow to change the source table
+		echo ' <a href="rep_det.php?rep=' . $rep_info['id_report'] 
+				. "&amp;del_line_src_type=" . $rep_info['line_src_name'] . '">Remove</a>';
+		echo "</p>\n";
+	}
+
+	// Add field (if line_src_type == table)
+	// TODO: add 'not in (...existing fields..)
+	$query = "SELECT *
+				FROM lcm_fields
+				WHERE table_name = 'lcm_" . $rep_info['line_src_name'] . "'";
+	
+	$result = lcm_query($query);
+
+	if (lcm_num_rows($result)) {
+		echo "<form action='rep_det.php' name='frm_line_additem' method='get'>\n";
+		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+		echo "<p class='normal_text'>Add an item: ";
+		echo "<select name='matrix_line_additem'>";
+
+		while ($row = lcm_fetch_array($result)) {
+			echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
+		}
+		
+		echo "</select>\n";
+		echo "<button name='validate_line_additem'>" . _T('button_validate') . "</button>\n";
+		echo "</p>\n";
+		echo "</form>\n";
+	}
+} else {
+	echo "<form action='rep_det.php' name='frm_line_source' method='get'>\n";
+	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+	echo "<p class='normal_text'>Select source: ";
+	echo "<input name='matrix_line_type' value='table' type='hidden' />\n";
+	echo "<select name='matrix_line_name'>
+			<option value='author'>Author</option>
+			<option value='case'>Case</option>
+			<option value='client'>Client</option>
+			<option value='followup'>Follow-up</option>
+		</select>\n";
+
+	echo "<button name='validate_line_source'>" . _T('button_validate') . "</button>\n";
+	echo "</p>\n";
+	echo "</form>\n";
+}
+
+echo "</fieldset>\n";
 
 //
 //	List the columns in the report
@@ -94,10 +240,10 @@ echo "</p></fieldset>";
 </tr>";
 
 		// Show fields included in this report
-		$q = "SELECT lcm_rep_cols.*,lcm_fields.description
-			FROM lcm_rep_cols,lcm_fields
+		$q = "SELECT lcm_rep_col.*,lcm_fields.description
+			FROM lcm_rep_col,lcm_fields
 			WHERE (id_report=$rep
-				AND lcm_rep_cols.id_field=lcm_fields.id_field)
+				AND lcm_rep_col.id_field=lcm_fields.id_field)
 			ORDER BY 'col_order'";
 		// Do the query
 		$cols = lcm_query($q);
