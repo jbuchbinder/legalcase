@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.184 2005/03/23 14:15:18 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.185 2005/03/23 22:22:05 antzi Exp $
 */
 
 //
@@ -1061,7 +1061,7 @@ function get_list_pos(&$result) {
 	// Position to the page info start
 	if ($list_pos > 0)
 		if (!lcm_data_seek($result, $list_pos))
-			lcm_panic("Error seeking position $list_pos in the result");
+			lcm_panic("Error seeking position $list_pos in the result"); // TRAD
 	
 	return $list_pos;
 }
