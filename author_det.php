@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.17 2005/04/04 14:22:28 mlutfy Exp $
+	$Id: author_det.php,v 1.18 2005/04/05 06:16:01 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -157,8 +157,8 @@ if ($author > 0) {
 				echo $link->getForm();
 
 				echo "<p class=\"normal_text\">\n";
-				$date_end = get_datetime_from_array($_REQUEST, 'date_end', date('Y-m-d'));
-				$date_start = get_datetime_from_array($_REQUEST, 'date_start', date('Y-m-d', strtotime("-1 month" . $date_end)));
+				$date_end = get_datetime_from_array($_REQUEST, 'date_end', 'end', date('Y-m-d H:i:s'));
+				$date_start = get_datetime_from_array($_REQUEST, 'date_start', 'start', date('Y-m-d H:i:s', strtotime("-1 month" . $date_end)));
 
 				echo _Ti('time_input_date_start');
 				echo get_date_inputs('date_start', $date_start);

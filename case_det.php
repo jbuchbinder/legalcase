@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.128 2005/04/04 12:09:51 mlutfy Exp $
+	$Id: case_det.php,v 1.129 2005/04/05 06:16:01 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -68,7 +68,7 @@ if ($case > 0) {
 
 		// Show tabs
 		$groups = array('general' => _T('generic_tab_general'),
-				'clients' => _T('generic_tab_clients'),
+				// [ML] 'clients' => _T('generic_tab_clients'),
 				'followups' => _T('generic_tab_followups'),
 				'appointments' => _T('generic_tab_agenda'),
 				'times' => _T('generic_tab_reports'),
@@ -185,6 +185,7 @@ if ($case > 0) {
 				if ($admin) echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
 		
 				echo "<br />\n";
+			/*
 				echo "</fieldset>\n";
 
 				break;
@@ -196,13 +197,12 @@ if ($case > 0) {
 				// Main table for attached organisations and clients
 				//
 				echo '<fieldset class="info_box">' . "\n";
+			*/
 				echo '<div class="prefs_column_menu_head">'
 					. "<div style='float: right'>" . lcm_help('clients_intro') . "</div>"
 					. _T('case_subtitle_clients') 
 					. "</div>\n";
 
-				// [ML] did not close + not very logical echo '<p class="normal_text">';
-		
 				//
 				// Show case client(s)
 				//
@@ -365,8 +365,8 @@ if ($case > 0) {
 				echo $link->getForm();
 
 				echo "<p class=\"normal_text\">\n";
-				$date_end = get_datetime_from_array($_REQUEST, 'date_end', date('Y-m-d'));
-				$date_start = get_datetime_from_array($_REQUEST, 'date_start', $row['date_creation']);
+				$date_end = get_datetime_from_array($_REQUEST, 'date_end', 'end', date('Y-m-d H:i:s'));
+				$date_start = get_datetime_from_array($_REQUEST, 'date_start', 'start', $row['date_creation']);
 
 				echo _Ti('time_input_date_start');
 				echo get_date_inputs('date_start', $date_start);
@@ -483,13 +483,9 @@ if ($case > 0) {
 				if ($add)
 					echo "<a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a>&nbsp;\n";
 
-				/*
-				echo '<a href="case_activity.php?case=' . $case . '" class="create_new_lnk">' . 'Printable list of activities' . "</a>\n";
-				*/
-
 				echo "<br /><br />\n";
-			
-				echo "</p></fieldset>";
+				echo "</p>\n";
+				echo "</fieldset>\n";
 				
 				break;
 			//
