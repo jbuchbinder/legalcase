@@ -14,21 +14,31 @@ function get_contact_type_id($name) {
 }
 
 // type_person should be of the enum in the database (author, client, org, ..)
+// type_contact is the name of the contact, and can be a comma seperated list.
+// For example: get_contacts('author', $id_author, 'email_main,email_alternate')
 function get_contacts($type_person, $id, $type_contact = '') {
 	global $system_kwg;
 	$contacts = array();
 
-	// XXX FIXME TODO very temporary untill we solved this issue..
+	// In case there is still some deprecated code
 	if ($type_contact == 'email')
-		$type_contact = 1;
-
+		$type_contact = 'email_main';
+	
 	$query = "SELECT type_contact, value, id_contact
 				FROM lcm_contact
 				WHERE id_of_person = " . intval($id) . " 
 					AND type_person = '" . addslashes($type_person) . "' ";
 
-	if ($type_contact)
-		$query .= "AND type_contact IN (" . addslashes($type_contact) . ")";
+	if ($type_contact) {
+		$all_types = explode(",", $type_contact);
+		$id_type_contact = "";
+
+		foreach ($all_types as $t) {
+			$id_type_contact .= $system_kwg['contacts']['keywords'][$t]['id_keyword'];
+		}
+
+		$query .= "AND type_contact IN (" . addslashes($id_type_contact) . ")";
+	}
 
 	$result = lcm_query($query);
 	$tmp_row = array();
