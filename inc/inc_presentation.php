@@ -151,8 +151,12 @@ function lcm_page_start($title = "", $css_files = "") {
 						<div class=\"nav_column_menu_head\">Calendar</div>
 						<p class=\"nav_column_text\">". format_date() ."</p>
 					</div>
-					<div id=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\">Next 7 meetings</div>
+					<!-- [ML] Keeping this so that testers see what features
+					to expect, but I put the opacity low to insist that it is
+					not ready. Who knows whether it works in MSIE. -->
+					<div id=\"nav_menu_box\" style='-moz-opacity: 0.5; filter: alpha(opacity=50);'>
+						<div class=\"nav_column_menu_head\">Next 7 meetings (demo)</div>
+						<p style='font-size: 70%;'><b>This feature is not ready yet.</b></p>
 						<p class=\"nav_column_text\">
 						<strong>Today</strong><br />
 						9:30 - Meeting with Mr. Smith<br /><br />
@@ -160,7 +164,7 @@ function lcm_page_start($title = "", $css_files = "") {
 						</p>
 						<hr class=\"hair_line\" />
 						<p class=\"nav_column_text\">
-						<strong>Tomorrow(28.09.2004)</strong><br />
+						<strong>Tomorrow (28.09.2004)</strong><br />
 						8:30 - Meeting with Mr. Johnson<br /><br />
 						10:00 - At the court
 						</p>
