@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.3 2005/01/21 01:57:12 antzi Exp $
+	$Id: fu_det.php,v 1.4 2005/01/21 03:15:58 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -127,24 +127,28 @@ echo "</ul>\n";
 		<tr><td>Type:</td>
 			<td><?php echo $fu_data['type']; ?></td></tr>
 		<tr><td valign="top">Description:</td>
-			<td><?php echo clean_output($fu_data['description']); ?></td></tr>
-		<tr><td>Sum billed:</td>
+			<td><?php echo clean_output($fu_data['description']);
+				echo "</td></tr>\n";
+
+				// Read the policy settings
+				$fu_sum_billed = read_meta('fu_sum_billed');
+				if ($fu_sum_billed=='yes') {
+?>		<tr><td>Sum billed:</td>
 			<td><?php echo clean_output($fu_data['sumbilled']);
-				// [ML] If we do this we may as well make a function
-				// out of it, but not sure where to place it :-)
-				// This code is also in config_site.php
-				$currency = read_meta('currency');
-				if (empty($currency)) {
-					$current_lang = $GLOBALS['lang'];
-					$GLOBALS['lang'] = read_meta('default_language');
-					$currency = _T('currency_default_format');
-					$GLOBALS['lang'] = $current_lang;
-				}
+					// [ML] If we do this we may as well make a function
+					// out of it, but not sure where to place it :-)
+					// This code is also in config_site.php
+					$currency = read_meta('currency');
+					if (empty($currency)) {
+						$current_lang = $GLOBALS['lang'];
+						$GLOBALS['lang'] = read_meta('default_language');
+						$currency = _T('currency_default_format');
+						$GLOBALS['lang'] = $current_lang;
+					}
 
-				echo htmlspecialchars($currency);
-			?></td></tr>
-	</table>
+					echo htmlspecialchars($currency);
+					echo "\n			</td></tr>\n";
+				}; echo "	</table>\n";
 
-<?php
 	lcm_page_end();
 ?>
