@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.22 2005/03/29 17:56:27 antzi Exp $
+	$Id: org_det.php,v 1.23 2005/03/30 07:32:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -75,7 +75,7 @@ if ($row = lcm_fetch_array($result)) {
 			echo _Ti('time_input_date_creation') . format_date($row['date_creation'], 'full') . "<br />\n";
 
 			echo _Ti('org_input_notes') . "<br />\n";
-			echo $row['notes'];
+			echo nl2br($row['notes']);
 
 			echo "</p>\n";
 

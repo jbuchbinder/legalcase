@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.15 2005/03/29 10:37:38 mlutfy Exp $
+	$Id: upd_client.php,v 1.16 2005/03/30 07:32:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -64,6 +64,7 @@ $cl = "name_first = '" . clean_input($_SESSION['client_data']['name_first']) . "
 	gender = '" . clean_input($_SESSION['client_data']['gender']) . "',
 	citizen_number = '" . clean_input($_SESSION['client_data']['citizen_number']) . "',
 	civil_status = '" . clean_input($_SESSION['client_data']['civil_status']) . "',
+	notes = '" . clean_input($_SESSION['client_data']['notes']) . "', 
 	income = '" . clean_input($_SESSION['client_data']['income']) . "'";
 
 if ($_SESSION['client_data']['id_client'] > 0) {
@@ -110,6 +111,10 @@ if (!empty($_SESSION['client_data']['new_org'])) {
 		VALUES (" . $_SESSION['client_data']['id_client'] . ',' . $_SESSION['client_data']['new_org'] . ")";
 	$result = lcm_query($q);
 }
+
+// Keywords
+include_lcm('inc_keywords');
+update_keywords_request('client', $_SESSION['client_data']['id_client']);
 
 //
 // Insert/update client contacts

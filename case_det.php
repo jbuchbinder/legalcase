@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.124 2005/03/29 09:52:32 mlutfy Exp $
+	$Id: case_det.php,v 1.125 2005/03/30 07:32:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,7 @@ if (isset($_GET['fu_order']))
 
 if ($case > 0) {
 	$q="SELECT id_case, title, id_court_archive, date_creation, date_assignment,
-			legal_reason, alledged_crime, status, stage, public, pub_write
+			legal_reason, alledged_crime, status, stage, public, pub_write, notes
 		FROM lcm_case
 		WHERE id_case=$case";
 
@@ -134,6 +134,10 @@ if ($case > 0) {
 
 				include_lcm('inc_keywords');
 				show_all_keywords('case', $row['id_case']);
+
+				// Notes
+				echo _Ti('case_input_notes') . "<br />\n";
+				echo nl2br($row['notes']);
 
 				// Show case status
 				if ($edit) {

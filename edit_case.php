@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.71 2005/03/29 09:16:30 mlutfy Exp $
+	$Id: edit_case.php,v 1.72 2005/03/30 07:32:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -213,9 +213,18 @@ if ($_SESSION['case_data']['id_case']) {
 		echo "</tr>\n";
 	}
 
-	// Keywords already attached
+	// Keywords (if any)
 	include_lcm('inc_keywords');
 	show_edit_keywords_form('case', $_SESSION['case_data']['id_case']);
+
+	// Notes
+	echo "<tr>\n";
+	echo "<td>" . f_err_star('notes') . _Ti('case_input_notes') . "</td>\n";
+	echo '<td><textarea name="notes" id="input_notes" class="frm_tarea" rows="3" cols="60">'
+		. clean_output($_SESSION['case_data']['notes'])
+		. "</textarea>\n"
+		. "</td>\n";
+	echo "</tr>\n";
 
 	// Case status
 	echo '<tr><td><label for="input_status">' . _T('case_input_status') . "</label></td>\n";

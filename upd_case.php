@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.41 2005/03/28 13:20:15 mlutfy Exp $
+	$Id: upd_case.php,v 1.42 2005/03/30 07:32:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -50,7 +50,8 @@ if (count($_SESSION['errors'])) {
 			id_court_archive='" . clean_input($_SESSION['case_data']['id_court_archive']) . "',";
 	$fl .= "
 			legal_reason='" . clean_input($_SESSION['case_data']['legal_reason']) . "',
-			alledged_crime='" . clean_input($_SESSION['case_data']['alledged_crime']) . "'";
+			alledged_crime='" . clean_input($_SESSION['case_data']['alledged_crime']) . "',
+			notes = '" . clean_input($_SESSION['case_data']['notes']) . "'";
 
 	// Add status to the list of fields
 	$fl .= ",status='" . $_SESSION['case_data']['status'] . "'";
