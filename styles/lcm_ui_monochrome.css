@@ -16,18 +16,18 @@ body {
 #header {
 	height: 83px;
 	text-align: left;
-	background: url("../images/lcm_logo_mono.png") repeat-y left;
+	background: url("../images/lcm/lcm_logo_mono.png") repeat-y left;
 }
 
 #wrapper {
-	background: url(../images/right_back_mono.gif) repeat-y right;
+	background: url(../images/lcm/right_back_mono.gif) repeat-y right;
 }
 
 #container {
 	width: 100%;
 	float: left;
 	margin-right: -200px;
-	background: url(../images/right_back_mono.gif) repeat-y right;
+	background: url(../images/lcm/right_back_mono.gif) repeat-y right;
 }
 
 #content {
@@ -151,7 +151,7 @@ a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
 	text-decoration: none;
 	display: block;
 	color: #000;
-	background: url("../images/test_icon1.gif") no-repeat 1px 3px;
+	background: url("../images/lcm/test_icon1.gif") no-repeat 1px 3px;
 	padding-left: 22px;
 }
 
@@ -159,7 +159,7 @@ a.main_nav_btn:hover {
 	text-decoration: none;
 	display: block;
 	color: #666;
-	background: url("../images/test_icon2.gif") no-repeat 1px 3px;
+	background: url("../images/lcm/test_icon2.gif") no-repeat 1px 3px;
 	padding-left: 22px;
 }
 
