@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.7 2005/01/18 22:31:08 antzi Exp $
+	$Id: sel_client.php,v 1.8 2005/01/18 22:50:26 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -99,15 +99,29 @@ if ($list_pos>0)
 			<th class="heading">&nbsp;</th>
 		</tr>
 <?php
-	while ($row = lcm_fetch_array($result)) {
-?>
-		<tr>
-			<td><input type="checkbox" name="clients[]" value="<?php echo $row['id_client']; ?>"></td>
-			<td><?php echo $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']; ?></td>
-			<td><a href="edit_client.php?client=<?php echo $row['id_client']; ?>" class="content_link">Edit</a></td>
-		</tr>
-<?php
-	}
+
+// Process the output of the query
+for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+	// Show checkbox
+	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] "></td>\n";
+	// Show client name
+	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo highlight_matches(clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' '
+		. $row['name_last']),$find_author_string);
+	echo "</td>\n";
+	// Show client edit link
+	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo '<a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">Edit</a>';
+	echo "</td>\n";
+
+//	if (($GLOBALS['author_session']['status'] == 'admin') ||
+//		($row['id_author'] == $GLOBALS['author_session']['id_author']))
+//			echo '<a href="edit_author.php?author=' . $row['id_author'] . '" class="content_link">Edit</a>';
+
+	echo "\t</tr>\n";
+}
+
 ?>
 		<tr>
 			<td></td>
@@ -117,6 +131,47 @@ if ($list_pos>0)
 		<td></td>
 		</tr>
 	</table>
+
+	<table border='0' align='center' width='99%' class='page_numbers'>
+		<tr><td align="left" width="15%"><?php
+
+// Show link to previous page
+if ($list_pos>0) {
+	echo '<a href="' . $_SERVER['REQUEST_URI'];
+	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
+	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
+	echo '" class="content_link">< Prev</a> ';
+}
+
+echo "</td>\n\t\t\t<td align='center' width='70%'>";
+
+// Show page numbers with direct links
+$list_pages = ceil($number_of_rows / $prefs['page_rows']);
+if ($list_pages>1) {
+	echo 'Go to page: ';
+	for ($i=0 ; $i<$list_pages ; $i++) {
+		if ($i==floor($list_pos / $prefs['page_rows'])) echo '['. ($i+1) . '] ';
+		else {
+			echo '<a href="' . $_SERVER['REQUEST_URI'] . '?list_pos=' . ($i*$prefs['page_rows']);
+			if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
+			echo '" class="content_link">' . ($i+1) . '</a> ';
+		}
+	}
+}
+
+echo "</td>\n\t\t\t<td align='right' width='15%'>";
+
+// Show link to next page
+$next_pos = $list_pos + $prefs['page_rows'];
+if ($next_pos<$number_of_rows) {
+	echo '<a href="' . $_SERVER['REQUEST_URI'] . "?list_pos=$next_pos";
+	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
+	echo '" class="content_link">Next ></a>';
+}
+
+echo "</td>\n\t\t</tr>\n\t</table>\n";
+
+?>
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
 	<input type="hidden" name="ref_sel_client" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button>
