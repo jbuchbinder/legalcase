@@ -43,7 +43,7 @@ if ($list_pos>0)
 <?php
 for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	echo "\t<tr><td><a href=\"client_det.php?client=" . $row['id_client'] . '">';
-	$fullname = $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'];
+	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
 	echo highlight_matches($fullname,$find_client_string);
 ?></td>
 		<td><a href="edit_client.php?client=<?php echo $row['id_client']; ?>">Edit</a></td>
