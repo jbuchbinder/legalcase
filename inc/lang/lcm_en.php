@@ -13,14 +13,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // A
-'add' => 'Add',
 'add_and_go_to_details' => 'Add &amp; go to details',
 'add_and_open_new' => 'Add &amp; open new',
 'add_client_s' => 'Add client(s)',
 'add_organisation_s' => 'Add organisation(s)',
 'add_user_case' => 'Add user to the case',
-'alledged_crime' => 'Alledged crime',
-'assignment_date' => 'Assignment date',
 'author_id' => 'Author ID',
 'authorconf_button_change_password' => 'Change password',
 'authorconf_button_update_preferences' => 'Save preferences',
@@ -39,9 +36,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_theme_orange' => 'Orange',
 'authorconf_subtitle_interface' => 'Interface',
 'authorconf_subtitle_password' => 'Change password',
-'authoredit_input_namefirst' => 'First name:',
-'authoredit_input_namelast' => 'Last name:',
-'authoredit_input_namemiddle' => 'Middle name:',
 'authoredit_input_username' => 'Username:',
 'authoredit_subtitle_connectionidentifiers' => 'Connection identifiers',
 'authoredit_subtitle_personalinfo' => 'Personal information',
@@ -56,15 +50,21 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // C
-'case_clients' => 'Clients in this case',
-'case_details' => 'Case details',
-'case_followups' => 'Follow-ups to this case',
-'case_id' => 'Case ID',
-'case_status' => 'Case status',
-'case_title' => 'Case title',
-'case_user_s' => 'Case user(s)',
-'clients' => 'Clients',
-'court_archive_id' => 'Court archive ID',
+'case_input_alledged_crime' => 'Alledged crime:',
+'case_input_author' => 'Author:',
+'case_input_authors' => 'Authors:',
+'case_input_clients' => 'Clients:',
+'case_input_court_archive' => 'Court archive ID:',
+'case_input_date_assigned' => 'Assignment date:',
+'case_input_date_creation' => 'Creation date:',
+'case_input_id' => 'Case ID:',
+'case_input_legal_reason' => 'Legal reason:',
+'case_input_organisations' => 'Organisations:',
+'case_input_status' => 'Status:',
+'case_input_title' => 'Title:',
+'case_subtitle_clients' => 'Case clients',
+'case_subtitle_followups' => 'Case follow-ups',
+'case_subtitle_general' => 'General case information',
 'creation_date' => 'Creation date',
 'currency_default_format' => '€',
 
@@ -105,7 +105,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // E
 'edit' => 'Edit',
-'edit_case_details' => 'Edit case details',
 'edit_case_information' => 'Edit case information',
 'edit_filter_details' => 'Edit filter details',
 'edit_rep_details' => 'Edit report details',
@@ -144,6 +143,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_your_contact_information' => 'Your contact information ...',
 'input_connection_identifiers' => 'Your connection identifiers ...',
 'input_email' => 'E-mail address',
+'input_search_case' => 'Find case:',
+'input_search_client' => 'Find client:',
+'input_search_organisation' => 'Find organisation:',
 'install_connection_login' => 'Connection login',
 'install_connection_password' => 'Connection password',
 'install_connection_succeeded' => 'Connection succeeded.',
@@ -201,7 +203,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // L
-'legal_reason' => 'Legal reason',
 'login_access_denied' => 'Access denied',
 'login_identifier_unknown' => 'The identifier "@login@" is unknown.',
 'login_info_login' => 'identifier for connection to the site',
@@ -236,15 +237,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_profile' => 'Profile',
 'menu_profile_logout' => 'Logout',
 'menu_profile_preferences' => 'My preferences',
+'menu_search' => 'Search',
 
 
 // N
-'new_case' => 'New case',
 'new_followup' => 'New followup',
-
-
-// O
-'organisations' => 'Organisations',
 
 
 // P
@@ -336,6 +333,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // T
 'title_authorconf' => 'My preferences',
+'title_case_details' => 'Case details:',
+'title_case_edit' => 'Edit case details',
+'title_case_new' => 'New case',
+'title_client_edit' => 'Edit client:',
+'title_client_new' => 'New client',
 'title_error' => 'Error',
 'title_site_configuration' => 'Site configuration',
 'title_software' => 'Legal Case Management',
