@@ -13,7 +13,7 @@ if ($case>0) {
 					SET id_case=$case,id_author=$author";
 
 				// Do the query
-				if (!($result = lcm_query($q))) die("$q<br>\n" .  _T('title_error') . " " . lcm_errno() . ": " . lcm_error());
+				if (!($result = lcm_query($q))) die("$q<br>\n" . _T('title_error') . " " . lcm_errno() . ": " . lcm_error());
 			}
 		} else die(_T('error_add_auth_no_rights'));
 	}
