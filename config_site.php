@@ -18,10 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.37 2005/03/03 15:49:36 mlutfy Exp $
+	$Id: config_site.php,v 1.38 2005/04/04 07:26:27 mlutfy Exp $
 */
 
 include ("inc/inc.php");
+
+function now_and_before($now, $before) {
+	return _T('siteconf_info_now_and_before', array('now' => $now, 'before' => $before));
+}
 
 function show_config_form() {
 	echo "<p class='normal_text'><img src='images/jimmac/icon_warning.gif' alt='' align='right'
@@ -240,9 +244,8 @@ function show_config_form_regional() {
 	echo "<fieldset class='conf_info_box'>\n";
 	echo "<div class='prefs_column_menu_head'><label for='available_regional'>" . _T('siteconf_subtitle_refresh_lang') . "</label></div>\n";
 	echo "<p>" . _T('siteconf_info_available_languages') . "</p>\n";
-	// echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40' class='search_form_txt' /></p>\n";
 
-	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate5' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='validate_refresh' id='Validate5' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</fieldset>\n";
 }
 
@@ -351,7 +354,7 @@ function apply_conf_changes_general() {
 
 		if ($old_name != $site_name) {
 			write_meta('site_name', $site_name);
-			array_push($log, "Name of site set to '<tt>$site_name</tt>', was '<tt>$old_name</tt>'.");
+			array_push($log, _Ti('siteconf_input_site_name') . now_and_before($site_name, $old_name));
 		}
 	}
 
@@ -360,7 +363,7 @@ function apply_conf_changes_general() {
 
 	if ($old_desc != $site_desc) {
 		write_meta('site_description', $site_desc);
-		array_push($log, "Description of site set to '<tt>$site_desc</tt>', was '<tt>$old_desc</tt>'.");
+		array_push($log, _Ti('siteconf_input_site_desc') . now_and_before($site_desc, $old_desc));
 	}
 
 	// Site address (Internet or LAN)
@@ -368,21 +371,21 @@ function apply_conf_changes_general() {
 
 	if ($old_address != $site_address) {
 		write_meta('site_address', $site_address);
-		array_push($log, "Site Internet or network address set to '<tt>$site_address</tt>', was '<tt>$old_address</tt>'.");
+		array_push($log, _Ti('siteconf_input_site_address') . now_and_before($site_address, $old_address));
 	}
 
 	// Administrator e-mail
 	if (! empty($email_sysadmin)) {
-		if ($email_sysadmin != read_meta('email_sysadmin')) {
+		$old_email = read_meta('email_sysadmin');
+		if ($email_sysadmin != $old_email) {
 			if (is_valid_email($email_sysadmin)) {
 				write_meta('email_sysadmin', $email_sysadmin);
-				array_push($log, "Sysadmin e-mail address et to <tt>"
-					. addslashes($email_sysadmin) . "</tt>.");
+				array_push($log, _Ti('siteconf_input_admin_email') . now_and_before(addslashes($email_sysadmin, $old_email)));
 			} else {
 				// FIXME not the best way of showing errors... 
 				array_push($log, "Sysadmin e-mail address <tt>"
 					. addslashes($email_sysadmin) . "</tt> is <b>not</b> a "
-					. "valid address. Modification not applied.");
+					. "valid address. Modification not applied."); // TRAD
 			}
 		}
 	}
@@ -406,7 +409,7 @@ function apply_conf_changes_collab() {
 	if ($case_default_read != read_meta('case_default_read')) {
 		write_meta('case_default_read', $case_default_read);
 
-		$entry = "Read access to cases set to '<tt>";
+		$entry = "Read access to cases set to '<tt>"; // TRAD
 		if ($case_default_read == 'yes') $entry .= "public";
 		else $entry .= "restricted";
 		$entry .= "</tt>'";
@@ -417,7 +420,7 @@ function apply_conf_changes_collab() {
 	if ($case_default_write != read_meta('case_default_write')) {
 		write_meta('case_default_write', $case_default_write);
 
-		$entry = "Write access to cases set to '<tt>";
+		$entry = "Write access to cases set to '<tt>"; // TRAD
 		if ($case_default_write == 'yes') $entry .= "public";
 		else $entry .= "restricted";
 		$entry .= "</tt>'";
@@ -428,7 +431,7 @@ function apply_conf_changes_collab() {
 	if ($case_read_always != read_meta('case_read_always')) {
 		write_meta('case_read_always', $case_read_always);
 
-		$entry = "Read access policy can by changed by <tt>";
+		$entry = "Read access policy can by changed by <tt>"; // TRAD
 		if ($case_read_always == 'yes') $entry .= "admin only";
 		else $entry .= "everybody";
 		$entry .= "</tt>";
@@ -439,7 +442,7 @@ function apply_conf_changes_collab() {
 	if ($case_write_always != read_meta('case_write_always')) {
 		write_meta('case_write_always', $case_write_always);
 
-		$entry = "Write access policy can be changed by <tt>";
+		$entry = "Write access policy can be changed by <tt>"; // TRAD
 		if ($case_write_always == 'yes') $entry .= "admin only";
 		else $entry .= "everybody";
 		$entry .= "</tt>";
@@ -454,7 +457,7 @@ function apply_conf_changes_collab() {
 			$site_open_subscription == 'no') 
 		{
 			write_meta('site_open_subscription', $site_open_subscription);
-			array_push($log, "New author self-registration changed to "
+			array_push($log, "New author self-registration changed to " // TRAD
 				. "'$site_open_subscription', was '$old_site_open_subscription'.");
 		}
 	}
@@ -468,19 +471,26 @@ function apply_conf_changes_collab() {
 function apply_conf_changes_policy() {
 	$log = array();
 
-	$items = array('client_name_middle', 'client_citizen_number',
-				'client_civil_status', 'client_income', 'hide_emails',
-				'case_court_archive', 'case_assignment_date', 'case_alledged_crime',
-				'case_allow_modif', 'fu_sum_billed', 'fu_allow_modif');
+	$items = array('client_name_middle' => 'person_input_name_middle',
+				'client_citizen_number' => 'person_input_citizen_number',
+				'client_civil_status'   => 'person_input_civil_status',
+				'client_income'         => 'person_input_income',
+				'hide_emails'           => 'siteconf_info_hide_emails',
+				'case_court_archive'    => 'case_input_court_archive',
+				'case_assignment_date'  => 'siteconf_input_assignment_date',
+				'case_alledged_crime'   => 'siteconf_input_alledged_crime',
+				'case_allow_modif'      => 'siteconf_input_case_allow_modif', 
+				'fu_sum_billed'         => 'siteconf_input_sum_billed',
+				'fu_allow_modif'        => 'siteconf_input_fu_allow_modif');
 
-	foreach ($items as $it) {
+	foreach ($items as $it => $trad) {
 		if (isset($_REQUEST[$it])
 			AND ($_REQUEST[$it] == 'yes' OR $_REQUEST[$it] == 'no'))
 		{
 			$old_value = read_meta($it);
 			if ($_REQUEST[$it] != $old_value) {
 				write_meta($it, $_REQUEST[$it]);
-				array_push($log, $it . " set to " . $_REQUEST[$it] . ", was " . $old_value . ".");
+				array_push($log, _Ti($trad) . now_and_before($_REQUEST[$it], $old_value));
 			}
 		}
 	}
@@ -496,6 +506,7 @@ function apply_conf_changes_regional() {
 
 	$default_language = $_REQUEST['default_language'];
 	$currency = $_REQUEST['currency'];
+	$refresh_list_lang = isset($_REQUEST['validate_refresh']);
 
 	// Default language
 	if (! empty($default_language)) {
@@ -503,10 +514,8 @@ function apply_conf_changes_regional() {
 
 		if ($old_lang != $default_language) {
 			write_meta('default_language', $default_language);
-			array_push($log, "Default language set to <tt>"
-				. translate_language_name($default_language)
-				. "</tt>, previously was <tt>"
-				. translate_language_name($old_lang) ."</tt>.");
+			array_push($log, _Ti('siteconf_input_default_lang') 
+				. now_and_before(translate_language_name($default_language), translate_language_name($old_lang)));
 		}
 	}
 
@@ -516,14 +525,15 @@ function apply_conf_changes_regional() {
 
 		if ($currency != $old_currency) {
 			write_meta('currency', $currency);
-			array_push($log, "Currency changed to <tt>$currency</tt>, "
-				. "was <tt>$old_currency</tt>.");
+			array_push($log, _Ti('siteconf_input_currency') . now_and_before($currency, $old_currency));
 		}
 	}
 
-	// Force refresh of lcm_meta->available_languaes
-	init_languages(true);
-	array_push($log, "Language list refreshed.");
+	// Force refresh of lcm_meta->available_languages
+	if ($refresh_list_lang) {
+		init_languages(true);
+		array_push($log, _T('siteconf_info_languages_refreshed'));
+	}
 
 	if (! empty($log))
 		write_metas();
@@ -535,7 +545,7 @@ global $author_session;
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	lcm_page_start("Site configuration");
+	lcm_page_start(_T('title_site_configuration'));
 	echo "<p>Warning: Access denied, not admin.\n";
 	lcm_page_end();
 	exit;
@@ -557,7 +567,7 @@ lcm_page_start(_T('title_site_configuration'));
 // Show changes on screen
 if (! empty($log)) {
 	echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
-	echo "<div>Changes made:</div>\n";
+	echo "<div>" . _T('siteconf_info_changes_made') . "</div>\n";
 	echo "<ul>";
 
 	foreach ($log as $line) {
