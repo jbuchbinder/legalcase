@@ -170,6 +170,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // I
+'info_followup_case' => 'Case:',
 'info_followup_involving' => 'Involving:',
 'info_followup_to_case' => 'To case:',
 'info_free_software' => 'Free software <a href=\'http://www.lcm.ngo-bg.org/en\' class=\'prefs_normal_lnk\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\' class=\'prefs_normal_lnk\'>GPL licence</a>.',
