@@ -24,18 +24,15 @@ if (!@file_exists('data/inc_meta_cache.php'))
 //
 
 // [ML] This is very important (but dirty hack) to change the language
-// from config_author.php, without passing by lcm_cookie.php
+// from config_author.php but passing by lcm_cookie.php
 if ($sel_language)
 	$lang = $sel_language;
 else
 	$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
 
-if ($lang AND $lang <> $author_session['lang'] AND lcm_set_language($lang)) {
-	lcm_query("UPDATE lcm_author
-				SET   lang = '".addslashes($lang)."'
-				WHERE id_author  = " .$author_session['id_author']);
-	$author_session['lang'] = $lang;
-	lcm_add_session($author_session, $lcm_session);
+if ($lang AND $lang <> $author_session['lang']) {
+	// Boomerang via lcm_cookie to set a cookie and do all the dirty work
+	header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" .  urlencode($HTTP_REFERER));
 }
 
 if ($sel_theme) {
