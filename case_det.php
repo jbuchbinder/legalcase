@@ -2,15 +2,14 @@
 
 include('inc/inc.php');
 include('inc/inc_acc.php');
-lcm_page_start("Case details");
 
-if ($case>0) {
-	// Prepare query
+// lcm_page_start("Case details");
+
+if ($case > 0) {
 	$q="SELECT *
 		FROM lcm_case
 		WHERE id_case=$case";
 
-	// Do the query
 	$result = lcm_query($q);
 
 	// Process the output of the query
@@ -25,7 +24,9 @@ if ($case>0) {
 		$admin = allowed($case,'a');
 
 		// Show case details
-		echo '<h1>Details for case: </h1>' . $row['title'];
+		// echo '<h1>Details for case: </h1>' . $row['title'];
+		lcm_page_start("Case details: " . $row['title']);
+
 		if ($edit)
 			echo ' [<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case information</a>]';
 		echo "<br>\nCase ID: " . $row['id_case'] . "<br>\n";
@@ -60,9 +61,9 @@ if ($case>0) {
 			echo 'No';
 		echo "<br>\n";
 
-		?><h2>Clients in this case:</h2>
+		?><h3>Clients in this case:</h3>
 
-		<table border>
+		<table border='1'>
 		<caption>Organisations:</caption>
 		<?php
 
@@ -71,7 +72,6 @@ if ($case>0) {
 			FROM lcm_case_client_org,lcm_org
 			WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
 
-		// Do the query
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
@@ -95,7 +95,6 @@ if ($case>0) {
 			FROM lcm_case_client_org,lcm_client
 			WHERE id_case=$case AND lcm_case_client_org.id_client=lcm_client.id_client";
 
-		// Do the query
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
@@ -112,7 +111,10 @@ if ($case>0) {
 	} else die("There's no such case!");
 
 	?>
-	<br><table border>
+
+	<br/>
+	
+	<table border='1'>
 	<caption>Follow-ups to this case:</caption>
 	<tr><th>Date</th><th>Type</th><th>Description</th><th></th></tr>
 	<?php
@@ -138,8 +140,13 @@ if ($case>0) {
 
 	?>
 	</table>
-	<?php
-} else die("Which case?");
 
+	<?php
 	lcm_page_end();
+} else {
+	lcm_page_start("Error");
+	echo "<p>No case was specified</p>\n";
+	lcm_page_end();
+}
+
 ?>
