@@ -45,11 +45,12 @@ function show_config_form($panel) {
 		show_config_form_general();
 	}
 
-	echo "<p><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
 	echo "</form>\n";
 }
 
 function show_config_form_general() {
+	global $lcm_lang_right;
+
 	//
 	// *** INFO SITE
 	//
@@ -74,6 +75,7 @@ function show_config_form_general() {
 
 	echo "\t<input type='hidden' name='conf_modified_general' value='yes'/>\n";
 
+	/*
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
 	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
@@ -81,35 +83,46 @@ function show_config_form_general() {
 	echo "</h4></td>\n";
 	echo "<tr>\n";
 	echo "<td>";
+	*/	
 
-	echo "<p><b><label for='site_name'>" . _T('siteconf_input_site_name') . "</label></b></p>\n";
+	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
+	// XXX fix css, this was just a test
+	echo "<p class='prefs_column_menu_head'><b><label for='site_name'>" . _T('siteconf_input_site_name') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_site_name') . "</small></p>\n";
 	echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40'/></p>\n";
 
-	echo "<p><b><label for='site_desc'>" . _T('siteconf_input_site_desc') . "</label></b></p>\n";
+	echo "<p class='prefs_column_menu_head'><b><label for='site_desc'>" . _T('siteconf_input_site_desc') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_site_desc') . "</small></p>\n";
 	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40'/></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</fieldset>\n";
 
+	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
 	echo "<p><b><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></b></p>\n";
 	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40'/></p>\n";
 
 	echo "<p><b><label for='email_sysadmin'>" . _T('siteconf_input_admin_email') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_admin_email') . "</small></p>\n";
 	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40'/></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</fieldset>\n";
 
+	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
 	echo "<p><b>" . _T('siteconf_input_default_lang') . "</b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_default_lang') . "</small></p>\n";
-	echo "<p>" . menu_languages('default_language', $default_language) . "</p>\n";
+	echo "<p align='center'>" . menu_languages('default_language', $default_language) . "</p>\n";
 
 	echo "<p><b><label for='currency'>" . _T('siteconf_input_currency') . "</label></b></p>\n";
 	echo "<p><small>" . _T('siteconf_info_currency') . "</small></p>\n";
 	echo "<p><small>" . _T('siteconf_warning_currency') . "</small></p>\n";
-	echo "<p><input type='text' id='currency' name='currency' value='$currency' size='5'/></p>\n";
-	echo "</td>\n</tr>\n</table>\n";
-
+	echo "<p align='center'><input type='text' id='currency' name='currency' value='$currency' size='5'/></p>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
+	echo "</fieldset>\n";
 }
 
 function show_config_form_collab() {
+	global $lcm_lang_right;
+
 	// 
 	// *** COLLAB WORK
 	//
@@ -240,9 +253,12 @@ function show_config_form_collab() {
 
 	echo "</ul>\n";
 	echo "</td>\n</tr>\n</table>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
 }
 
 function show_config_form_policy() {
+	global $lcm_lang_right;
+
 	// 
 	// *** OFFICE POLICY
 	//
@@ -260,6 +276,7 @@ function show_config_form_policy() {
 	echo "<td>";
 
 	echo "</td>\n</tr>\n</table>\n";
+	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
 }
 
 function apply_conf_changes_general() {
