@@ -22,20 +22,19 @@
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-function read_author_data() {
-	// We'll store author information here
-	global $usr;
-
-	// Get author information from database
-	$q = "SELECT * FROM lcm_author WHERE id_author=" . $GLOBALS['author_session']['id_author'];
+function read_author_data($id_author) {
+	$q = "SELECT * FROM lcm_author WHERE id_author=" . $id_author;
 	$result = lcm_query($q);
 	if (!($usr = lcm_fetch_array($result))) die(_T('error_no_such_user'));
+
+	return $usr;
 }
 
 function show_author_form() {
 	global $author_session;
-	global $prefs;
-	global $usr;
+
+	$usr = read_author_data($author_session['id_author']);
+	$prefs = ($usr['prefs']) ? unserialize($usr['prefs']) : array();
 
 	// TODO: Show author information
 
@@ -118,12 +117,14 @@ function show_author_form() {
               <td align="right" valign="top">Theme:</td>
               <td align="left" valign="top">
 			  	<input type="hidden" name="old_theme" id="old_theme" value="<?php echo $prefs['theme'] ?>" />
-				<!-- TODO: make a function for this to list all lcm_ui*.css -->
 			  	<select name="sel_theme" class="sel_frm" id="sel_theme">
-                  <option value="">Default</option>
-                  <option value="blue">Blue</option>
-                  <option value="orange">Orange</option>
-                  <option value="monochrome">Monochrome</option>
+<?php
+	$themes = get_theme_list();
+	foreach ($themes as $t) {
+		$selected = ($t == $prefs['theme'] ? " selected='selected'" : '');
+		echo "<option value='" . $t . "'" . $selected . ">" . $t .  "</option>\n";
+	}
+?>
                 </select></td>
             </tr>
 <?php
@@ -141,10 +142,10 @@ function show_author_form() {
 	}
 ?>
             <tr> 
-              <td align="right" valign="top">Font size and font style:</td>
+              <td align="right" valign="top">Font size:</td>
               <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" /> 
                 &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" /> 
-                <br /> <br /> 
+                <!-- [ML:should we remove?] br /> <br /> 
                 <select name="sel_fnt" class="sel_frm" id="sel_fnt">
                   <option value="verdana" selected="selected">Verdana</option>
                   <option value="arial">Arial</option>
@@ -152,7 +153,8 @@ function show_author_form() {
                   <option value="georgia">Georgia</option>
                   <option value="times_new_roman">Times New Roman</option>
                   <option value="Courier">Courier</option>
-                </select></td>
+                </select -->
+		  	  </td>
             </tr>
             <tr> 
               <td colspan="2" align="right" valign="top" class="separate">&nbsp;</td>
@@ -219,8 +221,6 @@ lcm_page_start("Update profile");
 
 if ($author_modified)
 	apply_author_changes();
-else
-	read_author_data();
 
 show_author_form();
 lcm_page_end();
