@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.44 2005/01/21 11:23:38 mlutfy Exp $
+	$Id: config_author.php,v 1.45 2005/01/26 10:40:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -212,33 +212,6 @@ function apply_author_ui_change() {
 		array_push($log, "User interface mode set to $sel_mode, was $old_mode.");
 }
 
-function apply_author_password_change() {
-	global $author_session;
-	global $lcm_session;
-	global $prefs;
-	global $log;
-
-	// From the form
-	global $usr_old_passwd;
-	global $usr_new_passwd;
-	global $usr_retype_passwd;
-
-
-	// Show modifications made one finished
-	$log = array();
-
-	//
-	// Change the author's password
-	//
-
-	// TODO:
-	// - verify is new password long enough (> 5)
-	// - verify if two passwords match
-	// - verify if old password matches
-
-
-}
-
 function show_changes() {
 	global $log;
 	//
@@ -260,28 +233,16 @@ function show_changes() {
 if (isset($_POST['author_ui_modified']))
 	apply_author_ui_change();
 
-if (isset($_POST['$author_password_modified']))
-	apply_author_password_change();
-
-if (isset($_POST['author_ui_modified']) || isset($_POST['author_password_modified'])) {
-	if ($referer) {
-		// [ML] I have no exact idea why, but if we do not do this,
-		// the language will not be changed. There is not this problem
-		// with theme/screen/etc, only language. Perhaps because of the
-		// lcm_cookie.php boomerang, see inc.php
-		$target = new Link($referer);
-		$target->delVar('sel_language');
-
-		if (isset($sel_language))
-			$target->addVar('sel_language', $sel_language);
-
-		header('Location: ' . $target->getUrl());
-
-		exit;
-	} else {
-		show_changes();
-	}
+// Referer may be set by the form, but also by lcm_cookie.php which
+// is called before config_author.php via inc.php (ahem..)
+if (isset($_REQUEST['referer'])) {
+	$target = new Link($_REQUEST['referer']);
+	header('Location: ' . $target->getUrl());
+	exit;
 }
+
+if (isset($_POST['author_ui_modified']))
+	show_changes();
 
 lcm_page_start(_T('title_authorconf'));
 
