@@ -23,7 +23,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'assignment_date' => 'Assignment date',
 'author_id' => 'Author ID',
 'authorconf_button_change_password' => 'Change password',
-'authorconf_button_update_preferences' => 'Update preferences',
+'authorconf_button_update_preferences' => 'Save preferences',
 'authorconf_input_language' => 'Language:',
 'authorconf_input_password_confirm' => 'Confirm new password:',
 'authorconf_input_password_current' => 'Current password:',
@@ -39,6 +39,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_theme_orange' => 'Orange',
 'authorconf_subtitle_interface' => 'Interface',
 'authorconf_subtitle_password' => 'Change password',
+'authoredit_input_namefirst' => 'First name:',
+'authoredit_input_namelast' => 'Last name:',
+'authoredit_input_namemiddle' => 'Middle name:',
+'authoredit_input_username' => 'Username:',
+'authoredit_subtitle_connectionidentifiers' => 'Connection identifiers',
+'authoredit_subtitle_personalinfo' => 'Personal information',
 
 
 // B
@@ -321,6 +327,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_subtitle_followup_fields' => 'Follow-up',
 'siteconf_subtitle_general_info' => 'General information',
 'siteconf_subtitle_policy' => 'Office policy',
+'siteconf_subtitle_regional' => 'Regional settings',
 'siteconf_subtitle_self_registration' => 'Self-registration of new authors',
 'siteconf_warning' => '<b>Caution!</b> The settings on this page have a global impact which may influence the functionning of the site.',
 'siteconf_warning_currency' => '<b>Warning!</b> If you change the currency, the current information entered will <strong>not</strong> be converted.',
