@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.101 2005/03/09 14:41:31 antzi Exp $
+	$Id: case_det.php,v 1.102 2005/03/10 16:49:00 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -470,9 +470,14 @@ if ($case > 0) {
 				}
 			
 				echo "\t</table>\n";
-			
+
+				echo "<br />\n";
+
 				if ($add)
-					echo "<br /><a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a><br /><br />\n";
+					echo "<a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a>&nbsp;\n";
+
+				echo '<a href="case_activity.php?case=' . $case . '" class="create_new_lnk">' . 'Printable list of activities' . "</a>\n";
+				echo "<br /><br />\n";
 			
 				echo "</p></fieldset>";
 				
