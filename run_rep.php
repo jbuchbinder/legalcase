@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.9 2005/02/03 09:57:24 mlutfy Exp $
+	$Id: run_rep.php,v 1.10 2005/02/07 13:01:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -37,9 +37,181 @@ if ($row = lcm_fetch_array($result))
 else
 	die("There is no such report!");
 
+//
 // Get report columns
+// They should be a limited number, so we will store them
+//
+
+$my_columns = array();
+$q = "SELECT f.id_field, f.field_name, f.table_name, f.enum_type
+		FROM lcm_rep_col as c, lcm_fields as f
+		WHERE c.id_report = $rep
+			AND c.id_field = f.id_field
+		ORDER BY c.col_order";
+
+$result = lcm_query($q);
+
+while ($row = lcm_fetch_array($result)) {
+	array_push($my_columns, $row);
+}
+
+
+//
+// Report lines
+//
+
+// Get fields to show
+$temp = array();
+$q = "SELECT field_name, table_name
+		FROM lcm_rep_line as l, lcm_fields as f
+		WHERE id_report = " . $rep . "
+		AND l.id_field = f.id_field
+		ORDER BY col_order ASC";
+
+$result = lcm_query($q);
+
+while ($row = lcm_fetch_array($result)) {
+	$my_line_table = $row['table_name'];
+	array_push($temp, $row['field_name']);
+}
+
+$my_line_fields = implode(", ", $temp);
+
+if ($my_line_fields && ! $my_line_table)
+	lcm_panic("internal error");
+
+// TODO: Define filter for lines
+$q = "SELECT " . $my_line_fields . "
+		FROM " . $my_line_table;
+// TODO: WHERE .... (each line type can propose ready filters?)
+
+$result = lcm_query($q);
+
+echo "<table width='99%' border='1'>";
+
+while ($row = lcm_fetch_array($result)) {
+	echo "<tr>\n";
+
+	// Line information
+	echo "<td>\n";
+
+	foreach ($row as $k => $v) {
+		// mysql sends back columns as array + hash, take only array
+		if (is_numeric($k))
+			echo $v . " ";
+	}
+
+	echo "</td>\n";
+
+	// Column information
+	foreach ($my_columns as $col) {
+		// Table-join condition
+		$from = $my_line_table;
+		if ($col['table_name'] != $my_line_table)
+			$from .= ", " . $col['table_name'];
+
+		$where = '';
+
+		switch ($my_line_table) {
+			case 'lcm_case':
+				$where = " lcm_case.id_case = ";
+				break;
+			case 'lcm_author': 
+				$where = " lcm_author.id_author = ";
+				break;
+			case 'lcm_client':
+				$where = " lcm_client.id_client = ";
+				break;
+			case 'lcm_followup':
+				$where = " lcm_followup.id_followup = " . $row['id_followup'];
+				// $where .= " lcm_followup.id_author ";
+				break;
+			default:
+				lcm_panic("internal error: table = " . $my_line_table);
+		}
+
+		switch ($col['table_name']) {
+			case 'lcm_case':
+				if ($my_line_table == 'lcm_author') {
+					$from  .= ", lcm_case_author";
+					$where .= "lcm_case_author.id_author AND lcm_case_author.id_case = lcm_case.id_case";
+
+					// This can be determined automatically
+					$where .= " AND lcm_author.id_author = " . $row['id_author'];
+				}
+				break;
+			case 'lcm_author': 
+				$where .= " lcm_author.id_author ";
+				break;
+			case 'lcm_client':
+				$where .= " lcm_client.id_client ";
+				break;
+			case 'lcm_followup':
+				if ($my_line_table != 'lcm_followup')
+					$where .= " lcm_followup.id_author ";
+
+				if ($my_line_table == 'lcm_author') {
+					$where .= " AND lcm_followup.id_author = " . $row['id_author'];
+				}
+
+				break;
+			default:
+				lcm_panic("internal error: table = " . $col['table_name']);
+
+		}
+
+		if ($col['enum_type']) {
+			$enum_info = explode(":", $col['enum_type']);
+			$enum_src = $enum_info[0]; // keyword
+			$enum_type = $enum_info[1]; // system_kwg
+			$enum_group = $enum_info[2]; // ex: followups
+
+			if ($enum_src == 'keyword') {
+				global $system_kwg;
+
+				foreach ($system_kwg[$enum_group]['keywords'] as $kw) {
+					lcm_log("TYPE = " . $kw['name']);
+
+					// FIXME: COUNT(*), AVG(date_end - date_start), SUM(date_end - date_start)
+					$q1 = "SELECT COUNT(*)
+							FROM " . $from . "
+							WHERE " . $col['field_name'] . " = '" . $kw['name'] . "'
+								AND " . $where;
+
+					$result1 = lcm_query($q1);
+
+					$val = lcm_fetch_array($result1);
+					echo "<td>" . $val[0] . "</td>\n";
+
+				}
+			} else {
+				lcm_panic("unknown enum_src = " . $enum_src);
+			}
+
+		} else {
+			$q1 = "SELECT " . $col['field_name'] . "
+					FROM " . $from . "
+					WHERE " . $where;
+	
+			$result1 = lcm_query($q1);
+			$val = lcm_fetch_array($result1);
+	
+			echo "<td>" . $val[0] . "</td>\n";
+		}
+	}
+	
+	echo "</tr>\n";
+}
+
+echo "</table>\n";
+
+/*
+
+//
+// Get report columns
+//
 $q = "SELECT *
-		FROM lcm_rep_cols as c, lcm_fields as f
+		FROM lcm_rep_col as c, lcm_fields as f
 		WHERE c.id_report = $rep
 			AND c.id_field = f.id_field
 		ORDER BY c.col_order";
@@ -194,8 +366,9 @@ if ($fl && $tl) { //  && $wl) {
 		echo "</table>";
 	}
 }
+*/
 
-echo '<a href="' . ($GLOBALS['HTTP_REFERER'] ? $GLOBALS['HTTP_REFERER'] : "rep_det.php?rep=$rep") . '" class="run_lnk">Back</a><br />';
+echo '<p><a href="' . ($GLOBALS['HTTP_REFERER'] ? $GLOBALS['HTTP_REFERER'] : "rep_det.php?rep=$rep") . '" class="run_lnk">Back</a></p>';
 
 lcm_page_end();
 
