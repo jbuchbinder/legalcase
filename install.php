@@ -69,9 +69,9 @@ if ($step == 6) {
 		$name_first  = addslashes($name_first);
 		$name_middle = addslashes($name_middle);
 		$name_last   = addslashes($name_last);
-		$login       = addslashes($login);
+		$username    = addslashes($username);
 
-		$query = "SELECT id_author FROM lcm_author WHERE username=\"$login\"";
+		$query = "SELECT id_author FROM lcm_author WHERE username=\"$username\"";
 		$result = lcm_query($query);
 
 		unset($id_author);
@@ -98,6 +98,7 @@ if ($step == 6) {
 			$query = "INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, htpass, alea_futur, status)
 							VALUES(\"$name_first\", \"$name_middle\", \"$name_last\", \"$username\", \"$mdpass\", \"$htpass\", FLOOR(32000*RAND()), \"admin\")";
 		}
+
 		lcm_query_db($query);
 
 		// Set e-mail for author (if none)
