@@ -342,3 +342,13 @@ a.prefs_logout {
 	font-weight: bold;
 	text-decoration: none;
 }
+
+/* Go to page bar */
+.page_numbers {
+	margin-top: 5px;
+	/* border: 1px solid #efefef; */
+}
+
+.page_numbers td {
+	font-size: 11px;
+}
