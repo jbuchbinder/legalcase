@@ -429,9 +429,6 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 	// modify the date range.
 
 	// Date and month have no default selection, Year does
-//	$default_month = ($date ? format_date($date, 'n') : 0);
-//	$default_day = ($date ? format_date($date, 'j') : 0);
-//	$default_year = format_date($date, 'Y');
 	$split_date = recup_date($date);
 	$default_month = $split_date[1];
 	$default_day = $split_date[2];
