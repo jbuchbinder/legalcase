@@ -1,14 +1,8 @@
 <?php
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
-
-// Error display function
-function f_err($fn, $errors)
-{
-    if (isset($errors[$fn]))
-		echo "<font color='red'>$errors[$fn]</font><br>";
-}
+include_lcm('inc_acc');
+include_lcm('inc_filters');
 
 $fu_data=array();
 
@@ -17,7 +11,7 @@ session_start();
 
 if (empty($errors)) {
     // Clear form data
-    $fu_data=array('referer'=>$HTTP_REFERER);
+    $fu_data = array('referer'=>$HTTP_REFERER);
 
 	if (isset($followup)) {
 		// Register followup as session variable
@@ -40,7 +34,7 @@ if (empty($errors)) {
 		if ($row = lcm_fetch_array($result)) {
 			// Get followup details
 			foreach($row as $key=>$value) {
-				$fu_data[$key]=$value;
+				$fu_data[$key] = $value;
 			}
 		} else die("There's no such follow-up!");
 
