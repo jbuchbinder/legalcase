@@ -358,8 +358,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'person_input_gender_female' => 'female',
 'person_input_gender_male' => 'male',
 'person_input_income' => 'Income:',
-'person_input_name_first' => 'Surname:',
-'person_input_name_last' => 'Name:',
+'person_input_name_first' => 'Name:',
+'person_input_name_last' => 'Surname:',
 'person_input_name_middle' => 'Middle name:',
 'public' => 'Public',
 
