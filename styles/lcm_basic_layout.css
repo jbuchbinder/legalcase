@@ -213,7 +213,6 @@ p.nav_column_text {
 ul.small_agenda {
 	margin: 0;
 	padding: 0;
-	border-top: 1px dotted #999;
 }
 
 ul.small_agenda li {
@@ -221,12 +220,6 @@ ul.small_agenda li {
 	padding: 2px 0px 2px 5px;
 	font-size: 11px;
 	list-style-type: none;
-	border-bottom: 1px dotted #999;
-}
-
-ul.small_agenda li a {
-	text-decoration: none;
-	color: #333;
 }
 
 /* --- [ Buttons-like effect ] --- */

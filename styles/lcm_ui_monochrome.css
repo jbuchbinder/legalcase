@@ -63,6 +63,25 @@ p.nav_column_text {
 	color: #000;
 }
 
+/* Main column agenda small list */
+
+ul.small_agenda {
+	border-top: 1px dotted #999;
+}
+
+ul.small_agenda li {
+	border-bottom: 1px dotted #999;
+}
+
+ul.small_agenda li a {
+	text-decoration: none;
+	color: #333;
+}
+
+ul.small_agenda li a:hover {
+	color: #999;
+}
+
 /* Buttons-like effect */
 
 a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {

@@ -45,7 +45,7 @@ hr.hair_line {
 
 .nav_menu_box {
 	border: 1px solid #999;
-	background-color: #eee;
+	background-color: #fff;
 }
 
 .nav_column_menu_head {
@@ -57,6 +57,25 @@ hr.hair_line {
 
 ul.nav_menu_list li {
 	border-bottom: 1px solid #999;
+}
+
+/* Main column agenda small list */
+
+ul.small_agenda {
+	border-top: 1px dotted #999;
+}
+
+ul.small_agenda li {
+	border-bottom: 1px dotted #999;
+}
+
+ul.small_agenda li a {
+	text-decoration: none;
+	color: #663;
+}
+
+ul.small_agenda li a:hover {
+	color: #996;
 }
 
 /* Buttons-like effect */
