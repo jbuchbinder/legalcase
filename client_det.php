@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.27 2005/03/06 21:24:15 antzi Exp $
+	$Id: client_det.php,v 1.28 2005/03/11 16:56:40 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -120,7 +120,17 @@ if ($client > 0) {
 		
 				$i = 0;
 				foreach($contacts as $c) {
-					if (! ($hide_emails == 'yes' && $c['name'] == 'email_main' && $author_session['status'] != 'admin')) {
+					// Check if the contact is an e-mail
+					if (strpos($c['name'],'email') === 0) {
+						if (! ($hide_emails == 'yes' && $author_session['status'] != 'admin')) {
+							$html .= "\t<tr>";
+							$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>";
+							$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+							$html .= '<a href="mailto:' . $c['value'] . '">' . $c['value'] . '</a></td>';
+							$html .= "</tr>\n";
+							$i++;
+						}
+					} else {
 						$html .= "\t<tr>";
 						$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>";
 						$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $c['value'] . "</td>";
