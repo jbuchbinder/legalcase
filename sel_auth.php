@@ -56,8 +56,8 @@ if ($case>0) {
 		</table>
 		<input type="hidden" name="case" value="<?php echo $case; ?>">
 		<input type="hidden" name="ref_sel_auth" value="<?php echo $HTTP_REFERER ?>">
-		<button name="submit" type="submit" value="submit">Add user(s) to the case</button>
-		<button name="reset" type="reset" value="reset">Clear selected</button>
+		<button name="submit" type="submit" value="submit" class="simple_form_btn">Add user(s) to the case</button>
+		<button name="reset" type="reset" value="reset" class="simple_form_btn">Clear selected</button>
 	</form>
 	<?php
 	} else die("You don't have permission to add users to this case!");

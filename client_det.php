@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.8 2004/11/24 12:50:19 makaveev Exp $
+	$Id: client_det.php,v 1.9 2004/11/24 15:21:48 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -100,7 +100,7 @@ if ($client>0) {
 		echo "</table>";
 
 		if ($edit)
-			echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_create_new_lnk\">Add organisation(s)</a><br />";
+			echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">Add organisation(s)</a><br />";
 
 		
 

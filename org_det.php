@@ -64,7 +64,7 @@ if ($org>0) {
 		echo "</table>";
 
 		if ($edit)
-			echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_create_new_lnk\">Add representative(s)</a><br />";
+			echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />";
 
 		
 	} else die("There's no such organisation!");

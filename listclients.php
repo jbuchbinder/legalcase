@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.18 2004/11/24 12:31:54 makaveev Exp $
+	$Id: listclients.php,v 1.19 2004/11/24 15:21:48 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -80,7 +80,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 }
 ?>
 </table>
-<br /><a href="edit_client.php" class="add_create_new_lnk">Add new client</a>
+<br /><a href="edit_client.php" class="create_new_lnk">Add new client</a>
 <?php
 
 // Show link to previous page

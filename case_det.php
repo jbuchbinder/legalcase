@@ -69,7 +69,7 @@ if ($case > 0) {
 			if ($admin) echo '</a>';
 			echo '; ';
 		}
-		if ($admin) echo '<a href="sel_auth.php?case=' . $case . '" class="add_create_new_lnk">' . _T('add_user_case') . '</a>';
+		if ($admin) echo '<a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a>';
 		echo "<br>\n";
 		echo _T('court_archive_id') . ': ' . clean_output($row['id_court_archive']) . "<br>\n";
 		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
@@ -112,7 +112,7 @@ if ($case > 0) {
 		echo "\t\t</table>";
 		
 		if ($add)
-			echo "<br /><a href=\"sel_org.php?case=$case\" class=\"add_create_new_lnk\">" . _T('add_organisation_s') . "</a><br />";
+			echo "<br /><a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('add_organisation_s') . "</a><br />";
 
 		echo "<br />\n\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
 		echo "\t\t<th class='heading'>" . _T('clients') . ":</th>\n\t\t<th class='heading'>&nbsp;</th>";
@@ -136,7 +136,7 @@ if ($case > 0) {
 		echo "\t\t</table>\n";
 		
 		if ($add)
-			echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_create_new_lnk\">" . _T('add_client_s') . "</a><br />\n";
+			echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('add_client_s') . "</a><br />\n";
 
 		
 
@@ -171,7 +171,7 @@ if ($case > 0) {
 	echo "\t</table>\n";
 	
 	if ($add)
-		echo "<br /><a href=\"edit_fu.php?case=$case\" class=\"add_create_new_lnk\">" . _T('new_followup') . "</a><br /><br />\n";
+		echo "<br /><a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a><br /><br />\n";
 
 	lcm_page_end();
 } else {
