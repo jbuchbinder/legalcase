@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.5 2005/02/04 15:59:14 antzi Exp $
+	$Id: inc_keywords.php,v 1.6 2005/02/24 16:12:32 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -67,9 +67,10 @@ function get_kwg_from_id($id_group) {
 // with the provided ID.
 //
 function get_kw_from_id($id_keyword) {
-	$query = "SELECT *
-				FROM lcm_keyword
-				WHERE id_keyword = " . intval($id_keyword);
+	$query = "SELECT k.*, kwg.type
+				FROM lcm_keyword as k, lcm_keyword_group as kwg
+				WHERE kwg.id_group = k.id_group
+				AND id_keyword = " . intval($id_keyword);
 	$result = lcm_query($query);
 
 	return lcm_fetch_array($result);
