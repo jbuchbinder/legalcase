@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.41 2005/04/04 06:28:52 mlutfy Exp $
+	$Id: upd_fu.php,v 1.42 2005/04/05 13:14:25 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -110,116 +110,118 @@ if ( !(strlen($_SESSION['fu_data']['description']) > 0) )
 ///////////////////////////////////////////////////////////////////////
 //	Consequent appointment information error checking
 ///////////////////////////////////////////////////////////////////////
-// Convert day, month, year, hour, minute to date/time
-// Check submitted information
-// start_time
-$_SESSION['fu_data']['app_start_time'] = $_SESSION['fu_data']['app_start_year'] . '-'
-					. $_SESSION['fu_data']['app_start_month'] . '-'
-					. $_SESSION['fu_data']['app_start_day'] . ' '
-					. (isset($_SESSION['fu_data']['app_start_hour']) ? $_SESSION['fu_data']['app_start_hour'] : '00') . ':'
-					. (isset($_SESSION['fu_data']['app_start_minutes']) ? $_SESSION['fu_data']['app_start_minutes'] : '00') . ':'
-					. (isset($_SESSION['fu_data']['app_start_seconds']) ? $_SESSION['fu_data']['app_start_seconds'] : '00');
-
-$unix_app_start_time = strtotime($_SESSION['fu_data']['app_start_time']);
-
-if ( ($unix_app_start_time<0) || !checkdate($_SESSION['fu_data']['app_start_month'],$_SESSION['fu_data']['app_start_day'],$_SESSION['fu_data']['app_start_year']) )
-	$_SESSION['errors']['app_start_time'] = 'Invalid appointment start time!'; // TRAD
-//else 
-//	$_SESSION['fu_data']['app_start_time'] = date('Y-m-d H:i:s', $unix_app_start_time);
-
-//
-// End time
-//
-if ($prefs['time_intervals'] == 'absolute') {
-	// Set to default empty date if all fields empty
-	if (!($_SESSION['fu_data']['app_end_year'] || $_SESSION['fu_data']['app_end_month'] || $_SESSION['fu_data']['app_end_day']))
-		$_SESSION['fu_data']['app_end_time'] = '0000-00-00 00:00:00';
-		// Report error if some of the fields empty TODO
-	elseif (!$_SESSION['fu_data']['app_end_year'] || !$_SESSION['fu_data']['app_end_month'] || !$_SESSION['fu_data']['app_end_day']) {
-		$_SESSION['errors']['app_end_time'] = 'Partial appointment end time!';
-		$_SESSION['fu_data']['app_end_time'] = ($_SESSION['fu_data']['app_end_year'] ? $_SESSION['fu_data']['app_end_year'] : '0000') . '-'
-							. ($_SESSION['fu_data']['app_end_month'] ? $_SESSION['fu_data']['app_end_month'] : '00') . '-'
-							. ($_SESSION['fu_data']['app_end_day'] ? $_SESSION['fu_data']['app_end_day'] : '00') . ' '
-							. ($_SESSION['fu_data']['app_end_hour'] ? $_SESSION['fu_data']['app_end_hour'] : '00') . ':'
-							. ($_SESSION['fu_data']['app_end_minutes'] ? $_SESSION['fu_data']['app_end_minutes'] : '00') . ':'
-							. ($_SESSION['fu_data']['app_end_seconds'] ? $_SESSION['fu_data']['app_end_seconds'] : '00');
+if (isset($_SESSION['fu_data']['add_appointment'])) {
+	// Convert day, month, year, hour, minute to date/time
+	// Check submitted information
+	// start_time
+	$_SESSION['fu_data']['app_start_time'] = $_SESSION['fu_data']['app_start_year'] . '-'
+						. $_SESSION['fu_data']['app_start_month'] . '-'
+						. $_SESSION['fu_data']['app_start_day'] . ' '
+						. (isset($_SESSION['fu_data']['app_start_hour']) ? $_SESSION['fu_data']['app_start_hour'] : '00') . ':'
+						. (isset($_SESSION['fu_data']['app_start_minutes']) ? $_SESSION['fu_data']['app_start_minutes'] : '00') . ':'
+						. (isset($_SESSION['fu_data']['app_start_seconds']) ? $_SESSION['fu_data']['app_start_seconds'] : '00');
+	
+	$unix_app_start_time = strtotime($_SESSION['fu_data']['app_start_time']);
+	
+	if ( ($unix_app_start_time<0) || !checkdate($_SESSION['fu_data']['app_start_month'],$_SESSION['fu_data']['app_start_day'],$_SESSION['fu_data']['app_start_year']) )
+		$_SESSION['errors']['app_start_time'] = 'Invalid appointment start time!'; // TRAD
+	//else 
+	//	$_SESSION['fu_data']['app_start_time'] = date('Y-m-d H:i:s', $unix_app_start_time);
+	
+	//
+	// End time
+	//
+	if ($prefs['time_intervals'] == 'absolute') {
+		// Set to default empty date if all fields empty
+		if (!($_SESSION['fu_data']['app_end_year'] || $_SESSION['fu_data']['app_end_month'] || $_SESSION['fu_data']['app_end_day']))
+			$_SESSION['fu_data']['app_end_time'] = '0000-00-00 00:00:00';
+			// Report error if some of the fields empty TODO
+		elseif (!$_SESSION['fu_data']['app_end_year'] || !$_SESSION['fu_data']['app_end_month'] || !$_SESSION['fu_data']['app_end_day']) {
+			$_SESSION['errors']['app_end_time'] = 'Partial appointment end time!';
+			$_SESSION['fu_data']['app_end_time'] = ($_SESSION['fu_data']['app_end_year'] ? $_SESSION['fu_data']['app_end_year'] : '0000') . '-'
+								. ($_SESSION['fu_data']['app_end_month'] ? $_SESSION['fu_data']['app_end_month'] : '00') . '-'
+								. ($_SESSION['fu_data']['app_end_day'] ? $_SESSION['fu_data']['app_end_day'] : '00') . ' '
+								. ($_SESSION['fu_data']['app_end_hour'] ? $_SESSION['fu_data']['app_end_hour'] : '00') . ':'
+								. ($_SESSION['fu_data']['app_end_minutes'] ? $_SESSION['fu_data']['app_end_minutes'] : '00') . ':'
+								. ($_SESSION['fu_data']['app_end_seconds'] ? $_SESSION['fu_data']['app_end_seconds'] : '00');
+		} else {
+			// Join fields and check resulting date
+			$_SESSION['fu_data']['app_end_time'] = $_SESSION['fu_data']['app_end_year'] . '-'
+								. $_SESSION['fu_data']['app_end_month'] . '-'
+								. $_SESSION['fu_data']['app_end_day'] . ' '
+								. $_SESSION['fu_data']['app_end_hour'] . ':'
+								. $_SESSION['fu_data']['app_end_minutes'] . ':'
+						. (isset($_SESSION['fu_data']['app_end_seconds']) ? $_SESSION['fu_data']['app_end_seconds'] : '00');
+			$unix_app_end_time = strtotime($_SESSION['fu_data']['app_end_time']);
+	
+			if ( ($unix_app_end_time<0) || !checkdate($_SESSION['fu_data']['app_end_month'],$_SESSION['fu_data']['app_end_day'],$_SESSION['fu_data']['app_end_year']) )
+				$_SESSION['errors']['app_end_time'] = 'Invalid appointment end time!';
+	//		else 
+	//			$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s',$unix_app_end_time);
+		}
 	} else {
-		// Join fields and check resulting date
-		$_SESSION['fu_data']['app_end_time'] = $_SESSION['fu_data']['app_end_year'] . '-'
-							. $_SESSION['fu_data']['app_end_month'] . '-'
-							. $_SESSION['fu_data']['app_end_day'] . ' '
-							. $_SESSION['fu_data']['app_end_hour'] . ':'
-							. $_SESSION['fu_data']['app_end_minutes'] . ':'
-					. (isset($_SESSION['fu_data']['app_end_seconds']) ? $_SESSION['fu_data']['app_end_seconds'] : '00');
-		$unix_app_end_time = strtotime($_SESSION['fu_data']['app_end_time']);
-
-		if ( ($unix_app_end_time<0) || !checkdate($_SESSION['fu_data']['app_end_month'],$_SESSION['fu_data']['app_end_day'],$_SESSION['fu_data']['app_end_year']) )
-			$_SESSION['errors']['app_end_time'] = 'Invalid appointment end time!';
-//		else 
-//			$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s',$unix_app_end_time);
+		if ( ! (isset($_SESSION['fu_data']['app_delta_days']) && (!is_numeric($_SESSION['fu_data']['app_delta_days']) || $_SESSION['fu_data']['app_delta_days'] < 0) ||
+			isset($_SESSION['fu_data']['app_delta_hours']) && (!is_numeric($_SESSION['fu_data']['app_delta_hours']) || $_SESSION['fu_data']['app_delta_hours'] < 0) ||
+			isset($_SESSION['fu_data']['app_delta_minutes']) && (!is_numeric($_SESSION['fu_data']['app_delta_minutes']) || $_SESSION['fu_data']['app_delta_minutes'] < 0) ) ) {
+			$unix_app_end_time = $unix_app_start_time
+					+ $_SESSION['fu_data']['app_delta_days'] * 86400
+					+ $_SESSION['fu_data']['app_delta_hours'] * 3600
+					+ $_SESSION['fu_data']['app_delta_minutes'] * 60;
+			$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s', $unix_app_end_time);
+		} else {
+			$_SESSION['errors']['app_end_time'] = _Ti('app_input_time_length') . _T('time_warning_invalid_format') . ' (' . $_SESSION['fu_data']['app_delta_hours'] . ')'; // XXX
+			$_SESSION['fu_data']['app_end_time'] = $_SESSION['fu_data']['app_start_time'];
+		}
 	}
-} else {
-	if ( ! (isset($_SESSION['fu_data']['app_delta_days']) && (!is_numeric($_SESSION['fu_data']['app_delta_days']) || $_SESSION['fu_data']['app_delta_days'] < 0) ||
-		isset($_SESSION['fu_data']['app_delta_hours']) && (!is_numeric($_SESSION['fu_data']['app_delta_hours']) || $_SESSION['fu_data']['app_delta_hours'] < 0) ||
-		isset($_SESSION['fu_data']['app_delta_minutes']) && (!is_numeric($_SESSION['fu_data']['app_delta_minutes']) || $_SESSION['fu_data']['app_delta_minutes'] < 0) ) ) {
-		$unix_app_end_time = $unix_app_start_time
-				+ $_SESSION['fu_data']['app_delta_days'] * 86400
-				+ $_SESSION['fu_data']['app_delta_hours'] * 3600
-				+ $_SESSION['fu_data']['app_delta_minutes'] * 60;
-		$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s', $unix_app_end_time);
+	
+	// reminder
+	if ($prefs['time_intervals']=='absolute') {
+		// Set to default empty date if all fields empty
+		if (!($_SESSION['fu_data']['app_reminder_year'] || $_SESSION['fu_data']['app_reminder_month'] || $_SESSION['fu_data']['app_reminder_day']))
+			$_SESSION['fu_data']['app_reminder'] = '0000-00-00 00:00:00';
+			// Report error if some of the fields empty
+		elseif (!$_SESSION['fu_data']['app_reminder_year'] || !$_SESSION['fu_data']['app_reminder_month'] || !$_SESSION['fu_data']['app_reminder_day']) {
+			$_SESSION['errors']['app_reminder'] = 'Partial appointment reminder time!'; // TRAD
+			$_SESSION['fu_data']['app_reminder'] = ($_SESSION['fu_data']['app_reminder_year'] ? $_SESSION['fu_data']['app_reminder_year'] : '0000') . '-'
+								. ($_SESSION['fu_data']['app_reminder_month'] ? $_SESSION['fu_data']['app_reminder_month'] : '00') . '-'
+								. ($_SESSION['fu_data']['app_reminder_day'] ? $_SESSION['fu_data']['app_reminder_day'] : '00') . ' '
+								. ($_SESSION['fu_data']['app_reminder_hour'] ? $_SESSION['fu_data']['app_reminder_hour'] : '00') . ':'
+								. ($_SESSION['fu_data']['app_reminder_minutes'] ? $_SESSION['fu_data']['app_reminder_minutes'] : '00') . ':'
+								. ($_SESSION['fu_data']['app_reminder_seconds'] ? $_SESSION['fu_data']['app_reminder_seconds'] : '00');
+		} else {
+			// Join fields and check resulting time
+			$_SESSION['fu_data']['app_reminder'] = $_SESSION['fu_data']['app_reminder_year'] . '-'
+							. $_SESSION['fu_data']['app_reminder_month'] . '-'
+							. $_SESSION['fu_data']['app_reminder_day'] . ' '
+							. $_SESSION['fu_data']['app_reminder_hour'] . ':'
+							. $_SESSION['fu_data']['app_reminder_minutes'] . ':'
+						. (isset($_SESSION['fu_data']['app_reminder_seconds']) ? $_SESSION['fu_data']['app_reminder_seconds'] : '00');
+			$unix_app_reminder_time = strtotime($_SESSION['fu_data']['app_reminder']);
+	
+			if ( ($unix_app_reminder_time<0) || !checkdate($_SESSION['fu_data']['app_reminder_month'],$_SESSION['fu_data']['app_reminder_day'],$_SESSION['fu_data']['app_reminder_year']) )
+				$_SESSION['errors']['app_reminder'] = 'Invalid appointment reminder time!'; // TRAD
+	//		else 
+	//			$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s',$unix_app_reminder_time);
+		}
 	} else {
-		$_SESSION['errors']['app_end_time'] = _Ti('app_input_time_length') . _T('time_warning_invalid_format') . ' (' . $_SESSION['fu_data']['app_delta_hours'] . ')'; // XXX
-		$_SESSION['fu_data']['app_end_time'] = $_SESSION['fu_data']['app_start_time'];
+		if ( ! (isset($_SESSION['fu_data']['app_rem_offset_days']) && (!is_numeric($_SESSION['fu_data']['app_rem_offset_days']) || $_SESSION['fu_data']['app_rem_offset_days'] < 0) ||
+			isset($_SESSION['fu_data']['app_rem_offset_hours']) && (!is_numeric($_SESSION['fu_data']['app_rem_offset_hours']) || $_SESSION['fu_data']['app_rem_offset_hours'] < 0) ||
+			isset($_SESSION['fu_data']['app_rem_offset_minutes']) && (!is_numeric($_SESSION['fu_data']['app_rem_offset_minutes']) || $_SESSION['fu_data']['app_rem_offset_minutes'] < 0) ) ) {
+			$unix_app_reminder_time = $unix_app_start_time
+					- $_SESSION['fu_data']['app_rem_offset_days'] * 86400
+					- $_SESSION['fu_data']['app_rem_offset_hours'] * 3600
+					- $_SESSION['fu_data']['app_rem_offset_minutes'] * 60;
+			$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s', $unix_app_reminder_time);
+		} else {
+			$_SESSION['errors']['app_reminder'] = _Ti('app_input_reminder') . _T('time_warning_invalid_format') . ' (' . $_SESSION['fu_data']['app_rem_offset_hours'] . ')'; // XXX
+			$_SESSION['fu_data']['app_reminder'] = $_SESSION['fu_data']['app_start_time'];
+		}
 	}
+	
+	// title
+	if (! $_SESSION['fu_data']['app_title'])
+		$_SESSION['errors']['app_title'] = _Ti('app_input_title') . _T('warning_field_mandatory');
 }
-
-// reminder
-if ($prefs['time_intervals']=='absolute') {
-	// Set to default empty date if all fields empty
-	if (!($_SESSION['fu_data']['app_reminder_year'] || $_SESSION['fu_data']['app_reminder_month'] || $_SESSION['fu_data']['app_reminder_day']))
-		$_SESSION['fu_data']['app_reminder'] = '0000-00-00 00:00:00';
-		// Report error if some of the fields empty
-	elseif (!$_SESSION['fu_data']['app_reminder_year'] || !$_SESSION['fu_data']['app_reminder_month'] || !$_SESSION['fu_data']['app_reminder_day']) {
-		$_SESSION['errors']['app_reminder'] = 'Partial appointment reminder time!'; // TRAD
-		$_SESSION['fu_data']['app_reminder'] = ($_SESSION['fu_data']['app_reminder_year'] ? $_SESSION['fu_data']['app_reminder_year'] : '0000') . '-'
-							. ($_SESSION['fu_data']['app_reminder_month'] ? $_SESSION['fu_data']['app_reminder_month'] : '00') . '-'
-							. ($_SESSION['fu_data']['app_reminder_day'] ? $_SESSION['fu_data']['app_reminder_day'] : '00') . ' '
-							. ($_SESSION['fu_data']['app_reminder_hour'] ? $_SESSION['fu_data']['app_reminder_hour'] : '00') . ':'
-							. ($_SESSION['fu_data']['app_reminder_minutes'] ? $_SESSION['fu_data']['app_reminder_minutes'] : '00') . ':'
-							. ($_SESSION['fu_data']['app_reminder_seconds'] ? $_SESSION['fu_data']['app_reminder_seconds'] : '00');
-	} else {
-		// Join fields and check resulting time
-		$_SESSION['fu_data']['app_reminder'] = $_SESSION['fu_data']['app_reminder_year'] . '-'
-						. $_SESSION['fu_data']['app_reminder_month'] . '-'
-						. $_SESSION['fu_data']['app_reminder_day'] . ' '
-						. $_SESSION['fu_data']['app_reminder_hour'] . ':'
-						. $_SESSION['fu_data']['app_reminder_minutes'] . ':'
-					. (isset($_SESSION['fu_data']['app_reminder_seconds']) ? $_SESSION['fu_data']['app_reminder_seconds'] : '00');
-		$unix_app_reminder_time = strtotime($_SESSION['fu_data']['app_reminder']);
-
-		if ( ($unix_app_reminder_time<0) || !checkdate($_SESSION['fu_data']['app_reminder_month'],$_SESSION['fu_data']['app_reminder_day'],$_SESSION['fu_data']['app_reminder_year']) )
-			$_SESSION['errors']['app_reminder'] = 'Invalid appointment reminder time!'; // TRAD
-//		else 
-//			$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s',$unix_app_reminder_time);
-	}
-} else {
-	if ( ! (isset($_SESSION['fu_data']['app_rem_offset_days']) && (!is_numeric($_SESSION['fu_data']['app_rem_offset_days']) || $_SESSION['fu_data']['app_rem_offset_days'] < 0) ||
-		isset($_SESSION['fu_data']['app_rem_offset_hours']) && (!is_numeric($_SESSION['fu_data']['app_rem_offset_hours']) || $_SESSION['fu_data']['app_rem_offset_hours'] < 0) ||
-		isset($_SESSION['fu_data']['app_rem_offset_minutes']) && (!is_numeric($_SESSION['fu_data']['app_rem_offset_minutes']) || $_SESSION['fu_data']['app_rem_offset_minutes'] < 0) ) ) {
-		$unix_app_reminder_time = $unix_app_start_time
-				- $_SESSION['fu_data']['app_rem_offset_days'] * 86400
-				- $_SESSION['fu_data']['app_rem_offset_hours'] * 3600
-				- $_SESSION['fu_data']['app_rem_offset_minutes'] * 60;
-		$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s', $unix_app_reminder_time);
-	} else {
-		$_SESSION['errors']['app_reminder'] = _Ti('app_input_reminder') . _T('time_warning_invalid_format') . ' (' . $_SESSION['fu_data']['app_rem_offset_hours'] . ')'; // XXX
-		$_SESSION['fu_data']['app_reminder'] = $_SESSION['fu_data']['app_start_time'];
-	}
-}
-
-// title
-if (! $_SESSION['fu_data']['app_title'])
-	$_SESSION['errors']['app_title'] = _Ti('app_input_title') . _T('warning_field_mandatory');
 
 //
 // Check if any errors found
@@ -308,7 +310,7 @@ if (count($_SESSION['errors'])) {
 		if (! empty($_SESSION['fu_data']['id_app'])) {
 			$q = "INSERT INTO lcm_app_fu 
 					SET id_app=" . $_SESSION['fu_data']['id_app'] . ",
-						id_followup=$id_followup, relation='parent'";
+						id_followup=$id_followup, relation='child'";
 			$result = lcm_query($q);
 		}
 	}
@@ -316,6 +318,7 @@ if (count($_SESSION['errors'])) {
 ///////////////////////////////////////////////////////////////////////
 //	Consequent appointment information update
 ///////////////////////////////////////////////////////////////////////
+if (isset($_SESSION['fu_data']['add_appointment'])) {
 	// No errors, proceed with database update
 	$fl="	type		= '" . clean_input($_SESSION['fu_data']['app_type']) . "',
 		title		= '" . clean_input($_SESSION['fu_data']['app_title']) . "',
@@ -341,13 +344,11 @@ if (count($_SESSION['errors'])) {
 	$_SESSION['fu_data']['id_app'] = $id_app;
 
 	// Add relationship with the creator
-	$q = "INSERT INTO lcm_author_app SET id_app=$id_app,id_author=" . $GLOBALS['author_session']['id_author'];
-
-	$result = lcm_query($q);
+	lcm_query("INSERT INTO lcm_author_app SET id_app=$id_app,id_author=" . $GLOBALS['author_session']['id_author']);
 
 	// Add followup relation
-	// [ML] XXX this was left as-is... is it the same as above query?
-	// lcm_query("INSERT INTO lcm_
+	lcm_query("INSERT INTO lcm_app_fu SET id_app=$id_app,id_followup=$id_followup,relation='parent'");
+}
 
 // Send user back to add/edit page's referer or (default) to followup detail page
 header('Location: ' . ($_SESSION['fu_data']['ref_edit_fu'] ? $_SESSION['fu_data']['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));
