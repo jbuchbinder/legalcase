@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.87 2005/02/22 17:30:37 antzi Exp $
+	$Id: case_det.php,v 1.88 2005/02/22 17:42:56 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -253,13 +253,13 @@ if ($case > 0) {
 					<tr><th class='heading'>";
 				switch ($fu_order) {
 					case 'ASC':
-						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 						break;
 					case 'DESC':
-						echo "<a href='case_det.php?case=$case&amp;fu_order=ASC' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=ASC&amp;tab=2' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
 						break;
 					default:
-						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
+						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 				}
 			//	echo _T('date') .
 				echo "</th>";
