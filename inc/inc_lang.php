@@ -389,7 +389,11 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 	if ($select_name == 'var_lang_lcm') {
 		include_lcm('inc_admin');
 		$target = $lien->getUrl();
-		$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
+
+		if ($connect_id_auteur)
+			$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
+		else
+			$post = "lcm_cookie.php";
 
 		$ret = "<form action='$post' method='post' style='margin:0px; padding:0px;'>";
 
