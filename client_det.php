@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.29 2005/03/12 17:53:40 antzi Exp $
+	$Id: client_det.php,v 1.30 2005/03/13 16:44:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,6 +35,8 @@ if ($client > 0) {
 	$result = lcm_query($q);
 
 	if ($row = lcm_fetch_array($result)) {
+		lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
+
 		/* Saved for future use
 			// Check for access rights
 			if (!($row['public'] || allowed($client,'r'))) {
@@ -49,10 +51,6 @@ if ($client > 0) {
 			$gender = _T('person_input_gender_' . $row['gender']);
 		else
 			$gender = _T('info_not_available');
-
-
-		// Show client details
-		lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 
 		// Show tabs
 		$groups = array(
@@ -71,10 +69,10 @@ if ($client > 0) {
 					WHERE id_case = " . intval($_SESSION['client']['attach_case']);
 			$result = lcm_query($q);
 
-			while ($row = lcm_fetch_array($result)) {
+			while ($row1 = lcm_fetch_array($result)) {
 				echo '<p>' . 'The client was created and attached to the case: ' 
 					. '<a href="case_det.php?case=' . $_SESSION['client']['attach_case'] . '">' 
-					. $row['title'] 
+					. $row1['title'] 
 					. "</a></p>\n";
 			}
 		}
@@ -169,10 +167,10 @@ if ($client > 0) {
 		
 				$result = lcm_query($q);
 		
-				while ($row = lcm_fetch_array($result)) {
-					echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">' . $row['name'] . "</a></td>\n<td>";
+				while ($row1 = lcm_fetch_array($result)) {
+					echo '<tr><td><a href="org_det.php?org=' . $row1['id_org'] . '" class="content_link">' . $row1['name'] . "</a></td>\n<td>";
 					if ($edit)
-						echo '<a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">Edit</a>';
+						echo '<a href="edit_org.php?org=' . $row1['id_org'] . '" class="content_link">Edit</a>';
 					echo "</td></tr>\n";
 				}
 				
@@ -193,8 +191,16 @@ if ($client > 0) {
 				$q = "SELECT clo.id_case, c.title, c.date_creation, c.id_court_archive, c.status
 						FROM lcm_case_client_org as clo, lcm_case as c
 						WHERE id_client = " . $client . "
-						AND clo.id_case = c.id_case
-						LIMIT " . $prefs['page_rows'];
+						AND clo.id_case = c.id_case ";
+
+				// Sort cases by creation date
+				$case_order = 'DESC';
+				if (isset($_REQUEST['case_order']))
+					if ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'DESC')
+						$case_order = $_REQUEST['case_order'];
+				
+				$q .= " ORDER BY c.date_creation " . $case_order;
+				$q .= " LIMIT " . $prefs['page_rows']; // [ML] should use list next/prev stuff
 		
 				$result = lcm_query($q);
 
@@ -203,8 +209,8 @@ if ($client > 0) {
 					echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_cases') . "</div>\n";
 					show_listcase_start();
 		
-					for ($cpt = 0; $row = lcm_fetch_array($result); $cpt++) {
-						show_listcase_item($row, $cpt);
+					for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
+						show_listcase_item($row1, $cpt);
 					}
 
 					show_listcase_end();
