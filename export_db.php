@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.3 2005/01/26 23:35:35 antzi Exp $
+	$Id: export_db.php,v 1.4 2005/02/01 17:15:28 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -31,15 +31,15 @@ function get_parameters() {
 	// Create form
 	echo "\n<form action='export_db.php' method='POST'>\n";
 	echo "\t<select name='old_name'>\n";
+	echo "\t\t<option selected>-- Create new file --</option>\n";
 	// Read existing backups
 	$storage = opendir('inc/data');
 	while (false !== ($file = readdir($storage))) {
-		var_dump($file);
+//		var_dump($file);
 		if (is_dir("inc/data/$file") && (strpos($file,'db-')===0)) {
 			echo "\t\t<option value='" . substr($file,3) . "'>" . substr($file,3) . "</option>\n";
 		}
 	}
-	echo "\t\t<option selected>-- Create new file --</option>\n";
 	echo "\t</select>\n";
 	echo "\tName: <input name='new_name' />\n";
 	echo "\t<button type='submit' class='simple_form_btn'>Export</button>\n";
