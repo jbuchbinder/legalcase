@@ -151,3 +151,9 @@ ul.font_size_buttons li a {
 a.set_fnt_sz {
 	font-size: 11px;
 }
+
+/* --- [ Errors list ] --- */
+
+ul.err_list li {
+	font-size: 14px;
+}

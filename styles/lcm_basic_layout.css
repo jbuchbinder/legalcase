@@ -453,6 +453,12 @@ a.prefs_logout {
 	text-decoration: none;
 }
 
+/* --- [ Errors list ] --- */
+
+ul.err_list li {
+	list-style-type: square;
+}
+
 /* Go to page bar */
 .page_numbers {
 	margin-top: 5px;
@@ -465,7 +471,7 @@ a.prefs_logout {
 /* For the Small/Normal/Large Font size list */
 
 ul.font_size_buttons {
-	margin: 0px 0px 0px 10px;
+	margin: 10px 0px 0px 10px;
 	padding: 0;
 }
 

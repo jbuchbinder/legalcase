@@ -271,3 +271,9 @@ a.prefs_logout:hover {
 fieldset.conf_info_box, fieldset.info_box {
 	border: 1px solid #996;
 }
+
+/* --- [ Errors list ] --- */
+
+ul.err_list li {
+	color: #f00;
+}
