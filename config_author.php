@@ -93,7 +93,7 @@ function show_author_form() {
             <tr>
               <td align="right" valign="top">Rows per page:</td>
               <td align="left" valign="top">
-			  <input name="page_rows" type="text" class="search_form_txt" id="page_rows" size="5" value="<?php
+			  <input name="page_rows" type="text" class="search_form_txt" id="page_rows" size="3" value="<?php
 			  echo $prefs['page_rows']; ?>" />
 		  	  </td>
             </tr>
@@ -222,6 +222,12 @@ function apply_author_ui_change() {
 	if ($sel_theme == $prefs['theme'] && $sel_theme <> $old_theme)
 		array_push($log, "Theme set to " . $sel_theme . ", was " . $old_theme . ".");
 
+	//
+	// Change rows per page preference
+	//
+
+	if ($page_rows)
+		$prefs['page_rows'] = $page_rows;
 
 	//
 	// Show changes on screen
