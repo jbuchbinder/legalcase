@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.3 2005/02/02 18:49:19 antzi Exp $
+	$Id: import_db.php,v 1.4 2005/02/04 09:25:51 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -32,7 +32,9 @@ function get_parameters() {
 	echo "\n<form action='import_db.php' method='POST'>\n";
 	
 	// Select backup to restore
-	echo "\t<select name='name'>\n";
+	echo "<fieldset class='info_box'>\n";
+	echo "<strong>Select backup to restore</strong><br />";
+	echo "\t<select name='name' class='sel_frm'>\n";
 	// Read existing backups
 	$storage = opendir('inc/data');
 	while (false !== ($file = readdir($storage))) {
@@ -46,10 +48,13 @@ function get_parameters() {
 	
 	// Select restore type
 	echo "<br />\n";
-	echo "\t<input type='radio' name='restore_type' value='clean' checked> Clean</input> - Import backup data into empty database. This will return database in the exact state at the time of backup.<br />\n";
-	echo "\t<input type='radio' name='restore_type' value='replace'> Replace</input> - Imported backup data will replace the existing. This is usefull to undo the changes made in the database since last backup, without losing the new information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br />\n";
-	echo "\t<input type='radio' name='restore_type' value='ignore'> Append</input> - Only backup data NOT existing in the database will be imported. This is usefull to import data lost since last backup, without changing the existing information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br />\n";
+	echo "<p class='normal_text'>\n";
+	echo "\t<input type='radio' name='restore_type' value='clean' id='r1' checked /><label for='r1'>&nbsp;<strong>Clean</strong></label><br />Import backup data into empty database. This will return database in the exact state at the time of backup.<br /><br />\n";
+	echo "\t<input type='radio' name='restore_type' value='replace' id='r2' /><label for='r2'>&nbsp;<strong>Replace</strong></label><br /> Imported backup data will replace the existing. This is usefull to undo the changes made in the database since last backup, without losing the new information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br /><br />\n";
+	echo "\t<input type='radio' name='restore_type' value='ignore' id='r3' /><label for='r3'>&nbsp;<strong>Append</strong></label><br /> Only backup data NOT existing in the database will be imported. This is usefull to import data lost since last backup, without changing the existing information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br /><br />\n";
 	echo "\t<button type='submit' class='simple_form_btn'>Import</button>\n";
+	echo "</p>\n";
+	echo "</fieldset\n>";
 	echo "</form>\n";
 
 	lcm_page_end();
