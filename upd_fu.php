@@ -1,5 +1,7 @@
 <?php
 
+include('inc/inc.php');
+
 // Start session
 session_start();
 
@@ -25,12 +27,6 @@ if (count($errors)) {
     header("Location: $HTTP_REFERER");
     exit;
 } else {
-    // Connect to the database
-    $db=mysql_connect('localhost','lcm','lcmpass');
-
-    // Select lcm database
-    mysql_select_db('lcm',$db);
-
     $fl="date_start=\"$date_start\",date_end='$date_end',type='$type',description='$description'";
     $fl.=",sumbilled='$sumbilled'";
 
@@ -42,11 +38,8 @@ if (count($errors)) {
     }
 
     // Do the query
-    if (!($result=mysql_query($q,$db))) die("$q<br>\nError ".mysql_errno().": ".mysql_error());
+    if (!($result = lcm_query($q))) die("$q<br>\nError ".lcm_errno().": ".lcm_error());
     //echo $q;
-
-    // Close connection
-    mysql_close($db);
 
     // Clear the session
     session_destroy();
@@ -54,4 +47,5 @@ if (count($errors)) {
     // Send user back to add/edit page's referer
     header("Location: $fu_data['referer']");
 }
+
 ?>

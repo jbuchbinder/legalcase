@@ -1,41 +1,30 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-  <title>Edit case details</title>
-</head>
-<body>
-
 <?php
+
+include('inc/inc.php');
+lcm_page_start("Edit case details");
 
 // Create empty case data
 $case_data=array();
 
 if ($case>0) {
-   // Connect to the database
-   $db=mysql_connect('localhost','lcm','lcmpass');
+	// Prepare query
+	$q = 'SELECT * FROM lcm_case WHERE id_case=' . $case;
 
-   // Select lcm database
-   mysql_select_db('lcm',$db);
+	// Do the query
+	$result = lcm_query($q);
 
-   // Prepare query
-   $q='SELECT * FROM lcm_case WHERE id_case=' . $case;
-
-   // Do the query
-   $result=mysql_query($q,$db);
-
-   // Process the output of the query
-   if ($row = mysql_fetch_assoc($result)) {
-	// Get case details
-	foreach ($row as $key => $value) {
-	   $case_data[$key] = $value;
+	// Process the output of the query
+	if ($row = lcm_fetch_assoc($result)) {
+		// Get case details
+		foreach ($row as $key => $value) {
+			$case_data[$key] = $value;
+		}
 	}
-   }
-
-   // Close connection
-   mysql_close($db);
 }
 
-?><h1>Edit case information:</h1>
+?>
+
+<h1>Edit case information:</h1>
 <form action="upd_case.php" method="POST">
 <table>
 <caption>Case details</caption>
@@ -54,5 +43,7 @@ if ($case>0) {
 <BUTTON name="reset" type="reset">Reset</BUTTON>
 <INPUT type="hidden" name="referer" value="<?php echo $HTTP_REFERER ?>">
 </form>
-</body>
-</html>
+
+<?php
+	lcm_page_end();
+?>
