@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.25 2005/02/08 17:31:22 antzi Exp $
+	$Id: edit_client.php,v 1.26 2005/02/08 18:16:10 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -240,7 +240,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 					<input type='text' size='40' style='style: 99%' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt_new; ?>' 
 					
 					<?php 
-						echo ' value="' . $_SESSION['client_data']['new_contact_' . $cpt_new] . '" ';
+						echo ' value="' . $client_data['new_contact_' . $cpt_new] . '" ';
 						$cpt_new++;
 					?>
 						
