@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.16 2005/03/07 11:25:07 mlutfy Exp $
+	$Id: keywords.php,v 1.17 2005/03/07 11:38:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -78,12 +78,13 @@ function show_keyword_group_id($id_group) {
 	global $system_kwg;
 
 	if (! $id_group) {
-		echo "not coded yet";
-		exit;
+		$kwg['name'] = '';
+		$kwg['type'] = 'user';
+		lcm_page_start("Keyword group:" . " " . "New keyword group"); // TRAD
+	} else {
+		$kwg = get_kwg_from_id($id_group);
+		lcm_page_start("Keyword group:" . " " . $kwg['name']); // TRAD
 	}
-
-	$kwg = get_kwg_from_id($id_group);
-	lcm_page_start("Keyword group: " . $kwg['name']);
 
 	echo show_all_errors($_SESSION['errors']);
 	
@@ -130,12 +131,23 @@ function show_keyword_group_id($id_group) {
 	echo '<td colspan="2"><p>' . _T('keywords_info_quantity', array(quantity => $html_quantity)) . "</p>\n";
 	echo "</td>\n";
 	echo "</tr><tr>\n";
-	echo "<td colspan='2'>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "<br />\n";
+
+	// Name (only for new keywords, must be unique and cannot be changed)
+	if (! $id_keyword) {
+		echo "<td colspan='2'>";
+		echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
+			. "(short identifier, unique to this keyword group)" . "<br />\n";
+		echo '<input type="text" style="width:99%;" id="kwg_name" name="kwg_name" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
+		echo "</td>";
+	}
+
+	echo "</tr><tr>\n";
+	echo "<td colspan='2'><strong>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "</strong><br />\n";
 	echo "<input type='text' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "<tr></tr>\n";
-	echo "<td colspan='2'>" . _T('keywords_input_description') . "<br />\n";
+	echo "<td colspan='2'><strong>" . _T('keywords_input_description') . "</strong><br />\n";
 	echo "<textarea id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
 	echo $kwg['description'];
 	echo "</textarea>\n";
@@ -168,14 +180,11 @@ function show_keyword_id($id_keyword = 0) {
 		$kw['id_group'] = $kwg['id_group'];
 		$kw['ac_author'] = 'Y';
 		$kw['type'] = $kwg['type'];
+		lcm_page_start("Keyword:" . " " . "New keyword"); // TRAD
 	} else {
 		$kw = get_kw_from_id($id_keyword);
-	}
-
-	if ($kw['name'])
 		lcm_page_start("Keyword:" . " " . $kw['name']); // TRAD
-	else
-		lcm_page_start("Keyword:" . " " . "New keyword"); // TRAD
+	}
 
 	echo show_all_errors($_SESSION['errors']);
 
@@ -234,9 +243,12 @@ function update_keyword_group($id_group) {
 	$kwg_title   = $_REQUEST['kwg_title'];
 	$kwg_desc    = $_REQUEST['kwg_desc'];
 	$kwg_quantity = $_REQUEST['kwg_quantity']; // only for non-system kwg
+	$new_kwg     = false;
 
-	if (! intval($id_group) > 0)
-		lcm_panic("update_keyword_group: missing or badly formatted id_group");
+	if (! $id_group) {
+		$new_kwg = true;
+		lcm_panic("update_keyword_group: Feature not ready yet.");
+	}
 
 	// Get current kwg information (kwg_type, name, etc. cannot be changed)
 	$kwg_info = get_kwg_from_id($id_group);
@@ -282,7 +294,7 @@ function update_keyword($id_keyword) {
 	// Check for errors
 	//
 
-	if (! $id_keyword > 0) // new keyword
+	if (! $id_keyword) // new keyword
 		if (! $kw_idgroup)
 			lcm_panic("update_keyword: missing or badly formatted id_keyword or id_group");
 		else
