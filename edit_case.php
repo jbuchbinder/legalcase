@@ -40,19 +40,21 @@ if ($existing) {
 
 }
 
-	echo "
+	echo "\n<form action=\"upd_case.php\" method=\"POST\">
+		<table>
+			<!-- caption>" . _T('case_details') . "</caption -->
+			<!-- tr><th>" . _T('parameter') . "</th><th>" . _T('value') .  "</th></tr -->\n";
+	if ($case_data['id_case']) {
+		echo "\t<tr><td>" . _T('case_id') . ":</td><td>" . $case_data['id_case'] . "
+			<input type=\"hidden\" name=\"id_case\" value=\"" .  $case_data['id_case'] . "\"></td></tr>\n";
+	}
 
-<form action=\"upd_case.php\" method=\"POST\">
-	<table>
-		<caption>" . _T('case_details') . "</caption>
-		<tr><th>" . _T('parameter') . "</th><th>" . _T('value') . "</th></tr>
-		<tr><td>" . _T('case_id') . ":</td><td>" . $case_data['id_case'] . "
-			<input type=\"hidden\" name=\"id_case\" value=\"" . $case_data['id_case'] . "\"></td></tr>
+	echo "
 		<tr><td>" . _T('author_id') . ":</td><td>" . $case_data['id_author'] . "
 			<input type=\"hidden\" name=\"id_author\" value=\"" . $case_data['id_author'] . "\"></td></tr>
 		<tr><td>" . _T('case_title') . ":</td>
 			<td><input name=\"title\" value=\"" . htmlspecialchars($case_data['title']) . "\"></td></tr>
-		<tr><td>" . _T('court archive_id') . ":</td>
+		<tr><td>" . _T('court_archive_id') . ":</td>
 			<td><input name=\"id_court_archive\" value=\"" . htmlspecialchars($case_data['id_court_archive']) . "\"></td></tr>
 		<tr><td>" . _T('creation_date') . ":</td>
 			<td>" . $case_data['date_creation'] . "</td></tr>
@@ -64,33 +66,42 @@ if ($existing) {
 			<td><input name=\"alledged_crime\" value=\"" .  htmlspecialchars($case_data['alledged_crime']) . "\"></td></tr>
 		<tr><td>" . _T('case_status') . ":</td>
 			<td><input name=\"status\" value=\"" . $case_data['status'] . "\"></td></tr>
-	</table>
 	";
 
-	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) { ?>
-	<table>
-		<tr><td></td>
-<?php
+	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
+		echo "\t<tr><td>" . _T('public') . "</td>
+			<td>
+				<table>
+				<tr>\n";
+
 		if (read_meta('case_read_always') || $admin) echo "			<td>" . _T('read') . "</td>\n";
 		if (read_meta('case_write_always') || $admin) echo "			<td>" . _T('write') . "</td>\n";
-		echo "		</tr>
-		<tr><td>" . _T('public') . ":</td>\n";
+
+		echo "\n</tr><tr>\n";
+
 		if (read_meta('case_read_always') || $admin) {
 			echo '			<td><input type="checkbox" name="public" value="yes"';
 			if ($case_data['public']) echo ' checked';
 			echo "></td>\n";
 		}
+
 		if (read_meta('case_write_always') || $admin) {
 			echo '			<td><input type="checkbox" name="pub_write" value="yes"';
 			if ($case_data['pub_write']) echo ' checked';
-			echo "></td>";
+			echo "></td>\n";
 		}
-?>		</tr>
-	</table>
+?>
+				</tr>
+				</table>
+			</td>
+		</tr>
+
 <?php
 	}
 
-// Different buttons for edit existing and for new case
+	echo "</table>\n";
+
+	// Different buttons for edit existing and for new case
 	if ($existing) {
 		echo '	<button name="submit" type="submit" value="submit">' . _T('save') . "</button>\n";
 	} else {
