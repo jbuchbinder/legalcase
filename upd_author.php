@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.17 2005/01/18 12:45:54 mlutfy Exp $
+	$Id: upd_author.php,v 1.18 2005/01/19 10:35:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -146,7 +146,7 @@ if ($usr['id_author'] != $author_session['id_author'])
 $fl = 'date_update = NOW()';
 
 // First name must have at least one character
-if (strlen(utf8_decode($usr['name_first'])) < 1) {
+if (strlen(lcm_utf8_decode($usr['name_first'])) < 1) {
 	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . 'Must be at least 1 character';
 	$_SESSION['usr']['name_first'] = $usr['name_first'];
 } else {
@@ -157,7 +157,7 @@ if (strlen(utf8_decode($usr['name_first'])) < 1) {
 $fl .= ", name_middle = '" . clean_input($usr['name_middle']) . "'";
 
 // Last name must have at least one character
-if (strlen(utf8_decode($usr['name_last'])) < 1) {
+if (strlen(lcm_utf8_decode($usr['name_last'])) < 1) {
 	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . 'Must be at least 1 character';
 	$_SESSION['usr']['name_last'] = $usr['name_last'];
 } else {
