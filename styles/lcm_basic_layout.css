@@ -388,3 +388,69 @@ a.set_fnt_sz {
 	font-weight: bold;
 	border: 1px solid #000;
 }
+
+
+/* Help pages styles */
+
+h1.hlp_h1 {
+	text-align: left;
+	border-bottom: 1px solid #333;
+	margin: 0;
+	padding: 5px 0px 5px 0px;
+	color: #333;
+}
+
+h2.hlp_h2 {
+	text-align: left;
+	/* border-bottom: 1px solid #ccc; */
+	margin: 0;
+	padding: 5px;
+}
+
+#hlp_big_box {
+	text-align: left;
+	border-bottom: 1px solid #333;
+}
+
+#hlp_menu {
+	float: left;
+	text-align: left;
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+}
+
+#hlp_menu ul {
+	margin: 5px 0px 0px 0px;
+	padding: 0;
+	border-top: 1px solid #ccc;
+}
+
+#hlp_menu ul li {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px solid #ccc;
+	font-size: 11px;
+}
+
+#hlp_menu ul li a {
+	width: 160px;
+	line-height: 25px;
+	text-decoration: none;
+	background-color: #fff;
+	display: block;
+	color: #333;
+}
+
+#hlp_menu ul li a:hover {
+	background-color: #efefef;
+}
+
+#hlp_cont {
+	margin-left: 3px;
+	height: 380px;
+	overflow: auto;
+	border-left: 1px solid #333;
+	padding: 0px 15px 15px 15px;
+}
