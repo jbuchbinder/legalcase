@@ -63,7 +63,20 @@ if (count($errors)) {
     } else {
 		// Check access rights
 		if (!allowed($id_case,'w')) die("You don't have permission to add information to this case!");
-		// Prepare query
+		// Update case status
+		switch ($fu_data['type']) {
+			case 'conclusion' :
+				$status = 'closed';
+				break;
+			default: $status = '';
+		}
+		if ($status) {
+			$q = "UPDATE lcm_case
+					SET status='$status'
+					WHERE id_case=$id_case";
+			$result = lcm_query($q);
+		}
+		// Prepare query to add the new follow-up
 		$q="INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
     }
 
