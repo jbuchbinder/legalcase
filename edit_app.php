@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.30 2005/03/29 13:57:00 antzi Exp $
+	$Id: edit_app.php,v 1.31 2005/03/30 10:13:28 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -230,8 +230,12 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			foreach($_SESSION['authors'] as $author) {
 				// $q .= ($q ? ', ' : '');
 				$author_ids[] = $author['id_author'];
-				$q .= njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
-				$q .= '&nbsp;(<label for="id_rem_author' . $author['id_author'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_author' . $author['id_author'] . '" name="rem_author[]" value="' . $author['id_author'] . '" />)<br />';	// TRAD
+				$q .= get_person_name($author);
+
+				if ($author['id_author'] != $author_session['id_author'])
+					$q .= '&nbsp;(<label for="id_rem_author' . $author['id_author'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_author' . $author['id_author'] . '" name="rem_author[]" value="' . $author['id_author'] . '" />)'; // TRAD
+
+				$q .= "<br />\n";
 
 			}
 			echo "\t\t\t$q\n";
@@ -251,17 +255,15 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			FROM lcm_author
 			WHERE id_author NOT IN (" . join(',',$author_ids) . ")";
 		$result = lcm_query($q);
-//		echo "\t\t<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"POST\">\n";
 		echo "\t\t\t<select name=\"author\">\n";
 		echo "\t\t\t\t<option selected='selected' value=\"0\">- Select author -</option>\n"; // TRAD
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t\t<option value=\"" . $row['id_author'] . '">'
-				. njoin(array($row['name_first'],$row['name_middle'],$row['name_last']))
+				. get_person_name($row)
 				. "</option>\n";
 		}
 		echo "\t\t\t</select>\n";
-		echo "\t\t\t<button name=\"submit\" type=\"submit\" value=\"add_author\" class=\"simple_form_btn\">" . 'Add' . "</button>\n";
-//		echo "\t\t</form>\n";
+		echo "\t\t\t<button name=\"submit\" type=\"submit\" value=\"add_author\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
 		echo "\t\t</td></tr>\n";
 		
 		// Appointment participants - clients
