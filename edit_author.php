@@ -104,7 +104,7 @@ else lcm_page_start("New author");
 ?>			</select></td>
 		</tr>
 		<tr><td colspan="2" align="center" valign="middle">
-			<input name="submit" type="submit" class="search_form_btn" id="submit" value="Save changes" /></td>
+			<input name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('button_validate') ?>" /></td>
 		</tr>
 	</table>
 </form>
