@@ -18,10 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.11 2005/03/14 08:09:51 mlutfy Exp $
+	$Id: listorgs.php,v 1.12 2005/03/16 08:22:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
+
+$find_org_string = '';
+if (isset($_REQUEST['find_org_string']))
+	$find_org_string = $_REQUEST['find_org_string'];
 
 lcm_page_start("List of organisations"); // TRAD
 show_find_box('org', $find_org_string);
@@ -33,24 +37,53 @@ $q = "SELECT id_org,name
 if (strlen($find_org_string) > 1)
 	$q .= " WHERE (name LIKE '%$find_org_string%')";
 
+// Sort organisations by name
+$order_name = 'ASC';
+if (isset($_REQUEST['order_name']))
+	if ($_REQUEST['order_name'] == 'ASC' || $_REQUEST['order_name'] == 'DESC')
+		$order_name = $_REQUEST['order_name'];
+
+$q .= " ORDER BY name " . $order_name;
+
 $result = lcm_query($q);
+$number_of_rows = lcm_num_rows($result);
+
+// Check for correct start position of the list
+$list_pos = 0;
+
+if (isset($_REQUEST['list_pos']))
+	$list_pos = $_REQUEST['list_pos'];
+
+if ($list_pos >= $number_of_rows)
+	$list_pos = 0;
+
+// Position to the page info start
+if ($list_pos > 0)
+	if (!lcm_data_seek($result, $list_pos))
+		lcm_panic("Error seeking position $list_pos in the result");
 
 // Output table tags
-echo '<table class="tbl_usr_dtl" width="99%" border="0">' . "\n";
-echo "<tr>\n";
-echo "<th class='heading'>" . "Organisation name" . "</th>\n"; // TRAD
-echo "</tr>\n";
+// Not worth creating show_listorgs_*() for now
+$cpt = 0;
+$headers = array();
 
-for($cnt = 0; $row = lcm_fetch_array($result); $cnt++) {
+$headers[0]['title'] = "Organisation name"; // TRAD
+$headers[0]['order'] = 'order_name';
+$headers[0]['default'] = 'ASC';
+
+show_list_start($headers);
+
+for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	echo "<tr>\n";
-	echo "<td class='tbl_cont_" . ($cnt % 2 ? "dark" : "light") . "'>";
+	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo '<a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['name']), $find_org_string);
 	echo "</td>\n";
 	echo "</tr>\n";
 }
 
-echo "</table>\n";
+show_list_end($list_pos, $number_of_rows);
+
 echo '<p><a href="edit_org.php" class="create_new_lnk">' . "Register new organisation" . "</a></p>\n"; // TRAD
 echo "<br />\n";
 
