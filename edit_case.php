@@ -42,7 +42,7 @@ if ($existing) {
 
 	echo "
 
-<form action=\"upd_case.php\" method="POST">
+<form action=\"upd_case.php\" method=\"POST\">
 	<table>
 		<caption>" . _T('case_details') . "</caption>
 		<tr><th>" . _T('parameter') . "</th><th>" . _T('value') . "</th></tr>
@@ -61,11 +61,12 @@ if ($existing) {
 		<tr><td>" . _T('legal_reason') . ":</td>
 			<td><input name=\"legal_reason\" value=\"" . htmlspecialchars($case_data['legal_reason']) . "\"></td></tr>
 		<tr><td>" . _T('alledged_crime') . ":</td>
-			<td><input name=\"alledged_crime\" value=\"" . htmlspecialchars($case_data['alledged_crime'] . "\"></td></tr>
+			<td><input name=\"alledged_crime\" value=\"" .  htmlspecialchars($case_data['alledged_crime']) . "\"></td></tr>
 		<tr><td>" . _T('case_status') . ":</td>
 			<td><input name=\"status\" value=\"" . $case_data['status'] . "\"></td></tr>
 	</table>
 	";
+
 	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) { ?>
 	<table>
 		<tr><td></td>
@@ -98,8 +99,8 @@ if ($existing) {
 	<button name="submit" type="submit" value="adddet">' . _T('add_and_go_to_details') . "</button>\n";
 	}
 	echo '	<button name="reset" type="reset">' . _T('reset') . '</button>
-	<input type="hidden" name="date_creation" value="' . $case_data['date_creation'] '">
-	<input type="hidden" name="ref_edit_case" value="';
+		<input type="hidden" name="date_creation" value="' .  $case_data['date_creation'] . '">
+		<input type="hidden" name="ref_edit_case" value="';
 	if ($ref) echo $ref;
 	else echo $HTTP_REFERER;
 	echo '">
