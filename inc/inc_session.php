@@ -233,8 +233,9 @@ function ask_php_auth($text_failure) {
 // Verify if we have a correct session cookie and load
 // the values in $GLOBALS['author_session'] (author)
 function verifier_visiteur() {
-	if (verifier_session($GLOBALS['HTTP_COOKIE_VARS']['lcm_session']))
-		return true;
+	if (isset($GLOBALS['HTTP_COOKIE_VARS']['lcm_session']))
+		if (verifier_session($GLOBALS['HTTP_COOKIE_VARS']['lcm_session']))
+			return true;
 
 	return false;
 }

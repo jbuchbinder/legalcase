@@ -73,7 +73,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	global $clean_link;
 
 	if (!$cible) {
-		if ($GLOBALS['var_url'])
+		if (isset($GLOBALS['var_url']) && $GLOBALS['var_url'])
 			$cible = new Link($GLOBALS['var_url']);
 		else 
 			$cible = new Link('index.php');
