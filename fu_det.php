@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.7 2005/01/21 14:06:47 mlutfy Exp $
+	$Id: fu_det.php,v 1.8 2005/02/10 07:19:02 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -58,7 +58,7 @@ $query = "SELECT title
 $result = lcm_query($query);
 while ($row = lcm_fetch_array($result))  // should be only once
 	echo '<li style="list-style-type: none;">' . _T('info_followup_case')
-		. " <a href='case_det.php?case=$case'>" . $row['title'] . "</a></li>\n";
+		. " <a href='case_det.php?case=$case' class='content_link'>" . $row['title'] . "</a></li>\n";
 
 // We dump all the clients and org in the same array, then show
 // them on screen in a more densed way
