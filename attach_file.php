@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: attach_file.php,v 1.7 2005/03/22 15:22:18 antzi Exp $
+	$Id: attach_file.php,v 1.8 2005/03/23 20:55:04 antzi Exp $
 */
 
 include("inc/inc.php");
@@ -38,7 +38,7 @@ if (isset($_FILES['filename'])) {
 	if (is_uploaded_file($filename) && $_SESSION['user_file']['size'] > 0) {
 		$file = fopen($filename,"r");
 		$file_contents = fread($file, filesize($filename));
-		$file_contents = clean_input($file_contents);
+		$file_contents = addslashes($file_contents);
 
 		if ($case > 0) {
 			$q = "INSERT INTO lcm_case_attachment
