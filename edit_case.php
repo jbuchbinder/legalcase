@@ -5,7 +5,9 @@ include('inc/inc_acc.php');
 
 $case_data = array();
 
-if ($case > 0) {
+$existing = ($case > 0);
+
+if ($existing) {
 	lcm_page_start("Edit case details");
 
 	// Check access rights
@@ -59,8 +61,15 @@ if ($case > 0) {
 			<td><input type="checkbox" name="public" value="yes"<?php
 			if ($case_data['public']) echo ' checked'; ?>></td></tr>
 	</table>
-
+<?php
+	if ($existing) { ?>
 	<button name="submit" type="submit" value="submit">Save</button>
+<?php
+	} else { ?>
+	<button name="submit" type="submit" value="add">Add</button>
+	<button name="submit" type="submit" value="addnew">Add & open new</button>
+<?php
+	} ?>
 	<button name="reset" type="reset">Reset</button>
 	<input type="hidden" name="date_creation" value="<?php echo $case_data['date_creation']; ?>">
 	<input type="hidden" name="ref_edit_case" value="<?php echo $HTTP_REFERER ?>">

@@ -41,7 +41,11 @@ if ($id_case > 0) {
 $result = lcm_query($q);
 
 // [ML] I don't understand why: header("Location: $ref_edit_case");
+// [AG] Because "edit_case" could be invoked from diferent places i.e. edit existing case or add new or other.
+// [AG] User could come to edit from listcases.php or case_det.php. Also, other references could be added later.
+// [AG] In each case the return page will be different.
 
-header("Location: case_det.php?case=$id_case");
+//header("Location: case_det.php?case=$id_case");
+header("Location: $ref_edit_case");
 
 ?>
