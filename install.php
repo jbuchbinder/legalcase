@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.43 2005/03/15 15:25:23 mlutfy Exp $
+	$Id: install.php,v 1.44 2005/03/18 11:05:13 mlutfy Exp $
 */
 
 
@@ -345,7 +345,9 @@ else if ($step == 3) {
 
 	if (! empty($install_log)) {
 		echo "<div class='box_error'>\n";
-		echo "\t<p><b>" . _T('warning_operation_failed') . "</b> " .  _T('install_database_install_failed') . "</p>\n";
+		echo "\t<p>";
+		echo "<b>" . _T('warning_operation_failed') . "</b> " . _T('install_database_install_failed');
+		echo " " . lcm_help("install_connection") . "</p>\n";
 		echo "</div>\n";
 
 		// Dump error listing
@@ -519,22 +521,26 @@ else if ($step == 1) {
 	echo "<input type='hidden' name='step' value='2'>\n";
 
 	echo "<fieldset class='fs_box'>\n";
+
 	echo "<div><label for='db_address'><strong>" . _T('install_database_address') . "</strong></label></div>\n";
-	echo "<div>" . _T('install_info_database_address') . "</div>\n";
+	// echo "<div>" . _T('install_info_database_address') . "</div>\n";
 	echo "<input type='text' id='db_address' name='db_address' value=\"$db_address\" size='40' class='txt_lmnt'>\n";
-	echo "</fieldset><p>\n";
 
-	echo "<fieldset class='fs_box'>\n";
+	echo "<br />\n";
+	echo "<br />\n";
+
 	echo "<div><label for='db_login'><strong>" . _T('install_connection_login') . "</strong></div></label>\n";
-	echo "<div>(" . _T('install_info_connection_login') . ")</div>\n";
+	// echo "<div>(" . _T('install_info_connection_login') . ")</div>\n";
 	echo "<input type='text' id='db_login' name='db_login' value=\"$db_login\" size='40' class='txt_lmnt'>\n";
-	echo "</fieldset><p>";
 
-	echo "<fieldset class='fs_box'>\n";
+	echo "<br />\n";
+	echo "<br />\n";
+
 	echo "<div><label for='db_password'><strong>" . _T('install_connection_password') . "</strong></div></label>\n";
-	echo "<div>(" . _T('install_info_connection_password') . ")</div>\n";
+	// echo "<div>(" . _T('install_info_connection_password') . ")</div>\n";
 	echo "<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40' class='txt_lmnt'>\n";
-	echo "</fieldset><p>";
+
+	echo "</fieldset>";
 
 	echo "<div align='$lcm_lang_right'>"
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
@@ -567,7 +573,7 @@ else if (!$step) {
 	echo _T('info_free_software', 
 			array(
 				'distributed' => '<a href="http://www.lcm.ngo-bg.org/" class="prefs_normal_lnk">' . _T('info_free_software1') . '</a>',
-				'license' => lcm_help_string('about', _T('info_free_software2'), 'license')))
+				'license' => lcm_help_string('about_license', _T('info_free_software2'))))
 			. "</p>
 		</td></tr>\n";
 	echo "</table>\n";
