@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.5 2005/02/01 17:25:49 antzi Exp $
+	$Id: export_db.php,v 1.6 2005/02/02 17:34:37 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -87,7 +87,7 @@ function export_database($output_filename) {
 	}
 
 	// Export database
-	if (!mkdir("$root/inc/data/db-$output_filename",0700))
+	if (!mkdir("$root/inc/data/db-$output_filename",0777))
 		die("System error: Could not create $root/inc/data/db-$output_filename!");
 //	if (!chdir("$root/inc/data/db-$output_filename"))
 //		die("System error: Could not change dir to '$root/inc/data/db-$output_filename'");
@@ -117,6 +117,7 @@ function export_database($output_filename) {
 				LINES TERMINATED BY '\r\n'";
 		$res = lcm_query($q);
 	}
+	chmod("$root/inc/data/db-$output_filename",0700);
 	
 	lcm_page_start("Export finished");
 	echo "Database has been successfully exported. The name of the backup is '$output_filename'.";
