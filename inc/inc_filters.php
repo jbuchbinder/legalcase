@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.33 2005/02/24 10:24:47 antzi Exp $
+	$Id: inc_filters.php,v 1.34 2005/03/01 10:19:47 antzi Exp $
 */
 
 // Execute this file only once
@@ -92,7 +92,7 @@ function format_date($timestamp = '', $format = 'full') {
 }
 
 // Formats time interval
-function format_time_interval($time, $hours_only=false) {
+function format_time_interval($time, $hours_only=false, $hours_only_format='%.2f') {
 	if (is_int($time) && ($time>0)) {
 		if ($hours_only) {
 			$days = 0;
@@ -106,7 +106,12 @@ function format_time_interval($time, $hours_only=false) {
 
 		$ret = array();
 		if ($days) $ret[] = $days . 'd';
-		if ($hours) $ret[] = $hours . ($hours_only ? ( ($hours == 1.0) ? 'hr' : 'hrs') : 'h');
+		if ($hours) {
+			if ($hours_only)
+				$ret[] = sprintf($hours_only_format,$hours) . ( ($hours == 1.0) ? ' hr' : ' hrs');
+			else
+				$ret[] = $hours . 'h';
+		}
 		if ($minutes) $ret[] = $minutes . 'm';
 
 		return join(', ',$ret);
