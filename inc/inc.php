@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.32 2004/11/16 13:32:31 mlutfy Exp $
+	$Id: inc.php,v 1.33 2004/11/16 13:34:15 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -37,8 +37,6 @@ include_lcm('inc_filters');
 
 if (!@file_exists('data/inc_meta_cache.php'))
 	write_metas();
-
-error_reporting(E_ALL);
 
 //
 // Preferences for presentation
