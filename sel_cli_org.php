@@ -30,7 +30,7 @@ if ($org>0) {
 	$result = lcm_query($q);
 ?>
 <form action="add_cli_org.php" method="post">
-<h3>List if persons</h3>
+	<!--h3>List if persons</h3-->
 	<table class="tbl_usr_dtl">
 		<tr>
 			<th class="heading">&nbsp;</th>
