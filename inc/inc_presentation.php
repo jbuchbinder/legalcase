@@ -973,18 +973,18 @@ function show_listcase_start() {
 	echo '<th class="heading">' . '#' . '</th>'; // TRAD
 
 	// Date creation + order asc/desc
-	$cur_sort_order = 'desc';
-	if (isset($_REQUEST['case_order']) && ($_REQUEST['case_order'] == 'asc' || $_REQUEST['case_order'] == 'asc'))
+	$cur_sort_order = 'DESC';
+	if (isset($_REQUEST['case_order']) && ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'ASC'))
 		$cur_sort_order = $_REQUEST['case_order'];
 
-	$new_sort_order = ($cur_sort_order == 'desc' ? 'asc' : 'desc');
+	$new_sort_order = ($cur_sort_order == 'DESC' ? 'ASC' : 'DESC');
 	$sort_link = new Link();
 	$sort_link->addVar('case_order', $new_sort_order);
 
 	echo '<th class="heading">';
 	echo '<a href="' . $sort_link->getUrl() . '" class="content_link">' .  "Date creation" . '</a>'; // TRAD
 
-	if ($cur_sort_order == 'asc')
+	if ($cur_sort_order == 'ASC')
 		echo '<img src="images/lcm/asc_desc_arrow.gif" alt="" />';
 	else
 		echo '<img src="images/lcm/desc_asc_arrow.gif" alt="" />';
