@@ -121,6 +121,7 @@ function spip_apres_typo ($letexte) {
 // Mise de cote des echappements
 function echappe_html($letexte, $source, $no_transform=false) {
 	global $flag_pcre;
+	$les_echap = array();
 
 	if ($flag_pcre) {	// beaucoup plus rapide si on a pcre
 		$regexp_echap_html = "<html>((.*?))<\/html>";
