@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.12 2005/03/28 13:56:38 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.13 2005/03/29 09:14:32 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -50,6 +50,46 @@ function get_kwg_all($type, $exclude_empty = false) {
 					WHERE type $in_type";
 	}
 
+	$result = lcm_query($query);
+
+	while ($row = lcm_fetch_array($result)) 
+		$ret[$row['name']] = $row;
+	
+	return $ret;
+}
+
+function get_kwg_applicable_for($type_obj, $id_obj) {
+	$ret = array();
+
+	if (! ($type_obj == 'case' || $type_obj == 'client' || $type_obj == 'org' || $type_obj == 'author'))
+		lcm_panic("Unknown type_obj: " . $type_obj);
+	
+	// Build 'NOT IN' list (already applied keywords, with quantity 'one')
+	$query = "SELECT DISTINCT kwg.id_group, kwg.quantity
+				FROM lcm_keyword_" . $type_obj . " as ko, lcm_keyword as k, lcm_keyword_group as kwg
+				WHERE k.id_keyword = ko.id_keyword
+				  AND k.id_group = kwg.id_group
+				  AND kwg.quantity = 'one'";
+	
+	$result = lcm_query($query);
+
+	$not_in_list = array();
+	while ($row = lcm_fetch_array($result))
+		array_push($not_in_list, $row['id_group']);
+	
+	$not_in_str = implode(',', $not_in_list);
+
+	// Get list of keyword groups which can be applied to object
+	$query = "SELECT kwg.*, COUNT(k.id_keyword) as cpt
+				FROM lcm_keyword_group as kwg, lcm_keyword as k
+				WHERE type = '$type_obj'
+				  AND kwg.id_group = k.id_group ";
+	
+	if ($not_in_str)
+		$query .= " AND kwg.id_group NOT IN (" . $not_in_str . ") ";
+
+	$query .= " GROUP BY id_group HAVING cpt > 0";
+	
 	$result = lcm_query($query);
 
 	while ($row = lcm_fetch_array($result)) 
@@ -163,13 +203,94 @@ function get_keywords_applied_to($type, $id) {
 	return $ret;
 }
 
+function show_edit_keywords_form($type_obj, $id_obj) {
+	if (! ($type_obj == 'case' || $type_obj == 'client' || $type_obj == 'org'))
+		lcm_panic("Invalid object type requested");
+
+	//
+	// Show current keywords (already attached to object)
+	//
+	if ($id_obj) {
+		$current_kws = get_keywords_applied_to($type_obj, $id_obj);
+	
+		foreach ($current_kws as $kw) {
+			$kwg = get_kwg_from_id($kw['id_group']);
+		
+			echo "<tr>\n";
+			echo "<td>" . f_err_star('FIXME') . _Ti($kwg['title'])
+				. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
+
+			echo "<td>";
+			echo '<input type="hidden" name="kwg_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
+			echo '<input type="hidden" name="kw_entry[]" value="' . $kw['id_entry'] . '" />' . "\n";
+			echo '<select name="kw_value[]">';
+
+			$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
+			foreach ($kw_for_kwg as $kw1) {
+				$sel = ($kw1['id_keyword'] == $kw['id_keyword'] ? ' selected="selected"' : '');
+				echo '<option value="' . $kw1['id_keyword'] . '"' . $sel . '>' . _T($kw1['title']) . "</option>\n";
+			}
+
+			echo "</select>\n";
+			echo "</td>\n";
+			echo "</tr>\n";
+		}
+	}
+
+	//
+	// New keywords
+	//
+	$kwg_for_case = get_kwg_applicable_for($type_obj, $id_obj);
+	$cpt_kw = 0;
+
+	foreach ($kwg_for_case as $kwg) {
+		echo "<tr>\n";
+		echo '<td>' . f_err_star('keyword_' . $cpt_kw) . _Ti($kwg['title']) 
+			. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
+
+		$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
+		if (count($kw_for_kwg)) {
+			echo "<td>";
+			echo '<input type="hidden" name="new_kwg_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
+			echo '<select name="new_keyword_value[]">';
+			echo '<option value="">' . '' . "</option>\n";
+
+			foreach ($kw_for_kwg as $kw)
+				echo '<option value="' . $kw['id_keyword'] . '">' . _T($kw['title']) . "</option>\n";
+
+			echo "</select>\n";
+			echo "</td>\n";
+		} else {
+			// This should not happen, we should get only non-empty groups
+		}
+		
+		echo "</tr>\n";
+		$cpt_kw++;
+	}
+}
+
 function update_keywords_request($type_obj, $id_obj) {
 
 	//
 	// Update existing keywords
 	//
-	if (isset($_REQUEST['keyword_value'])) {
+	if (isset($_REQUEST['kw_value'])) {
+		$kw_entries = $_REQUEST['kw_entry'];
+		$kw_values  = $_REQUEST['kw_value'];
+		$kwg_ids    = $_REQUEST['kwg_id'];
 
+		// Check if the keywords provided are really attached to the object
+		for ($cpt = 0; $kw_entries[$cpt]; $cpt++) {
+			// TODO
+		}
+
+		for ($cpt = 0; isset($kw_entries[$cpt]); $cpt++) {
+			$query = "UPDATE lcm_keyword_" . $type_obj . " 
+						SET id_keyword = " . $kw_values[$cpt] . "
+						WHERE id_entry = " . $kw_entries[$cpt];
+
+			lcm_query($query);
+		}
 	}
 
 	//
