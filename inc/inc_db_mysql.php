@@ -90,13 +90,22 @@ function process_query($query) {
 // Connection to the database
 //
 
-function lcm_connect_db($host, $port = 0, $login, $pass, $db) {
+function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 	global $spip_mysql_link, $spip_mysql_db;	// for multiple connections
+
+	if ($link && $db) {
+		return mysql_select_db($db);
+	}
 
 	if ($port > 0) $host = "$host:$port";
 	$spip_mysql_link = @mysql_connect($host, $login, $pass);
-	$spip_mysql_db = $db;
-	return @mysql_select_db($db);
+
+	if ($db) {
+		$spip_mysql_db = $db;
+		return @mysql_select_db($db);
+	} else {
+		return $spip_mysql_link;
+	}
 }
 
 function lcm_connect_db_test($host, $login, $pass, $port = 0) {
