@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.94 2005/03/01 10:39:18 antzi Exp $
+	$Id: case_det.php,v 1.95 2005/03/01 16:55:02 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -253,97 +253,107 @@ if ($case > 0) {
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_appointments') . '</div>';
 				echo "<p class=\"normal_text\">\n";
-			
-				echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-				echo "\t\t<tr><th class='heading'>";
-				switch ($fu_order) {
-					case 'ASC':
-						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=appointments' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
-						break;
-					case 'DESC':
-						echo "<a href='case_det.php?case=$case&amp;fu_order=ASC&amp;tab=appointments' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
-						break;
-					default:
-						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=appointments' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
-				}
-			//	echo _T('date') .
-				echo "</th>";
-				echo "<th class='heading'>" . 'Author' . "</th>";
-				echo "<th class='heading'>"
-					. _T( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>";
-				echo "<th class='heading'>" . _T('type') . "</th>";
-				echo "<th class='heading'>" . _T('description') . "</th>";
-				echo "<th class='heading'>&nbsp;</th></tr>\n";
-			
-				// Prepare query
-				$q = "SELECT	lcm_followup.id_followup,
-						lcm_followup.date_start,
-						lcm_followup.date_end,
-						lcm_followup.type,
-						lcm_followup.description,
-						lcm_author.name_first,
-						lcm_author.name_middle,
-						lcm_author.name_last
-					FROM lcm_followup, lcm_author
-					WHERE id_case=$case AND lcm_followup.id_author=lcm_author.id_author";
-			
-				// Add ordering
-				if ($fu_order) $q .= " ORDER BY date_start $fu_order";
-			
-				// Do the query
-				$result = lcm_query($q);
-			
-				// Set the length of short followup title
-				$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
-			
-				// Process the output of the query
-				while ($row = lcm_fetch_array($result)) {
-					echo "\t\t";
-					
-					// Start date
-					echo '<tr><td>' . format_date($row['date_start'], 'short') . '</td>';
-					
-					// Author initials
-					echo '<td>';
-					echo substr($row['name_first'],0,1);
-					echo substr($row['name_middle'],0,1);
-					echo substr($row['name_last'],0,1);
-					echo '</td>';
-					
-					// Time
-					echo '<td>';
-					$fu_date_end = vider_date($row['date_end']);
-					if ($prefs['time_intervals'] == 'absolute') {
-						if ($fu_date_end) echo format_date($row['date_end'],'short');
-					} else {
-						$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
-						echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
-					}
-					echo '</td>';
 
-					// Type
-					echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
-			
-					// Description
-					if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
-						$short_description = $row['description'];
-					else
-						$short_description = substr($row['description'],0,$title_length) . '...';
-			
-					echo '<td><a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a></td>';
-			
-					if ($edit)
-						echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '" class="content_link">' . _T('Edit') . '</a></td>';
-					echo "</tr>\n";
-				}
-			
-				echo "\t</table>\n";
-			
-				if ($add)
-					echo "<br /><a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a><br /><br />\n";
-			
-				echo "</p></fieldset>";
+				$q = "SELECT *
+					FROM lcm_app
+					WHERE lcm_app.id_case=$case";
+				$result = lcm_query($q);
 				
+				// Get the number of rows in the result
+				$number_of_rows = lcm_num_rows($result);
+				if ($number_of_rows) {
+					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
+					echo "\t<tr>";
+					echo '<th class="heading">Start time</th>';
+					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Duration' ) . '</th>';
+					echo '<th class="heading">Type</th>';
+					echo '<th class="heading">Title</th>';
+					echo '<th class="heading">Reminder</th>';
+					echo '<th class="heading">Action</th>';
+					echo "</tr>\n";
+				
+					// Check for correct start position of the list
+					$list_pos = 0;
+					
+					if (isset($_REQUEST['list_pos']))
+						$list_pos = $_REQUEST['list_pos'];
+					
+					if ($list_pos>=$number_of_rows) $list_pos = 0;
+					
+					// Position to the page info start
+					if ($list_pos>0)
+						if (!lcm_data_seek($result,$list_pos))
+							die("Error seeking position $list_pos in the result");
+					
+					// Show page of the list
+					for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+						echo "\t<tr>";
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. date('d.m.y H:i',strtotime($row['start_time'])) . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. ( ($prefs['time_intervals'] == 'absolute') ?
+								date('d.m.y H:i',strtotime($row['end_time'])) :
+								format_time_interval(strtotime($row['end_time']) - strtotime($row['start_time']),
+											($prefs['time_intervals_notation'] == 'hours_only') )
+							) . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['type'] . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. '<a href="app_det.php?app=' . $row['id_app'] . '">' . $row['title'] . '</a></td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. date('d.m.y H:i',strtotime($row['reminder'])) . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. '<a href="edit_app.php?app=' . $row['id_app'] . '">' . _T('edit') . '</a></td>';
+						echo "</tr>\n";
+					}
+					
+					echo "</table>\n\n";
+				
+					if ($number_of_rows>$prefs['page_rows']) {
+						echo '<table border="0" align="center" width="99%" class="page_numbers">
+					<tr><td align="left" width="15%">';
+				
+						// Show link to previous page
+						if ($list_pos>0) {
+							echo "<a href=\"case_det.php?case=$case&amp;tab=appointments&amp;list_pos=";
+							echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
+							if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+							echo '" class="content_link">< Prev</a> ';
+						}
+				
+						echo "</td>\n\t\t<td align='center' width='70%'>";
+				
+						// Show page numbers with direct links
+						$list_pages = ceil($number_of_rows / $prefs['page_rows']);
+						if ($list_pages>1) {
+							echo 'Go to page: ';
+							for ($i=0 ; $i<$list_pages ; $i++) {
+								if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
+								else {
+									echo "<a href=\"case_det.php?case=$case&amp;tab=appointments&amp;list_pos="
+										. ($i*$prefs['page_rows']);
+									if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+									echo '" class="content_link">' . ($i+1) . '</a> ';
+								}
+							}
+						}
+						
+						echo "</td>\n\t\t<td align='right' width='15%'>";
+						
+						// Show link to next page
+						$next_pos = $list_pos + $prefs['page_rows'];
+						if ($next_pos<$number_of_rows) {
+							echo "<a href=\"case_det.php?case=$case&amp;tab=appointments&amp;list_pos=$next_pos";
+							if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+							echo '" class="content_link">Next ></a>';
+						}
+						
+						echo "</td>\n\t</tr>\n</table>\n";
+					}
+				
+				}
+
+				echo "<br /><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">New appointment</a>";
+
 				break;
 			//
 			// Case followups
