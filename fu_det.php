@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.5 2005/01/21 09:21:14 mlutfy Exp $
+	$Id: fu_det.php,v 1.6 2005/01/21 10:51:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -120,20 +120,20 @@ echo "</ul>\n";
 ?>
 
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td>Start:</td>
+		<tr><td><?php echo _T('fu_input_date_start'); ?></td>
 			<td><?php echo format_date($fu_data['date_start']); ?></td></tr>
-		<tr><td>End:</td>
+		<tr><td><?php echo _T('fu_input_date_end'); ?></td>
 			<td><?php echo format_date($fu_data['date_end']); ?></td></tr>
-		<tr><td>Type:</td>
+		<tr><td><?php echo _T('fu_input_type'); ?></td>
 			<td><?php echo $fu_data['type']; ?></td></tr>
-		<tr><td valign="top">Description:</td>
+		<tr><td valign="top"><?php echo _T('fu_input_description'); ?></td>
 			<td><?php echo clean_output($fu_data['description']);
 				echo "</td></tr>\n";
 
 				// Read the policy settings
 				$fu_sum_billed = read_meta('fu_sum_billed');
 				if ($fu_sum_billed=='yes') {
-?>		<tr><td>Sum billed:</td>
+?>		<tr><td><?php echo _T('fu_input_sum_billed'); ?></td>
 			<td><?php echo clean_output($fu_data['sumbilled']);
 					// [ML] If we do this we may as well make a function
 					// out of it, but not sure where to place it :-)
