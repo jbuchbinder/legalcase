@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.34 2005/02/09 16:58:13 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.35 2005/02/10 16:15:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -395,9 +395,51 @@ function upgrade_database($old_db_version) {
 		lcm_query("ALTER TABLE lcm_fields
 			ADD filter ENUM('none', 'date', 'number', 'text') NOT NULL DEFAULT 'none'");
 
-		// TODO: set filter types for various lcm_fields
-
 		upgrade_db_version (19);
+	}
+
+	if ($lcm_db_version_current < 20) {
+		// [ML] Sorry for the brutality
+		lcm_query("DELETE FROM lcm_fields");
+
+		lcm_query("INSERT INTO lcm_fields (table_name, field_name, description, enum_type, filter) VALUES
+				('lcm_case',     'id_case',          'id_case',          '', 'number'),
+				('lcm_case',     'title',            'title',            '', 'text'),
+				('lcm_case',     'id_court_archive', 'id_court_archive', '', 'text'),
+				('lcm_case',     'date_creation',    'date_creation',    '', 'date'),
+				('lcm_case',     'date_assignment',  'date_assignment',  '', 'date'),
+				('lcm_case',     'legal_reason',     'legal_reason',     '', 'none'),
+				('lcm_case',     'alledged_crime',   'alleged_crime',    '', 'none'),
+				('lcm_case',     'count(*)',         'count',            '', 'number'),
+				('lcm_author',   'id_author',        'id_author',        '', 'number'),
+				('lcm_author',   'id_office',        'id_office',        '', 'number'),
+				('lcm_author',   'name_first',       'name_first',       '', 'text'),
+				('lcm_author',   'name_middle',      'name_middle',      '', 'text'),
+				('lcm_author',   'name_last',        'name_last',        '', 'text'),
+				('lcm_author',   'date_creation',    'date_creation',    '', 'date'),
+				('lcm_author',   'status',           'status',           '', 'text'),
+				('lcm_author',   'count(*)',         'count',            '', 'number'),
+				('lcm_client',   'id_client',        'id_client',        '', 'number'),
+				('lcm_client',   'name_first',       'name_first',       '', 'text'),
+				('lcm_client',   'name_middle',      'name_middle',      '', 'text'),
+				('lcm_client',   'name_last',        'name_last',        '', 'text'),
+				('lcm_client',   'date_creation',    'date_creation',    '', 'date'),
+				('lcm_client',   'citizen_number',   'citizen_number',   '', 'text'),
+				('lcm_client',   'civil_status',     'civil_status',     'keyword:system_kwg:civilstatus', 'number'),
+				('lcm_client',   'income',           'income',           'keyword:system_kwg:income', 'number'),
+				('lcm_client',   'gender',           'gender',           'list:female,male,unknown', 'text'),
+				('lcm_followup', 'id_followup',      'id_followup',      '', 'number'),
+				('lcm_followup', 'id_case',          'id_case',          '', 'number'),
+				('lcm_followup', 'id_author',        'id_author',        '', 'number'),
+				('lcm_followup', 'type',             'type',             'keyword:system_kwg:followups', 'number'),
+				('lcm_followup', 'description',      'description',      '', 'none'),
+				('lcm_followup', 'sumbilled',        'sumbilled',        '', 'number'),
+				('lcm_followup', 'date_start',       'date_start',       '', 'date'),
+				('lcm_followup', 'date_end',         'date_end',         '', 'date'),
+				('lcm_followup', 'date_end - date_start', 'time_spent',  '', 'number'),
+				('lcm_followup', 'count(*)',         'count',            '', 'none')");
+
+		upgrade_db_version (20);
 	}
 
 	return $log;
