@@ -518,7 +518,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 		if ($hours24) {
 			$ret .= $i;
 		} else {
-			$ret .= gmstrftime('g a',($i * 3600));
+			$ret .= gmdate('g a',($i * 3600));
 		}
 		$ret .= "</option>\n";
 	}
