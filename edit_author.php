@@ -17,6 +17,8 @@
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: edit_author.php,v 1.4 2004/11/16 15:53:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -50,10 +52,14 @@ if (empty($errors)) {
 			}
 		} else  die(_T('error_no_such_user'));
 
-
-		$q = "SELECT value FROM lcm_contact WHERE (id_of_person=$author
-					AND type_person='author'
-					AND type_contact=1)";
+		global $system_kwg;
+		$type_email = $system_kwg['contacts']['keywords']['email_main']['id_keyword'];
+		
+		$q = "SELECT value
+				FROM lcm_contact 
+				WHERE id_of_person = $author
+					AND type_person = 'author'
+					AND type_contact = " . $type_email;
 		$result = lcm_query($q);
 		if ($contact = lcm_fetch_array($result)) {
 			$usr['email'] = $contact['value'];
@@ -93,6 +99,29 @@ else lcm_page_start("New author");
 		</tr>
 		<tr><td align="right" valign="top">E-mail:</td>
 			<td align="left" valign="top"><input name="email" type="text" class="search_form_txt" id="email" size="35" value="<?php echo clean_output($usr['email']); ?>"/>&nbsp;<?php echo f_err('email',$errors); ?></td>
+		</tr>
+		<tr>
+			<td align="right" valign="top">Other contact:<br />(optionnal)</td>
+			<td align="left" valign="top">
+				<div>
+				<?php
+					global $system_kwg;
+
+					// XXX TODO: Temporary, for testing, will need to be a bit
+					// more wise
+					echo "<select name='sel_other_contact_type'>\n";
+					echo "<option value=''>" . "- select contact type -" . "</option>\n";
+					foreach ($system_kwg['contacts']['keywords'] as $contact) {
+						if ($contact['name'] != 'email_main' && $contact['name'] != 'address_main')
+							echo "<option value='" . $contact['name'] . "'>" .  $contact['title'] . "</option>\n";
+					}
+					echo "</select>\n";
+				?>
+				</div>
+				<div>
+					<input type='text' size='40' style='style: 99%' name='sel_other_contact_value' id='sel_other_contact_value' />
+				</div>
+			</td>
 		</tr>
 		<tr><td align="right" valign="top">Status:</td>
 			<td align="left" valign="top"><select name="status" class="sel_frm" id="status">
