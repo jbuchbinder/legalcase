@@ -6,6 +6,21 @@ if (defined('_INC_FILTRES')) return;
 define('_INC_FILTRES', '1');
 
 
+
+
+
+
+
+
+
+
+
+
+
+/* ********************************************************
+ * DEPRECATED: The following functions will be removed soon 
+ * ******************************************************** */
+
 // Echappement des entites HTML avec correction des entites "brutes"
 // (generees par les butineurs lorsqu'on rentre des caracteres n'appartenant
 // pas au charset de la page [iso-8859-1 par defaut])
