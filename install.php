@@ -456,8 +456,8 @@ else if ($step == 'ldap5') {
 
 	include_ecrire('inc_connect_install.php3');
 	include_ecrire('inc_meta.php3');
-	ecrire_meta("ldap_statut_import", $statut_ldap);
-	ecrire_metas();
+	write_meta("ldap_statut_import", $statut_ldap);
+	write_metas();
 
 	echo "<B>"._T('info_ldap_ok')."</B>";
 	echo "<P>"._T('info_terminer_installation');

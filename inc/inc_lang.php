@@ -514,11 +514,11 @@ $langue_site = read_meta('langue_site');
 				if (ereg(',en,', ",$all_langs,")) $langue_site = 'en';
 				else list(, $langue_site) = each($toutes_langs);
 				if (defined('_INC_META'))
-					ecrire_meta('langue_site', $langue_site);
+					write_meta('langue_site', $langue_site);
 			}
 			if (defined('_INC_META')) {
-				ecrire_meta('langues_proposees', $all_langs);
-				ecrire_metas();
+				write_meta('langues_proposees', $all_langs);
+				write_metas();
 			}
 		}
 	}
