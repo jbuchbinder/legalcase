@@ -20,7 +20,7 @@ if (empty($errors)) {
     if (!session_is_registered("case"))
 		session_register("case");
 
-	$case = $_GET['case'];
+	$case = intval($_GET['case']);
 
 	// Register case type variable for the session
 	if (!session_is_registered("existing"))
