@@ -954,6 +954,7 @@ function lcm_getbacktrace()
 }
 
 function lcm_panic($message) {
+	echo "<p>" . _T('warning_panic_is_useful') . "</p>\n";
 	$error = "[INTERNAL] " . $message . "\n";
 	$error .= lcm_getbacktrace();
 
