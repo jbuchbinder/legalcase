@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.68 2005/01/19 01:01:09 antzi Exp $
+	$Id: case_det.php,v 1.69 2005/01/19 13:34:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,7 +26,11 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 $case = intval($_GET['case']);
-$fu_order = clean_input($_GET['fu_order']);
+$fu_order = "DESC";
+
+if (isset($_GET['fu_order']))
+	if ($_GET['fu_order'] == 'ASC' || $_GET['fu_order'] == 'DESC')
+		$fu_order = clean_input($_GET['fu_order']);
 
 if ($case > 0) {
 	$q="SELECT id_case, title, id_court_archive, date_creation, date_assignment,
@@ -43,6 +47,7 @@ if ($case > 0) {
 		if (!(($GLOBALS['author_session']['status'] == 'admin') || $row['public'] || allowed($case,'r'))) {
 			die(_T('error_no_read_permission'));
 		}
+
 		$add = allowed($case,'w');
 		$edit = ($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'e');
 		$admin = ($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'a');
@@ -67,10 +72,10 @@ if ($case > 0) {
 			FROM lcm_case_author,lcm_author
 			WHERE (id_case=$case
 				AND lcm_case_author.id_author=lcm_author.id_author)";
-		// Do the query
-		$authors = lcm_query($q);
-		// Show the results
 
+		$authors = lcm_query($q);
+
+		// Show the results
 		//echo "<ul class=\"simple_list\">\n";
 
 		while ($user = lcm_fetch_array($authors)) {
@@ -82,7 +87,7 @@ if ($case > 0) {
 
 		//echo "</ul>";
 
-		//Add user to the case link was here
+		// Add user to the case link was here
 
 		echo "<br />\n";
 		echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br>\n";
@@ -115,11 +120,9 @@ if ($case > 0) {
 		}
 
 		echo _T('public') . ': ' . _T('Read') . '=';
-		if ($row['public']) echo 'Yes';
-		else echo 'No';
+		echo ($row['public'] ? 'Yes' : 'No');
 		echo ', ' . _T('Write') . '=';
-		if ($row['pub_write']) echo 'Yes';
-		else echo 'No';
+		echo ($row['pub_write'] ? 'Yes' : 'No');
 		echo "</p><br /><br />\n";
 
 		if ($edit)
@@ -127,19 +130,28 @@ if ($case > 0) {
 
 		if ($admin) echo '&nbsp;<a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a>';
 
-		echo "<br /><br /></fieldset>";
+		echo "<br /><br />\n";
+		echo "</fieldset>\n";
 
+		//
+		// Main table for attached organisations and clients
+		//
 		echo '<fieldset class="info_box">';
 		echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_clients') . '</div>';
 		echo '<p class="normal_text">';
 		
-		//first table
-		echo "<table border=\"0\" width=\"99%\">\n<tr>\n<td align=\"left\" valign=\"top\" width=\"50%\">";
-		
-		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
-		echo "<th class='heading'>" . _T('case_input_organisations'). "</th><th class='heading'>&nbsp;</th>";
+		echo '<table border="0" width="99%">' . "\n";
+		echo '<tr><td align="left" valign="top" width="50%">' . "\n";
 
+		//
 		// Show case organization(s)
+		//
+		$html_show = false; // show table only if it has content
+		$html = '<table border="0" class="tbl_usr_dtl">' . "\n";
+		$html .= '<tr>';
+		$html .= '<th class="heading">' . _T('case_input_organisations'). '</th><th class="heading">&nbsp;</th>';
+		$html .= '</tr>' . "\n";
+
 		$q="SELECT lcm_org.id_org,name
 			FROM lcm_case_client_org,lcm_org
 			WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
@@ -147,40 +159,52 @@ if ($case > 0) {
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">' . clean_output($row['name']) . "</a></td>\n";
+			$html .= '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">' . clean_output($row['name']) . "</a></td>\n";
 			if ($edit)
-				echo '<td><a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">' . _T('edit') . '</a></td>';
-			echo "</tr>\n";
+				$html .= '<td><a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">' . _T('edit') . '</a></td>';
+			$html .= "</tr>\n";
+			$html_show = true;
 		}
 
-		echo "\t\t</table>";
+		$html .= "\t\t</table>";
+
+		if ($html_show)
+			echo $html;
 
 		if ($add)
 			echo "<br /><a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('add_organisation_s') . "</a><br />";
 
 		echo "</td>\n<td align=\"left\" valign=\"top\" width=\"50%\">";
-		//second table
 
-		echo "<table border='0' class='tbl_usr_dtl'>\n";
-		echo "\t\t<th class='heading'>" . _T('case_input_clients') . "</th>\n\t\t<th class='heading'>&nbsp;</th>";
-
+		//
 		// Show case client(s)
-		$q="SELECT lcm_client.id_client,name_first,name_middle,name_last
-			FROM lcm_case_client_org,lcm_client
-			WHERE id_case=$case AND lcm_case_client_org.id_client=lcm_client.id_client";
+		//
+		$html_show = false;
+		$html = '<table border="0" class="tbl_usr_dtl">' . "\n";
+		$html .= '<tr>';
+		$html .= '<th class="heading">' . _T('case_input_clients') . '</th><th class="heading">&nbsp;</th>';
+		$html .= '</tr>' . "\n";
+
+		$q="SELECT cl.id_client, cl.name_first, cl.name_middle, cl.name_last
+			FROM lcm_case_client_org as clo, lcm_client as cl
+			WHERE id_case = $case AND clo.id_client = cl.id_client";
 
 		$result = lcm_query($q);
 
 		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td>';
-			echo  clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last']);
-			echo "</td>\n";
+			$html .= '<tr><td><a class="content_link" href="client_det.php?client=' . $row['id_client'] . '">';
+			$html .=  clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last']);
+			$html .= "</a></td>\n";
 			if ($edit)
-				echo '<td><a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">' . _T('edit') . '</a></td>';
-			echo "</tr>\n";
+				$html .= '<td><a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link">' . _T('edit') . '</a></td>';
+			$html .= "</tr>\n";
+			$html_show = true;
 		}
 
-		echo "\t\t</table>\n";
+		$html .= "\t\t</table>\n";
+
+		if ($html_show)
+			echo $html;
 
 		if ($add)
 			echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('add_client_s') . "</a><br />\n";
