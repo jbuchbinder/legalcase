@@ -75,20 +75,25 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 		$type_contact = 1;
 	else
 		echo "Wrong get_contact_author type ($type_contact)";
-	
+
 	$id = intval($id);
 	$type_contact = intval($type_contact);
 	$value = addslashes($value);
 
 	$query = "SELECT id_contact
 				FROM lcm_contact
-				WHERE value = '" . $value . "'";
-	
+				WHERE ((value = '$value')";
+
+	if ($type_person)
+		$query .= " AND (type_person = '$type_person')";
+
 	if ($type_contact)
-		$query .= " AND type_contact = " . $type_contact;
+		$query .= " AND (type_contact = $type_contact)";
 
 	if ($id)
-		$query .= " AND id_of_person = " . $id;
+		$query .= " AND (id_of_person = $id)";
+
+	$query .= ")";
 
 	$result = lcm_query($query);
 	return (lcm_num_rows($result) > 0);
