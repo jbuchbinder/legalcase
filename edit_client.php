@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.35 2005/03/01 10:47:11 mlutfy Exp $
+	$Id: edit_client.php,v 1.36 2005/03/01 10:53:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -60,10 +60,10 @@ if (empty($_SESSION['errors'])) {
 
 if ($client > 0) {
 	lcm_page_start(_T('title_client_edit')
-		. $client_data['name_first'] . ' '
+		. ' ' . $client_data['name_first']
 		// [ML] always show middle name, if any, no matter the configuration
-		. $client_data['name_middle'] . ' ' 
-		. $client_data['name_last']);
+		. ' ' . $client_data['name_middle']
+		. ' ' . $client_data['name_last']);
 } else {
 	lcm_page_start(_T('title_client_new'));
 }
