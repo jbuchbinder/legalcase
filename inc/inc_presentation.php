@@ -11,13 +11,8 @@ include_lcm('inc_lang');
 
 use_language_of_visitor();
 
-/*
- * [ML] Ok, this file really is a mess.
- * Please be careful where you step.
- */
-
 //
-// The following functions are currently in used.
+// Header / Footer functions
 //
 
 
@@ -287,358 +282,8 @@ function lcm_page_end($credits = '') {
 	// [ML] Off-topic note, seen while removing code:
 	// http://www.dynamicdrive.com/dynamicindex11/abox.htm
 
-	//debut_grand_cadre(); // start_big_frame, needs cleaning
-	
-	//[KM] This is some copyright info and its place is not here I think
-	//But I'm not sure
-	/*
-	echo "<div align='right' class='verdana2'>";
-	echo "<b>LCM $lcm_version_shown</b> ";
-	echo _T('info_copyright');
-
-	echo "<br>"._T('info_copyright_doc');
-
-	if (ereg("jimmac", $credits))
-		echo "<br>"._T('lien_icones_interface');
-
-	echo "</div><p>";
-
-	fin_grand_cadre();
-
-	echo "</center>";
-	echo "</td></tr></center>\n";
-	*/
-
 	lcm_html_end();
 }
-
-
-
-
-// *************
-// The following functions may not be in use. Still double-check 
-// before deleting!
-// *************
-
-//
-// Help
-//
-function aide($aide='') {
-	global $couleur_foncee, $lcm_lang, $spip_lang_rtl;
-
-	if (!$aide) return;
-
-	return "&nbsp;&nbsp;<a class='aide' href=\"help_index.php?aide=$aide&var_lang=$lcm_lang\" target=\"spip_aide\" ".
-		"onclick=\"javascript:window.open(this.href, 'spip_aide', 'scrollbars=yes, ".
-		"resizable=yes, width=740, height=580'); return false;\"><img ".
-		"src=\"images/lcm/help.png\" alt=\""._T('info_image_aide')."\" ".
-		"title=\""._T('titre_image_aide')."\" width=\"12\" height=\"12\" border=\"0\" ".
-		"align=\"middle\"></a>";
-}
-
-
-// Fake HR, with color control
-function hr($color, $retour = false) {
-	$ret = "<div style='height: 1px; margin-top: 5px; padding-top: 5px; border-top: 1px solid $color;'></div>";
-	
-	if ($retour) return $ret;
-	else echo $ret;
-}
-
-
-// Frames (start)
-function debut_cadre($style, $icone = "", $fonction = "", $titre = "") {
-	global $spip_display, $spip_lang_left;
-	static $accesskey = 97; // a
-
-	// accesskey pour accessibilite espace prive
-	$accesskey_c = chr($accesskey++);
-	$ret = "<a name='access-$accesskey_c' href='#access-$accesskey_c' accesskey='$accesskey_c'></a>";
-
-
-	$ret .= "<div style='position: relative; z-index: 1;'>";
-	if ($spip_display != 1 AND strlen($icone) > 1) {
-		$style_gauche = " style='padding-$spip_lang_left: 38px;'";
-		$ret .= "<div style='position: absolute; top: 0px; $spip_lang_left: 10px; z-index: 2;'>";
-		if ($fonction) {
-			$ret .= "<div style='$bgright"."background: url(img_pack/$icone) no-repeat; padding: 0px; margin: 0px;'>";
-			$ret .= "<img src='img_pack/$fonction'>";
-			$ret .= "</div>";
-		}
-		else $ret .= "<img src='img_pack/$icone'>";
-		$ret .= "</div>";
-
-		$style_cadre = " style='position: relative; top: 15px; margin-bottom: 15px; z-index: 1;'";
-	}
-
-	if ($style == "e") {
-		$ret .= "<div class='cadre-e-noir'$style_cadre><div class='cadre-$style'>";
-	}
-	else {
-		$ret .= "<div class='cadre-$style'$style_cadre>";
-	}
-	
-	if (strlen($titre) > 0) {
-		$ret .= "<div class='cadre-titre'$style_gauche>$titre</div>";
-	}
-	
-	
-	$ret .= "<div class='cadre-padding'>";
-	
-	
-	return $ret;
-}
-
-
-// Frames (end)
-function fin_cadre($style="") {
-	if ($style == "e") $ret = "</div>";
-	$ret .= "</div></div></div>\n";
-	$ret .= "<div style='height: 5px;'></div>";
-	
-	return $ret;
-}
-
-
-
-
-function debut_cadre_relief($icone='', $return = false, $fonction='', $titre = ''){
-	$retour_aff = debut_cadre('r', $icone, $fonction, $titre);
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-function fin_cadre_relief($return = false){
-	$retour_aff = fin_cadre('r');
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-
-function debut_cadre_enfonce($icone='', $return = false, $fonction='', $titre = ''){
-	$retour_aff = debut_cadre('e', $icone, $fonction, $titre);
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-function fin_cadre_enfonce($return = false){
-
-	$retour_aff = fin_cadre('e');
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-
-function debut_cadre_gris_clair($icone='', $return = false, $fonction='', $titre = ''){
-	$retour_aff = debut_cadre('gris-clair', $icone, $fonction, $titre);
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-function fin_cadre_gris_clair($return = false){
-	$retour_aff = fin_cadre('gris-clair');
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-
-function debut_cadre_couleur($icone='', $return = false, $fonction='', $titre=''){
-	$retour_aff = debut_cadre('couleur', $icone, $fonction, $titre);
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-function fin_cadre_couleur($return = false){
-	$retour_aff = fin_cadre('couleur');
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-function debut_cadre_trait_couleur($icone='', $return = false, $fonction='', $titre=''){
-	$retour_aff = debut_cadre('trait-couleur', $icone, $fonction, $titre);
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-function fin_cadre_trait_couleur($return = false){
-	$retour_aff = fin_cadre('trait-couleur');
-
-	if ($return) return $retour_aff;
-	else echo $retour_aff;
-}
-
-
-
-// an alert box
-function debut_boite_alerte() {
-	echo "<p><table cellpadding='6' border='0'><tr><td width='100%' bgcolor='red'>";
-	echo "<table width='100%' cellpadding='12' border='0'><tr><td width='100%' bgcolor='white'>";
-}
-
-function fin_boite_alerte() {
-	echo "</td></tr></table>";
-	echo "</td></tr></table>";
-}
-
-
-// an information box
-function debut_boite_info() {
-	echo "<div class='cadre-info'>";
-}
-
-function fin_boite_info() {
-	echo "</div>";
-}
-
-// yet another box
-function bandeau_titre_boite($titre, $afficher_auteurs, $boite_importante = true) {
-	global $couleur_foncee;
-	if ($boite_importante) {
-		$couleur_fond = $couleur_foncee;
-		$couleur_texte = '#FFFFFF';
-	}
-	else {
-		$couleur_fond = '#EEEECC';
-		$couleur_texte = '#000000';
-	}
-	echo "<tr bgcolor='$couleur_fond'><td width=\"100%\"><FONT FACE='Verdana,Arial,Sans,sans-serif' SIZE=3 COLOR='$couleur_texte'>";
-	echo "<B>$titre</B></FONT></TD>";
-	if ($afficher_auteurs){
-		echo "<TD WIDTH='100'>";
-		echo "<img src='img_pack/rien.gif' alt='' width='100' height='12' border='0'>";
-		echo "</TD>";
-	}
-	echo "<TD WIDTH='90'>";
-	echo "<img src='img_pack/rien.gif' alt='' width='90' height='12' border='0'>";
-	echo "</TD>";
-	echo "</TR>";
-}
-
-// .. and another box
-function bandeau_titre_boite2($titre, $logo="", $fond="white", $texte="black") {
-	global $spip_lang_left, $spip_display;
-	
-	if (strlen($logo) > 0 AND $spip_display != 1) {
-		echo "<div style='position: relative;'>";
-		echo "<div style='position: absolute; top: -12px; $spip_lang_left: 3px;'><img src='img_pack/$logo'></div>";
-		echo "<div style='background-color: $fond; color: $texte; padding: 3px; padding-$spip_lang_left: 30px; border-bottom: 1px solid #444444;' class='verdana2'><b>$titre</b></div>";
-	
-		echo "</div>";
-	} else {
-		echo "<div style='background-color: $fond; color: $texte; padding: 3px; border-bottom: 1px solid #444444;' class='verdana2'><b>$titre</b></div>";
-	}
-
-}
-
-
-// Shows the author's status from the SQL query result
-// [ML] not used, may never be
-function author_status($row) {
-	global $connect_status;
-
-	switch($row['statut']) {
-		case "admin":
-			$image = "<img src='img_pack/admin-12.gif' alt='' title='"._T('titre_image_administrateur')."' border='0'>";
-			break;
-		case "1comite":
-			if ($connect_status == 'admin' AND ($row['source'] == 'spip' AND !($row['pass'] AND $row['login'])))
-				$image = "<img src='img_pack/visit-12.gif' alt='' title='"._T('titre_image_redacteur')."' border='0'>";
-			else
-				$image = "<img src='img_pack/redac-12.gif' alt='' title='"._T('titre_image_redacteur_02')."' border='0'>";
-			break;
-		case "5poubelle":
-			$image = "<img src='img_pack/poubelle.gif' alt='' title='"._T('titre_image_auteur_supprime')."' border='0'>";
-			break;
-		case "6forum":
-			$image = "<img src='img_pack/visit-12.gif' alt='' title='"._T('titre_image_visiteur')."' border='0'>";
-			break;
-		case "nouveau":
-		default:
-			$image = '';
-			break;
-	}
-
-	return $image;
-}
-
-// La couleur du statut
-function puce_statut($statut, $type='article') {
-	switch ($statut) {
-		case 'publie':
-			return 'verte';
-		case 'prepa':
-			return 'blanche';
-		case 'prop':
-			return 'orange';
-		case 'refuse':
-			return 'rouge';
-		case 'poubelle':
-			return 'poubelle';
-	}
-}
-
-
-
-//
-// un bouton (en POST) a partir d'un URL en format GET
-//
-function bouton($titre,$lien) {
-	$lapage=substr($lien,0,strpos($lien,"?"));
-	$lesvars=substr($lien,strpos($lien,"?")+1,strlen($lien));
-
-	echo "\n<form action='$lapage' method='get'>\n";
-	$lesvars=explode("&",$lesvars);
-	
-	for($i=0;$i<count($lesvars);$i++){
-		$var_loc=explode("=",$lesvars[$i]);
-		echo "<input type='Hidden' name='$var_loc[0]' value=\"$var_loc[1]\">\n";
-	}
-	echo "<input type='submit' name='Submit' class='fondo' value=\"$titre\">\n";
-	echo "</form>";
-}
-
-
-
-// Link to change the color
-function lien_change_var($lien, $set, $couleur, $coords, $titre, $mouseOver="") {
-	$lien->addVar($set, $couleur);
-	return "\n<area shape='rect' href='". $lien->getUrl() ."' coords='$coords' title=\"$titre\" $mouseOver>";
-}
-
-
-//
-// Cadre centre (haut de page)
-//
-
-function debut_grand_cadre(){
-	global $spip_ecran;
-	
-	if ($spip_ecran == "large") $largeur = 974;
-	else $largeur = 750;
-	echo "\n<br><br><table width='$largeur' cellpadding='0' cellspacing='0' border='0'>";
-	echo "\n<tr>";
-	echo "<td width='$largeur' class='serif'>";
-
-}
-
-function fin_grand_cadre(){
-	echo "\n</td></tr></table>";
-}
-
-
-//
-// ******************************************************************
-//
-
 
 /*
  * Header function for the installation
@@ -675,6 +320,82 @@ function install_html_end() {
 ";
 }
 
+
+//
+// Commonly used visual functions
+//
+
+function get_date_inputs($name = 'select', $date) {
+	// TODO: Add global variables (optional) in my_options.php to 
+	// modify the date range.
+
+	// Date and month have no default selection, Year does
+	$default_month = ($date ? format_date($date, 'g') : 0);
+	$default_day = ($date ? format_date($date, 'j') : 0);
+	$default_year = format_date($date, 'Y');
+
+	$ret = "<table cellpadding=\"3\" cellspacing=\"3\">\n"
+		. "<tr>\n"
+		. "\t<td><!-- " . _T('select_date_day') . "<br/ -->"
+		. "\t\t<select name=\"" . $name . "_day\">\n";
+
+	for ($i = 1; $i <= 31; $i++) {
+		$default = ($i == $default_day ? ' selected' : '');
+		$ret .= "<option" . $default . " value=\"" . $i . "\">" . $i . "</option>\n";
+	}
+	
+	$ret .= "\t\t</select>\n"
+		. "\t</td>\n"
+		. "\t<td><!-- " . _T('select_date_month') . "<br/ -->\n"
+		. "\t\t<select name=\"" . $name . "_month\">\n";
+
+	for ($i = 1; $i <= 12; $i++)
+		$ret .= "<option value=\"" . $i . "\">" . _T('date_month_' . $i) . "</option>\n";
+
+	$ret .= "\t</select>\n"
+		. "\t</td>\n"
+		. "\t<td><!-- " . _T('select_date_year') . "<br/ -->\n"
+		. "\t\t<select name=\"" . $name . "_year\">\n";
+
+	for ($i = 1999; $i <= 2006; $i++)
+		$ret .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
+		
+	$ret .= "\t</select>\n"
+		. "\t</td>\n"
+		. "</tr>\n"
+		. "</table>\n";
+
+	if ($date)
+		$ret .= "<!-- date = $date -->\n";
+
+	return $ret;
+}
+
+
+// ******************************************************************
+// The following functions are not used. Some are kept only as reminders
+// of features todo.
+// ******************************************************************
+
+//
+// Help
+//
+/*
+function help($aide='') {
+ // ...
+}
+*/
+
+
+// Fake HR, with color control -- advantages is to hide in Lynx (?)
+/*
+function hr($color, $retour = false) {
+	$ret = "<div style='height: 1px; margin-top: 5px; padding-top: 5px; border-top: 1px solid $color;'></div>";
+	
+	if ($retour) return $ret;
+	else echo $ret;
+}
+*/
 
 
 ?>
