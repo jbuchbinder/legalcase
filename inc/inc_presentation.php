@@ -66,7 +66,7 @@ function lcm_html_start($title = "") {
 	//$link->addVar('right', $GLOBALS['spip_lang_right']);
 	//echo $link->getUrl(). '">' . "\n";
 	
-	echo "<link rel=\"stylesheet\" href=\"styles/lcm_styles.css\" type=\"text/css\" />\n";
+	echo "<link rel=\"stylesheet\" href=\"/styles/lcm_styles.css\" type=\"text/css\" />\n";
 	echo "</head>\n";
 
 	// [ML] couleur_lien = link color
