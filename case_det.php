@@ -35,6 +35,12 @@ if ($row = mysql_fetch_array($result)) {
 	echo 'Legal reason: ' . $row['legal_reason'] . "<br>\n";
 	echo 'Alledged crime: ' . $row['alledged_crime'] . "<br>\n";
 	echo 'Status: ' . $row['status'] . "<br>\n";
+	echo 'Public: ';
+	if ($row['public'])
+		echo 'Yes';
+	else
+		echo 'No';
+	echo "<br>\n";
 
 	?><h2>Clients in this case:</h2>
 
@@ -51,7 +57,7 @@ if ($row = mysql_fetch_array($result)) {
 	$result = lcm_query($q);
 
 	while ($row = mysql_fetch_array($result)) {
-		echo '<tr><td>' . $row['name'] . "</td>\n<td>";
+		echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '">' . $row['name'] . "</a></td>\n<td>";
 		if ($edit)
 			echo '<a href="edit_org.php?org=' . $row['id_org'] . '">Edit</a>';
 		echo "</td></tr>\n";
@@ -85,8 +91,7 @@ if ($row = mysql_fetch_array($result)) {
 	?></table><br>
 	<?php
 
-} else die("There's no such case!")
-
+} else die("There's no such case!");
 
 ?>
 <br><table border>
