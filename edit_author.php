@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.15 2005/01/10 12:58:08 mlutfy Exp $
+	$Id: edit_author.php,v 1.16 2005/01/10 16:52:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -201,6 +201,18 @@ else lcm_page_start("New author");
 
 		<?php
 			global $author_session;
+
+			$class_auth = 'Auth_db';
+			include_lcm('inc_auth_db');
+
+			$auth = new $class_auth;
+
+			if (! $auth->init()) {
+				// XXX: make error ?
+				lcm_log("ERROR: failed to initialize auth method");
+			}
+
+			// TODO: check with is_newpass_allowed() ...
 
 			if ($usr['id_author'] && $author_session['status'] != 'admin') {
 				echo '
