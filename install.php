@@ -55,15 +55,17 @@ if ($etape == 6) {
 
 	include_lcm('inc_defaults');
 	init_default_config();
-	// [ML USELESS?] init_languages();
+	init_languages();
 
 	// Block public access to the 'data' subdirectory
 	// [ML] Moved data + config under inc, and blocked inc instead
-	ecrire_acces();
+	// [ML] But for now, we can ignore it. Why not just simply ship with a .htaccess included?
+	/* ecrire_acces();
 	$protec = "deny from all\n";
 	$myFile = fopen('inc/.htaccess', 'w');
 	fputs($myFile, $protec);
 	fclose($myFile);
+	*/
 
 	@unlink('inc/data/inc_meta_cache.php');
 	if (!@rename('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php')) {
@@ -360,12 +362,12 @@ else if ($etape == 'dirs') {
 }
 
 else if (!$etape) {
-	// If LCM is unilingual (only one language file), we skip to step 2
-	$menu_lang = menu_languages('var_lang_lcm');
+	$menu_lang = menu_languages('var_lang_lcm_all');
 
-	if (!$menu_lang)
-		header("Location: lcm_test_dirs.php");
-	else {
+	//if (!$menu_lang)
+	//	header("Location: lcm_test_dirs.php");
+	// else 
+	{
 		install_html_start();
 
 		// TODO TRANSLATE
