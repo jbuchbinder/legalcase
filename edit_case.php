@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.66 2005/03/23 18:35:51 mlutfy Exp $
+	$Id: edit_case.php,v 1.67 2005/03/28 08:49:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -219,8 +219,12 @@ if ($_SESSION['case_data']['id_case']) {
 	echo '<select name="status" id="input_status" class="sel_frm">' . "\n";
 	$statuses = ($existing ? array('draft','open','suspended','closed','merged') : array('draft','open') );
 
-	foreach ($statuses as $s)
-		echo "<option" .  (($s == $_SESSION['case_data']['status']) ? ' selected="selected"' : '') . ">$s</option>\n";
+	foreach ($statuses as $s) {
+		$sel = ($s == $_SESSION['case_data']['status'] ? ' selected="selected"' : '');
+		echo '<option value="' . $s . '"' . $sel . ">" 
+			. _T('case_status_option_' . $s)
+			. "</option>\n";
+	}
 
 	echo "</select></td>\n";
 	echo "</tr>\n";
