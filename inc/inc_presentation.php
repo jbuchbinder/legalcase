@@ -106,8 +106,7 @@ function lcm_page_start($title = "") {
 	$clean_link->delVar('set_disp');
 	$clean_link->delVar('set_ecran');
 
-	lcm_html_start($title, $onLoad);
-
+	lcm_html_start($title); // , $onLoad);
 	
 	// XXX TODO
 	// most of the header html after <head></head> should go here
@@ -150,19 +149,13 @@ function lcm_page_start($title = "") {
 					<br /><br />
 				<!-- End of \"navigation_menu_column\" content -->
 				</div>
-<!-- The main content will be here - all the data, html forms, search results etc. -->
-<div id=\"main_column\">
-<!-- Start of \"main_column\" content -->
-<h3 class=\"content_head\">". $title ."</h3>";
 
-	// Opening of the "main" part of the page
-	// [ML] This is temporary untill we cleanup the HTML
+				<!-- The main content will be here - all the data, html forms, search results etc. -->
+				<div id=\"main_column\">
+				
+					<!-- Start of 'main_column' content -->
+					<h3 class=\"content_head\">". $title ."</h3>";
 	
-	//[KM] Obsolete!
-	//Tags like <center></center> are substituted with for example <div align="center"></div>
-	
-	//echo "<center>";
-	//echo "<table><tr><td>\n";
 }
 
 // Footer of the interface
@@ -191,7 +184,6 @@ function lcm_html_end() {
 function lcm_page_end($credits = '') {
 	global $lcm_version_shown;
 	global $connect_id_auteur;
-	global $auth_can_disconnect, $connect_login;
 
 	global $author_session;
 
@@ -202,12 +194,12 @@ function lcm_page_end($credits = '') {
 
 	//[KM] The bottom of a single page
 	//
-	echo "<!-- End of \"main_column\" content -->
+	echo "<!-- End of 'main_column' content -->
 </div>
 			</div>
 		</div>
 <!-- The initial intention was that here can be placed some UI preferences -->
-<!-- but after revisiting AIMS I think it will be much better to put the search boxes -->
+<!-- but I think it will be much better to put the search boxes -->
 <!-- The right and the left column can be very long, so, we can put here a lot of additional information, some tiny help hints and so -->
 		<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
@@ -217,7 +209,7 @@ function lcm_page_end($credits = '') {
 				. $author_session['name_middle'] . ' '
 				. $author_session['name_last'] 
 				. "<br /><br />
-			<a href=\"#\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"#\" class=\"prefs_bold_lnk\">[ logout ]</a>
+			<a href=\"#\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ logout ]</a>
 			</p>
 			<div class=\"prefs_column_menu_head\">Search</div>
 			<p class=\"prefs_column_text\">
@@ -240,11 +232,7 @@ function lcm_page_end($credits = '') {
 	// Language choice (temporarely put here by [ML])
 	//
 	if ($GLOBALS['all_langs']) {
-		echo menu_languages('var_lang_lcm');
-	}
-
-	if ($auth_can_disconnect) {	
-		echo "<a href='lcm_cookie.php?logout=$connect_login' class='icone26' onMouseOver=\"changestyle('bandeaudeconnecter','visibility', 'visible');\"><img src='img_pack/deconnecter-24$spip_lang_rtl.gif' border='0'></a>";
+		echo "<br/><div align=\"right\">" . menu_languages('var_lang_lcm') .  "</div>\n";
 	}
 
 	echo "
