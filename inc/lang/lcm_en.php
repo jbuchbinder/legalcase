@@ -81,6 +81,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_author' => 'Author:',
 'case_input_authors' => 'Authors:',
 'case_input_clients' => 'Clients:',
+'case_input_collaboration' => 'Office collaboration and confidentiality:',
+'case_input_collaboration_read' => 'Other authors can consult this case.',
+'case_input_collaboration_write' => 'Other authors can contribute to this case.',
 'case_input_court_archive' => 'Court archive ID:',
 'case_input_date_assigned' => 'Assignment date:',
 'case_input_date_creation' => 'Creation date:',
@@ -460,11 +463,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'person_input_name_first' => 'Name:',
 'person_input_name_last' => 'Surname:',
 'person_input_name_middle' => 'Middle name:',
-'public' => 'Public',
 
 
 // R
-'read' => 'Read',
 'rep_title' => 'Title',
 'report_id' => 'Report ID',
 
@@ -562,8 +563,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_operation_failed' => 'The operation failed.',
 'warning_sql_connection_failed' => 'Connection to SQL database server failed.',
 'warning_sql_query_failed' => 'Error in SQL database query.',
-'which_case' => 'Which case?',
-'write' => 'Write'
+'which_case' => 'Which case?'
 
 );
 
