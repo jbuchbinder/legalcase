@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.44 2005/03/12 17:57:34 antzi Exp $
+	$Id: inc_db_upgrade.php,v 1.45 2005/03/15 04:12:54 antzi Exp $
 */
 
 // Execute this file only once
@@ -598,6 +598,44 @@ function upgrade_database($old_db_version) {
 		  FULLTEXT KEY description (description))");
 
 		upgrade_db_version (27); 
+	}
+
+	if ($lcm_db_version_current < 27) {
+		// Add client attachments table
+		lcm_query("CREATE TABLE lcm_client_attachment (
+		  id_attachment bigint(21) NOT NULL auto_increment,
+		  id_client bigint(21) NOT NULL default '0',
+		  filename varchar(255) NOT NULL default '',
+		  type varchar(255) default NULL,
+		  size bigint(21) NOT NULL default '0',
+		  description text,
+		  content longblob NOT NULL,
+		  date_attached datetime NOT NULL default '0000-00-00 00:00:00',
+		  PRIMARY KEY  (id_attachment),
+		  KEY id_client (id_client),
+		  KEY filename (filename),
+		  FULLTEXT KEY description (description))");
+
+		upgrade_db_version (27); 
+	}
+
+	if ($lcm_db_version_current < 28) {
+		// Add client attachments table
+		lcm_query("CREATE TABLE lcm_org_attachment (
+		  id_attachment bigint(21) NOT NULL auto_increment,
+		  id_org bigint(21) NOT NULL default '0',
+		  filename varchar(255) NOT NULL default '',
+		  type varchar(255) default NULL,
+		  size bigint(21) NOT NULL default '0',
+		  description text,
+		  content longblob NOT NULL,
+		  date_attached datetime NOT NULL default '0000-00-00 00:00:00',
+		  PRIMARY KEY  (id_attachment),
+		  KEY id_org (id_org),
+		  KEY filename (filename),
+		  FULLTEXT KEY description (description))");
+
+		upgrade_db_version (28); 
 	}
 
 	return $log;

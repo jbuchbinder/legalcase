@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.36 2005/03/12 17:57:34 antzi Exp $
+	$Id: inc_db_create.php,v 1.37 2005/03/15 04:12:54 antzi Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -90,7 +90,7 @@ function create_database() {
 		pub_write tinyint(1) DEFAULT '0' NOT NULL,
 		PRIMARY KEY (id_case))";
 	$result = lcm_query($query);
-	
+
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_case_attachment (
@@ -107,7 +107,7 @@ function create_database() {
 		  KEY filename (filename),
 		  FULLTEXT KEY description (description))";
 	$result = lcm_query($query);
-	
+
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_followup (
@@ -191,7 +191,7 @@ function create_database() {
 		  KEY filename (filename),
 		  FULLTEXT KEY description (description))";
 	$result = lcm_query($query);
-	
+
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_org (
@@ -203,6 +203,24 @@ function create_database() {
 		PRIMARY KEY id_org (id_org))";
 
 	$result = lcm_query($query);
+
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_org_attachment (
+		  id_attachment bigint(21) NOT NULL auto_increment,
+		  id_org bigint(21) NOT NULL default '0',
+		  filename varchar(255) NOT NULL default '',
+		  type varchar(255) default NULL,
+		  size bigint(21) NOT NULL default '0',
+		  description text,
+		  content longblob NOT NULL,
+		  date_attached datetime NOT NULL default '0000-00-00 00:00:00',
+		  PRIMARY KEY  (id_attachment),
+		  KEY id_org (id_org),
+		  KEY filename (filename),
+		  FULLTEXT KEY description (description))";
+	$result = lcm_query($query);
+
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_contact (
@@ -214,6 +232,7 @@ function create_database() {
 		PRIMARY KEY id_contact (id_contact))";
 
 	$result = lcm_query($query);
+
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_keyword (
@@ -224,8 +243,9 @@ function create_database() {
 		description text NOT NULL DEFAULT '',
 		ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
 		PRIMARY KEY (id_keyword))";
-	
+
 	$result = lcm_query($query);
+
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (id_group, name)";
