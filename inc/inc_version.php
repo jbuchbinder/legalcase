@@ -748,13 +748,21 @@ if (@file_exists($inc_meta_cache) AND !defined('_INC_META_CACHE')  AND !defined(
 // This is used usually at installation, when the inc/data/inc_meta_cache.php
 // is not yet created, and avoids having tons of warnings printed.
 if (!defined('_INC_META_CACHE')) {
-	function lire_meta($nom) {
+	function read_meta($name) {
 		global $meta;
-		return $meta[$nom];
+		return $meta[$name];
 	}
-	function lire_meta_maj($nom) {
-		global $meta_maj;
-		return $meta_maj[$nom];
+	function lire_meta($name) {
+		global $meta;
+		return $meta[$name];
+	}
+	function read_meta_upd($name) {
+		global $meta_upd;
+		return $meta_upd[$name];
+	}
+	function lire_meta_maj($name) {
+		global $meta_upd;
+		return $meta_upd[$name];
 	}
 	define('_INC_META_CACHE', '1');
 }

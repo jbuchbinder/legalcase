@@ -28,6 +28,7 @@ function read_metas() {
 
 // old function for read_metas
 function lire_metas() {
+	lcm_log("use of deprecated function: lire_metas, use read_metas instead");
 	return read_metas();
 }
 
@@ -37,14 +38,19 @@ function write_meta($name, $value) {
 }
 
 // old function for write_meta
-function ecrire_meta($nom, $valeur) {
-	lcm_log("use of deprecated function ecrire_meta");
-	return write_meta($nom, $valeur);
+function ecrire_meta($name, $value) {
+	lcm_log("use of deprecated function: ecrire_meta, use write_meta instead");
+	return write_meta($name, $value);
 }
 
-// delete metas
-function effacer_meta($nom) {
-	lcm_query("DELETE FROM lcm_meta WHERE name='$nom'");
+function erase_meta($name) {
+	lcm_query("DELETE FROM lcm_meta WHERE name='$name'");
+}
+
+// old function for delete_meta
+function effacer_meta($name) {
+	lcm_log("use of deprecated function: effacer_meta, use erase_meta instead");
+	erase_meta($name);
 }
 
 //
@@ -61,7 +67,7 @@ function write_metas() {
 if (defined("_INC_META_CACHE")) return;
 define("_INC_META_CACHE", "1");
 
-function read_meta($nom) {
+function read_meta($name) {
 	global $meta;
 	return $meta[$name];
 }

@@ -179,11 +179,11 @@ switch ($prefs['couleur']) {
 // Version management
 //
 
-ecrire_metas();
+write_metas();
 
-$version_installee = (double) lire_meta('version_lcm');
+$version_installee = (double) read_meta('version_lcm');
 if ($version_installee <> $lcm_version) {
-	debut_page();
+	lcm_page_start();
 	if (!$version_installee)
 		$version_installee = _T('info_anterieur');
 
@@ -191,7 +191,7 @@ if ($version_installee <> $lcm_version) {
 	echo "<blockquote><blockquote><h4><font color='red'>"._T('info_message_technique')."</font><br> "._T('info_procedure_maj_version')."</h4>
 	"._T('info_administrateur_site_01')." <a href='upgrade.php3'>"._T('info_administrateur_site_02')."</a></blockquote></blockquote><p>";
 
-	fin_page();
+	lcm_page_end();
 	exit;
 }
 

@@ -109,8 +109,8 @@ function ecrire_acces() {
 		fclose($fichier);
 	} else {
 		// [ML] This is confusing, since this function is probably called by
-		// the install.php at "etape == 6", but lcm_test_dirs.php will send
-		// back the user to etape == 1. (Altough nothing catastrophic, since
+		// the install.php at "step == 6", but lcm_test_dirs.php will send
+		// back the user to "step == 1". (Altough nothing catastrophic, since
 		// I fell on this only because of a programming bug.)
 		@header ("Location: lcm_test_dirs.php");
 		exit;
