@@ -1053,10 +1053,10 @@ function http_cal_height ($heure, $heurefin, $debut, $fin, $dimheure, $dimjour, 
 // une dimension $large
 
 function http_calendrier_jour_ics($debut, $fin, $largeur, $detcolor, $echelle, $evenements, $date) {
+	echo "<!-- http_calendrier_jour_ics($debut, $fin, $largeur, $detcolor, $echelle, $evenements, $date) -->\n";
 	global $spip_lang_left;
 
 	if ($echelle==0) $echelle = DEFAUT_D_ECHELLE;
-
 
 	list($dimheure, $dimjour, $fontsize, $padding) = calendrier_echelle($debut, $fin, $echelle);
 	$modif_decalage = round($largeur/8);
@@ -1067,8 +1067,13 @@ function http_calendrier_jour_ics($debut, $fin, $largeur, $detcolor, $echelle, $
     {
 		$tous = 1 + count($evenements);
 		$i = 0;
-		foreach($evenements as $evenement){
+		foreach($evenements as $evenement) {
 
+/*			// Debug info
+			echo "<!-- Event: ";
+			var_dump($evenement);
+			echo " -->\n";
+*/
 			$d = $evenement['DTSTART'];
 			$e = $evenement['DTEND'];
 			$d_jour = substr($d,0,8);
@@ -1080,104 +1085,103 @@ function http_calendrier_jour_ics($debut, $fin, $largeur, $detcolor, $echelle, $
 			$radius_top = " -moz-border-radius-topleft: 6px; -moz-border-radius-topright: 6px;";
 			$radius_bottom = " -moz-border-radius-bottomleft: 6px; -moz-border-radius-bottomright: 6px;";
 			
-			if ($d_jour <= $date AND $e_jour >= $date)
-			{
+			if ($d_jour <= $date AND $e_jour >= $date) {
 
-			$i++;
-
-			// Verifier si debut est jour precedent
-			if (substr($d,0,8) < $date)
-			{
-				$heure_debut = 0; $minutes_debut = 0;
-				$debut_avant = true;
-				$radius_top = "";
-			}
-			else
-			{
-				$heure_debut = substr($d,-6,2);
-				$minutes_debut = substr($d,-4,2);
-			}
-
-			if (!$e)
-			{ 
-				$heure_fin = $heure_debut ;
-				$minutes_fin = $minutes_debut ;
-				$haut = 0;
-				$bordure = "border-bottom: dashed 2px";
-			}
-			else
-			{
-				$bordure = "border: 1px solid";
-				if (substr($e,0,8) > $date) 
+				$i++;
+	
+				// Verifier si debut est jour precedent
+				if (substr($d,0,8) < $date)
 				{
-					$heure_fin = 23; $minutes_fin = 59;
-					$fin_apres = true;
-					$radius_bottom = "";
+					$heure_debut = 0; $minutes_debut = 0;
+					$debut_avant = true;
+					$radius_top = "";
 				}
 				else
 				{
-					$heure_fin = substr($e,-6,2);
-					$minutes_fin = substr($e,-4,2);
+					$heure_debut = substr($d,-6,2);
+					$minutes_debut = substr($d,-4,2);
 				}
-			}
-			
-			if ($debut_avant && $fin_apres)  $opacity = "-moz-opacity: 0.6; filter: alpha(opacity=60);";
-			else $opacity = "";
-						
-						
-			$haut = http_cal_top ("$heure_debut:$minutes_debut", $debut, $fin, $dimheure, $dimjour, $fontsize);
-			$bas = http_cal_top ("$heure_fin:$minutes_fin", $debut, $fin, $dimheure, $dimjour, $fontsize);
-			$hauteur = http_cal_height ("$heure_debut:$minutes_debut", "$heure_fin:$minutes_fin", $debut, $fin, $dimheure, $dimjour, $fontsize);
-			if ($bas_prec > $haut) $decale += $modif_decalage;
-			else $decale = (2 * $fontsize);
-			if ($bas > $bas_prec) $bas_prec = $bas;
-			$url = $evenement['URL']; 
-			$desc = propre($evenement['DESCRIPTION']);
-			$perso = $evenement['ATTENDEE'];
-			$lieu = $evenement['LOCATION'];
-			$sum = ereg_replace(' +','&nbsp;', typo($evenement['SUMMARY']));
-			if (!$sum) { $sum = $desc; $desc = '';}
-			if (!$sum) { $sum = $lieu; $lieu = '';}
-			if (!$sum) { $sum = $perso; $perso = '';}
-			if ($sum)
-			  $sum = "<span style='font-family: Verdana, Arial, Sans, sans-serif; font-size: 10px;'><b>$sum</b>$lieu $perso</span>";
-			if (($largeur > 90) && $desc)
-			  $sum .=  "<br /><span style='color: black'>$desc</span>";
-			$colors = $detcolor($evenement);
-			if ($colors)
-			{
-				list($bcolor,$fcolor) = $colors;
-			}
-			else 
-			{ 
-				$bcolor = 'white';
-				$fcolor = 'black';
-			}
-			$total .= "\n<div style='cursor: auto; position: absolute; overflow: hidden;$radius_top$radius_bottom$opacity z-index: " .
-				$i .
-				"; $spip_lang_left: " .
-				$decale .
-				"px; top: " .
-				$haut .
-				"px; height: " .
-				$hauteur .
-				"px; width: ".
-				($largeur - 2 * ($padding+1)) .
-				"px; font-size: ".
-				floor($fontsize * 1.3) .
-				"px; padding: " .
-				$padding . 
-				"px; background-color: " .
-				$bcolor .
-				";color: " .
-				$fcolor .
-				"; $bordure $fcolor;'
-				onmouseover=\"this.style.zIndex=" . $tous . "\"
-				onmouseout=\"this.style.zIndex=" . $i . "\">" .
-				((!$url) ? 
-					$sum :
-				 http_href($url, $sum, $desc,"color: $fcolor")) . 
-				"</div>";
+	
+				if (!$e)
+				{ 
+					$heure_fin = $heure_debut ;
+					$minutes_fin = $minutes_debut ;
+					$haut = 0;
+					$bordure = "border-bottom: dashed 2px";
+				}
+				else
+				{
+					$bordure = "border: 1px solid";
+					if (substr($e,0,8) > $date) 
+					{
+						$heure_fin = 23; $minutes_fin = 59;
+						$fin_apres = true;
+						$radius_bottom = "";
+					}
+					else
+					{
+						$heure_fin = substr($e,-6,2);
+						$minutes_fin = substr($e,-4,2);
+					}
+				}
+				
+				if ($debut_avant && $fin_apres)  $opacity = "-moz-opacity: 0.6; filter: alpha(opacity=60);";
+				else $opacity = "";
+	
+	
+				$haut = http_cal_top ("$heure_debut:$minutes_debut", $debut, $fin, $dimheure, $dimjour, $fontsize);
+				$bas = http_cal_top ("$heure_fin:$minutes_fin", $debut, $fin, $dimheure, $dimjour, $fontsize);
+				$hauteur = http_cal_height ("$heure_debut:$minutes_debut", "$heure_fin:$minutes_fin", $debut, $fin, $dimheure, $dimjour, $fontsize);
+				if ($bas_prec > $haut) $decale += $modif_decalage;
+				else $decale = (2 * $fontsize);
+				if ($bas > $bas_prec) $bas_prec = $bas;
+				$url = $evenement['URL']; 
+				$desc = propre($evenement['DESCRIPTION']);
+				$perso = $evenement['ATTENDEE'];
+				$lieu = $evenement['LOCATION'];
+				$sum = ereg_replace(' +','&nbsp;', typo($evenement['SUMMARY']));
+				if (!$sum) { $sum = $desc; $desc = '';}
+				if (!$sum) { $sum = $lieu; $lieu = '';}
+				if (!$sum) { $sum = $perso; $perso = '';}
+				if ($sum)
+				$sum = "<span style='font-family: Verdana, Arial, Sans, sans-serif; font-size: 10px;'><b>$sum</b>$lieu $perso</span>";
+				if (($largeur > 90) && $desc)
+				$sum .=  "<br /><span style='color: black'>$desc</span>";
+				$colors = $detcolor($evenement);
+				if ($colors)
+				{
+					list($bcolor,$fcolor) = $colors;
+				}
+				else 
+				{ 
+					$bcolor = 'white';
+					$fcolor = 'black';
+				}
+				$total .= "\n<div style='cursor: auto; position: absolute; overflow: hidden;$radius_top$radius_bottom$opacity z-index: " .
+					$i .
+					"; left: " .
+					$decale .
+					"px; top: " .
+					$haut .
+					"px; height: " .
+					$hauteur .
+					"px; width: ".
+					($largeur - 2 * ($padding+1)) .
+					"px; font-size: ".
+					floor($fontsize * 1.3) .
+					"px; padding: " .
+					$padding . 
+					"px; background-color: " .
+					$bcolor .
+					";color: " .
+					$fcolor .
+					"; $bordure $fcolor;'
+					onmouseover=\"this.style.zIndex=" . $tous . "\"
+					onmouseout=\"this.style.zIndex=" . $i . "\">" .
+					((!$url) ? 
+						$sum :
+					http_href($url, $sum, $desc,"color: $fcolor")) .
+					"</div>";
 			}
 		}
     }
@@ -1388,7 +1392,6 @@ function http_calendrier_jour($jour,$mois,$annee,$large = "large", $partie_cal, 
 
 	list($articles, $breves, $messages) =
 	  sql_calendrier_interval_jour($annee,$mois,$jour);
-	var_dump($messages);
 	  
 	$j = sprintf("%04d%02d%02d", $annee,$mois,$jour);
 	
@@ -1718,7 +1721,10 @@ ORDER BY date_heure
 }
 
 function sql_calendrier_interval_rv($avant, $apres) {
+/*
+	// Debug info
 	echo "<!-- sql_calendrier_interval_rv($avant, $apres)";
+*/
 	global $connect_id_auteur;
 	$evenements= array();
 	if (!$connect_id_auteur) return $evenements;
@@ -1854,10 +1860,13 @@ WHERE	(lien.id_message='$id_message'
 		}
 
 	}
-
+/*
+  // Debug info
   echo " = ";
   var_dump($evenements);
   echo " -->\n";
+*/
+
   return $evenements;
 }
 
