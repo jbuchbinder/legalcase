@@ -54,22 +54,18 @@ define("_INC_META_CACHE", "1");
 
 function read_meta($name) {
 	global $meta;
-	return $meta[$name];
-}
 
-// old read_meta function (to remove eventually)
-function lire_meta($name) {
-	return read_meta($name);
+	if (! array_key_exists($name, $meta)) {
+		lcm_debug("read_meta: -$name- does not exist");
+		return "";
+	}
+
+	return $meta[$name];
 }
 
 function read_meta_upd($name) {
 	global $meta_upd;
 	return $meta_upd[$name];
-}
-
-// old read_meta_upd function (to remove eventually)
-function lire_meta_maj($name) {
-	return read_meta_upd($name);
 }
 
 ';
