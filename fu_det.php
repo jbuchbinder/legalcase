@@ -18,12 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.12 2005/03/09 14:47:18 antzi Exp $
+	$Id: fu_det.php,v 1.13 2005/03/09 15:16:32 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
+include_lcm('inc_keywords');
 
 if (isset($_GET['followup'])) {
 	$followup=intval($_GET['followup']);
@@ -97,7 +98,7 @@ if ($numrows > 0)
 foreach ($all_clients as $client) {
 	if ($client['id_client']) {
 		echo '<a href="client_det.php?client=' . $client['id_client'] . '" class="content_link">'
-			. $client['name_first'] . ' ' . $client['name_middle'] . ' ' . $client['name_last']
+			. njoin(array($client['name_first'],$client['name_middle'],$client['name_last']))
 			. '</a>';
 
 		if (++$current < $numrows)
@@ -115,6 +116,15 @@ foreach ($all_clients as $client) {
 
 if ($numrows > 0)
 	echo "</li>\n";
+
+// Show parent appointment, if any
+$q = "SELECT lcm_app.* FROM lcm_app_fu,lcm_app WHERE lcm_app_fu.id_followup=$followup AND lcm_app_fu.id_app=lcm_app.id_app";
+$res_app = lcm_query($q);
+if ($app = lcm_fetch_array($res_app)) {
+	echo '<li style="list-style-type: none;">' . _T('fu_input_parent_appointment') . ' ';
+	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _T(get_kw_title($app['type']))
+		. ' (' . $app['title'] . ') from ' . format_date($app['start_time']) . "</a></li>\n";
+}
 
 echo "</ul>\n";
 
