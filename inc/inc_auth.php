@@ -119,6 +119,9 @@ function auth() {
 		if (! $prefs['theme'])
 			$prefs['theme'] = 'green';
 
+		if (! $prefs['screen'])
+			$prefs['screen'] = 'narrow';
+
 	}
 	else {
 		// This case is a strange possibility: the author is authentified
