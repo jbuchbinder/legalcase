@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.32 2005/03/06 14:37:31 antzi Exp $
+	$Id: upd_fu.php,v 1.33 2005/03/09 03:51:56 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -102,15 +102,24 @@ if (count($_SESSION['errors'])) {
 
 	if ($id_followup>0) {
 		// Check access rights
-		if (!allowed($id_case,'e')) die("You don't have permission to modify this case's information!");
+		if (!allowed($_SESSION['fu_data']['id_case'],'e')) die("You don't have permission to modify this case's information!");
 
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
 		if (!($result = lcm_query($q)))
 			lcm_panic("$q <br />\nError ".lcm_errno().": ".lcm_error());
 	} else {
 		// Check access rights
-		if (!allowed($id_case,'w'))
+		if (!allowed($_SESSION['fu_data']['id_case'],'w'))
 			die("You don't have permission to add information to this case!");
+
+		// Get the current case stage
+		$q = "SELECT stage FROM lcm_case WHERE id_case=" . $_SESSION['fu_data']['id_case'];
+		$result = lcm_query($q);
+		if ($row = lcm_fetch_array($result)) {
+			$case_stage = $row['stage'];
+		} else {
+			die("There is no such case!");
+		}
 
 		// Update case status
 		$status = '';
@@ -137,12 +146,17 @@ if (count($_SESSION['errors'])) {
 		if ($status || $stage) {
 			$q = "UPDATE lcm_case
 					SET " . ($status ? "status='$status'" : '') . ($status && $stage ? ',' : '') . ($stage ? "stage='$stage'" : '') . "
-					WHERE id_case=$id_case";
+					WHERE id_case=" . $_SESSION['fu_data']['id_case'];
 			$result = lcm_query($q);
 		}
 		
 		// Add the new follow-up
-		$q = "INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,id_author=" . $GLOBALS['author_session']['id_author'] . ",$fl";
+		$q = "INSERT INTO lcm_followup
+			SET	id_followup=0,
+				id_case=" . $_SESSION['fu_data']['id_case'] . ",
+				id_author=" . $GLOBALS['author_session']['id_author'] . ",
+				$fl,
+				case_stage='$case_stage'";
 
 		if (!($result = lcm_query($q))) 
 			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
