@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.43 2005/04/04 06:12:45 mlutfy Exp $
+	$Id: upd_case.php,v 1.44 2005/04/05 05:54:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -124,9 +124,9 @@ if (count($_SESSION['errors'])) {
 		// Add 'assignment' followup to the case
 		$q = "INSERT INTO lcm_followup
 				SET id_followup = 0, id_case = $id_case, id_author = $id_author, type = 'assignment',
-					date_start = NOW(), description='" . $id_author . "'";
+					date_start = NOW(), date_end = NOW(), description='" . $id_author . "'";
 
-		// [ML] For translation system
+		// [ML] Now in translation system
 		//	$q .= njoin(array($author_data['name_first'], $author_data['name_middle'], $author_data['name_last']));
 		//	$q .= " created the case and is auto-assigned to it',date_start=NOW()"; // TRAD
 
@@ -134,8 +134,8 @@ if (count($_SESSION['errors'])) {
 
 		// Set case date_assigned to NOW()
 		$q = "UPDATE lcm_case
-				SET date_assignment=NOW()
-				WHERE id_case=$id_case";
+				SET date_assignment = NOW()
+				WHERE id_case = $id_case";
 
 		$result = lcm_query($q);
 	}
