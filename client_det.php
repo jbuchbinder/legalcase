@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.24 2005/03/01 09:11:09 mlutfy Exp $
+	$Id: client_det.php,v 1.25 2005/03/01 12:03:48 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -52,7 +52,7 @@ if ($client > 0) {
 
 
 		// Show client details
-		lcm_page_start(_T('title_client_view') . ' ' . $row['name_first'] . ' ' .  $row['name_middle'] . ' ' . $row['name_last']);
+		lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 
 		// Show tabs
 		$groups = array(
