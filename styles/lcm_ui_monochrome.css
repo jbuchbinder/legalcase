@@ -18,7 +18,7 @@
 	background-color: #efefef;
 }
 
-#footer {
+#footer, #footer_narrow {
 	border: 1px solid #ccc;
 	background-color: #efefef;
 	text-align: center;
