@@ -17,7 +17,7 @@ $result = lcm_query($q);
 <tr><th colspan="2">Case description</th></tr>
 <?php
 // Process the output of the query
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = mysql_fetch_array($result)) {
 	// Show case title
 	echo '<tr><td><a href="case_det.php?case=' . $row['id_case'] . '">'. $row['title'] . "</a></td>\n";
 	echo '<td><a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a></td></tr>' . "\n";

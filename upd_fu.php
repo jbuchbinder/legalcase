@@ -22,6 +22,7 @@ foreach($_POST as $key => $value)
 
 // Check submitted information
 if (strtotime($fu_data['date_start'])<0) { $errors['date_start']='Invalid start date!'; }
+if (strtotime($fu_data['date_end'])<0) { $errors['date_end']='Invalid end date!'; }
 
 if (count($errors)) {
     header("Location: $HTTP_REFERER");
@@ -31,10 +32,10 @@ if (count($errors)) {
     $fl.=",sumbilled='$sumbilled'";
 
     if ($id_followup>0) {
-	// Prepare query
-	$q="UPDATE lcm_followup SET $fl WHERE id_followup=$id_followup";
+		// Prepare query
+		$q="UPDATE lcm_followup SET $fl WHERE id_followup=$id_followup";
     } else {
-	$q="INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
+		$q="INSERT INTO lcm_followup SET id_followup=0,id_case=$id_case,$fl";
     }
 
     // Do the query
@@ -45,7 +46,7 @@ if (count($errors)) {
     session_destroy();
 
     // Send user back to add/edit page's referer
-    header("Location: $fu_data['referer']");
+    header('Location: ' . $fu_data['referer']);
 }
 
 ?>

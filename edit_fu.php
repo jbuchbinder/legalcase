@@ -1,7 +1,6 @@
 <?php
 
 include('inc/inc.php');
-lcm_page_start("Edit follow-up");
 
 // Error display function
 function f_err($fn, $errors)
@@ -32,7 +31,10 @@ if (empty($errors)) {
 
 		// Process the output of the query
 		// [ML] XXX mysql_fetch_assoc is MySQL 4.x, can't we do without?
-		if ($row = mysql_fetch_assoc($result)) {
+		// [AG] mysql_fetch_aray does the same and is available in PHP 3.
+		// [AG] no requirement for MySQL version in PHP manual though.
+		// [AG] TODO check if suplying MYSQL_ASSOC speeds the function up.
+		if ($row = mysql_fetch_array($result)) {
 			// Get followup details
 			foreach($row as $key=>$value) {
 				$fu_data[$key]=$value;
@@ -49,7 +51,8 @@ $types=array("assignment","suspension","delay","conclusion","consultation","corr
 
 // Edit followup details form
 
-lcm_page_start("Follow-up details");
+// lcm_page_start("Follow-up details");
+lcm_page_start("Edit follow-up");
 
 ?>
 
