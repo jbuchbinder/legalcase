@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.21 2005/03/21 14:47:12 mlutfy Exp $
+	$Id: keywords.php,v 1.22 2005/03/28 08:39:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -95,25 +95,44 @@ function show_keyword_group_id($id_group) {
 	
 	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
 	echo "<tr>\n";
-	echo "<td width='30%'>" . _T('keywords_input_type') . "</td>\n";
+	echo '<td width="30%"><label for="kwg_type">' . _T('keywords_input_type') . "</label></td>\n";
 	echo "<td>";
 	
 	if ($kwg['type'] == 'system') {
-		echo $kwg['type'];
+		echo _T('keywords_input_type_system');
 	} else {
-		$all_types = array("case", "followup", "client", "org", "author");
+		$all_types = array("case", "followup", "client", "org", "client_org");  // "author"
+		
 		echo '<select name="kwg_type" id="kwg_type">';
 
 		foreach ($all_types as $t)
-			echo '<option value="' . $t . '">' . $t . '</option>';
+			echo '<option value="' . $t . '">' . _T('keywords_input_type_' . $t) . '</option>';
 
 		echo "</select>\n";
 	}
 	
 	echo "</td>\n";
 	echo "</tr><tr>\n";
-	echo "<td>" . _T('keywords_input_policy') . "</td>\n";
-	echo "<td>" . $kwg['policy'] . "</td>\n";
+	echo '<td><label for="kwg_policy">' . _T('keywords_input_policy') . "</label></td>\n";
+	echo "<td>";
+
+	if ($kwg['type'] == 'system') {
+		echo _T('keywords_input_policy_' . $kwg['policy']);
+	} else {
+		$all_policy = array('mandatory', 'optional', 'recommended');
+		echo '<select name="kwg_policy" id="kwg_policy">';
+
+		foreach ($all_policy as $pol) {
+			$sel = ($kwg['policy'] == $pol ? ' selected="selected"' : '');
+			echo '<option value="' . $pol . '"' . $sel . '>' 
+				. _T('keywords_input_policy_' . $pol)
+				. "</option>\n";
+		}
+
+		echo "</select>\n";
+	}
+
+	echo "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
 	echo "<td>";
@@ -132,13 +151,15 @@ function show_keyword_group_id($id_group) {
 	echo "</tr><tr>\n";
 
 	// Name (only for new keywords, must be unique and cannot be changed)
-	if (! $id_keyword) {
-		echo "<td colspan='2'>";
-		echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
-			. "(short identifier, unique to this keyword group)" . "<br />\n";
+	echo "<td colspan='2'>";
+	echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
+		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
+	if ($id_group) {
+		echo $kwg['name'];
+	} else {
 		echo '<input type="text" style="width:99%;" id="kwg_name" name="kwg_name" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
-		echo "</td>";
 	}
+	echo "</td>";
 
 	echo "</tr><tr>\n";
 	echo "<td colspan='2'><strong>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "</strong><br />\n";
@@ -256,12 +277,13 @@ function show_keyword_id($id_keyword = 0) {
 // Update the information on a keyword group
 //
 function update_keyword_group($id_group) {
-	$kwg_suggest = $_REQUEST['kwg_suggest'];
-	$kwg_name    = $_REQUEST['kwg_name'];
-	$kwg_title   = $_REQUEST['kwg_title'];
-	$kwg_desc    = $_REQUEST['kwg_desc'];
-	$kwg_type    = $_REQUEST['kwg_type'];
-	$kwg_quantity = $_REQUEST['kwg_quantity']; // only for non-system kwg
+	$kwg_suggest = $_REQUEST['kwg_suggest']; // sys + user
+	$kwg_name    = $_REQUEST['kwg_name'];    // user only
+	$kwg_title   = $_REQUEST['kwg_title'];   // sys + user
+	$kwg_desc    = $_REQUEST['kwg_desc'];    // sys + user
+	$kwg_type    = $_REQUEST['kwg_type'];    // user only
+	$kwg_policy  = $_REQUEST['kwg_policy'];  // user only
+	$kwg_quantity = $_REQUEST['kwg_quantity']; // user only
 
 	//
 	// Check for errors
@@ -294,6 +316,7 @@ function update_keyword_group($id_group) {
 						title = '" . clean_input($kwg_title) . "',
 						description = '" . clean_input($kwg_desc) . "',
 						suggest = '',
+						policy = '" . clean_input($kwg_policy) . "',
 						quantity = '" . clean_input($kwg_quantity) . "',
 						ac_author = 'Y',
 						ac_admin = 'Y'";
@@ -302,14 +325,16 @@ function update_keyword_group($id_group) {
 		$id_group = lcm_insert_id();
 		$kwg_info = get_kwg_from_id($id_group);
 	} else {
-		// Get current kwg information (kwg_type, name, etc. cannot be changed)
+		// Get current kwg information (kwg_type & name cannot be changed)
 		$kwg_info = get_kwg_from_id($id_group);
 
 		$fl = " suggest = '" . clean_input($kwg_suggest) . "', "
 			. "title = '" . clean_input($kwg_title) . "' ";
 	
-		if ($kwg_info['type'] != 'system')
+		if ($kwg_info['type'] != 'system') {
 			$fl .= ", quantity = '" . clean_input($kwg_quantity) . "' ";
+			$fl .= ", policy = '" . clean_input($kwg_policy) . "' ";
+		}
 		
 		$fl .= ", description = '" . clean_input($kwg_desc) . "' ";
 	
