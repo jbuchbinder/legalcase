@@ -36,18 +36,18 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 // Change the current language
 //
 function lcm_set_language($lang) {
-	global $all_langs, $spip_lang_rtl, $spip_lang_right, $spip_lang_left, $spip_lang_dir, $spip_dir_lang;
+	global $all_langs, $lcm_lang_rtl, $lcm_lang_right, $lcm_lang_left, $lcm_lang_dir, $spip_dir_lang;
 
 	$liste_langues = $all_langs.','.read_meta('langues_multilingue');
 
  	if ($lang && ereg(",$lang,", ",$liste_langues,")) {
 		$GLOBALS['lcm_lang'] = $lang;
 
-		$spip_lang_rtl =   lang_dir($lang, '', '_rtl');
-		$spip_lang_left =  lang_dir($lang, 'left', 'right');
-		$spip_lang_right = lang_dir($lang, 'right', 'left');
-		$spip_lang_dir =   lang_dir($lang);
-		$spip_dir_lang = " dir='$spip_lang_dir'";
+		$lcm_lang_rtl =   lang_dir($lang, '', '_rtl');
+		$lcm_lang_left =  lang_dir($lang, 'left', 'right');
+		$lcm_lang_right = lang_dir($lang, 'right', 'left');
+		$lcm_lang_dir =   lang_dir($lang);
+		$lcm_dir_lang = " dir='$lcm_lang_dir'";
 
 		return true;
 	}
