@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.194 2005/03/31 13:49:54 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.195 2005/03/31 14:32:55 mlutfy Exp $
 */
 
 //
@@ -242,34 +242,30 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 						<div class=\"nav_column_menu_head\"><div class=\"mm_main_menu\">"
 							. _T('menu_main') . "</div>
 							</div>
-						<ul class=\"nav_menu_list\">
-							<li><a href=\"listcases.php\" class=\"main_nav_btn\">" . _T('menu_main_cases') . "</a></li>
-							<li><a href=\"listclients.php\" class=\"main_nav_btn\">" . _T('menu_main_clients') . "</a></li>
-							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">" . _T('menu_main_org') . "</a></li>
-							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">" . _T('menu_main_authors') . "</a></li>";
-							/*
-							if($prefs['screen'] == "narrow") {
-								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">" . _T('menu_profile_preferences') . "</a></li>\n";
-							}
-							*/
-	echo "
-						</ul>
-					</div>\n";
+						<ul class=\"nav_menu_list\">";
+	
+	echo show_navmenu_item("listcases.php", 'main_cases');
+	echo show_navmenu_item("listclients.php", 'main_clients');
+	echo show_navmenu_item("listorgs.php", 'main_orgs');
+	echo show_navmenu_item("listauthors.php", 'main_authors');
+
+	echo "</ul>\n";
+	echo "</div>\n";
 
 	if ($connect_status == 'admin') {
 		echo "		
 					<div class=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\"><div class=\"mm_admin\">" . _T('menu_admin') . "</div></div>
-						<ul class=\"nav_menu_list\">
-							<li><a href=\"config_site.php\" class=\"main_nav_btn\">" . _T('menu_admin_siteconf') . "</a></li>
-							<li><a href=\"archive.php\" class=\"main_nav_btn\">" .  _T('menu_admin_archives') . " <abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\"></abbr></a></li>
-							<li><a href=\"listreps.php\" class=\"main_nav_btn\">" . _T('menu_admin_reports') . " <abbr title=\"Manage reports (admin only)\"></abbr></a></li>
-							<!-- [ML] li><a href=\"listfilters.php\" class=\"main_nav_btn\">" . _T('menu_admin_filters') . " <abbr title=\"Manage filters (admin only)\"></abbr></a></li -->
-							<li><a href=\"keywords.php\" class=\"main_nav_btn\">" .  _T('menu_admin_keywords') . "</a></li>
-							<!-- [ML] li><a href=\"export_db.php\" class=\"main_nav_btn\">" .  _T('menu_admin_export_db') . "</a></li -->
-							<!-- [ML] li><a href=\"import_db.php\" class=\"main_nav_btn\">" .  _T('menu_admin_import_db') . "</a></li -->
-						</ul>
-					</div>\n";
+						<ul class=\"nav_menu_list\">";
+
+		show_navmenu_item("config_site.php", "admin_siteconf");
+		show_navmenu_item("archive.php", "admin_archives");
+		show_navmenu_item("listreps.php", "admin_reports");
+		// [ML] show_navmenu_item("listfilters.php", "admin_filters");
+		show_navmenu_item("keywords.php", "admin_keywords");
+
+		echo "</ul>\n";
+		echo "</div>\n";
 	}
 
 	// Show today's date
@@ -1472,6 +1468,13 @@ function show_attachments_upload($type, $id_type, $filename='', $description='')
 	echo '<input type="text" name="description" class="search_form_txt" value="' . $description . '" />&nbsp;' . "\n";
 //	echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 //	echo "</form>\n";
+}
+
+function show_navmenu_item($dest, $name) {
+	echo '<li><a href="' . $dest . '" class="main_nav_btn" '
+		. 'title="' . htmlspecialchars(_T('menu_' . $name . '_tooltip')) . '">'
+		. _T('menu_' . $name) 
+		. "</a></li>\n";
 }
 
 ?>
