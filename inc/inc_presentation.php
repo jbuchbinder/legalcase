@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.192 2005/03/31 08:42:00 makaveev Exp $
+	$Id: inc_presentation.php,v 1.193 2005/03/31 13:48:10 makaveev Exp $
 */
 
 //
@@ -212,6 +212,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 		<a href='summary.php' class='balance_link'>&nbsp;</a>
 		<h1 class='lcm_main_head'><a href='summary.php' class='head_ttl_link'>" . $site_name . "</a></h1>
 		<div class='lcm_slogan'><a href='summary.php' class='head_subttl_link'>" . $site_desc . "</a></div>
+		<br />
 	</div>";
 	
 	/*
