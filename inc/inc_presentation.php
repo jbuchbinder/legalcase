@@ -828,7 +828,7 @@ function show_tabs($tab_list, $selected, $url_base) {
 		parse_str($query,$params);
 		unset($params['tab']);
 		foreach ($params as $k => $v) {
-			$params[$k] = htmlspecialchars($k) . '=' . htmlspecialchars($v);
+			$params[$k] = $k . '=' . urlencode($v);
 		}
 	}
 	
