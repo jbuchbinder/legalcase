@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.102 2005/03/10 16:49:00 antzi Exp $
+	$Id: case_det.php,v 1.103 2005/03/12 17:51:18 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -568,8 +568,8 @@ if ($case > 0) {
 					for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
 						echo "\t<tr>";
 						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
-							. '<a href="view_file.php?file_id=' . $row['id_attachment'] . '" class="content_link">'
-							. $row['filename'] . '</a></td>';
+							. '<a href="view_file.php?type=case&amp;file_id=' . $row['id_attachment']
+							. '" class="content_link">' . $row['filename'] . '</a></td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
