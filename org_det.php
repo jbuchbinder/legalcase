@@ -26,17 +26,18 @@ if ($org>0) {
 		$edit = true;
 
 		// Show organisation details
-		echo '<h3>Details for organisation:</h3><p class="normal_text"><strong>' . $row['name'] .'</strong>';
-		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
+//		echo '<h3>Details for organisation:</h3><p class="normal_text"><strong>' . $row['name'] .'</strong>';
+		echo '<p class="normal_text"><strong>' . $row['name'] .'</strong>';
+//		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
 	//	echo 'Organisation name: ' . $row['name'] . "<br />\n";
 		echo 'Organisation address: ' . $row['address'] . "<br />\n";
-		echo 'Creation date: ' . $row['date_creation'] . "<br />\n";
-		echo 'Last update date: ' . $row['date_update'] . "<br />\n";
+		echo 'Created on: ' . $row['date_creation'] . "<br />\n";
+		echo 'Last update: ' . $row['date_update'] . "<br />\n";
 		if ($edit)
 			echo ' [<a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link"><strong>Edit organisation information</strong></a>]';
 
-		?></p><h3>Representative(s) of this organisation:</h3>
-		
+		?></p><!--h3>Representative(s) of this organisation:</h3-->
+
 		<table class="tbl_usr_dtl">
 			<tr>
 			    <th class="heading">Representative(s):</th>
