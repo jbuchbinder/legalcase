@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.37 2005/03/15 04:12:54 antzi Exp $
+	$Id: inc_db_create.php,v 1.38 2005/03/25 13:38:55 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -44,7 +44,7 @@ function log_if_not_duplicate_table($errno) {
 
 // For details on the various fields, see:
 // http://www.lcm.ngo-bg.org/article2.html
-//
+
 // [AG] Upon database format change DO NOT FORGET
 // to increase $lcm_db_version found in inc_version.
 // Also, add the queries to apply the changes into
@@ -69,8 +69,9 @@ function create_database() {
 	// + TODO lcm_appelation
 	// - DONE lcm_keyword
 	// - DONE lcm_keyword_group
-	// + TODO lcm_client_keyword
-	// + TODO lcm_case_keyword
+	// - DONE lcm_keyword_client
+	// - DONE lcm_keyword_case
+	// - DONE lcm_keyword_org
 	// - DONE lcm_case_client_org
 	// - DONE lcm_case_author
 
@@ -84,6 +85,7 @@ function create_database() {
 		date_assignment datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		legal_reason text NOT NULL,
 		alledged_crime text NOT NULL,
+		notes text NOT NULL DEFAULT '',
 		status text NOT NULL,
 		stage varchar(255) NOT NULL,
 		public tinyint(1) DEFAULT '0' NOT NULL,
@@ -172,6 +174,7 @@ function create_database() {
 		gender ENUM('female','male') DEFAULT 'male' NOT NULL,
 		civil_status varchar(255) DEFAULT 'unknown' NOT NULL,
 		income varchar(255) DEFAULT 'unknown' NOT NULL,
+		notes text DEFAULT '' NOT NULL,
 		PRIMARY KEY id_client (id_client))";
 	$result = lcm_query($query);
 
@@ -200,6 +203,10 @@ function create_database() {
 		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		address text NOT NULL,
+		notes text NOT NULL DEFAULT '',
+		court_reg text NOT NULL default '',
+		tax_number text NOT NULL default '',
+		stat_number text NOT NULL default '',
 		PRIMARY KEY id_org (id_org))";
 
 	$result = lcm_query($query);
@@ -246,6 +253,35 @@ function create_database() {
 
 	$result = lcm_query($query);
 
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_keyword_case (
+			id_entry bigint(21) NOT NULL auto_increment,
+			id_case bigint(21) NOT NULL default '0',
+			PRIMARY KEY (id_entry),
+			KEY id_case (id_case))";
+	
+	$result = lcm_query($query);
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_keyword_client (
+			id_entry bigint(21) NOT NULL auto_increment,
+			id_keyword bigint(21) NOT NULL default '0',
+			id_client bigint(21) NOT NULL default '0',
+			PRIMARY KEY (id_entry),
+			KEY id_client (id_client))";
+	
+	$result = lcm_query($query);
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_keyword_org (
+			id_entry bigint(21) NOT NULL auto_increment,
+			id_keyword bigint(21) NOT NULL default '0',
+			id_org bigint(21) NOT NULL default '0',
+			PRIMARY KEY (id_entry),
+			KEY id_org (id_org))";
+
+	$result = lcm_query($query);
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (id_group, name)";
