@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.17 2005/03/31 12:01:23 mlutfy Exp $
+	$Id: listorgs.php,v 1.18 2005/03/31 14:44:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,6 +28,7 @@ if (isset($_REQUEST['find_org_string']))
 	$find_org_string = $_REQUEST['find_org_string'];
 
 lcm_page_start(_T('title_org_list'));
+lcm_bubble('org_list');
 show_find_box('org', $find_org_string);
 
 // List all organisations in the system + search criterion if any
