@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.5 2004/12/16 15:12:13 makaveev Exp $
+	$Id: listreps.php,v 1.6 2005/02/03 09:27:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -61,9 +61,7 @@ if ($list_pos>0)
 ?>
 
 <table border='0' align='center' class='tbl_usr_dtl' width='99%'>
-	<tr><th class='heading'>Description</th>
-		<th colspan="2" class='heading'>Actions</th>
-	</tr>
+	<tr><th colspan="2" class='heading'>Description</th></tr>
 <?php
 // Process the output of the query
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
@@ -73,13 +71,20 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	if (true) echo '<a href="rep_det.php?rep=' . $row['id_report'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['title']),$find_rep_string);
 	if (true) echo '</a>';
-	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo "</td>\n";
+	
+	/*
+	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (true)
 		echo '<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="content_link">Edit</a>';
-	echo "</td>\n<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo "</td>\n";
+	*/
+
+	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (true)
 		echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="content_link">Run</a>';
-	echo "</td></tr>\n";
+	echo "</td>";
+	echo "</tr>\n";
 }
 
 ?>
