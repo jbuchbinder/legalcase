@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.5 2005/02/04 09:40:11 makaveev Exp $
+	$Id: import_db.php,v 1.6 2005/02/04 10:13:57 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -171,7 +171,10 @@ function import_database($input_filename) {
 
 	// Change backup dir permissions back
 	chmod($dir,0700);
-
+	
+	// Update lcm_db_version since we have overwritten lcm_meta
+	write_meta('lcm_db_version',$backup_db_version);
+	
 	// Debugging
 	//lcm_query("use lcm");
 
