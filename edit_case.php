@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.56 2005/03/03 16:11:26 antzi Exp $
+	$Id: edit_case.php,v 1.57 2005/03/03 16:28:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -123,8 +123,8 @@ echo show_all_errors($_SESSION['errors']);
 
 // Start edit case form
 echo "\n<form action=\"upd_case.php\" method=\"post\">
-<table class=\"tbl_usr_dtl\">
-<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\">\n";
+<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\" />
+<table class=\"tbl_usr_dtl\">\n";
 
 if ($attach_client)
 	echo '<input type="hidden" name="attach_client" value="' . $attach_client . '" />' . "\n";
@@ -171,7 +171,7 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "\t\t</tr>\n";
 
 	// Case stage
-	echo "\t\t<<tr><td>" . _T('case_input_status') . "</td>\n";
+	echo "\t\t<tr><td>" . _T('case_input_status') . "</td>\n";
 	echo "\t\t\t<td><select name='stage' class='sel_frm'>\n";
 	global $system_kwg;
 	foreach($system_kwg['stage']['keywords'] as $kw) {
@@ -195,13 +195,13 @@ if ($_SESSION['case_data']['id_case']) {
 
 		if (!read_meta('case_read_always') || $admin) {
 			echo '			<td><input type="checkbox" name="public" value="yes"';
-			if ($_SESSION['case_data']['public']) echo ' checked';
+			if ($_SESSION['case_data']['public']) echo ' checked="checked"';
 			echo "></td>\n";
 		}
 
 		if (!read_meta('case_write_always') || $admin) {
 			echo '			<td><input type="checkbox" name="pub_write" value="yes"';
-			if ($_SESSION['case_data']['pub_write']) echo ' checked';
+			if ($_SESSION['case_data']['pub_write']) echo ' checked="checked"';
 			echo "></td>\n";
 		}
 ?>				</tr>
