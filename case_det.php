@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.76 2005/02/01 13:04:09 mlutfy Exp $
+	$Id: case_det.php,v 1.77 2005/02/02 10:13:35 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -176,7 +176,7 @@ if ($case > 0) {
 
 		while ($row = lcm_fetch_array($result)) {
 			$html .= "<tr>\n";
-			$html .= '<td width="25"><img src="images/spip/client_one-20.png" alt="" height="20" width="20" /></td>' . "\n";
+			$html .= '<td width="25" align="center"><img src="images/jimmac/stock_person.png" alt="" height="16" width="16" /></td>' . "\n";
 			$html .= '<td><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 			$html .=  clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last']);
 			$html .= "</a></td>\n";
@@ -199,7 +199,7 @@ if ($case > 0) {
 
 		while ($row = lcm_fetch_array($result)) {
 			$html .= "<tr>\n";
-			$html .= '<td width="25"><img src="images/spip/client_org-20.png" alt="" height="20" width="20" /></td>' . "\n";
+			$html .= '<td width="25" align="center"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
 			$html .= '<td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
 			$html .= clean_output($row['name']);
 			$html .= "</a></td>\n";
