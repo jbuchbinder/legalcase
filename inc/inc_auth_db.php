@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.14 2005/01/12 09:27:38 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.15 2005/01/12 10:16:22 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -29,11 +29,14 @@ class Auth_db {
 	var $nom, $username, $md5pass, $md5next, $alea_futur, $statut;
 
 	function init() {
+		$this->error = "";
 		return true;
 	}
 
 	// Check the encrypted password (javascript)
 	function validate_md5_challenge($username, $current_mdpass, $future_mdpass) {
+		$this->error = "";
+
 		// Do not allow empty passwords
 		if ($current_mdpass == '') return false;
 
@@ -58,6 +61,8 @@ class Auth_db {
 
 	// Check the non-encrypted password (no javascript support)
 	function validate_pass_cleartext($username, $pass) {
+		$this->error = "";
+
 		// Do not allow empty passwords
 		if ($pass == '') return false;
 
@@ -73,11 +78,14 @@ class Auth_db {
 
 	// lire == read. See lcm_cookie.php. This function is important for LDAP auth.
 	function lire() {
+		$this->error = "";
 		return true;
 	}
 
 	// [ML] not used afaik
 	function activate() {
+		$this->error = "";
+
 		if ($this->statut == 'nouveau') { // new author
 			lcm_query("UPDATE lcm_author SET status='normal' WHERE username='".addslashes($this->username)."'");
 		}
@@ -93,11 +101,14 @@ class Auth_db {
 	}
 
 	function activer() {
+		$this->error = "";
 		lcm_log("use of deprecated function: activer, use activate instead");
 		return $this->activate();
 	}
 
 	function is_newpass_allowed($id_author, $username, $author_session = 0) {
+		$this->error = "";
+
 		if (! $author_session)
 			return true;
 
@@ -105,13 +116,23 @@ class Auth_db {
 			return true;
 		else if ($author_session['status'] == 'admin')
 			return true;
-		else
+		else {
+			$this->error = "You are not allowed to change the password.";
 			return false;
+		}
 	}
 
 	function newpass($id_author, $username, $pass, $author_session = 0) {
+		$this->error = "";
+
 		if ($this->is_newpass_allowed($id_author, $username, $author_session) == false)
 			return false;
+
+		// Check for password size
+		if (! $pass || strlen(utf8_decode($pass)) <= 5) {
+			$this->error = _T('pass_title_new_pass');
+			return false;
+		}
 
 		$alea_current = create_uniq_id();
 		$alea_future  = create_uniq_id();
@@ -128,16 +149,22 @@ class Auth_db {
 	}
 
 	function is_newusername_allowed($id_author, $username, $author_session = 0) {
+		$this->error = "";
+		
 		if (! $author_session)
 			return true;
 
 		if ($author_session['status'] == 'admin')
 			return true;
-		else
+		else {
+			$this->error = "You are not allowed to change the username.";
 			return false;
+		}
 	}
 
 	function newusername($id_author, $old_username, $new_username, $author_session = 0) {
+		$this->error = "";
+
 		if ($this->is_newusername_allowed($id_author, $username, $author_session) == false)
 			return false;
 
