@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.22 2005/02/15 08:24:10 mlutfy Exp $
+	$Id: listclients.php,v 1.23 2005/02/15 08:32:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -59,6 +59,12 @@ if ($list_pos >= $number_of_rows)
 if ($list_pos > 0)
 	if (!lcm_data_seek($result,$list_pos))
 		lcm_panic("Error seeking position $list_pos in the result");
+
+echo '<form name="frm_find_client" class="search_form" action="listclients.php" method="get">' . "\n";
+echo _T('input_search_client') . "&nbsp;";
+echo '<input type="text" name="find_client_string" size="10" class="search_form_txt" value="' .  $find_client_string . '" />';
+echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
+echo "</form>\n";
 
 // Output table tags
 ?>
