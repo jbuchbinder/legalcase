@@ -19,7 +19,7 @@ function lcm_query_db($query) {
 	if ($my_profile)
 		$m1 = microtime();
 
-	if ($GLOBALS['mysql_rappel_connexion'] AND $spip_mysql_link)
+	if ($GLOBALS['mysql_recall_link'] AND $spip_mysql_link)
 		$result = mysql_query($query, $spip_mysql_link);
 	else 
 		$result = mysql_query($query);
@@ -61,8 +61,10 @@ function lcm_create_table($table, $query) {
 // This includes the "prefix" name for the database tables
 //
 function process_query($query) {
-	// [ML] 'rappel_connection' == 'recall connection' (keep alive)
-	if ($GLOBALS['mysql_rappel_connexion'] AND $db = $GLOBALS['spip_mysql_db'])
+	$db = '';
+	$suite = '';
+
+	if ($GLOBALS['mysql_recall_link'] AND $db = $GLOBALS['lcm_mysql_db'])
 		$db = '`'.$db.'`.';
 
 	// change the names of the tables ($table_prefix)
@@ -91,7 +93,7 @@ function process_query($query) {
 //
 
 function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
-	global $spip_mysql_link, $spip_mysql_db;	// for multiple connections
+	global $spip_mysql_link, $lcm_mysql_db;	// for multiple connections
 
 	if ($link && $db) {
 		return mysql_select_db($db);
@@ -101,7 +103,7 @@ function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 	$spip_mysql_link = @mysql_connect($host, $login, $pass);
 
 	if ($db) {
-		$spip_mysql_db = $db;
+		$lcm_mysql_db = $db;
 		return @mysql_select_db($db);
 	} else {
 		return $spip_mysql_link;
@@ -237,9 +239,9 @@ function spip_insert_id() {
 // Put a local lock on a given LCM installation
 // [ML] we can probably ignore this
 function spip_get_lock($nom, $timeout = 0) {
-	global $spip_mysql_db, $table_prefix;
+	global $lcm_mysql_db, $table_prefix;
 	if ($table_prefix) $nom = "$table_prefix:$nom";
-	if ($spip_mysql_db) $nom = "$spip_mysql_db:$nom";
+	if ($lcm_mysql_db) $nom = "$lcm_mysql_db:$nom";
 
 	$nom = addslashes($nom);
 	list($lock_ok) = spip_fetch_array(spip_query("SELECT GET_LOCK('$nom', $timeout)"));
@@ -247,9 +249,9 @@ function spip_get_lock($nom, $timeout = 0) {
 }
 
 function spip_release_lock($nom) {
-	global $spip_mysql_db, $table_prefix;
+	global $lcm_mysql_db, $table_prefix;
 	if ($table_prefix) $nom = "$table_prefix:$nom";
-	if ($spip_mysql_db) $nom = "$spip_mysql_db:$nom";
+	if ($lcm_mysql_db) $nom = "$lcm_mysql_db:$nom";
 
 	$nom = addslashes($nom);
 	spip_query("SELECT RELEASE_LOCK('$nom')");
