@@ -325,19 +325,25 @@ function install_html_end() {
 // Commonly used visual functions
 //
 
-function get_date_inputs($name = 'select', $date = '') {
-	// TODO: Add global variables (optional) in my_options.php to 
+function get_date_inputs($name = 'select', $date = '', $blank = true, $table = false) {
+	// TODO: Add global variables (optional) in my_options.php to
 	// modify the date range.
 
 	// Date and month have no default selection, Year does
-	$default_month = ($date ? format_date($date, 'n') : 0);
-	$default_day = ($date ? format_date($date, 'j') : 0);
-	$default_year = format_date($date, 'Y');
+//	$default_month = ($date ? format_date($date, 'n') : 0);
+//	$default_day = ($date ? format_date($date, 'j') : 0);
+//	$default_year = format_date($date, 'Y');
+	$split_date = recup_date($date);
+	$default_month = $split_date[1];
+	$default_day = $split_date[2];
+	$default_year = $split_date[0];
 
-	$ret = "<table cellpadding=\"3\" cellspacing=\"3\">\n"
-		. "<tr>\n"
-		. "\t<td><!-- " . _T('select_date_day') . "<br/ -->"
-		. "\t\t<select name=\"" . $name . "_day\" id=\"" . $name . "_day\">\n";
+	$ret = '';
+	if ($table)
+		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n"
+			. "<tr>\n"
+			. "<td><!-- " . _T('select_date_day') . "<br/ -->\n";
+	$ret .= "<select name=\"" . $name . "_day\" id=\"" . $name . "_day\">\n";
 
 	// Day of month
 	for ($i = 1; $i <= 31; $i++) {
@@ -345,41 +351,50 @@ function get_date_inputs($name = 'select', $date = '') {
 		$ret .= "<option" . $default . " value=\"" . $i . "\">" . $i . "</option>\n";
 	}
 
-	$default = ($default_day == 0 ? ' selected="selected"' : '');
-	$ret .= "<option" . $default . " value=\"\"></option>\n";
+	if ($blank) {
+		$default = ($default_day == 0 ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"\"></option>\n";
+	}
 
 	// Month of year
-	$ret .= "\t\t</select>\n"
-		. "\t</td>\n"
-		. "\t<td><!-- " . _T('select_date_month') . "<br/ -->\n"
-		. "\t\t<select name=\"" . $name . "_month\" id=\"" . $name . "_month\">\n";
+	$ret .= "</select>\n";
+	if ($table)
+		$ret .= "</td>\n"
+			. "<td><!-- " . _T('select_date_month') . "<br/ -->\n";
+	$ret .= "<select name=\"" . $name . "_month\" id=\"" . $name . "_month\">\n";
 
 	for ($i = 1; $i <= 12; $i++) {
 		$default = ($i == $default_month ? ' selected="selected"' : '');
 		$ret .= "<option" . $default . " value=\"" . $i . "\">" . _T('date_month_' . $i) . "</option>\n";
 	}
 
-	$default = ($default_month == 0 ? ' selected="selected"' : '');
-	$ret .= "<option" . $default . " value=\"\"></option>\n";
+	if ($blank) {
+		$default = ($default_month == 0 ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"\"></option>\n";
+	}
 
 	// Year
-	$ret .= "\t</select>\n"
-		. "\t</td>\n"
-		. "\t<td><!-- " . _T('select_date_year') . "<br/ -->\n"
-		. "\t\t<select name=\"" . $name . "_year\" id=\"" . $name . "_year\">\n";
+	$ret .= "</select>\n";
+	if ($table)
+		$ret .= "</td>\n"
+			. "<td><!-- " . _T('select_date_year') . "<br/ -->\n";
+	$ret .= "<select name=\"" . $name . "_year\" id=\"" . $name . "_year\">\n";
 
 	for ($i = 1999; $i <= 2006; $i++) {
 		$default = ($i == $default_year ? ' selected="selected"' : '');
 		$ret .= "<option" . $default . " value=\"" . $i . "\">" . $i . "</option>\n";
 	}
 
-	$default = ($default_year == 0 ? ' selected="selected"' : '');
-	$ret .= "<option" . $default . " value=\"\"></option>\n";
-		
-	$ret .= "\t</select>\n"
-		. "\t</td>\n"
-		. "</tr>\n"
-		. "</table>\n";
+	if ($blank) {
+		$default = ($default_year == 0 ? ' selected="selected"' : '');
+		$ret .= "<option" . $default . " value=\"\"></option>\n";
+	}
+
+	$ret .= "</select>\n";
+	if ($table)
+		$ret .= "</td>\n"
+			. "</tr>\n"
+			. "</table>\n";
 
 	if ($date)
 		$ret .= "<!-- date = $date -->\n";
