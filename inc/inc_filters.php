@@ -57,13 +57,20 @@ function format_date($timestamp = '') {
 }
 
 // Error display function
-// Highlights (outlines) errirs in the form data
-function f_err($fn, $errors)
-{
+// Highlights (outlines) errors in the form data
+function f_err($fn, $errors) {
     if (isset($errors[$fn]))
 		echo "<font color='red'>$errors[$fn]</font><br>";
 }
 
+// Cleans user input string from 'dangerous' characters
+function clean($string) {
+	if (get_magic_quotes_gpc()) {
+		return $string;
+	} else {
+		return addslashes($string);
+	}
+}
 
 /* ********************************************************
  * DEPRECATED: The following functions will be removed soon
