@@ -18,8 +18,10 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.8 2005/01/10 16:11:18 mlutfy Exp $
+	$Id: upd_author.php,v 1.9 2005/01/11 12:52:50 mlutfy Exp $
 */
+
+session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
@@ -35,8 +37,10 @@ function change_password($usr) {
 	$auth = new $class_auth;
 
 	if (! $auth->init()) {
-		// TODO: make error
 		lcm_log("pass change: failed auth init, signal 'internal error'.");
+		$_SESSION['errors']['password_generic'] = "Failed to
+			initialize authentication mecanism. Please contact your local
+			system administrator.";
 		return;
 	}
 
@@ -46,7 +50,7 @@ function change_password($usr) {
 			$result = $auth->newpass($usr['username'], $usr['usr_new_passwd'], $author_session);
 			lcm_log("pass change: result = " . $result);
 		} else {
-			// TODO: Make error: passwords do not match
+			$_SESSION['errors']['password_confirm'] = "The passwords do not match.";
 		}
 	} else {
 		// If user, confirm existing password before changing it
@@ -70,40 +74,31 @@ function change_password($usr) {
 			if (! $valid_newpass) {
 				// TODO return error: $this->get_error() ? generic error?
 				lcm_log("new pass failed 001");
+				$_SESSION['errors']['password_generic'] = "Failed to change the
+					password (internal error). Please contact your local system 
+					administrator.";
 			}
 		} else {
-			// TODO: return error: could not validate current password
 			lcm_log("pass change: could not validate current password");
+			$_SESSION['errors']['password_current'] = "Bad password";
 		}
 	}
-
 }
 
-session_start();
-
-// Register $errors array - just in case
-if (!session_is_registered("errors"))
-    session_register("errors");
-
 // Clear all previous errors
-$errors=array();
+$_SESSION['errors'] = array();
 
+// [ML] deprecated function call PHP 4.2.0 
+// cf: http://www.php.net/session_register
+/*
 // Register form data in the session
 if(!session_is_registered("usr"))
     session_register("usr");
+*/
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-    $usr[$key]=$value;
-
-// Check author data for validty
-// [ML:temporary] if (!$usr['email']) $errors['email'] = 'You MUST specify an e-mail!';
-
-// There were errors, send user back to form
-if (count($errors)) {
-    header("Location: $HTTP_REFERER");
-    exit;
-}
+    $usr[$key] = $value;
 
 //
 // Change password (if requested)
@@ -195,9 +190,13 @@ if (isset($_REQUEST['contact_value'])) {
 	}
 }
 
-session_destroy();
+// There were errors, send user back to form
+if (count($_SESSION['errors'])) {
+    header("Location: $HTTP_REFERER");
+    exit;
+}
 
-// [ML] Added this because 1- people can bookmark a page 2- easier for testing
+// No errors: send user back to referer, or (if none) show author details.
 if (isset($usr['ref_edit_author']) && $usr['ref_edit_author'])
 	header('Location: ' . $usr['ref_edit_author']);
 else
