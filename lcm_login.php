@@ -1,5 +1,11 @@
 <?php
 
+// Test if LCM is installed
+if (!@file_exists('inc/config/inc_connect.php')) {
+	header('Location: install.php');
+	exit;
+}
+
 include('inc/inc_version.php');
 include_lcm('inc_presentation');
 include_lcm('inc_login');
