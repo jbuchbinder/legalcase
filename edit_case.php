@@ -28,7 +28,7 @@ if ($case>0) {
 }
 
 ?>
-<h1>Edit case information:</h1>
+
 <form action="upd_case.php" method="POST">
 	<table>
 		<caption>Case details</caption>

@@ -1,7 +1,8 @@
 <?php
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
+include_lcm('inc_acc');
+
 lcm_page_start("List of cases");
 
 // Prepare query
@@ -16,7 +17,7 @@ $q = "SELECT lcm_case.id_case,title,public
 $result = lcm_query($q);
 
 ?>
-<h1>List of cases</h1>
+
 <table border>
 <tr><th colspan="2">Case description</th></tr>
 <?php
