@@ -116,7 +116,7 @@ else if ($absent_dirs) {
 }
 else {
 	if ($install)
-		header("Location: ./install.php?etape=1");
+		header("Location: ./install.php?step=1");
 	else
 		header("Location: ./index.php");
 }

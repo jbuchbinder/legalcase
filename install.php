@@ -9,6 +9,7 @@ use_language_of_visitor();
 // Test if the software is already installed
 if (@file_exists('inc/config/inc_connect.php')) {
 	install_html_start();
+	// forbidden area
 	echo "<p><font face='Verdana,Arial,Sans,sans-serif' size='4'>"._T('avis_espace_interdit')."</font>";
 	install_html_end();
 
@@ -19,9 +20,10 @@ if (@file_exists('inc/config/inc_connect.php')) {
 // Usual installation steps
 //
 
-if ($etape == 6) {
+if ($step == 6) {
 	install_html_start();
 
+	// last step
 	echo "<br><font face='Verdana,Arial,Sans,sans-serif' size='3'>"._T('info_derniere_etape')."</b></font>";
 	echo "<p>";
 	echo "<b>"._T('info_code_acces')."</b>";
@@ -82,7 +84,7 @@ if ($etape == 6) {
 	install_html_end();
 }
 
-else if ($etape == 5) {
+else if ($step == 5) {
 	install_html_start();
 
 	include_config('inc_connect_install');
@@ -96,7 +98,7 @@ else if ($etape == 5) {
 	echo _T('info_laisser_champs_vides');
 
 	echo "\n<form action='install.php' method='post'>\n";
-	echo "<input type='hidden' name='etape' value='6'>\n";
+	echo "<input type='hidden' name='step' value='6'>\n";
 
 	echo "<fieldset><label><b>"._T('info_identification_publique')."</b><br></label>";
 	echo "<b>"._T('entree_signature')."</b><br>";
@@ -124,7 +126,7 @@ else if ($etape == 5) {
 		echo "<b>"._T('info_authentification_externe')."</b>";
 		echo "<p>"._T('texte_annuaire_ldap_1');
 		echo "<form action='install.php' method='post'>";
-		echo "<input type='hidden' name='etape' value='ldap1'>";
+		echo "<input type='hidden' name='step' value='ldap1'>";
 		echo "<DIV align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value=\""._T('bouton_acces_ldap')."\">";
 		echo "</form>";
 	}
@@ -132,7 +134,7 @@ else if ($etape == 5) {
 	install_html_end();
 }
 
-else if ($etape == 4) {
+else if ($step == 4) {
 	install_html_start();
 
 	echo "<BR><FONT FACE='Verdana,Arial,Sans,sans-serif' size=3>"._T('info_creation_tables')."</FONT>";
@@ -194,7 +196,7 @@ else if ($etape == 4) {
 		echo "<B>"._T('info_base_installee')."</B><P>"._T('info_etape_suivante_1');
 
 		echo "<form action='install.php' method='post'>";
-		echo "<input type='hidden' name='etape' value='5'>";
+		echo "<input type='hidden' name='step' value='5'>";
 
 		echo "<DIV align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value='"._T('bouton_suivant')." >>'>";
 
@@ -210,7 +212,7 @@ else if ($etape == 4) {
 	install_html_end();
 }
 
-else if ($etape == 3) {
+else if ($step == 3) {
 	install_html_start();
 
 	echo "<br><font face='Verdana,Arial,Sans,sans-serif' size=3>"._T('info_choix_base')." <B>"._T('menu_aide_installation_choix_base')."</b></font>";
@@ -219,7 +221,7 @@ else if ($etape == 3) {
 	echo "<p>";
 
 	echo "<form action='install.php' method='post'>";
-	echo "<input type='hidden' name='etape' value='4'>";
+	echo "<input type='hidden' name='step' value='4'>";
 	echo "<input type='hidden' name='adresse_db'  value=\"$adresse_db\" size='40'>";
 	echo "<input type='hidden' name='login_db' value=\"$login_db\">";
 	echo "<input type='hidden' name='pass_db' value=\"$pass_db\"><P>";
@@ -274,7 +276,7 @@ else if ($etape == 3) {
 	install_html_end();
 }
 
-else if ($etape == 2) {
+else if ($step == 2) {
 	install_html_start();
 
 	echo "<BR><FONT FACE='Verdana,Arial,Sans,sans-serif' size=3>"._T('info_connexion_base')."</FONT>";
@@ -290,7 +292,7 @@ else if ($etape == 2) {
 		echo "<B>"._T('info_connexion_ok')."</B><P> "._T('info_etape_suivante_2');
 
 		echo "<form action='install.php' method='post'>";
-		echo "<input type='hidden' name='etape' value='3'>";
+		echo "<input type='hidden' name='step' value='3'>";
 		echo "<input type='hidden' name='adresse_db'  value=\"$adresse_db\" size='40'>";
 		echo "<input type='hidden' name='login_db' value=\"$login_db\">";
 		echo "<input type='hidden' name='pass_db' value=\"$pass_db\"><P>";
@@ -307,7 +309,7 @@ else if ($etape == 2) {
 	install_html_end();
 }
 
-else if ($etape == 1) {
+else if ($step == 1) {
 	install_html_start();
 
 	echo "<BR><FONT FACE='Verdana,Arial,Sans,sans-serif' size=3>"._T('info_connexion_mysql')."</FONT>";
@@ -335,7 +337,7 @@ else if ($etape == 1) {
 	}
 
 	echo "<p><form action='install.php' method='post'>";
-	echo "<input type='hidden' name='etape' value='2'>";
+	echo "<input type='hidden' name='step' value='2'>";
 	echo "<fieldset><label><B>"._T('entree_base_donnee_1')."</B><BR></label>";
 	echo _T('entree_base_donnee_2')."<BR>";
 	echo "<input type='text' name='adresse_db' class='formo' value=\"$adresse_db\" size='40'></fieldset><P>";
@@ -357,44 +359,40 @@ else if ($etape == 1) {
 
 }
 
-else if ($etape == 'dirs') {
+else if ($step == 'dirs') {
 	header("Location: lcm_test_dirs.php");
 }
 
-else if (!$etape) {
+else if (!$step) {
 	$menu_lang = menu_languages('var_lang_lcm_all');
 
-	//if (!$menu_lang)
-	//	header("Location: lcm_test_dirs.php");
-	// else 
-	{
-		install_html_start();
+	install_html_start();
 
-		// TODO TRANSLATE
-		echo "<p>&nbsp;</p>\n";
-		echo "<table border='0' cellspacing='0' width='300' height='170' style=\"background-image: url('images/lcm/logo_lcm-170.png'); border: 0\">\n";
-		echo "<tr><td align='center'><p style='font-size: 130%;'>" .  _T('title_software') . "</p></td></tr>\n";
-		echo "</table>\n";
+	// TODO TRANSLATE
+	echo "<p>&nbsp;</p>\n";
+	echo "<table border='0' cellspacing='0' width='300' height='170' style=\"background-image: url('images/lcm/logo_lcm-170.png'); border: 0\">\n";
+	echo "<tr><td align='center'><p style='font-size: 130%;'>" .  _T('title_software') . "</p></td></tr>\n";
+	echo "</table>\n";
 
-		echo "<p>&nbsp;</p><p>" . _T('install_select_langue');
+	echo "<p>&nbsp;</p><p>" . _T('install_select_langue');
 
-		echo "<p><div align='center'>".$menu_lang."</div>";
+	echo "<p><div align='center'>".$menu_lang."</div>";
 
-		echo "<p><form action='install.php' method='get'>";
-		echo "<input type='hidden' name='etape' value='dirs'>";
-		echo "<DIV align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value='"._T('bouton_suivant')." >>'>";
-		echo "</form>";
+	echo "<p><form action='install.php' method='get'>";
+	echo "<input type='hidden' name='step' value='dirs'>";
+	echo "<DIV align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value='"._T('bouton_suivant')." >>'>";
+	echo "</form>";
 
-		install_html_end();
-	}
+	install_html_end();
 }
 
 
 //
-// Etapes de l'installation LDAP
+// Steps for LDAP installation
+// [ML] For now, lets ignore this
 //
 
-else if ($etape == 'ldap5') {
+else if ($step == 'ldap5') {
 	install_html_start();
 
 	include_ecrire('inc_connect_install.php3');
@@ -406,14 +404,14 @@ else if ($etape == 'ldap5') {
 	echo "<P>"._T('info_terminer_installation');
 
 	echo "<form action='install.php' method='post'>";
-	echo "<input type='hidden' name='etape' value='5'>";
+	echo "<input type='hidden' name='step' value='5'>";
 
 	echo "<DIV align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value='"._T('bouton_suivant')." >>'>";
 
 	echo "</FORM>";
 }
 
-else if ($etape == 'ldap4') {
+else if ($step == 'ldap4') {
 	install_html_start();
 
 	if (!$base_ldap) $base_ldap = $base_ldap_text;
@@ -421,7 +419,7 @@ else if ($etape == 'ldap4') {
 	$ldap_link = @ldap_connect("$adresse_ldap", "$port_ldap");
 	@ldap_bind($ldap_link, "$login_ldap", "$pass_ldap");
 
-	// Essayer de verifier le chemin fourni
+	// Try to validate the path provided
 	$r = @ldap_compare($ldap_link, $base_ldap, "objectClass", "");
 	$fail = (ldap_errno($ldap_link) == 32);
 
@@ -454,7 +452,7 @@ else if ($etape == 'ldap4') {
 		fclose($myFile);
 
 		echo "<p><form action='install.php' method='post'>";
-		echo "<input type='hidden' name='etape' value='ldap5'>";
+		echo "<input type='hidden' name='step' value='ldap5'>";
 		echo "<fieldset><label><B>"._T('info_statut_utilisateurs_1')."</B></label><BR>";
 		echo _T('info_statut_utilisateurs_2')." ";
 		echo "<p>";
@@ -473,7 +471,7 @@ else if ($etape == 'ldap4') {
 	install_html_end();
 }
 
-else if ($etape == 'ldap3') {
+else if ($step == 'ldap3') {
 	install_html_start();
 
 	echo "<BR><FONT FACE='Verdana,Arial,Sans,sans-serif' size=3>"._T('info_chemin_acces_1')."</FONT>";
@@ -487,7 +485,7 @@ else if ($etape == 'ldap3') {
 	$info = @ldap_get_entries($ldap_link, $result);
 
 	echo "<form action='install.php' method='post'>";
-	echo "<input type='hidden' name='etape' value='ldap4'>";
+	echo "<input type='hidden' name='step' value='ldap4'>";
 	echo "<input type='hidden' name='adresse_ldap' value=\"$adresse_ldap\">";
 	echo "<input type='hidden' name='port_ldap' value=\"$port_ldap\">";
 	echo "<input type='hidden' name='login_ldap' value=\"$login_ldap\">";
@@ -535,7 +533,7 @@ else if ($etape == 'ldap3') {
 
 }
 
-else if ($etape == 'ldap2') {
+else if ($step == 'ldap2') {
 	install_html_start();
 
 	echo "<br><font face='Verdana,Arial,Sans,sans-serif' size='3'>"._T('titre_connexion_ldap')."</font>";
@@ -548,7 +546,7 @@ else if ($etape == 'ldap2') {
 		echo "<B>"._T('info_connexion_ldap_ok');
 
 		echo "<form action='install.php' method='post'>";
-		echo "<input type='hidden' name='etape' value='ldap3'>";
+		echo "<input type='hidden' name='step' value='ldap3'>";
 		echo "<input type='hidden' name='adresse_ldap' value=\"$adresse_ldap\">";
 		echo "<input type='hidden' name='port_ldap' value=\"$port_ldap\">";
 		echo "<input type='hidden' name='login_ldap' value=\"$login_ldap\">";
@@ -566,7 +564,7 @@ else if ($etape == 'ldap2') {
 	install_html_end();
 }
 
-else if ($etape == 'ldap1') {
+else if ($step == 'ldap1') {
 	install_html_start();
 
 	echo "<br><font face='Verdana,Arial,Sans,sans-serif' size=3>"._T('titre_connexion_ldap')."</font>";
@@ -586,7 +584,7 @@ else if ($etape == 'ldap1') {
 	}
 
 	echo "<p><form action='install.php' method='post'>";
-	echo "<input type='hidden' name='etape' value='ldap2'>";
+	echo "<input type='hidden' name='step' value='ldap2'>";
 	echo "<fieldset><label><B>"._T('entree_adresse_annuaire')."</B><BR></label>";
 	echo _T('texte_adresse_annuaire_1')."<BR>";
 	echo "<input type='text' name='adresse_ldap' class='formo' value=\"$adresse_ldap\" size='20'><P>";
