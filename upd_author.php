@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.2 2004/11/25 15:16:48 mlutfy Exp $
+	$Id: upd_author.php,v 1.3 2004/12/10 09:08:36 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -63,7 +63,7 @@ $fl = "id_author=" . $usr['id_author'] . ",username='" . clean_input($usr['usern
 
 if ($usr['id_author'] > 0) {
 	// Check access rights
-	if ($GLOBALS['author_session']['status'] != 'admin')
+	if (($GLOBALS['author_session']['status'] != 'admin') && ($GLOBALS['author_session']['id_author'] != $usr['id_author']))
 		die("You don't have permission to change author's information!");
 	else {
 		$q = "UPDATE lcm_author SET $fl WHERE id_author=" . $usr['id_author'];
