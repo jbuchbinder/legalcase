@@ -11,7 +11,7 @@ function lcm_query_db($query) {
 	global $spip_mysql_link;
 	static $tt = 0;
 
-	$my_debug = $GLOBALS['sql_debug'];
+	$my_debug   = $GLOBALS['sql_debug'];
 	$my_profile = $GLOBALS['sql_profile'];
 
 	$query = process_query($query);
@@ -34,10 +34,12 @@ function lcm_query_db($query) {
 		echo " -> <font color='blue'>".sprintf("%3f", $dt)."</font> ($tt)</small><p>\n";
 	}
 
-	if ($my_debug AND $s = mysql_errno()) {
+	if ($my_debug AND lcm_sql_errno()) {
+		$s = lcm_sql_error();
 		$error = _T('warning_sql_query_failed') . "<br />\n" . htmlentities($query) . "<br />\n";
 		$error .= "&laquo; " . htmlentities($s) . " &raquo;<p>";
 		echo $error;
+		echo lcm_getbacktrace();
 	}
 
 	if ($my_debug)

@@ -127,7 +127,7 @@ function create_groups($keyword_groups) {
 
 		if ($kwg_id < 1) {
 			lcm_log("create_groups: creation of keyword group seems to have failed. Aborting.");
-			lcm_log("-> Query way: " . $q);
+			lcm_log("-> Query was: " . $q);
 			return;
 		}
 
