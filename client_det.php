@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.19 2005/02/15 08:54:26 mlutfy Exp $
+	$Id: client_det.php,v 1.20 2005/02/15 23:58:10 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -56,6 +56,12 @@ if ($client > 0) {
 		// Show client details
 		lcm_page_start(_T('title_client_view') . ' ' . $row['name_first'] . ' ' .  $row['name_middle'] . ' ' . $row['name_last']);
 
+		// Show tabs
+		$groups = array('general','contacts','organisations','cases');
+		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 0 );
+		//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
+		show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME']);
+
 		if (isset($_SESSION['client']['attach_case'])) {
 			$q = "SELECT title
 					FROM lcm_case
@@ -70,130 +76,139 @@ if ($client > 0) {
 			}
 		}
 
-		//
-		// Show client general information
-		//
-		echo '<fieldset class="info_box">';
-		echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_view_general') . "</div>\n";
-
-		echo '<p class="normal_text">';
-		echo _T('client_input_id') . ' ' . $row['id_client'] . "<br/>\n";
-		echo _T('person_input_gender') . ' ' . $gender . "<br/>\n";
-
-		if (read_meta('client_citizen_number') == 'yes')
-			echo _T('person_input_citizen_number') . ' ' . $row['citizen_number'] . "<br/>\n";
-
-		echo _T('person_input_address') . ' ' . $row['address'] . "<br/>\n";
-		echo _T('person_input_civil_status') . ' ' . $row['civil_status'] . "<br/>\n";
-		echo _T('person_input_income') . ' ' . $row['income'] . "<br/>\n";
-		echo 'Creation date: ' . format_date($row['date_creation']) . "<br/>\n";
-		// [ML] echo 'Last update date: ' . $row['date_update'] . "<br/>\n";
-		echo "</p>\n";
-
-		if ($edit)
-			echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a></p>' . "\n";
-
-		echo '<p><a href="edit_case.php?case=0&attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
-		echo "Open new case involving this client";
-		echo "</a></p>\n";
+		switch ($tab) {
+			case 0:
+				//
+				// Show client general information
+				//
+				echo '<fieldset class="info_box">';
+				echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_view_general') . "</div>\n";
 		
-		echo "</fieldset>\n";
-			
-		//
-		// Show client contacts (if any)
-		//
-		$hide_emails = read_meta('hide_emails');
-		$contacts = get_contacts('client', $row['id_client']);
-
-		$html = '<fieldset class="info_box">';
-		$html .= '<div class="prefs_column_menu_head">' . _T('client_subtitle_contacts') . "</div>\n";
-
-		$html .= '<table border="0" class="tbl_usr_dtl">' . "\n";
-		//$html .= '<tr><th class="heading" colspan="2">' . "Contacts:" . '</th></tr>' . "\n";
-
-		$i = 0;
-		foreach($contacts as $c) {
-			if (! ($hide_emails == 'yes' && $c['name'] == 'email_main' && $author_session['status'] != 'admin')) {
-				$html .= "\t<tr>";
-				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>";
-				$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $c['value'] . "</td>";
-				$html .= "</tr>\n";
-				$i++;
-			}
-		}
-
-		$html .= "</table><br /></fieldset>\n";
-
-		if ($i > 0)
-			echo $html;
-
-		//
-		// Show client associated organisations
-		//
-		echo '<fieldset class="info_box">';
-		echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_associated_org') . "</div>\n";
-
-		echo '
-		<br /><table border="0" class="tbl_usr_dtl">
-		    <tr>
-			<th class="heading">Organisation name</th>
-			<th class="heading">&nbsp;</th>
-		    </tr>';
-
-		//
-		// Show organisation(s)
-		//
-		$q = "SELECT lcm_org.id_org,name
-				FROM lcm_client_org,lcm_org
-				WHERE id_client=$client
-					AND lcm_client_org.id_org=lcm_org.id_org";
-
-		$result = lcm_query($q);
-
-		while ($row = lcm_fetch_array($result)) {
-			echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">' . $row['name'] . "</a></td>\n<td>";
-			if ($edit)
-				echo '<a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">Edit</a>';
-			echo "</td></tr>\n";
-		}
+				echo '<p class="normal_text">';
+				echo _T('client_input_id') . ' ' . $row['id_client'] . "<br/>\n";
+				echo _T('person_input_gender') . ' ' . $gender . "<br/>\n";
 		
-		echo "</table>";
+				if (read_meta('client_citizen_number') == 'yes')
+					echo _T('person_input_citizen_number') . ' ' . $row['citizen_number'] . "<br/>\n";
+		
+				echo _T('person_input_address') . ' ' . $row['address'] . "<br/>\n";
+				echo _T('person_input_civil_status') . ' ' . $row['civil_status'] . "<br/>\n";
+				echo _T('person_input_income') . ' ' . $row['income'] . "<br/>\n";
+				echo 'Creation date: ' . format_date($row['date_creation']) . "<br/>\n";
+				// [ML] echo 'Last update date: ' . $row['date_update'] . "<br/>\n";
+				echo "</p>\n";
+		
+				if ($edit)
+					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a></p>' . "\n";
+		
+				echo '<p><a href="edit_case.php?case=0&attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
+				echo "Open new case involving this client";
+				echo "</a></p>\n";
+				
+				echo "</fieldset>\n";
+				break;
+			case 1:
+				//
+				// Show client contacts (if any)
+				//
+				$hide_emails = read_meta('hide_emails');
+				$contacts = get_contacts('client', $row['id_client']);
+		
+				$html = '<fieldset class="info_box">';
+				$html .= '<div class="prefs_column_menu_head">' . _T('client_subtitle_contacts') . "</div>\n";
+		
+				$html .= '<table border="0" class="tbl_usr_dtl">' . "\n";
+				//$html .= '<tr><th class="heading" colspan="2">' . "Contacts:" . '</th></tr>' . "\n";
+		
+				$i = 0;
+				foreach($contacts as $c) {
+					if (! ($hide_emails == 'yes' && $c['name'] == 'email_main' && $author_session['status'] != 'admin')) {
+						$html .= "\t<tr>";
+						$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>";
+						$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $c['value'] . "</td>";
+						$html .= "</tr>\n";
+						$i++;
+					}
+				}
+		
+				$html .= "</table><br /></fieldset>\n";
+		
+				if ($i > 0)
+					echo $html;
+				break;
+			case 2:
+				//
+				// Show client associated organisations
+				//
+				echo '<fieldset class="info_box">';
+				echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_associated_org') . "</div>\n";
+		
+				echo '
+				<br /><table border="0" class="tbl_usr_dtl">
+				<tr>
+					<th class="heading">Organisation name</th>
+					<th class="heading">&nbsp;</th>
+				</tr>';
+		
+				//
+				// Show organisation(s)
+				//
+				$q = "SELECT lcm_org.id_org,name
+						FROM lcm_client_org,lcm_org
+						WHERE id_client=$client
+							AND lcm_client_org.id_org=lcm_org.id_org";
+		
+				$result = lcm_query($q);
+		
+				while ($row = lcm_fetch_array($result)) {
+					echo '<tr><td><a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">' . $row['name'] . "</a></td>\n<td>";
+					if ($edit)
+						echo '<a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link">Edit</a>';
+					echo "</td></tr>\n";
+				}
+				
+				echo "</table>";
+		
+				if ($edit)
+					echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">Add organisation(s)</a><br />";
+		
+				echo "<br /></fieldset>";
+				
+				break;
 
-		if ($edit)
-			echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">Add organisation(s)</a><br />";
+			case 3:
+				//
+				// Show 5 recent cases - why 5? - [ML] because I'm lazy
+				// [ML] we should have a general "list case" function in a libracy..
+				// [AG] Since this info is on separate tab, they could be more, i.e. $prefs['page_rows']
+				$q = "SELECT clo.id_case, c.title, c.date_creation
+						FROM lcm_case_client_org as clo, lcm_case as c
+						WHERE id_client = " . $client . "
+						AND clo.id_case = c.id_case
+						LIMIT " . $prefs['page_rows'];
+		
+				$result = lcm_query($q);
+				$html = "";
+				$cpt = 0;
+		
+				while ($row = lcm_fetch_array($result)) {
+					$html .= '<tr><td class="tbl_cont_' . ($cpt++ % 2 ? "dark" : "light") . '">' 
+						. '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">' 
+						.  $row['title'] 
+						. '</a></td></tr>' . "\n";
+				}
+		
+				if ($html) {
+					echo '<fieldset class="info_box">' . "\n";
+					echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_cases') . "</div>\n";
+					echo "<table>\n";
+					echo $html;
+					echo "</table>\n";
+					echo "</fieldset>\n";
+				}
 
-		echo "<br /></fieldset>";
-
-		//
-		// Show 5 recent cases - why 5? - [ML] because I'm lazy
-		// [ML] we should have a general "list case" function in a libracy..
-		//
-		$q = "SELECT clo.id_case, c.title, c.date_creation
-				FROM lcm_case_client_org as clo, lcm_case as c
-				WHERE id_client = " . $client . "
-				AND clo.id_case = c.id_case
-				LIMIT 5";
-
-		$result = lcm_query($q);
-		$html = "";
-		$cpt = 0;
-
-		while ($row = lcm_fetch_array($result)) {
-			$html .= '<tr><td class="tbl_cont_' . ($cpt++ % 2 ? "dark" : "light") . '">' 
-				. '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">' 
-				.  $row['title'] 
-				. '</a></td></tr>' . "\n";
+				break;
 		}
-
-		if ($html) {
-			echo '<fieldset class="info_box">' . "\n";
-			echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_cases') . "</div>\n";
-			echo "<table>\n";
-			echo $html;
-			echo "</table>\n";
-			echo "</fieldset>\n";
-		}
-
 	} else die("There's no such client!");
 } else die("Which client?");
 
