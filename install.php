@@ -125,24 +125,20 @@ if ($step == 6) {
 
 		// Set e-mail for author (if none)
 		if ($email) {
-			// Check if it is not already there
-			$email_exists = false;
-			$query = "SELECT value
-						FROM lcm_contact
-						WHERE id_of_person = $id_author 
-							AND type_person = 'author' 
-							AND type_contact = 1"; // EMAIL XXX
-			$result = lcm_query($query);
+			include_lcm('inc_contacts');
+			// XXX does not check for "alternative e-mail" (which aren't supported yet)
 
-			while ($row = lcm_fetch_array($result))
-				if ($row['value'] == $email)
-					$email_exists = true;
 
-			// Insert email if not exist
-			if (! $email_exists) {
-				$query = "INSERT INTO lcm_contact (type_person, id_of_person, type_contact, value)
-							VALUES(\"author\", $id_author, 1, \"" .  addslashes($email) . "\")";
-				lcm_query($query);
+			if (! is_existing_contact('author', $id_author, 'email', $email)) {
+				if (is_existing_contact('author', 0, 'email', $email)) {
+					// The author entered the e-mail of another author
+					// This is bad for the password recall function
+
+					// TODO
+
+				} else {
+					add_contact('author', $id_author, 'email', $email);
+				}
 			}
 		}
 
