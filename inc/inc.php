@@ -45,6 +45,12 @@ if ($sel_theme) {
 	}
 }
 
+// Set wide/narrow screen mode preference
+if ($sel_screen) {
+	$prefs['sel_screen'] = ($sel_screen);
+	$prefs_mod = true;
+}
+
 // Set rows per page preference
 if (intval($page_rows) > 0) {
 	$prefs['page_rows'] = intval($page_rows);
