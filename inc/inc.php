@@ -1,6 +1,6 @@
 <?php
 
-// Is LCM installed?
+// Test if LCM is installed
 if (!@file_exists('config/inc_connect.php')) {
 	header('Location: install.php');
 	exit;
@@ -59,7 +59,7 @@ if ($set_ecran) {
 if (!$spip_ecran) $spip_ecran = "etroit";
 
 
-// Debloquer articles
+// Unlock articles
 /* [ML NOT NECESSARY]
 if ($debloquer_article) {
 	if ($debloquer_article <> 'tous')
@@ -180,22 +180,27 @@ switch ($prefs['couleur']) {
 
 
 //
-// Gestion de version
+// Version management
 //
 
-$version_installee = (double) lire_meta("version_installee");
+$version_installee = (double) lire_meta('version_lcm');
 if ($version_installee <> $spip_version) {
 	debut_page();
-	if (!$version_installee) $version_installee = _T('info_anterieur');
+	if (!$version_installee)
+		$version_installee = _T('info_anterieur');
+
+	echo "<p>[ML] Test!</p>"; // FIXME
 	echo "<blockquote><blockquote><h4><font color='red'>"._T('info_message_technique')."</font><br> "._T('info_procedure_maj_version')."</h4>
 	"._T('info_administrateur_site_01')." <a href='upgrade.php3'>"._T('info_administrateur_site_02')."</a></blockquote></blockquote><p>";
+
 	fin_page();
 	exit;
 }
 
 
 //
-// Gestion de la configuration globale du site
+// Management of the global configuration of the site
+// [ML] Why is this done here?
 //
 
 if (!$adresse_site) {
@@ -250,12 +255,13 @@ function tester_rubrique_vide($id_rubrique) {
 
 
 //
-// Recuperation du cookie
+// Fetch the cookie
 //
 
 $cookie_admin = $HTTP_COOKIE_VARS['spip_admin'];
 
-// Supprimer rubrique
+// Delete a section
+// [ML] FIXME change this
 if ($supp_rubrique = intval($supp_rubrique) AND $connect_statut == '0minirezo' AND acces_rubrique($supp_rubrique)) {
 	$query = "DELETE FROM spip_rubriques WHERE id_rubrique=$supp_rubrique";
 	$result = spip_query($query);
