@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.100 2005/03/08 11:46:36 mlutfy Exp $
+	$Id: case_det.php,v 1.101 2005/03/09 14:41:31 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -420,7 +420,7 @@ if ($case > 0) {
 					WHERE id_case=$case AND lcm_followup.id_author=lcm_author.id_author";
 			
 				// Add ordering
-				if ($fu_order) $q .= " ORDER BY date_start $fu_order";
+				if ($fu_order) $q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
 			
 				// Do the query
 				$result = lcm_query($q);
