@@ -172,6 +172,8 @@ switch ($prefs['couleur']) {
 
 write_metas();
 
+/* [ML] Not needed anymore, perhaps, since done with db_version */
+/*
 $installed_version = (double) read_meta('version_lcm');
 if ($installed_version <> $lcm_version) {
 	lcm_page_start();
@@ -179,24 +181,33 @@ if ($installed_version <> $lcm_version) {
 		$installed_version = _T('info_anterieur');
 
 	echo "<p>[ML] Installed version = $installed_version ; lcm_version = $lcm_version </p>"; // FIXME
-	echo "<blockquote><blockquote><h4><font color='red'>"._T('info_message_technique')."</font><br> "._T('info_procedure_maj_version')."</h4>
+	echo "<blockquote><blockquote><h4><font color='red'>"._T('title_technical_message')."</font><br> "._T('info_procedure_maj_version')."</h4>
 	"._T('info_administrateur_site_01')." <a href='upgrade.php3'>"._T('info_administrateur_site_02')."</a></blockquote></blockquote><p>";
 
 	lcm_page_end();
 	exit;
-}
+} */
 
+//
 // Database version management
+// 
+
 $installed_db_version = read_meta('lcm_db_version');
-// Temporary - check if database version exists in lcm_meta
-if (!($installed_db_version)) {
-	write_meta('lcm_db_version',1);
-	write_metas();
-	$installed_db_version = 1;
-}
-if ($installed_db_version < $lcm_db_version) {
-	include_lcm('inc_db_upgrade');
-	upgrade_database($installed_db_version);
+
+if ($installed_db_version <> $lcm_db_version) {
+	lcm_page_start("Database upgrade", "install");
+	if (!$installed_version)
+		$installed_version = "old version";
+
+	echo "<div class='box_warning'>\n";
+	echo "<p><b>" . _T('title_technical_message') . _T('typo_column') . "</b> The
+		format of the database has changed. <a href='lcm_upgrade.php'>To 
+		proceed with the automatic upgrade, click here</a>. You are also 
+		encouraged to make a backup before proceeding.</p>\n";
+	echo "</div>\n";
+
+	lcm_page_end();
+	exit;
 }
 
 //
