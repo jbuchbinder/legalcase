@@ -137,21 +137,30 @@ ul.tabs_list li a {
 /* Other visual settings - font, colors, sizes, boxes */
 /* ================================================== */
 
+a.balance_link {
+	float: left;
+	display: block;
+	width: 85px;
+	height: 78px;
+	text-decoration: none;
+}
+
 h1.lcm_main_head {
 	position: relative;
 	width: 650px;
-	margin: 0px;
+	margin: 0px 0px 0px 85px;
 	padding-top: 15px;
-	left: 85px;
+	/* left: 85px; */
 }
 
 .lcm_slogan {
 	position: relative;
 	top: 0px;
-	left: 150px;
+	/* left: 150px; */
 	color: #666;
 	font-size: 11px;
 	width: 350px;
+	margin: 0px 0px 0px 150px;
 }
 
 a.head_ttl_link, a.head_subttl_link {
