@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.33 2005/03/01 08:55:57 mlutfy Exp $
+	$Id: edit_client.php,v 1.34 2005/03/01 09:31:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -59,7 +59,8 @@ if (empty($_SESSION['errors'])) {
 if ($client > 0) {
 	lcm_page_start(_T('title_client_edit')
 		. $client_data['name_first'] . ' '
-		. ( ($client_name_middle == 'yes') ? $client_data['name_middle'] . ' ' : '' )
+		// [ML] always show middle name, if any, no matter the configuration
+		. $client_data['name_middle'] . ' ' 
 		. $client_data['name_last']);
 } else {
 	lcm_page_start(_T('title_client_new'));
@@ -87,7 +88,8 @@ if($client_data['id_client']) {
 echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
 echo '<td><input name="name_first" value="' . clean_output($client_data['name_first']) . '" class="search_form_txt"></td></tr>' . "\n";
 
-if ($client_name_middle == 'yes') {
+// [ML] always show middle name, if any, no matter the configuration
+if ($client_data['name_middle'] || $client_name_middle == 'yes') {
 	echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
 	echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt"></td></tr>' . "\n";
 }
