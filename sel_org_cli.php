@@ -3,6 +3,8 @@
 include('inc/inc.php');
 lcm_page_start("Select organisation(s)");
 
+$client = intval($_GET['client']);
+
 if ($client>0) {
 	// Prepare query
 	$q = "SELECT *
