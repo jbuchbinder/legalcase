@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.23 2005/01/26 23:51:54 mlutfy Exp $
+	$Id: inc_auth.php,v 1.24 2005/02/03 09:22:14 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -149,8 +149,10 @@ function auth() {
 		include_lcm('inc_presentation');
 		include_lcm('inc_text');
 
-		install_html_start(_T('avis_erreur_connexion'));
-		echo "<br><br><p>"._T('texte_inc_auth_1', array('auth_login' => $auth_login))." <A HREF='lcm_cookie.php?logout=$auth_login'>".  _T('texte_inc_auth_2')."</A>"._T('texte_inc_auth_3');
+		install_html_start(_T('login_warning_connection_failed'));
+		echo "<p>" . _T('login_warning_connection_failed1', array('username' => $auth_login));
+		echo " <a href='lcm_cookie.php?logout=$auth_login'>" 
+			. _T('login_warning_connection_failed1') . "</a>";
 		install_html_end();
 		exit;
 	}
