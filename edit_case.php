@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.63 2005/03/21 12:06:56 mlutfy Exp $
+	$Id: edit_case.php,v 1.64 2005/03/23 16:37:58 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -111,6 +111,8 @@ if ($existing) lcm_page_start(_T('title_case_edit'));
 else lcm_page_start(_T('title_case_new'));
 
 echo "<div style='float: right'>" . lcm_help("case_edit") . "</div>\n";
+
+print_r($_SESSION);
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
@@ -255,15 +257,13 @@ if ($_SESSION['case_data']['id_case']) {
 		}
 	}
 
-	// [ML] if ($existing)
-	//	echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
-
 	echo '<input type="hidden" name="admin" value="' . $_SESSION['case_data']['admin'] . "\" />\n";
 	echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['case_data']['ref_edit_case'] . "\" />\n";
 	echo "</form>\n\n";
 
-	lcm_page_end();
-
-	// Reset error messages
+	// Reset error messages and form data
 	$_SESSION['errors'] = array();
+	$_SESSION['case_data'] = array();
+
+	lcm_page_end();
 ?>
