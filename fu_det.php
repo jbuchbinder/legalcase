@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.1 2005/01/21 01:43:36 antzi Exp $
+	$Id: fu_det.php,v 1.2 2005/01/21 01:51:34 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -47,7 +47,7 @@ if (isset($_GET['followup'])) {
 lcm_page_start("Follow-up details");
 
 // Show a bit of background on the case
-
+$case = $fu_data['id_case'];
 echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
 
 // Name of case
