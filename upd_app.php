@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.10 2005/03/24 22:14:30 antzi Exp $
+	$Id: upd_app.php,v 1.11 2005/03/30 17:37:28 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -39,15 +39,18 @@ foreach($_POST as $key => $value)
 // Convert day, month, year, hour, minute to date/time
 // Check submitted information
 // start_time
-$unix_start_time = strtotime($_SESSION['app_data']['start_year'] . '-' . $_SESSION['app_data']['start_month'] . '-' . $_SESSION['app_data']['start_day'] . ' '
-						. (isset($_SESSION['app_data']['start_hour']) ? $_SESSION['app_data']['start_hour'] : '00') . ':'
-						. (isset($_SESSION['app_data']['start_minutes']) ? $_SESSION['app_data']['start_minutes'] : '00') . ':'
-						. (isset($_SESSION['app_data']['start_seconds']) ? $_SESSION['app_data']['start_seconds'] : '00'));
+$_SESSION['app_data']['start_time'] = $_SESSION['app_data']['start_year'] . '-'
+					. $_SESSION['app_data']['start_month'] . '-'
+					. $_SESSION['app_data']['start_day'] . ' '
+					. (isset($_SESSION['app_data']['start_hour']) ? $_SESSION['app_data']['start_hour'] : '00') . ':'
+					. (isset($_SESSION['app_data']['start_minutes']) ? $_SESSION['app_data']['start_minutes'] : '00') . ':'
+					. (isset($_SESSION['app_data']['start_seconds']) ? $_SESSION['app_data']['start_seconds'] : '00');
+$unix_start_time = strtotime($_SESSION['app_data']['start_time']);
 
-if ($unix_start_time<0)
+if ( ($unix_start_time<0) || !checkdate($_SESSION['app_data']['start_month'],$_SESSION['app_data']['start_day'],$_SESSION['app_data']['start_year']) )
 	$_SESSION['errors']['start_time'] = 'Invalid start time!';
-else 
-	$_SESSION['app_data']['start_time'] = date('Y-m-d H:i:s', $unix_start_time);
+//else 
+//	$_SESSION['app_data']['start_time'] = date('Y-m-d H:i:s', $unix_start_time);
 
 // end_time
 if ($prefs['time_intervals']=='absolute') {
@@ -65,14 +68,18 @@ if ($prefs['time_intervals']=='absolute') {
 							. ($_SESSION['app_data']['end_seconds'] ? $_SESSION['app_data']['end_seconds'] : '00');
 	} else {
 		// Join fields and check resulting date
-		$unix_end_time = strtotime($_SESSION['app_data']['end_year'] . '-' . $_SESSION['app_data']['end_month'] . '-' . $_SESSION['app_data']['end_day']
-					. ' ' . $_SESSION['app_data']['end_hour'] . ':' . $_SESSION['app_data']['end_minutes'] . ':'
-					. (isset($_SESSION['app_data']['end_seconds']) ? $_SESSION['app_data']['end_seconds'] : '00'));
-	
-		if ($unix_end_time<0)
+		$_SESSION['app_data']['end_time'] = $_SESSION['app_data']['end_year'] . '-'
+							. $_SESSION['app_data']['end_month'] . '-'
+							. $_SESSION['app_data']['end_day'] . ' '
+							. $_SESSION['app_data']['end_hour'] . ':'
+							. $_SESSION['app_data']['end_minutes'] . ':'
+					. (isset($_SESSION['app_data']['end_seconds']) ? $_SESSION['app_data']['end_seconds'] : '00');
+		$unix_end_time = strtotime($_SESSION['app_data']['end_time']);
+
+		if ( ($unix_end_time<0) || !checkdate($_SESSION['app_data']['end_month'],$_SESSION['app_data']['end_day'],$_SESSION['app_data']['end_year']) )
 			$_SESSION['errors']['end_time'] = 'Invalid end time!';
-		else 
-			$_SESSION['app_data']['end_time'] = date('Y-m-d H:i:s',$unix_end_time);
+//		else 
+//			$_SESSION['app_data']['end_time'] = date('Y-m-d H:i:s',$unix_end_time);
 	}
 } else {
 	if ( ! (isset($_SESSION['app_data']['delta_days']) && (!is_numeric($_SESSION['app_data']['delta_days']) || $_SESSION['app_data']['delta_days'] < 0) ||
@@ -105,14 +112,18 @@ if ($prefs['time_intervals']=='absolute') {
 							. ($_SESSION['app_data']['reminder_seconds'] ? $_SESSION['app_data']['reminder_seconds'] : '00');
 	} else {
 		// Join fields and check resulting time
-		$unix_reminder_time = strtotime($_SESSION['app_data']['reminder_year'] . '-' . $_SESSION['app_data']['reminder_month'] . '-' . $_SESSION['app_data']['reminder_day']
-					. ' ' . $_SESSION['app_data']['reminder_hour'] . ':' . $_SESSION['app_data']['reminder_minutes'] . ':'
-					. (isset($_SESSION['app_data']['reminder_seconds']) ? $_SESSION['app_data']['reminder_seconds'] : '00'));
-	
-		if ($unix_reminder_time<0)
+		$_SESSION['app_data']['reminder'] = $_SESSION['app_data']['reminder_year'] . '-'
+						. $_SESSION['app_data']['reminder_month'] . '-'
+						. $_SESSION['app_data']['reminder_day'] . ' '
+						. $_SESSION['app_data']['reminder_hour'] . ':'
+						. $_SESSION['app_data']['reminder_minutes'] . ':'
+					. (isset($_SESSION['app_data']['reminder_seconds']) ? $_SESSION['app_data']['reminder_seconds'] : '00');
+		$unix_reminder_time = strtotime($_SESSION['app_data']['reminder']);
+
+		if ( ($unix_reminder_time<0) || !checkdate($_SESSION['app_data']['reminder_month'],$_SESSION['app_data']['reminder_day'],$_SESSION['app_data']['reminder_year']) )
 			$_SESSION['errors']['reminder'] = 'Invalid reminder time!';
-		else 
-			$_SESSION['app_data']['reminder'] = date('Y-m-d H:i:s',$unix_reminder_time);
+//		else 
+//			$_SESSION['app_data']['reminder'] = date('Y-m-d H:i:s',$unix_reminder_time);
 	}
 } else {
 	if ( ! (isset($_SESSION['app_data']['rem_offset_days']) && (!is_numeric($_SESSION['app_data']['rem_offset_days']) || $_SESSION['app_data']['rem_offset_days'] < 0) ||

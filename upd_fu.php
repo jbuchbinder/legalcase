@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.37 2005/03/25 08:08:50 mlutfy Exp $
+	$Id: upd_fu.php,v 1.38 2005/03/30 17:37:28 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -40,15 +40,20 @@ foreach($_POST as $key => $value)
 // Convert day, month, year to date
 // Check submitted information
 // date_start
-$unix_date_start = strtotime($_SESSION['fu_data']['start_year'] . '-' . $_SESSION['fu_data']['start_month'] . '-' . $_SESSION['fu_data']['start_day'] . ' '
-						. (isset($_SESSION['fu_data']['start_hour']) ? $_SESSION['fu_data']['start_hour'] : '00') . ':'
-						. (isset($_SESSION['fu_data']['start_minutes']) ? $_SESSION['fu_data']['start_minutes'] : '00') . ':'
-						. (isset($_SESSION['fu_data']['start_seconds']) ? $_SESSION['fu_data']['start_seconds'] : '00'));
+//$unix_date_start = mktime($_SESSION['fu_data']['start_hour'],$_SESSION['fu_data']['start_minutes'],$_SESSION['fu_data']['start_seconds'],
+//			$_SESSION['fu_data']['start_month'],$_SESSION['fu_data']['start_day'],$_SESSION['fu_data']['start_year']);
+$_SESSION['fu_data']['date_start'] = $_SESSION['fu_data']['start_year'] . '-'
+					. $_SESSION['fu_data']['start_month'] . '-'
+					. $_SESSION['fu_data']['start_day'] . ' '
+					. (isset($_SESSION['fu_data']['start_hour']) ? $_SESSION['fu_data']['start_hour'] : '00') . ':'
+					. (isset($_SESSION['fu_data']['start_minutes']) ? $_SESSION['fu_data']['start_minutes'] : '00') . ':'
+					. (isset($_SESSION['fu_data']['start_seconds']) ? $_SESSION['fu_data']['start_seconds'] : '00');
+$unix_date_start = strtotime($_SESSION['fu_data']['date_start']);
 
-if ($unix_date_start<0)
+if ( ($unix_date_start<0) || !checkdate($_SESSION['fu_data']['start_month'],$_SESSION['fu_data']['start_day'],$_SESSION['fu_data']['start_year']) )
 	$_SESSION['errors']['date_start'] = 'Invalid start date!';	// TRAD
-else 
-	$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s', $unix_date_start);
+//else
+//	$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s', $unix_date_start);
 
 // date_end
 if ($prefs['time_intervals']=='absolute') {
@@ -66,14 +71,19 @@ if ($prefs['time_intervals']=='absolute') {
 							. ($_SESSION['fu_data']['end_seconds'] ? $_SESSION['fu_data']['end_seconds'] : '00');
 	} else {
 		// Join fields and check resulting date
-		$unix_date_end = strtotime($_SESSION['fu_data']['end_year'] . '-' . $_SESSION['fu_data']['end_month'] . '-' . $_SESSION['fu_data']['end_day']
-					. ' ' . $_SESSION['fu_data']['end_hour'] . ':' . $_SESSION['fu_data']['end_minutes'] . ':'
-					. (isset($_SESSION['fu_data']['end_seconds']) ? $_SESSION['fu_data']['end_seconds'] : '00'));
-	
-		if ($unix_date_end<0)
+//		$unix_date_end = mktime($_SESSION['fu_data']['end_hour'],$_SESSION['fu_data']['end_minutes'],$_SESSION['fu_data']['end_seconds'],
+//					 $_SESSION['fu_data']['end_month'],$_SESSION['fu_data']['end_day'],$_SESSION['fu_data']['end_year']);
+		$_SESSION['fu_data']['date_end'] = $_SESSION['fu_data']['end_year'] . '-'
+						. $_SESSION['fu_data']['end_month'] . '-'
+						. $_SESSION['fu_data']['end_day'] . ' '
+						. $_SESSION['fu_data']['end_hour'] . ':'
+						. $_SESSION['fu_data']['end_minutes'] . ':'
+					. (isset($_SESSION['fu_data']['end_seconds']) ? $_SESSION['fu_data']['end_seconds'] : '00');
+		$unix_date_end = strtotime($_SESSION['fu_data']['date_end']);
+		if ( ($unix_date_end<0) || !checkdate($_SESSION['fu_data']['end_month'],$_SESSION['fu_data']['end_day'],$_SESSION['fu_data']['end_year']) )
 			$_SESSION['errors']['date_end'] = 'Invalid end date!';	// TRAD
-		else 
-			$_SESSION['fu_data']['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
+		//else
+		//	$_SESSION['fu_data']['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
 	}
 } else {
 	if ( ! (isset($_SESSION['fu_data']['delta_days']) && (!is_numeric($_SESSION['fu_data']['delta_days']) || $_SESSION['fu_data']['delta_days'] < 0) ||
