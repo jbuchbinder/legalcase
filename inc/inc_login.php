@@ -176,7 +176,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "<form name='form_login' action='lcm_cookie.php' method='post'";
 
 		if ($flag_challenge_md5)
-			echo " onSubmit='if (this.session_password.value) {
+			echo " onsubmit='if (this.session_password.value) {
 				this.session_password_md5.value = calcMD5(\"$alea_actuel\" + this.session_password.value);
 				this.next_session_password_md5.value = calcMD5(\"$alea_futur\" + this.session_password.value);
 				this.session_password.value = \"\"; }'";
