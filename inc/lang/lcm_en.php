@@ -144,7 +144,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_info_login' => 'identifier for connection to the site',
 'login_link_reload_page' => 'reload this page',
 'login_login' => 'Login',
-'login_not_secure' => 'Caution, this form is not secure. If you do not want your password to be open to interception on the network, please activate Javascript in your browser and',
 'login_other_identifier' => 'connect with another identifier',
 'login_password' => 'Password',
 'login_password_confirm' => 'Confirm password',
@@ -153,6 +152,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_prefer_no_cookie' => '<b>If you prefer to refuse the cookies</b>, there is another connection method (less secure) at your disposal:',
 'login_register' => 'Register with the site',
 'login_remain_logged_on' => 'Remain logged-on for a few days',
+'login_this_way' => 'You are registered... this way...',
 'login_title_login' => 'Login',
 'login_without_cookie' => 'Identification without cookie',
 

@@ -144,7 +144,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_info_login' => 'потребителско име за свързване със сайта',
 'login_link_reload_page' => '<NEW>reload this page',
 'login_login' => 'Вход',
-'login_not_secure' => '<NEW>Caution, this form is not secure. If you do not want your password to be open to interception on the network, please activate Javascript in your browser and',
 'login_other_identifier' => '<NEW>connect with another identifier',
 'login_password' => '<NEW>Password',
 'login_password_confirm' => '<NEW>Confirm password',
@@ -153,6 +152,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_prefer_no_cookie' => '<NEW><b>If you prefer to refuse the cookies</b>, there is another connection method (less secure) at your disposal:',
 'login_register' => '<NEW>Register with the site',
 'login_remain_logged_on' => '<NEW>Remain logged-on for a few days',
+'login_this_way' => '<NEW>You are registered... this way...',
 'login_title_login' => '<NEW>Login',
 'login_without_cookie' => '<NEW>Identification without cookie',
 
