@@ -123,7 +123,7 @@ if ($case > 0) {
 	echo "</form>\n";
 
 	echo "\n<table border='0' width='99%' align='center' class='tbl_data'>
-	<caption>" . (strlen($find_fu_string)>1 ? _T('case_followups') : _T('case_followups_containing') . $find_fu_string) . ":</caption>
+	<caption>" . (strlen($find_fu_string)>1 ? (_T('case_followups_containing') . ' ' . $find_fu_string) : _T('case_followups')) . ":</caption>
 	<tr><th class='tbl_head'>" . _T('date') . "</th>
 		<th class='tbl_head'>" . _T('type') . "</th>
 		<th class='tbl_head'>" . _T('description') . "</th>
