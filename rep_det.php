@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.12 2005/02/03 11:18:11 mlutfy Exp $
+	$Id: rep_det.php,v 1.13 2005/02/03 12:06:56 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -87,7 +87,8 @@ echo "</p></fieldset>";
 		echo "<tr><th class='heading'>#</th>
 	<th class='heading'>Header</th>
 	<th class='heading'>Contents</th>
-	<th class='heading'>Sorting</th>
+	<th class='heading'>Group</th>
+	<th class='heading'>Sort</th>
 	<th class='heading'>Total</th>
 	<th class='heading'>Action</th>
 </tr>";
@@ -120,14 +121,19 @@ echo "</p></fieldset>";
 			if ($edit) echo '</a>';
 			echo "</td>\n";
 
+			//Display column groupping
+			echo '<td>';
+			echo ($column['col_group'] ? $column['col_group'] : "None");
+			echo "</td>\n";
+
 			//Display sort setting
 			echo '<td>';
 			switch ($column['sort']) {
 				case 'asc':
-					echo "Ascending";
+					echo "Asc";
 					break;
 				case 'desc':
-					echo "Descending";
+					echo "Desc";
 					break;
 				default:
 					echo "None";
