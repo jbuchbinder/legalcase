@@ -179,7 +179,7 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 }
 
 function print_existing_contact($c, $num) {
-	echo '<tr><td align="right" valign="top">' . _T($c['title']) . "\n";
+	echo '<tr><td align="right" valign="top">' . _T($c['title']) . "</td>\n";
 	echo '<td align="left" valign="top">';
 
 	echo '<input name="contact_id[]" id="contact_id_' . $num . '" '
