@@ -19,9 +19,9 @@
 
 	You should have received a copy of the GNU General Public License along 
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.37 2005/03/07 16:16:27 mlutfy Exp $
+	$Id: install.php,v 1.38 2005/03/07 16:52:09 mlutfy Exp $
 */
 
 
@@ -76,7 +76,7 @@ if (@file_exists('inc/config/inc_connect.php')) {
 if ($step == 6) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_last') . _T('typo_column') .  "</small></h3>\n";
+	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
 
 	// last step
 	echo "<div class='box_success'>\n";
@@ -169,7 +169,7 @@ if ($step == 6) {
 
 	echo "<form action='index.php' method='post'>\n";
 	echo "<div align='$lcm_lang_right'>"
-		. "<button type='submit' name='Next'>" .  _T('button_next')." >></button>"
+		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>"
 		. "</div>\n";
 	echo "</form>\n";
 
@@ -181,7 +181,7 @@ if ($step == 6) {
 else if ($step == 5) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_five') . _T('typo_column') .  "</small> "
+	echo "<h3><small>" . _T('install_step_five') . "</small> "
 		. _T('install_title_admin_account') . "</h3>\n";
 
 	include_config('inc_connect_install');
@@ -211,7 +211,7 @@ else if ($step == 5) {
 	echo "<b>". _T('info_name_of_person') . "</b></div>\n\n";
 
 	echo "<table border='0'><tr>\n";
-	echo "<td><small><label for='name_first'>" . _T('enter_name_first') .  "</label></small></td>\n";
+	echo "<td><small><label for='name_first'>" . _T('enter_name_first') . "</label></small></td>\n";
 	// [ML] Too many fields on screen. Middle name can be filled later, if necessary
 	// [ML] echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
 	echo "<td><small><label for='name_last'>" . _T('enter_name_last') . "</label></small></td>\n";
@@ -267,7 +267,7 @@ else if ($step == 4) {
 	$install_log = "";
 	$upgrade_log = "";
 
-	echo "<h3><small>" . _T('install_step_four') . _T('typo_column') . "</small> "
+	echo "<h3><small>" . _T('install_step_four') . "</small> "
 		. _T('install_title_creating_database') . "</h3>\n";
 
 	// Comment out possible errors because the creation of new tables
@@ -399,7 +399,7 @@ else if ($step == 4) {
 else if ($step == 3) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_three') . _T('typo_column') .  "</small> "
+	echo "<h3><small>" . _T('install_step_three') .  "</small> "
 		. _T('install_title_select_database') . "</h3>\n";
 
 	// [ML] TODO echo help ("install2");
@@ -413,7 +413,7 @@ else if ($step == 3) {
 	$result = lcm_list_databases($db_address, $db_login, $db_password);
 
 	echo "<fieldset>\n";
-	echo "<p><b><label>" . _T('install_select_database') .  _T('typo_column') . "</label></b></p>";
+	echo "<p><b><label>" . _T('install_select_database') . "</label></b></p>";
 
 	echo "<!-- " . count($result) . " -->\n";
 
@@ -460,7 +460,7 @@ else if ($step == 3) {
 	if (!$checked) echo " checked='checked'";
 	echo " />";
 	
-	echo "<label for='new_db'>" . _T('install_create_new_database') .  _T('typo_column') . "</label><br />\n";
+	echo "<label for='new_db'>" . _T('install_create_new_database') .. "</label><br />\n";
 	echo "<input type='text' name='table_new' value='lcm' size='20' /></li>\n";
 	echo "</ul>\n";
 	echo "</fieldset>\n";
@@ -476,7 +476,7 @@ else if ($step == 3) {
 else if ($step == 2) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_two') . _T('typo_column') . "</small> "
+	echo "<h3><small>" . _T('install_step_two') . "</small> "
 		. _T('install_title_connection_attempt') . "</h3>\n";
 
 	echo "\n<!--\n";
@@ -506,7 +506,7 @@ else if ($step == 2) {
 		echo "<strong>" . _T('warning_sql_connection_failed') . "</strong>\n";
 		echo "<p><code>" . $error . "</code></p>\n";
 		echo "<p>"._T('install_info_go_back_verify_data') . ' ' . lcm_help('install_connection') . "</p>\n";
-		echo "<p><small>" .  _T('install_info_sql_connection_failed') .  "</small></p>\n";
+		echo "<p><small>" . _T('install_info_sql_connection_failed') . "</small></p>\n";
 		echo "</div>\n\n";
 	}
 
@@ -516,8 +516,8 @@ else if ($step == 2) {
 else if ($step == 1) {
 	install_html_start();
 
-	echo "<h3><small>" . _T('install_step_one') . _T('typo_column') .  "</small> "
-		.  _T('install_title_sql_connection') . "</h3>\n";
+	echo "<h3><small>" . _T('install_step_one') . "</small> "
+		. _T('install_title_sql_connection') . "</h3>\n";
 
 	echo "<p>" . _T('install_info_sql_connection') . " " . lcm_help("install_database") . "</p>\n";
 
@@ -580,8 +580,8 @@ else if (!$step) {
 	echo "<table border='0' cellspacing='0' width='490' height='242' style=\"background-image: url('images/lcm/lcm_logo_install.png'); border: 0\">\n";
 	echo "<tr><td align='center' valign='top'>
 			<div id='title'>
-				<p><span style='font-size: 130%;'>" .  _T('title_software') . "</span><br />
-				<span style='font-size: 90%;'>" .  _T('title_software_description') . "</span></p>
+				<p><span style='font-size: 130%;'>" . _T('title_software') . "</span><br />
+				<span style='font-size: 90%;'>" . _T('title_software_description') . "</span></p>
 			</div>
 		</td></tr>
 		<tr><td align='center' valign='top'>
@@ -603,7 +603,7 @@ else if (!$step) {
 	echo "<form action='install.php' method='get'>\n";
 	echo "\t<input type='hidden' name='step' value='dirs'>\n";
 	echo "\t<div align='$lcm_lang_right'>"
-		. "<button type='submit' name='Next'>" .  _T('button_next')." >></button>"
+		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>"
 		. "</div>";
 	echo "</form>";
 
