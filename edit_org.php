@@ -41,14 +41,14 @@ if (empty($errors)) {
 
 lcm_page_start("Edit organisation details");
 ?>
-<h2>Edit organisation information:</h2>
+<!--h2>Edit organisation information:</h2-->
 <form action="upd_org.php" method="POST">
 	<!--h3>Organisation details</h3-->
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><th class="heading">Parameter</th><th class="heading">Value</th></tr>
-		<tr><td>Organisation ID:</td>
-			<td><?php echo $org_data['id_org']; ?>
-			<input type="hidden" name="id_org" value="<?php echo $org_data['id_org']; ?>"></td></tr>
+		<!--tr><th class="heading">Parameter</th><th class="heading">Value</th></tr-->
+		<!--tr><td>Organisation ID:</td>
+			<td><?php echo $org_data['id_org']; ?> -->
+			<input type="hidden" name="id_org" value="<?php echo $org_data['id_org']; ?>"><!--/td></tr-->
 		<tr><td>Name:</td>
 			<td><input name="name" value="<?php echo clean_output($org_data['name']); ?>" class="search_form_txt"></td></tr>
 		<!--
