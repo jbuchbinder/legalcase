@@ -18,13 +18,26 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.11 2005/01/11 14:52:32 mlutfy Exp $
+	$Id: upd_author.php,v 1.12 2005/01/11 16:01:45 mlutfy Exp $
 */
 
 session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
+
+function force_session_restart($id_author) {
+	include_lcm('inc_session');
+	global $author_session, $lcm_session;
+
+	zap_sessions($id_author, true);
+	if ($author_session['id_author'] == $id_author) {
+		lcm_debug("lcm_session = " . $lcm_session);
+		delete_session($lcm_session);
+	} else {
+		lcm_debug("I am ID = " . $author_session['id_author']);
+	}
+}
 
 function change_password($usr) {
 	global $author_session;
@@ -94,7 +107,7 @@ function change_password($usr) {
 	}
 }
 
-function change_username($old_username, $new_username) {
+function change_username($id_author, $old_username, $new_username) {
 	global $author_session;
 
 	if (! $new_username) {
@@ -104,7 +117,7 @@ function change_username($old_username, $new_username) {
 
 	include_lcm('inc_auth_db');
 	$class_auth = 'Auth_db'; // FIXME, take from author_session
-	$auth = new $class_db;
+	$auth = new $class_auth;
 
 	if (! $auth->init()) {
 		lcm_log("username change: failed auth init, signal 'internal error'.");
@@ -114,24 +127,24 @@ function change_username($old_username, $new_username) {
 		return;
 	}
 
-	if (! $auth->is_newusername_allowed($old_username, $author_session)) {
+	if (! $auth->is_newusername_allowed($id_author, $old_username, $author_session)) {
 		// TODO: use $auth->error ?
 		$_SESSION['errors']['username'] = "You are not allowed to change the username.";
 		return;
 	}
 
 	// Change the username
-	$ok = $auth->newusername($old_username, $new_username, $author_session);
+	$ok = $auth->newusername($id_author, $old_username, $new_username, $author_session);
 
 	if (! $ok) {
 		// TODO return error: $this->get_error() ? generic error?
 		lcm_log("new username failed 001");
-		$_SESSION['errors']['username_generic'] = "Failed to change the
-			username (internal error). Please contact your local system 
-			administrator.";
+		$_SESSION['errors']['username'] = "Failed to change the username: " . $auth->error;
 
 		return;
 	}
+
+	force_session_restart($id_author);
 }
 
 // Clear all previous errors
@@ -161,33 +174,30 @@ if ($usr['usr_new_passwd'])
 //
 
 if ($usr['username'] != $usr['username_old'])
-	change_username($usr['username']);
-
-//
-// No errors, update database
-//
+	change_username($usr['id_author'], $usr['username_old'], $usr['username']);
 
 // FIXME: 
 // - do not allow status change to users
 // - make first & last name mandatory
 
-$fl = "name_first='" . clean_input($usr['name_first']) . "'"
-. ",name_middle='" . clean_input($usr['name_middle']) . "'"
-. ",name_last='" . clean_input($usr['name_last']) . "'"
-. ",status='" . clean_input($usr['status']) . "'"
-. ",date_update=NOW()";
-
+$fl = "name_first   = '" . clean_input($usr['name_first'])  . "',"
+	. "name_middle  = '" . clean_input($usr['name_middle']) . "',"
+	. "name_last    = '" . clean_input($usr['name_last'])   . "',"
+	. "status       = '" . clean_input($usr['status'])      . "',"
+	. "date_update  = NOW()";
 
 if ($usr['id_author'] > 0) {
 	// Check access rights
 	if (($author_session['status'] != 'admin') && ($author_session['id_author'] != $usr['id_author']))
 		die("You don't have permission to change author's information!");
 	else {
-		$q = "UPDATE lcm_author SET $fl WHERE id_author=" . $usr['id_author'];
+		$q = "UPDATE lcm_author 
+				SET $fl 
+				WHERE id_author = " . $usr['id_author'];
 		$result = lcm_query($q);
 	}
 } else {
-	$q = "INSERT INTO lcm_author SET date_creation=NOW(),$fl";
+	$q = "INSERT INTO lcm_author SET date_creation = NOW(),$fl";
 	$result = lcm_query($q);
 	$usr['id_author'] = lcm_insert_id();
 }
