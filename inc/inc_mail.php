@@ -26,19 +26,18 @@ function tester_mail() {
 	return $test_mail;
 }
 
-function send_email($email, $sujet, $texte, $from = "", $headers = "") {
+function send_email($email, $subject, $texte, $from = "", $headers = "") {
 	global $hebergeur, $queue_mails, $flag_wordwrap, $os_serveur;
 	include_lcm('inc_filters');
 
 	if (!$from) {
-		$email_envoi = lire_meta("email_envoi");
+		$email_envoi = read_meta("email_sender");
 		$from = is_valid_email($email_envoi) ? $email_envoi : $email;
 	}
+
 	if (!is_valid_email($email)) return false;
-	if ($email == _T('info_mail_fournisseur')) return false; // tres fort
 
-	lcm_log("mail ($email): $sujet");
-
+	lcm_log("mail ($email): $subject");
 	$charset = read_meta('charset');
 
 	$headers = "From: $from\n".
@@ -47,17 +46,17 @@ function send_email($email, $sujet, $texte, $from = "", $headers = "") {
 		"Content-Transfer-Encoding: 8bit\n$headers";
 
 	$texte = filtrer_entites($texte);
-	$sujet = filtrer_entites($sujet);
+	$subject = filtrer_entites($subject);
 
 	// fignoler ce qui peut l'etre...
 	if ($charset <> 'utf-8') {
 		$texte = str_replace("&#8217;", "'", $texte);
-		$sujet = str_replace("&#8217;", "'", $sujet);
+		$subject = str_replace("&#8217;", "'", $subject);
 	}
 
 	// encoder le sujet si possible selon la RFC
 	if($GLOBALS['flag_multibyte'] AND @mb_internal_encoding($charset))
-		$sujet = mb_encode_mimeheader($sujet, $charset, 'Q');
+		$subject = mb_encode_mimeheader($subject, $charset, 'Q');
 
 	if ($flag_wordwrap) $texte = wordwrap($texte);
 
@@ -70,16 +69,16 @@ function send_email($email, $sujet, $texte, $from = "", $headers = "") {
 	case 'lycos':
 		$queue_mails[] = array(
 			'email' => $email,
-			'sujet' => $sujet,
+			'sujet' => $subject,
 			'texte' => $texte,
 			'headers' => $headers);
 		return true;
 	case 'free':
 		return false;
 	case 'online':
-		return @email('webmaster', $email, $sujet, $texte);
+		return @email('webmaster', $email, $subject, $texte);
 	default:
-		return @mail($email, $sujet, $texte, $headers);
+		return @mail($email, $subject, $texte, $headers);
 	}
 }
 
