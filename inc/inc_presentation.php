@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.188 2005/03/28 21:35:42 antzi Exp $
+	$Id: inc_presentation.php,v 1.189 2005/03/29 15:37:10 mlutfy Exp $
 */
 
 //
@@ -1067,7 +1067,8 @@ function show_list_start($headers = array()) {
 	echo "<tr>\n";
 
 	foreach($headers as $h) {
-		echo "<th class=\"heading\">";
+		$width = ($h['width'] ? ' width="' . $h['width'] . '" ' : '');
+		echo '<th ' . $width . 'class="heading" nowrap="nowrap">';
 
 		if ($h['order'] && $h['order'] != 'no_order') {
 			$ovar = $h['order']; // on which variable to order
@@ -1183,9 +1184,14 @@ function show_list_end($current_pos = 0, $number_of_rows = 0) {
 // see listclients.php for example
 function show_listclient_start() {
 	$headers = array();
-	$headers[0]['title'] = _Th('person_input_name');
-	$headers[0]['order']  = 'order_name_first';
-	$headers[0]['default'] = 'ASC';
+	$headers[0]['title'] = "#";
+	$headers[0]['order'] = 'order_id';
+	$headers[0]['default'] = '';
+
+	$headers[1]['title'] = _Th('person_input_name');
+	$headers[1]['order']  = 'order_name_first';
+	$headers[1]['default'] = 'ASC';
+	$headers[1]['width'] = "99%";
 
 	show_list_start($headers);
 }
