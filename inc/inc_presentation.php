@@ -264,7 +264,7 @@ function lcm_page_end($credits = '') {
 		</div>
 		<div class=\"clearing\">&nbsp;</div>
 	</div>
-<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")</div>\n";
+<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ". _T('info_free_software') ."</div>\n";
 
 	//
 	// Language choice (temporarely put here by [ML])
