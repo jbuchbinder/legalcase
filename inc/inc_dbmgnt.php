@@ -36,6 +36,7 @@ function create_database() {
 		legal_reason text NOT NULL,
 		alledged_crime text NOT NULL,
 		status text NOT NULL,
+		public tinyint(1) default '0' NOT NULL,	// Is the case publicaly available to all users?
 		PRIMARY KEY (id_case))";
 	$result = lcm_query($query);
 
@@ -112,7 +113,7 @@ function create_database() {
 	//
 
 	lcm_log("creating the tables used for relations between objects", 'install');
-	
+
 	$query = "CREATE TABLE lcm_case_client_org (
 		id_case bigint(21) DEFAULT '0' NOT NULL,
 		id_client bigint(21) DEFAULT '0' NOT NULL,
@@ -122,9 +123,12 @@ function create_database() {
 		KEY id_org (id_org))";
 	$result = lcm_query($query);
 
+	// + Access control permissions
 	$query = "CREATE TABLE lcm_case_author (
 		id_case bigint(21) DEFAULT '0' NOT NULL,
 		id_author bigint(21) DEFAULT '0' NOT NULL,
+		read tinyint(1) NOT NULL default '0',
+		write tinyint(1) NOT NULL default '0',
 		KEY id_case (id_case),
 		KEY id_author (id_author))";
 	$result = lcm_query($query);

@@ -1,20 +1,34 @@
 <?php
 
 include('inc/inc.php');
+include('inc/inc_acc.php');
 lcm_page_start("Case details");
 
 // Prepare query
-$q='SELECT * FROM lcm_case WHERE id_case=' . $case;
+$q="SELECT *
+	FROM lcm_case,lcm_case_author,lcm_author
+	WHERE (lcm_case.id_case=$case
+		AND lcm_case_author.id_case=$case
+		AND lcm_case_author.id_author=lcm_author.id_author)";
 
 // Do the query
 $result = lcm_query($q);
 
 // Process the output of the query
 if ($row = mysql_fetch_array($result)) {
+
+	// Check for access rights
+	if (!($row['public'] || allowed($case,'r'))) {
+		die("You don't have permission to view this case!");
+	}
+	$edit = allowed($case,'w');
+
 	// Show case details
 	echo '<h1>Details for case: </h1>' . $row['title'];
-	echo ' [<a href="edit_case.php?case=' . $row['id_case'] . "\">Edit case information</a>]<br>\n";
-	echo 'Case ID: ' . $row['id_case'] . "<br>\n";
+	if ($edit)
+		echo ' [<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case information</a>]';
+	echo "<br>\nCase ID: " . $row['id_case'] . "<br>\n";
+	echo 'Case Author: ' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "<br>\n";
 	echo 'Court archive ID: ' . $row['id_court_archive'] . "<br>\n";
 	echo 'Creation date: ' . $row['date_creation'] . "<br>\n";
 	echo 'Assignment date: ' . $row['date_assignment'] . "<br>\n";
@@ -37,12 +51,16 @@ if ($row = mysql_fetch_array($result)) {
 	$result = lcm_query($q);
 
 	while ($row = mysql_fetch_array($result)) {
-		echo '<tr><td>' . $row['name'] . "</td>\n";
-		echo '<td><a href="edit_org.php?org=' . $row['id_org'] . "\">Edit</a></td></tr>\n";
+		echo '<tr><td>' . $row['name'] . "</td>\n<td>";
+		if ($edit)
+			echo '<a href="edit_org.php?org=' . $row['id_org'] . '">Edit</a>';
+		echo "</td></tr>\n";
 	}
 
-	?><tr><td><a href="sel_org.php?case=<?php echo $case; ?>">Add organisation(s)</a></td><td></td></tr>
-	</table><br>
+	if ($edit)
+		echo "<tr><td><a href=\"sel_org.php?case=$case\">Add organisation(s)</a></td><td></td></tr>";
+
+	?></table><br>
 
 	<table border>
 	<caption>Clients:</caption>
@@ -57,11 +75,14 @@ if ($row = mysql_fetch_array($result)) {
 	$result = lcm_query($q);
 
 	while ($row = mysql_fetch_array($result)) {
-		echo '<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last'] . "</td>\n";
-		echo '<td><a href="edit_client.php?client=' . $row['id_client'] . "\">Edit</a></td></tr>\n";
+		echo '<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' .$row['name_last'] . "</td>\n<td>";
+		if ($edit)
+			echo '<a href="edit_client.php?client=' . $row['id_client'] . '">Edit</a>';
+		echo "</td></tr>\n";
 	}
-	?><tr><td><a href="sel_client.php?case=<?php echo $case; ?>">Add client(s)</a></td><td></td></tr>
-	</table><br>
+	if ($edit)
+		echo "<tr><td><a href=\"sel_client.php?case=$case\">Add client(s)</a></td><td></td></tr>";
+	?></table><br>
 	<?php
 
 } else die("There's no such case!")
@@ -84,10 +105,13 @@ $result = lcm_query($q);
 // Process the output of the query
 while ($row = mysql_fetch_assoc($result)) {
 	// Show followup
-	echo '<tr><td>' . $row['date_start'] . '</td><td>' . $row['type'] . '</td><td>' . $row['description'] . '</td>';
-	echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . "\">Edit</a></td></tr>\n";
+	echo '<tr><td>' . $row['date_start'] . '</td><td>' . $row['type'] . '</td><td>' . $row['description'] . '</td><td>';
+	if ($edit)
+		echo '<a href="edit_fu.php?followup=' . $row['id_followup'] . '">Edit</a>';
+	echo "</td></tr>\n";
 }
-echo '<tr><td colspan="3"><a href="edit_fu.php?case=' . $case . "\">New followup</a></td><td></td></tr>\n";
+if ($edit)
+	echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\">New followup</a></td><td></td></tr>\n";
 
 ?>
 </table>

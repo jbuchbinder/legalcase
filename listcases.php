@@ -1,10 +1,14 @@
 <?php
 
 include('inc/inc.php');
+include('inc/inc_acc.php');
 lcm_page_start("List of cases");
 
 // Prepare query
-$q = 'SELECT id_case,title FROM lcm_case';
+$q = "SELECT lcm_case.id_case,title,public
+		FROM lcm_case,lcm_case_author
+		WHERE (lcm_case.id_case=lcm_case_author.id_case
+			AND lcm_case_author.id_author=" . $GLOBALS['connect_id_auteur'] . ")";
 
 // TODO - add case filter based on user/case status to query
 
@@ -20,7 +24,10 @@ $result = lcm_query($q);
 while ($row = mysql_fetch_array($result)) {
 	// Show case title
 	echo '<tr><td><a href="case_det.php?case=' . $row['id_case'] . '">'. $row['title'] . "</a></td>\n";
-	echo '<td><a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a></td></tr>' . "\n";
+	echo '<td>';
+	if (allowed($row['id_case'],"rw"))
+		echo '<a href="edit_case.php?case=' . $row['id_case'] . '">Edit case</a>';
+	echo "</td></tr>\n";
 }
 
 ?>

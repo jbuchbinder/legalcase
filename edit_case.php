@@ -23,6 +23,7 @@ if ($case>0) {
 		}
 	}
 } else {
+	$case_data['id_author'] = $GLOBALS['connect_id_auteur'];
 	$case_data['date_creation'] = date('Y-m-d H:i:s');
 }
 
@@ -34,6 +35,8 @@ if ($case>0) {
 		<tr><th>Parameter</th><th>Value</th></tr>
 		<tr><td>Case ID:</td><td><?php echo $case_data['id_case']; ?>
 			<input type="hidden" name="id_case" value="<?php echo $case_data['id_case']; ?>"></td></tr>
+		<tr><td>Author ID:</td><td><?php echo $case_data['id_author']; ?>
+			<input type="hidden" name="id_author" value="<?php echo $case_data['id_author']; ?>"></td></tr>
 		<tr><td>Case title:</td>
 			<td><input name="title" value="<?php echo htmlspecialchars($case_data['title']); ?>"></td></tr>
 		<tr><td>Court archive:</td>
@@ -48,6 +51,8 @@ if ($case>0) {
 			<td><input name="alledged_crime" value="<?php echo htmlspecialchars($case_data['alledged_crime']); ?>"></td></tr>
 		<tr><td>Case status:</td>
 			<td><input name="status" value="<?php echo $case_data['status']; ?>"></td></tr>
+		<tr><td>Public:</td>
+			<td><input name="public" value="<?php echo $case_data['public']; ?>"></td></tr>
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>

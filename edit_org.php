@@ -25,7 +25,9 @@ if (empty($errors)) {
 			session_register("org");
 
 		// Prepare query
-		$q='SELECT * FROM lcm_org WHERE id_org=' . $org;
+		$q="SELECT *
+			FROM lcm_org
+			WHERE id_org=$org";
 
 		// Do the query
 		$result = lcm_query($q);
