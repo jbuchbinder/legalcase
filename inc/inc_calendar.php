@@ -1,11 +1,10 @@
 <?php
 
-//
 // Execute only once
 if (defined("_INC_CALENDAR")) return;
 define("_INC_CALENDAR", "1");
 
-define(DEFAUT_D_ECHELLE,120); # 1 pixel = 2 minutes
+define(DEFAULT_D_SCALE,120); # 1 pixel = 2 minutes
 
 // Write cookies
 
@@ -22,10 +21,7 @@ if ($GLOBALS['set_partie_cal']) {
 	$GLOBALS['partie_cal'] = $GLOBALS['HTTP_COOKIE_VARS']['spip_partie_cal'];
 
 
-# Typographie generale des calendriers de 3 type: jour/mois/annee
-# Il faudrait rationnaliser le nom des fonctions 
-# avec des suffixes identiques pour les memes fonctionnalites des 3 types
-
+// General typography of the 3 types of calendars: day/month/year
 global $bleu, $vert, $jaune;
 $style = "style='width: 14px; height: 7px; border: 0px'";
 $bleu = http_img_pack("m_envoi_bleu$spip_lang_rtl.gif", 'B', $style);
@@ -36,7 +32,7 @@ function http_calendrier_init($date='', $ltype='', $lechelle='', $lpartie_cal=''
 {
 	global $mois, $annee, $jour, $type, $echelle, $partie_cal;
 
-	# valeurs par defaut
+	// default values
 	if (!$type
 	AND !($type = $ltype))
 		$type = 'mois';
@@ -52,30 +48,8 @@ function http_calendrier_init($date='', $ltype='', $lechelle='', $lpartie_cal=''
 	if (!$script) $script = $GLOBALS['REQUEST_URI']; 
 	$script = http_calendrier_retire_args($script);
 
-	if (!_DIR_RESTREINT) http_calendrier_titre($date, $type);
 	$f = 'http_calendrier_init_' . $type;
 	return $f($date, $echelle, $partie_cal, $script);
-}
-
-function http_calendrier_titre($date, $type)
-{
-
-if ($type == 'semaine') {
-
-	$GLOBALS['afficher_bandeau_calendrier_semaine'] = true;
-
-	$titre = _T('titre_page_calendrier',
-		    array('nom_mois' => nom_mois($date), 'annee' => annee($date)));
-	  }
-elseif ($type == 'jour') {
-	$titre = nom_jour($date)." ". affdate_jourcourt($date);
- }
- else {
-	$titre = _T('titre_page_calendrier',
-		    array('nom_mois' => nom_mois($date), 'annee' => annee($date)));
-	  }
-
-//  debut_page($titre,  "redacteurs", "calendrier");
 }
 
 
@@ -191,8 +165,7 @@ function http_calendrier_aujourdhui_et_aide($now, $texte, $href)
 	;
 }
   
-# affiche un mois en grand, avec des tableau de clics vers d'autres mois
-
+// Shows a month view, with tables which allow the user to click to other months
 function http_calendrier_tout($mois, $annee, $premier_jour, $dernier_jour)
 {
 	global $largeur_table, $largeur_gauche, $prefs;
@@ -249,8 +222,7 @@ function http_calendrier_tout($mois, $annee, $premier_jour, $dernier_jour)
 	return $total;
 }
 
-# affiche un mois en grand, avec des tableau de clics vers d'autres mois
-
+// Shows a month view, with tables which allow the user to click to other months
 function http_calendrier_init_mois($date, $echelle, $partie_cal, $script)
 {
 	global $largeur_table, $largeur_gauche, $prefs;
@@ -309,6 +281,7 @@ function http_calendrier_init_mois($date, $echelle, $partie_cal, $script)
 	return $total;
 }
 
+// calendar help for 'mess' => message center, but we call it 'agenda'
 function http_calendrier_aide_mess()
 {
   global $bleu, $vert, $jaune;
@@ -331,19 +304,17 @@ function http_calendrier_retire_args($script)
 	return $script;
 }
 
-# Bandeau superieur d'un calendrier selon son $type (jour/mois/annee):
-# 2 icones vers les 2 autres types, a la meme date $jour $mois $annee
-# 2 icones de loupes pour zoom sur la meme date et le meme type
-# 2 fleches appelant le $script sur les periodes $pred/$suiv avec une $ancre
-# et au center le $nom du calendrier
-
+// Banner at the top of the screen, according to the $type (day/month/year):
+// 2 icons go to other types, for the same day/month/year ($jour/$mois/$annee)
+// 2 icons zoom in/out for same type of cal
+// and in the center, the name ($nom) of the calendar
 function http_calendrier_navigation($jour, $mois, $annee, $partie_cal, $echelle, $nom,
 			    $script, $args_pred, $args_suiv, $type, $ancre)
 {
   global $couleur_foncee;
 
   if (!isset($couleur_foncee)) $couleur_foncee = '#aaaaaa';
-	if (!$echelle) $echelle = DEFAUT_D_ECHELLE;
+	if (!$echelle) $echelle = DEFAULT_D_SCALE;
 	$script = http_calendrier_retire_args($script);
 	if (!ereg('[?&]$', $script))
 		$script .= (strpos($script,'?') ? '&' : '?');
@@ -427,15 +398,12 @@ function http_calendrier_navigation($jour, $mois, $annee, $partie_cal, $echelle,
 				     _T('next'));
   	$retour .= "&nbsp;&nbsp;";
  	$retour .= "<span style='font-weight: bold'>$nom</span>";
-	return $retour .
-//	  (_DIR_RESTREINT ? '' :  aide("messcalen")) .
-	  "</div>".
-	  http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre);
+	return $retour . "</div>"
+		. http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre);
 }
 
 
-// fabrique un petit agenda accessible par survol
-
+// Builds a mini-agenda accessible via mouse-over
 function http_agenda_invisible($id, $annee, $jour, $mois, $script, $ancre)
 {
 	global $couleur_claire;
@@ -480,8 +448,7 @@ style='position: absolute; padding: 5px; background-color: $couleur_claire; marg
 	return $gadget . "</td></tr></table></div></div>";
 }
 
-# affichage du bandeau d'un calendrier d'une journee
-
+// Shows the banner of a calendar for a given day
 function http_calendrier_navigation_jour($jour,$mois,$annee, $partie_cal, $echelle, $script, $nav)
 {
   $today=getdate(time());
@@ -501,8 +468,7 @@ function http_calendrier_navigation_jour($jour,$mois,$annee, $partie_cal, $echel
 // "</table>";
 }
 
-# affichage du bandeau d'un calendrier d'une semaine
-
+// Shows the banner for a calendar of a given week
 function http_calendrier_navigation_semaine($jour_today,$mois_today,$annee_today, $partie_cal, $echelle, $jour_semaine, $script, $nav)
 {
    $debut = date("Y-m-d",mktime (1,1,1,$mois_today, $jour_today-$jour_semaine+1, $annee_today));
@@ -1063,7 +1029,7 @@ function http_cal_height ($heure, $heurefin, $debut, $fin, $dimheure, $dimjour, 
 
 function http_calendrier_jour_ics($debut, $fin, $largeur, $detcolor, $echelle, $evenements, $date) {
 
-	if ($echelle==0) $echelle = DEFAUT_D_ECHELLE;
+	if ($echelle==0) $echelle = DEFAULT_D_SCALE;
 
 	list($dimheure, $dimjour, $fontsize, $padding) = calendrier_echelle($debut, $fin, $echelle);
 	$modif_decalage = round($largeur/8);
@@ -1997,7 +1963,7 @@ function sql_calendrier_jour_ical($d) {
 
 function calendrier_echelle($debut, $fin, $echelle)
 {
-  if ($echelle==0) $echelle = DEFAUT_D_ECHELLE;
+  if ($echelle==0) $echelle = DEFAULT_D_SCALE;
   if ($fin <= $debut) $fin = $debut +1;
 
   $duree = $fin - $debut;
