@@ -31,15 +31,6 @@ if ($change_session == 'yes' || $change_session == 'oui') {
 	}
 }
 
-
-// Attemp to connect via auth_http
-// [ML] TODO
-if ($essai_auth_http AND !$ignore_auth_http) {
-	include_local ("inc-login.php3");
-	auth_http($cible, $essai_auth_http);
-	exit;
-}
-
 // Attempt to logout
 if ($logout) {
 	include_lcm('inc_session');
@@ -80,8 +71,8 @@ if ($essai_login == 'oui') {
 	if ($session_login_hidden AND !$session_login)
 		$session_login = $session_login_hidden;
 
-	$login = $session_login;
-	$pass = $session_password;
+	$login = $session_login; // [ML] where from?
+	$pass = $session_password; // [ML] not used??
 
 	// Try different authentication methods, starting with "db" (database)
 	$auths = array('db');
@@ -99,12 +90,18 @@ if ($essai_login == 'oui') {
 		include_lcm('inc_auth_'.$nom_auth);
 		$classe_auth = 'Auth_'.$nom_auth;
 		$auth = new $classe_auth;
+
 		if ($auth->init()) {
-			// Try with the md5 password
+			// Try with the md5 password (made by Javascript in the form)
+			// [ML] TODO: session_password_md5 + next_session_password_md5 
+			// should probably be refered to via _REQUEST... (test after!)
 			$ok = $auth->validate_md5_challenge($login, $session_password_md5, $next_session_password_md5);
+
 			// If failed, try as cleartext
-			if (!$ok && $session_password) $ok = $auth->verifier($login, $session_password);
+			if (!$ok && $session_password)
+				$ok = $auth->validate_pass_cleartext($login, $session_password);
 		}
+
 		if ($ok) break;
 	}
 
@@ -113,11 +110,15 @@ if ($essai_login == 'oui') {
 	if ($ok) {
 		$auth->activate();
 
-		if ($auth->login AND $auth->statut == 'admin') // force cookies for admins
-			$cookie_admin = "@".$auth->login;
+		// Force cookies for admins
+		if ($auth->username AND $auth->status == 'admin')
+			$cookie_admin = "@" . $auth->username;
 
-		$query = "SELECT * FROM lcm_author WHERE username='".addslashes($auth->login)."'";
+		$query = "SELECT * 
+					FROM lcm_author
+					WHERE username='".addslashes($auth->username)."'";
 		$result = lcm_query($query);
+
 		if ($row_author = lcm_fetch_array($result))
 			$cookie_session = creer_cookie_session($row_author);
 
