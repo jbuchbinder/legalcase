@@ -88,7 +88,7 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 		$query .= " AND type_contact = " . $type_contact;
 
 	if ($id)
-		$query .= " AND id_person = " . $id;
+		$query .= " AND id_of_person = " . $id;
 
 	$result = lcm_query($query);
 	return (lcm_num_rows($result) > 0);
