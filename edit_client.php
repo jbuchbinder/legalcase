@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.30 2005/02/08 21:19:37 antzi Exp $
+	$Id: edit_client.php,v 1.31 2005/02/10 09:02:40 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -96,7 +96,7 @@ echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_inpu
 echo '<td><input name="name_last" value="' . clean_output($client_data['name_last']) . '" class="search_form_txt"></td></tr>' . "\n";
 
 echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
-echo '<td><select name="gender">' . "\n";
+echo '<td><select name="gender" class="sel_frm">' . "\n";
 
 $opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
 
@@ -234,7 +234,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 				<?php
 					global $system_kwg;
 
-					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '">' . "\n";
+					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '" class="sel_frm">' . "\n";
 					echo "<option value=''>" . "- select contact type -" . "</option>\n";
 
 					foreach ($system_kwg['contacts']['keywords'] as $contact) {
@@ -247,7 +247,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 				?>
 				</div>
 				<div>
-					<input type='text' size='40' style='style: 99%' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt_new; ?>' 
+					<input type='text' size='40' name='new_contact_value[]' id='new_contact_value_<?php echo $cpt_new; ?>' 
 					
 					<?php 
 						echo ' value="' . $client_data['new_contact_' . $cpt_new] . '" ';
@@ -259,7 +259,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 			</td>
 		</tr>
 	</table>
-
+	<br />
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
 	<input type="hidden" name="ref_edit_client" value="<?php echo $HTTP_REFERER ?>">
 </form>

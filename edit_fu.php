@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.60 2005/02/09 12:27:46 antzi Exp $
+	$Id: edit_fu.php,v 1.61 2005/02/10 09:02:40 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -203,7 +203,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			</td>
 		</tr>
 		<tr><td><?php echo _T('fu_input_type'); ?></td>
-			<td><select <?php echo $dis; ?> name="type" size="1">
+			<td><select <?php echo $dis; ?> name="type" size="1" class="sel_frm">
 			<?php
 
 			global $system_kwg;
