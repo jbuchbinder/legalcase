@@ -154,8 +154,9 @@ function lcm_page_start($title = "", $css_files = "") {
 						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_admin') . "</div>
 						<ul id=\"nav_menu_list\">
 							<li><a href=\"config_site.php\" class=\"main_nav_btn\">" . _T('menu_admin_siteconf') . "</a></li>
-							<li><a href=\"archives.php\" class=\"main_nav_btn\">" .  _T('menu_admin_archives') . " (<abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\">not ready yet</abbr>)</a></li>
-							<li><a href=\"reports.php\" class=\"main_nav_btn\">" . _T('menu_admin_reports') . " (<abbr title=\"Generate reports on all cases (admin only)\">not ready yet</abbr>)</a></li>
+							<li><a href=\"all_cases.php\" class=\"main_nav_btn\">" .  _T('menu_admin_archives') . " <abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\"></abbr></a></li>
+							<li><a href=\"listreps.php\" class=\"main_nav_btn\">" . _T('menu_admin_reports') . " <abbr title=\"Manage reports (admin only)\"></abbr></a></li>
+							<li><a href=\"listfilters.php\" class=\"main_nav_btn\">" . _T('menu_admin_filters') . " <abbr title=\"Manage filters (admin only)\"></abbr></a></li>
 							<li><a href=\"keywords.php\" class=\"main_nav_btn\">" .  _T('menu_admin_keywords') . "</a></li>
 						</ul>
 					</div>\n";
