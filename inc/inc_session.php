@@ -1,22 +1,19 @@
 <?php
 //
-// Ce fichier ne sera execute qu'une fois
-if (defined("_ECRIRE_INC_SESSION")) return;
-define("_ECRIRE_INC_SESSION", "1");
+// Execute this file only once
+if (defined('_INC_SESSION')) return;
+define('_INC_SESSION', '1');
 
 
 /*
- * Gestion de l'authentification par sessions
- * a utiliser pour valider l'acces (bloquant)
- * ou pour reconnaitre un utilisateur (non bloquant)
- *
+ * Management for authentication by sessions.
  */
 
 $GLOBALS['auteur_session'] = '';
 
 
 //
-// On verifie l'IP et le nom du navigateur
+// Hash is created with the IP and the web navigator name
 //
 function hash_env() {
 	global $HTTP_SERVER_VARS;
@@ -25,13 +22,13 @@ function hash_env() {
 
 
 //
-// Calcule le nom du fichier session
+// Calculate the name of the session file
 //
 function fichier_session($id_session, $alea) {
 	if (ereg("^([0-9]+_)", $id_session, $regs))
-		$id_auteur = $regs[1];
+		$id_author = $regs[1];
 
-	$fichier_session = 'session_'.$id_auteur.md5($id_session.' '.$alea).'.php';
+	$fichier_session = 'session_'.$id_author.md5($id_session.' '.$alea).'.php';
 	$fichier_session = 'data/'.$fichier_session;
 
 	return $fichier_session;
@@ -42,7 +39,7 @@ function fichier_session($id_session, $alea) {
 //
 function ajouter_session($auteur, $id_session) {
 	$fichier_session = fichier_session($id_session, lire_meta('alea_ephemere'));
-	$vars = array('id_auteur', 'nom', 'login', 'email', 'statut', 'lang', 'ip_change', 'hash_env');
+	$vars = array('id_author', 'name_first', 'name_middle', 'name_last', 'username', 'email', 'status', 'lang', 'ip_change', 'hash_env');
 
 	$texte = "<"."?php\n";
 	reset($vars);
@@ -113,8 +110,8 @@ function supprimer_session($id_session) {
 // Creer une session et retourne le cookie correspondant (a poser)
 //
 function creer_cookie_session($auteur) {
-	if ($id_auteur = $auteur['id_auteur']) {
-		$id_session = $id_auteur.'_'.md5(creer_uniqid());
+	if ($id_author = $auteur['id_author']) {
+		$id_session = $id_author.'_'.md5(creer_uniqid());
 		$auteur['hash_env'] = hash_env();
 		ajouter_session($auteur, $id_session);
 		return $id_session;
@@ -147,30 +144,29 @@ function creer_uniqid() {
 // Cette fonction efface toutes les sessions appartenant a l'auteur
 // On en profite pour effacer toutes les sessions creees il y a plus de 48 h
 //
-function zap_sessions ($id_auteur, $zap) {
-	$dirname = $GLOBALS['flag_ecrire'] ? "data/" : "ecrire/data/";
+function zap_sessions ($id_author, $zap) {
+	$dirname = 'data/';
 
 	// ne pas se zapper soi-meme
-	if ($s = $GLOBALS['spip_session'])
+	if ($s = $GLOBALS['lcm_session'])
 		$fichier_session = fichier_session($s, lire_meta('alea_ephemere'));
 
 	$dir = opendir($dirname);
 	$t = time();
 	while(($item = readdir($dir)) != '') {
 		$chemin = "$dirname$item";
-		if (ereg("^session_([0-9]+_)?([a-z0-9]+)\.php3$", $item, $regs)) {
+		if (ereg("^session_([0-9]+_)?([a-z0-9]+)\.php$", $item, $regs)) {
 
 			// Si c'est une vieille session, on jette
 			if (($t - filemtime($chemin)) > 48 * 3600)
 				@unlink($chemin);
 
 			// sinon voir si c'est une session du meme auteur
-			else if ($regs[1] == $id_auteur.'_') {
+			else if ($regs[1] == $id_author.'_') {
 				$zap_num ++;
 				if ($zap)
 					@unlink($chemin);
 			}
-
 		}
 	}
 
@@ -184,14 +180,15 @@ function verifier_php_auth() {
 	global $PHP_AUTH_USER, $PHP_AUTH_PW, $ignore_auth_http;
 	if ($PHP_AUTH_USER && $PHP_AUTH_PW && !$ignore_auth_http) {
 		$login = addslashes($PHP_AUTH_USER);
-		$result = spip_query("SELECT * FROM spip_auteurs WHERE login='$login'");
+		$result = spip_query("SELECT * FROM lcm_author WHERE username='$login'");
 		$row = spip_fetch_array($result);
 		$auth_mdpass = md5($row['alea_actuel'] . $PHP_AUTH_PW);
 		if ($auth_mdpass != $row['pass']) {
 			$PHP_AUTH_USER='';
 			return false;
 		} else {
-			$GLOBALS['auteur_session']['id_auteur'] = $row['id_auteur'];
+			// [ML] FIXME update fields
+			$GLOBALS['auteur_session']['id_author'] = $row['id_author'];
 			$GLOBALS['auteur_session']['nom'] = $row['nom'];
 			$GLOBALS['auteur_session']['login'] = $row['login'];
 			$GLOBALS['auteur_session']['email'] = $row['email'];
@@ -218,7 +215,7 @@ function ask_php_auth($text_failure) {
 // et charge ses valeurs dans $GLOBALS['auteur_session']
 //
 function verifier_visiteur() {
-	if (verifier_session($GLOBALS['HTTP_COOKIE_VARS']['spip_session']))
+	if (verifier_session($GLOBALS['HTTP_COOKIE_VARS']['lcm_session']))
 		return true;
 	if (verifier_php_auth())
 		return true;

@@ -669,5 +669,11 @@ function ajoute_popup_multi($langue_demandee, $trads, $texte) {
 	return $texte;
 }
 
+function quote_amp ($text) {
+	// avoids cases "&amp; & me"
+	$text = str_replace("&amp;", "&", $text);
+	$text = str_replace("&", "&amp;", $text);
+	return $text;
+}
 
 ?>

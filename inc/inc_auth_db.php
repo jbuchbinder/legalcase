@@ -5,7 +5,7 @@
 if (defined('_INC_AUTH_DB')) return;
 define('_INC_AUTH_DB', '1');
 
-class Auth_spip {
+class Auth_db {
 	var $nom, $login, $email, $md5pass, $md5next, $alea_futur, $statut;
 
 	function init() {
@@ -17,14 +17,14 @@ class Auth_spip {
 		// Interdire mot de passe vide
 		if ($mdpass_actuel == '') return false;
 
-		$query = "SELECT * FROM spip_auteurs WHERE login='".addslashes($login)."' AND pass='".addslashes($mdpass_actuel)."' AND statut<>'5poubelle'";
+		$query = "SELECT * FROM lcm_author WHERE username='".addslashes($login)."' AND password='".addslashes($mdpass_actuel)."' AND status<>'5poubelle'";
 		$result = spip_query($query);
 
 		if ($row = spip_fetch_array($result)) {
 			$this->nom = $row['nom'];
-			$this->login = $row['login'];
+			$this->login = $row['username'];
 			$this->email = $row['email'];
-			$this->statut = $row['statut'];
+			$this->statut = $row['status'];
 			$this->md5pass = $mdpass_actuel;
 			$this->md5next = $mdpass_futur;
 			return true;
@@ -37,7 +37,7 @@ class Auth_spip {
 		// Interdire mot de passe vide
 		if ($pass == '') return false;
 
-		$query = "SELECT alea_actuel, alea_futur FROM spip_auteurs WHERE login='".addslashes($login)."'";
+		$query = "SELECT alea_actuel, alea_futur FROM lcm_author WHERE username='".addslashes($login)."'";
 		$result = spip_query($query);
 		if ($row = spip_fetch_array($result)) {
 			$md5pass = md5($row['alea_actuel'] . $pass);
@@ -53,15 +53,15 @@ class Auth_spip {
 
 	function activer() {
 		if ($this->statut == 'nouveau') { // nouvel inscrit
-			spip_query("UPDATE spip_auteurs SET statut='1comite' WHERE login='".addslashes($this->login)."'");
+			spip_query("UPDATE lcm_author SET status='1comite' WHERE username='".addslashes($this->login)."'");
 		}
 		if ($this->md5next) {
-			include_ecrire("inc_session.php3");
+			include_lcm('inc_session');
 			// fait tourner le codage du pass dans la base
 			$nouvel_alea_futur = creer_uniqid();
-			$query = "UPDATE spip_auteurs SET alea_actuel = alea_futur, ".
-				"pass = '".addslashes($this->md5next)."', alea_futur = '$nouvel_alea_futur' ".
-				"WHERE login='".$this->login."'";
+			$query = "UPDATE lcm_author SET alea_actuel = alea_futur, ".
+				"password = '".addslashes($this->md5next)."', alea_futur = '$nouvel_alea_futur' ".
+				"WHERE username='".$this->login."'";
 			@spip_query($query);
 		}
 	}

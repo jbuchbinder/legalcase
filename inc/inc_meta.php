@@ -65,8 +65,6 @@ function lire_meta_maj($nom) {
 			$s .= "\$GLOBALS['meta']['$key'] = '$val';\n";
 		}
 		$s .= "\n";
-	} else {
-		echo "Niama meta!\n";
 	}
 	if ($meta_maj) {
 		reset($meta_maj);

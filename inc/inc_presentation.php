@@ -5,7 +5,10 @@
 if (defined('_INC_PRESENTATION')) return;
 define('_INC_PRESENTATION', '1');
 
-include_lcm ('inc_lang');
+include_lcm('inc_filters');
+include_lcm('inc_text');
+include_lcm('inc_lang');
+
 use_language_of_visitor();
 
 
@@ -1776,7 +1779,7 @@ function bandeau_rubrique ($id_rubrique, $titre_rubrique, $z = 1) {
 
 }
 
-function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivre", $onLoad = "") {
+function lcm_page_start($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivre", $onLoad = "") {
 	global $couleur_foncee;
 	global $couleur_claire;
 	global $adresse_site;
@@ -1790,8 +1793,10 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 	$activer_messagerie = lire_meta("activer_messagerie");
 	global $clean_link;
 
-	if ($spip_ecran == "large") $largeur = 974;
-	else $largeur = 750;
+	if ($spip_ecran == "large")
+		$largeur = 974;
+	else
+		$largeur = 750;
 
 	// nettoyer le lien global
 	$clean_link->delVar('var_lang');
@@ -1800,7 +1805,7 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 	$clean_link->delVar('set_disp');
 	$clean_link->delVar('set_ecran');
 
-	// [ML] FIXME (site "../")
+	// [ML] FIXME (site "../", what is this for?)
 	if (strlen($adresse_site)<10) $adresse_site="../";
 
 	debut_html($titre, $rubrique, $onLoad);
@@ -2082,7 +2087,7 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 		echo "<td class='bandeau_couleur' style='text-align: $spip_lang_right; width: 28px;' valign='middle'>";
 
 			if ($auth_can_disconnect) {	
-				echo "<a href='../spip_cookie.php3?logout=$connect_login' class='icone26' onMouseOver=\"changestyle('bandeaudeconnecter','visibility', 'visible');\"><img src='img_pack/deconnecter-24$spip_lang_rtl.gif' border='0'></a>";
+				echo "<a href='lcm_cookie.php?logout=$connect_login' class='icone26' onMouseOver=\"changestyle('bandeaudeconnecter','visibility', 'visible');\"><img src='img_pack/deconnecter-24$spip_lang_rtl.gif' border='0'></a>";
 			}
 		echo "</td>";
 	
@@ -2224,9 +2229,10 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 	
 		// Taches
 		
+		/* [ML] NOT USED 
 		$result_pb = spip_query("SELECT * FROM spip_messages AS messages WHERE id_auteur=$connect_id_auteur AND statut='publie' AND type='pb' AND rv!='oui'");
 		$result_rv = spip_query("SELECT messages.* FROM spip_messages AS messages, spip_auteurs_messages AS lien WHERE ((lien.id_auteur='$connect_id_auteur' AND lien.id_message=messages.id_message) OR messages.type='affich') AND messages.rv='oui' AND messages.date_heure > DATE_SUB(NOW(), INTERVAL 1 DAY) AND messages.date_heure < DATE_ADD(NOW(), INTERVAL 1 MONTH) AND messages.statut='publie' GROUP BY messages.id_message ORDER BY messages.date_heure");
-		
+		*/
 
 		if (spip_num_rows($result_pb) OR spip_num_rows($result_rv)) {
 			$largeur = "410px";
@@ -2326,6 +2332,7 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 	echo "<center onMouseOver=\"if (findObj('bandeaurecherche').style.visibility == 'visible') { ouvrir_recherche = true; } else { ouvrir_recherche = false; } changestyle('bandeauvide', 'visibility', 'hidden'); if (ouvrir_recherche == true) { changestyle('bandeaurecherche','visibility','visible'); }\">";
 
 
+		/* [ML] NOT USED 
 		if ($activer_messagerie != 'non' AND $connect_activer_messagerie != 'non') {
 			$result_messages = spip_query("SELECT * FROM spip_messages AS messages, spip_auteurs_messages AS lien WHERE lien.id_auteur=$connect_id_auteur AND vu='non' AND statut='publie' AND type='normal' AND lien.id_message=messages.id_message");
 			$total_messages = @spip_num_rows($result_messages);
@@ -2337,6 +2344,7 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 			}
 			if ($total_messages > 1) echo "<div class='messages'><a href='messagerie.php3'><font color='$couleur_foncee'>"._T('info_nouveaux_messages', array('total_messages' => $total_messages))."</font></a></div>";
 		}
+		*/
 
 
 	// Afficher les auteurs recemment connectes
@@ -2347,6 +2355,7 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 	global $connect_activer_messagerie;
 	global $connect_activer_imessage;
 
+		/* [ML] NOT USED
 		if ($changer_config!="oui"){
 			$activer_messagerie=lire_meta("activer_messagerie");
 			$activer_imessage=lire_meta("activer_imessage");
@@ -2357,6 +2366,7 @@ function debut_page($titre = "", $rubrique = "asuivre", $sous_rubrique = "asuivr
 				$result_auteurs = spip_query($query2);
 				$nb_connectes = spip_num_rows($result_auteurs);
 			}
+		*/
 	
 			$flag_cadre = (($nb_connectes > 0) OR $rubrique == "messagerie");
 			if ($flag_cadre) echo "<div class='messages' style='color: #666666;'>";
@@ -2585,11 +2595,12 @@ function fin_html() {
 
 	echo "</font>";
 
-	// rejouer le cookie de session si l'IP a change
-	if ($GLOBALS['spip_session'] && $GLOBALS['auteur_session']['ip_change']) {
+	// Create a new session cookie if the IP changed
+	// [ML] FIXME update paths and names
+	if ($GLOBALS['lcm_session'] && $GLOBALS['auteur_session']['ip_change']) {
 		echo "<img name='img_session' src='img_pack/rien.gif' width='0' height='0'>\n";
 		echo "<script type='text/javascript'><!-- \n";
-		echo "document.img_session.src='../spip_cookie.php3?change_session=oui';\n";
+		echo "document.img_session.src='lcm_cookie.php?change_session=oui';\n";
 		echo "// --></script>\n";
 	}
 
@@ -2598,7 +2609,7 @@ function fin_html() {
 }
 
 
-function fin_page($credits='') {
+function lcm_page_end($credits='') {
 	global $spip_version_affichee;
 	global $connect_id_auteur;
 	global $multi_popup;

@@ -61,8 +61,10 @@ function _action_auteur($action, $id_auteur, $nom_alea) {
 		$pass = $connect_pass;
 	}
 	else {
-		$result = spip_query("SELECT pass FROM spip_auteurs WHERE id_auteur=$id_auteur");
-		if ($result) if ($row = spip_fetch_array($result)) $pass = $row['pass'];
+		$result = spip_query("SELECT password FROM lcm_author WHERE id_author=$id_auteur");
+		if ($result)
+			if ($row = spip_fetch_array($result))
+				$pass = $row['password'];
 	}
 	$alea = lire_meta($nom_alea);
 	return md5($action.$id_auteur.$pass.$alea);

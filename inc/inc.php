@@ -8,20 +8,16 @@ if (!@file_exists('config/inc_connect.php')) {
 
 include ('inc/inc_version.php');
 
-// [ML] Most of the commented files may not be necessary
-// [ML] include_lcm("inc_auth");
+include_lcm('inc_auth');
 include_lcm('inc_presentation');
-include_lcm("inc_text");
-include_lcm("inc_filters");
+include_lcm('inc_text');
+include_lcm('inc_filters');
 // [ML] include_lcm("inc_urls");
 // [ML] include_lcm("inc_layer");
 // [ML] include_lcm("inc_rubriques");
 include_lcm('inc_calendar');
 
-// [ML] added
-include_lcm('inc_session');
-
-if (!@file_exists("data/inc_meta_cache.php"))
+if (!@file_exists('data/inc_meta_cache.php'))
 	ecrire_metas();
 
 
@@ -32,7 +28,7 @@ if (!@file_exists("data/inc_meta_cache.php"))
 if ($lang = $GLOBALS['HTTP_COOKIE_VARS']['spip_lang_ecrire'] AND $lang <> $auteur_session['lang'] AND changer_langue($lang)) {
 	// [ML TODO] spip_query ("UPDATE spip_auteurs SET lang = '".addslashes($lang)."' WHERE id_auteur = $connect_id_auteur");
 	$auteur_session['lang'] = $lang;
-	ajouter_session($auteur_session, $spip_session);
+	ajouter_session($auteur_session, $lcm_session);
 }
 
 if ($set_couleur) {
@@ -183,13 +179,15 @@ switch ($prefs['couleur']) {
 // Version management
 //
 
+ecrire_metas();
+
 $version_installee = (double) lire_meta('version_lcm');
-if ($version_installee <> $spip_version) {
+if ($version_installee <> $lcm_version) {
 	debut_page();
 	if (!$version_installee)
 		$version_installee = _T('info_anterieur');
 
-	echo "<p>[ML] Test!</p>"; // FIXME
+	echo "<p>[ML] Installed version = $version_installee ; lcm_version = $lcm_version </p>"; // FIXME
 	echo "<blockquote><blockquote><h4><font color='red'>"._T('info_message_technique')."</font><br> "._T('info_procedure_maj_version')."</h4>
 	"._T('info_administrateur_site_01')." <a href='upgrade.php3'>"._T('info_administrateur_site_02')."</a></blockquote></blockquote><p>";
 
