@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.77 2005/02/02 10:13:35 makaveev Exp $
+	$Id: case_det.php,v 1.78 2005/02/03 08:34:59 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -235,13 +235,13 @@ if ($case > 0) {
 		<tr><th class='heading'>";
 	switch ($fu_order) {
 		case 'ASC':
-			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> v';
+			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 			break;
 		case 'DESC':
-			echo "<a href='case_det.php?case=$case&amp;fu_order=ASC' class='content_link'>" . _T('date') . '</a> ^';
+			echo "<a href='case_det.php?case=$case&amp;fu_order=ASC' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/desc_asc_arrow.gif" width="9" height="11" alt="" />';
 			break;
 		default:
-			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> v';
+			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 	}
 //	echo _T('date') .
 	echo "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
