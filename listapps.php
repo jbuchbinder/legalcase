@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listapps.php,v 1.3 2005/02/24 15:03:13 antzi Exp $
+	$Id: listapps.php,v 1.4 2005/02/25 22:17:16 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -37,10 +37,11 @@ if ($number_of_rows) {
 	echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 	echo "\t<tr>";
 	echo '<th class="heading">Start time</th>';
-	echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Length' ) . '</th>';
+	echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Duration' ) . '</th>';
 	echo '<th class="heading">Type</th>';
 	echo '<th class="heading">Title</th>';
 	echo '<th class="heading">Reminder</th>';
+	echo '<th class="heading">Action</th>';
 	echo "</tr>\n";
 
 	// Check for correct start position of the list
@@ -68,9 +69,12 @@ if ($number_of_rows) {
 							($prefs['time_intervals_notation'] == 'hours_only') )
 			) . '</td>';
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['type'] . '</td>';
-		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['title'] . '</td>';
+		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+			. '<a href="app_det.php?app=' . $row['id_app'] . '">' . $row['title'] . '</a></td>';
 		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 			. date('d.m.y H:i',strtotime($row['reminder'])) . '</td>';
+		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+			. '<a href="edit_app.php?app=' . $row['id_app'] . '">' . _T('edit') . '</a></td>';
 		echo "</tr>\n";
 	}
 	
