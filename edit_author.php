@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.17 2005/01/11 12:47:36 mlutfy Exp $
+	$Id: edit_author.php,v 1.18 2005/01/11 13:11:47 mlutfy Exp $
 */
 
 session_start();
@@ -41,6 +41,7 @@ $author = intval($_GET['author']);
 	if (isset($ref)) $usr['ref_edit_author'] = $ref;
 	else $usr['ref_edit_author'] = $HTTP_REFERER;
 
+	// XXX: [ML] deprecated PHP 4.2.0
 	// Register case type variable for the session
 	if (!session_is_registered("existing"))
 		session_register("existing");
@@ -203,8 +204,7 @@ echo show_all_errors($_SESSION['errors']);
 			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_connectionidentifiers'); ?></h4></td>
 		</tr>
 		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_login'); ?></td>
-			<td align="left" valign="top"><input name="username" type="text" class="search_form_txt" id="username" size="35" value="<?php echo clean_output($usr['username']); ?>"/></td>
-		</tr>
+			<td align="left" valign="top">
 
 		<?php
 			global $author_session;
@@ -219,9 +219,22 @@ echo show_all_errors($_SESSION['errors']);
 				lcm_log("ERROR: failed to initialize auth method");
 			}
 
+			if ($auth->is_newusername_allowed($usr['username'], $author_session)) {
+				echo '<input name="username" type="text" class="search_form_txt" id="username" size="35" value="' . clean_output($usr['username']) .'"/>';
+			} else {
+				echo '<input type="hidden" name="username" value="' . clean_output($usr['username']) . '"/>';
+				echo $usr['username'];
+			}
+		?>
+
+			</td>
+		</tr>
+
+		<?php
 			// Some authentication methods might not allow the password
 			// to be changed. Show the fields only if it is possible.
 			if ($auth->is_newpass_allowed($usr['username'], $author_session)) {
+				// Do not request 'current password' if new author or admin
 				if ($usr['id_author'] && $author_session['status'] != 'admin') {
 					echo '
 		<tr>
@@ -245,13 +258,23 @@ echo show_all_errors($_SESSION['errors']);
 		?>
 
 		<tr><td align="right" valign="top">Status:</td>
-			<td align="left" valign="top"><select name="status" class="sel_frm" id="status">
+			<td align="left" valign="top">
+			
 <?php
-			foreach ($statuses as $s) {
-				echo "\t\t\t\t<option value=\"$s\""
-					. (($s == $usr['status']) ? ' selected="selected"' : '') . ">$s</option>\n";
+			if ($author_session['status'] == 'admin') {
+				echo '<select name="status" class="sel_frm" id="status">' . "\n";
+
+				foreach ($statuses as $s) {
+					echo "\t\t\t\t<option value=\"$s\""
+						. (($s == $usr['status']) ? ' selected="selected"' : '') . ">$s</option>\n";
+				}
+
+				echo "</select>\n";
+			} else {
+				echo $usr['status'];
 			}
-?>			</select></td>
+?>
+			</td>
 		</tr>
 		<tr><td colspan="2" align="center" valign="middle">
 			<input name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('button_validate') ?>" /></td>
