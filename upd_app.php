@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.9 2005/03/24 21:06:15 antzi Exp $
+	$Id: upd_app.php,v 1.10 2005/03/24 22:14:30 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -189,6 +189,13 @@ if (count($_SESSION['errors'])) {
 			$_SESSION['errors']['author_added'] = "An author was added to the participants of this appointment.";
 	}
 
+	// Remove appointment participants (authors)
+	if (!empty($_SESSION['app_data']['rem_author'])) {
+		$q = "DELETE FROM lcm_author_app WHERE id_app=$id_app AND id_author IN (" . join(',',$_SESSION['app_data']['rem_author']) . ")";
+		if ( ($result = lcm_query($q)) && (mysql_affected_rows() > 0) )
+			$_SESSION['errors']['author_removed'] = "Author(s) was/were removed from participants of this appointment.";
+	}
+
 	// Add/update appointment clients/organisations
 	if (!empty($_SESSION['app_data']['client'])) {
 		$client_org = explode(':',$_SESSION['app_data']['client']);
@@ -196,6 +203,21 @@ if (count($_SESSION['errors'])) {
 		$q .= ',id_client=' . $client_org[0];
 		if ($client_org[1]) $q .= ',id_org=' . $client_org[1];
 		if ($result = lcm_query($q))
+			$_SESSION['errors']['client_added'] = "An client/organisation was added to the participants of this appointment.";
+	}
+
+	// Remove appointment participants (clients/organisations)
+	if (!empty($_SESSION['app_data']['rem_client'])) {
+		$q = "DELETE FROM lcm_app_client_org WHERE id_app=$id_app AND (0";
+		foreach($_SESSION['app_data']['rem_client'] as $rem_cli) {
+			$client_org = explode(':',$rem_cli);
+			$co .= 'id_client=' . $client_org[0];
+			if ($client_org[1])
+				$co = "($co AND id_org=" . $client_org[1] . ')';
+			$q .= " OR $co";
+		}
+		$q .= ")";
+		if ( ($result = lcm_query($q)) && (mysql_affected_rows() > 0) )
 			$_SESSION['errors']['client_added'] = "An client/organisation was added to the participants of this appointment.";
 	}
 

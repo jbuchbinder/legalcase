@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.26 2005/03/24 21:09:03 antzi Exp $
+	$Id: edit_app.php,v 1.27 2005/03/24 22:14:30 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -99,7 +99,7 @@ if (empty($_SESSION['errors'])) {
 
 	}
 
-} else if ( array_key_exists('author_added',$_SESSION['errors']) ) {
+} else if ( array_key_exists('author_added',$_SESSION['errors']) || array_key_exists('author_removed',$_SESSION['errors']) ) {
 	// Refresh appointment participants
 	$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
 		FROM lcm_author_app,lcm_author
@@ -231,7 +231,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				$q .= ($q ? ', ' : '');
 				$author_ids[] = $author['id_author'];
 				$q .= njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
-				$q .= ' (<label for="id_rem_author' . $author['id_author'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_author' . $author['id_author'] . '" name="rem_author_' . $author['id_author'] . '"/>)';	// TRAD
+				$q .= '&nbsp;(<label for="id_rem_author' . $author['id_author'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_author' . $author['id_author'] . '" name="rem_author[]" value="' . $author['id_author'] . '" />)';	// TRAD
 
 			}
 			echo "\t\t\t$q\n";
@@ -264,7 +264,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		echo "\t\t<tr><td valign=\"top\">";
 		echo _T('app_input_clients');
 		echo "</td><td>";
-		$q = "SELECT lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
+		$q = "SELECT lcm_client.id_client,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.id_org,lcm_org.name
 			FROM lcm_client,lcm_app_client_org
 			LEFT JOIN lcm_org USING (id_org)
 			WHERE id_app=" . $_SESSION['app_data']['id_app'] . "
@@ -274,6 +274,9 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		while ($row = lcm_fetch_array($result)) {
 			$q .= ($q ? ', ' : '');
 			$q .= get_person_name($row) . ( ($row['name']) ? " of " . $row['name'] : ''); // TRAD
+			$q .= '&nbsp;(<label for="id_rem_client' . $row['id_client'] . ':' . $row['id_org'] . '">';
+			$q .= '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;';
+			$q .= '<input type="checkbox" id="id_rem_client' . $row['id_client'] . ':' . $row['id_org'] . '" name="rem_client[]" value="' . $row['id_client'] . ':' . $row['id_org'] . '"/>)';	// TRAD
 		}
 		echo "\t\t\t$q\n";
 		// List rest of the clients to add
