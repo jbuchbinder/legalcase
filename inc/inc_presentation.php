@@ -270,7 +270,7 @@ function lcm_page_end($credits = '') {
 <!-- Start of \"prefs_column\" content -->
 			<div class=\"prefs_column_menu_head\">Profile</div>
 			<p class=\"prefs_column_text\"><strong>Name: </strong>"
-				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\">"
+				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
 				. $author_session['name_first'] . ' '
 				. $author_session['name_middle'] . ' '
 				. $author_session['name_last']
