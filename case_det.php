@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.114 2005/03/21 12:36:54 mlutfy Exp $
+	$Id: case_det.php,v 1.115 2005/03/21 12:53:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -287,7 +287,7 @@ if ($case > 0) {
 					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 					echo "\t<tr>";
 					echo '<th class="heading">' . _Th('time_input_date_start') . '</th>';
-					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? 'End time' : 'Duration' ) . '</th>'; // TRAD
+					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? _('time_input_date_end') : _T('time_input_duration') ) . '</th>';
 					echo '<th class="heading">' . _Th('app_input_type') . '</th>';
 					echo '<th class="heading">' . _Th('app_input_title') . '</th>';
 					echo '<th class="heading">Reminder</th>'; // TRAD
@@ -354,21 +354,20 @@ if ($case > 0) {
 					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 
-				$headers[0]['title'] = "Date start"; // TRAD
+				$headers[0]['title'] = _Th('time_input_date_start');
 				$headers[0]['order'] = 'fu_order';
 				$headers[0]['default'] = 'ASC';
-				$headers[1]['title'] = "Length"; // TRAD
+				$headers[1]['title'] = _Th('time_input_length');
 				$headers[1]['order'] = 'no_order';
-				$headers[2]['title'] = "Author"; // TRAD
+				$headers[2]['title'] = _Th('case_input_author');
 				$headers[2]['order'] = 'no_order';
-				$headers[3]['title'] = "Type"; // TRAD
+				$headers[3]['title'] = _Th('fu_input_type');
 				$headers[3]['order'] = 'no_order';
-				$headers[4]['title'] = "Description"; // TRAD
+				$headers[4]['title'] = _Th('fu_input_description');
 				$headers[4]['order'] = 'no_order';
 			
 				show_list_start($headers);
 			
-				// Prepare query
 				$q = "SELECT	lcm_followup.id_followup,
 						lcm_followup.date_start,
 						lcm_followup.date_end,
@@ -499,7 +498,7 @@ if ($case > 0) {
 			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 				echo "<tr>\n";
-				echo "<th class='heading'>" . 'Author' . "</th>\n"; // TRAD
+				echo "<th class='heading'>" . _Th('case_input_author') . "</th>\n";
 				echo "<th class='heading' width='1%' nowrap='nowrap'>" . 'Time spent' . ' (' . 'hrs' . ")</th>\n"; // TRAD
 
 				$total_time = 0;
@@ -508,7 +507,7 @@ if ($case > 0) {
 
 				if ($meta_sum_billed == 'yes') {
 					$currency = read_meta('currency');
-					echo "<th class='heading' width='1%' nowrap='nowrap'>" . 'Sum billed' . ' (' . $currency . ")</th>\n"; // TRAD
+					echo "<th class='heading' width='1%' nowrap='nowrap'>" . _Th('fu_input_sum_billed') . ' (' . $currency . ")</th>\n";
 				}
 
 				echo "</tr>\n";
@@ -567,10 +566,10 @@ if ($case > 0) {
 				if ($i > 0) {
 					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
 					// TRAD ++
-					echo "\t<tr><th class=\"heading\">Filename</th>
-						<th class=\"heading\">Type</th>
-						<th class=\"heading\">Size</th>
-						<th class=\"heading\">Description</th></tr>\n";
+					echo "\t<tr><th class=\"heading\">" . _Th('file_input_name') "</th>
+						<th class=\"heading\">" . _Th('file_input_type') . "</th>
+						<th class=\"heading\">" . _Th('file_input_size') . "</th>
+						<th class=\"heading\">" . _Th('file_input_description') . "</th></tr>\n";
 					for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
 						echo "\t<tr>";
 						echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
@@ -590,9 +589,9 @@ if ($case > 0) {
 					echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
 					echo "<input type=\"hidden\" name=\"case\" value=\"$case\" />\n";
 					echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
-					echo '<strong>Filename:</strong><br /><input type="file" name="filename" size="40" />' . "\n"; // TRAD
-					echo "<br />\n";
-					echo '<strong>Description:</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n"; // TRAD
+					echo '<strong>' . _Ti('file_input_name') . '</strong><br />';
+					echo '<input type="file" name="filename" size="40" />' . "<br />\n";
+					echo '<strong>' . _Ti('file_input_description') . '</strong><br /><input type="text" name="description" class="search_form_txt" />&nbsp;' . "\n";
 					echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 					echo "</form>\n";
 				}
