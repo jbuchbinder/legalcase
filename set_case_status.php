@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: set_case_status.php,v 1.10 2004/12/17 23:24:11 antzi Exp $
+	$Id: set_case_status.php,v 1.11 2005/01/19 00:52:17 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -45,6 +45,13 @@ switch ($status) {
 	case 'open' :
 		// Check the current case status
 		switch ($row['status']) {
+			case 'draft' :
+				// Set defaults
+				$page_title = 'Opening case: ' . clean_output($row['title']);
+				$date_title = 'Start date:';
+				$type = 'opening';
+				$date_start = date('Y-m-d H:i:s');
+				break;
 			case 'suspended' :
 				// Set defaults
 				$page_title = 'Resuming case: ' . clean_output($row['title']);
@@ -112,7 +119,7 @@ switch ($status) {
 //
 	case 'closed' :
 		// Check if the case is already closed
-		if (($row['status'] == 'closed') || ($row['status'] == 'merged')) {
+		if (($row['status'] == 'closed') || ($row['status'] == 'merged') || ($row['status'] == 'draft')) {
 			header('Location: ' . $GLOBALS['HTTP_REFERER']);
 			break;
 		}
@@ -166,7 +173,7 @@ switch ($status) {
 //
 	case 'suspended' :
 		// Check if the case is already suspended or closed
-		if (($row['status'] == 'suspended') || ($row['status'] == 'closed') || ($row['status'] == 'merged')) {
+		if ($row['status'] != 'open') {
 			header('Location: ' . $GLOBALS['HTTP_REFERER']);
 			break;
 		}
@@ -220,7 +227,7 @@ switch ($status) {
 //
 	case 'merged' :
 		// Check if the case is already merged
-		if ($row['status'] == 'merged') {
+		if (($row['status'] == 'merged') || ($row['status'] == 'draft')) {
 			header('Location: ' . $GLOBALS['HTTP_REFERER']);
 			break;
 		}
