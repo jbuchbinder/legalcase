@@ -100,7 +100,6 @@ function create_database() {
 		status ENUM('admin', 'normal', 'external', 'trash', 'waiting', 'suspended') DEFAULT 'normal' NOT NULL,
 		cookie_recall tinytext NOT NULL,
 
-		low_sec tinytext NOT NULL,
 		maj TIMESTAMP,
 		pgp BLOB NOT NULL,
 		htpass tinyblob NOT NULL,
