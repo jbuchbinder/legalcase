@@ -110,13 +110,13 @@ function upgrade_database($old_db_version) {
 		$site_address = read_meta('site_address');
 
 		if (! $site_address) {
-			global $HTTP_SERVER_VARS;
+			global $HTTP_SERVER_VARS, $HTTP_HOST;
 	
 			// Replace www.site.net/foo/name.php -> www.site.net/foo/
 			$site_address = $HTTP_SERVER_VARS['REQUEST_URI'];
 			if (!$site_address) $site_address = $_ENV['PHP_SELF']; // [ML] unsure
 			$site_address = preg_replace("/\/[^\/]+\.php$/", "/", $site_address);
-			$site_address = 'http://' . $GLOBALS['SERVER_NAME'] . $site_address;
+			$site_address = 'http://' . $HTTP_HOST /* $GLOBALS['SERVER_NAME'] */ . $site_address;
 	
 			write_meta('site_address', $site_address);
 		}
