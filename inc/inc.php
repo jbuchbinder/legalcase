@@ -48,24 +48,24 @@ if ($sel_theme) {
 	}
 }
 
-// Change rows per page preference
+// Set rows per page preference
 if ($page_rows) {
 	$prefs['page_rows'] = $page_rows;
 	$prefs_mod = true;
-	$GLOBALS['list_len'] = $page_rows;
 }
+$GLOBALS['list_len'] = $prefs['page_rows'];
 
 // Update user preferences if modified
 if ($prefs_mod) {
-	lcm_query("UPDATE lcm_author	
-				SET   prefs = '".addslashes(serialize($prefs))."' 
+	lcm_query("UPDATE lcm_author
+				SET   prefs = '".addslashes(serialize($prefs))."'
 				WHERE id_author = " . $author_session['id_author']);
 }
 
 
 //
 // Database version management
-// 
+//
 
 write_metas();
 $installed_db_version = read_meta('lcm_db_version');
@@ -77,8 +77,8 @@ if ($installed_db_version <> $lcm_db_version) {
 
 	echo "<div class='box_warning'>\n";
 	echo "<p><b>" . _T('title_technical_message') . _T('typo_column') . "</b> The
-		format of the database has changed. <a href='lcm_upgrade.php'>To 
-		proceed with the automatic upgrade, click here</a>. You are also 
+		format of the database has changed. <a href='lcm_upgrade.php'>To
+		proceed with the automatic upgrade, click here</a>. You are also
 		encouraged to make a backup before proceeding.</p>\n";
 	echo "</div>\n";
 
