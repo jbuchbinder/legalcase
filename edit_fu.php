@@ -61,17 +61,25 @@ lcm_page_start("Edit follow-up");
 
 ?>
 
-<h1>Edit follow-up information:</h1>
+<!-- [ML:repetition] <h1>Edit follow-up information:</h1 -->
 
 <form action="upd_fu.php" method="POST">
 	<table><caption>Details of follow-up:</caption>
-		<tr><th>Parameter</th><th>Value</th></tr>
+		<!-- [ML;tech-talk] tr><th>Parameter</th><th>Value</th></tr -->
 		<tr><td>Start date:</td>
-			<td><input name="date_start" value="<?php echo clean_output($fu_data['date_start']); ?>">
-				<?php echo f_err('date_start',$errors); ?></td></tr>
+			<td>
+				<!-- <input name="date_start" value="<?php echo clean_output($fu_data['date_start']); ?>">
+				<?php echo f_err('date_start',$errors); ?> -->
+
+				<?php echo get_date_inputs('start', $fu_data['date_start']); ?>
+			</td></tr>
 		<tr><td>End date:</td>
-			<td><input name="date_end" value="<?php echo clean_output($fu_data['date_end']); ?>">
-			<?php echo f_err('date_end',$errors); ?></td></tr>
+			<td>
+				<!-- <input name="date_end" value="<?php echo clean_output($fu_data['date_end']); ?>">
+				<?php echo f_err('date_end',$errors); ?> -->
+			
+				<?php echo get_date_inputs('end', $fu_data['date_end']); ?>
+			</td></tr>
 		<tr><td>Type:</td>
 			<td><select name="type" size="1"><option selected><?php echo clean_output($fu_data['type']); ?></option>
 			<?php
