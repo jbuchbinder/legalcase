@@ -37,14 +37,14 @@ function fichier_session($id_session, $alea) {
 //
 // Add a session for the specified author
 //
-function ajouter_session($auteur, $id_session) {
+function lcm_add_session($author, $id_session) {
 	$fichier_session = fichier_session($id_session, read_meta('alea_ephemere'));
 	$vars = array('id_author', 'name_first', 'name_middle', 'name_last', 'username', 'email', 'status', 'lang', 'ip_change', 'hash_env');
 
 	$texte = "<"."?php\n";
 	reset($vars);
 	while (list(, $var) = each($vars)) {
-		$texte .= "\$GLOBALS['author_session']['$var'] = '".addslashes($auteur[$var])."';\n";
+		$texte .= "\$GLOBALS['author_session']['$var'] = '".addslashes($author[$var])."';\n";
 	}
 	$texte .= "?".">\n";
 
@@ -56,6 +56,11 @@ function ajouter_session($auteur, $id_session) {
 		@header("Location: lcm_test_dirs.php");
 		exit;
 	}
+}
+
+function ajouter_session($author, $id_session) {
+	lcm_log("Use of deprecated function ajouter_session(), use lcm_add_session() instead");
+	return lcm_add_session($author, $id_session);
 }
 
 //
