@@ -218,11 +218,13 @@ form.search_form {
 	margin: 4px 4px 10px 4px;
 }
 
-/*
-#main_column input[type=text], #main_column input[type=password], #main_column select, #main_column textarea {
-	width: 99%;
+td input.search_form_txt, td select.sel_frm, td textarea {
+	width: 85%;
 }
-*/
+
+fieldset input.search_form_txt, fieldset textarea, fieldset select.sel_frm {
+	width: 60%;
+}
 
 input.search_form_txt {
 	
@@ -274,7 +276,6 @@ table.tbl_usr_dtl td, table.tbl_usr_dtl th{
 
 table.tbl_usr_dtl, table.tbl_data {
 	border-collapse: collapse;
-	/* border-collapse: separate; */
 }
 
 td.heading, th.heading {
@@ -361,15 +362,9 @@ a.prefs_logout {
 	text-decoration: none;
 }
 
-a.prefs_logout, a.prefs_myprefs, a.run_lnk, a.edit_lnk, a.create_new_lnk, a.add_lnk {
-	/* display: inline; */
-	/* clear: right; */
-}
-
 /* Go to page bar */
 .page_numbers {
 	margin-top: 5px;
-	/* border: 1px solid #efefef; */
 }
 
 .page_numbers td {
@@ -421,7 +416,6 @@ h1.hlp_h1 {
 
 h2.hlp_h2 {
 	text-align: left;
-	/* border-bottom: 1px solid #ccc; */
 	margin: 0;
 	padding: 5px;
 }
