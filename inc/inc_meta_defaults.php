@@ -18,10 +18,10 @@ function init_default_config() {
 	// [ML] Cleanup needed
 	$liste_meta = array(
 		'default_language' => $lang,
-		'langue_site' => $lang, // OLD
+		// 'langue_site' => $lang, // OLD
 
 		'site_open_subscription' => 'no',
-		'accepter_inscriptions' => 'non', // OLD
+		// 'accepter_inscriptions' => 'non', // OLD
 
 		'site_name' => _T('title_software'),
 		'site_description' => _T('title_software_description'),
@@ -30,30 +30,8 @@ function init_default_config() {
 		// but let's leave it for now.
 		'charset' => 'UTF-8',
 
-		'available_languages' => $GLOBALS['all_langs'],
-		'langues_multilingue' => $GLOBALS['all_langs'], // OLD
-
-		// NOT USED - kept for ideas
-		'config_precise_groupes' => 'non',
-		'mots_cles_forums' =>  'non',
-		'articles_modif' => 'non',
-
-		'activer_sites' => 'oui',
-		'proposer_sites' => 0,
-		'activer_syndic' => 'oui',
-		'visiter_sites' => 'non',
-		'moderation_sites' => 'non',
-
-		'prevenir_auteurs' => 'non',
-		'quoi_de_neuf' => 'non',
-		'forum_prive_admin' => 'non',
-
-		'articles_versions' => 'non',
-		'activer_statistiques' => 'oui',
-
-		'documents_article' => 'oui',
-		'documents_rubrique' => 'non',
-		'gerer_trad' => 'non'
+		'available_languages' => $GLOBALS['all_langs']
+		// 'langues_multilingue' => $GLOBALS['all_langs'], // OLD
 	);
 
 	while (list($nom, $valeur) = each($liste_meta)) {
