@@ -34,8 +34,10 @@ if (empty($errors)) {
 		$result = lcm_query($q);
 
 		// Register case ID as session variable
-	    if (!session_is_registered("case"))
+	    if (!session_is_registered("case")) {
+			$case = $_GET['case'];
 			session_register("case");
+		}
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach ($row as $key => $value) {
