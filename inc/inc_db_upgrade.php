@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.46 2005/03/25 13:14:04 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.47 2005/03/25 13:33:03 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -659,8 +659,8 @@ function upgrade_database($old_db_version) {
 			PRIMARY KEY (id_entry),
 			KEY id_org (id_org))");
 
-		lcm_query("ALTER TABLE lcm_case ADD notes text NOT NULL AFTER alledged_crime");
-		lcm_query("ALTER TABLE lcm_client ADD notes text NOT NULL");
+		lcm_query("ALTER TABLE lcm_case ADD notes text NOT NULL DEFAULT '' AFTER alledged_crime");
+		lcm_query("ALTER TABLE lcm_client ADD notes text NOT NULL DEFAULT ''");
 
 		lcm_query("ALTER TABLE lcm_org 
 						ADD notes text NOT NULL default '',
