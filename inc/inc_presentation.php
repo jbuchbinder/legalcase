@@ -141,9 +141,11 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">" . _T('menu_main_clients') . "</a></li>
 							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">" . _T('menu_main_org') . "</a></li>
 							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">" . _T('menu_main_authors') . "</a></li>";
+							/*
 							if($prefs['screen'] == "narrow") {
 								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">" . _T('menu_profile_preferences') . "</a></li>\n";
 							}
+							*/
 	echo "
 						</ul>
 					</div>\n";
@@ -247,7 +249,7 @@ if($prefs['screen'] == "wide")
 				. $author_session['name_middle'] . ' '
 				. $author_session['name_last']
 				. "</a><br /><br />
-			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ " .  _T('menu_profile_preferences') . " ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ " . _T('menu_profile_logout') . " ]</a>
+			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a>&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
 			</p>
 			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;Search</div>
 			<p class=\"prefs_column_text\">
@@ -284,7 +286,7 @@ else
 				. $author_session['name_middle'] . ' '
 				. $author_session['name_last']
 				. "</a><br /><br />
-			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ My preferences ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ Logout ]</a>
+			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a>&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
 			</p>";
 		echo "</div>";
 }
