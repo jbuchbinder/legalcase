@@ -135,7 +135,7 @@ function lcm_page_start($title = "", $css_files = "") {
 					<div class=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_home-16.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;"
 							. _T('menu_main') . "</div>
-						<ul id=\"nav_menu_list\">
+						<ul class=\"nav_menu_list\">
 							<li><a href=\"listcases.php\" class=\"main_nav_btn\">" . _T('menu_main_cases') . "</a></li>
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">" . _T('menu_main_clients') . "</a></li>
 							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">" . _T('menu_main_org') . "</a></li>
@@ -153,7 +153,7 @@ function lcm_page_start($title = "", $css_files = "") {
 		echo "		
 					<div class=\"nav_menu_box\">
 						<div class=\"nav_column_menu_head\"><img src=\"images/jimmac/stock_menu_properties.png\" width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_admin') . "</div>
-						<ul id=\"nav_menu_list\">
+						<ul class=\"nav_menu_list\">
 							<li><a href=\"config_site.php\" class=\"main_nav_btn\">" . _T('menu_admin_siteconf') . "</a></li>
 							<li><a href=\"all_cases.php\" class=\"main_nav_btn\">" .  _T('menu_admin_archives') . " <abbr title=\"All cases, categorised by date, keyword, etc. (admin only)\"></abbr></a></li>
 							<li><a href=\"listreps.php\" class=\"main_nav_btn\">" . _T('menu_admin_reports') . " <abbr title=\"Manage reports (admin only)\"></abbr></a></li>
@@ -253,26 +253,30 @@ if($prefs['screen'] == "wide")
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a>&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
 			</p>
 			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;Search</div>
-			<p class=\"prefs_column_text\">
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
+			<p class=\"prefs_column_text\">
 			Find case<br />
 			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\"";
 	if (isset($find_case_string)) echo " value='$find_case_string'";
 	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			</p>
 			</form>
 			<form name=\"frm_find_client\" class=\"search_form\" action=\"listclients.php\" method=\"post\">
+			<p class=\"prefs_column_text\">
 			Find client<br />
 			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\"";
 	if (isset($find_client_string)) echo " value='$find_client_string'";
 	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			</p>
 			</form>
 			<form name=\"frm_find_client\" class=\"search_form\" action=\"listorgs.php\" method=\"post\">
+			<p class=\"prefs_column_text\">
 			Find organisation<br />
 			<input type=\"text\" name=\"find_org_string\" size=\"10\" class=\"search_form_txt\"";
 	if (isset($find_org_string)) echo " value='$find_org_string'";
 	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
-			</form>
 			</p>
+			</form>
 <!-- End of \"prefs_column\" content -->
 		</div>";
 //end of user screen IF
