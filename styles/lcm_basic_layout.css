@@ -270,3 +270,21 @@ small.sm_11 {
 ul.simple_list li {
 	font-size: 12px;
 }
+
+a.add_create_new_lnk {
+	padding: 4px 4px 4px 22px;
+	margin-left: 5px;
+	background: url("../images/jimmac/stock_edit-16.png") no-repeat 2px 4px;
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: none;
+	-moz-border-radius: 5px;
+	/* for the theme */
+	background-color: #ccc;
+	color: #000;
+	border: 1px solid #333;
+}
+
+a.add_create_new_lnk:hover {
+	background-color: #efefef;
+}
