@@ -1,6 +1,7 @@
 <?php
 
 include('inc/inc.php');
+include('inc/inc_acc.php');
 lcm_page_start("Select users(s)");
 
 if ($case>0) {
