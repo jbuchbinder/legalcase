@@ -18,13 +18,17 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.10 2005/02/07 13:01:31 mlutfy Exp $
+	$Id: run_rep.php,v 1.11 2005/02/09 09:59:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
 // Report ID
 $rep = intval($_GET['rep']);
+
+//
+// Show title and description of the report
+//
 
 $q = "SELECT *
 		FROM lcm_report
@@ -37,9 +41,10 @@ if ($row = lcm_fetch_array($result))
 else
 	die("There is no such report!");
 
+echo "<p>" . $row['description'] . "</p>\n";
+
 //
-// Get report columns
-// They should be a limited number, so we will store them
+// Get report columns fields, store into $my_columns for later
 //
 
 $my_columns = array();
@@ -51,17 +56,14 @@ $q = "SELECT f.id_field, f.field_name, f.table_name, f.enum_type
 
 $result = lcm_query($q);
 
-while ($row = lcm_fetch_array($result)) {
+while ($row = lcm_fetch_array($result))
 	array_push($my_columns, $row);
-}
-
 
 //
-// Report lines
+// Get report line fields, store into $my_lines for later
 //
 
-// Get fields to show
-$temp = array();
+$my_lines = array();
 $q = "SELECT field_name, table_name
 		FROM lcm_rep_line as l, lcm_fields as f
 		WHERE id_report = " . $rep . "
@@ -72,15 +74,46 @@ $result = lcm_query($q);
 
 while ($row = lcm_fetch_array($result)) {
 	$my_line_table = $row['table_name'];
-	array_push($temp, $row['field_name']);
+	array_push($my_lines, $row['field_name']);
 }
 
-$my_line_fields = implode(", ", $temp);
+if (! empty($my_lines) && ! $my_line_table)
+	lcm_panic("Internal error: line fields are present, but no source table was specified");
 
-if ($my_line_fields && ! $my_line_table)
-	lcm_panic("internal error");
+//
+// Add implicit fields, if necesary
+// For example, if we select fields from lcm_author, we should include id_author
+// even if we don't want to show it (for table joining, later).
+// 
 
-// TODO: Define filter for lines
+$my_line_fields_implicit = "";
+
+if (preg_match("/^lcm_(.*)$/", $my_line_table, $regs)) {
+	$temp = "id_" . $regs[1];
+	$temp_exists = false;
+
+	// Add it only if it was not already selected
+	foreach($my_lines as $l)
+		if ($l == $temp)
+			$temp_exists = true;
+	
+	if (! $temp_exists) {
+		$my_line_fields_implicit = $temp;
+		echo "<!-- Implicit param: " . $my_line_fields_implicit . " -->\n";
+	}
+}
+
+
+//
+// Start building the SQL query for the report lines
+//
+
+$my_line_fields = implode(", ", $my_lines);
+
+if ($my_line_fields && $my_line_fields_implicit) {
+	$my_line_fields .= ", " . $my_line_fields_implicit;
+}
+
 $q = "SELECT " . $my_line_fields . "
 		FROM " . $my_line_table;
 // TODO: WHERE .... (each line type can propose ready filters?)
@@ -95,11 +128,9 @@ while ($row = lcm_fetch_array($result)) {
 	// Line information
 	echo "<td>\n";
 
-	foreach ($row as $k => $v) {
-		// mysql sends back columns as array + hash, take only array
-		if (is_numeric($k))
-			echo $v . " ";
-	}
+	// Show only the explicitely requested fields, not implicit
+	foreach ($my_lines as $l)
+		echo $row[$l] . " ";
 
 	echo "</td>\n";
 
