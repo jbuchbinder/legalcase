@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.34 2005/03/09 14:52:50 antzi Exp $
+	$Id: upd_fu.php,v 1.35 2005/03/23 21:05:33 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -33,11 +33,6 @@ $id_followup = 0;
 if (isset($_REQUEST['id_followup']) && $_REQUEST['id_followup'] > 0)
 	$id_followup = $_REQUEST['id_followup'];
 
-// Register form data in the session
-// XXX [ML] use $_SESSION
-//if(!session_is_registered("fu_data"))
-//    session_register("fu_data");
-
 // Get form data from POST fields
 foreach($_POST as $key => $value)
     $_SESSION['fu_data'][$key]=$value;
@@ -51,7 +46,7 @@ $unix_date_start = strtotime($_SESSION['fu_data']['start_year'] . '-' . $_SESSIO
 						. (isset($_SESSION['fu_data']['start_seconds']) ? $_SESSION['fu_data']['start_seconds'] : '00'));
 
 if ($unix_date_start<0)
-	$_SESSION['errors']['date_start'] = 'Invalid start date!';
+	$_SESSION['errors']['date_start'] = 'Invalid start date!';	// TRAD
 else 
 	$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s', $unix_date_start);
 
@@ -62,7 +57,7 @@ if ($prefs['time_intervals']=='absolute') {
 		$_SESSION['fu_data']['date_end'] = '0000-00-00 00:00:00';
 		// Report error if some of the fields empty
 	elseif (!$_SESSION['fu_data']['end_year'] || !$_SESSION['fu_data']['end_month'] || !$_SESSION['fu_data']['end_day']) {
-		$_SESSION['errors']['date_end'] = 'Partial end date!';
+		$_SESSION['errors']['date_end'] = 'Partial end date!';	// TRAD
 		$_SESSION['fu_data']['date_end'] = ($_SESSION['fu_data']['end_year'] ? $_SESSION['fu_data']['end_year'] : '0000') . '-'
 							. ($_SESSION['fu_data']['end_month'] ? $_SESSION['fu_data']['end_month'] : '00') . '-'
 							. ($_SESSION['fu_data']['end_day'] ? $_SESSION['fu_data']['end_day'] : '00') . ' '
@@ -76,7 +71,7 @@ if ($prefs['time_intervals']=='absolute') {
 					. (isset($_SESSION['fu_data']['end_seconds']) ? $_SESSION['fu_data']['end_seconds'] : '00'));
 	
 		if ($unix_date_end<0)
-			$_SESSION['errors']['date_end'] = 'Invalid end date!';
+			$_SESSION['errors']['date_end'] = 'Invalid end date!';	// TRAD
 		else 
 			$_SESSION['fu_data']['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
 	}
@@ -87,6 +82,10 @@ if ($prefs['time_intervals']=='absolute') {
 			+ $_SESSION['fu_data']['delta_minutes'] * 60;
 	$_SESSION['fu_data']['date_end'] = date('Y-m-d H:i:s', $unix_date_end);
 }
+
+// Description
+if ( !(strlen($_SESSION['fu_data']['description']) > 0) )
+	$_SESSION['errors']['description'] = 'Description should not be empty!';	// TRAD
 
 if (count($_SESSION['errors'])) {
     header("Location: " . $GLOBALS['HTTP_REFERER']);
@@ -102,15 +101,15 @@ if (count($_SESSION['errors'])) {
 
 	if ($id_followup>0) {
 		// Check access rights
-		if (!allowed($_SESSION['fu_data']['id_case'],'e')) die("You don't have permission to modify this case's information!");
+		if (!allowed($_SESSION['fu_data']['id_case'],'e')) die("You don't have permission to modify this case's information!");	// TRAD
 
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
 		if (!($result = lcm_query($q)))
-			lcm_panic("$q <br />\nError ".lcm_errno().": ".lcm_error());
+			lcm_panic("$q <br />\nError ".lcm_errno().": ".lcm_error());	// TRAD
 	} else {
 		// Check access rights
 		if (!allowed($_SESSION['fu_data']['id_case'],'w'))
-			die("You don't have permission to add information to this case!");
+			die("You don't have permission to add information to this case!");	// TRAD
 
 		// Get the current case stage
 		$q = "SELECT stage FROM lcm_case WHERE id_case=" . $_SESSION['fu_data']['id_case'];
@@ -118,7 +117,7 @@ if (count($_SESSION['errors'])) {
 		if ($row = lcm_fetch_array($result)) {
 			$case_stage = $row['stage'];
 		} else {
-			die("There is no such case!");
+			die("There is no such case!");	// TRAD
 		}
 
 		// Update case status
