@@ -1,5 +1,26 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: inc_login.php,v 1.26 2005/03/21 10:10:39 mlutfy Exp $
+*/
+
 if (defined('_INC_LOGIN')) return;
 define('_INC_LOGIN', '1');
 
@@ -9,36 +30,12 @@ include_lcm('inc_session');
 include_lcm('inc_filters');
 include_lcm('inc_text');
 
-// Management of HTTP authentication
-// [ML] Might not be used at all -- or should be removed
-function auth_http($cible, $essai_auth_http) {
-	lcm_log("inc_login.php/auth_http: should be deprecated");
-
-	if ($essai_auth_http == 'oui') {
-		include_lcm('inc_session');
-		if (!verifier_php_auth()) {
-			$url = quote_amp(urlencode($cible->getUrl()));
-			$page_erreur = "<b>"._T('login_access_denied')."</b><p />"._T('login_password_incorrect')."<p />[<a href='./'>"._T('login_retour_site')."</a>] [<a href='./lcm_cookie.php?essai_auth_http=oui&amp;url=$url'>"._T('login_nouvelle_tentative')."</a>]";
-			ask_php_auth($page_erreur);
-		}
-		else
-			@header("Location: " . $cible->getUrl() );
-		exit;
-	} else if ($essai_auth_http == 'logout') {
-		// request for logout auth_http
-		include_lcm('inc_session');
-		ask_php_auth("<b>"._T('login_deconnexion_ok')."</b><p />"._T('login_verifiez_navigateur')."<p />[<a href='./'>"._T('login_retour_public')."</a>] [<a href='./lcm_cookie.php?essai_auth_http=oui&amp;redirect=ecrire'>"._T('login_test_navigateur')."</a>] [<a href='ecrire/'>"._T('login_espace_prive')."</a>]");
-		exit;
-	}
-}
-
 function open_login($title='') {
 	$text = "<div>\n";
 
 	if ($title)
 		$text .= "<h3>$title</h3>";
 
-	// $text .= '<div style="font-family: Verdana,arial,helvetica,sans-serif; font-size: 12px;">';
 	$text .= '<div id="login_main">' . "\n";
 	return $text;
 }
@@ -50,7 +47,8 @@ function close_login() {
 }
 
 function login($cible, $prive = 'prive', $message_login='') {
-	$pass_popup ='href="lcm_pass.php" target="lcm_pass" onclick="' .  "javascript:window.open('lcm_pass.php', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
+	$pass_popup = 'href="lcm_pass.php" target="lcm_pass" '
+		. ' onclick="' . "javascript:window.open('lcm_pass.php', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
 
 	$erreur = '';
 	$login = (isset($GLOBALS['var_login']) ? $GLOBALS['var_login'] : '');
@@ -59,7 +57,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 
 	// If the cookie fails, inc_auth tried to redirect to lcm_cookie who
 	// then tried to put a cookie. If it is not there, it is "cookie failed"
-	// who is there, and it's probably a bookmark on bonjour=oui and not
+	// who is there, and it's probably a bookmark on privet=yes and not
 	// a cookie failure.
 	if (isset($GLOBALS['var_cookie_failed']))
 		$cookie_failed = ($GLOBALS['lcm_session'] != 'cookie_test_failed');
@@ -92,7 +90,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		AND ($author_session['status']=='admin' OR $author_session['status']=='normal'))
 	{
 		if ($url != $GLOBALS['clean_link']->getUrl())
-			@Header("Location: $url");
+			@Header("Location: " . $cible->getUrlForHeader());
 
 		echo "<a href='$url'>"._T('login_this_way')."</a>\n";
 		return;
@@ -185,20 +183,19 @@ function login($cible, $prive = 'prive', $message_login='') {
 			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . " $erreur</b></div><br />\n";
 
 		if ($flag_challenge_md5) {
+			// This is printed with javascript so that it is hidden from navigators not
+			// using JS, since they will see the username field anyway.
+			echo "<script type=\"text/javascript\"><!--\n" 
+				.  "document.write('" . addslashes(_T('login_login')) .  _T('typo_column') . " <b>$login</b><br/>"
+				. "<font size=\\'2\\'><a href=\\'lcm_cookie.php?cookie_admin=no&amp;url=".rawurlencode($action)."\\' class=\\'link_btn\\'>" . _T('login_other_identifier') . "</a></font>');\n"
+				.  "//--></script>\n";
+
 			// If javascript is active, we pass the login in the hidden field
-			echo "<script type=\"text/javascript\"><!--\n" . 
-				"document.write('" . addslashes(_T('login_login')) .  _T('typo_column') . " <b>$login</b><br/>" .
-				"<font size=\\'2\\'><a href=\\'lcm_cookie.php?cookie_admin=no&amp;url=".rawurlencode($action)."\\' class=\\'link_btn\\'>" . _T('login_other_identifier') . "</a></font>');\n" .
-				"//--></script>\n";
 		 	echo "<input type='hidden' name='session_login_hidden' value='$login' />";
 
 			// If javascript is not active, the login is still modifiable
 			// (since the challenge is not used)
 			echo "<noscript>";
-			// echo "<div class='box_warning'>";
-			// echo _T('login_not_secure') . " <a href=\"" .
-			// quote_amp($clean_link->getUrl()) . "\">" .
-			// _T('login_link_reload_page') . "</a>.<p /></div>\n";
 		}
 
 		echo "\t<label for='session_login'><b>" . _T('login_login') . _T('typo_column') . "</b> (" . _T('login_info_login').")<br /></label>";
