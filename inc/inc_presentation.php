@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.202 2005/04/04 14:37:17 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.203 2005/04/05 14:14:00 makaveev Exp $
 */
 
 //
@@ -102,7 +102,9 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 
 			return x;
 		}
-
+		
+		// [KM]
+		/*
 		function setvisibility (objet, status) {
 			element = findObj(objet);
 			if (element.style.visibility != status) {
@@ -117,13 +119,40 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 				}
 			}
 		}
-
+		
 		function lcm_show(objet) {
 			setvisibility(objet, 'visible');
 		}
 
 		function lcm_hide(objet) {
 			setvisibility(objet, 'hidden');
+		}
+		*/
+		
+		// [KM] The code above works too
+		// but it uses VISIBILITY property which causes blank space when the for is not visible
+		
+		function setvisibility (objet, status) {
+			element = findObj(objet);
+			if (element.style.display != status) {
+				if (status == 'flip') {
+					if (element.style.display == 'block') {
+						element.style.display = 'none';
+					} else {
+						element.style.display = 'block';
+					}
+				} else {
+					element.style.display = status;
+				}
+			}
+		}
+		
+		function lcm_show(objet) {
+			setvisibility(objet, 'block');
+		}
+
+		function lcm_hide(objet) {
+			setvisibility(objet, 'none');
 		}
 
 		//--></script>\n";
