@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.39 2005/03/21 16:23:13 mlutfy Exp $
+	$Id: edit_client.php,v 1.40 2005/03/23 16:28:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -52,9 +52,13 @@ if (empty($_SESSION['errors'])) {
 	}
 } else {
 	// Fetch previously submitted values, if any
-	if (isset($_SESSION['client']))
-		foreach($_SESSION['client'] as $key => $value)
+	if (! $_SESSION['client_data']['id_client'])
+		$_SESSION['client_data']['id_client'] = 0;
+
+	if (isset($_SESSION['client_data']))
+		foreach($_SESSION['client_data'] as $key => $value)
 			$client_data[$key] = $value;
+
 }
 
 if ($client > 0) {
@@ -116,7 +120,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 
 <?php
 	echo "<tr>\n";
-	echo '<td>' . "Created on:" . '</td>';
+	echo '<td>' . "Created on:" . '</td>'; // TRAD
 	echo '<td>' . format_date($client_data['date_creation'], 'short') . '</td>';
 	echo "</tr>\n";
 
@@ -186,7 +190,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	while ($row = lcm_fetch_array($result)) {
 		$orgs[] = $row['name'];
 	}
-	echo "\t<tr><td>" . 'Representative of:' . '</td><td>' . join(', ',$orgs) . (count($orgs)>0 ? '&nbsp;' : '');
+	echo "\t<tr><td>" . 'Representative of:' . '</td><td>' . join(', ',$orgs) . (count($orgs)>0 ? '&nbsp;' : ''); // TRAD
 	$q = "SELECT lcm_org.id_org,name,id_client
 		FROM lcm_org
 		LEFT JOIN lcm_client_org
