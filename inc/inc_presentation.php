@@ -557,7 +557,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 		$ret .= "</select>\n";
 
 		if ($table)
-			$ret .= "</td>\n"
+			$ret .= "</td>\n";
 	}
 
 	if ($table)
