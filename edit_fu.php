@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.71 2005/03/17 14:40:23 mlutfy Exp $
+	$Id: edit_fu.php,v 1.72 2005/03/17 14:44:50 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -148,9 +148,9 @@ else
 echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
 
 // Name of case
-$query = "SELECT title
+$query = "SELECT id_case, title
 		FROM lcm_case
-		WHERE id_case=$case";
+		WHERE id_case = $case";
 
 $result = lcm_query($query);
 while ($row = lcm_fetch_array($result))  // should be only once
