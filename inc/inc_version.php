@@ -368,8 +368,8 @@ function spip_query($query) { // TODO FIXME ML
 
 	if ($GLOBALS['flag_connect']) {
 		include_config('inc_connect');
-		// [ML] if (!$GLOBALS['db_ok'])
-		//	return;
+		if (!$GLOBALS['db_ok'])
+		return;
 	}
 	return lcm_query_db($query);
 }
