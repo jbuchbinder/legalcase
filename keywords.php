@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.10 2005/02/17 14:54:09 mlutfy Exp $
+	$Id: keywords.php,v 1.11 2005/02/17 17:12:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,10 +35,11 @@ function show_all_keywords($type = '') {
 	$kwg_all = get_kwg_all($type);
 
 	foreach ($kwg_all as $kwg) {
-		// tester ac-admin?
+		// test ac-admin?
+		$suggest = $kwg['suggest'];
 		
 		echo "<fieldset class='info_box'>\n";
-		echo "<div class='prefs_column_menu_head'><a href='?action=edit&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>" . _T($kwg['title']) . "</a></div>\n";
+		echo "<div class='prefs_column_menu_head'><a href='?action=edit_group&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>" . _T($kwg['title']) . "</a></div>\n";
 
 		$kw_all = get_keywords_in_group_id($kwg['id_group']);
 
@@ -47,7 +48,9 @@ function show_all_keywords($type = '') {
 
 			foreach ($kw_all as $kw) {
 				echo "\t<li>";
-				echo "<a href='?action=edit&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T($kw['title']) . "</a>";
+				if ($suggest == $kw['name']) echo "<b>";
+				echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T($kw['title']) . "</a>";
+				if ($suggest == $kw['name']) echo "</b>";
 				echo "</li>\n";
 			}
 
@@ -55,23 +58,34 @@ function show_all_keywords($type = '') {
 		}
 		
 		echo "</fieldset>\n";
-		
 	}
-} 
+
+	if ($type == 'user')
+		echo '<a href="keywords.php?action=edit_group&amp;id_group=0" class="create_new_lnk">Create a new keyword group</a>' . "\n";
+
+}
 
 //
 // View the details on a keyword group
 //
-function show_keyword_group_id($action = 'edit', $id_group) {
+function show_keyword_group_id($id_group) {
 	global $system_kwg;
+
+	if (! $id_group) {
+		echo "not coded yet";
+		exit;
+	}
 
 	$kwg = get_kwg_from_id($id_group);
 	lcm_page_start("Keyword group: " . $kwg['name']);
+
+	echo show_all_errors($_SESSION['errors']);
 	
 	echo '<form action="keywords.php" method="post">' . "\n";
 	
 	echo '<input type="hidden" name="action" value="update_group" />' . "\n";
 	echo '<input type="hidden" name="id_group" value="' . $id_group . '" />' . "\n";
+	echo '<input type="hidden" name="kwg_type" value="' . $kwg['type'] . '" />' . "\n";
 	
 	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
 	echo "<tr>\n";
@@ -87,6 +101,7 @@ function show_keyword_group_id($action = 'edit', $id_group) {
 	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
 	echo "<td>";
 	echo '<select name="kwg_suggest" class="sel_frm">';
+	echo '<option value=""' . $sel . '>' . "none" . '</option>' . "\n";
 	
 	foreach ($system_kwg[$kwg['name']]['keywords'] as $kw) {
 		$sel = ($kw['name'] == $kwg['suggest'] ? ' selected="selected"' : '');
@@ -97,12 +112,12 @@ function show_keyword_group_id($action = 'edit', $id_group) {
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
-	echo "<td colspan='2'>" . _T('keywords_input_title') . "<br />\n";
-	echo "<input type='text' readonly='readonly' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
+	echo "<td colspan='2'>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "<br />\n";
+	echo "<input type='text' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
 	echo "</td>\n";
 	echo "<tr></tr>\n";
 	echo "<td colspan='2'>" . _T('keywords_input_description') . "<br />\n";
-	echo "<textarea readonly='readonly' id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
+	echo "<textarea id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
 	echo $kwg['description'];
 	echo "</textarea>\n";
 	echo "</td>\n";
@@ -112,22 +127,114 @@ function show_keyword_group_id($action = 'edit', $id_group) {
 	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 	echo "</form>\n";
 
+	// destroy error messages
+	$_SESSION['errors'] = array();
+
 	lcm_page_end();
+	exit;
 }
 
 //
 // View the details on a keyword 
 //
-function show_keyword_id($action = 'view', $id_keyword) {
+function show_keyword_id($id_keyword) {
 	$kw = get_kw_from_id($id_keyword);
 
 	lcm_page_start("Keyword: " . $kw['name']);
+	echo show_all_errors($_SESSION['errors']);
+	
+	echo '<form action="keywords.php" method="post">' . "\n";
+	
+	echo '<input type="hidden" name="action" value="update_keyword" />' . "\n";
+	echo '<input type="hidden" name="id_keyword" value="' . $id_keyword . '" />' . "\n";
+	echo '<input type="hidden" name="kwg_type" value="' . $kw['type'] . '" />' . "\n";
+	
+	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
+	echo "<tr>\n";
+	echo "<tr>\n";
+	echo "<td colspan='2'>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "<br />\n";
+	echo "<input type='text' style='width:99%;' id='kw_title' name='kw_title' value='" .  $kw['title'] . "' class='search_form_txt' />\n";
+	echo "</td>\n";
+	echo "<tr></tr>\n";
+	echo "<td colspan='2'>" . _T('keywords_input_description') . "<br />\n";
+	echo "<textarea id='kw_desc' name='kw_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
+	echo $kw['description'];
+	echo "</textarea>\n";
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "</table>\n\n";
 
-	echo "<p>Title = " . $kw['title'] . "</p>\n";
-	echo "<p>TODO</p>\n";
+	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+	echo "</form>\n";
+
+	// destroy error messages
+	$_SESSION['errors'] = array();
 
 	lcm_page_end();
+	exit;
 }
+
+//
+// Update the information on a keyword group
+//
+function update_keyword_group($id_group) {
+	$kwg_suggest = $_REQUEST['kwg_suggest'];
+	$kwg_title   = $_REQUEST['kwg_title'];
+	$kwg_desc    = $_REQUEST['kwg_desc'];
+	$kwg_type    = $_REQUEST['kwg_type'];
+
+	if (! intval($id_group) > 0)
+		lcm_panic("update_keyword_group: missing or badly formatted id_group");
+	
+	$fl = " suggest = '" . clean_input($kwg_suggest) . "' ";
+	
+	if ($kwg_title) // cannot be empty
+		$fl .= ", title = '" . clean_input($kwg_title) . "' ";
+	else
+		$_SESSION['errors']['title'] = "The title cannot be empty.";
+	
+	$fl .= ", description = '" . clean_input($kwg_desc) . "' ";
+
+	$query = "UPDATE lcm_keyword_group
+				SET $fl
+				WHERE id_group = " . $id_group;
+	
+	lcm_query($query);
+	write_metas(); // update inc_meta_cache.php
+
+	header("Location: keywords.php?tab=" . $kwg_type);
+	exit;
+}
+
+//
+// Update the information on a keyword
+//
+function update_keyword($id_keyword) {
+	$kw_title   = $_REQUEST['kw_title'];
+	$kw_desc    = $_REQUEST['kw_desc'];
+	$kwg_type   = $_REQUEST['kwg_type'];
+
+	if (! intval($id_keyword) > 0)
+		lcm_panic("update_keyword: missing or badly formatted id_keyword");
+	
+	$fl = "description = '" . clean_input($kw_desc) . "' ";
+	
+	if ($kw_title) // cannot be empty
+		$fl .= ", title = '" . clean_input($kw_title) . "' ";
+	else
+		$_SESSION['errors']['title'] = "The title cannot be empty.";
+
+	$query = "UPDATE lcm_keyword
+				SET $fl
+				WHERE id_keyword = " . $id_keyword;
+	
+	lcm_query($query);
+	write_metas(); // update inc_meta_cache.php
+
+	header("Location: keywords.php?tab=" . $kwg_type);
+	exit;
+}
+
 
 //
 // Main
@@ -136,15 +243,27 @@ function show_keyword_id($action = 'view', $id_keyword) {
 // Do any requested actions
 if (isset($_REQUEST['action'])) {
 	switch ($_REQUEST['action']) {
-		case 'edit' :
-			if (isset($_REQUEST['id_group']) && intval($_REQUEST['id_group']) > 0) {
-				show_keyword_group_id($_REQUEST['action'], intval($_REQUEST['id_group']));
-			} else if (isset($_REQUEST['id_keyword']) && intval($_REQUEST['id_keyword']) > 0) {
-				show_keyword_id($_REQUEST['action'], intval($_REQUEST['id_keyword']));
-			}
-			exit;
+		case 'edit_group' :
+			// Show form to edit a keyword group and exit
+			show_keyword_group_id(intval($_REQUEST['id_group']));
+
 			break;
-		case 'refresh' :
+		case 'edit_keyword':
+			// Show form to edit a keyword and exit
+			show_keyword_id(intval($_REQUEST['id_keyword']));
+
+			break;
+		case 'update_group':
+			// Update the information on a keyword group then goes to edit group
+			update_keyword_group(intval($_REQUEST['id_group']));
+
+			break;
+		case 'update_keyword':
+			// Update the information on a keyword group then goes to edit group
+			update_keyword(intval($_REQUEST['id_keyword']));
+
+			break;
+		case 'refresh':
 			// Do not remove, or variables won't be declared
 			global $system_keyword_groups;
 			$system_keyword_groups = array();
@@ -154,11 +273,9 @@ if (isset($_REQUEST['action'])) {
 			create_groups($system_keyword_groups);
 
 			break;
-		default :
-			//echo "<p>Not ready yet</p>\n";
-			die("No such action!");
+		default:
+			die("No such action! (" . $_REQUEST['action'] . ")");
 	}
-	//exit;
 }
 
 // Define tabs
@@ -187,7 +304,7 @@ switch ($tab) {
 		show_all_keywords($tab);
 		break;
 	case 'maint' :
-		echo '<form method="POST" action="' . $_SERVER['REQUEST_URI'] . "\">\n";
+		echo '<form method="post" action="' . $_SERVER['REQUEST_URI'] . "\">\n";
 		echo "\t<button type=\"submit\" name=\"action\" value=\"refresh\">Refresh default keywords</button>\n";
 		echo "</form>\n";
 }
