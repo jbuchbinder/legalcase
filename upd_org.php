@@ -1,6 +1,7 @@
 <?php
 
 include('inc/inc.php');
+include_lcm('inc_filters');
 
 // Start session
 session_start();
