@@ -76,33 +76,59 @@ if ($p = addslashes($p)) {
 		$error = _T('pass_erreur_code_inconnu');
 }
 
-// Send a cookie by e-mail
+// Send a cookie by e-mail which will later allow the user to
+// reset his/her password.
 if ($user_email) {
+	include_lcm('inc_mail');
+
 	if (is_valid_email($user_email)) {
-		$email = addslashes($user_email);
-		$res = lcm_query("SELECT * FROM lcm_author WHERE email ='$email'");
-		if ($row = spip_fetch_array($res)) {
-			if ($row['status'] == 'trash' OR $row['pass'] == '')
-				$error = _T('pass_erreur_acces_refuse');
-			else {
-				$cookie = creer_uniqid();
-				lcm_query("UPDATE lcm_author SET cookie_recall = '$cookie' WHERE email ='$email'");
+		$user_email = addslashes($user_email);
 
-				$nom_site_spip = lire_meta("nom_site");
-				$adresse_site = lire_meta("adresse_site");
+		// Find the ID + info of the author
+		$res = lcm_query("SELECT id_of_person, status, password
+					FROM lcm_contact as c, lcm_author as a
+					WHERE c.id_of_person = a.id_author
+						and type_person = 'author' 
+						and value ='$user_email' 
+						and type_contact = 1");
+		if ($row = lcm_fetch_array($res)) {
+			if ($row['status'] == 'trash' OR $row['password'] == '')
+				// TODO
+				$error = _T('pass_error_acces_refuse');
+			else if ($row['status'] == 'waiting') {
+				// TODO
+				$error = _T('pass_error_waiting_moderator');
+			} else {
+				$cookie = create_uniq_id();
+				lcm_query("UPDATE lcm_author 
+					SET cookie_recall = '$cookie'
+					WHERE id_author ='" . $row['id_of_contact'] . "'");
 
-				$message = _T('pass_mail_passcookie', array('nom_site_spip' => $nom_site_spip, 'adresse_site' => $adresse_site, 'cookie' => $cookie));
-				if (send_email($email, "[$nom_site_spip] "._T('pass_oubli_mot'), $message))
-					$error = _T('pass_recevoir_mail');
-				else
-					$error = _T('pass_erreur_probleme_technique');
+				$site_name = read_meta('site_name');
+				$site_address = read_meta('site_address');
+
+				$message = _T('pass_mail_cookie1') . "\n";
+				$message .= $site_name . " (" . $site_address . ")\n\n";
+				$message .= _T('pass_mail_cookie2') . "\n";
+				$message .= "    " . $site_address . "/lcm_pass.php?p=" .  $cookie .  "\n\n";
+				$message .= _T('pass_mail_cookie3') . "\n";
+
+				if (send_email($user_email, "[$site_name] "._T('pass_title_forgotten_password'), $message)) {
+					$error = _T('pass_info_receive_mail');
+				} else {
+					$email_admin = meta_read('email_sysadmin');
+					$error = "<div class=\"box_error\"><p>" 
+						.  _T('pass_warning_mail_failure', array('email_admin' => $email_admin))
+						. "</p></div>\n";
+				}
 			}
 		}
-		else
+		else {
 			$error = _T('pass_erreur_non_enregistre', array('user_email' => htmlspecialchars($user_email)));
-	}
-	else
+		}
+	} else {
 		$error = _T('pass_erreur_non_valide', array('user_email' => htmlspecialchars($user_email)));
+	}
 }
 
 if ($pass_forgotten == 'yes') {
@@ -186,7 +212,7 @@ if ($pass_forgotten == 'yes') {
 
 			$message = _T('pass_info_automated_msg') . "\n\n";
 			$message .= _T('info_greetings') . ",\n\n";
-			$message .= _T('pass_info_here_info', array('site_name' => $site_name, 'site_address' => $site_url)) . "\n\n";
+			$message .= _T('pass_info_here_info', array('site_name' => $site_name, 'site_address' => $site_address)) . "\n\n";
 			$message .= "- "._T('login_login') . _T('typo_column') . " $username\n";
 			$message .= "- "._T('login_password') . _T('typo_column') . " $pass\n\n";
 
