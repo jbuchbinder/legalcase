@@ -77,6 +77,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_more_than_three' => '(More than 3 characters)',
 'info_name_of_person' => 'Name',
 'info_or' => 'or',
+'info_technical_problem_database' => 'The connection to the database failed. It is possible that either is it not running or it has refused the login/password. Please consult the message provided below (if any) for more information.',
 'info_your_contact_information' => 'Your contact information ...',
 'input_connection_identifiers' => 'Your connection identifiers ...',
 'input_email' => 'E-mail address',
@@ -164,6 +165,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_software' => 'Legal Case Management System',
 'title_software_article' => 'The Legal Case Management Software',
 'title_technical_message' => 'Technical message',
+'title_technical_problem' => 'Technical problem',
 'type' => 'Type',
 'typo_column' => ':',
 
