@@ -47,7 +47,7 @@ body {
 }
 
 #main_column {
-	margin-left: 150px;
+	margin-left: 170px;
 	border-top: 1px dashed #999;
 	background-color: #fff;
 	margin-right: 5px;
@@ -57,7 +57,7 @@ body {
 #navigation_menu_column {
 	background-color: #fff;
 	text-align: center;
-	width: 150px;
+	width: 170px;
 	float: left;
 }
 
