@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.23 2005/03/22 02:16:04 antzi Exp $
+	$Id: edit_app.php,v 1.24 2005/03/23 10:13:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -128,10 +128,10 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 		<!-- Start time -->
 		<tr><td><?php echo _T('app_input_date_start'); ?></td>
-			<td><?php /* echo _T('calendar_info_date') . ' ';  */
+			<td><?php
 				$name = (($admin || ($edit && $modify)) ? 'start' : '');
 				echo get_date_inputs($name, $_SESSION['app_data']['start_time'], false);
-				echo ' ' . _T('calendar_info_time') . ' ';
+				echo ' ' . _T('time_input_time_at') . ' ';
 				echo get_time_inputs($name, $_SESSION['app_data']['start_time']);
 				echo f_err_star('start_time',$_SESSION['errors']); ?>
 			</td>
@@ -142,10 +142,9 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			<td><?php 
 				if ($prefs['time_intervals'] == 'absolute') {
 					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'end' : '');
-					echo _T('calendar_info_date') . ' '; 
 					echo get_date_inputs($name, $_SESSION['app_data']['end_time']);
 					echo ' ';
-					echo _T('calendar_info_time') . ' ';
+					echo _T('time_input_time_at') . ' ';
 					echo get_time_inputs($name, $_SESSION['app_data']['end_time']);
 					echo f_err_star('end_time',$_SESSION['errors']);
 				} else {
@@ -164,10 +163,9 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			<td><?php 
 				if ($prefs['time_intervals'] == 'absolute') {
 					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'reminder' : '');
-					echo _T('calendar_info_date') . ' '; 
 					echo get_date_inputs($name, $_SESSION['app_data']['end_time']);
 					echo ' ';
-					echo _T('calendar_info_time') . ' ';
+					echo _T('time_input_time_at') . ' ';
 					echo get_time_inputs($name, $_SESSION['app_data']['end_time']);
 					echo f_err_star('end_time',$_SESSION['errors']);
 				} else {
@@ -176,7 +174,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 							strtotime($_SESSION['app_data']['end_time']) - strtotime($_SESSION['app_data']['start_time']) : 0);
 				//	echo _T('calendar_info_time') . ' ';
 					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
-					echo " before the start time";
+					echo " before the start time"; // TRAD
 					echo f_err_star('end_time',$_SESSION['errors']);
 				} ?>
 			</td>
