@@ -20,7 +20,8 @@ if ($case>0) {
 		if (!($row['public'] || allowed($case,'r'))) {
 			die("You don't have permission to view this case!");
 		}
-		$edit = allowed($case,'w');
+		$edit = allowed($case,'we');
+		$admin = allowed($case,'a');
 
 		// Show case details
 		echo '<h1>Details for case: </h1>' . $row['title'];
@@ -38,10 +39,12 @@ if ($case>0) {
 		$authors = lcm_query($q);
 		// Show the results
 		while ($user = lcm_fetch_array($authors)) {
-			echo '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '">';
-			echo $user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last'] . '</a>; ';
+			if ($admin) echo '<a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '">';
+			echo $user['name_first'] . ' ' . $user['name_middle'] . ' ' . $user['name_last'];
+			if ($admin) echo '</a>';
+			echo '; ';
 		}
-		echo '[<a href="sel_auth.php?case=' . $case . '">Add user to the case</a>]';
+		if ($admin) echo '[<a href="sel_auth.php?case=' . $case . '">Add user to the case</a>]';
 		echo "<br>\n";
 		echo 'Court archive ID: ' . $row['id_court_archive'] . "<br>\n";
 		echo 'Creation date: ' . $row['date_creation'] . "<br>\n";
