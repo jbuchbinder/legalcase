@@ -70,13 +70,11 @@ p.nav_column_text {
 a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
 	background-color: #fff;
 	color: #06f;
-	background: url("../images/lcm/test_icon1.gif") no-repeat 1px 3px;
 }
 
 a.main_nav_btn:hover {
 	background-color: #def;
 	color: #f60;
-	background: url("../images/lcm/test_icon2.gif") no-repeat 1px 3px;
 }
 
 /* --------------------------------- */

@@ -66,13 +66,11 @@ ul#nav_menu_list li {
 a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
 	background-color: #fff;
 	color: #333;
-	background: url("../images/lcm/test_icon1.gif") no-repeat 1px 3px;
 }
 
 a.main_nav_btn:hover {
 	background-color: #def;
 	color: #666;
-	background: url("../images/lcm/test_icon2.gif") no-repeat 1px 3px;
 }
 
 .prefs_column_menu_head {
