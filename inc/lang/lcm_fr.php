@@ -80,13 +80,13 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_month_8' => 'Août',
 'date_month_9' => 'Septembre',
 'date_time_format' => '<NEW>Y-m-d H:i:s',
-'date_wday_1' => '<NEW>Monday',
-'date_wday_2' => '<NEW>Tuesday',
-'date_wday_3' => '<NEW>Wednesday',
-'date_wday_4' => '<NEW>Thursday',
-'date_wday_5' => '<NEW>Friday',
-'date_wday_6' => '<NEW>Saturday',
-'date_wday_7' => '<NEW>Sunday',
+'date_wday_1' => 'lundi',
+'date_wday_2' => 'mardi',
+'date_wday_3' => 'mercredi',
+'date_wday_4' => 'jeudi',
+'date_wday_5' => 'vendredi',
+'date_wday_6' => 'samedi',
+'date_wday_7' => 'dimanche',
 'description' => '<NEW>Description',
 'directories_bad_rights' => '<NEW>The following directories do not have write permission',
 'directories_bad_rights_cause' => '<NEW>To change this, use your SSH/SFTP client in order to set access permissions for each of these directories. The procedure is detailed in the install guide.',
@@ -101,6 +101,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'edit' => '<NEW>Edit',
 'edit_case_details' => '<NEW>Edit case details',
 'edit_case_information' => '<NEW>Edit case information',
+'edit_filter_details' => '<NEW>Edit filter details',
+'edit_rep_details' => '<NEW>Edit report details',
 'enter_name_first' => '<NEW>First',
 'enter_name_last' => '<NEW>Last',
 'enter_name_middle' => '<NEW>Middle',
@@ -111,6 +113,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'error_no_read_permission' => '<NEW>You don\'t have permission to view this case!',
 'error_no_such_case' => '<NEW>There\'s no such case!',
 'error_no_such_user' => '<NEW>There is no such user in the database. How did you get in?',
+
+
+// F
+'filter_id' => '<NEW>Filter ID',
+'filter_title' => '<NEW>Title',
+'filter_type' => '<NEW>Conditions logic',
 
 
 // I
@@ -170,6 +178,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
+'kw_contacts_addressmain_title' => '<NEW>Home address',
+'kw_contacts_emailalternate_title' => '<NEW>E-mail (alternate)',
+'kw_contacts_emailmain_title' => '<NEW>E-mail',
+'kw_contacts_phonehome_title' => '<NEW>Phone (home)',
+'kw_contacts_phonemobile_title' => '<NEW>Phone (mobile)',
+'kw_contacts_phoneoffice_title' => '<NEW>Phone (office)',
 'kw_followups_assignment_title' => '<NEW>Assignment',
 'kw_followups_conclusion_title' => '<NEW>Conclusion',
 'kw_followups_consultation_title' => '<NEW>Consultation',
@@ -203,6 +217,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // M
 'menu_admin' => '<NEW>Administration',
 'menu_admin_archives' => '<NEW>Archives',
+'menu_admin_filters' => '<NEW>Filters',
 'menu_admin_keywords' => '<NEW>Keywords',
 'menu_admin_reports' => '<NEW>Reports',
 'menu_admin_siteconf' => '<NEW>Site configuration',
@@ -268,6 +283,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // R
 'read' => '<NEW>Read',
+'rep_title' => '<NEW>Title',
+'report_id' => '<NEW>Report ID',
 
 
 // S
