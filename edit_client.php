@@ -18,16 +18,21 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.23 2005/01/21 15:48:54 mlutfy Exp $
+	$Id: edit_client.php,v 1.24 2005/02/07 22:57:41 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
+// Get input value(s)
 $client = intval($_GET['client']);
 
+// Get site preferences
+$client_name_middle = read_meta('client_name_middle');
+$client_citizen_number = read_meta('client_citizen_number');
+
 if (empty($_SESSION['errors'])) {
-    $client_data = array();
+	$client_data = array();
 	$client_data['referer'] = $HTTP_REFERER;
 
 	if ($client > 0) {
@@ -53,7 +58,7 @@ if (empty($_SESSION['errors'])) {
 if ($client > 0) {
 	lcm_page_start(_T('title_client_edit')
 		. $client_data['name_first'] . ' '
-		. $client_data['name_middle'] . ' '
+		. ( ($client_name_middle == 'yes') ? $client_data['name_middle'] . ' ' : '' )
 		. $client_data['name_last']);
 } else {
 	lcm_page_start(_T('title_client_new'));
@@ -81,9 +86,11 @@ if($client_data['id_client']) {
 echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
 echo '<td><input name="name_first" value="' . clean_output($client_data['name_first']) . '" class="search_form_txt"></td></tr>' . "\n";
 
-echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
-echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt"></td></tr>' . "\n";
-
+if ($client_name_middle == 'yes') {
+	echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
+	echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt"></td></tr>' . "\n";
+}
+	
 echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
 echo '<td><input name="name_last" value="' . clean_output($client_data['name_last']) . '" class="search_form_txt"></td></tr>' . "\n";
 
@@ -108,9 +115,11 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 			</td></tr>
 		<tr><td>Created on:</td>
 			<td><?php echo format_date($client_data['date_creation'], 'short'); ?></td></tr>
-		<tr><td><?php echo _T('person_input_citizen_number'); ?></td>
+<?php if ($client_citizen_number == 'yes') {
+?>		<tr><td><?php echo _T('person_input_citizen_number'); ?></td>
 			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>" class="search_form_txt"></td></tr>
-		<tr><td><?php echo _T('person_input_address'); ?></td>
+<?php }
+?>		<tr><td><?php echo _T('person_input_address'); ?></td>
 			<td><textarea name="address" rows="3" class="frm_tarea"><?php echo clean_output($client_data['address']); ?></textarea></td></tr>
 		<tr><td><?php echo _T('person_input_civil_status'); ?></td>
 			<td><input name="civil_status" value="<?php echo clean_output($client_data['civil_status']); ?>" class="search_form_txt"></td></tr>
