@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.13 2005/03/09 15:16:32 antzi Exp $
+	$Id: fu_det.php,v 1.14 2005/03/17 15:00:43 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -131,8 +131,8 @@ echo "</ul>\n";
 ?>
 
 	<table class="tbl_usr_dtl" width="99%">
-		<tr><td><?php echo 'Author:'; ?></td>
-			<td><?php echo njoin(array($fu_data['name_first'],$fu_data['name_middle'],$fu_data['name_last'])); ?></td></tr>
+		<tr><td><?php echo 'Author:'; /* TRAD */ ?></td>
+			<td><?php echo get_person_name($fu_data); ?></td></tr>
 		<tr><td><?php echo _T('fu_input_date_start'); ?></td>
 			<td><?php echo format_date($fu_data['date_start']); ?></td></tr>
 		<tr><td><?php echo _T('fu_input_date_end'); ?></td>
@@ -140,28 +140,34 @@ echo "</ul>\n";
 		<tr><td><?php echo _T('fu_input_type'); ?></td>
 			<td><?php echo _T('kw_followups_' . $fu_data['type'] . '_title'); ?></td></tr>
 		<tr><td valign="top"><?php echo _T('fu_input_description'); ?></td>
-			<td><?php echo nl2br(clean_output($fu_data['description']));
-				echo "</td></tr>\n";
+			<td><?php
+			
+	echo nl2br(clean_output($fu_data['description']));
+	echo "</td></tr>\n";
 
-				// Read the policy settings
-				$fu_sum_billed = read_meta('fu_sum_billed');
-				if ($fu_sum_billed=='yes') {
-?>		<tr><td><?php echo _T('fu_input_sum_billed'); ?></td>
-			<td><?php echo clean_output($fu_data['sumbilled']);
-					// [ML] If we do this we may as well make a function
-					// out of it, but not sure where to place it :-)
-					// This code is also in config_site.php
-					$currency = read_meta('currency');
-					if (empty($currency)) {
-						$current_lang = $GLOBALS['lang'];
-						$GLOBALS['lang'] = read_meta('default_language');
-						$currency = _T('currency_default_format');
-						$GLOBALS['lang'] = $current_lang;
-					}
+	// Sum billed (if activated from policy)
+	$fu_sum_billed = read_meta('fu_sum_billed');
 
-					echo htmlspecialchars($currency);
-					echo "\n			</td></tr>\n";
-				}; echo "	</table>\n";
+	if ($fu_sum_billed == 'yes') {
+		echo "<tr><td>" . _T('fu_input_sum_billed') . "</td>\n";
+		echo "<td>";
+		echo format_money(clean_output($fu_data['sumbilled']));
+		$currency = read_meta('currency');
+		echo htmlspecialchars($currency);
+		echo "</td></tr>\n";
+	}
+				
+	echo "</table>\n";
 
+	// Show 'edit case' button if allowed
+	$case_allow_modif = read_meta('case_allow_modif');
+	$edit = ($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'e');
+
+	if ($case_allow_modif == 'yes' && $edit) {
+		echo '<p><a href="edit_fu.php?followup=' . $fu_data['id_followup'] . '" class="edit_lnk">'
+				. "Edit follow-up" // TRAD
+				. '</a></p>';
+	}
+	
 	lcm_page_end();
 ?>
