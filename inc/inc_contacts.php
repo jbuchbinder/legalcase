@@ -13,11 +13,11 @@ function get_contacts($type_person, $id, $type_contact = '') {
 	if ($type_contact == 'email')
 		$type_contact = 1;
 	else
-		die "Wrong get_contact_author type ($type_contact)";
+		echo "Wrong get_contact_author type $type_contact";
 
 	$query = "SELECT type_contact, value
 				FROM lcm_contact
-				WHERE id_of_person = " . intval($id) " .
+				WHERE id_of_person = " . intval($id) . " 
 					AND type_person = '" . addslashes($type_person) . "' ";
 
 	if ($type_contact)
@@ -33,16 +33,41 @@ function get_contacts($type_person, $id, $type_contact = '') {
 
 function add_contact($type_person, $id, $type_contact, $value) {
 	// XXX FIXME TODO very temporary untill we solved this issue..
-	if ($type == 'email')
-		$type = 1;
+	if ($type_contact == 'email')
+		$type_contact = 1;
 	else
-		die "Wrong get_contact_author type ($type_contact)";
+		echo "Wrong get_contact_author type ($type_contact)";
 
 	$query = "INSERT INTO lcm_contact (type_person, id_of_person, type_contact, value)
 		VALUES('" . addslashes($type_person) . "', " . intval($id) . ", "
 			. intval($type_contact) . ", " . "'" . addslashes($value) . "')";
 
 	lcm_query($query);
+}
+
+function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
+	// XXX FIXME TODO very temporary untill we solved this issue..
+	if ($type_contact == 'email')
+		$type_contact = 1;
+	else
+		echo "Wrong get_contact_author type ($type_contact)";
+	
+	$id = intval($id);
+	$type_contact = intval($type_contact);
+	$value = addslashes($value);
+
+	$query = "SELECT id_contact
+				FROM lcm_contact
+				WHERE value = '" . $value . "'";
+	
+	if ($type_contact)
+		$query .= " AND type_contact = " . $type_contact;
+
+	if ($id)
+		$query .= " AND id_person = " . $id;
+
+	$result = lcm_query($query);
+	return (lcm_num_rows($result) > 0);
 }
 
 ?>
