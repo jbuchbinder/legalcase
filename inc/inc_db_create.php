@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.34 2005/03/03 15:11:52 antzi Exp $
+	$Id: inc_db_create.php,v 1.35 2005/03/09 03:14:48 antzi Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -118,6 +118,7 @@ function create_database() {
 		date_end datetime NOT NULL,
 		type varchar(255) NOT NULL DEFAULT 'other',
 		description text NOT NULL,
+		case_stage varchar(255) NOT NULL,
 		sumbilled decimal(19,4) NOT NULL,
 		PRIMARY KEY (id_followup),
 		KEY id_case (id_case),

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.42 2005/03/03 15:11:52 antzi Exp $
+	$Id: inc_db_upgrade.php,v 1.43 2005/03/09 03:14:48 antzi Exp $
 */
 
 // Execute this file only once
@@ -572,6 +572,13 @@ function upgrade_database($old_db_version) {
 		lcm_query("ALTER TABLE lcm_case ADD stage VARCHAR(255) NOT NULL AFTER status");
 
 		upgrade_db_version (25); 
+	}
+
+	if ($lcm_db_version_current < 26) {
+		// Add case stage
+		lcm_query("ALTER TABLE lcm_followup ADD case_stage VARCHAR(255) NOT NULL AFTER description");
+
+		upgrade_db_version (26); 
 	}
 
 	return $log;
