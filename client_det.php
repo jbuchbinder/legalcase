@@ -39,6 +39,10 @@ if ($client>0) {
 
 		?></p><h3>Organisation(s) represented by this client:</h3>
 		<table border="0" class="tbl_usr_dtl">
+		    <tr>
+			<th class="heading">Organisation name</th>
+			<th class="heading">&nbsp;</th>
+		    </tr>
 		<?php
 
 		// Show organisation(s)
@@ -58,7 +62,7 @@ if ($client>0) {
 		}
 
 		if ($edit)
-			echo "<tr><td><a href=\"sel_org_cli.php?client=$client\" class=\"content_link\">Add organisation(s)</a></td><td></td></tr>";
+			echo "<tr><td><a href=\"sel_org_cli.php?client=$client\" class=\"content_link\"><strong>Add organisation(s)</strong></a></td><td></td></tr>";
 
 		?>
 		</table><br>
