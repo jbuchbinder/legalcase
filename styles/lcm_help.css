@@ -2,6 +2,10 @@
 /* Help pages styles */
 /* -------------------- */
 
+/* -------------------- */
+/* Help pages styles */
+/* -------------------- */
+
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	margin: 0;
@@ -9,7 +13,7 @@ body {
 }
 
 h1 {
-	width: 735px;
+	width: 734px;
 	height: 50px;
 	line-height: 50px;
 	margin: 0;
@@ -25,60 +29,84 @@ h2 {
 	padding: 0;
 }
 
+/* Layout */
+
 #hlp_big_box {
-	width: 740px;
-	height: 530px;
+	width: 739px;
+	height: 525px;
 	border-bottom: 1px solid #999;
 	border-right: 1px solid #999;
 }
 
 #hlp_menu {
 	float: left;
-	width: 160px;
+	width: 150px;
 }
 
 #hlp_cont {
 	float: right;
-	width: 574px;
-	height: 510px;
+	width: 588px;
+	height: 525px;
 	border-left: 1px solid #999;
 }
 
-#hlp_btm {
-	clear: both;
-	height: 19px;
-	background: #efefef;
+#hlp_cont p, #hlp_cont div, #hlp_cont ul li {
+	font-size: 12px;
+}
+
+/* Help Main Menu  */
+
+#hlp_menu ul#nav {
+	margin: 0;
+	padding: 0; 
+	list-style: none;
+	width: 150px;
+	}
+
+#hlp_menu ul.subnav {
+	margin: -1px 0px 0px 0px;
+	padding: 0; 
+	list-style: none;
+	width: 200px;
 	border-top: 1px solid #999;
 }
 
-/* Help main menu */
-
-ul#nav {
-	margin: 0;
-	padding: 0;
+#hlp_menu ul.subnav li a {
+	border-right: 1px solid #999;
 }
 
-ul#nav li {
-	list-style-type: none;
+#hlp_menu ul.subnav li a:hover, #hlp_menu ul#nav li a:hover {
+	background: #efefef;
+	color: #f60;
 }
+	
+#hlp_menu ul li {
+	position: relative;
+	}
+	
+#hlp_menu li ul {
+	position: absolute;
+	left: 150px;
+	top: 0;
+	display: none;
+	}
 
-ul#nav li a {
+#hlp_menu ul li a {
 	display: block;
-	width: 160px;
-	height: 25px;
-	line-height: 25px;
-	font-size: 11px;
 	text-decoration: none;
 	color: #333;
+	background: #fff;
+	padding: 5px;
+	border-left: 1px solid #999;
+	border-right: 0;
 	border-bottom: 1px solid #999;
-	padding-left: 5px;
-}
+	border-top: 0;
+	font-size: 11px;
+	}
+	
+/* Holly Hack. IE Requirement \*/
+* html #hlp_menu ul li { float: left; height: 1%; }
+* html #hlp_menu ul li a { height: 1%; }
+/* End */
 
-ul#nav li a:hover {
-	background: #efefef;
-	color: #000;
-}
-
-ul.subnav {
-	display: none;
-}
+#hlp_menu li:hover ul, #hlp_menu li.over ul { display: block; }
