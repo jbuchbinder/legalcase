@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.10 2005/03/10 14:48:51 antzi Exp $
+	$Id: inc_keywords.php,v 1.11 2005/03/28 13:21:59 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -29,17 +29,26 @@ define('_INC_KEYWORDS', '1');
 // type. If type is 'user', then all keyword groups of type
 // case, followup, client, org and author are returned.
 // 
-function get_kwg_all($type) {
+function get_kwg_all($type, $exclude_empty = false) {
 	$ret = array();
 
 	if ($type == 'user')
-		$in_type = "IN ('case', 'followup', 'client', 'org', 'author')";
+		$in_type = "IN ('case', 'followup', 'client', 'org', 'client_org')";
 	else
 		$in_type = "= '" . addslashes($type) . "'";
 
-	$query = "SELECT *
-				FROM lcm_keyword_group
-				WHERE type $in_type";
+	if ($exclude_empty) {
+		$query = "SELECT kwg.*, COUNT(k.id_keyword) as cpt
+					FROM lcm_keyword_group as kwg, lcm_keyword as k
+					WHERE type $in_type
+					  AND kwg.id_group = k.id_group
+					GROUP BY id_group
+					HAVING cpt > 0";
+	} else {
+		$query = "SELECT *
+					FROM lcm_keyword_group
+					WHERE type $in_type";
+	}
 
 	$result = lcm_query($query);
 
@@ -89,7 +98,8 @@ function get_keywords_from_group_name($kwg_name) {
 	// 1- Get ID for name (check cache first)
 
 	// 2- call get_keywords_in_group_id()
-	
+
+	lcm_panic("Not implemented");
 }
 
 //
@@ -132,6 +142,63 @@ function get_kw_title($name) {
 		return $row['title'];
 	else
 		return false;
+}
+
+// Return a list of keywords attached to type (case/client/org/..) for a given ID
+function get_keywords_applied_to($type, $id) {
+	if (! ($type == 'case' || $type == 'client' || $type == 'org' || $type == 'author'))
+		lcm_panic("Unknown type: " . $type);
+	
+	$query = "SELECT *
+				FROM lcm_keyword_" . $type . " as kwlist, lcm_keyword as kwinfo
+				WHERE id_" . $type . " = " . $id . " 
+				  AND kwinfo.id_keyword = kwlist.id_keyword";
+	
+	$result = lcm_query($query);
+
+	if (lcm_num_rows($result))
+		return lcm_fetch_array($result);
+	else
+		return array();
+}
+
+function update_keywords_request($type_obj, $id_obj) {
+
+	//
+	// Update existing keywords
+	//
+	if (isset($_REQUEST['keyword_value'])) {
+
+	}
+
+	//
+	// New keywords
+	//
+
+	if ($id_obj && isset($_REQUEST['new_keyword_value'])) {
+		$cpt = 0;
+		$new_keywords = $_REQUEST['new_keyword_value'];
+		$new_kwg_id = $_REQUEST['new_kwg_id'];
+
+		while(isset($new_keywords[$cpt])) {
+			// Process new keywords which have a value
+			if ($new_keywords[$cpt]) {
+				if (! $new_kwg_id[$cpt])
+					lcm_panic("Empty kwg name");
+
+				// optionally, we can validate whether it makes sense
+				// to apply this kwg to this 'object' ... (TODO ?)
+
+				$query = "INSERT INTO lcm_keyword_" . $type_obj . "
+						SET id_keyword = " . $new_keywords[$cpt] . ",
+							id_" . $type_obj . " = " . $id_obj;
+
+				lcm_query($query);
+			}
+
+			$cpt++;
+		}
+	}
 }
 
 ?>
