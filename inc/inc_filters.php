@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.44 2005/03/15 06:27:26 mlutfy Exp $
+	$Id: inc_filters.php,v 1.45 2005/03/16 09:43:46 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -76,6 +76,9 @@ function format_date($timestamp = '', $format = 'full') {
 	// The following works, but Sunday is day 0 instead of 7
 	// $day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
 	$day_of_w = date("w", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
+
+	if ($format == 'short' && ereg('[0-9]{2}([0-9]{2})', $dd[0], $regs))
+		$dd[0] = $regs[1];
 
 	$my_date = _T('date_format_' . $format, array(
 				'day_name' => _T('date_wday_' . ($day_of_w + 0)),
