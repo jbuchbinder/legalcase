@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.9 2005/01/11 12:52:50 mlutfy Exp $
+	$Id: upd_author.php,v 1.10 2005/01/11 13:25:57 mlutfy Exp $
 */
 
 session_start();
@@ -44,16 +44,9 @@ function change_password($usr) {
 		return;
 	}
 
-	if ($author_session['status'] == 'admin') {
-		// If admin, do not check existing password (reset pass for users)
-		if ($usr['usr_new_passwd'] == $usr['usr_retype_passwd']) {
-			$result = $auth->newpass($usr['username'], $usr['usr_new_passwd'], $author_session);
-			lcm_log("pass change: result = " . $result);
-		} else {
-			$_SESSION['errors']['password_confirm'] = "The passwords do not match.";
-		}
-	} else {
-		// If user, confirm existing password before changing it
+	// Confirm current password only if user is not admin
+	// (this also applies to the creation of new authors, only admins can do that)
+	if ($author_session['status'] != 'admin') {
 		$valid_oldpass = false;
 
 		// Try to validate with the MD5s
@@ -83,6 +76,14 @@ function change_password($usr) {
 			$_SESSION['errors']['password_current'] = "Bad password";
 		}
 	}
+
+	// Do the password + confirm match?
+	if ($usr['usr_new_passwd'] == $usr['usr_retype_passwd']) {
+		$result = $auth->newpass($usr['username'], $usr['usr_new_passwd'], $author_session);
+		lcm_log("pass change: result = " . $result);
+	} else {
+		$_SESSION['errors']['password_confirm'] = "The passwords do not match.";
+	}
 }
 
 // Clear all previous errors
@@ -111,6 +112,11 @@ if ($usr['usr_new_passwd'])
 //
 // No errors, update database
 //
+
+// FIXME: 
+// - do not allow status change to users
+// - do not allow username change to users (is_newusername_allowed())
+// - make first & last name mandatory
 
 $fl = "id_author=" . $usr['id_author'] . ",username='" . clean_input($usr['username']) . "'"
 . ",name_first='" . clean_input($usr['name_first']) . "'"
