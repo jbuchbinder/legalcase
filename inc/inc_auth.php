@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.22 2005/01/21 10:55:29 mlutfy Exp $
+	$Id: inc_auth.php,v 1.23 2005/01/26 23:51:54 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -136,7 +136,7 @@ function auth() {
 			$prefs['theme'] = 'green';
 
 		if (! isset($prefs['screen']) || ! $prefs['screen'])
-			$prefs['screen'] = 'narrow';
+			$prefs['screen'] = 'wide';
 
 		if (! isset($prefs['font_size']) || ! $prefs['font_size'])
 			$prefs['font_size'] = 'medium_font';
