@@ -27,16 +27,16 @@ if ($org>0) {
 
 		// Show organisation details
 //		echo '<h3>Details for organisation:</h3><p class="normal_text"><strong>' . $row['name'] .'</strong>';
-		echo '<p class="normal_text"><strong>' . $row['name'] ."</strong><br />\n";
+		echo '<fieldset class="info_box"><p class="normal_text"><div class="prefs_column_menu_head">' . $row['name'] ."</div>\n";
 //		echo "\n<br />Organisation ID: " . $row['id_org'] . "<br />\n";
 //		echo 'Organisation name: ' . $row['name'] . "<br />\n";
 		echo 'Address: ' . $row['address'] . "<br />\n";
 		echo 'Created on: ' . $row['date_creation'] . "<br />\n";
 		echo 'Last update: ' . $row['date_update'] . "<br />\n";
 		if ($edit)
-			echo ' [<a href="edit_org.php?org=' . $row['id_org'] . '" class="content_link"><strong>Edit organisation information</strong></a>]';
+			echo '<br /><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">Edit organisation information</a><br />';
 
-		?></p><!--h3>Representative(s) of this organisation:</h3-->
+		?><br /></p><!--h3>Representative(s) of this organisation:</h3-->
 
 		<table class="tbl_usr_dtl">
 			<tr>
@@ -66,6 +66,7 @@ if ($org>0) {
 		if ($edit)
 			echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />";
 
+		echo "<br /></fieldset>";
 		
 	} else die("There's no such organisation!");
 } else die("Which organisation?");
