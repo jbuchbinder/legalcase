@@ -18,15 +18,23 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.70 2005/01/21 01:47:54 antzi Exp $
+	$Id: case_det.php,v 1.71 2005/01/21 03:42:09 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
+// Read parameters
 $case = intval($_GET['case']);
 $fu_order = "DESC";
+
+// Read site configuration settings
+$case_court_archive = read_meta('case_court_archive');
+$case_assignment_date = read_meta('case_assignment_date');
+$case_alledged_crime = read_meta('case_alledged_crime');
+$case_allow_modif = read_meta('case_allow_modif');
+$modify = ($case_allow_modif == 'yes');
 
 if (isset($_GET['fu_order']))
 	if ($_GET['fu_order'] == 'ASC' || $_GET['fu_order'] == 'DESC')
@@ -90,17 +98,21 @@ if ($case > 0) {
 		// Add user to the case link was here
 
 		echo "<br />\n";
-		echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br>\n";
+		if ($case_court_archive == 'yes')
+			echo _T('case_input_court_archive') . ' ' . clean_output($row['id_court_archive']) . "<br>\n";
 		echo _T('case_input_date_creation') . ' ' . format_date($row['date_creation']) . "<br>\n";
 
-		// [ML] FIXME: Not very clear how this should work
-		if ($row['date_assignment'])
-			echo _T('case_input_date_assigned') . ' ' .  format_date($row['date_assignment']) . "<br>\n";
-		else
-			echo _T('case_input_date_assigned') . ' ' . "Click to assign (?)<br/>\n";
+		if ($case_assignment_date == 'yes') {
+			// [ML] FIXME: Not very clear how this should work
+			if ($row['date_assignment'])
+				echo _T('case_input_date_assigned') . ' ' .  format_date($row['date_assignment']) . "<br>\n";
+			else
+				echo _T('case_input_date_assigned') . ' ' . "Click to assign (?)<br/>\n";
+		}
 
 		echo _T('case_input_legal_reason') . ' ' . clean_output($row['legal_reason']) . "<br>\n";
-		echo _T('case_input_alledged_crime') . ' ' . clean_output($row['alledged_crime']) . "<br>\n";
+		if ($case_alledged_crime == 'yes')
+			echo _T('case_input_alledged_crime') . ' ' . clean_output($row['alledged_crime']) . "<br>\n";
 
 		// Show case status
 		if ($edit) {
@@ -125,7 +137,7 @@ if ($case > 0) {
 		echo ($row['pub_write'] ? 'Yes' : 'No');
 		echo "</p><br /><br />\n";
 
-		if ($edit)
+		if ($edit && $modify)
 			echo '&nbsp;<a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a>';
 
 		if ($admin) echo '&nbsp;<a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a>';
@@ -139,7 +151,7 @@ if ($case > 0) {
 		echo '<fieldset class="info_box">';
 		echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_clients') . '</div>';
 		echo '<p class="normal_text">';
-		
+
 		echo '<table border="0" width="99%">' . "\n";
 		echo '<tr><td align="left" valign="top" width="50%">' . "\n";
 
@@ -267,7 +279,7 @@ if ($case > 0) {
 		echo "<br /><a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a><br /><br />\n";
 
 	echo "</p></fieldset>";
-		
+
 	lcm_page_end();
 } else {
 	lcm_page_start(_T('title_error'));
