@@ -456,11 +456,11 @@ else if ($step == 'ldap4') {
 		echo "<fieldset><label><B>"._T('info_statut_utilisateurs_1')."</B></label><BR>";
 		echo _T('info_statut_utilisateurs_2')." ";
 		echo "<p>";
-		echo "<input type='Radio' name='statut_ldap' value=\"6forum\" id='visit'>";
+		echo "<input type='Radio' name='statut_ldap' value=\"external\" id='external'>";
 		echo "<label for='visit'><b>"._T('info_visiteur_1')."</b></label> "._T('info_visiteur_2')."<br>";
-		echo "<input type='Radio' name='statut_ldap' value=\"1comite\" id='redac' CHECKED>";
+		echo "<input type='Radio' name='statut_ldap' value=\"normal\" id='normal' CHECKED>";
 		echo "<label for='redac'><b>"._T('info_redacteur_1')."</b></label> "._T('info_redacteur_2')."<br>";
-		echo "<input type='Radio' name='statut_ldap' value=\"0minirezo\" id='admin'>";
+		echo "<input type='Radio' name='statut_ldap' value=\"admin\" id='admin'>";
 		echo "<label for='admin'><b>"._T('info_administrateur_1')."</b></label> "._T('info_administrateur_2')."<br>";
 	
 		echo "<DIV align='$spip_lang_right'><input type='submit' class='fondl' name='Valider' value='"._T('bouton_suivant')." >>'>";
