@@ -237,7 +237,7 @@ function lcm_page_end($credits = '') {
 				. $author_session['name_middle'] . ' '
 				. $author_session['name_last']
 				. "<br /><br />
-			<a href=\"#\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ logout ]</a>
+			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ logout ]</a>
 			</p>
 			<div class=\"prefs_column_menu_head\">Search</div>
 			<p class=\"prefs_column_text\">
