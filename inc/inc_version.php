@@ -147,10 +147,10 @@ if (@file_exists('inc/my_options.php'))
 	include('inc/my_options.php');
 
 // Current version of LCM
-$lcm_version = 0.1;
+$lcm_version = 0.10;
 
 // Current version of LCM shown on screen
-$lcm_version_shown = "0.1 alpha 1 CVS";
+$lcm_version_shown = "0.1 alpha 1 CVS $Name:  $";
 
 // Current version of LCM with cvs tags
 if (ereg('Name: v(.*) ','$Name:  $', $regs)) $lcm_version_shown = $regs[1];
@@ -161,7 +161,7 @@ if (ereg('Name: v(.*) ','$Name:  $', $regs)) $lcm_version_shown = $regs[1];
 // error_reporting(E_ALL ^ E_NOTICE);
 
 // ** Security **
-$auteur_session = '';
+$author_session = '';
 $connect_status = '';
 $hash_recherche = '';
 $hash_recherche_strict = '';
