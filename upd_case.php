@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.34 2005/03/03 16:29:32 mlutfy Exp $
+	$Id: upd_case.php,v 1.35 2005/03/09 15:38:19 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -56,7 +56,9 @@ if (count($_SESSION['errors'])) {
 	// Add status to the list of fields
 	$fl .= ",status='" . $_SESSION['case_data']['status'] . "'";
 
-			
+	// Add stage to the list of fields
+	$fl .= ",stage='" . $_SESSION['case_data']['stage'] . "'";
+
 // Put public access rights settings in a separate string
 	$public_access_rights = '';
 	if ($_SESSION['case_data']['public'] || read_meta('case_read_always'))
