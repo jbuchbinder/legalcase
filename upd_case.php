@@ -35,7 +35,6 @@ if (count($errors)) {
 //			date_creation='" . $case_data['date_creation'] . "',
 // [AG] Creation date derived from MySQL server to prevent user manipulation
 	$fl .= "
-			date_creation=NOW(),
 			date_assignment='" . $case_data['date_assignment'] . "',
 			legal_reason='" . $case_data['legal_reason'] . "',
 			alledged_crime='" . $case_data['alledged_crime'] . "',
@@ -49,7 +48,7 @@ if (count($errors)) {
 
 		$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
 	} else {
-		$q = "INSERT INTO lcm_case SET id_case=0,$fl";
+		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl";
 		$result = lcm_query($q);
 		$id_case = lcm_insert_id();
 
