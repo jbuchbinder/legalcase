@@ -114,34 +114,50 @@ if ($case > 0) {
 
 	} else die(_T('error_no_such_case'));
 
-	echo "\n\n\t<br/>\n\n\t<table border='1'>
+	echo "\n\n<br/>\n\n<table border='0' width='99%' align='center' class='tbl_data'>
 	<caption>" . _T('case_followups') . ":</caption>
-	<tr><th>" . _T('date') . "</th><th>" . _T('type') . "</th><th>" . _T('description') . "</th><th></th></tr>\n";
+	<tr><th class='tbl_head'>" . _T('date') . "</th>
+		<th class='tbl_head'>" . _T('type') . "</th>
+		<th class='tbl_head'>" . _T('description') . "</th>
+		<th class='tbl_head'></th></tr>\n";
 
 	// Prepare query
 	$q = "SELECT id_followup,date_start,type,description
 		FROM lcm_followup
-		WHERE id_case=$case";
+		WHERE (id_case=$case";
+
+	if (strlen($fu_search_string)>1) {
+		$q .= " AND ((date_start LIKE '%$fu_search_string%')
+					OR (type LIKE '%$fu_search_string%')
+					OR (description LIKE '%$fu_search_string%'))";
+	}
+
+	$q .= ")";
 
 	// Do the query
 	$result = lcm_query($q);
 
 	// Process the output of the query
-	while ($row = lcm_fetch_array($result)) {
+	for ($i = 0 ; ($row = lcm_fetch_array($result)) ; $i++) {
 		// Show followup
-		echo '<tr><td>' . clean_output(date(_T('date_format_short'),strtotime($row['date_start']))) . '</td>';
-		echo '<td>' . clean_output($row['type']) . '</td>';
+		echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+		echo clean_output(date(_T('date_format_short'),strtotime($row['date_start']))) . "</td>\n";
+		echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+		echo clean_output($row['type']) . "</td>\n";
 		if (strlen($row['description'])<30) $short_description = $row['description'];
 		else $short_description = substr($row['description'],0,30) . '...';
-		echo '<td>' . clean_output($short_description) . '</td>';
+		echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+		echo clean_output($short_description) . "</td>\n";
 		if ($edit)
-			echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . '</a></td>';
-		echo "</tr>\n";
+			echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"
+			. '<a href="edit_fu.php?followup=' . $row['id_followup'] . '">' . _T('Edit') . "</a></td>\n";
+		echo "\t</tr>\n";
 	}
 	if ($add)
-		echo "<tr><td colspan=\"3\"><a href=\"edit_fu.php?case=$case\">" . _T('new_followup') . "</a></td><td></td></tr>\n";
+		echo "<tr><td colspan=\"3\" class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>"
+		. "<a href=\"edit_fu.php?case=$case\">" . _T('new_followup') . "</a></td>\n\t<td></td>\n</tr>\n";
 
-	echo "\t</table>\n";
+	echo "</table>\n";
 
 	lcm_page_end();
 } else {
