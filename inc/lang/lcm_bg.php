@@ -128,7 +128,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_month_8' => 'август',
 'date_month_9' => 'септември',
 'date_time_format' => 'Y-m-d H:i:s',
-'date_wday_0' => 'Неделя',
+'date_wday_0' => 'неделя',
 'date_wday_1' => 'понеделник',
 'date_wday_2' => 'вторник',
 'date_wday_3' => 'сряда',
@@ -170,6 +170,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // I
+'info_followup_case' => '<NEW>Case:',
 'info_followup_involving' => 'Включва:',
 'info_followup_to_case' => 'Към дело:',
 'info_free_software' => 'Свободен софтуер, <a href=\\"http://www.lcm.ngo-bg.org/en\\" class=\\"prefs_normal_lnk\\">разпространяван</a> под <a href=\\"http://www.gnu.org/licenses/gpl.html\\" class=\\"prefs_normal_lnk\\">Общ публичен лиценз (GPL)</a>.',
