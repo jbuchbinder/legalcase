@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.35 2005/01/25 11:11:10 mlutfy Exp $
+	$Id: install.php,v 1.36 2005/01/25 11:22:57 mlutfy Exp $
 */
 
 
@@ -96,7 +96,9 @@ if ($step == 6) {
 		$name_last   = addslashes($name_last);
 		$username    = addslashes($username);
 
-		$query = "SELECT id_author FROM lcm_author WHERE username=\"$username\"";
+		// XXX TODO: This should use inc_auth_db.php
+
+		$query = "SELECT id_author FROM lcm_author WHERE username='$username'";
 		$result = lcm_query($query);
 
 		unset($id_author);
@@ -125,23 +127,12 @@ if ($step == 6) {
 
 		lcm_query_db($query);
 
-		// Set e-mail for author (if none)
+		// Set e-mail for author
 		if ($email) {
 			include_lcm('inc_contacts');
-			// XXX does not check for "alternative e-mail" (which aren't supported yet)
 
-
-			if (! is_existing_contact('author', $id_author, 'email', $email)) {
-				if (is_existing_contact('author', 0, 'email', $email)) {
-					// The author entered the e-mail of another author
-					// This is bad for the password recall function
-
-					// TODO
-
-				} else {
-					add_contact('author', $id_author, 'email', $email);
-				}
-			}
+			if (! is_existing_contact('author', $id_author, 'email_main', $email))
+				add_contact('author', $id_author, 'email_main', $email);
 		}
 
 		// Insert email as main system administrator
@@ -221,11 +212,12 @@ else if ($step == 5) {
 
 	echo "<table border='0'><tr>\n";
 	echo "<td><small><label for='name_first'>" . _T('enter_name_first') .  "</label></small></td>\n";
-	echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
+	// [ML] Too many fields on screen. Middle name can be filled later, if necessary
+	// [ML] echo "<td><small><label for='name_middle'>" . _T('enter_name_middle') . "</label></small></td>\n";
 	echo "<td><small><label for='name_last'>" . _T('enter_name_last') . "</label></small></td>\n";
 	echo "</tr><tr>\n";
 	echo "<td><input type='text' id='name_first' name='name_first' value='$name_first' size='20' /></td>\n";
-	echo "<td><input type='text' id='name_middle' name='name_middle' value='$name_middle' size='20' /></td>\n";
+	// [ML] echo "<td><input type='text' id='name_middle' name='name_middle' value='$name_middle' size='20' /></td>\n";
 	echo "<td><input type='text' id='name_last' name='name_last' value='$name_last' size='20' /></td>\n";
 	echo "</tr></table>\n\n";
 
