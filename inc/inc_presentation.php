@@ -63,8 +63,8 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	} else {
 		echo "<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_ui_default.css\" title=\"Default\" />\n";
 		echo "<link rel=\"" . ($prefs['theme'] == 'blue' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_blue.css\" title=\"blue\" />\n";
-		echo "<link rel=\"" . ($prefs['theme'] == 'orange' ? '' : 'alternative ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
-		echo "<link rel=\"" . ($prefs['theme'] == 'monochrome' ? '' : 'alternative ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
+		echo "<link rel=\"" . ($prefs['theme'] == 'orange' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_orange.css\" title=\"orange\" />\n";
+		echo "<link rel=\"" . ($prefs['theme'] == 'monochrome' ? '' : 'alternate ') . "stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_ui_monochrome.css\" title=\"mono\" />\n";
 	}
 
 	// It is the responsability of the function caller to make sure that
