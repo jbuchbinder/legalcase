@@ -16,9 +16,9 @@
 
 	You should have received a copy of the GNU General Public License along 
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.30 2005/02/09 14:28:19 antzi Exp $
+	$Id: inc_filters.php,v 1.31 2005/02/23 00:31:03 antzi Exp $
 */
 
 // Execute this file only once
@@ -130,6 +130,16 @@ function clean_output($string) {
 	} else {
 		return htmlspecialchars($string);
 	}
+}
+
+// Joins non-empty elements of the array
+function njoin($parts,$separator=' ') {
+	if (!empty($parts) && is_array($parts)) {
+		foreach ($parts as $key => $value) {
+			if ($value === '') unset($parts[$key]);
+		}
+		return join($separator,$parts);
+	} else return false;
 }
 
 // Dirty hack: utf8_decode is mainly used for strlen(),
