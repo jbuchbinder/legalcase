@@ -34,14 +34,15 @@ function lcm_query_db($query) {
 		echo " -> <font color='blue'>".sprintf("%3f", $dt)."</font> ($tt)</small><p>\n";
 	}
 
-	if ($my_debug AND $s = mysql_error()) {
-		echo _T('warning_sql_query_failed') . "<br />\n" . htmlentities($query) . "<br />\n";
-		echo "&laquo; " . htmlentities($s) . " &raquo;<p>";
+	if ($my_debug AND $s = mysql_errno()) {
+		$error = _T('warning_sql_query_failed') . "<br />\n" . htmlentities($query) . "<br />\n";
+		$error .= "&laquo; " . htmlentities($s) . " &raquo;<p>";
+		echo $error;
 	}
 
 	if ($my_debug)
 		lcm_log("QUERY: $query\n", "mysql");
-
+	
 	return $result;
 }
 
@@ -188,18 +189,8 @@ function lcm_sql_error() {
 	return mysql_error();
 }
 
-function spip_sql_error() {
-	lcm_log("use of deprecated function: spip_sql_error, use lcm_sql_error instead");
-	return lcm_sql_error();
-}
-
 function lcm_sql_errno() {
 	return mysql_errno();
-}
-
-function spip_sql_errno() {
-	lcm_log("use of deprecated function: spip_sql_errno, use lcm_sql_errno instead");
-	return lcm_sql_errno();
 }
 
 function lcm_num_rows($r) {
