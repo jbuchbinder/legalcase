@@ -55,8 +55,6 @@ if ($prefs_mod) {
 				WHERE id_author = " . $author_session['id_author']);
 }
 
-lcm_log("Theme = " . $prefs['theme']);
-
 
 //
 // Database version management
