@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.10 2005/01/25 23:58:27 antzi Exp $
+	$Id: rep_det.php,v 1.11 2005/02/03 09:57:25 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -200,13 +200,13 @@ if ($rep > 0) {
 		echo "\t\t<tr><th class='heading'>Description</th></tr>\n";
 
 		// Show filters included in this report
-		$q = "SELECT lcm_rep_filters.*,lcm_filter.title
-			FROM lcm_rep_filters,lcm_filter
-			WHERE (id_report=$rep
-				AND lcm_rep_filters.id_filter=lcm_filter.id_filter)";
-		// Do the query
+		$q = "SELECT rf.*, f.title
+			FROM lcm_rep_filters as rf, lcm_filter as f
+			WHERE id_report = $rep
+				AND rf.id_filter = f.id_filter";
+
 		$fltrs = lcm_query($q);
-		// Show the results
+
 		while ($filter = lcm_fetch_array($fltrs)) {
 			echo "\t\t<tr><td>";
 			if (true) echo '<a href="filter_det.php?filter=' . $filter['id_filter'] . '" class="content_link">';

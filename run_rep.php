@@ -16,32 +16,34 @@
 
 	You should have received a copy of the GNU General Public License along
 	with this program; if not, write to the Free Software Foundation, Inc.,
-    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.8 2005/01/26 00:03:20 antzi Exp $
+	$Id: run_rep.php,v 1.9 2005/02/03 09:57:24 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
-// Clean input data
+// Report ID
 $rep = intval($_GET['rep']);
 
-// Get report info
 $q = "SELECT *
 		FROM lcm_report
 		WHERE id_report=$rep";
+
 $result = lcm_query($q);
+
 if ($row = lcm_fetch_array($result))
-	lcm_page_start($row['title']);
+	lcm_page_start("Report: " . $row['title']);
 else
 	die("There is no such report!");
 
 // Get report columns
-$q = "SELECT lcm_rep_cols.*,lcm_fields.*
-		FROM lcm_rep_cols,lcm_fields
-		WHERE (id_report=$rep
-			AND lcm_rep_cols.id_field=lcm_fields.id_field)
-		ORDER BY lcm_rep_cols.col_order";
+$q = "SELECT *
+		FROM lcm_rep_cols as c, lcm_fields as f
+		WHERE c.id_report = $rep
+			AND c.id_field = f.id_field
+		ORDER BY c.col_order";
+
 $result = lcm_query($q);
 
 // Process report column data to prepare SQL query
@@ -52,13 +54,18 @@ $sl_text = '';	// Sorting explaination
 
 while ($row = lcm_fetch_array($result)) {
 	if ($fl) $fl .= ',';
+
 	$fl .= $row['table_name'] . '.' . $row['field_name'] . " AS '" . $row['header'] . "'";
-	if (!in_array($row['table_name'],$ta)) $ta[] = $row['table_name'];
+
+	if (!in_array($row['table_name'],$ta))
+		$ta[] = $row['table_name'];
+
 	if ($row['sort']) {
 		if ($sl) $sl .= ',';
 		$sl .= $row['table_name'] . '.' . $row['field_name'] . " " . $row['sort'];
 		$sl_text .= ( $sl_text ? ', "' : '"' ) . $row['description'] . '"';
 	}
+
 	if ($row['total']) {
 		$totals[$row['col_order']] = 0;
 	}
@@ -69,6 +76,7 @@ $q = "SELECT lcm_filter.*
 		FROM lcm_rep_filters,lcm_filter
 		WHERE (id_report=$rep
 			AND lcm_rep_filters.id_filter = lcm_filter.id_filter)";
+
 $result = lcm_query($q);
 
 // Process each filter
@@ -119,19 +127,38 @@ while ($filter = lcm_fetch_array($result)) {
 }
 
 $wl = ( ($cl) ? "($cl)" : '');	// WHERE clause list
+
 // Add implied relations between tables included in the report
 if (in_array('lcm_case',$ta) && in_array('lcm_author',$ta)) {
 	$ta[] = 'lcm_case_author';
-	$wl .= ' AND lcm_case.id_case=lcm_case_author.id_case AND lcm_author.id_author=lcm_case_author.id_author';
+
+	if ($wl)
+		$wl .= ' AND ';
+
+	$wl .= ' lcm_case.id_case = lcm_case_author.id_case AND lcm_author.id_author = lcm_case_author.id_author';
 }
 
 // Convert array of table names into string list
 $tl = implode(',',$ta);
 
-if ($fl && $tl && $wl) {
+echo "\n<!-- ";
+echo "\t * FL = $fl\n";
+echo "\t * TL = $tl\n";
+echo "\t * WL = $wl\n";
+echo "-->\n";
+
+
+if ($fl && $tl) { //  && $wl) {
 	// Get report data
-	$q = "SELECT $fl\n\tFROM $tl\n\tWHERE ($wl)";
-	if ($sl) $q .= "\n\tORDER BY $sl";
+	$q = "SELECT $fl
+			FROM $tl\n";
+	
+	if ($wl)
+		$q .= "\tWHERE ($wl)\n";
+
+	if ($sl)
+		$q .= "\tORDER BY $sl";
+
 	$result = lcm_query($q);
 
 	// Diagnostic: show query into HTML
