@@ -948,6 +948,13 @@ function lcm_getbacktrace()
 	return $s;
 }
 
+function lcm_panic($message) {
+	$error = "[INTERNAL] " . $message . "\n";
+	$error .= lcm_getbacktrace();
+
+	lcm_log($error);
+	die("<pre>$error</pre>");
+}
 
 function lcm_debug($message) {
 	if ($GLOBALS['debug'])
