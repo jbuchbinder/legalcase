@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.18 2005/03/07 13:04:19 mlutfy Exp $
+	$Id: keywords.php,v 1.19 2005/03/07 13:13:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,12 +57,12 @@ function show_all_keywords($type = '') {
 			}
 
 			echo "</ul>\n";
-
-			echo '<p><a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
-				. 'id_group=' . $kwg['id_group'] . '">'
-				. 'Add a new keyword in this group' . "</a></p>\n";
 		}
-		
+
+		echo '<p><a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
+			. 'id_group=' . $kwg['id_group'] . '">'
+			. 'Add a new keyword in this group' . "</a></p>\n";
+	
 		echo "</fieldset>\n";
 	}
 
