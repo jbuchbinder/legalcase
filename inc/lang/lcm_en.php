@@ -307,6 +307,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // N
 'new_followup' => 'New followup',
+'new_report' => 'New report',
 
 
 // O
