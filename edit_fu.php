@@ -67,13 +67,13 @@ lcm_page_start("Edit follow-up");
 	<table><caption>Details of follow-up:</caption>
 		<tr><th>Parameter</th><th>Value</th></tr>
 		<tr><td>Start date:</td>
-			<td><input name="date_start" value="<?php echo $fu_data['date_start']; ?>">
+			<td><input name="date_start" value="<?php echo clean_output($fu_data['date_start']); ?>">
 				<?php echo f_err('date_start',$errors); ?></td></tr>
 		<tr><td>End date:</td>
-			<td><input name="date_end" value="<?php echo $fu_data['date_end']; ?>">
+			<td><input name="date_end" value="<?php echo clean_output($fu_data['date_end']); ?>">
 			<?php echo f_err('date_end',$errors); ?></td></tr>
 		<tr><td>Type:</td>
-			<td><select name="type" size="1"><option selected><?php echo $fu_data['type']; ?></option>
+			<td><select name="type" size="1"><option selected><?php echo clean_output($fu_data['type']); ?></option>
 			<?php
 			foreach($types as $item) {
 				if ($item != $fu_data['type']) {
@@ -83,9 +83,9 @@ lcm_page_start("Edit follow-up");
 			</select></td></tr>
 		<tr><td>Description:</td>
 			<td><textarea name="description" rows="5" cols="30"><?php
-			echo $fu_data['description']; ?></textarea></td></tr>
+			echo clean_output($fu_data['description']); ?></textarea></td></tr>
 		<tr><td>Sum billed:</td>
-			<td><input name="sumbilled" value="<?php echo $fu_data['sumbilled']; ?>"></td></tr>
+			<td><input name="sumbilled" value="<?php echo clean_output($fu_data['sumbilled']); ?>"></td></tr>
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>
