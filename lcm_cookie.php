@@ -164,26 +164,14 @@ if ($cookie_session) {
 	spip_query ("UPDATE lcm_author SET prefs = '".addslashes(serialize($prefs))."' WHERE id_author = ".$row_auteur['id_author']);
 }
 
-// changement de langue espace public
-if ($var_lang) {
-	include_lcm('inc_lang');
-
-	if (changer_langue($var_lang)) {
-		spip_setcookie('lcm_lang', $var_lang, time() + 365 * 24 * 3600);
-		$cible->delvar('lang');
-		$cible->addvar('lang', $var_lang);
-	}
-}
-
-// to change the language of the private area (or login)
-if ($var_lang_ecrire) {
+// Change the language of the private area (or login)
+if ($var_lang_lcm) {
 	include_lcm('inc_lang');
 	include_lcm('inc_session');
 	$verif = verifier_visiteur();
 
-	if (changer_langue($var_lang_ecrire)) {
-		spip_setcookie('lcm_lang_ecrire', $var_lang_ecrire, time() + 365 * 24 * 3600);
-		spip_setcookie('lcm_lang', $var_lang_ecrire, time() + 365 * 24 * 3600);
+	if (changer_langue($var_lang_lcm)) {
+		spip_setcookie('lcm_lang', $var_lang_lcm, time() + 365 * 24 * 3600);
 
 		// [ML] Strange, if I don't do this, id_auteur stays null,
 		// and I have no idea where the variable should have been initialized
@@ -191,16 +179,17 @@ if ($var_lang_ecrire) {
 
 		if (@file_exists('config/inc_connect.php')) {
 			include_lcm('inc_admin');
-				$cible->addvar('test', '123_' .  $GLOBALS['auteur_session']['id_author'] . '_' . $verif);
-			if (verifier_action_auteur('var_lang_ecrire', $valeur, $id_auteur)) {
-				spip_query ("UPDATE lcm_author SET lang = '".addslashes($var_lang_ecrire)."' WHERE id_author = ".$id_auteur);
-				$auteur_session['lang'] = $var_lang_ecrire;
+			$cible->addvar('test', '123_' .  $GLOBALS['auteur_session']['id_author'] . '_' . $verif);
+
+			if (verifier_action_auteur('var_lang_lcm', $valeur, $id_auteur)) {
+				spip_query ("UPDATE lcm_author SET lang = '".addslashes($var_lang_lcm)."' WHERE id_author = ".$id_auteur);
+				$auteur_session['lang'] = $var_lang_lcm;
 				ajouter_session($auteur_session, $lcm_session);	// enregistrer dans le fichier de session
 			}
 		}
 
 		$cible->delvar('lang');
-		$cible->addvar('lang', $var_lang_ecrire);
+		$cible->addvar('lang', $var_lang_lcm);
 	}
 }
 
