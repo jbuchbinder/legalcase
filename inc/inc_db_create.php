@@ -43,11 +43,11 @@ function create_database() {
 	// - DONE lcm_client
 	// - DONE lcm_org
 	// - DONE lcm_client_org
-	// + DONE lcm_contact
+	// - DONE lcm_contact
 	// + TODO lcm_courtfinal
 	// + TODO lcm_appelation
-	// + DONE lcm_keyword
-	// + DONE lcm_keyword_group
+	// - DONE lcm_keyword
+	// - DONE lcm_keyword_group
 	// + TODO lcm_client_keyword
 	// + TODO lcm_case_keyword
 	// - DONE lcm_case_client_org
@@ -196,9 +196,14 @@ function create_database() {
 	$query = "CREATE TABLE lcm_report (
 		id_report bigint(21) NOT NULL auto_increment,
 		title varchar(255) NOT NULL default '',
+		description text NOT NULL default '',
 		id_author bigint(21) NOT NULL default '0',
 		date_creation datetime NOT NULL default '0000-00-00 00:00:00',
 		date_update datetime NOT NULL default '0000-00-00 00:00:00',
+		line_src_type text NOT NULL DEFAULT '',
+		line_src_name text NOT NULL DEFAULT '',
+		col_src_type text NOT NULL DEFAULT '',
+		col_src_name text NOT NULL DEFAULT '',
 		PRIMARY KEY  (id_report),
 		KEY id_author (id_author))";
 
@@ -210,22 +215,33 @@ function create_database() {
 		table_name varchar(255) NOT NULL default '',
 		field_name varchar(255) NOT NULL default '',
 		description varchar(255) NOT NULL default '',
+		enum_type text NOT NULL DEFAULT '',
 		PRIMARY KEY  (id_field))";
 
 	$result = lcm_query($query);
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
-	$query = "REPLACE INTO lcm_fields VALUES (1, 'lcm_case', 'title', 'Case: Title'),
-											(2, 'lcm_case', 'id_court_archive', 'Case: Court archive ID'),
-											(3, 'lcm_case', 'date_creation', 'Case: Creation date'),
-											(4, 'lcm_case', 'date_assignment', 'Case: Assignment date'),
-											(5, 'lcm_case', 'legal_reason', 'Case: Legal reason'),
-											(6, 'lcm_case', 'alledged_crime', 'Case: Alleged crime'),
-											(7, 'lcm_author', 'name_first', 'Author: First name'),
-											(8, 'lcm_author', 'name_middle', 'Author: Middle name'),
-											(9, 'lcm_author', 'name_last', 'Author: Last name'),
-											(10, 'lcm_author', 'date_creation', 'Author: Date created'),
-											(11, 'lcm_author', 'date_update', 'Author: Date updated')";
+	$query = "REPLACE INTO lcm_fields (id_field, table_name, field_name, description, enum_type) VALUES
+			(1, 'lcm_case', 'title', 'Case: Title', ''),
+			(2, 'lcm_case', 'id_court_archive', 'Case: Court archive ID', ''),
+			(3, 'lcm_case', 'date_creation', 'Case: Creation date', ''),
+			(4, 'lcm_case', 'date_assignment', 'Case: Assignment date', ''),
+			(5, 'lcm_case', 'legal_reason', 'Case: Legal reason', ''),
+			(6, 'lcm_case', 'alledged_crime', 'Case: Alleged crime', ''),
+			(7, 'lcm_author', 'name_first', 'Author: First name', ''),
+			(8, 'lcm_author', 'name_middle', 'Author: Middle name', ''),
+			(9, 'lcm_author', 'name_last', 'Author: Last name', ''),
+			(10, 'lcm_author', 'date_creation', 'Author: Date created', ''),
+			(11, 'lcm_author', 'date_update', 'Author: Date updated', ''),
+			(12, 'lcm_case', 'count(*)', 'COUNT(*)', ''),
+			(13, 'lcm_author', 'count(*)', 'COUNT(*)', ''),
+			(14, 'lcm_author', 'id_author', 'Author: ID', ''),
+			(15, 'lcm_case', 'id_case', 'Case: ID', ''),
+			(16, 'lcm_followup', 'type', 'Activities: Type', 'keyword:system_kwg:followups'),
+			(17, 'lcm_followup', 'date_start', 'Activities: Date start', ''),
+			(18, 'lcm_followup', 'date_end', 'Activities: Date end', ''),
+			(19, 'lcm_followup', 'date_end - date_start', 'Activities: Time spent', ''),
+			(20, 'lcm_followup', 'id_followup', 'Activities: ID', '')";
 
 	$result = lcm_query($query);
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
@@ -282,7 +298,7 @@ function create_database() {
 
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
-	$query = "CREATE TABLE lcm_rep_cols (
+	$query = "CREATE TABLE lcm_rep_col (
 		id_column bigint(21) NOT NULL auto_increment,
 		id_report bigint(21) NOT NULL default '0',
 		id_field bigint(21) NOT NULL default '0',
@@ -295,6 +311,21 @@ function create_database() {
 		KEY id_report (id_report),
 		KEY id_field (id_field),
 		KEY col_order (col_order))";
+	$result = lcm_query($query);
+
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_rep_line (
+		id_line bigint(21) NOT NULL auto_increment,
+		id_report bigint(21) NOT NULL DEFAULT 0,
+		id_field bigint(21) NOT NULL DEFAULT 0,
+		sort_type ENUM('asc', 'desc') DEFAULT NULL,
+		col_order bigint(21) NOT NULL DEFAULT 0,
+		total tinyint(1) NOT NULL DEFAULT 0,
+		PRIMARY KEY (id_line),
+		KEY id_report (id_report),
+		KEY id_field (id_field),
+		KEY col_order (col_order))");
 	$result = lcm_query($query);
 
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
