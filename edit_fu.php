@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.70 2005/03/11 16:04:51 antzi Exp $
+	$Id: edit_fu.php,v 1.71 2005/03/17 14:40:23 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -95,7 +95,7 @@ if (empty($_SESSION['errors'])) {
 					$res_author = lcm_query($q);
 					if (lcm_num_rows($res_author)>0) {
 						while ($author = lcm_fetch_array($res_author)) {
-							$participants[] = njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
+							$participants[] = get_person_name($author);
 						}
 					}
 					
@@ -107,11 +107,11 @@ if (empty($_SESSION['errors'])) {
 					$res_client = lcm_query($q);
 					if (lcm_num_rows($res_client)>0) {
 						while ($client = lcm_fetch_array($res_client))
-							$participants[] = njoin(array($client['name_first'],$client['name_middle'],$client['name_last']))
-								. ( ($client['id_org'] > 0) ? " of " . $client['name'] : '');
+							$participants[] = get_person_name($client)
+								. ( ($client['id_org'] > 0) ? " of " . $client['name'] : ''); // TRAD
 					}
 
-					$_SESSION['fu_data']['description'] .= ' involving ' . join(', ',$participants);
+					$_SESSION['fu_data']['description'] .= ' involving ' . join(', ',$participants); // TRAD
 
 					// Add separator
 					$_SESSION['fu_data']['description'] .= "\n--=+=--\n";
@@ -139,9 +139,9 @@ if (empty($_SESSION['errors'])) {
 }
 
 if (isset($_SESSION['followup']))
-	lcm_page_start("Edit follow-up");
+	lcm_page_start("Edit follow-up"); // TRAD
 else
-	lcm_page_start("New follow-up");
+	lcm_page_start("New follow-up"); // TRAD
 
 // Show a bit of background on the case
 
@@ -154,7 +154,12 @@ $query = "SELECT title
 
 $result = lcm_query($query);
 while ($row = lcm_fetch_array($result))  // should be only once
-	echo '<li style="list-style-type: none;">' . _T('fu_input_for_case') . " " . $row['title'] . "</li>\n";
+	echo '<li style="list-style-type: none;">' 
+		. _T('fu_input_for_case') . " " 
+		. '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">'
+		. $row['title']
+		. '</a>'
+		. "</li>\n";
 
 // We dump all the clients and org in the same array, then show
 // them on screen in a more densed way
