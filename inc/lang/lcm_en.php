@@ -190,6 +190,18 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'fu_input_type' => 'Type:',
 
 
+// H
+'help_title_about' => 'About ...',
+'help_title_archives' => 'Archives',
+'help_title_authors' => 'Authors',
+'help_title_cases' => 'Cases',
+'help_title_clients' => 'Clients',
+'help_title_installation' => 'Installation',
+'help_title_keywords' => 'Keywords',
+'help_title_reports' => 'Reports',
+'help_title_siteconfig' => 'Site configuration',
+
+
 // I
 'info_followup_case' => 'Case:',
 'info_followup_involving' => 'Involving:',
