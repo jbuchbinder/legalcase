@@ -23,8 +23,7 @@ include ("inc/inc.php");
 
 function show_config_form() {
 	echo "<p><img src='images/jimmac/icon_warning.gif' alt='' align='right'
-	height='48' width='48'><b>Caution!</b> The settings on this page have a global
-	impact which may influence the functionning of the site.</p>";
+		height='48' width='48' />" . _T('siteconf_warning') . "</p>\n";
 
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
 	echo "\t<input type='hidden' name='conf_modified' value='yes'/>\n";
@@ -44,28 +43,28 @@ function show_config_form() {
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
 	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
-	echo "Information about the site";
+	echo _T('siteconf_subtitle_general_info');
 	echo "</h4></td>\n";
 	echo "<tr>\n";
 	echo "<td>";
 
-	echo "<p><b>Site name:</b></p>\n";
-	echo "<p><small>This will be shown when the user logs-in, in generated reports, etc.</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_site_name') . "</b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_site_name') . "</small></p>\n";
 	echo "<p><input type='text' id='site_name' name='site_name' value='$site_name' size='40'/></p>\n";
 
-	echo "<p><b>Site description:</b></p>\n";
-	echo "<p><small>Often shown under the site name, except on reports.</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_site_desc') . "</b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_site_desc') . "</small></p>\n";
 	echo "<p><input type='text' id='site_desc' name='site_desc' value='$site_desc' size='40'/></p>\n";
 
-	echo "<p><b>Site Internet or network location:</b></p>\n";
+	echo "<p><b>" . _T('siteconf_input_site_address') . "</b></p>\n";
 	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40'/></p>\n";
 
-	echo "<p><b>Default language:</b></p>\n";
-	echo "<p><small>Language to use if a language could not be detected or chosen (such as for new users).</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_default_lang') . "</b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_default_lang') . "</small></p>\n";
 	echo "<p>" . menu_languages('default_language', $default_language) . "\n";
 
-	echo "<p><b>E-mail of site administrator:</b></p>\n";
-	echo "<p><small>E-mail of the contact for administrative requests or problems. This e-mail can be a mailing-list.</small></p>\n";
+	echo "<p><b>" . _T('siteconf_input_email_admin') . "</b></p>\n";
+	echo "<p><small>" . _T('siteconf_info_email_admin') . "</small></p>\n";
 	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40'/></p>\n";
 	echo "</td>\n</tr>\n</table>\n";
 
@@ -80,7 +79,7 @@ function show_config_form() {
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
 	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
-	echo "Collaborative work";
+	echo _T('siteconf_subtitle_collab_work');
 	echo "</h4></td>\n";
 	echo "<tr>\n";
 	echo "<td>";
@@ -171,29 +170,34 @@ function show_config_form() {
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
 	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
-	echo "Self-registration of new authors";
+	echo _T('siteconf_subtitle_self_registration');
 	echo "</h4></td>\n";
 	echo "<tr>\n";
 	echo "<td>";
 
-	echo "<p>Can users create themselves a new account (e.g. self-register) on the site?</p>\n";
+	echo "<p>" . _T('siteconf_info_self_registration') . "</p>\n";
 	echo "<ul>";
 
-	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_1' value='yes'";
-	if ($site_open_subscription == 'yes') echo " checked";
-	echo "><label for='site_open_subscription_1'>Yes, without moderation.</label></input></li>\n";
-
+	// moderated
 	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_2' value='moderated'";
-	if ($site_open_subscription == 'moderated') echo " checked";
-	echo "><label for='site_open_subscription_2'>Yes, but an administrator must approve the request.</label></input></li>\n";
+	if ($site_open_subscription == 'moderated') echo " checked='checked'";
+	echo " /><label for='site_open_subscription_2'>" . _T('siteconf_input_selfreg_moderated') . "</label></input></li>\n";
 
+	// un-moderated (yes)
+	echo "<li style='list-style-type: none;'>";
+	echo "<input type='radio' name='site_open_subscription' id='site_open_subscription_1' value='yes'";
+	if ($site_open_subscription == 'yes') echo " checked='checked'";
+	echo " /><label for='site_open_subscription_1'>" . _T('siteconf_input_selfreg_yes') . "</label></input></li>\n";
+
+	// no
 	echo "<li style='list-style-type: none;'><input type='radio' name='site_open_subscription' id='site_open_subscription_3' value='no'";
-	if ($site_open_subscription == 'no') echo " checked";
-	echo "><label for='site_open_subscription_3'>No.</label></input></li>\n";
+	if ($site_open_subscription == 'no') echo " checked='checked'";
+	echo "><label for='site_open_subscription_3'>" . _T('siteconf_input_selfreg_no') . "</label></input></li>\n";
+
 	echo "</ul>\n";
 	echo "</td>\n</tr>\n</table>\n";
 
-	echo "<p><input type='submit' name='Validate' id='Validate' value='Validate'/></p>\n";
+	echo "<p><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
 
 	echo "</form>\n";
 }
@@ -340,7 +344,7 @@ if ($author_session['status'] != 'admin') {
 
 	// Once ready, show the form (must be done after changes are
 	// applied so that they can be used in the header).
-	lcm_page_start("Site configuration");
+	lcm_page_start(_T('title_site_configuration'));
 
 	// Show changes on screen
 	if (! empty($log)) {
