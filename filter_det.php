@@ -45,11 +45,13 @@ if ($filter > 0) {
 		echo "\nFilter ID: " . $row['id_filter'] . "<br>\n";
 		echo "Created on: " . $row['date_creation'] . "<br>\n";
 		echo "Last update: " . $row['date_update'] . "<br>\n";
+		echo "Conditions logic: " . $row['type'] . "<br>\n";
 
 //
 //	List the conditions in the filter
 //
 		echo '<h3>Filter conditions:</h3>';
+		echo (($row['type'] == 'AND') ? 'All' : 'Any') . " of the conditions has to be fulfilled to show data in the report.<br />\n";
 		echo "\n\t\t<table border='0' class='tbl_usr_dtl'>\n";
 		echo "<tr><th class='heading'>#</th>
 	<th class='heading'>Field</th>
