@@ -444,6 +444,52 @@ function install_html_end() {
 ";
 }
 
+//
+// Help pages HTML header & footer
+//
+
+function help_page_start($hlp_page_title)
+{
+
+	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\">
+<head>
+<title>LCM | Help</title>
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />
+<link rel=\"stylesheet\" href=\"styles/lcm_basic_layout.css\" type=\"text/css\" />
+<link rel=\"stylesheet\" href=\"styles/lcm_opt_mediumfonts.css\" type=\"text/css\" />
+</head>
+
+<body>
+<h1 class=\"hlp_h1\">Legal Case Management Help</h1>
+<div id=\"hlp_big_box\">
+	<div id=\"hlp_menu\">
+		<ul>
+			<li><a href=\"#\">Installation</a></li>
+			<li><a href=\"#\">Cases</a></li>
+			<li><a href=\"#\">Clients and organisations</a></li>
+			<li><a href=\"#\">Authors</a></li>
+			<li><a href=\"#\">Site configuration</a></li>
+			<li><a href=\"#\">Archives</a></li>
+			<li><a href=\"#\">Reports</a></li>
+			<li><a href=\"#\">Keywords</a></li>
+		</ul>
+	</div>
+	<div id=\"hlp_cont\">
+		<h2 class=\"hlp_h2\">". $hlp_page_title ."</h2>";
+
+}
+
+function help_page_end()
+{
+
+	echo "</div>
+</div>
+</body>
+</html>";
+
+}
+
 
 //
 // Commonly used visual functions
