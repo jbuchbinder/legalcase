@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.24 2005/02/07 12:34:27 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.25 2005/02/09 16:53:31 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -370,6 +370,19 @@ function create_database() {
 		KEY id_filter (id_filter),
 		KEY id_field (id_field),
 		KEY cond_order (cond_order))";
+	$result = lcm_query($query);
+
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_rep_filter (
+		id_filter bigint(21) NOT NULL auto_increment,
+		id_report bigint(21) NOT NULL default 0,
+		id_field bigint(21) NOT NULL default 0,
+		type varchar(255) NOT NULL default '',
+		value varchar(255) NOT NULL default '',
+		KEY id_report (id_report),
+		KEY id_field (id_field),
+		PRIMARY KEY  (id_filter))";
 	$result = lcm_query($query);
 
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
