@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.38 2005/03/28 07:48:08 mlutfy Exp $
+	$Id: client_det.php,v 1.39 2005/03/28 21:41:14 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -216,6 +216,9 @@ if ($client > 0) {
 				echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_attachments') . '</div>';
 				echo "<p class=\"normal_text\">\n";
 
+				echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+				echo '<input type="hidden" name="client" value="' . $client . '" />' . "\n";
+
 				// List of attached files
 				show_attachments_list('client', $client);
 
@@ -224,6 +227,10 @@ if ($client > 0) {
 					show_attachments_upload('client', $client);
 
 				echo "</p>\n";
+
+				echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
+				echo "</form>\n";
+
 				echo "</fieldset>\n";
 				break;
 		}

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.19 2005/03/24 15:16:19 mlutfy Exp $
+	$Id: org_det.php,v 1.20 2005/03/28 21:41:15 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -182,12 +182,18 @@ if ($row = lcm_fetch_array($result)) {
 			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_documents') . '</div>';
 			echo "<p class=\"normal_text\">\n";
 
+			echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+			echo '<input type="hidden" name="org" value="' . $org . '" />' . "\n";
+
 			// List of attached files
 			show_attachments_list('org', $org);
 
 			// Attach new file form
 			if ($edit)
 				show_attachments_upload('org', $org);
+
+			echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
+			echo "</form>\n";
 
 			echo '</fieldset>';
 
