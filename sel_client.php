@@ -31,11 +31,11 @@ if ($case>0) {
 ?>
 <form action="add_client.php" method="post">
 	<!--h3>List if clients</h3-->
-	<table border="0" width="99%" class="tbl_usr_dtl">
+	<table border="0" class="tbl_usr_dtl">
 
 		<tr>
 			<th class="heading">&nbsp;</th>
-			<th class="heading">Client name</th>
+			<th class="heading" width="350">Client name</th>
 			<th class="heading">&nbsp;</th>
 		</tr>
 <?php
@@ -44,21 +44,21 @@ if ($case>0) {
 		<tr>
 			<td><input type="checkbox" name="clients[]" value="<?php echo $row['id_client']; ?>"></td>
 			<td><?php echo $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']; ?></td>
-			<td><a href="edit_client.php?client=<?php echo $row['id_client']; ?>">Edit</a></td>
+			<td><a href="edit_client.php?client=<?php echo $row['id_client']; ?>" class="content_link">Edit</a></td>
 		</tr>
 <?php
 	}
 ?>
 		<tr>
 			<td></td>
-			<td><a href="edit_client.php">Add new client</a></td>
+			<td><a href="edit_client.php" class="content_link">Add new client</a></td>
 			<td></td>
 		</tr>
 	</table>
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
 	<input type="hidden" name="ref_sel_client" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
-	<button name="submit" type="submit" value="submit">Add client(s) to the case</button>
-	<button name="reset" type="reset" value="reset">Clear selected</button>
+	<button name="submit" type="submit" value="submit" class="simple_form_btn">Add client(s) to the case</button>
+	<button name="reset" type="reset" value="reset" class="simple_form_btn">Clear selected</button>
 </form>
 <?php
 

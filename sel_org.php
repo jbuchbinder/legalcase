@@ -35,7 +35,7 @@ if ($case>0) {
 	<table border="0" class="tbl_usr_dtl">
 		<tr>
 			<th class="heading">&nbsp;</th>
-			<th class="heading">Organisation name</th>
+			<th class="heading" width="350">Organisation name</th>
 			<th class="heading">&nbsp;</th>
 		</tr>
 <?php
@@ -57,8 +57,8 @@ if ($case>0) {
 	</table>
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
 	<input type="hidden" name="ref_sel_org" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
-	<button name="submit" type="submit" value="submit">Add organisation(s) to the case</button>
-	<button name="reset" type="reset" value="reset">Clear selected</button>
+	<button name="submit" type="submit" value="submit" class="simple_form_btn">Add organisation(s) to the case</button>
+	<button name="reset" type="reset" value="reset" class="simple_form_btn">Clear selected</button>
 </form>
 <?php
 
