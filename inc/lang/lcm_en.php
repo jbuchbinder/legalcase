@@ -225,6 +225,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_remain_logged_on' => 'Remain logged-on for a few days',
 'login_this_way' => 'You are registered... this way...',
 'login_title_login' => 'Login',
+'login_warning_already_exists' => 'The username already exists.',
+'login_warning_too_short' => 'The username must be at least 3 characters.',
 'login_without_cookie' => 'Identification without cookie',
 
 
@@ -367,7 +369,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // W
-'warning_already_installed' => 'is already installed.',
+'warning_already_installed' => 'LCM is already installed.',
 'warning_forbidden_area' => 'Forbidden area',
 'warning_operation_failed' => 'The operation failed.',
 'warning_sql_connection_failed' => 'Connection to SQL database server failed.',
