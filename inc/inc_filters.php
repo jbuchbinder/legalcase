@@ -54,8 +54,9 @@ function highlight_matches($source, $match) {
 function format_date($timestamp = '', $format = '') {
 	// TODO: Check if the user specified a format
 
-	if (! is_numeric($timestamp)) {
+	if ($timestamp && ! is_numeric($timestamp)) {
 		// FIXME: reacts strangely when date is 00:00:00 ...
+		// [ML] For now, I cannot reproduce
 		$newtime = strtotime($timestamp);
 		if ($newtime != -1) {
 			lcm_debug("Converted $timestamp to $newtime (" .  date(_T('date_format'), $newtime) . ")");
