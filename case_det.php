@@ -118,7 +118,7 @@ if ($case > 0) {
 	echo "\n<form name='frm_find_fu' class='search_form' action='case_det.php?case='$case' method='post'>Find followup:&nbsp;<input type='text' name='find_fu_string' size='10' class='search_form_txt'\n";
 
 	echo "\n<table border='0' width='99%' align='center' class='tbl_data'>
-	<caption>" . _T('case_followups') . ":</caption>
+	<caption>" . (strlen($find_fu_string)>1 ? _T('case_followups') : _T('case_followups_containing') . $find_fu_string) . ":</caption>
 	<tr><th class='tbl_head'>" . _T('date') . "</th>
 		<th class='tbl_head'>" . _T('type') . "</th>
 		<th class='tbl_head'>" . _T('description') . "</th>
