@@ -517,7 +517,6 @@ ul.err_list li {
 .small_help_box {
 	border: 1px solid #ccc;
 	background: #efefef url("../images/jimmac/stock_draw-callouts.png") no-repeat 2px 0px;
-	font-size: 11px;
 	padding: 5px 5px 5px 30px;
 	margin: 10px 5px 10px 5px;
 }

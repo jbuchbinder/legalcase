@@ -136,6 +136,10 @@ a.add_lnk,a.create_new_lnk,a.edit_lnk,a.run_lnk {
 	font-size: 10px;
 }
 
+.small_help_box {
+	font-size: 10px;
+}
+
 /* Go to page bar */
 
 .page_numbers td {
