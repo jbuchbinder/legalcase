@@ -9,7 +9,7 @@ include_lcm('inc_access');
 function log_if_not_duplicate_table($errno) {
 	if ($errno) {
 		$error = lcm_sql_error();
-		// XXX 1- If MySQL set by default in non-English, may not catch the error 
+		// XXX 1- If MySQL set by default in non-English, may not catch the error
 		//        (needs testing, and we can simply add the regexp in _T())
 		// XXX 2- PostgreSQL may have different error format.
 		if (! preg_match("/.*Table.*already exists.*/", $error)) {
@@ -24,6 +24,7 @@ function log_if_not_duplicate_table($errno) {
 // http://www.lcm.ngo-bg.org/article2.html
 
 function create_database() {
+	global $lcm_db_version;
 	$log = "";
 
 	//
@@ -36,10 +37,10 @@ function create_database() {
 	// - DONE lcm_client 
 	// - DONE lcm_org
 	// - DONE lcm_client_org
-	// + TODO lcm_courtfinal 
+	// + TODO lcm_courtfinal
 	// + TODO lcm_appelation 
 	// + TODO lcm_keyword 
-	// + TODO lcm_keyword_group 
+	// + TODO lcm_keyword_group
 	// + TODO lcm_client_keywords 
 	// - DONE lcm_case_client_org
 	// - DONE lcm_case_author
@@ -189,6 +190,13 @@ function create_database() {
 	$result = lcm_query($query);
 
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	// Set the version of the installed database
+	$query = "INSERT INTO lcm_meta
+				SET name='lcm_db_version',value=$lcm_db_version";
+	$result = lcm_query($query);
+
+	if (!$result) $log .= lcm_sql_error . "\n";
 
 	lcm_log("LCM database initialisation complete", 'install');
 
