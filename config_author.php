@@ -74,12 +74,12 @@ function show_author_form() {
 			</tr>\n";
 	}
 ?>
-            <tr> 
+            <tr>
               <td align="right" valign="top">Font size:</td>
-              <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" /> 
-                &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" /> 
+              <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
+                &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" />
 				(not working yet)
-                <!-- [ML:should we remove?] br /> <br /> 
+                <!-- [ML:should we remove?] br /> <br />
                 <select name="sel_fnt" class="sel_frm" id="sel_fnt">
                   <option value="verdana" selected="selected">Verdana</option>
                   <option value="arial">Arial</option>
@@ -90,8 +90,13 @@ function show_author_form() {
                 </select -->
 		  	  </td>
             </tr>
-            <tr> 
-              <td colspan="2" align="center" valign="middle"> 
+            <tr>
+              <td align="right" valign="top">Rows per page:</td>
+              <td align="left" valign="top"><input name="page_rows" type="text" class="search_form_txt" id="page_rows" value="<?php echo $prefs['page_rows']; ?>" />
+		  	  </td>
+            </tr>
+            <tr>
+              <td colspan="2" align="center" valign="middle">
                 <input name="submit" type="submit" class="search_form_btn" id="submit" value="Update Preferences" /></td>
             </tr>
 		  </table>
