@@ -321,6 +321,14 @@ else if ($step == 4) {
 			// Create database from scratch
 			include_lcm('inc_db_create');
 			$install_log .= create_database();
+
+			// Do not remove, or variables won't be declared
+			// Silly PHP.. we should use other mecanism instead
+			global $system_keyword_groups;
+			$system_keyword_groups = array();
+
+			include_lcm('inc_keywords_default');
+			create_groups($system_keyword_groups);
 		}
 
 		include_lcm('inc_db_test');
