@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listfilters.php,v 1.5 2004/12/13 08:20:44 makaveev Exp $
+	$Id: listfilters.php,v 1.6 2004/12/16 15:12:13 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -81,20 +81,19 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 ?>
 </table>
-<br /><a href="edit_filter.php?filter=0" class="create_new_lnk">Create new filter</a><br />
 
-<table border='0' align='center' width='99%'>
-	<tr><td align="left"><?php
+<table border='0' align='center' width='99%' class='page_numbers'>
+	<tr><td align="left" width="15%"><?php
 
 // Show link to previous page
 if ($list_pos>0) {
 	echo '<a href="listfilters.php?list_pos=';
 	echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
 	if (strlen($find_filter_string)>1) echo "&amp;find_filter_string=" . rawurlencode($find_filter_string);
-	echo '">< Prev</a> ';
+	echo '" class="content_link">< Prev</a> ';
 }
 
-echo "</td>\n\t\t<td align='center'>";
+echo "</td>\n\t\t<td align='center' width='70%'>";
 
 // Show page numbers with direct links
 $list_pages = ceil($number_of_rows / $prefs['page_rows']);
@@ -105,22 +104,24 @@ if ($list_pages>1) {
 		else {
 			echo '<a href="listfilters.php?list_pos=' . ($i*$prefs['page_rows']);
 			if (strlen($find_filter_string)>1) echo "&amp;find_filter_string=" . rawurlencode($find_filter_string);
-			echo '">' . ($i+1) . '</a> ';
+			echo '" class="content_link">' . ($i+1) . '</a> ';
 		}
 	}
 }
 
-echo "</td>\n\t\t<td align='right'>";
+echo "</td>\n\t\t<td align='right' width='15%'>";
 
 // Show link to next page
 $next_pos = $list_pos + $prefs['page_rows'];
 if ($next_pos<$number_of_rows) {
 	echo "<a href=\"listfilters.php?list_pos=$next_pos";
 	if (strlen($find_filter_string)>1) echo "&amp;find_filter_string=" . rawurlencode($find_filter_string);
-	echo '">Next ></a>';
+	echo '" class="content_link">Next ></a>';
 }
 
 echo "</td>\n\t</tr>\n</table>\n";
-
+?>
+<br /><a href="edit_filter.php?filter=0" class="create_new_lnk">Create new filter</a><br />
+<?php
 lcm_page_end();
 ?>

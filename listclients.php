@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.19 2004/11/24 15:21:48 makaveev Exp $
+	$Id: listclients.php,v 1.20 2004/12/16 15:12:13 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -80,7 +80,9 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 }
 ?>
 </table>
-<br /><a href="edit_client.php" class="create_new_lnk">Add new client</a>
+
+<table border='0' align='center' width='99%' class='page_numbers'>
+	<tr><td align="left" width="15%">
 <?php
 
 // Show link to previous page
@@ -88,29 +90,37 @@ if ($list_pos>0) {
 	echo '<a href="listclients.php';
 	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
 	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-	echo '">< Prev</a> ';
+	echo '" class="content_link">< Prev</a> ';
 }
+
+echo "</td>\n\t\t<td align='center' width='70%'>";
 
 // Show page numbers with direct links
 $list_pages = ceil($number_of_rows / $prefs['page_rows']);
 if ($list_pages>1) {
+	echo 'Go to page: ';
 	for ($i=0 ; $i<$list_pages ; $i++) {
-		if ($i==floor($list_pos / $prefs['page_rows'])) echo ($i+1) . ' ';
+		if ($i==floor($list_pos / $prefs['page_rows'])) echo '['. ($i+1) .'] ';
 		else {
 			echo '<a href="listclients.php?list_pos=' . ($i*$prefs['page_rows']);
 			if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-			echo '">' . ($i+1) . '</a> ';
+			echo '" class="content_link">' . ($i+1) . '</a> ';
 		}
 	}
 }
+
+echo "</td>\n\t\t<td align='right' width='15%'>";
 
 // Show link to next page
 $next_pos = $list_pos + $prefs['page_rows'];
 if ($next_pos<$number_of_rows) {
 	echo "<a href=\"listclients.php?list_pos=$next_pos";
 	if (strlen($find_client_string)>1) echo "&amp;find_client_string=" . rawurlencode($find_client_string);
-	echo '">Next ></a>';
+	echo '" class="content_link">Next ></a>';
 }
-
+echo "</td>\n\t</tr>\n</table>\n";
+?>
+<br /><a href="edit_client.php" class="create_new_lnk">Add new client</a>
+<?php
 lcm_page_end();
 ?>
