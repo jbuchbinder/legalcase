@@ -53,6 +53,7 @@ function init_default_config() {
 		'case_court_archive' => 'yes',
 		'case_assignment_date' => 'yes',
 		'case_alledged_crime' => 'yes',
+		'case_allow_modif' => 'yes',
 		'fu_sum_billed' => 'yes',
 		'fu_allow_modif' => 'yes',
 		'hide_emails' => 'no',
