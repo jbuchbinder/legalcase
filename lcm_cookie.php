@@ -144,11 +144,11 @@ if ($essai_login == 'oui') {
 
 // cookie d'admin ?
 if ($cookie_admin == 'non') {
-	spip_setcookie('lcm_admin', $spip_admin, time() - 3600 * 24);
+	spip_setcookie('lcm_admin', $lcm_admin, time() - 3600 * 24);
 	$cible->delVar('var_login');
 	$cible->addVar('var_login', '-1');
 }
-else if ($cookie_admin AND $spip_admin != $cookie_admin) {
+else if ($cookie_admin AND $lcm_admin != $cookie_admin) {
 	spip_setcookie('lcm_admin', $cookie_admin, time() + 3600 * 24 * 14);
 }
 
@@ -177,7 +177,8 @@ if ($var_lang_lcm) {
 		// and I have no idea where the variable should have been initialized
 		$id_auteur = $GLOBALS['auteur_session']['id_author'];
 
-		if (@file_exists('config/inc_connect.php')) {
+		// Save language preference only if we are installed
+		if (@file_exists('inc/config/inc_connect.php')) {
 			include_lcm('inc_admin');
 			$cible->addvar('test', '123_' .  $GLOBALS['auteur_session']['id_author'] . '_' . $verif);
 

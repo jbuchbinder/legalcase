@@ -7,7 +7,7 @@ include_lcm('inc_db');
 use_language_of_visitor();
 
 // Test if the software is already installed
-if (@file_exists('config/inc_connect.php')) {
+if (@file_exists('inc/config/inc_connect.php')) {
 	install_html_start();
 	echo "<p><font face='Verdana,Arial,Sans,sans-serif' size='4'>"._T('avis_espace_interdit')."</font>";
 
@@ -66,9 +66,9 @@ if ($etape == 6) {
 	fclose($myFile);
 
 	@unlink('data/inc_meta_cache.php');
-	if (!@rename('config/inc_connect_install.php', 'config/inc_connect.php')) {
-		copy('config/inc_connect_install.php', 'config/inc_connect.php');
-		@unlink('config/inc_connect_install.php');
+	if (!@rename('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php')) {
+		copy('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php');
+		@unlink('inc/config/inc_connect_install.php');
 	}
 
 	echo "<form action='index.php' method='post'>";
@@ -185,7 +185,7 @@ else if ($etape == 4) {
 		$conn .= "@spip_connect_db('$adresse_db','','$login_db','$pass_db','$sel_db');\n";
 		$conn .= "\$GLOBALS['db_ok'] = !!@spip_num_rows(@spip_query_db('SELECT COUNT(*) FROM lcm_meta'));\n";
 		$conn .= '?'.'>';
-		$myFile = fopen('config/inc_connect_install.php', 'wb');
+		$myFile = fopen('inc/config/inc_connect_install.php', 'wb');
 		fputs($myFile, $conn);
 		fclose($myFile);
 
@@ -199,7 +199,7 @@ else if ($etape == 4) {
 		echo "</FORM>";
 	}
 	else if ($result_ok) {
-		echo _T('alerte_maj_impossible', array('version' => $spip_version));
+		echo _T('alerte_maj_impossible', array('version' => $lcm_version));
 	}
 	else {
 		echo "<B>"._T('avis_operation_echec')."</B> "._T('texte_operation_echec');
@@ -319,8 +319,8 @@ else if ($etape == 1) {
 	$pass_db = '';
 
 	// Recuperer les anciennes donnees pour plus de facilite (si presentes)
-	if (@file_exists('config/inc_connect_install.php')) {
-		$s = @join('', @file('config/inc_connect_install.php'));
+	if (@file_exists('inc/config/inc_connect_install.php')) {
+		$s = @join('', @file('inc/config/inc_connect_install.php'));
 		if (ereg("mysql_connect\([\"'](.*)[\"'],[\"'](.*)[\"'],[\"'](.*)[\"']\)", $s, $regs)) {
 			$adresse_db = $regs[1];
 			$login_db = $regs[2];
@@ -360,8 +360,8 @@ else if ($etape == 'dirs') {
 }
 
 else if (!$etape) {
-	$menu_langues = menu_langues('var_lang_ecrire');
-	if (!$menu_langues) header("Location: lcm_test_dirs.php");
+	$menu_lang = menu_languages('var_lang_lcm');
+	if (!$menu_lang) header("Location: lcm_test_dirs.php");
 	else {
 		install_html_start();
 
@@ -373,7 +373,7 @@ else if (!$etape) {
 
 		echo "<p>&nbsp;</p><p>" . _T('install_select_langue');
 
-		echo "<p><div align='center'>".$menu_langues."</div>";
+		echo "<p><div align='center'>".$menu_lang."</div>";
 
 		echo "<p><form action='install.php' method='get'>";
 		echo "<input type='hidden' name='etape' value='dirs'>";

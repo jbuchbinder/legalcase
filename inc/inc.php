@@ -1,7 +1,7 @@
 <?php
 
 // Test if LCM is installed
-if (!@file_exists('config/inc_connect.php')) {
+if (!@file_exists('inc/config/inc_connect.php')) {
 	header('Location: install.php');
 	exit;
 }
@@ -69,14 +69,14 @@ $options      = $prefs['options'];
 $spip_display = $prefs['display'];
 
 
-// Vert
+// Green
 if (!$couleurs_spip[1]) $couleurs_spip[1] = array (
 		"couleur_foncee" => "#9DBA00",
 		"couleur_claire" => "#C5E41C",
 		"couleur_lien" => "#657701",
 		"couleur_lien_off" => "#A6C113"
 );
-// Violet clair
+// Light Violet
 if (!$couleurs_spip[2]) $couleurs_spip[2] = array (
 		"couleur_foncee" => "#eb68b3",
 		"couleur_claire" => "#ffa9e6",
@@ -90,21 +90,21 @@ if (!$couleurs_spip[3]) $couleurs_spip[3] = array (
 		"couleur_lien" => "#81A0C1",
 		"couleur_lien_off" => "#FF5B00"
 );
-// Saumon
+// Salmon
 if (!$couleurs_spip[4]) $couleurs_spip[4] = array (
 		"couleur_foncee" => "#CDA261",
 		"couleur_claire" => "#FFDDAA",
 		"couleur_lien" => "#5E0283",
 		"couleur_lien_off" => "#472854"
 );
-//  Bleu pastelle
+//  Light blue
 if (!$couleurs_spip[5]) $couleurs_spip[5] = array (
 		"couleur_foncee" => "#5da7c5",
 		"couleur_claire" => "#97d2e1",
 		"couleur_lien" => "#869100",
 		"couleur_lien_off" => "#5B55A0"
 );
-//  Gris
+//  Grey
 if (!$couleurs_spip[6]) $couleurs_spip[6] = array (
 		"couleur_foncee" => "#727D87",
 		"couleur_claire" => "#C0CAD4",
@@ -228,35 +228,14 @@ if (!$adresse_site) {
 
 
 function tester_rubrique_vide($id_rubrique) {
-	$query = "SELECT id_rubrique FROM spip_rubriques WHERE id_parent='$id_rubrique' LIMIT 0,1";
-	list($n) = spip_fetch_array(spip_query($query));
-	if ($n > 0) return false;
-
-	$query = "SELECT id_article FROM spip_articles WHERE id_rubrique='$id_rubrique' AND (statut='publie' OR statut='prepa' OR statut='prop') LIMIT 0,1";
-	list($n) = spip_fetch_array(spip_query($query));
-	if ($n > 0) return false;
-
-	$query = "SELECT id_breve FROM spip_breves WHERE id_rubrique='$id_rubrique' AND (statut='publie' OR statut='prop') LIMIT 0,1";
-	list($n) = spip_fetch_array(spip_query($query));
-	if ($n > 0) return false;
-
-	$query = "SELECT id_syndic FROM spip_syndic WHERE id_rubrique='$id_rubrique' AND (statut='publie' OR statut='prop') LIMIT 0,1";
-	list($n) = spip_fetch_array(spip_query($query));
-	if ($n > 0) return false;
-
-	$query = "SELECT id_document FROM spip_documents_rubriques WHERE id_rubrique='$id_rubrique' LIMIT 0,1";
-	list($n) = spip_fetch_array(spip_query($query));
-	if ($n > 0) return false;
-
+	lcm_log("Call of deprecated function: tester_rubrique_vide");
 	return true;
 }
 
 
 //
-// Fetch the cookie
-//
-
-$cookie_admin = $HTTP_COOKIE_VARS['spip_admin'];
+// Fetch the administration cookie
+$cookie_admin = $HTTP_COOKIE_VARS['lcm_admin'];
 
 // Delete a section
 // [ML] FIXME change this

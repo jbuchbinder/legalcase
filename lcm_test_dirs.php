@@ -18,7 +18,7 @@ function bad_dirs($bad_dirs, $test_dir, $install) {
 	if ($test_dir) $bad_url .= '?test_dir='.$test_dir;
 
 	echo "<FONT FACE=\"Verdana,Arial,Helvetica,sans-serif\" SIZE=3>$titre</FONT>\n<p>";
-	echo "<div align='right'>". menu_langues('var_lang_ecrire')."</div><p>";
+	echo "<div align='right'>". menu_languages('var_lang_lcm')."</div><p>";
 
 	echo _T('dirs_repertoires_suivants', array('bad_dirs' => $bad_dirs));
 	echo "<B>". _T('login_recharger')." $continuer.";
@@ -45,7 +45,7 @@ function absent_dirs($bad_dirs, $test_dir) {
 	if ($test_dir) $bad_url .= '?test_dir='.$test_dir;
 
 	echo "<FONT FACE=\"Verdana,Arial,Helvetica,sans-serif\" SIZE=3>$titre</FONT>\n<p>";
-	echo "<div align='right'>". menu_langues('var_lang_ecrire')."</div><p>";
+	echo "<div align='right'>". menu_languages('var_lang_lcm')."</div><p>";
 
 	echo _T('dirs_repertoires_absents', array('bad_dirs' => $bad_dirs));
 	echo "<B>". _T('login_recharger')." $continuer.";
@@ -78,16 +78,12 @@ function test_ecrire($my_dir) {
 // teste les droits sur les repertoires
 //
 
-$install = !@file_exists("config/inc_connect.php");
+$install = !@file_exists("inc/config/inc_connect.php");
 
 if ($test_dir)
 	$test_dirs[] = $test_dir;
 else {
 	$test_dirs = array("config", "log", "data");
-	/* [ML] not needed? */
-	/* if ($install)
-		$test_dirs[] = "ecrire";
-	*/
 }
 
 unset($bad_dirs);
