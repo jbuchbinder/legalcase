@@ -464,45 +464,49 @@ function use_language_of_visitor() {
 //
 // Initialisation
 //
-function init_languages() {
+function init_languages($force_init = false) {
 	global $all_langs, $langue_site, $cache_lang, $cache_lang_modifs;
 	global $pile_langues, $lang_typo, $lang_dir;
 
-	$all_langs = read_meta('langues_proposees');
-	$langue_site = read_meta('langue_site');
+	$all_langs = read_meta('available_languages');
+	$langue_site = read_meta('default_language');
 	$cache_lang = array();
 	$cache_lang_modifs = array();
 	$pile_langues = array();
 	$lang_typo = '';
 	$lang_dir = '';
 
-	$toutes_langs = Array();
-	if (!$all_langs || !$langue_site) {
+	$list_all_langs = Array();
+
+	if ($force_init || !$all_langs || !$langue_site) {
 		if (!$d = @opendir('inc/lang')) return;
 		while ($f = readdir($d)) {
 			if (ereg('^lcm_([a-z_]+)\.php?$', $f, $regs))
-				$toutes_langs[] = $regs[1];
+				$list_all_langs[] = $regs[1];
 		}
-		closedir($d);
-		sort($toutes_langs);
-		$all_langs2 = join(',', $toutes_langs);
 
-		// Si les langues n'ont pas change, ne rien faire
+		closedir($d);
+		sort($list_all_langs);
+		$all_langs2 = join(',', $list_all_langs);
+
+		// Re-initiatlize site data, if it has changed
 		if ($all_langs2 != $all_langs) {
 			$all_langs = $all_langs2;
-			if (!$langue_site) {
+			if (! $langue_site) {
 				// Initialisation: English by default, else the first language found
 				if (ereg(',en,', ",$all_langs,")) $langue_site = 'en';
-				else list(, $langue_site) = each($toutes_langs);
+				else list(, $langue_site) = each($list_all_langs);
+
 				if (defined('_INC_META'))
-					write_meta('langue_site', $langue_site);
+					write_meta('default_language', $langue_site);
 			}
 			if (defined('_INC_META')) {
-				write_meta('langues_proposees', $all_langs);
+				write_meta('available_languages', $all_langs);
 				write_metas();
 			}
 		}
 	}
+
 	init_codes_langues();
 }
 
