@@ -46,7 +46,7 @@ if ($case>0) {
 		echo "></td>\n";
 		echo '			<td align="center">';
 		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_admin]" . '" value="1"';
-		if ($row['admin']) echo ' checked';
+		if ($row['ac_admin']) echo ' checked';
 		echo "></td>\n";
 	}
 ?>
