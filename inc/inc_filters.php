@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.41 2005/03/13 16:22:44 mlutfy Exp $
+	$Id: inc_filters.php,v 1.42 2005/03/13 16:25:54 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -191,7 +191,7 @@ function get_person_name($item) {
 	if ($item['name_middle'])
 		$ret .= ' ' . $item['name_middle'];
 	
-	$ret = $item['name_last'];
+	$ret .= $item['name_last'];
 
 	return $ret;
 }
