@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.16 2005/03/06 10:27:14 antzi Exp $
+	$Id: edit_app.php,v 1.17 2005/03/07 11:17:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -107,7 +107,7 @@ if ($_SESSION['app_data']['id_case']>0) {
 
 	$result = lcm_query($query);
 	while ($row = lcm_fetch_array($result))  // should be only once
-		echo '<li style="list-style-type: none;">' . _T('info_appointment_to_case') . " " . $row['title'] . "</li>\n";
+		echo '<li style="list-style-type: none;">' . _T('app_input_for_case') . " " . $row['title'] . "</li>\n";
 
 	// We dump all the clients and org in the same array, then show
 	// them on screen in a more densed way
@@ -140,7 +140,7 @@ if ($_SESSION['app_data']['id_case']>0) {
 	while ($all_clients[] = lcm_fetch_array($result));
 	
 	if ($numrows > 0)
-		echo '<li style="list-style-type: none;">' . _T('info_appointment_involving') . " ";
+		echo '<li style="list-style-type: none;">' . _T('app_input_involving_clients') . " ";
 	
 	foreach ($all_clients as $client) {
 		if ($client['id_client']) {
