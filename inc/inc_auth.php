@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.24 2005/02/03 09:22:14 mlutfy Exp $
+	$Id: inc_auth.php,v 1.25 2005/02/04 21:20:16 antzi Exp $
 */
 
 // Execute this file only once
@@ -140,6 +140,12 @@ function auth() {
 
 		if (! isset($prefs['font_size']) || ! $prefs['font_size'])
 			$prefs['font_size'] = 'medium_font';
+
+		if (! isset($prefs['mode']) || ! $prefs['mode'])
+			$prefs['mode'] = 'simple';
+
+		if (! isset($prefs['time_intervals']) || ! $prefs['time_intervals'])
+			$prefs['time_intervals'] = 'relative';
 	}
 	else {
 		// This case is a strange possibility: the author is authentified
