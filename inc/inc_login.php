@@ -47,7 +47,7 @@ function close_login() {
 }
 
 function login($cible, $prive = 'prive', $message_login='') {
-	$pass_popup ='href="lcm_pass.php" target="spip_pass" onclick="' .  "javascript:window.open('lcm_pass.php', 'spip_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
+	$pass_popup ='href="lcm_pass.php" target="lcm_pass" onclick="' .  "javascript:window.open('lcm_pass.php', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
 
 	$login = $GLOBALS['var_login'];
 	$erreur = '';
@@ -92,7 +92,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	}
 
 	// Initialisations
-	$nom_site = lire_meta('nom_site');
+	$nom_site = lire_meta('site_name');
 	$url_site = lire_meta('adresse_site');
 
 	if (!$nom_site)
@@ -237,7 +237,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "</form>";
 	}
 
-	// Gerer le focus
+	// Focus management
 	echo "<script type=\"text/javascript\"><!--\n" . $js_focus . "\n//--></script>\n";
 
 	if ($echec_cookie == "oui" AND $php_module AND !$ignore_auth_http) {
@@ -252,14 +252,14 @@ function login($cible, $prive = 'prive', $message_login='') {
 
 	echo "\n<div align='center' style='font-size: 12px;' >"; // start of the login footer
 
-	$inscriptions_ecrire = (lire_meta("accepter_inscriptions") == "oui");
-	if ($inscriptions_ecrire)
+	$open_subscription = (lire_meta("site_open_subscription") == "yes");
+	if ($open_subscription)
 		echo " [<a $pass_popup>" . _T('login_register').'</a>]';
 
 	// button for "forgotten password"
 	include_lcm('inc_mail');
 	if (tester_mail()) {
-		echo ' [<a href="lcm_pass.php?oubli_pass=oui" target="spip_pass" onclick="' ."javascript:window.open(this.href, 'spip_pass', 'scrollbars=yes, resizable=yes, width=480, height=280'); return false;\">" ._T('login_password_forgotten').'</a>]'; 
+		echo ' [<a href="lcm_pass.php?pass_forgotten=yes" target="lcm_pass" onclick="' ."javascript:window.open(this.href, 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=280'); return false;\">" ._T('login_password_forgotten').'</a>]'; 
 	}
 
 	echo "</div>\n";
