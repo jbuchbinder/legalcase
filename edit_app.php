@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.11 2005/02/25 00:29:07 antzi Exp $
+	$Id: edit_app.php,v 1.12 2005/03/02 15:39:19 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -263,7 +263,9 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			echo clean_output($_SESSION['app_data']['description']) . "</textarea></td></tr>\n";
 
 		// Appointment participants - authors
-		echo "\t\t<tr><td valign=\"top\">Participant authors:</td><td>";
+		echo "\t\t<tr><td valign=\"top\">";
+		echo _T('app_input_authors');
+		echo "</td><td>";
 		$q = '';
 		foreach($_SESSION['authors'] as $author) {
 			$q .= ($q ? ', ' : '');
@@ -291,7 +293,9 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		echo "\t\t</td></tr>\n";
 		
 		// Appointment participants - clients
-		echo "\t\t<tr><td valign=\"top\">Participant clients:</td><td>";
+		echo "\t\t<tr><td valign=\"top\">";
+		echo _T('app_input_clients');
+		echo "</td><td>";
 		$q = "SELECT lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
 			FROM lcm_client,lcm_app_client_org
 			LEFT JOIN lcm_org USING (id_org)
