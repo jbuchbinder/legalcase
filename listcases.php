@@ -72,12 +72,14 @@ if ($list_pos>0) {
 
 // Show page numbers with direct links
 $list_pages = ceil($number_of_rows / $GLOBALS['list_len']);
-for ($i=0 ; $i<$list_pages ; $i++) {
-	if ($i==floor($list_pos / $GLOBALS['list_len'])) echo ($i+1) . ' ';
-	else {
-		echo '<a href="listcases.php?list_pos=' . ($i*$GLOBALS['list_len']);
-		if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-		echo '">' . ($i+1) . '</a> ';
+if ($list_pages>1) {
+	for ($i=0 ; $i<$list_pages ; $i++) {
+		if ($i==floor($list_pos / $GLOBALS['list_len'])) echo ($i+1) . ' ';
+		else {
+			echo '<a href="listcases.php?list_pos=' . ($i*$GLOBALS['list_len']);
+			if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
+			echo '">' . ($i+1) . '</a> ';
+		}
 	}
 }
 
