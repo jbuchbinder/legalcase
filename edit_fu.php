@@ -163,13 +163,33 @@ echo "</ul>\n";
 			echo f_err('date_end',$errors); ?>
 		</tr>
 		<tr><td>Type:</td>
-			<td><select name="type" size="1"><option selected><?php echo clean_output($fu_data['type']); ?></option>
+			<td><select name="type" size="1">
 			<?php
+				// [ML] <option selected>
+				// echo clean_output($fu_data['type']);
+				// </option>
+			?>
+			<?php
+			/* [ML] Replacing the code
 			foreach($types as $item) {
 				if ($item != $fu_data['type']) {
 					echo "<option>$item</option>\n";
 				}
-			} ?>
+			}  */
+			
+			global $system_kwg;
+
+			if ($fu_data['type'])
+				$default_fu = $fu_data['type'];
+			else
+				$default_fu = $system_kwg['followups']['suggest'];
+
+			foreach($system_kwg['followups']['keywords'] as $kw) {
+				$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
+				echo "<option value='" . $kw['name'] . "'" . "$sel>" . $kw['title'] . "</option>\n";
+			}
+			
+			?>
 			</select></td></tr>
 		<tr><td>Description:</td>
 			<td><textarea name="description" rows="15" cols="40" class="frm_tarea"><?php
