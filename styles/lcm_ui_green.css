@@ -170,9 +170,11 @@ a.add_lnk {
 	border: 1px solid #666633;
 }
 
+/*
 a.add_lnk:hover {
 	background-color: #e7e7d6;
 }
+*/
 
 a.create_new_lnk {
 	background-color: #d7dabd;
@@ -180,9 +182,11 @@ a.create_new_lnk {
 	border: 1px solid #666633;
 }
 
+/*
 a.create_new_lnk:hover {
 	background-color: #e7e7d6;
 }
+*/
 
 a.edit_lnk {
 	background-color: #d7dabd;
@@ -190,9 +194,11 @@ a.edit_lnk {
 	border: 1px solid #666633;
 }
 
+/*
 a.edit_lnk:hover {
 	background-color: #e7e7d6;
 }
+*/
 
 a.run_lnk {
 	background-color: #d7dabd;
@@ -200,9 +206,11 @@ a.run_lnk {
 	border: 1px solid #666633;
 }
 
+/*
 a.run_lnk:hover {
 	background-color: #e7e7d6;
 }
+*/
 
 a.prefs_myprefs {
 	background-color: #d7dabd;
@@ -210,9 +218,11 @@ a.prefs_myprefs {
 	border: 1px solid #666633;
 }
 
+/*
 a.prefs_myprefs:hover {
 	background-color: #e7e7d6;
 }
+*/
 
 a.prefs_logout {
 	background-color: #d7dabd;
@@ -220,9 +230,11 @@ a.prefs_logout {
 	border: 1px solid #666633;
 }
 
+/*
 a.prefs_logout:hover {
 	background-color: #e7e7d6;
 }
+*/
 
 fieldset.conf_info_box, fieldset.info_box {
 	border: 1px solid #996;

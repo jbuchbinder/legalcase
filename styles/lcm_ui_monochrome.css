@@ -160,8 +160,8 @@ td.tbl_cont_light {
 
 table.tbl_usr_dtl {
 	border-top: 1px solid #ccc;
-	/* border-right: 1px solid #ccc; */
-	/* border-left: 1px solid #ccc; */
+	/* border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc; */
 }
 
 table.tbl_usr_dtl td, table.tbl_usr_dtl th {
@@ -184,9 +184,11 @@ a.add_lnk {
 	border: 1px solid #333;
 }
 
+/*
 a.add_lnk:hover {
 	background-color: #efefef;
 }
+*/
 
 a.create_new_lnk {
 	background-color: #ccc;
@@ -194,9 +196,11 @@ a.create_new_lnk {
 	border: 1px solid #333;
 }
 
+/*
 a.create_new_lnk:hover {
 	background-color: #efefef;
 }
+*/
 
 a.edit_lnk {
 	background-color: #ccc;
@@ -204,9 +208,11 @@ a.edit_lnk {
 	border: 1px solid #333;
 }
 
+/*
 a.edit_lnk:hover {
 	background-color: #efefef;
 }
+*/
 
 a.run_lnk {
 	background-color: #ccc;
@@ -214,9 +220,11 @@ a.run_lnk {
 	border: 1px solid #333;
 }
 
+/*
 a.run_lnk:hover {
 	background-color: #efefef;
 }
+*/
 
 a.prefs_myprefs {
 	background-color: #ccc;
@@ -224,9 +232,11 @@ a.prefs_myprefs {
 	border: 1px solid #333;
 }
 
+/*
 a.prefs_myprefs:hover {
 	background-color: #efefef;
 }
+*/
 
 a.prefs_logout {
 	background-color: #ccc;
@@ -234,9 +244,11 @@ a.prefs_logout {
 	border: 1px solid #333;
 }
 
+/*
 a.prefs_logout:hover {
 	background-color: #efefef;
 }
+*/
 
 fieldset.conf_info_box, fieldset.info_box {
 	border: 1px solid #999;

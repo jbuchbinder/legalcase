@@ -193,10 +193,12 @@ a.add_lnk {
 	border: 1px solid #000;
 }
 
+/*
 a.add_lnk:hover {
 	background-color: #999;
 	color: #fff;
 }
+*/
 
 a.create_new_lnk {
 	background-color: #666;
@@ -204,10 +206,12 @@ a.create_new_lnk {
 	border: 1px solid #000;
 }
 
+/*
 a.create_new_lnk:hover {
 	background-color: #999;
 	color: #fff;
 }
+*/
 
 a.edit_lnk {
 	background-color: #666;
@@ -215,10 +219,12 @@ a.edit_lnk {
 	border: 1px solid #000;
 }
 
+/*
 a.edit_lnk:hover {
 	background-color: #999;
 	color: #fff;
 }
+*/
 
 a.run_lnk {
 	background-color: #666;
@@ -226,10 +232,12 @@ a.run_lnk {
 	border: 1px solid #000;
 }
 
+/*
 a.run_lnk:hover {
 	background-color: #999;
 	color: #fff;
 }
+*/
 
 a.prefs_myprefs {
 	background-color: #666;
@@ -237,10 +245,12 @@ a.prefs_myprefs {
 	border: 1px solid #000;
 }
 
+/*
 a.prefs_myprefs:hover {
 	background-color: #999;
 	color: #fff;
 }
+*/
 
 a.prefs_logout {
 	background-color: #666;
@@ -248,10 +258,12 @@ a.prefs_logout {
 	border: 1px solid #000;
 }
 
+/*
 a.prefs_logout:hover {
 	background-color: #999;
 	color: #fff;
 }
+*/
 
 fieldset.conf_info_box, fieldset.info_box {
 	border: 1px solid #666;
