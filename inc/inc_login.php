@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.26 2005/03/21 10:10:39 mlutfy Exp $
+	$Id: inc_login.php,v 1.27 2005/03/21 11:22:37 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -50,7 +50,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	$pass_popup = 'href="lcm_pass.php" target="lcm_pass" '
 		. ' onclick="' . "javascript:window.open('lcm_pass.php', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
 
-	$erreur = '';
+	$error = '';
 	$login = (isset($GLOBALS['var_login']) ? $GLOBALS['var_login'] : '');
 	$essai_auth_http = (isset($GLOBALS['var_essai_auth_http']) ? $GLOBALS['var_essai_auth_http'] : '');
 	$logout = (isset($GLOBALS['var_logout']) ? $GLOBALS['var_logout'] : '');
@@ -79,8 +79,10 @@ function login($cible, $prive = 'prive', $message_login='') {
 
 	$cible->delVar('var_erreur');
 	$cible->delVar('var_url');
+	$cible->delVar('var_cookie_failed');
 	$clean_link->delVar('var_erreur');
 	$clean_link->delVar('var_login');
+	$clean_link->delVar('var_cookie_failed');
 	$url = $cible->getUrl();
 
 	include_lcm('inc_session');
@@ -97,7 +99,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	}
 
 	if (isset($GLOBALS['var_erreur']) && $GLOBALS['var_erreur'] == 'pass')
-		$erreur = _T('login_password_incorrect');
+		$error = _T('login_password_incorrect');
 
 	// The login is memorized in the cookie for a possible future admin login
 	if (!$login) {
@@ -138,7 +140,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 
 		// Unknown login (except LDAP) or refused
 		if ($status_login == -1 OR ($status_login == 0 AND !$flag_autres_sources)) {
-			$erreur = _T('login_identifier_unknown', array('login' => htmlspecialchars($login)));
+			$error = _T('login_identifier_unknown', array('login' => htmlspecialchars($login)));
 			$login = '';
 			@lcm_setcookie('lcm_admin', '', time() - 3600);
 		}
@@ -150,14 +152,12 @@ function login($cible, $prive = 'prive', $message_login='') {
 	else
 		$js_focus = 'document.form_login.var_login.focus();';
 
-	if ($cookie_failed == "yes") {
-		echo open_login(_T('erreur_probleme_cookie'));
-		echo "<p /><b>"._T('login_cookie_oblige')."</b> ";
-		echo _T('login_cookie_accepte')."\n";
-	} else {
-		echo open_login();
-	}
+	// [ML] we should probably add a help link here, since tech, but let's see 
+	// how many users complain first, since this should affect only tech users
+	if ($cookie_failed == "yes")
+		$error = _T('login_warning_cookie');
 
+	echo open_login();
 	$action = $clean_link->getUrl();
 
 	if ($login) {
@@ -179,8 +179,8 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo ">\n";
 		echo "<div class='main_login_box' style='text-align:".$GLOBALS["lcm_lang_left"].";'>\n";
 
-		if ($erreur) 
-			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . " $erreur</b></div><br />\n";
+		if ($error) 
+			echo "<div style='color:red;'><b>" .  _T('login_access_denied') . " $error</b></div><br />\n";
 
 		if ($flag_challenge_md5) {
 			// This is printed with javascript so that it is hidden from navigators not
@@ -222,8 +222,8 @@ function login($cible, $prive = 'prive', $message_login='') {
 		echo "<form name='form_login' action='$action' method='post'>\n";
 		echo "<div class='main_login_box' style='text-align:" . $GLOBALS["lcm_lang_left"] . ";'>";
 
-		if ($erreur)
-			echo "<span style='color:red;'><b>" . _T('login_access_denied') . " $erreur</b></span><p />";
+		if ($error)
+			echo "<span style='color:red;'><b>" . _T('login_access_denied') . " $error</b></span><p />";
 			
 		echo "<label><b>" . _T('login_login') . '</b> (' . _T('login_info_login') . ')' . _T('typo_column') . "<br /></label>";
 		echo "<input type='text' name='var_login' class='forml' value=\"\" size='40' />\n";
@@ -237,17 +237,8 @@ function login($cible, $prive = 'prive', $message_login='') {
 	// Focus management
 	echo "<script type=\"text/javascript\"><!--\n" . $js_focus . "\n//--></script>\n";
 
-	if ($cookie_failed == "yes" AND $php_module AND !$ignore_auth_http) {
-		echo "<form action='lcm_cookie.php' method='get'>";
-		echo "<fieldset>\n<p>";
-		echo _T('login_prefer_no_cookie') . " \n";
-		echo "<input type='hidden' name='essai_auth_http' value='oui'/> ";
-		echo "<input type='hidden' name='url' value='$url'/>\n";
-		echo "<div align='right'><input type='submit' value='"._T('login_without_cookie')."'/></div>\n";
-		echo "</fieldset></form>\n";
-	}
-
-	echo "\n<div align='left' style='font-size: 12px;' >"; // start of the login footer
+	// Start the login footer
+	echo "<div align='left' style='font-size: 12px;' >";
 
 	echo "<div class='lang_combo_box'>". menu_languages() ."</div>\n";
 
