@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.34 2005/04/05 13:13:36 antzi Exp $
+	$Id: edit_app.php,v 1.35 2005/04/05 13:19:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -222,7 +222,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
 				strtotime($_SESSION['app_data']['start_time']) - strtotime($_SESSION['app_data']['reminder']) : 0);
 		echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
-		echo " before the start time"; // TRAD
+		echo " " . _T('time_info_before_start');
 		echo f_err_star('reminder',$_SESSION['errors']);
 
 		echo "</td>\n";
