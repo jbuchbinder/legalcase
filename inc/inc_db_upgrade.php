@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.32 2005/01/26 20:55:16 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.33 2005/02/07 12:27:47 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -57,6 +57,28 @@ function upgrade_database($old_db_version) {
 
 	if ($alter_test_log)
 		return $alter_test_log;
+
+	//
+	// Create new keywords (if necessary)
+	//
+
+	// Do not remove, or variables won't be declared
+	global $system_keyword_groups;
+	$system_keyword_groups = array();
+
+	include_lcm('inc_meta');
+	include_lcm('inc_keywords_default');
+	create_groups($system_keyword_groups);
+
+	//
+	// Create new meta (if necessary)
+	//
+
+	include_lcm('inc_meta_defaults');
+	init_default_config();
+	
+	// Rewrite metas in inc/data/inc_meta_cache.php, just to be sure
+	write_metas();
 
 	//
 	// Upgrade the database accordingly to the current version
@@ -299,6 +321,64 @@ function upgrade_database($old_db_version) {
 		lcm_query("ALTER TABLE lcm_followup ADD id_author bigint(21) DEFAULT '0' NOT NULL AFTER id_case");
 		lcm_query("ALTER TABLE lcm_followup ADD INDEX id_author (id_author)");
 		upgrade_db_version (17);
+	}
+
+	if ($lcm_db_version_current < 18) {
+		lcm_query("ALTER TABLE lcm_report
+				ADD description text NOT NULL DEFAULT '',
+				ADD line_src_type text NOT NULL DEFAULT '',
+				ADD line_src_name text NOT NULL DEFAULT '',
+				ADD col_src_type text NOT NULL DEFAULT '',
+				ADD col_src_name text NOT NULL DEFAULT '' ");
+
+		lcm_query("CREATE TABLE lcm_rep_line (
+				id_line bigint(21) NOT NULL auto_increment,
+				id_report bigint(21) NOT NULL DEFAULT 0,
+				id_field bigint(21) NOT NULL DEFAULT 0,
+				sort_type ENUM('asc', 'desc') DEFAULT NULL,
+				col_order bigint(21) NOT NULL DEFAULT 0,
+				total tinyint(1) NOT NULL DEFAULT 0,
+				PRIMARY KEY (id_line),
+				KEY id_report (id_report),
+				KEY id_field (id_field),
+				KEY col_order (col_order))");
+
+		// [ML] I'm stubborn, and renaming this table to singular
+		lcm_query("CREATE TABLE lcm_rep_col (
+				id_column bigint(21) NOT NULL auto_increment,
+				id_report bigint(21) NOT NULL default 0,
+				id_field bigint(21) NOT NULL default 0,
+				col_order bigint(21) NOT NULL default 0,
+				header varchar(255) NOT NULL default '',
+				sort enum('asc','desc') default NULL,
+				total tinyint(1) NOT NULL default 0,
+				col_group enum('COUNT','SUM') default NULL,
+				PRIMARY KEY (id_column),
+				KEY id_report (id_report),
+				KEY id_field (id_field),
+				KEY col_order (col_order))");
+
+		lcm_query("INSERT INTO lcm_rep_col
+					SELECT * FROM lcm_rep_cols");
+
+		lcm_query("drop table lcm_rep_cols");
+
+		lcm_query("ALTER TABLE lcm_fields
+				ADD enum_type text NOT NULL DEFAULT ''");
+
+		lcm_query("INSERT INTO lcm_fields (table_name, field_name, description, enum_type)
+				VALUES
+					('lcm_case', 'count(*)', 'COUNT(*)', ''),
+					('lcm_author', 'count(*)', 'COUNT(*)', ''),
+					('lcm_author', 'id_author', 'Author: ID', ''),
+					('lcm_case', 'id_case', 'Case: ID', ''),
+					('lcm_followup', 'type', 'Activities: Type', 'keyword:system_kwg:followups'),
+					('lcm_followup', 'date_start', 'Activities: Date start', ''),
+					('lcm_followup', 'date_end', 'Activities: Date end', ''),
+					('lcm_followup', 'date_end - date_start', 'Activities: Time spent', ''),
+					('lcm_followup', 'id_followup', 'Activities: ID', '')");
+
+		upgrade_db_version (18);
 	}
 
 	return $log;
