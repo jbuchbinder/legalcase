@@ -7,31 +7,41 @@ define('_INC_ACCES', '1');
 $GLOBALS['htaccess'] = 'inc/.htaccess';
 $GLOBALS['htpasswd'] = 'inc/data/.htpasswd';
 
-function creer_pass_aleatoire($longueur = 8, $sel = "") {
+function create_random_password($length = 8, $salt = "") {
 	$seed = (double) (microtime() + 1) * time();
 	mt_srand($seed);
 	srand($seed);
 
-	for ($i = 0; $i < $longueur; $i++) {
+	for ($i = 0; $i < $length; $i++) {
 		if (!$s) {
 			$s = mt_rand();
 			if (!$s) $s = rand();
-			$s = substr(md5(uniqid($s).$sel), 0, 16);
+			$s = substr(md5(uniqid($s).$salt), 0, 16);
 		}
+
 		$r = unpack("Cr", pack("H2", $s.$s));
 		$x = $r['r'] & 63;
+
 		if ($x < 10) $x = chr($x + 48);
 		else if ($x < 36) $x = chr($x + 55);
 		else if ($x < 62) $x = chr($x + 61);
 		else if ($x == 63) $x = '/';
 		else $x = '.';
+		
 		$pass .= $x;
 		$s = substr($s, 2);
 	}
+
 	$pass = ereg_replace("[./]", "a", $pass);
 	$pass = ereg_replace("[I1l]", "L", $pass);
 	$pass = ereg_replace("[0O]", "o", $pass);
+
 	return $pass;
+}
+
+function creer_pass_aleatoire($lenght = 8, $salt = "") {
+	lcm_log("Use of deprecated function creer_pass_aleatoire, use create_random_password() instead.");
+	return create_random_password($length, $salt);
 }
 
 
@@ -86,8 +96,11 @@ function ecrire_logins($fichier, $tableau_logins) {
 }
 
 
+// DEPRECATED, will be removed
 function ecrire_acces() {
 	global $htaccess, $htpasswd;
+
+	lcm_log("Call to deprecated function. Should not be called at all!");
 
 	// if .htaccess exists, bypass spip_meta
 	if ((read_meta('creer_htpasswd') == 'non') AND !@file_exists($htaccess)) {
@@ -126,8 +139,11 @@ function ecrire_acces() {
 }
 
 
+// DEPRECATED
 function generer_htpass($pass) {
 	global $htsalt, $flag_crypt;
+
+	lcm_log("Call to deprecated function. Should not be called at all!");
 	if ($flag_crypt) return crypt($pass, $htsalt);
 	else return '';
 }
