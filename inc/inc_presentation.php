@@ -23,7 +23,7 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 	global $mode;
 	global $connect_status;
 	global $prefs;
-	
+		
 	$lcm_site_name = entites_html(read_meta("site_name"));
 	$title = textebrut(typo($title));
 
@@ -76,6 +76,8 @@ function lcm_page_start($title = "", $css_files = "") {
 	global $options;
 	global $lcm_lang, $lcm_lang_rtl, $lcm_lang_left, $lcm_lang_right;
 	global $clean_link;
+	
+	global $prefs;
 
 	// Clean the global link (i.e. remove actions passed in the URL)
 	$clean_link->delVar('var_lang');
@@ -107,9 +109,9 @@ function lcm_page_start($title = "", $css_files = "") {
 		<h1 class='lcm_main_head'>" . $site_name . "</h1>
 		<div class='lcm_slogan'>" . $site_desc . "</div>
 	</div></a>
-	<div id='wrapper'>
-		<div id=\"container\">
-			<div id=\"content\">
+	<div id='wrapper_". $prefs['sel_screen'] ."'>
+		<div id=\"container_". $prefs['sel_screen'] ."\">
+			<div id=\"content_". $prefs['sel_screen'] ."\">
 			<!-- This is the navigation column, usually used for menus and brief information -->
 				<div id=\"navigation_menu_column\">
 				<!-- Start of navigation_menu_column content -->
@@ -120,8 +122,11 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"edit_case.php\" class=\"main_nav_btn\">New Case</a></li>
 							<li><a href=\"listclients.php\" class=\"main_nav_btn\">Clients</a></li>
 							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">Organisations</a></li>
-							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>
-							<!-- li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li-->\n";
+							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">Authors</a></li>";
+							if($prefs['sel_screen'] == "wide")
+							{
+								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">My preferences</a></li>\n";
+							}
 	echo "
 						</ul>
 					</div>\n";
@@ -197,7 +202,9 @@ function lcm_page_end($credits = '') {
 	global $find_org_string;
 	global $find_case_string;
 	global $find_client_string;
-
+	
+	global $prefs;
+	
 	//[KM] The bottom of a single page
 	//
 	echo "
@@ -207,8 +214,11 @@ function lcm_page_end($credits = '') {
 		</div>
 <!-- The initial intention was that here can be placed some UI preferences -->
 <!-- but I think it will be much better to put the search boxes -->
-<!-- The right and the left column can be very long, so, we can put here a lot of additional information, some tiny help hints and so -->
-		<div id=\"prefs_column\">
+<!-- The right and the left column can be very long, so, we can put here a lot of additional information, some tiny help hints and so -->";
+//Checking for "wide/narrow" user screen
+if($prefs['sel_screen'] == "narrow")
+{
+		echo "<div id=\"prefs_column\">
 <!-- Start of \"prefs_column\" content -->
 			<div class=\"prefs_column_menu_head\">Profile</div>
 			<p class=\"prefs_column_text\"><strong>Name: </strong>"
@@ -241,8 +251,11 @@ function lcm_page_end($credits = '') {
 			</form>
 			</p>
 <!-- End of \"prefs_column\" content -->
-		</div>
-		<div class=\"clearing\">&nbsp;</div>
+		</div>";
+//end of user screen IF
+}
+		//just test...
+		echo "<div class=\"clearing\">&nbsp;</div>
 	</div>
 
 	<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ". _T('info_free_software') ."</div>\n";
