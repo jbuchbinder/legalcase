@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.48 2005/03/18 10:01:38 mlutfy Exp $
+	$Id: inc_filters.php,v 1.49 2005/03/18 15:02:45 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -154,7 +154,10 @@ function f_err($fn, $errors) {
 	return (isset($errors[$fn]) ? '<span style="color: #ff0000">' . $errors[$fn] . '</span>' : '');
 }
 
-function f_err_star($fn, $errors) {
+function f_err_star($fn, $errors = array()) {
+	if (empty($errors))
+		$errors = $_SESSION['errors'];
+
 	return (isset($errors[$fn]) ? '<span style="color: #ff0000">*</span>' : '');
 }
 
