@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.20 2005/03/18 23:11:56 antzi Exp $
+	$Id: edit_app.php,v 1.21 2005/03/21 08:50:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -92,78 +92,16 @@ if (empty($_SESSION['errors'])) {
 }
 
 if ($_SESSION['app_data']['id_app']>0)
-	lcm_page_start("Edit appointment");
+	lcm_page_start("Edit appointment"); // TRAD
 else
-	lcm_page_start("New appointment");
+	lcm_page_start("New appointment"); // TRAD
 
 if ($_SESSION['app_data']['id_case']>0) {
 	// Show a bit of background on the case
-	echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
-
-	// Name of case
-	$query = "SELECT title
-			FROM lcm_case
-			WHERE id_case=" . $_SESSION['app_data']['id_case'];
-
-	$result = lcm_query($query);
-	while ($row = lcm_fetch_array($result))  // should be only once
-		echo '<li style="list-style-type: none;">' . _T('app_input_for_case') . " " . $row['title'] . "</li>\n";
-
-	// We dump all the clients and org in the same array, then show
-	// them on screen in a more densed way
-	// Could be more esthetic or ergonomic, but works for now..
-	$query = "SELECT cl.id_client, name_first, name_middle, name_last
-				FROM lcm_case_client_org as cco, lcm_client as cl
-				WHERE cco.id_case=" . $_SESSION['app_data']['id_case'] . "
-				AND cco.id_client = cl.id_client";
-	
-	$result = lcm_query($query);
-	$numrows = lcm_num_rows($result);
-	$current = 0;
-	
-	$all_clients = array();
-	
-	while ($all_clients[] = lcm_fetch_array($result));
-	
-	$query = "SELECT org.name, cco.id_client, org.id_org
-				FROM lcm_case_client_org as cco, lcm_org as org
-				WHERE cco.id_case=" . $_SESSION['app_data']['id_case'] . "
-				AND cco.id_org = org.id_org";
-	
-	$result = lcm_query($query);
-	$numrows += lcm_num_rows($result);
-	
-	// TODO: It would be nice to have the name of the contact for that
-	// organisation, if any, but then again, not the end of the world.
-	// (altough I we make a library of common functions, it will defenitely
-	// be a good thing to have)
-	while ($all_clients[] = lcm_fetch_array($result));
-	
-	if ($numrows > 0)
-		echo '<li style="list-style-type: none;">' . _T('app_input_involving_clients') . " ";
-	
-	foreach ($all_clients as $client) {
-		if ($client['id_client']) {
-			echo '<a href="client_det.php?client=' . $client['id_client'] . '" class="content_link">'
-				. get_person_name($client) . '</a>';
-	
-			if (++$current < $numrows)
-				echo ", ";
-		} else if ($client['id_org']) {
-			echo '<a href="org_det.php?org=' . $client['id_org'] . '" class="content_link">'
-				. $client['name']
-				. '</a>';
-	
-			if (++$current < $numrows)
-				echo ", ";
-		}
-	
-	}
-	
-	if ($numrows > 0)
-		echo "</li>\n";
-	
-	echo "</ul>\n";
+	show_context_start();
+	show_context_case_title($_SESSION['app_data']['id_case']);
+	show_context_case_involving($_SESSION['app_data']['id_case']);
+	show_context_end();
 }
 
 // Show the errors (if any)
@@ -283,7 +221,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		$result = lcm_query($q);
 //		echo "\t\t<form action=\"" . $_SERVER['REQUEST_URI'] . "\" method=\"POST\">\n";
 		echo "\t\t\t<select name=\"author\">\n";
-		echo "\t\t\t\t<option selected value=\"0\">- Select author -</option>\n";
+		echo "\t\t\t\t<option selected='selected' value=\"0\">- Select author -</option>\n"; // TRAD
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t\t<option value=\"" . $row['id_author'] . '">'
 				. njoin(array($row['name_first'],$row['name_middle'],$row['name_last']))
@@ -321,11 +259,11 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		
 		$result = lcm_query($q);
 		echo "\t\t\t<select name=\"client\">\n";
-		echo "\t\t\t\t<option selected value=\"0\">- Select client -</option>\n";
+		echo "\t\t\t\t<option selected='selected' value=\"0\">- Select client -</option>\n"; // TRAD
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t\t<option value=\"" . $row['id_client'] . ':' . $row['id_org'] . '">'
 				. njoin(array($row['name_first'],$row['name_middle'],$row['name_last']))
-				. ($row['name'] ? ' of ' . $row['name'] : '')
+				. ($row['name'] ? ' of ' . $row['name'] : '') // TRAD
 				. "</option>\n";
 		}
 		echo "\t\t\t</select>\n";
@@ -350,11 +288,17 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			else	// Less buttons in simple mode
 				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 		}
+
+		echo '<input type="hidden" name="id_app" value="' . $_SESSION['app_data']['id_app'] . '" />' . "\n";
+		echo '<input type="hidden" name="id_case" value="' . $_SESSION['app_data']['id_case'] . '" />' . "\n";
+
+		// because of XHTML validation...
+		$ref_link = new Link($_SESSION['app_data']['ref_edit_app']);
+		
+		echo '<input type="hidden" name="ref_edit_app" value="' . $ref_link->getUrl() . '" />' . "\n";
+
 	?>
 
-	<input type="hidden" name="id_app" value="<?php echo $_SESSION['app_data']['id_app']; ?>">
-	<input type="hidden" name="id_case" value="<?php echo $_SESSION['app_data']['id_case']; ?>">
-	<input type="hidden" name="ref_edit_app" value="<?php echo $_SESSION['app_data']['ref_edit_app']; ?>">
 </form>
 
 <?php
