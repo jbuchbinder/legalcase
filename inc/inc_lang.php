@@ -5,8 +5,6 @@
 if (defined('_INC_LANG')) return;
 define('_INC_LANG', '1');
 
-include_lcm('inc_meta');
-
 //
 // Load a language file
 //
@@ -38,7 +36,7 @@ function charger_langue($lang, $module = 'lcm', $forcer = false) {
 // Change the current language
 //
 function changer_langue($lang) {
-	global $all_langs, $spip_lang_rtl, $spip_lang_right, $spip_lang_left, $spip_lang_dir, $spip_dir_lang, $flag_ecrire;
+	global $all_langs, $spip_lang_rtl, $spip_lang_right, $spip_lang_left, $spip_lang_dir, $spip_dir_lang;
 
 	$liste_langues = $all_langs.','.lire_meta('langues_multilingue');
 
@@ -350,13 +348,20 @@ function lang_dselect ($rien='') {
 // - 'var_lang' = [NOT USED] langue de l'article, espace public
 // - 'changer_lang' = [NOT_USED] langue de l'article, espace prive
 // 
-function menu_languages($nom_select = 'var_lang', $default = '', $texte = '', $herit = '') {
+function menu_languages($nom_select = 'var_lang_lcm', $default = '', $texte = '', $herit = '') {
 	global $couleur_foncee, $couleur_claire, $flag_ecrire, $connect_id_auteur;
 
 	if ($default == '')
 		$default = $GLOBALS['lcm_lang'];
 
-	$langues = explode(',', lire_meta('langues_multilingue'));
+	if ($nom_select == 'var_lang_lcm_all') {
+		$langues = explode(',', $GLOBALS['all_langs']);
+		// [ML] XXX because I need a normal var_lang_lcm, but with all 
+		// the languages, instead, the function parameters should be changed.
+		$nom_select = 'var_lang_lcm';
+	} else {
+		$langues = explode(',', lire_meta('langues_multilingue'));
+	}
 
 	if (count($langues) <= 1) return;
 
@@ -370,14 +375,9 @@ function menu_languages($nom_select = 'var_lang', $default = '', $texte = '', $h
 		$post = $lien->getUrl();
 		$cible = '';
 	} else {
-		// [ML] if ($flag_ecrire) {
-			include_lcm('inc_admin');
-			$cible = $lien->getUrl();
-			$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
-		/* [ML] } else {
-			$cible = $lien->getUrl();
-			$post = 'lcm_cookie.php';
-		} */
+		include_lcm('inc_admin');
+		$cible = $lien->getUrl();
+		$post = "lcm_cookie.php?id_author=$connect_id_auteur&valeur=".calculer_action_auteur('var_lang_lcm', $connect_id_auteur);
 	}
 
 	$ret = "<form action='$post' method='post' style='margin:0px; padding:0px;'>";
@@ -483,9 +483,9 @@ function use_language_of_visitor() {
 //
 // Initialisation
 //
-function init_langues() {
-	global $all_langs, $flag_ecrire, $langue_site, $cache_lang, $cache_lang_modifs;
-	global $pile_langues, $lang_typo, $lang_dir, $dir_ecrire;
+function init_languages() {
+	global $all_langs, $langue_site, $cache_lang, $cache_lang_modifs;
+	global $pile_langues, $lang_typo, $lang_dir;
 
 	$all_langs = lire_meta('langues_proposees');
 	$langue_site = lire_meta('langue_site');
@@ -496,8 +496,8 @@ function init_langues() {
 	$lang_dir = '';
 
 	$toutes_langs = Array();
-	if (!$all_langs || !$langue_site || $flag_ecrire) {
-		if (!$d = @opendir($dir_ecrire.'lang')) return;
+	if (!$all_langs || !$langue_site) {
+		if (!$d = @opendir('inc/lang')) return;
 		while ($f = readdir($d)) {
 			if (ereg('^lcm_([a-z_]+)\.php?$', $f, $regs))
 				$toutes_langs[] = $regs[1];
@@ -510,14 +510,13 @@ function init_langues() {
 		if ($all_langs2 != $all_langs) {
 			$all_langs = $all_langs2;
 			if (!$langue_site) {
-				// Initialisation : le francais par defaut, sinon la premiere langue trouvee
-				// Initialisation: French by default, 
+				// Initialisation: English by default, else the first language found
 				if (ereg(',en,', ",$all_langs,")) $langue_site = 'en';
 				else list(, $langue_site) = each($toutes_langs);
-				if (defined("_INC_META"))
+				if (defined('_INC_META'))
 					ecrire_meta('langue_site', $langue_site);
 			}
-			if (defined("_INC_META")) {
+			if (defined('_INC_META')) {
 				ecrire_meta('langues_proposees', $all_langs);
 				ecrire_metas();
 			}
@@ -526,7 +525,7 @@ function init_langues() {
 	init_codes_langues();
 }
 
-init_langues();
+init_languages();
 use_language_of_site();
 
 

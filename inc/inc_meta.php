@@ -5,6 +5,13 @@
 if (defined('_INC_META')) return;
 define('_INC_META', '1');
 
+// ********8
+// [ML] WARNING: Don't include inc_meta unless you cannot
+// do without. Bad usage of inc_meta can cause strange bugs
+// in the installation and in inc_lang.php
+// ********8
+
+
 // read metas
 function lire_metas() {
 	global $meta, $meta_maj;
@@ -38,6 +45,8 @@ function effacer_meta($nom) {
 //
 function ecrire_metas() {
 	global $meta, $meta_maj, $flag_ecrire;
+
+	echo lcm_getbacktrace();
 
 	lire_metas();
 
@@ -76,7 +85,7 @@ function lire_meta_maj($nom) {
 	}
 	$s .= '?'.'>';
 
-	$fichier_meta_cache = 'data/inc_meta_cache.php';
+	$fichier_meta_cache = 'inc/data/inc_meta_cache.php';
 	@unlink($fichier_meta_cache);
 	$fichier_meta_cache_w = $fichier_meta_cache.'-'.@getmypid();
 	$f = @fopen($fichier_meta_cache_w, "wb");
