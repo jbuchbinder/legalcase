@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.35 2005/03/09 03:14:48 antzi Exp $
+	$Id: inc_db_create.php,v 1.36 2005/03/12 17:57:34 antzi Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -175,6 +175,23 @@ function create_database() {
 		PRIMARY KEY id_client (id_client))";
 	$result = lcm_query($query);
 
+	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+
+	$query = "CREATE TABLE lcm_client_attachment (
+		  id_attachment bigint(21) NOT NULL auto_increment,
+		  id_client bigint(21) NOT NULL default '0',
+		  filename varchar(255) NOT NULL default '',
+		  type varchar(255) default NULL,
+		  size bigint(21) NOT NULL default '0',
+		  description text,
+		  content longblob NOT NULL,
+		  date_attached datetime NOT NULL default '0000-00-00 00:00:00',
+		  PRIMARY KEY  (id_attachment),
+		  KEY id_client (id_client),
+		  KEY filename (filename),
+		  FULLTEXT KEY description (description))";
+	$result = lcm_query($query);
+	
 	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_org (
