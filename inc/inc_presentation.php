@@ -281,7 +281,7 @@ if($prefs['screen'] == "wide") {
 				. $author_session['name_last']
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
-			</p>
+			</p><br />
 			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_search-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;" . _T('menu_search') . "</div>
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
 			<p class=\"prefs_column_text\">
@@ -315,7 +315,7 @@ if($prefs['screen'] == "wide") {
 
 	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
 			</p>
-			</form>
+			</form><br />
 			<!-- the font size experiment -->
 			<div class=\"prefs_column_menu_head\"><img src=\"images/jimmac/stock_font-16.png\"  width=\"16\" height=\"16\" alt=\"\" />&nbsp;Font size</div>
 			<p class=\"prefs_column_text\">
