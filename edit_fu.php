@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.45 2005/01/25 21:54:19 antzi Exp $
+	$Id: edit_fu.php,v 1.46 2005/01/25 22:40:32 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -37,6 +37,8 @@ $admin = ($GLOBALS['author_session']['status']=='admin');
 if (empty($errors)) {
     // Clear form data
 	// [ML] FIXME: referer may be null, should default to fu_det.php?fu=...
+	// [AG] Since id_followup of new follow-ups is not known at this point,
+	// default redirection to fu_det.php is done in upd_fu.php
     $fu_data = array('ref_edit_fu' => $GLOBALS['HTTP_REFERER']);
 
 	if (isset($_GET['followup'])) {
@@ -228,12 +230,21 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				echo htmlspecialchars($currency);
 				echo "</td></tr>";
 			}
-?>	</table>
-	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
+		echo "	</table>\n";
 
-	<?php
-		if (isset($followup) && $prefs['mode'] == 'extended')
-			echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>'
+		if (isset($followup)) {
+			echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+			if ($prefs['mode'] == 'extended')
+				echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
+		} else {
+			// More buttons for 'extended' mode
+			if ($prefs['mode'] == 'extended') {
+				echo '<button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+				echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
+				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n"; }
+			else	// Less buttons in simple mode
+				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+		}
 	?>
 
 	<input type="hidden" name="id_followup" value="<?php echo $fu_data['id_followup']; ?>">
