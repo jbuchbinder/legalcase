@@ -78,12 +78,14 @@ function lcm_set_language_from_browser() {
 	return false;
 }
 
-//
-// Translate a string
-//
-function traduire_chaine($code, $args) {
+function translate_string($code, $args) {
 	global $lcm_lang;
 	global $debug;
+
+	$highlight = false;
+	
+	if (isset($_REQUEST['debug_tr']))
+		$highlight = $_REQUEST['debug_tr'];
 
 	// list of modules to process (ex: "module:my_string")
 	$modules = array('lcm');
@@ -118,7 +120,7 @@ function traduire_chaine($code, $args) {
 		if (!$text) {
 			$lcm_lang_temp = $lcm_lang;
 			$lcm_lang = 'en';
-			$text = traduire_chaine($code, $args);
+			$text = translate_string($code, $args);
 			$lcm_lang = $lcm_lang_temp;
 		}
 	}
@@ -129,13 +131,22 @@ function traduire_chaine($code, $args) {
 	}
 
 	// Insert the variables into the strings
-	if (!$args) return $text;
-	while (list($name, $value) = each($args))
-		$text = str_replace ("@$name@", $value, $text);
+	if ($args)
+		while (list($name, $value) = each($args))
+			$text = str_replace ("@$name@", $value, $text);
+
+	// If requested, highlight the translated string to help find strings
+	// not in the translation system
+	if ($highlight)
+		$text = "<span style='color: #ff0000'>" . $text . "</span>";
 	
 	return $text;
 }
 
+function traduire_chaine($code, $args) {
+	lcm_log("traduire_chaine: deprecated, use translate_string() instead");
+	return translate_string($code, $args);
+}
 
 function translate_language_name($lang) {
 	$r = $GLOBALS['codes_langues'][$lang];
