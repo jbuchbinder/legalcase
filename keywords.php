@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.5 2005/01/25 11:43:52 mlutfy Exp $
+	$Id: keywords.php,v 1.6 2005/01/28 23:37:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -38,10 +38,13 @@ function show_all_keywords($type = '') {
 	information, please consult the <a href='http://www.lcm.ngo-bg.org/article43.html'>analysis
 	documentation for keywords</a>.</p>\n";
 
+	$html_system = ($type == 'system' ? '&nbsp;&lt;--' : '');
+	$html_user   = ($type == 'user' ? '&nbsp;&lt;--' : '');
+
 	// Mini-menu: system or user keyword groups
 	echo "<ul>";
-	echo "<li><a href='?type=user'>User keywords</a></li>\n";
-	echo "<li><a href='?type=system'>System keywords</a></li>\n";
+	echo '<li><a href="?type=system">System keywords</a>' . $html_system . "</li>\n";
+	echo '<li><a href="?type=user">User keywords</a>' . $html_user . "</li>\n";
 	echo "</ul>\n\n";
 
 	$kwg_all = get_kwg_all($type);
@@ -49,7 +52,7 @@ function show_all_keywords($type = '') {
 	foreach ($kwg_all as $kwg) {
 		// tester ac-admin?
 		echo "<ul style='padding: 0.5em; border: 1px solid #cccccc; -moz-border-radius: 10px;'>\n";
-		echo "<li style='list-style-type: none;'><a href='?action=view&amp;id_group=" . $kwg['id_group'] . "'>" . _T($kwg['title']) . "</a></li>\n";
+		echo "<li style='list-style-type: none;'><a href='?action=edit&amp;id_group=" . $kwg['id_group'] . "'>" . _T($kwg['title']) . "</a></li>\n";
 
 		$kw_all = get_keywords_in_group_id($kwg['id_group']);
 
@@ -58,7 +61,7 @@ function show_all_keywords($type = '') {
 
 			foreach ($kw_all as $kw) {
 				echo "<li style='list-style-type: none;'>";
-				echo "<a href='?action=view&amp;id_keyword=" . $kw['id_keyword'] . "'>". _T($kw['title']) . "</a>";
+				echo "<a href='?action=edit&amp;id_keyword=" . $kw['id_keyword'] . "'>". _T($kw['title']) . "</a>";
 				echo "</li>\n";
 			}
 
@@ -74,36 +77,55 @@ function show_all_keywords($type = '') {
 //
 // View the details on a keyword group
 //
-function show_keyword_group_id($action = 'view', $id_group) {
-	$kwg = get_kwg_from_id($id_group);
+function show_keyword_group_id($action = 'edit', $id_group) {
+	global $system_kwg;
 
+	$kwg = get_kwg_from_id($id_group);
 	lcm_page_start("Keyword group: " . $kwg['name']);
 	
-	echo "<table border='0' width='99%' align='center' class='tbl_usr_dtl'>\n";
+	echo '<form action="keywords.php" method="post">' . "\n";
+	
+	echo '<input type="hidden" name="action" value="update_group" />' . "\n";
+	echo '<input type="hidden" name="id_group" value="' . $id_group . '" />' . "\n";
+	
+	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
 	echo "<tr>\n";
-	echo "<td>" . "Type:" . "</td>\n";
+	echo "<td>" . _T('keywords_input_type') . "</td>\n";
 	echo "<td>" . $kwg['type'] . "</td>\n";
 	echo "</tr><tr>\n";
-	echo "<td colspan='2'>" . "Title" . "<br />\n";
+	echo "<td>" . _T('keywords_input_policy') . "</td>\n";
+	echo "<td>" . $kwg['policy'] . "</td>\n";
+	echo "</tr><tr>\n";
+	echo "<td>" . _T('keywords_input_quantity') . "</td>\n";
+	echo "<td>" . $kwg['quantity'] . "</td>\n";
+	echo "</tr><tr>\n";
+	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
+	echo "<td>";
+	echo '<select name="kwg_suggest">';
+	
+	foreach ($system_kwg[$kwg['name']]['keywords'] as $kw) {
+		$sel = ($kw['name'] == $kwg['suggest'] ? ' selected="selected"' : '');
+		echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>' . "\n";
+	}
+
+	echo '</select>';
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td colspan='2'>" . _T('keywords_input_title') . "<br />\n";
 	echo "<input type='text' readonly='readonly' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' />\n";
 	echo "</td>\n";
 	echo "<tr></tr>\n";
-	echo "<td colspan='2'>" . "Description" . "<br />\n";
+	echo "<td colspan='2'>" . _T('keywords_input_description') . "<br />\n";
 	echo "<textarea readonly='readonly' id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft'>";
 	echo $kwg['description'];
 	echo "</textarea>\n";
 	echo "</td>\n";
-	echo "<tr></tr>\n";
-	echo "<td>" . "Policy" . "</td>\n";
-	echo "<td>" . $kwg['policy'] . "</td>\n";
-	echo "</tr><tr>\n";
-	echo "<td>" . "Quantity" . "</td>\n";
-	echo "<td>" . $kwg['quantity'] . "</td>\n";
-	echo "</tr><tr>\n";
-	echo "<td>" . "Suggest" . "</td>\n";
-	echo "<td>" . $kwg['suggest'] . "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n\n";
+
+	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+	echo "</form>\n";
 
 	lcm_page_end();
 }
@@ -123,20 +145,19 @@ function show_keyword_id($action = 'view', $id_keyword) {
 }
 
 if (isset($_REQUEST['action'])) {
-	if ($_REQUEST['action'] == 'view' || $_REQUEST['action'] == 'edit') {
+	if ($_REQUEST['action'] == 'edit') {
 		$action = $_REQUEST['action'];
 		
 		if (isset($_REQUEST['id_group']) && intval($_REQUEST['id_group']) > 0) {
 			show_keyword_group_id($action, intval($_REQUEST['id_group']));
-			exit;
 		} else if (isset($_REQUEST['id_keyword']) && intval($_REQUEST['id_keyword']) > 0) {
 			show_keyword_id($action, intval($_REQUEST['id_keyword']));
-			exit;
 		}
 	} else if ($_REQUEST['action'] == 'edit') {
 		echo "<p>Not ready yet</p>\n";
-		exit;
 	}
+
+	exit;
 }
 
 // Default action
