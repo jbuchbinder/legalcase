@@ -218,11 +218,29 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // S
 'save' => 'Save',
+'siteconf_info_admin_email' => 'E-mail of the contact for administrative requests or problems. This e-mail can be a mailing-list.',
+'siteconf_info_default_lang' => 'Language to use if a language could not be detected or chosen (such as for new users).',
+'siteconf_info_self_registration' => 'Can users create themselves a new account (e.g. self-register) on the site?',
+'siteconf_info_site_desc' => 'Often shown under the site name, except on reports.',
+'siteconf_info_site_name' => 'This will be shown when the user logs-in, in generated reports, etc.',
+'siteconf_input_admin_email' => 'E-mail of site administrator:',
+'siteconf_input_default_lang' => 'Default language:',
+'siteconf_input_selfreg_moderated' => 'Yes, but an administrator must approve (moderate) the request.',
+'siteconf_input_selfreg_no' => 'No.',
+'siteconf_input_selfreg_yes' => 'Yes, without moderation.',
+'siteconf_input_site_address' => 'Internet address or network location:',
+'siteconf_input_site_desc' => 'Site description:',
+'siteconf_input_site_name' => 'Site name:',
+'siteconf_subtitle_collab_work' => 'Collaborative work',
+'siteconf_subtitle_general_info' => 'General information',
+'siteconf_subtitle_self_registration' => 'Self-registration of new authors',
+'siteconf_warning' => '<b>Caution!</b> The settings on this page have a global impact which may influence the functionning of the site.',
 'status' => 'Status',
 
 
 // T
 'title_error' => 'Error',
+'title_site_configuration' => 'Site configuration',
 'title_software' => 'Legal Case Management',
 'title_software_article' => 'The Legal Case Management system',
 'title_software_description' => 'for not-for-profit legal advice centres',
