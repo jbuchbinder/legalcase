@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.9 2005/02/17 15:08:59 antzi Exp $
+	$Id: export_db.php,v 1.10 2005/02/24 16:23:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -31,7 +31,7 @@ $tabs = array(	array('name' => 'All cases','url' => 'archive.php'),
 	);
 
 function get_parameters() {
-	lcm_page_start('Archives');
+	lcm_page_start(_T('title_archives'));
 
 	// Show tabs
 	global $tabs;
@@ -86,7 +86,7 @@ function export_database($output_filename) {
 	if (file_exists("$root/inc/data/db-$output_filename")) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
-			lcm_page_start('Archives');
+			lcm_page_start(_T('title_archives'));
 
 			// Show tabs
 			show_tabs_links($tabs,1,true);
@@ -144,7 +144,7 @@ function export_database($output_filename) {
 	}
 	chmod("$root/inc/data/db-$output_filename",0700);
 	
-	lcm_page_start('Archives');
+	lcm_page_start(_T('title_archives'));
 
 	// Show tabs
 	show_tabs_links($tabs,1,true);
