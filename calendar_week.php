@@ -11,6 +11,6 @@
 \***************************************************************************/
 
 if (!isset($_GET['type'])) $type = 'semaine';
-include ("calendrier.php3");
+include ("calendar.php");
 exit;
 ?>
