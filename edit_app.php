@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.6 2005/02/23 01:59:02 antzi Exp $
+	$Id: edit_app.php,v 1.7 2005/02/23 02:23:18 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -89,6 +89,16 @@ if (empty($_SESSION['errors'])) {
 		$_SESSION['app_data']['reminder']   = date('Y-m-d H:i:s');
 	}
 
+} else if ( array_key_exists('author_added',$_SESSION['errors']) ) {
+	// Refresh appointment participants
+	$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
+		FROM lcm_author_app,lcm_author
+		WHERE lcm_author_app.id_author=lcm_author.id_author
+			AND id_app=$app";
+	$result = lcm_query($q);
+	$_SESSION['authors'] = array();
+	while ($row = lcm_fetch_array($result))
+		$_SESSION['authors'][$row['id_author']] = $row;
 }
 
 if ($_SESSION['app_data']['id_app']>0)
