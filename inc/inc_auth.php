@@ -96,10 +96,6 @@ function auth() {
 	if ($row = lcm_fetch_array($result)) {
 		$connect_id_auteur = $row['id_author'];
 		$connect_nom = $row['name_first'];
-		$connect_bio = $row['bio'];
-		$connect_email = $row['email'];
-		$connect_nom_site = $row['nom_site'];
-		$connect_url_site = $row['url_site'];
 		$connect_login = $row['username'];
 		$connect_pass = $row['password'];
 		$connect_status = $row['status'];
