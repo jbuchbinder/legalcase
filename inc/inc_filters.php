@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.39 2005/03/06 11:33:55 antzi Exp $
+	$Id: inc_filters.php,v 1.40 2005/03/10 16:44:33 antzi Exp $
 */
 
 // Execute this file only once
@@ -159,6 +159,14 @@ function clean_output($string) {
 	} else {
 		return htmlspecialchars($string);
 	}
+}
+
+// Converts &...; to the respective characters
+function unhtmlentities($string)
+{
+   $trans_tbl = get_html_translation_table(HTML_ENTITIES);
+   $trans_tbl = array_flip($trans_tbl);
+   return strtr($string, $trans_tbl);
 }
 
 // Joins non-empty elements of the array
