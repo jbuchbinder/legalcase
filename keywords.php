@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.4 2004/12/14 15:08:10 mlutfy Exp $
+	$Id: keywords.php,v 1.5 2005/01/25 11:43:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -138,8 +138,6 @@ if (isset($_REQUEST['action'])) {
 		exit;
 	}
 }
-
-error_reporting(E_ALL);
 
 // Default action
 $type = (isset($_REQUEST['type']) ? $_REQUEST['type'] : '');
