@@ -79,16 +79,7 @@ function show_config_form_general() {
 	}
 
 	echo "\t<input type='hidden' name='conf_modified_general' value='yes'/>\n";
-
-	/*
-	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
-	echo "<tr>\n";
-	echo '<td colspan="2" align="center" valign="middle" class="heading"><h4>';
-	echo _T('siteconf_subtitle_general_info');
-	echo "</h4></td>\n";
-	echo "<tr>\n";
-	echo "<td>";
-	*/	
+	echo "\t<input type='hidden' name='panel' value='general'/>\n";
 
 	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
 	// XXX fix css, this was just a test
@@ -134,6 +125,7 @@ function show_config_form_collab() {
 	$case_write_always = read_meta('case_write_always');
 
 	echo "\t<input type='hidden' name='conf_modified_collab' value='yes'/>\n";
+	echo "\t<input type='hidden' name='panel' value='collab'/>\n";
 
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 	echo "<tr>\n";
@@ -264,6 +256,7 @@ function show_config_form_policy() {
 	// read_meta() ...
 
 	echo "\t<input type='hidden' name='conf_modified_policy' value='yes'/>\n";
+	echo "\t<input type='hidden' name='panel' value='policy'/>\n";
 
 	// ** CLIENTS
 	echo "<fieldset style='margin: 0; margin-bottom: 1em; padding: 0.5em; -moz-border-radius: 10px;'>\n";
@@ -288,6 +281,8 @@ function show_config_form_policy() {
 	echo "<li> Court archive ID (yes/no)</li>\n";
 	echo "<li> Assignment date (yes/no)</li>\n";
 	echo "<li> Alledged crime (yes/no)</li>\n";
+	echo "<li> Allow case information to be modified by their authors once
+	their are created? (yes/no)</li>\n";
 	echo "</ul>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate'>" .  _T('button_validate') . "</button></p>\n";
@@ -466,7 +461,6 @@ function apply_conf_changes_policy() {
 
 }
 
-
 global $author_session;
 
 if ($author_session['status'] != 'admin') {
@@ -499,7 +493,7 @@ if ($author_session['status'] != 'admin') {
 		echo "</div>\n";
 	}
 
-	show_config_form($_GET['panel']);
+	show_config_form($panel);
 	lcm_page_end();
 }
 
