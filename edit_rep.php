@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.7 2005/02/03 11:44:35 mlutfy Exp $
+	$Id: edit_rep.php,v 1.8 2005/02/03 11:56:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -80,6 +80,9 @@ if ($existing)
 	lcm_page_start(_T('edit_rep_details'));
 else 
 	lcm_page_start(_T('new_report'));
+
+if (isset($_SESSION['errors'])) 
+	echo show_all_errors($_SESSION['errors']);
 
 echo "\n<form action='upd_rep.php' method='post'>
 	<table class='tbl_usr_dtl' width='99%'>\n";
@@ -148,6 +151,9 @@ if ($prefs['mode'] == 'extended') {
 
 echo '<input type="hidden" name="ref_edit_rep" value="' . $rep_data['ref_edit_rep'] . '">' . "\n";
 echo '</form>' . "\n";
+
+// Clear errors
+$_SESSION['errors'] = array();
 
 lcm_page_end();
 
