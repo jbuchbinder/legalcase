@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.37 2005/03/01 12:03:48 mlutfy Exp $
+	$Id: edit_client.php,v 1.38 2005/03/19 00:20:20 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -35,8 +35,7 @@ $client_civil_status = read_meta('client_civil_status');
 $client_income = read_meta('client_income');
 
 if (empty($_SESSION['errors'])) {
-	$client_data = array();
-	$client_data['referer'] = $HTTP_REFERER;
+	$client_data = array('id_client' => 0,'referer' => $HTTP_REFERER);
 
 	if ($client > 0) {
 		$q = 'SELECT * 
@@ -172,6 +171,39 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 		echo '</td>';
 		echo "</tr>\n";
 	}
+
+	//
+	// Organisations this client represents
+	//
+	echo "\t<tr>";
+	echo '<td colspan="2" align="center" valign="middle" class="heading">';
+	echo '<h4>' . _T('client_subtitle_organisations') . '</h4>';
+	echo '</td>';
+	echo "</tr>\n";
+	$q = "SELECT name FROM lcm_client_org, lcm_org WHERE id_client=" . $client_data['id_client'] . " AND lcm_client_org.id_org=lcm_org.id_org";
+	$result = lcm_query($q);
+	$orgs = array();
+	while ($row = lcm_fetch_array($result)) {
+		$orgs[] = $row['name'];
+	}
+	echo "\t<tr><td>" . 'Representative of:' . '</td><td>' . join(', ',$orgs) . (count($orgs)>0 ? '&nbsp;' : '');
+	$q = "SELECT lcm_org.id_org,name,id_client
+		FROM lcm_org
+		LEFT JOIN lcm_client_org
+		ON (id_client=" . $client_data['id_client'] . "
+		AND lcm_org.id_org=lcm_client_org.id_org)
+		WHERE id_client IS NULL";
+	$result = lcm_query($q);
+	if (lcm_num_rows($result) > 0) {
+		echo "\t\t<select name=\"new_org\">\n";
+		echo "\t\t\t<option selected value=\"0\">- Select organisation -</option>\n";
+		while ($row = lcm_fetch_array($result)) {
+			echo "\t\t\t<option value=\"" . $row['id_org'] . '">' . $row['name'] . "</option>\n";
+		}
+		echo "\t\t</select>\n";
+		echo "\t\t<button name=\"submit\" type=\"submit\" value=\"add_org\" class=\"simple_form_btn\">" . 'Add' . "</button>\n";
+	}
+	echo "\t</td></tr>\n";
 
 	//
 	// Contacts (e-mail, phones, etc.)
