@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.13 2005/04/01 16:50:43 antzi Exp $
+	$Id: app_det.php,v 1.14 2005/04/04 08:18:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,32 +35,46 @@ $q = "SELECT lcm_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.n
 $result = lcm_query($q);
 
 if ($row = lcm_fetch_array($result)) {
-	lcm_page_start('Appointment details:' . ' ' . $row['title']); // TRAD
+	lcm_page_start(_T('title_app_view') . ' ' . $row['title']); // TRAD
 
-	echo '<fieldset class="info_box">';
-//	echo '<div class="prefs_column_menu_head">' . _T('app_subtitle_general') . '</div>';
-	echo "<p class=\"normal_text\">\n";
+	echo '<fieldset class="info_box">' . "\n";
+	echo '<p class="normal_text">' . "\n";
 	
-	echo _Ti('time_input_date_start') . format_date($row['start_time'],'short') . "<br />\n";
+	echo _Ti('app_input_title') . $row['title'] . "<br />\n";
+	echo _Ti('app_input_type') . $row['type'] . "<br />\n";
+	echo _Ti('app_input_description') . nl2br($row['description']) . "<br />\n";
+
+	echo "<br />\n";
+	echo _Ti('time_input_date_start') . format_date($row['start_time'], 'short');
+	$year_for_cal = "&annee=" . annee($row['start_time'])  // year
+		. "&mois=" . mois($row['start_time'])  // month
+		. "&jour=" . journum($row['start_time']); // day
+
+	echo ' ' . http_href_img("calendar.php?type=jour" . $year_for_cal, 'cal-today', '', _T('app_info_see_cal_for_day_tooltip'));
+	echo "<br />\n";
+
+
 	$end_time = vider_date($row['end_time']);
 	$reminder = vider_date($row['reminder']);
 	if ($prefs['time_intervals'] == 'absolute') {
 		echo _Ti('time_input_date_end') . format_date($row['end_time'], 'short') . "<br />\n";
-		echo _Ti('app_input_reminder_time') . format_date($row['reminder'], 'short') . "<br />\n"; // TRAD
+		echo _Ti('app_input_reminder') . format_date($row['reminder'], 'short') . "<br />\n";
 	} else {
 		$duration = ($end_time ? strtotime($row['end_time']) - strtotime($row['start_time']) : 0);
-		echo _Ti('app_input_time_length') . format_time_interval($duration,($prefs['time_intervals_notation'] == 'hours_only')) . "<br />\n"; // TRAD
+		echo _Ti('app_input_time_length') . format_time_interval($duration,($prefs['time_intervals_notation'] == 'hours_only')) . "<br />\n";
 		$reminder_offset = ($reminder ? strtotime($row['start_time']) - strtotime($row['reminder']) : 0);
-		echo _Ti('app_input_reminder_time') . format_time_interval($reminder_offset,($prefs['time_intervals_notation'] == 'hours_only')) . " before start time<br />\n"; // TRAD
+		echo _Ti('app_input_reminder')
+			. format_time_interval($reminder_offset,($prefs['time_intervals_notation'] == 'hours_only'))
+			. " " . _T('time_info_before_start') . "<br />\n";
 	}
 
-	echo _Ti('app_input_type') . $row['type'] . "<br />\n";
-	echo _Ti('app_input_title') . $row['title'] . "<br />\n";
-	echo _Ti('app_input_description') . $row['description'] . "<br />\n";
+	echo "<br />\n";
+	echo _Ti('app_input_created_by') . get_person_name($row) . "<br />\n";
 
-	echo _Ti('app_input_created_by') . get_person_name($row) . "<br />\n"; // TRAD
 	if ($row['case_title'])
-		echo 'In connection with case: <a href="case_det.php?case=' .  $row['id_case'] . '" class="content_link">' . $row['case_title'] , "</a><br />\n"; // TRAD
+		echo _Ti('app_input_related_to_case') 
+			. '<a href="case_det.php?case=' .  $row['id_case'] . '" class="content_link">' . $row['case_title']
+			. "</a><br />\n";
 
 	// Show appointment participants
 	$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
@@ -100,7 +114,7 @@ if ($row = lcm_fetch_array($result)) {
 
 	// Show edit appointment button
 	if ($row['id_author'] == $GLOBALS['author_session']['id_author'])
-		echo '<br /><a href="edit_app.php?app=' . $row['id_app'] . '" class="create_new_lnk">' . 'Edit this appointment' . "</a><br />\n"; // TRAD
+		echo '<br /><a href="edit_app.php?app=' . $row['id_app'] . '" class="create_new_lnk">' . _T('app_button_edit') . "</a><br />\n";
 
 	if ($row['id_case'] > 0) {
 //		echo '<br />';
