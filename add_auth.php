@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: add_auth.php,v 1.9 2004/12/14 15:06:02 antzi Exp $
+	$Id: add_auth.php,v 1.10 2004/12/14 15:17:26 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -51,7 +51,7 @@ if ($case>0) {
 
 				// Add 'assigned' followup to the case
 				$q = "INSERT INTO lcm_followup
-						SET id_followup=0,id_case=$case,type=assignment,description='";
+						SET id_followup=0,id_case=$case,type='assignment',description='";
 				$q .= $author_data['name_first'];
 				$q .= (($author_data['name_middle']) ? ' ' . $author_data['name_middle'] : '');
 				$q .= (($author_data['name_last']) ? ' ' . $author_data['name_last'] : '');
