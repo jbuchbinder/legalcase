@@ -482,8 +482,7 @@ function install_html_start($title = 'AUTO', $css_files = "") {
 	lcm_html_start($title, $css_files);
 
 	echo "\t<br/>\n";
-	echo "\t<div align='center'>\n";
-	echo "\t\t<div align='left' style='width: 450px;'>\n";
+	echo "\t<div align='center' id='install_screen'>\n";
 	echo "\t\t<h1><b>$title</b></h1>\n";
 
 	echo "\n<!-- END install_html_start() -->\n\n";
@@ -494,9 +493,7 @@ function install_html_start($title = 'AUTO', $css_files = "") {
  * They are used by install.php and lcm_test_dirs.php
  */
 function install_html_end() {
-	echo "
-			</div>
-		</div>
+		echo " </div>
 	</body>
 	</html>
 ";
