@@ -540,33 +540,46 @@ function help_page_start($page_title) {
 	if (!$charset = read_meta('charset'))
 		$charset = 'utf-8';
 
-	$toc = array('installation', 'cases', 'clients', 'authors', 'siteconfig', 'archives', 'reports', 'keywords', 'about'); 
+	$toc = array(
+		'installation' => array('install_permissions', 'install_database', 'install_personal'),
+		'cases' => array('case_intro', 'case_participants', 'case_followups'),
+		'clients' => array('clients_intro', 'clients_org'),
+		'authors' => array('authors_intro', 'authors_admin'),
+		'siteconfig' => array('siteconfig_general', 'siteconfig_collab', 'siteconfig_policy', 'siteconfig_regional'),
+		'archives' => array('archives_intro', 'archives_export', 'archives_import'),
+		'reports' => array('reports_intro'), 
+		'keywords' => array('keywords_intro', 'keywords_new'),
+		'about' => array('about_contrib', 'about_license')); 
 
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>LCM | Help</title>
+<title>' . _T('help_title_help') . '</title>
 <meta http-equiv="Content-Type" content="text/html; charset=' . $charset . '" />
 <link rel="stylesheet" href="styles/lcm_basic_layout.css" type="text/css" />
 <link rel="stylesheet" href="styles/lcm_opt_mediumfonts.css" type="text/css" />
-</head>';
+</head>' . "\n";
 
-	echo "
-<body>
-<h1 class=\"hlp_h1\">Legal Case Management Help</h1>
-<div id=\"hlp_big_box\">
-	<div id=\"hlp_menu\">
-		<ul>";
+	echo "<body>\n";
+	echo '<h1 class="hlp_h1">' . _T('help_title_help') . "</h1>\n";
+	echo '<div id="hlp_big_box">
+	<div id="hlp_menu">
+		<ul>';
 
-	foreach ($toc as $topic) {
-		echo '<li><a href="lcm_help?code=' . $topic .'">' . _T('help_title_' . $topic) . '</a></li>' . "\n";
+	foreach ($toc as $topic => $subtopics) {
+		echo '<li><a href="lcm_help?code=' . $topic .'">' . _T('help_title_' . $topic) . '</a>' . "\n";
+		echo '<ul>';
+		foreach ($subtopics as $st) {
+			echo '<li><a href="lcm_help?code=' . $st .'">' . _T('help_title_' . $st) . '</a></li>' . "\n";
+		}
+		echo "</ul></li>\n";
 	}
 	
-	echo "
+	echo '
 		</ul>
 	</div>
-	<div id=\"hlp_cont\">
-		<h2 class=\"hlp_h2\">" . $page_title . "</h2>";
+	<div id="hlp_cont">
+		<h2 class="hlp_h2">' . $page_title . "</h2>\n";
 
 }
 
