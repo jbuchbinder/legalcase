@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.9 2005/02/08 18:16:10 antzi Exp $
+	$Id: upd_client.php,v 1.10 2005/02/08 19:06:07 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -112,7 +112,7 @@ if (isset($_REQUEST['contact_value'])) {
 	// Check if the contacts provided are really attached to the author
 	// or else the author can provide a form with false contacts.
 	//
-	$all_contacts = get_contacts('client', $_SESSION['client']['id_author']);
+	$all_contacts = get_contacts('client', $_SESSION['client']['id_client']);
 	for ($cpt = 0; $c_ids[$cpt]; $cpt++) {
 		$valid = false;
 
@@ -147,7 +147,7 @@ if (isset($_REQUEST['new_contact_value'])) {
 		if ($new_contacts[$cpt]) {
 			// And make sure that they have a "type of contact"
 			if ($c_type_names[$cpt]) {
-				add_contact('client', $_SESSION['client']['id_author'], $c_type_names[$cpt], $new_contacts[$cpt]);
+				add_contact('client', $_SESSION['client']['id_client'], $c_type_names[$cpt], $new_contacts[$cpt]);
 			} else {
 				$_SESSION['errors']['new_contact_' . $cpt] = "Please specify the type of contact.";
 				$_SESSION['client']['new_contact_' . $cpt] = $new_contacts[$cpt];
