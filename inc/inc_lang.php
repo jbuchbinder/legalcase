@@ -13,7 +13,7 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 	if (@file_exists('inc/lang/'.$module.'_'.$lang.'.php')) {
 		$GLOBALS['idx_lang'] = 'i18n_'.$module.'_'.$lang;
 		include_lcm('lang/'.$module.'_'.$lang);
-		lcm_log("Language file loaded");
+		lcm_debug($module . "_" . $lang . ": Language file loaded");
 	} else {
 		// If the language file of the module does not exist, we fallback
 		// on English, which *by definition* must exist. We then recopy the
@@ -23,7 +23,7 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 			include_lcm('lang/'.$module.'_en');
 		}
 		$GLOBALS['i18n_'.$module.'_'.$lang] = $GLOBALS['i18n_'.$module.'_en'];
-		lcm_log("Fellback on English");
+		lcm_debug("Fellback on English");
 	}
 
 	// The local system administrator can overload official strings
@@ -124,6 +124,9 @@ function traduire_chaine($code, $args) {
 	if (!$args) return $text;
 	while (list($name, $value) = each($args))
 		$text = str_replace ("@$name@", $value, $text);
+	
+	if (empty($text))
+		lcm_log("Warning: translation string -" . $code . "- has no text");
 
 	return $text;
 }
@@ -136,7 +139,7 @@ function translate_language_name($lang) {
 }
 
 function traduire_nom_langue($lang) {
-	lcm_log("Use of deprecated function traduire_nom_langue(), use translate_language_name() instead");
+	lcm_debug("Use of deprecated function traduire_nom_langue(), use translate_language_name() instead");
 	return translate_language_name($lang);
 }
 
