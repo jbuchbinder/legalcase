@@ -2,58 +2,20 @@
 /* Monochrome theme for the LCM UI  */
 /* ================================ */
 
-body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	margin: 5px;
-	padding: 0px;
-	text-align: center;
-}
-
-/* ============================================================ */
-/* Main layout settings, builded using tableless CSS technology */
-/* ============================================================ */
-
 #header {
-	height: 83px;
-	text-align: left;
 	background: url("../images/lcm/lcm_logo_mono.png") repeat-y left;
 }
 
 #wrapper {
-	background: url(../images/lcm/right_back_mono.gif) repeat-y right;
+	background: url("../images/lcm/right_back_mono.gif") repeat-y right;
 }
 
 #container {
-	width: 100%;
-	float: left;
-	margin-right: -200px;
-	background: url(../images/lcm/right_back_mono.gif) repeat-y right;
-}
-
-#content {
-	margin-right: 200px;
-}
-
-#main_column {
-	margin-left: 200px;
-	border-top: 1px dashed #999;
-	background-color: #fff;
-	margin-right: 5px;
-	text-align: left;
-}
-
-#navigation_menu_column {
-	background-color: #fff;
-	text-align: center;
-	width: 200px;
-	float: left;
+	background: url("../images/lcm/right_back_mono.gif") repeat-y right;
 }
 
 #prefs_column {
-	width: 200px;
 	background-color: #efefef;
-	text-align: left;
-	float: right;
 }
 
 #footer {
@@ -65,44 +27,17 @@ body {
 	line-height: 1.5;
 }
 
-.clearing {
-	height: 0;
-	clear: both;
-}
-
 /* ================================================== */
 /* Other visual settings - font, colors, sizes, boxes */
 /* ================================================== */
 
 h1.lcm_main_head {
-	position: relative;
-	width: 650px;
 	color: #000;
-	margin: 0px;
-	padding-top: 15px;
-	left: 85px;
-}
-
-.lcm_slogan {
-	position: relative;
-	top: 0px;
-	left: 150px;
-	color: #666;
-	font-size: 11px;
-	width: 350px;
-}
-
-a, p, div, h1, h2, h3, strong, input, select, option, form, textarea, td, table {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
 hr.hair_line {
-	border: 0px;
-	margin: 0px;
-	width: 100%;
 	color: #ccc;
 	background-color: #333;
-	height: 1px;
 }
 
 /* ----------------------------------------------- */
@@ -112,8 +47,6 @@ hr.hair_line {
 #nav_menu_box {
 	border: 1px solid #000;
 	background-color: #fff;
-	margin: 0px 5px 5px 0px;
-	text-align: left;
 }
 
 .nav_column_menu_head {
@@ -122,45 +55,26 @@ hr.hair_line {
 	font-size: 12px;
 	font-weight: bold;
 	color: #000;
-	padding: 4px;
-	text-align: left;
-}
-
-ul#nav_menu_list {
-	list-style-type: none;
-	padding: 0px;
-	margin: 0px;
 }
 
 ul#nav_menu_list li {
-	font-size: 11px;
-	margin: 0px;
-	line-height: 2;
 	border-bottom: 1px solid #000;
 }
 
 p.nav_column_text {
-	margin: 4px;
-	font-size: 11px;
-	margin-bottom: 10px;
+	color: #000;
 }
 
 /* Buttons-like effect */
 
 a.main_nav_btn:link, a.main_nav_btn:visited, a.main_nav_btn:active {
-	text-decoration: none;
-	display: block;
 	color: #000;
 	background: url("../images/lcm/test_icon1.gif") no-repeat 1px 3px;
-	padding-left: 22px;
 }
 
 a.main_nav_btn:hover {
-	text-decoration: none;
-	display: block;
 	color: #666;
 	background: url("../images/lcm/test_icon2.gif") no-repeat 1px 3px;
-	padding-left: 22px;
 }
 
 /* --------------------------------- */
@@ -169,24 +83,15 @@ a.main_nav_btn:hover {
 
 .prefs_column_menu_head {
 	background-color: #ccc;
-	font-size: 12px;
-	font-weight: bold;
 	color: #333;
-	padding: 4px;
-	text-align: left;
 }
 
 p.prefs_column_text {
-	margin: 4px;
-	font-size: 11px;
-	margin-bottom: 10px;
+	color: #000;
 }
 
-a.prefs_bold_lnk {
+a.prefs_bold_lnk, a.prefs_normal_lnk {
 	color: #333;
-	font-weight: bold;
-	text-decoration: none;
-	font-size: 10px;
 }
 
 /* Form elements */
@@ -194,7 +99,6 @@ a.prefs_bold_lnk {
 form.search_form {
 	font-size: 11px;
 	color: #333;
-	margin: 4px 4px 10px 4px;
 }
 
 input.search_form_txt {
@@ -203,7 +107,7 @@ input.search_form_txt {
 	border: 1px solid #666;
 }
 
-input.search_form_btn {
+input.search_form_btn, button.simple_form_btn {
 	font-size: 11px;
 	border: 1px solid #666;
 	background-color: #ccc;
@@ -227,18 +131,10 @@ select.sel_frm {
 
 h3.content_head {
 	color: #000;
-	text-transform: uppercase;
-	text-align: left;
-	margin: 5px 0px 5px 0px;
-	padding: 0px;
 }
 
 h4 {
 	color: #000;
-	text-transform: uppercase;
-	text-align: left;
-	margin: 5px 0px 5px 0px;
-	padding: 0px;
 }
 
 table.tbl_data {
@@ -248,9 +144,6 @@ table.tbl_data {
 }
 
 table.tbl_data td {
-	font-size: 12px;
-	text-align: left;
-	padding: 4px;
 	color: #000;
 	border-left: 1px solid #ccc;
 }
