@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.53 2005/02/08 09:56:16 antzi Exp $
+	$Id: edit_case.php,v 1.54 2005/02/08 10:56:41 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -31,18 +31,17 @@ $case_assignment_date = read_meta('case_assignment_date');
 $case_alledged_crime = read_meta('case_alledged_crime');
 $case_allow_modif = read_meta('case_allow_modif');
 
-
 if (empty($_SESSION['errors'])) {
 
-    // Clear form data
-    $_SESSION['case_data'] = array();
+	// Clear form data
+	$_SESSION['case_data'] = array();
 
 	// Set the returning page
 	if (isset($ref)) $_SESSION['case_data']['ref_edit_case'] = $ref;
 	else $_SESSION['case_data']['ref_edit_case'] = $GLOBALS['HTTP_REFERER'];
 
 	// Register case ID as session variable
-    if (!session_is_registered("case"))
+	if (!session_is_registered("case"))
 		session_register("case");
 
 	$case = intval($_GET['case']);
