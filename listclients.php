@@ -36,7 +36,7 @@ if ($list_pos>0)
 
 // Output table tags
 ?>
-<table border>
+<table border='1' width='99%'>
 	<tr>
 		<th>Client name</th>
 		<th></th>
@@ -52,11 +52,9 @@ for ($i = 0 ; (($i<$GLOBALS['list_len']) && ($row = lcm_fetch_array($result))) ;
 <?php
 }
 ?>
-	<tr>
-		<td><a href="edit_client.php">Add new client</a></td>
-		<td></td>
-	</tr>
 </table>
+
+<p><a href="edit_client.php">Add new client</a></p>
 <?php
 
 // Show link to previous page
