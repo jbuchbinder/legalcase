@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.121 2005/03/23 18:35:51 mlutfy Exp $
+	$Id: case_det.php,v 1.122 2005/03/24 16:22:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -67,12 +67,12 @@ if ($case > 0) {
 		// echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
 
 		// Show tabs
-		$groups = array('general' => _T('case_tab_general'),
-				'clients' => _T('case_tab_clients'),
-				'appointments' => _T('case_tab_appointments'),
-				'followups' => _T('case_tab_followups'),
-				'times' => _T('case_tab_times'),
-				'attachments' => _T('case_tab_attachments'));
+		$groups = array('general' => _T('generic_tab_general'),
+				'clients' => _T('generic_tab_clients'),
+				'appointments' => _T('generic_tab_agenda'),
+				'followups' => _T('generic_tab_followups'),
+				'times' => _T('generic_tab_reports'),
+				'attachments' => _T('generic_tab_documents'));
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
@@ -84,7 +84,7 @@ if ($case > 0) {
 				echo "<fieldset class='info_box'>";
 				echo "<div class='prefs_column_menu_head'>"
 					. "<div style='float: right'>" . lcm_help('cases_intro') . "</div>"
-					. _T('case_subtitle_general') 
+					. _T('generic_subtitle_general') 
 					. "</div>";
 				echo "<p class='normal_text'>";
 		
