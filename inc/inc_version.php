@@ -638,16 +638,19 @@ class Link {
 
 	//
 	// Fetch the URL assiciated with the link
-	function getUrl($anchor = '') {
+	function getUrl($anchor = '', $and_mode = 'content') {
 		$url = $this->file;
 		if (!$url) $url = './';
 		$query = '';
 		$vars = $this->getAllVars();
+
+		$symb_and = ($and_mode == 'header' ? '&' : '&amp;');
+		
 		if (is_array($vars)) {
 			$first = true;
 			reset($vars);
 			while (list($name, $value) = each($vars)) {
-				$query .= (($query) ? '&' : '?').$name.'='.urlencode($value);
+				$query .= (($query) ? $symb_and : '?').$name.'='.urlencode($value);
 			}
 		}
 		if (is_array($this->arrays)) {
@@ -655,12 +658,16 @@ class Link {
 			while (list($name, $table) = each($this->arrays)) {
 				reset($table);
 				while (list(, $value) = each($table)) {
-					$query .= (($query) ? '&' : '?').$name.'[]='.urlencode($value);
+					$query .= (($query) ? $symb_and : '?').$name.'[]='.urlencode($value);
 				}
 			}
 		}
 		if ($anchor) $anchor = '#'.$anchor;
 		return $url.$query.$anchor;
+	}
+
+	function getUrlForHeader($anchor = '', $and_mode = 'header') {
+		return $this->getUrl($anchor, $and_mode);
 	}
 
 	//
