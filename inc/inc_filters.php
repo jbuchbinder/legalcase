@@ -71,7 +71,7 @@ function format_date($timestamp = '', $format = '') {
 
 	if (! $format) 
 		$format = _T('date_format');
-		
+
 	if ($timestamp)
 		return date($format, $timestamp);
 	else
@@ -82,7 +82,7 @@ function format_date($timestamp = '', $format = '') {
 // Highlights (outlines) errors in the form data
 function f_err($fn, $errors) {
     if (isset($errors[$fn]))
-		echo "<font color='red'>$errors[$fn]</font><br>";
+		echo "<font color='red'>$errors[$fn]</font>";
 }
 
 // Cleans user input string from 'dangerous' characters
@@ -357,7 +357,7 @@ function recup_date($numdate){
 }
 
 
-function affdate_base($numdate, $vue) { 
+function affdate_base($numdate, $vue) {
 	global $lcm_lang;
 	$date_array = recup_date($numdate);
 	if ($date_array)
