@@ -33,24 +33,26 @@ if ($list_pos>0)
 
 // Output table tags
 ?>
-<table border='0' class='tbl_data' width='99%'>
+<table border='0' width='99%' class='tbl_usr_dtl'>
 	<tr>
-		<th class='tbl_head'>Name</th>
-		<th class='tbl_head'>Action</th>
+		<th class='heading'>Client name</th>
+		<th class='heading'>&nbsp;</th>
 	</tr>
 <?php
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	echo "\t<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo '<a href="client_det.php?client=' . $row['id_client'] . '">';
+	echo "\t<tr><td><a href=\"client_det.php?client=" . $row['id_client'] . '" class="content_link">';
 	$fullname = clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last']);
 	echo highlight_matches($fullname,$find_client_string);
-	echo "</a></td>\n\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo '<a href="edit_client.php?client=' . $row['id_client'] . "\">Edit</a></td>\n\t</tr>\n";
+?></td>
+		<td><a href="edit_client.php?client=<?php echo $row['id_client']; ?>" class="content_link">Edit</a></td>
+	</tr>
+<?php
 }
+?>
+</table>
 
-echo '</table>
-
-<p><a href="edit_client.php">Add new client</a></p>';
+<p><a href="edit_client.php" class="content_link">Add new client</a></p>
+<?php
 
 // Show link to previous page
 if ($list_pos>0) {
