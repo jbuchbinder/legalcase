@@ -1,5 +1,26 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: inc.php,v 1.32 2004/11/16 13:32:31 mlutfy Exp $
+*/
+
 // Test if LCM is installed
 if (!@file_exists('inc/config/inc_connect.php')) {
 	header('Location: install.php');
@@ -17,6 +38,7 @@ include_lcm('inc_filters');
 if (!@file_exists('data/inc_meta_cache.php'))
 	write_metas();
 
+error_reporting(E_ALL);
 
 //
 // Preferences for presentation
@@ -29,13 +51,15 @@ $prefs_mod = false;
 // [ML] This is very important (but dirty hack) to change the language
 // from config_author.php but passing by lcm_cookie.php
 if (isset($_REQUEST['sel_language']))
-	$lang = $sel_language;
+	$lang = $_REQUEST['sel_language'];
 else
 	$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
 
 if (isset($lang) AND $lang <> $author_session['lang']) {
 	// Boomerang via lcm_cookie to set a cookie and do all the dirty work
-	header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" .  urlencode($HTTP_REFERER));
+	// The REQUEST_URI should always be set, and point to the current page
+	// we are being sent to (Ex: from config_author.php to listcases.php).
+	header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" .  $_SERVER['REQUEST_URI']);
 }
 
 if (isset($_REQUEST['sel_theme'])) {
