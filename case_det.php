@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.78 2005/02/03 08:34:59 makaveev Exp $
+	$Id: case_det.php,v 1.79 2005/02/04 08:44:10 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -154,15 +154,15 @@ if ($case > 0) {
 		echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_clients') . '</div>';
 		echo '<p class="normal_text">';
 
-		echo '<table border="0" width="99%">' . "\n";
-		echo '<tr><td align="left" valign="top" width="50%">' . "\n";
+		//echo '<table border="1" width="99%">' . "\n";
+		//echo '<tr><td align="left" valign="top" width="50%">' . "\n";
 
 		//
 		// Show case client(s)
 		//
 		$html_show = false;
 		$html = '<table border="0" width="99%" class="tbl_usr_dtl">' . "\n";
-		$html .= "<tr>\n";
+		//$html .= "<tr>\n";
 		/*
 		$html .= '<th class="heading" colspan="3">' . _T('case_input_clients') . '</th>';
 		$html .= '</tr>' . "\n";
@@ -217,11 +217,11 @@ if ($case > 0) {
 			echo $html;
 
 		if ($add) {
-			echo "<p><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
-			echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a></p>";
+			echo "<br /><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
+			echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a><br /><br />";
 		}
 
-		echo "</td></tr></table>\n\n";
+		//echo "</td></tr></table>\n\n";
 
 	} else die(_T('error_no_such_case'));
 
