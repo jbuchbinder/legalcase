@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.85 2005/04/05 13:14:24 antzi Exp $
+	$Id: edit_fu.php,v 1.86 2005/04/05 14:42:35 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -255,7 +255,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			echo '<label for="box_new_app">' . 'Add a future activity for this follow-up.' . '</label>'; // TRAD
 			echo "</p>\n";
 
-			echo '<div id="new_app" style="visibility: hidden;">';
+			echo '<div id="new_app" style="display: none;">';
 			echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
 			echo "<!-- Start time -->\n\t\t<tr><td>";
 			echo _T('app_input_date_start');
@@ -305,7 +305,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			echo f_err_star('app_title') . _T('app_input_title');
 			echo "</td><td>";
 			echo '<input type="text" ' . $title_onfocus . $dis . ' name="app_title" size="50" value="';
-			echo clean_output($_SESSION['fu_data']['app_title']) . '" />';
+			echo clean_output($_SESSION['fu_data']['app_title']) . '" class="search_form_txt" />';
 			echo "</td></tr>\n";
 
 			echo "<!-- Appointment type -->\n\t\t<tr><td>";
