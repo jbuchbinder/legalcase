@@ -52,7 +52,7 @@ function ajouter_session($auteur, $id_session) {
 		fputs($f, $texte);
  		fclose($f);
 	} else {
-		lcm_log("cannot write in $fichier_session"); // [ML] DEBUG
+		lcm_log("CRITICAL: cannot write in $fichier_session, am I installed?");
 		@header("Location: lcm_test_dirs.php");
 		exit;
 	}

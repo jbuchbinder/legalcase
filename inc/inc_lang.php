@@ -91,8 +91,6 @@ function traduire_chaine($code, $args) {
 		}
 	}
 
-	lcm_log("DEBUG: lcm_lang = " . $lcm_lang);
-
 	// go thgough all the modules until we find our string
 	while (!$text AND (list(,$module) = each ($modules))) {
 		$var = "i18n_".$module."_".$lcm_lang;
