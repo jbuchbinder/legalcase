@@ -316,7 +316,7 @@ if($prefs['screen'] == "wide") {
 				. $author_session['name_middle'] . ' '
 				. $author_session['name_last']
 				. "</a><br /><br />
-			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a>&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
+			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
 			</p>";
 		echo "</div>";
 }
