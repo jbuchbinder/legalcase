@@ -536,3 +536,76 @@ a.set_fnt_sz {
 	font-weight: bold;
 	border: 1px solid #000;
 }
+
+/* ============================================================ */
+/* Calendar/Agenda CSS                                          */
+/* ============================================================ */
+
+ul.list_events {
+	margin: 0;
+	padding: 0;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	float: left;
+	width: 147px;
+}   
+
+ul.list_events li { 
+	float: left;
+	list-style-type: none;
+}   
+
+ul.list_events li a {
+	display: block; 
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	font-size: 10px;
+	text-decoration: none;
+	text-align: center;
+	color: #036;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}   
+
+ul.list_events li a:hover {
+	background: #def;
+	color: #f60;
+}   
+
+ul.list_events li a.week_day { 
+	background: #efefef;
+	color: #333;
+}   
+
+/* [ML] The following are temporary until we find something better */
+div.navigation-calendrier {
+	color: white;
+	font-family: verdana, arial, sans,sans-serif;
+	font-size: 14px;
+	padding: 2px;
+	-moz-border-radius-topleft: 8px;
+	-moz-border-radius-topright: 8px;
+}
+
+div.navigation-calendrier img {
+	border: 0px;
+	vertical-align: middle;
+	margin: 1px;
+}
+
+a.calendrier-annee {
+	background-color: #aaaaaa;
+	padding: 3px;
+	margin: 1px;
+	font-family: verdana, arial, sans,sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: white;
+	-moz-border-radius: 5px;
+}
+a.calendrier-annee:hover {
+	color: black;
+	background-color: white;
+}
+
