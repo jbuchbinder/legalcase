@@ -757,15 +757,15 @@ if (!defined('_INC_META_CACHE')) {
 
 
 // Verify the confirmity of one or many email adresses
-function email_valide($adresse) {
-	$adresses = explode(',', $adresse);
-	if (is_array($adresses)) {
-		while (list(, $adresse) = each($adresses)) {
+function is_valid_email($address) {
+	$many_addresses = explode(',', $address);
+	if (is_array($many_addresses)) {
+		while (list(, $address) = each($many_addresses)) {
 			// clean certain formats
 			// "Marie Toto <Marie@toto.com>"
-			$adresse = eregi_replace("^[^<>\"]*<([^<>\"]+)>$", "\\1", $adresse);
+			$address = eregi_replace("^[^<>\"]*<([^<>\"]+)>$", "\\1", $address);
 			// RFC 822
-			if (!eregi('^[^()<>@,;:\\"/[:space:]]+(@([-_0-9a-z]+\.)*[-_0-9a-z]+)?$', trim($adresse)))
+			if (!eregi('^[^()<>@,;:\\"/[:space:]]+(@([-_0-9a-z]+\.)*[-_0-9a-z]+)?$', trim($address)))
 				return false;
 		}
 		return true;
