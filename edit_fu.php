@@ -18,12 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.50 2005/02/04 13:41:59 antzi Exp $
+	$Id: edit_fu.php,v 1.51 2005/02/04 13:45:09 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
+include_lcm('inc_keywords_default');
 
 // Initiate session
 // [ML] now in inc_auth session_start();
