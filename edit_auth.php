@@ -31,7 +31,8 @@ if ($case>0) {
 
 	// Process the output of the query
 	while ($row = lcm_fetch_array($result)) {
-		echo '		<tr><td>' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "</td>\n";
+		echo '		<tr><td align="left">';
+		echo $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "</td>\n";
 		echo '			<td align="center">';
 		echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_read]" . '" value="1"';
 		if ($row['ac_read']) echo ' checked';
