@@ -1,8 +1,29 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: client_det.php,v 1.6 2004/11/23 12:53:03 mlutfy Exp $
+*/
+
 include('inc/inc.php');
 include('inc/inc_acc.php');
-lcm_page_start("Client details");
+
 
 if ($client>0) {
 	// Prepare query
@@ -23,21 +44,36 @@ if ($client>0) {
 		}
 		$edit = allowed($client,'w');
 	*/
+
 		$edit = true;
 
-		// Show client details
-		echo '<p class="normal_text">Name: ' . $row['name_first'] . ' ' . $row['name_middle'] . ' ' . $row['name_last'] . "<br>\n";
-		echo 'Client ID: ' . $row['id_client'] . "<br>\n";
-		echo 'Citizen number: ' . $row['citizen_number'] . "<br>\n";
-		echo 'Address: ' . $row['address'] . "<br>\n";
-		echo 'Civil status: ' . $row['civil_status'] . "<br>\n";
-		echo 'Income: ' . $row['income'] . "<br>\n";
-		echo 'Creation date: ' . $row['date_creation'] . "<br>\n";
-		echo 'Last update date: ' . $row['date_update'] . "<br>\n";
-		if ($edit)
-			echo ' [<a href="edit_client.php?client=' . $row['id_client'] . '" class="content_link"><strong>Edit client information</strong></a>]';
+		if ($row['gender'] == 'male' || $row['gender'] == 'female')
+			$gender = _T('person_gender_' . $row['gender']);
+		else
+			$gender = _T('info_not_available');
 
-		?></p><h3>Organisation(s) represented by this client:</h3>
+
+		// [ML] TODO: Show as a list with UL + LI without bullets (accessibility)
+
+		// Show client details
+		lcm_page_start("Client: " . $row['name_first'] . ' ' .  $row['name_middle'] . ' ' . $row['name_last']);
+		echo '<p class="normal_text">';
+		echo 'Client ID: ' . $row['id_client'] . "<br/>\n";
+		echo 'Gender: ' . $gender . "<br/>\n";
+		echo 'Citizen number: ' . $row['citizen_number'] . "<br/>\n";
+		echo 'Address: ' . $row['address'] . "<br/>\n";
+		echo 'Civil status: ' . $row['civil_status'] . "<br/>\n";
+		echo 'Income: ' . $row['income'] . "<br/>\n";
+		echo 'Creation date: ' . format_date($row['date_creation']) . "<br/>\n";
+		// [ML] echo 'Last update date: ' . $row['date_update'] . "<br/>\n";
+		echo "</p>\n";
+
+		if ($edit)
+			echo '<p class="normal_text">[<a href="edit_client.php?client=' . $row['id_client'] .  '" class="content_link"><strong>Edit client information</strong></a>]</p>' . "\n";
+
+		?>
+		
+		<h3>Organisation(s) represented by this client:</h3>
 		<table border="0" class="tbl_usr_dtl">
 		    <tr>
 			<th class="heading">Organisation name</th>
