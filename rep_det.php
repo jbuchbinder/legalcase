@@ -63,12 +63,12 @@ if ($rep > 0) {
 			FROM lcm_rep_cols,lcm_fields
 			WHERE (id_report=$rep
 				AND lcm_rep_cols.id_field=lcm_fields.id_field)
-			ORDER BY 'order'";
+			ORDER BY 'col_order'";
 		// Do the query
 		$cols = lcm_query($q);
 		// Show the results
 		while ($column = lcm_fetch_array($cols)) {
-			echo '<tr><td>' . $column['order'] . "</td>\n";
+			echo '<tr><td>' . $column['col_order'] . "</td>\n";
 			echo '<td>';
 			if (true) echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
 			echo clean_output($column['header']);
@@ -92,7 +92,7 @@ if ($rep > 0) {
 			}
 			echo "</td>\n";
 			echo "</tr>\n";
-			$last_order = $column['order']+1;
+			$last_order = $column['col_order']+1;
 		}
 		echo "\t\t</table><br>\n";
 
@@ -106,7 +106,7 @@ if ($rep > 0) {
 
 			// Get column order
 			echo "\t\t<tr><th class='heading'>Position</th><td>\n";
-			echo "\t\t\t<select name='order'>\n";
+			echo "\t\t\t<select name='col_order'>\n";
 			$i = 1;
 			while ($i<$last_order) {
 				echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n";
@@ -114,7 +114,7 @@ if ($rep > 0) {
 			}
 			echo "\t\t\t\t<option selected label='Add at the end' value='$i'>Add at the end</option>\n";
 			echo "\t\t\t</select>\n";
-//			echo "<input type='text' name='order' value='$last_order' size='2' />";
+//			echo "<input type='text' name='col_order' value='$last_order' size='2' />";
 			echo "\t\t</td></tr>\n";
 
 			// Get column header

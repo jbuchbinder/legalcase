@@ -32,14 +32,14 @@ $sort = clean_input($_POST['sort']);
 if (($rep>0) && ($field)) {
 	// Change order of the columns to be left behind the new one
 	$q = "UPDATE lcm_rep_cols
-			SET lcm_rep_cols.order=lcm_rep_cols.order+1
+			SET lcm_rep_cols.col_order=lcm_rep_cols.col_order+1
 			WHERE (id_report=$rep
-				AND lcm_rep_cols.order>=$order)";
+				AND lcm_rep_cols.col_order>=$order)";
 	$result = lcm_query($q);
 
 	// Insert new column info
 	$q = "INSERT INTO lcm_rep_cols
-			SET id_report=$rep,id_field=$field,lcm_rep_cols.order=$order,header='$header',sort='$sort'";
+			SET id_report=$rep,id_field=$field,lcm_rep_cols.col_order=$order,header='$header',sort='$sort'";
 	$result = lcm_query($q);
 }
 
