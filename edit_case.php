@@ -29,6 +29,9 @@ if (empty($errors)) {
 	// Find out if this is existing or new case
 	$existing = ($case > 0);
 
+	// Set author ID by session data
+	$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
+
 	if ($existing) {
 		// Check access rights
 		if (!allowed($case,'e')) die(_T('error_no_edit_permission'));
@@ -49,7 +52,6 @@ if (empty($errors)) {
 
 	} else {
 		// Set default values for the new case
-		$case_data['id_author'] = $GLOBALS['author_session']['id_author'];
 		$case_data['date_creation'] = date(_T('date_format')); // was: date('Y-m-d H:i:s');
 		$case_data['public'] = read_meta('case_default_read');
 		$case_data['pub_write'] = read_meta('case_default_write');
@@ -64,17 +66,19 @@ if ($existing) lcm_page_start(_T('edit_case_details'));
 else lcm_page_start(_T('new_case'));
 
 	echo "\n<form action=\"upd_case.php\" method=\"POST\">
-		<table class=\"tbl_usr_dtl\">
+	<table class=\"tbl_usr_dtl\">
+		<input type=\"hidden\" name=\"id_author\" value=\"" . $case_data['id_author'] . "\">
 			<!-- caption>" . _T('case_details') . "</caption -->
 			<!-- tr><th>" . _T('parameter') . "</th><th>" . _T('value') .  "</th></tr -->\n";
 	if ($case_data['id_case']) {
-		echo "\t<tr><td>" . _T('case_id') . ":</td><td>" . $case_data['id_case'] . "
-			<input type=\"hidden\" name=\"id_case\" value=\"" .  $case_data['id_case'] . "\"></td></tr>\n";
+		echo "\t<tr><td>" . _T('case_id') . ":</td><td>" . $case_data['id_case']
+			. "<input type=\"hidden\" name=\"id_case\" value=\"" .  $case_data['id_case'] . "\"></td></tr>\n";
 	}
 
+//	echo "
+//		<tr><td>" . _T('author_id') . ":</td><td>" . $case_data['id_author'] . "
+//			<input type=\"hidden\" name=\"id_author\" value=\"" . $case_data['id_author'] . "\"></td></tr>";
 	echo "
-		<tr><td>" . _T('author_id') . ":</td><td>" . $case_data['id_author'] . "
-			<input type=\"hidden\" name=\"id_author\" value=\"" . $case_data['id_author'] . "\"></td></tr>
 		<tr><td>" . _T('case_title') . ":</td>
 			<td><input name=\"title\" value=\"" . clean_output($case_data['title']) . "\" class=\"search_form_txt\">";
 	echo f_err('title',$errors) . "</td></tr>
