@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.57 2005/02/04 21:45:16 antzi Exp $
+	$Id: edit_fu.php,v 1.58 2005/02/08 17:34:47 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -40,13 +40,13 @@ if (empty($_SESSION['errors'])) {
 	// [ML] FIXME: referer may be null, should default to fu_det.php?fu=...
 	// [AG] Since id_followup of new follow-ups is not known at this point,
 	// default redirection to fu_det.php is done in upd_fu.php
-    $fu_data = array('ref_edit_fu' => $GLOBALS['HTTP_REFERER']);
+	$_SESSION['fu_data'] = array('ref_edit_fu' => $GLOBALS['HTTP_REFERER']);
 
 	if (isset($_GET['followup'])) {
 		$_SESSION['followup'] = intval($_GET['followup']);
 
 		// Register followup as session variable
-//	    if (!session_is_registered("followup"))
+//		if (!session_is_registered("followup"))
 //			session_register("followup");
 
 		// Fetch the details on the specified follow-up
@@ -58,12 +58,12 @@ if (empty($_SESSION['errors'])) {
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach($row as $key=>$value) {
-				$fu_data[$key] = $value;
+				$_SESSION['fu_data'][$key] = $value;
 			}
 		} else die("There's no such follow-up!");
 
 		// Set the case ID, to which this followup belongs
-		$case = $fu_data['id_case'];
+		$case = $_SESSION['fu_data']['id_case'];
 	} else {
 		unset($_SESSION['followup']);
 		if ($_GET['case'] > 0) {
@@ -74,16 +74,16 @@ if (empty($_SESSION['errors'])) {
 				die("You don't have permission to add information to this case!");
 
 			// Setup default values
-			$fu_data['id_case'] = $case; // Link to the case
-			$fu_data['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
-			$fu_data['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+			$_SESSION['fu_data']['id_case'] = $case; // Link to the case
+			$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+			$_SESSION['fu_data']['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 		} else {
 			die("Add followup to which case?");
 		}
 	}
 
 	// Check for access rights
-	$edit = allowed($fu_data['id_case'],'e');
+	$edit = allowed($_SESSION['fu_data']['id_case'],'e');
 	if (!($admin || $edit))
 		die("You don't have permission to edit this case's information!");
 
@@ -176,26 +176,26 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		<tr><td><?php echo _T('fu_input_date_start'); ?></td>
 			<td><?php echo _T('calendar_info_date');  
 				$name = (($admin || ($edit && $modify)) ? 'start' : '');
-				echo get_date_inputs($name, $fu_data['date_start'], false);
+				echo get_date_inputs($name, $_SESSION['fu_data']['date_start'], false);
 				echo ' ' . _T('calendar_info_time') . ' ';
-				echo get_time_inputs($name, $fu_data['date_start']);
+				echo get_time_inputs($name, $_SESSION['fu_data']['date_start']);
 				echo f_err_star('date_start',$errors); ?>
 			</td>
 		</tr>
 		<tr><td><?php echo (($prefs['time_intervals'] == 'absolute') ? _T('fu_input_date_end') : _T('fu_input_time_length')); ?></td>
 			<td><?php 
 				if ($prefs['time_intervals'] == 'absolute') {
-					$name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
+					$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
 					echo _T('calendar_info_date'); 
-					echo get_date_inputs($name, $fu_data['date_end']);
+					echo get_date_inputs($name, $_SESSION['fu_data']['date_end']);
 					echo ' ';
 					echo _T('calendar_info_time') . ' ';
-					echo get_time_inputs($name, $fu_data['date_end']);
+					echo get_time_inputs($name, $_SESSION['fu_data']['date_end']);
 					echo f_err_star('date_end',$errors);
 				} else {
-					$name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
-					$interval = ( ($fu_data['date_end']!='0000-00-00 00:00:00') ?
-							strtotime($fu_data['date_end']) - strtotime($fu_data['date_start']) : 0);
+					$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
+					$interval = ( ($_SESSION['fu_data']['date_end']!='0000-00-00 00:00:00') ?
+							strtotime($_SESSION['fu_data']['date_end']) - strtotime($_SESSION['fu_data']['date_start']) : 0);
 					echo _T('calendar_info_time') . ' ';
 					echo get_time_interval_inputs($name, $interval);
 					echo f_err_star('date_end',$errors);
@@ -208,8 +208,8 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 			global $system_kwg;
 
-			if ($fu_data['type'])
-				$default_fu = $fu_data['type'];
+			if ($_SESSION['fu_data']['type'])
+				$default_fu = $_SESSION['fu_data']['type'];
 			else
 				$default_fu = $system_kwg['followups']['suggest'];
 
@@ -222,12 +222,12 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			</select></td></tr>
 		<tr><td valign="top"><?php echo _T('fu_input_description'); ?></td>
 			<td><textarea <?php echo $dis; ?> name="description" rows="15" cols="40" class="frm_tarea"><?php
-			echo clean_output($fu_data['description']) . "</textarea></td></tr>\n";
+			echo clean_output($_SESSION['fu_data']['description']) . "</textarea></td></tr>\n";
 // Sum billed field
 			if ($fu_sum_billed == "yes") {
 ?>		<tr><td><?php echo _T('fu_input_sum_billed'); ?></td>
 			<td><input <?php echo $dis; ?> name="sumbilled" value="<?php echo
-			clean_output($fu_data['sumbilled']); ?>" class="search_form_txt" size='10' />
+			clean_output($_SESSION['fu_data']['sumbilled']); ?>" class="search_form_txt" size='10' />
 			<?php
 				// [ML] If we do this we may as well make a function
 				// out of it, but not sure where to place it :-)
@@ -260,9 +260,9 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		}
 	?>
 
-	<input type="hidden" name="id_followup" value="<?php echo $fu_data['id_followup']; ?>">
-	<input type="hidden" name="id_case" value="<?php echo $fu_data['id_case']; ?>">
-	<input type="hidden" name="ref_edit_fu" value="<?php echo $fu_data['ref_edit_fu']; ?>">
+	<input type="hidden" name="id_followup" value="<?php echo $_SESSION['fu_data']['id_followup']; ?>">
+	<input type="hidden" name="id_case" value="<?php echo $_SESSION['fu_data']['id_case']; ?>">
+	<input type="hidden" name="ref_edit_fu" value="<?php echo $_SESSION['fu_data']['ref_edit_fu']; ?>">
 </form>
 
 <?php
