@@ -79,15 +79,6 @@ function show_author_form() {
               <td align="left" valign="top"><input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
                 &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" />
 				(not working yet)
-                <!-- [ML:should we remove?] br /> <br />
-                <select name="sel_fnt" class="sel_frm" id="sel_fnt">
-                  <option value="verdana" selected="selected">Verdana</option>
-                  <option value="arial">Arial</option>
-                  <option value="tahoma">Tahoma</option>
-                  <option value="georgia">Georgia</option>
-                  <option value="times_new_roman">Times New Roman</option>
-                  <option value="Courier">Courier</option>
-                </select -->
 		  	  </td>
             </tr>
             <tr>
@@ -209,7 +200,8 @@ function apply_author_ui_change() {
 	// Change the user's language (done in inc.php, we only log the result)
 	//
 
-	if ($sel_language == $author_session['lang'] && $sel_language <> $old_language) {
+	// if ($sel_language == $author_session['lang'] && $sel_language <> $old_language) {
+	if ($sel_language <> $old_language) {
 		array_push($log, "Language set to " .
 			translate_language_name($sel_language) . ", was " .
 			translate_language_name($old_language) . ".");
