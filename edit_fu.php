@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.48 2005/01/25 22:52:20 antzi Exp $
+	$Id: edit_fu.php,v 1.49 2005/02/04 13:15:15 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -184,8 +184,11 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		<tr><td><?php echo _T('fu_input_date_end'); ?></td>
 			<td><?php echo _T('calendar_info_date'); 
 				$name = (($admin || ($edit && ($fu_data['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
-				echo get_date_inputs($name, $fu_data['date_end']);
-				echo ' ' . _T('calendar_info_time') . ' ';
+				if ($prefs['time_intervals'] == 'absolute') {
+					echo get_date_inputs($name, $fu_data['date_end']);
+					echo ' ';
+				}
+				echo _T('calendar_info_time') . ' ';
 				echo get_time_inputs($name, $fu_data['date_end']);
 				echo f_err_star('date_end',$errors); ?>
 			</td>
