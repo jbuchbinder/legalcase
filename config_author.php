@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.37 2005/01/10 16:55:46 mlutfy Exp $
+	$Id: config_author.php,v 1.38 2005/01/11 13:27:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -118,93 +118,6 @@ function show_author_form() {
 	</table>
 </form>
 
-		  <!-- [ML] I think that we can remove this for good -->
-		  <!-- br />
-
-<form name="upd_user_profile" method="post" action="config_author.php">
-	<input type="hidden" name="author_password_modified" value="yes"/>
-	<input type="hidden" name="referer" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>"/>
-          <table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
-            <tr>
-              <td colspan="2" align="center" valign="middle"
-			  class="heading"><h4><?php echo _T('authorconf_subtitle_password'); ?></h4></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top"><?php echo _T('authorconf_input_password_current'); ?></td>
-              <td align="left" valign="top"><input name="usr_old_passwd" type="password" class="search_form_txt" id="usr_old_passwd" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top"><?php echo _T('authorconf_input_password_new'); ?></td>
-              <td align="left" valign="top"><input name="usr_new_passwd" type="password" class="search_form_txt" id="usr_new_passwd" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top"><?php echo _T('authorconf_input_password_confirm'); ?></td>
-              <td align="left" valign="top"><input name="usr_retype_passwd" type="password" class="search_form_txt" id="usr_retype_passwd" size="35" /></td>
-            </tr>
-            <tr> 
-              <td colspan="2" align="center" valign="middle"> 
-                <input name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_change_password'); ?>" /></td>
-            </tr>
-			</table>
-</form -->
-
-
-            <!-- tr>
-              <td colspan="2" align="center" valign="middle" class="heading"><h4>Change personal data</h4></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Title:</td>
-              <td align="left" valign="top"><select name="usr_title" class="sel_frm" id="usr_title">
-                  <option value="Mr." selected="selected">Mr.</option>
-                  <option value="Mrs.">Mrs.</option>
-                  <option value="Miss">Miss</option>
-                  <option value="Dr.">Dr.</option>
-                  <option value="Prof.">Prof.</option>
-                </select></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">First name:</td>
-              <td align="left" valign="top"><input name="usr_fname" type="text" class="search_form_txt" id="usr_fname" size="35" value="<?php echo clean_output($usr['name_first']); ?>"/></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Middle name:</td>
-              <td align="left" valign="top"><input name="usr_mname" type="text" class="search_form_txt" id="usr_mname" size="35"  value="<?php echo clean_output($usr['name_middle']); ?>"/></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Last name:</td>
-              <td align="left" valign="top"><input name="usr_lname" type="text" class="search_form_txt" id="usr_lname" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Phone #:</td>
-              <td align="left" valign="top"><input name="usr_phonenum" type="text" class="search_form_txt" id="usr_phonenum" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">E-mail:</td>
-              <td align="left" valign="top"><input name="usr_email" type="text" class="search_form_txt" id="usr_email" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">ICQ:</td>
-              <td align="left" valign="top"><input name="usr_icq" type="text" class="search_form_txt" id="usr_icq" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Jabber:</td>
-              <td align="left" valign="top"><input name="usr_jabber" type="text" class="search_form_txt" id="usr_jabber" size="35" /></td>
-            </tr>
-            <tr>
-              <td align="right" valign="top">Address:</td>
-              <td align="left" valign="top"><textarea name="usr_address" cols="50" rows="5" wrap="VIRTUAL" class="frm_tarea" id="usr_address"></textarea></td>
-            </tr>
-            <tr>
-              <td colspan="2" align="center" valign="middle" class="separate">&nbsp;</td>
-            </tr>
-            <tr>
-              <td colspan="2" align="right" valign="top" class="separate">&nbsp;</td>
-            </tr>
-            <tr>
-              <td colspan="2" align="center" valign="middle">
-                <input name="submit" type="submit" class="search_form_btn" id="submit" value="Save changes" /></td>
-            </tr>
-          </table -->
 <?php
 
 }
