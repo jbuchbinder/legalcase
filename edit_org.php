@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.16 2005/01/19 09:14:40 mlutfy Exp $
+	$Id: edit_org.php,v 1.17 2005/01/21 16:41:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -61,17 +61,18 @@ if (empty($errors)) {
 	}
 }
 
-lcm_page_start("Edit organisation details");
+if ($org) 
+	lcm_page_start("Edit organisation details");
+else
+	lcm_page_start("New organisation");
 ?>
-<!--h2>Edit organisation information:</h2-->
+
 <form action="upd_org.php" method="POST">
-	<!--h3>Organisation details</h3-->
 	<table class="tbl_usr_dtl" width="99%">
-		<!--tr><th class="heading">Parameter</th><th class="heading">Value</th></tr-->
 		<!--tr><td>Organisation ID:</td>
 			<td><?php echo $org_data['id_org']; ?> -->
 			<input type="hidden" name="id_org" value="<?php echo $org_data['id_org']; ?>"><!--/td></tr-->
-		<tr><td>Name:</td>
+		<tr><td><?php echo _T('org_input_name'); ?></td>
 			<td><input name="name" value="<?php echo clean_output($org_data['name']); ?>" class="search_form_txt"></td></tr>
 		<!--
 		<tr><td>Created on:</td>
@@ -85,9 +86,14 @@ lcm_page_start("Edit organisation details");
 			<td><textarea name="address" cols="50" rows="3" class="frm_tarea"><?php
 			echo clean_output($org_data['address']); ?></textarea></td></tr>
 	</table>
-	<button name="submit" type="submit" value="submit" class="simple_form_btn">Save</button>
-	<button name="reset" type="reset" class="simple_form_btn">Reset</button>
-	<input type="hidden" name="ref_edit_org" value="<?php echo $HTTP_REFERER ?>">
+
+<?php
+	echo '<input type="hidden" name="ref_edit_org" value="' . $GLOBALS['HTTP_REFERER'] . '">' . "\n";
+	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . '</button>' . "\n";
+	if ($org && $prefs['mode'] == 'extended')
+		echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>' . "\n";
+?>
+
 </form>
 
 <?php
