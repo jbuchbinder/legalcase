@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.21 2005/01/17 13:58:22 mlutfy Exp $
+	$Id: inc_auth.php,v 1.22 2005/01/21 10:55:29 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -129,16 +129,16 @@ function auth() {
 		// Default values for some possibly unset preferences
 		//
 
-		if (intval($prefs['page_rows']) < 1) 
+		if (! isset($prefs['page_rows']) || intval($prefs['page_rows']) < 1) 
 			$prefs['page_rows'] = 15;
 
-		if (! $prefs['theme'])
+		if (! isset($prefs['theme']) || ! $prefs['theme'])
 			$prefs['theme'] = 'green';
 
-		if (! $prefs['screen'])
+		if (! isset($prefs['screen']) || ! $prefs['screen'])
 			$prefs['screen'] = 'narrow';
 
-		if (! $prefs['font_size'])
+		if (! isset($prefs['font_size']) || ! $prefs['font_size'])
 			$prefs['font_size'] = 'medium_font';
 	}
 	else {
