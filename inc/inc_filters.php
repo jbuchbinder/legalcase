@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.47 2005/03/18 04:57:15 antzi Exp $
+	$Id: inc_filters.php,v 1.48 2005/03/18 10:01:38 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -214,6 +214,19 @@ function get_person_name($item) {
 	}
 
 	return njoin(array($item['name_first'], $item['name_middle'], $item['name_last']));
+}
+
+function get_person_initials($item) {
+	if (! is_array($item)) {
+		lcm_debug("get_person_name: parameter is not an array.");
+		return '';
+	}
+
+	$ret  = substr($item['name_first'],0,1);
+	$ret .= substr($item['name_middle'],0,1);
+	$ret .= substr($item['name_last'],0,1);
+
+	return $ret;
 }
 
 // Dirty hack: utf8_decode is mainly used for strlen(),
