@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.11 2005/02/08 11:10:36 antzi Exp $
+	$Id: edit_rep.php,v 1.12 2005/02/09 09:04:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,10 +33,6 @@ if (empty($_SESSION['errors'])) {
 	// Set the returning page
 	if (isset($ref)) $_SESSION['rep_data']['ref_edit_rep'] = $ref;
 	else $_SESSION['rep_data']['ref_edit_rep'] = $GLOBALS['HTTP_REFERER'];
-
-	// Register case type variable for the session
-//	if (!session_is_registered("existing"))
-//		session_register("existing");
 
 	// Read input values
 	$rep = intval($_GET['rep']);
@@ -53,10 +49,6 @@ if (empty($_SESSION['errors'])) {
 			WHERE id_report=$rep";
 
 		$result = lcm_query($q);
-
-		// Register report ID as session variable
-//		if (!session_is_registered("rep"))
-//			session_register("rep");
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach ($row as $key => $value) {
