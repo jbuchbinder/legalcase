@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.13 2005/01/10 12:11:38 mlutfy Exp $
+	$Id: edit_author.php,v 1.14 2005/01/10 12:51:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -87,20 +87,27 @@ else lcm_page_start("New author");
 
 ?>
 <form name="edit_author" method="post" action="upd_author.php">
+	<input name="id_author" type="hidden" id="id_author" value="<?php echo $usr['id_author']; ?>"/>
+	<input name="email_exists" type="hidden" id="email_exists" value="<?php echo $usr['email_exists']; ?>"/>
+	<input name="ref_edit_author" type="hidden" id="ref_edit_author" value="<?php echo $usr['ref_edit_author']; ?>"/>
+
 	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
-		<input name="id_author" type="hidden" id="id_author" value="<?php echo $usr['id_author']; ?>"/>
-		<input name="email_exists" type="hidden" id="email_exists" value="<?php echo $usr['email_exists']; ?>"/>
-		<input name="ref_edit_author" type="hidden" id="ref_edit_author" value="<?php echo $usr['ref_edit_author']; ?>"/>
-		<tr><td align="right" valign="top">Username:</td>
-			<td align="left" valign="top"><input name="username" type="text" class="search_form_txt" id="username" size="35" value="<?php echo clean_output($usr['username']); ?>"/></td>
+		<?php
+			//
+			// PERSONAL INFO
+			//
+		?>
+		<tr>
+			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_personalinfo'); ?></h4></td>
 		</tr>
-		<tr><td align="right" valign="top">First name:</td>
+
+		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_namefirst'); ?></td>
 			<td align="left" valign="top"><input name="name_first" type="text" class="search_form_txt" id="name_first" size="35" value="<?php echo clean_output($usr['name_first']); ?>"/></td>
 		</tr>
-		<tr><td align="right" valign="top">Middle name:</td>
+		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_namemiddle'); ?></td>
 			<td align="left" valign="top"><input name="name_middle" type="text" class="search_form_txt" id="name_middle" size="35" value="<?php echo clean_output($usr['name_middle']); ?>"/></td>
 		</tr>
-		<tr><td align="right" valign="top">Last name:</td>
+		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_namelast'); ?></td>
 			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($usr['name_last']); ?>"/></td>
 		</tr>
 <?php
@@ -151,7 +158,6 @@ else lcm_page_start("New author");
 		$cpt++;
 	}
 ?>
-
 		<tr>
 			<td align="right" valign="top">Other contact:<br />(optionnal)</td>
 			<td align="left" valign="top">
@@ -181,6 +187,47 @@ else lcm_page_start("New author");
 				</div>
 			</td>
 		</tr>
+		<tr><td colspan="2" align="center" valign="middle">
+			<input name="submit" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('button_validate') ?>" /></td>
+		</tr>
+	</table>
+
+	<br />
+
+	<?php
+		//
+		// LOGIN INFO
+		//
+	?>
+	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
+		<tr>
+			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authoredit_subtitle_connectionidentifiers'); ?></h4></td>
+		</tr>
+		<tr><td align="right" valign="top"><?php echo _T('authoredit_input_login'); ?></td>
+			<td align="left" valign="top"><input name="username" type="text" class="search_form_txt" id="username" size="35" value="<?php echo clean_output($usr['username']); ?>"/></td>
+		</tr>
+
+		<?php
+			global $author_session;
+
+			if ($usr['id_author'] && $author_session['status'] != 'admin') {
+				echo '
+		<tr>
+			<td align="right" valign="top">' . _T('authorconf_input_password_current') . '</td>
+			<td align="left" valign="top"><input name="usr_old_passwd" type="password" class="search_form_txt" id="usr_old_passwd" size="35" /></td>
+		</tr>' . "\n";
+			}
+		?>
+		
+		<tr>
+			<td align="right" valign="top"><?php echo _T('authorconf_input_password_new'); ?></td>
+			<td align="left" valign="top"><input name="usr_new_passwd" type="password" class="search_form_txt" id="usr_new_passwd" size="35" /></td>
+		</tr>
+		<tr>
+			<td align="right" valign="top"><?php echo _T('authorconf_input_password_confirm'); ?></td>
+			<td align="left" valign="top"><input name="usr_retype_passwd" type="password" class="search_form_txt" id="usr_retype_passwd" size="35" /></td>
+		</tr>
+
 		<tr><td align="right" valign="top">Status:</td>
 			<td align="left" valign="top"><select name="status" class="sel_frm" id="status">
 <?php
