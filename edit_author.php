@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.28 2005/02/08 19:38:08 antzi Exp $
+	$Id: edit_author.php,v 1.29 2005/02/10 09:13:07 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -216,7 +216,7 @@ echo show_all_errors($_SESSION['errors']);
 				<?php
 					global $system_kwg;
 
-					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '">' . "\n";
+					echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $cpt_new . '" class="sel_frm">' . "\n";
 					echo "<option value=''>" . "- select contact type -" . "</option>\n";
 
 					foreach ($system_kwg['contacts']['keywords'] as $contact) {
