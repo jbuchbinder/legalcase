@@ -593,11 +593,19 @@ ul.list_events li a.today {
 	font-weight: bold;
 }
 
+/* Selected date */
+
+ul.list_events li a.sel_day {
+	background: #def;
+	color: #369;
+	font-weight: bold;
+}
+
 /* Shows days with appointments */
 
 ul.list_events li a.app_day { 
 	background: #efefef;
-	color: #333;
+	color: #f60;
 }
 
 /* Used in the navigation bar at the top of the calendar */
