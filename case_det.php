@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.127 2005/04/04 06:12:45 mlutfy Exp $
+	$Id: case_det.php,v 1.128 2005/04/04 12:09:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -353,6 +353,31 @@ if ($case > 0) {
 					. "<div style='float: right'>" . lcm_help('clients_followups') . "</div>"
 					. _T('case_subtitle_followups') 
 					. '</div>';
+
+				// By default, show from "case creation date" to NOW().
+				$link = new Link();
+				$link->delVar('date_start_day');
+				$link->delVar('date_start_month');
+				$link->delVar('date_start_year');
+				$link->delVar('date_end_day');
+				$link->delVar('date_end_month');
+				$link->delVar('date_end_year');
+				echo $link->getForm();
+
+				echo "<p class=\"normal_text\">\n";
+				$date_end = get_datetime_from_array($_REQUEST, 'date_end', date('Y-m-d'));
+				$date_start = get_datetime_from_array($_REQUEST, 'date_start', $row['date_creation']);
+
+				echo _Ti('time_input_date_start');
+				echo get_date_inputs('date_start', $date_start);
+
+				echo _Ti('time_input_date_end');
+				echo get_date_inputs('date_end', $date_end);
+				echo ' <button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+				echo "</p>\n";
+				echo "</form>\n";
+
+
 				echo "<p class=\"normal_text\">\n";
 
 				$headers[0]['title'] = _Th('time_input_date_start');
@@ -369,16 +394,19 @@ if ($case > 0) {
 			
 				show_list_start($headers);
 			
-				$q = "SELECT	lcm_followup.id_followup,
-						lcm_followup.date_start,
-						lcm_followup.date_end,
-						lcm_followup.type,
-						lcm_followup.description,
-						lcm_author.name_first,
-						lcm_author.name_middle,
-						lcm_author.name_last
-					FROM lcm_followup, lcm_author
-					WHERE id_case=$case AND lcm_followup.id_author=lcm_author.id_author";
+				$q = "SELECT fu.id_followup,
+						fu.date_start,
+						fu.date_end,
+						fu.type,
+						fu.description,
+						a.name_first,
+						a.name_middle,
+						a.name_last
+					FROM lcm_followup as fu, lcm_author as a
+					WHERE id_case = $case
+					  AND fu.id_author = a.id_author
+					  AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "')
+					  AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
 			
 				// Add ordering
 				if ($fu_order) $q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
@@ -445,11 +473,6 @@ if ($case > 0) {
 					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
 					echo '</td>';
 			
-					/* [ML]
-					if ($edit)
-						echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '" class="content_link">' . _T('Edit') . '</a></td>';
-					*/
-
 					echo "</tr>\n";
 				}
 			
@@ -460,7 +483,10 @@ if ($case > 0) {
 				if ($add)
 					echo "<a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a>&nbsp;\n";
 
+				/*
 				echo '<a href="case_activity.php?case=' . $case . '" class="create_new_lnk">' . 'Printable list of activities' . "</a>\n";
+				*/
+
 				echo "<br /><br />\n";
 			
 				echo "</p></fieldset>";
