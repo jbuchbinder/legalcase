@@ -165,17 +165,6 @@ echo "</ul>\n";
 		<tr><td>Type:</td>
 			<td><select name="type" size="1">
 			<?php
-				// [ML] <option selected>
-				// echo clean_output($fu_data['type']);
-				// </option>
-			?>
-			<?php
-			/* [ML] Replacing the code
-			foreach($types as $item) {
-				if ($item != $fu_data['type']) {
-					echo "<option>$item</option>\n";
-				}
-			}  */
 			
 			global $system_kwg;
 
@@ -186,7 +175,7 @@ echo "</ul>\n";
 
 			foreach($system_kwg['followups']['keywords'] as $kw) {
 				$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
-				echo "<option value='" . $kw['name'] . "'" . "$sel>" . $kw['title'] . "</option>\n";
+				echo "<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
 			}
 			
 			?>
