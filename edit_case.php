@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.59 2005/03/13 16:35:31 mlutfy Exp $
+	$Id: edit_case.php,v 1.60 2005/03/13 17:13:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -153,13 +153,13 @@ if ($_SESSION['case_data']['id_case']) {
 //			<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\"></td></tr>";
 	echo "
 		<tr><td>" . f_err_star('title', $_SESSION['errors']) . _T('case_input_title') . "</td>
-			<td><input name=\"title\" value=\"" . clean_output($_SESSION['case_data']['title']) . "\" class=\"search_form_txt\">";
+			<td><input size=\"35\" name=\"title\" value=\"" . clean_output($_SESSION['case_data']['title']) . "\" class=\"search_form_txt\">";
 	echo "</td></tr>\n";
 	
 	// Court archive ID
 	if ($case_court_archive == 'yes')
 		echo "		<tr><td>" . _T('case_input_court_archive') . "</td>
-			<td><input name=\"id_court_archive\" value=\"" . clean_output($_SESSION['case_data']['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>\n";
+			<td><input size=\"35\" name=\"id_court_archive\" value=\"" . clean_output($_SESSION['case_data']['id_court_archive']) . "\" class=\"search_form_txt\"></td></tr>\n";
 
 // [AG] Assignment date is set only when adding user to the case
 //		<tr><td>" . _T('case_input_date_assignment') . "</td>
@@ -167,12 +167,12 @@ if ($_SESSION['case_data']['id_case']) {
 	
 	// Legal reason
 	echo "		<tr><td>" . _T('case_input_legal_reason') . "</td>
-			<td><input name=\"legal_reason\" value=\"" . clean_output($_SESSION['case_data']['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>\n";
+			<td><input size=\"35\" name=\"legal_reason\" value=\"" . clean_output($_SESSION['case_data']['legal_reason']) . "\" class=\"search_form_txt\"></td></tr>\n";
 
 	// Alledged crime
 	if ($case_alledged_crime == 'yes')
 		echo "		<tr><td>" . _T('case_input_alledged_crime') . "</td>
-			<td><input name=\"alledged_crime\" value=\"" .  clean_output($_SESSION['case_data']['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>\n";
+			<td><input size=\"35\" name=\"alledged_crime\" value=\"" .  clean_output($_SESSION['case_data']['alledged_crime']) . "\" class=\"search_form_txt\"></td></tr>\n";
 
 	// Case status
 	echo "		<tr><td>" . _T('case_input_status') . "</td>
@@ -200,29 +200,32 @@ if ($_SESSION['case_data']['id_case']) {
 
 	// Public access rights
 	if ($_SESSION['case_data']['admin'] || !read_meta('case_read_always') || !read_meta('case_write_always')) {
-		echo "\t<tr><td>" . _T('public') . "</td>
-			<td>
-				<table>
-				<tr>\n";
+		echo '<tr><td colspan="2">' . _T('case_input_collaboration') .  ' <br />
+				<ul>';
 
-		if (!read_meta('case_read_always') || $_SESSION['case_data']['admin']) echo "			<td>" . _T('read') . "</td>\n";
-		if (!read_meta('case_write_always') || $_SESSION['case_data']['admin']) echo "			<td>" . _T('write') . "</td>\n";
+		if (read_meta('case_read_always') == 'no' || $author_session['status'] == 'admin') {
+			echo '<li style="list-style-type: none;">';
+			echo '<input type="checkbox" name="public" id="case_public_read" value="yes"';
 
-		echo "</tr><tr>\n";
+			if ($_SESSION['case_data']['public'])
+				echo ' checked="checked"';
 
-		if (!read_meta('case_read_always') || $_SESSION['case_data']['admin']) {
-			echo '			<td><input type="checkbox" name="public" value="yes"';
-			if ($_SESSION['case_data']['public']) echo ' checked="checked"';
-			echo "></td>\n";
+			echo '<label for="case_public_read">' . _T('case_input_collaboration_read') . "</label></li>\n";
 		}
 
 		if (!read_meta('case_write_always') || $_SESSION['case_data']['admin']) {
-			echo '			<td><input type="checkbox" name="pub_write" value="yes"';
-			if ($_SESSION['case_data']['pub_write']) echo ' checked="checked"';
-			echo "></td>\n";
+			echo '<li style="list-style-type: none;">';
+			echo '<input type="checkbox" name="pub_write" id="case_public_write" value="yes"';
+
+			if ($_SESSION['case_data']['pub_write'])
+				echo ' checked="checked"';
+
+			echo '<label for="case_public_write">' . _T('case_input_collaboration_write') . "</label></li>\n";
 		}
-?>				</tr>
-				</table>
+
+		echo "</ul>\n";
+?>
+
 			</td>
 		</tr>
 
