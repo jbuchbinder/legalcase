@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.14 2005/04/04 08:26:00 mlutfy Exp $
+	$Id: author_det.php,v 1.15 2005/04/04 10:34:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -142,6 +142,30 @@ if ($author > 0) {
 					. "<div style='float: right'>" . lcm_help('author_followups') . "</div>"
 					. _T('author_subtitle_followups', array('author' => get_person_name($author_data)))
 					. '</div>';
+
+				// By default, show from "now() - 1 month" to NOW().
+				$link = new Link();
+				$link->delVar('date_start_day');
+				$link->delVar('date_start_month');
+				$link->delVar('date_start_year');
+				$link->delVar('date_end_day');
+				$link->delVar('date_end_month');
+				$link->delVar('date_end_year');
+				echo $link->getForm();
+
+				echo "<p class=\"normal_text\">\n";
+				$date_end = get_datetime_from_array($_REQUEST, 'date_end', date('Y-m-d'));
+				$date_start = get_datetime_from_array($_REQUEST, 'date_start', date('Y-m-d', strtotime("-1 month" . $date_end)));
+
+				echo _Ti('time_input_date_start');
+				echo get_date_inputs('date_start', $date_start);
+
+				echo _Ti('time_input_date_end');
+				echo get_date_inputs('date_end', $date_end);
+				echo ' <button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+				echo "</p>\n";
+				echo "</form>\n";
+
 				echo "<p class=\"normal_text\">\n";
 
 				$headers[0]['title'] = _Th('time_input_date_start');
@@ -149,19 +173,24 @@ if ($author > 0) {
 				$headers[0]['default'] = 'ASC';
 				$headers[1]['title'] = _Th('time_input_length');
 				$headers[1]['order'] = 'no_order';
-				$headers[2]['title'] = _Th('fu_input_type');
+				$headers[2]['title'] = _Th('case_input_id');
 				$headers[2]['order'] = 'no_order';
-				$headers[3]['title'] = _Th('fu_input_description');
+				$headers[3]['title'] = _Th('fu_input_type');
 				$headers[3]['order'] = 'no_order';
+				$headers[4]['title'] = _Th('fu_input_description');
+				$headers[4]['order'] = 'no_order';
 			
 				show_list_start($headers);
 			
-				$q = "SELECT	id_followup, date_start, date_end, type, description
+				$q = "SELECT id_followup, id_case, date_start, date_end, type, description
 					FROM lcm_followup
-					WHERE id_author=$author";
+					WHERE id_author = $author
+					  AND UNIX_TIMESTAMP(date_start) > UNIX_TIMESTAMP('" . $date_start . "')
+					  AND UNIX_TIMESTAMP(date_end) < UNIX_TIMESTAMP('" . $date_end . "')";
 			
 				// Add ordering
 				if ($fu_order) $q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
+
 			
 				$result = lcm_query($q);
 
@@ -176,22 +205,23 @@ if ($author > 0) {
 					$list_pos = 0;
 				
 				// Position to the page info start
-				if ($list_pos > 0)
+				if ($list_pos > 0 && $list_pos != 'all')
 					if (!lcm_data_seek($result,$list_pos))
 						lcm_panic("Error seeking position $list_pos in the result");
 			
 				// Set the length of short followup title
 				$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
-			
+
 				// Process the output of the query
-				for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
+				for ($i = 0 ; (($i<$prefs['page_rows'] || $list_pos == 'all') && ($row = lcm_fetch_array($result))); $i++) {
 					echo "<tr>\n";
+					$td = '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">';
 					
 					// Start date
-					echo '<td>' . format_date($row['date_start'], 'short') . '</td>';
+					echo $td . format_date($row['date_start'], 'short') . '</td>';
 					
 					// Time
-					echo '<td>';
+					echo $td;
 					$fu_date_end = vider_date($row['date_end']);
 					if ($prefs['time_intervals'] == 'absolute') {
 						if ($fu_date_end) echo format_date($row['date_end'],'short');
@@ -199,40 +229,59 @@ if ($author > 0) {
 						$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
 						echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
 					}
-					echo '</td>';
+					echo "</td>\n";
+
+					// Case ID
+					echo $td;
+					echo '<a class="content_link" href="case_det.php?case=' . $row['id_case'] . '">' . $row['id_case'] . "</a>";
+					echo "</td>\n";
 
 					// Type
-					echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
+					echo $td . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
 
 					// Description
-					if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
-						$short_description = $row['description'];
-					else
-						$short_description = substr($row['description'],0,$title_length) . '...';
+					if ($row['type'] == 'assignment' && is_numeric($row['description'])) {
+						$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $row['description']);
+						$author1 = lcm_fetch_array($res1);
+						$short_description = _T('case_info_author_assigned', array('name' => get_person_name($author1)));
+					} else{
+						if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
+							$short_description = $row['description'];
+						else
+							$short_description = substr($row['description'],0,$title_length) . '...';
+					}
 			
-					echo '<td>';
+					echo $td;
 					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
-					echo '</td>';
+					echo "</td>\n";
 			
-					/* [ML]
-					if ($edit)
-						echo '<td><a href="edit_fu.php?followup=' . $row['id_followup'] . '" class="content_link">' . _T('Edit') . '</a></td>';
-					*/
-
 					echo "</tr>\n";
 				}
 			
-				show_list_end($list_pos, $number_of_rows);
+				show_list_end($list_pos, $number_of_rows, true);
 
-				echo "<br />\n";
+				echo "</p>\n";
 
-				if ($add)
-					echo "<a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a>&nbsp;\n";
+				// Total hours for period
+				$q = "SELECT sum(IF(UNIX_TIMESTAMP(date_end) > UNIX_TIMESTAMP(date_start), 
+								UNIX_TIMESTAMP(date_end)-UNIX_TIMESTAMP(date_start), 0)) as total_time
+					FROM lcm_followup
+					WHERE id_author = $author
+				 	GROUP BY id_author";
 
-				echo '<a href="case_activity.php?case=' . $case . '" class="create_new_lnk">' . 'Printable list of activities' . "</a>\n";	// TRAD
-				echo "<br /><br />\n";
+				$result = lcm_query($q);
+				$row = lcm_fetch_array($result);
+				
+				echo '<p class="normal_text">';
+				echo 'Total hours: ' . format_time_interval($row['total_time'], true) . "<br />\n"; // TRAD
+				echo "</p>\n";
+
+				// echo "<p class='content_link'>\n";
+				// echo '<a href="case_activity.php?case=' . $case . '" class="create_new_lnk">' . 'Printable list of activities' . "</a>\n";	// TRAD
+				// echo "<br /><br />\n";
 			
-				echo "</p></fieldset>";
+				// echo "</p>\n";
+				echo "</fieldset>\n";
 				
 				break;
 			//
