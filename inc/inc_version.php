@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.61 2005/03/18 16:39:47 mlutfy Exp $
+	$Id: inc_version.php,v 1.62 2005/03/21 12:14:45 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -818,12 +818,28 @@ function _T($text, $args = '') {
 	return translate_string($text, $args);
 }
 
-// Strings in the process of being translated
-function _L($text) {
-	if ($GLOBALS['test_i18n'])
-		return "<span style='color:red;'>$text</span>";
-	else
-		return $text;
+// Translate text and use it in 'input field', meaning that it should
+// have ':' at the end.
+function _Ti($text, $args = '') {
+	include_lcm('inc_lang');
+	$str = translate_string($text, $args);
+	
+	if (! preg_match('/:$/', $str))
+		$str .= ':';
+	
+	return $str;
+}
+
+// Translate text and use it in 'header field', meaning that it should
+// NOT have ':' at the end.
+function _Th($text, $args = '') {
+	include_lcm('inc_lang');
+	$str = translate_string($text, $args);
+	
+	if (preg_match('/(.*):$/', $str, $regs))
+		$str = $regs[1];
+	
+	return $str;
 }
 
 // Main language of the site
