@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.79 2005/02/04 08:44:10 makaveev Exp $
+	$Id: case_det.php,v 1.80 2005/02/07 19:57:20 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -244,7 +244,11 @@ if ($case > 0) {
 			echo "<a href='case_det.php?case=$case&amp;fu_order=DESC' class='content_link'>" . _T('date') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
 	}
 //	echo _T('date') .
-	echo "</th><th class='heading'>" . _T('type') . "</th><th class='heading'>" . _T('description') . "</th><th class='heading'>&nbsp;</th></tr>\n";
+	echo "</th>";
+	echo "<th class='heading'>" . _T('type') . "</th>";
+	echo "<th class='heading'>" . _T('time') . "</th>";
+	echo "<th class='heading'>" . _T('description') . "</th>";
+	echo "<th class='heading'>&nbsp;</th></tr>\n";
 
 	// Prepare query
 	$q = "SELECT id_followup,date_start,type,description
@@ -265,7 +269,23 @@ if ($case > 0) {
 		// Show followup
 		echo '<tr><td>' . format_date($row['date_start'], 'short') . '</td>';
 		echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
+		
+		// Time
+		echo '<td>';
+		$fu_date_end = vider_date($row['date_end']);
+		$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
+		
+		$fu_days = (int) ($fu_time / 86400);
+		$fu_hours = (int) ( ($fu_time % 86400) / 3600);
+		$fu_minutes = (int) ( ($fu_time % 3600) / 60);
 
+		echo ($fu_days ? $fu_days . 'd ' : '');
+		echo ($fu_hours ? $fu_hours . 'h ' : '');
+		echo ($fu_minutes ? $fu_minutes . 'm' : '');
+
+		echo '</td>';
+
+		// Description
 		if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
 			$short_description = $row['description'];
 		else
