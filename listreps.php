@@ -89,8 +89,8 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 // Show link to previous page
 if ($list_pos>0) {
-	echo '<a href="listreps.php';
-	if ($list_pos>$prefs['page_rows']) echo '?list_pos=' . ($list_pos - $prefs['page_rows']);
+	echo '<a href="listreps.php?list_pos=';
+	echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
 	if (strlen($find_rep_string)>1) echo "&amp;find_rep_string=" . rawurlencode($find_rep_string);
 	echo '">< Prev</a> ';
 }
