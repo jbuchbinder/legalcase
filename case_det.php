@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.91 2005/03/01 08:16:47 antzi Exp $
+	$Id: case_det.php,v 1.92 2005/03/01 08:33:04 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -249,8 +249,8 @@ if ($case > 0) {
 				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_followups') . '</div>';
 				echo "<p class=\"normal_text\">\n";
 			
-				echo "\n\n\t\n\t<table border='0' class='tbl_usr_dtl' width='99%'>
-					<tr><th class='heading'>";
+				echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+				echo "\t\t<tr><th class='heading'>";
 				switch ($fu_order) {
 					case 'ASC':
 						echo "<a href='case_det.php?case=$case&amp;fu_order=DESC&amp;tab=2' class='content_link'>" . _T('date_start') . '</a> <img src="images/lcm/asc_desc_arrow.gif" width="9" height="11" alt="" />';
@@ -263,6 +263,7 @@ if ($case > 0) {
 				}
 			//	echo _T('date') .
 				echo "</th>";
+				echo "<th class='heading'>" . 'Author' . "</th>";
 				echo "<th class='heading'>"
 					. _T( (($prefs['time_intervals'] == 'absolute') ? 'date_end' : 'time_length') ) . "</th>";
 				echo "<th class='heading'>" . _T('type') . "</th>";
@@ -270,9 +271,16 @@ if ($case > 0) {
 				echo "<th class='heading'>&nbsp;</th></tr>\n";
 			
 				// Prepare query
-				$q = "SELECT id_followup,date_start,date_end,type,description
-					FROM lcm_followup
-					WHERE id_case=$case";
+				$q = "SELECT	lcm_followup.id_followup,
+						lcm_followup.date_start,
+						lcm_followup.date_end,
+						lcm_followup.type,
+						lcm_followup.description,
+						lcm_author.name_first,
+						lcm_author.name_middle,
+						lcm_author.name_last
+					FROM lcm_followup, lcm_author
+					WHERE id_case=$case AND lcm_followup.id_author=lcm_author.id_author";
 			
 				// Add ordering
 				if ($fu_order) $q .= " ORDER BY date_start $fu_order";
@@ -285,8 +293,17 @@ if ($case > 0) {
 			
 				// Process the output of the query
 				while ($row = lcm_fetch_array($result)) {
-					// Show followup
+					echo "\t\t";
+					
+					// Start date
 					echo '<tr><td>' . format_date($row['date_start'], 'short') . '</td>';
+					
+					// Author initials
+					echo '<td>';
+					echo substr($row['name_first'],0,1);
+					echo substr($row['name_middle'],0,1);
+					echo substr($row['name_last'],0,1);
+					echo '</td>';
 					
 					// Time
 					echo '<td>';
