@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.17 2005/03/25 13:27:15 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.18 2005/03/28 07:28:44 mlutfy Exp $
 */
 
 
@@ -956,9 +956,12 @@ function http_calendrier_agenda_rv ($annee, $mois, $les_rv, $fclic, $perso='',
 
 	if ($jour_semaine == 0) $jour_semaine=7;
 
+	for ($i = 1; $i <= 7; $i++)
+		$ligne .= '<li>' . _T('date_wday_short_' . $i) . "</li>\n";
+
 	// Empty boxes at beginning of month
 	for ($i = 1; $i < $jour_semaine; $i++)
-		$ligne .= '<li>&nbsp;</li>' . "\n";
+		$ligne .= "<li>&nbsp;</li>\n";
 
 	for ($j = 1; $j < 32; $j++) {
 		$nom = mktime(1,1,1, $mois, $j, $annee); // current day?
