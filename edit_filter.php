@@ -82,7 +82,8 @@ else lcm_page_start(_T('new_filter'));
 
 	// Show filter data form
 	echo "\n<form action='upd_filter.php' method='POST'>
-		<table class='tbl_usr_dtl'>\n";
+		<table class='tbl_usr_dtl'>
+			<input type=\"hidden\" name=\"ref_edit_filter\" value=\"" .  $filter_data['ref_edit_filter'] . "\">\n";
 	// Show filter ID if available
 	if ($filter_data['id_filter']) {
 		echo "\t<tr><td>" . _T('filter_id') . ":</td><td>" . $filter_data['id_filter'] . "
@@ -100,8 +101,8 @@ else lcm_page_start(_T('new_filter'));
 	echo"
 		<tr><td>" . _T('filter_type') . ":</td>
 			<td><select name=\"type\">
-				<option" . (($filter_data['type']='AND') ? ' selected' : '') . ">AND</option>
-				<option" . (($filter_data['type']='OR') ? ' selected' : '') . ">OR</option>
+				<option" . (($filter_data['type']=='AND') ? ' selected' : '') . ">AND</option>
+				<option" . (($filter_data['type']=='OR') ? ' selected' : '') . ">OR</option>
 			</select></td></tr>";
 
 //	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {

@@ -52,7 +52,7 @@ if (count($errors)) {
     header("Location: " . $GLOBALS['HTTP_REFERER']);
     exit;
 } else {
-	$fl = "title='" . clean_input($filter_data['title']) . "',id_author=" . $filter_data['id_author'] . ",date_update=NOW()";
+	$fl = "title='" . clean_input($filter_data['title']) . "',type='" . clean_input($filter_data['type']) . "',id_author=" . $filter_data['id_author'] . ",date_update=NOW()";
 
 // Put public access rights settings in a separate string
 //	$public_access_rights = '';
