@@ -8,19 +8,20 @@ if ($_REQUEST['url']) {
 	$cible = new Link($_REQUEST['url']);
 	if ($_REQUEST['referer']) // see config_author.php
 		$cible->addVar('referer', $_REQUEST['referer']);
-} else
-	$cible = new Link('/');
+} else {
+	$cible = new Link(); // [ML] XXX uses current page, but this can create strange bugs..
+}
 
 // Replay the cookie to renew lcm_session
 if ($change_session == 'yes' || $change_session == 'oui') {
 	if (verifier_session($lcm_session)) {
-		// Attention : seul celui qui a le bon IP a le droit de rejouer,
-		// ainsi un eventuel voleur de cookie ne pourrait pas deconnecter
-		// sa victime, mais se ferait deconnecter par elle.
+		// Warning: only the user with the correct IP has the right to replay
+		// the cookie, therefore a cookie theft cannot disconnect the vitim
+		// but be disconnected by her.
 		if ($author_session['hash_env'] == hash_env()) {
 			$author_session['ip_change'] = false;
 			$cookie = creer_cookie_session($author_session);
-			supprimer_session($lcm_session);
+			delete_session($lcm_session);
 			lcm_setcookie('lcm_session', $cookie);
 		}
 		@header('Content-Type: image/gif');
@@ -28,7 +29,7 @@ if ($change_session == 'yes' || $change_session == 'oui') {
 		@header("Cache-Control: no-store, no-cache, must-revalidate");
 		@header('Pragma: no-cache');
 		@header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-		@readfile('ecrire/img_pack/rien.gif');
+		@readfile('ecrire/img_pack/rien.gif'); // XXX change this
 		exit;
 	}
 }
@@ -57,11 +58,12 @@ if ($logout) {
 // If the user logins with privet=yes (privet: greetings), we try to
 // put a cookie and then go to lcm_login.php which will try to make 
 // a diagnostic if necessary.
-// [ML] echec == failure
 if ($cookie_test_failed == 'yes') {
 	lcm_setcookie('lcm_session', 'cookie_test_failed');
 	$link = new Link("lcm_login.php?var_cookie_failed=yes");
-	$link->addVar("var_url", $cible->getUrl());
+	// [ML] This caused strange endless redirections. Since it does not happen often,
+	// better to get rid of it, the user will be redirected to the home page anyway.
+	// $link->addVar("var_url", $cible->getUrl());
 	@header("Location: ".$link->getUrlForHeader());
 	exit;
 }
