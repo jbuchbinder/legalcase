@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.4 2005/02/04 09:25:51 makaveev Exp $
+	$Id: import_db.php,v 1.5 2005/02/04 09:40:11 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -70,6 +70,7 @@ function import_database($input_filename) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
 			lcm_page_start("Warning!");
+			echo "<fieldset class='info_box'>\n";
 			echo "<form action='import_db.php' method='POST'>\n";
 			echo "\tRestore operation will overwrite your database. Are you sure?<br />\n";
 			echo "\t<button type='submit' class='simple_form_btn' name='conf' value='yes'>Yes</button>\n";
@@ -77,6 +78,7 @@ function import_database($input_filename) {
 			echo "\t<input type='hidden' name='name' value='$input_filename' />\n";
 			echo "\t<input type='hidden' name='restore_type' value='" . $_POST['restore_type'] . "' />\n";
 			echo "</form>";
+			echo "</fieldset\n>";
 			lcm_page_end();
 			return;
 		}
@@ -124,7 +126,9 @@ function import_database($input_filename) {
 	else if ($backup_db_version > read_meta('lcm_db_version')) {
 		// Backup version newer than installed db version
 		lcm_page_start("Version mismatch!");
+		echo "<fieldset class='info_box'>\n";
 		echo "Backup database version is newer than the installed database.";
+		echo "</fieldset\n>";
 		lcm_page_end();
 		return;
 	}	// Backup version newer than installed db version
@@ -172,7 +176,9 @@ function import_database($input_filename) {
 	//lcm_query("use lcm");
 
 	lcm_page_start("Import finished");
+	echo "<fieldset class='info_box'>\n";
 	echo "Backup '$input_filename' was successfully imported into database.";
+	echo "</fieldset\n>";
 	lcm_page_end();
 
 }	// import_database()

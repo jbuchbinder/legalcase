@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.6 2005/02/02 17:34:37 antzi Exp $
+	$Id: export_db.php,v 1.7 2005/02/04 09:38:00 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -29,8 +29,10 @@ function get_parameters() {
 	lcm_page_start('Export database');
 
 	// Create form
+	echo "<fieldset class='info_box'>\n";
 	echo "\n<form action='export_db.php' method='POST'>\n";
-	echo "\t<select name='old_name'>\n";
+	echo "<strong>Make your choice:</strong><br />";
+	echo "\t<select name='old_name' class='sel_frm'>\n";
 	echo "\t\t<option selected>-- Create new file --</option>\n";
 	// Read existing backups
 	$storage = opendir('inc/data');
@@ -40,11 +42,11 @@ function get_parameters() {
 			echo "\t\t<option value='" . substr($file,3) . "'>" . substr($file,3) . "</option>\n";
 		}
 	}
-	echo "\t</select>\n";
-	echo "\tName: <input name='new_name' />\n";
+	echo "\t</select><br /><br />\n";
+	echo "\t<strong>Name:</strong><br /><input name='new_name' class='search_form_txt' size='50' /><br /><br />\n";
 	echo "\t<button type='submit' class='simple_form_btn'>Export</button>\n";
 	echo "</form>\n";
-
+	echo "</fieldset>\n";
 	lcm_page_end();
 }
 
@@ -71,12 +73,14 @@ function export_database($output_filename) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
 			lcm_page_start("Warning!");
+			echo "<fieldset class='info_box'>\n";
 			echo "<form action='export_db.php' method='POST'>\n";
 			echo "\tBackup named '$output_filename' already exists. Do you want to overwrite it?<br />\n";
 			echo "\t<button type='submit' class='simple_form_btn' name='conf' value='yes'>Yes</button>\n";
 			echo "\t<button type='submit' class='simple_form_btn' name='conf' value='no'>No</button>\n";
 			echo "\t<input type='hidden' name='new_name' value='$output_filename' />\n";
 			echo "</form>";
+			echo "</fieldset>\n";
 			lcm_page_end();
 			return;
 		} else {
@@ -120,7 +124,9 @@ function export_database($output_filename) {
 	chmod("$root/inc/data/db-$output_filename",0700);
 	
 	lcm_page_start("Export finished");
+	echo "<fieldset class='info_box'>\n";
 	echo "Database has been successfully exported. The name of the backup is '$output_filename'.";
+	echo "</fieldset>\n";
 	lcm_page_end();
 	
 }
