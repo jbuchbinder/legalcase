@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.38 2005/03/19 00:20:20 antzi Exp $
+	$Id: edit_client.php,v 1.39 2005/03/21 16:23:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -79,20 +79,20 @@ echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="
 if($client_data['id_client']) {
 	echo "<tr><td>" . _T('client_input_id') . "</td>\n";
 	echo "<td>" . $client_data['id_client']
-		. '<input type="hidden" name="id_client" value="' . $client_data['id_client'] . '"></td></tr>' . "\n";
+		. '<input type="hidden" name="id_client" value="' . $client_data['id_client'] . '" /></td></tr>' . "\n";
 }
 
 echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
-echo '<td><input name="name_first" value="' . clean_output($client_data['name_first']) . '" class="search_form_txt"></td></tr>' . "\n";
+echo '<td><input name="name_first" value="' . clean_output($client_data['name_first']) . '" class="search_form_txt" /></td></tr>' . "\n";
 
 // [ML] always show middle name, if any, no matter the configuration
 if ($client_data['name_middle'] || $client_name_middle == 'yes') {
 	echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
-	echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt"></td></tr>' . "\n";
+	echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt" /></td></tr>' . "\n";
 }
 	
 echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
-echo '<td><input name="name_last" value="' . clean_output($client_data['name_last']) . '" class="search_form_txt"></td></tr>' . "\n";
+echo '<td><input name="name_last" value="' . clean_output($client_data['name_last']) . '" class="search_form_txt" /></td></tr>' . "\n";
 
 echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
 echo '<td><select name="gender" class="sel_frm">' . "\n";
@@ -196,12 +196,12 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	$result = lcm_query($q);
 	if (lcm_num_rows($result) > 0) {
 		echo "\t\t<select name=\"new_org\">\n";
-		echo "\t\t\t<option selected value=\"0\">- Select organisation -</option>\n";
+		echo "\t\t\t<option selected='selected' value=\"0\">- Select organisation -</option>\n"; // TRAD
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t<option value=\"" . $row['id_org'] . '">' . $row['name'] . "</option>\n";
 		}
 		echo "\t\t</select>\n";
-		echo "\t\t<button name=\"submit\" type=\"submit\" value=\"add_org\" class=\"simple_form_btn\">" . 'Add' . "</button>\n";
+		echo "\t\t<button name=\"submit\" type=\"submit\" value=\"add_org\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
 	}
 	echo "\t</td></tr>\n";
 
@@ -342,7 +342,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	</table>
 	<br />
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
-	<input type="hidden" name="ref_edit_client" value="<?php echo $HTTP_REFERER ?>">
+	<input type="hidden" name="ref_edit_client" value="<?php echo $HTTP_REFERER ?>" />
 </form>
 
 <?php
