@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.28 2005/03/25 14:13:49 makaveev Exp $
+	$Id: edit_app.php,v 1.29 2005/03/28 08:49:54 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -228,10 +228,10 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			$q = '';
 			$author_ids = array();
 			foreach($_SESSION['authors'] as $author) {
-				$q .= ($q ? '<br />' : '');
+				// $q .= ($q ? ', ' : '');
 				$author_ids[] = $author['id_author'];
 				$q .= njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
-				$q .= '&nbsp;(<label for="id_rem_author' . $author['id_author'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_author' . $author['id_author'] . '" name="rem_author[]" value="' . $author['id_author'] . '" />)';	// TRAD
+				$q .= '&nbsp;(<label for="id_rem_author' . $author['id_author'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_author' . $author['id_author'] . '" name="rem_author[]" value="' . $author['id_author'] . '" />)<br />';	// TRAD
 
 			}
 			echo "\t\t\t$q\n";
@@ -245,7 +245,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 */
 		
 		// [KM]
-		echo "<br /><br />";
+		// echo "<br /><br />";
 		
 		$q = "SELECT id_author,name_first,name_middle,name_last
 			FROM lcm_author
@@ -276,16 +276,13 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		$result = lcm_query($q);
 		$q = '';
 		while ($row = lcm_fetch_array($result)) {
-			$q .= ($q ? '<br />' : '');
+			// $q .= ($q ? ', ' : '');
 			$q .= get_person_name($row) . ( ($row['name']) ? " of " . $row['name'] : ''); // TRAD
 			$q .= '&nbsp;(<label for="id_rem_client' . $row['id_client'] . ':' . $row['id_org'] . '">';
 			$q .= '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;';
-			$q .= '<input type="checkbox" id="id_rem_client' . $row['id_client'] . ':' . $row['id_org'] . '" name="rem_client[]" value="' . $row['id_client'] . ':' . $row['id_org'] . '"/>)';	// TRAD
+			$q .= '<input type="checkbox" id="id_rem_client' . $row['id_client'] . ':' . $row['id_org'] . '" name="rem_client[]" value="' . $row['id_client'] . ':' . $row['id_org'] . '"/>)<br />';	// TRAD
 		}
 		echo "\t\t\t$q\n";
-		
-		// [KM]
-		echo "<br /><br />";
 		
 		// List rest of the clients to add
 		$q = "SELECT c.id_client,c.name_first,c.name_last,co.id_org,o.name
