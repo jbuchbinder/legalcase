@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.1 2005/01/27 06:14:30 antzi Exp $
+	$Id: import_db.php,v 1.2 2005/02/01 17:34:44 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -30,6 +30,8 @@ function get_parameters() {
 
 	// Create form
 	echo "\n<form action='import_db.php' method='POST'>\n";
+	
+	// Select backup to restore
 	echo "\t<select name='name'>\n";
 	// Read existing backups
 	$storage = opendir('inc/data');
@@ -41,6 +43,12 @@ function get_parameters() {
 	}
 //	echo "\t\t<option selected>-- Create new file --</option>\n";
 	echo "\t</select>\n";
+	
+	// Select restore type
+	echo "<br />\n";
+	echo "\t<input type='radio' name='restore_type' value='clean' checked> Clean</input> - Import backup data into empty database. This will return database in the exact state at the time of backup.<br />\n";
+	echo "\t<input type='radio' name='restore_type' value='replace'> Replace</input> - Imported backup data will replace the existing. This is usefull to undo the changes made in the database since last backup, without losing the new information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br />\n";
+	echo "\t<input type='radio' name='restore_type' value='ignore'> Append</input> - Only backup data NOT existing in the database will be imported. This is usefull to import data lost since last backup, without changing the existing information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br />\n";
 	echo "\t<button type='submit' class='simple_form_btn'>Import</button>\n";
 	echo "</form>\n";
 
@@ -62,6 +70,7 @@ function import_database($input_filename) {
 			echo "\t<button type='submit' class='simple_form_btn' name='conf' value='yes'>Yes</button>\n";
 			echo "\t<button type='submit' class='simple_form_btn' name='conf' value='no'>No</button>\n";
 			echo "\t<input type='hidden' name='name' value='$input_filename' />\n";
+			echo "\t<input type='hidden' name='restore_type' value='" . $_POST['restore_type'] . "' />\n";
 			echo "</form>";
 			lcm_page_end();
 			return;
@@ -74,8 +83,11 @@ function import_database($input_filename) {
 	$backup_db_version = intval(fread($fh,10));
 	fclose($fh);
 
+	// For debugging - use another database
+	//lcm_query("use lcm_new");
+	
 	// Recreate tables
-	if ($backup_db_version < read_meta('lcm_db_version')) {
+	if ( ($_POST['restore_type'] == 'clean') || ($backup_db_version < read_meta('lcm_db_version')) ) {
 		// Open backup dir
 		if (false === ($dh = opendir("$dir/")))
 			die("System error: Could not open directory '$dir'!");
@@ -88,14 +100,14 @@ function import_database($input_filename) {
 			if (strlen($file) > 10) {
 				if (is_file($file) && (substr($file,-10) === ".structure")) {
 					// Clear the table
-					$q = "DROP TABLE $table IF EXISTS";
-//					$result = lcm_query($q);
+					$q = "DROP TABLE IF EXISTS $table";
+					$result = lcm_query($q);
 
 					// Create table
 					$fh = fopen($file,'r');
 					$q = fread($fh,filesize($file));
 					fclose($fh);
-//					$result = lcm_query($q);
+					$result = lcm_query($q);
 				}
 			}
 		}
@@ -112,43 +124,46 @@ function import_database($input_filename) {
 		return;
 	}	// Backup version newer than installed db version
 	else {
-		// Import data into database tables
-
+		// Backup and current db versions are equal
 	}
+	
+	//
+	// Import data into database tables\
+	//
+	
+	// Open backup dir
+	if (false === ($dh = opendir("$dir/")))
+		die("System error: Could not open directory '$dir'!");
 
+	while (false !== ($file = readdir($dh))) {
+		// Get table name
+		$table = substr($file,0,-5);
+		// Add path to filename
+		$file = "$dir/$file";
+		if (strlen($file) > 5) {
+			if (is_file($file) && (substr($file,-5) === ".data")) {
+				// If restore_type='clean', clear the table
+				if ($_POST['restore_type'] == 'clean') lcm_query("TRUNCATE TABLE $table");
+				
+				$q = "LOAD DATA INFILE '$file' ";
+				$q .= (($_POST['restore_type'] == 'replace') ? 'REPLACE' : 'IGNORE');
+				$q .= "	INTO TABLE $table
+					FIELDS TERMINATED BY ','
+						OPTIONALLY ENCLOSED BY '\"'
+						ESCAPED BY '\\\\'
+					LINES TERMINATED BY '\r\n'";
+				$result = lcm_query($q);
+			}
+		}
+	}
+	closedir($dh);
 
+	// Debugging
+	//lcm_query("use lcm");
 
-
-
-
-
-	// Get the list of tables in the backup
-/*	$q = "SHOW TABLES";
-	$result = lcm_query($q);
-	while ($row = lcm_fetch_array($result)) {
-		// Backup table structure
-		$q = "SHOW CREATE TABLE " . $row[0];
-		$res = lcm_query($q);
-		$sql = lcm_fetch_row($res);
-		$file = fopen("$root/inc/data/db-$output_filename/" . $row[0] . ".structure",'w');
-		fwrite($file,$sql[1]);
-		fclose($file);
-
-		// Backup data
-		$q = "SELECT * FROM " . $row[0] . "
-				INTO OUTFILE '$root/inc/data/db-$output_filename/" . $row[0] . ".data'
-				FIELDS TERMINATED BY ','
-					OPTIONALLY ENCLOSED BY '\"'
-					ESCAPED BY '\\\\'
-				LINES TERMINATED BY '\r\n'";
-		$res = lcm_query($q);
-	} */
-
-	// Upgrade database if necessary
-//	global $lcm_db_version;
-
-//	if ($lcm_db_version > read_meta('lcm_db_version')) {
-//	}
+	lcm_page_start("Import finished");
+	echo "Backup '$input_filename' was successfully imported into database.";
+	lcm_page_end();
 
 }	// import_database()
 
