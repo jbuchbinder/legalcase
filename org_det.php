@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.13 2005/03/21 16:01:48 mlutfy Exp $
+	$Id: org_det.php,v 1.14 2005/03/23 18:22:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -188,6 +188,13 @@ if ($row = lcm_fetch_array($result)) {
 			break;
 
 	}
+
+	// Show this in all tabs
+	echo '<p>';
+	echo '<a href="edit_case.php?case=0&amp;attach_org=' . $row['id_org'] . '" class="create_new_lnk">';
+	echo "Open new case involving this organisation"; // TRAD
+	echo "</a>";
+	echo "</p>\n";
 
 } else die("There's no such organisation!");
 
