@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.28 2005/02/07 20:36:13 antzi Exp $
+	$Id: upd_fu.php,v 1.29 2005/02/08 16:35:19 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -35,53 +35,56 @@ if (isset($_REQUEST['id_followup']) && $_REQUEST['id_followup'] > 0)
 
 // Register form data in the session
 // XXX [ML] use $_SESSION
-if(!session_is_registered("fu_data"))
-    session_register("fu_data");
+//if(!session_is_registered("fu_data"))
+//    session_register("fu_data");
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-    $fu_data[$key]=$value;
+    $_SESSION['fu_data'][$key]=$value;
 
 // Convert day, month, year to date
 // Check submitted information
 // date_start
-$unix_date_start = strtotime($fu_data['start_year'] . '-' . $fu_data['start_month'] . '-' . $fu_data['start_day'] . ' ' .
-							 $fu_data['start_hour'] . ':' . $fu_data['start_minutes'] . ':' .
-							 (isset($fu_data['start_seconds']) ? $fu_data['start_seconds'] : '00'));
+$unix_date_start = strtotime($_SESSION['fu_data']['start_year'] . '-' . $_SESSION['fu_data']['start_month'] . '-' . $_SESSION['fu_data']['start_day'] . ' ' .
+							 $_SESSION['fu_data']['start_hour'] . ':' . $_SESSION['fu_data']['start_minutes'] . ':' .
+							 (isset($_SESSION['fu_data']['start_seconds']) ? $_SESSION['fu_data']['start_seconds'] : '00'));
 
 if ($unix_date_start<0)
 	$_SESSION['errors']['date_start'] = 'Invalid start date!';
 else 
-	$fu_data['date_start'] = date('Y-m-d H:i:s', $unix_date_start);
+	$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s', $unix_date_start);
 
 // date_end
 if ($prefs['time_intervals']=='absolute') {
 	// Set to default empty date if all fields empty
-	if (!($fu_data['end_year'] || $fu_data['end_month'] || $fu_data['end_day']))
-		$fu_data['date_end'] = '0000-00-00 00:00:00';
+	if (!($_SESSION['fu_data']['end_year'] || $_SESSION['fu_data']['end_month'] || $_SESSION['fu_data']['end_day']))
+		$_SESSION['fu_data']['date_end'] = '0000-00-00 00:00:00';
 		// Report error if some of the fields empty
-	elseif (!$fu_data['end_year'] || !$fu_data['end_month'] || !$fu_data['end_day']) {
+	elseif (!$_SESSION['fu_data']['end_year'] || !$_SESSION['fu_data']['end_month'] || !$_SESSION['fu_data']['end_day']) {
 		$_SESSION['errors']['date_end'] = 'Partial end date!';
-		$fu_data['date_end'] = ($fu_data['end_year'] ? $fu_data['end_year'] : '0000') . '-'
-							. ($fu_data['end_month'] ? $fu_data['end_month'] : '00') . '-'
-							. ($fu_data['end_day'] ? $fu_data['end_day'] : '00') . ' '
-							. ($fu_data['end_hour'] ? $fu_data['end_hour'] : '00') . ':'
-							. ($fu_data['end_minutes'] ? $fu_data['end_minutes'] : '00') . ':'
-							. ($fu_data['end_seconds'] ? $fu_data['end_seconds'] : '00');
+		$_SESSION['fu_data']['date_end'] = ($_SESSION['fu_data']['end_year'] ? $_SESSION['fu_data']['end_year'] : '0000') . '-'
+							. ($_SESSION['fu_data']['end_month'] ? $_SESSION['fu_data']['end_month'] : '00') . '-'
+							. ($_SESSION['fu_data']['end_day'] ? $_SESSION['fu_data']['end_day'] : '00') . ' '
+							. ($_SESSION['fu_data']['end_hour'] ? $_SESSION['fu_data']['end_hour'] : '00') . ':'
+							. ($_SESSION['fu_data']['end_minutes'] ? $_SESSION['fu_data']['end_minutes'] : '00') . ':'
+							. ($_SESSION['fu_data']['end_seconds'] ? $_SESSION['fu_data']['end_seconds'] : '00');
 	} else {
 		// Join fields and check resulting date
-		$unix_date_end = strtotime($fu_data['end_year'] . '-' . $fu_data['end_month'] . '-' . $fu_data['end_day']
-					. ' ' . $fu_data['end_hour'] . ':' . $fu_data['end_minutes'] . ':'
-					. (isset($fu_data['end_seconds']) ? $fu_data['end_seconds'] : '00'));
+		$unix_date_end = strtotime($_SESSION['fu_data']['end_year'] . '-' . $_SESSION['fu_data']['end_month'] . '-' . $_SESSION['fu_data']['end_day']
+					. ' ' . $_SESSION['fu_data']['end_hour'] . ':' . $_SESSION['fu_data']['end_minutes'] . ':'
+					. (isset($_SESSION['fu_data']['end_seconds']) ? $_SESSION['fu_data']['end_seconds'] : '00'));
 	
 		if ($unix_date_end<0)
 			$_SESSION['errors']['date_end'] = 'Invalid end date!';
 		else 
-			$fu_data['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
+			$_SESSION['fu_data']['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
 	}
 } else {
-	$unix_date_end = $unix_date_start + $fu_data['delta_days'] * 86400 + $fu_data['delta_hours'] * 3600 + $fu_data['delta_minutes'] * 60;
-	$fu_data['date_end'] = date('Y-m-d H:i:s', $unix_date_end);
+	$unix_date_end = $unix_date_start
+			+ $_SESSION['fu_data']['delta_days'] * 86400
+			+ $_SESSION['fu_data']['delta_hours'] * 3600
+			+ $_SESSION['fu_data']['delta_minutes'] * 60;
+	$_SESSION['fu_data']['date_end'] = date('Y-m-d H:i:s', $unix_date_end);
 }
 
 if (count($_SESSION['errors'])) {
@@ -90,11 +93,11 @@ if (count($_SESSION['errors'])) {
 } else {
 	global $author_session;
 
-    $fl="	date_start   = '" . clean_input($fu_data['date_start']) . "',
-		date_end     = '" . clean_input($fu_data['date_end']) . "',
-		type         = '" . clean_input($fu_data['type']) . "',
-		description  = '" . clean_input($fu_data['description']) . "',
-    	sumbilled    = '" . clean_input($fu_data['sumbilled']) . "'";
+    $fl="	date_start   = '" . clean_input($_SESSION['fu_data']['date_start']) . "',
+		date_end     = '" . clean_input($_SESSION['fu_data']['date_end']) . "',
+		type         = '" . clean_input($_SESSION['fu_data']['type']) . "',
+		description  = '" . clean_input($_SESSION['fu_data']['description']) . "',
+		sumbilled    = '" . clean_input($_SESSION['fu_data']['sumbilled']) . "'";
 
     if ($id_followup>0) {
 		// Check access rights
@@ -109,7 +112,7 @@ if (count($_SESSION['errors'])) {
 			die("You don't have permission to add information to this case!");
 
 		// Update case status
-		switch ($fu_data['type']) {
+		switch ($_SESSION['fu_data']['type']) {
 			case 'conclusion' :
 				$status = 'closed';
 				break;
@@ -141,10 +144,11 @@ if (count($_SESSION['errors'])) {
 			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
 
 		$id_followup = lcm_insert_id();
-    }
+	}
 
-    // Send user back to add/edit page's referer or (default) to followup detail page
-    header('Location: ' . ($fu_data['ref_edit_fu'] ? $fu_data['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));
+	// Send user back to add/edit page's referer or (default) to followup detail page
+	header('Location: ' . ($_SESSION['fu_data']['ref_edit_fu'] ? $_SESSION['fu_data']['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));
+	
 	exit;
 }
 
