@@ -49,25 +49,25 @@ lcm_page_start("Edit client details");
 			<td><?php echo $client_data['id_client']; ?>
 			<input type="hidden" name="id_client" value="<?php echo $client_data['id_client']; ?>"></td></tr>
 		<tr><td>First name:</td>
-			<td><input name="name_first" value="<?php echo $client_data['name_first']; ?>"></td></tr>
+			<td><input name="name_first" value="<?php echo clean_output($client_data['name_first']); ?>"></td></tr>
 		<tr><td>Middle name:</td>
-			<td><input name="name_middle" value="<?php echo $client_data['name_middle']; ?>"></td></tr>
+			<td><input name="name_middle" value="<?php echo clean_output($client_data['name_middle']); ?>"></td></tr>
 		<tr><td>Last name:</td>
-			<td><input name="name_last" value="<?php echo $client_data['name_last']; ?>"></td></tr>
+			<td><input name="name_last" value="<?php echo clean_output($client_data['name_last']); ?>"></td></tr>
 		<tr><td>Created on:</td>
-			<td><input name="date_creation" value="<?php echo $client_data['date_creation']; ?>">
+			<td><input name="date_creation" value="<?php echo clean_output($client_data['date_creation']); ?>">
 			<?php echo f_err('date_creation',$errors); ?></td></tr>
 		<tr><td>Updated on:</td>
-			<td><input name="date_update" value="<?php echo $client_data['date_update']; ?>">
+			<td><input name="date_update" value="<?php echo clean_output($client_data['date_update']); ?>">
 			<?php echo f_err('date_update',$errors); ?></td></tr>
 		<tr><td>Citizen number:</td>
-			<td><input name="citizen_number" value="<?php echo $client_data['citizen_number']; ?>"></td></tr>
+			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>"></td></tr>
 		<tr><td>Address:</td>
-			<td><textarea name="address" rows=3><?php echo htmlspecialchars($client_data['address']); ?></textarea></td></tr>
+			<td><textarea name="address" rows=3><?php echo clean_output($client_data['address']); ?></textarea></td></tr>
 		<tr><td>Civil status:</td>
-			<td><input name="civil_status" value="<?php echo $client_data['civil_status']; ?>"></td></tr>
+			<td><input name="civil_status" value="<?php echo clean_output($client_data['civil_status']); ?>"></td></tr>
 		<tr><td>Income:</td>
-			<td><input name="income" value="<?php echo $client_data['income']; ?>"></td></tr>
+			<td><input name="income" value="<?php echo clean_output($client_data['income']); ?>"></td></tr>
 	</table>
 	<button name="submit" type="submit" value="submit">Save</button>
 	<button name="reset" type="reset">Reset</button>
