@@ -12,6 +12,8 @@ include_lcm('inc_text');
 // Management of HTTP authentication
 // [ML] Might not be used at all -- or should be removed
 function auth_http($cible, $essai_auth_http) {
+	lcm_log("inc_login.php/auth_http: should be deprecated");
+
 	if ($essai_auth_http == 'oui') {
 		include_lcm('inc_session');
 		if (!verifier_php_auth()) {
