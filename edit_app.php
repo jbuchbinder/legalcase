@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.29 2005/03/28 08:49:54 makaveev Exp $
+	$Id: edit_app.php,v 1.30 2005/03/29 13:57:00 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -181,7 +181,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				} else {
 					$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'rem_offset' : '');
 					$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
-							strtotime($_SESSION['app_data']['reminder']) - strtotime($_SESSION['app_data']['start_time']) : 0);
+							strtotime($_SESSION['app_data']['start_time']) - strtotime($_SESSION['app_data']['reminder']) : 0);
 				//	echo _T('calendar_info_time') . ' ';
 					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 					echo " before the start time"; // TRAD
