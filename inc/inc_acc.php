@@ -18,10 +18,16 @@ function allowed($case,$access) {
 		for($i=0 ; $i<strlen($access) ; $i++) {
 			switch ($access{$i}) {
 				case "r":
-					$allow &= ($row['read']);
+					$allow &= ($row['ac_read']);
 					break;
 				case "w":
-					$allow &= ($row['write']);
+					$allow &= ($row['ac_write']);
+					break;
+				case "e":
+					$allow &= ($row['ac_edit']);
+					break;
+				case "a":
+					$allow &= ($row['ac_admin']);
 					break;
 				default:
 					$allow = 0;
