@@ -200,11 +200,12 @@ function lcm_page_end($credits = '') {
 
 	global $author_session;
 	global $find_case_string;
+	global $find_client_string;
 
 	///
 	// Insert FOOTER stuff here
 	// Ignore the rest after this for now.
-	// 
+	//
 
 	//[KM] The bottom of a single page
 	//
@@ -222,17 +223,19 @@ function lcm_page_end($credits = '') {
 <!-- Start of \"prefs_column\" content -->
 			<div class=\"prefs_column_menu_head\">Profile</div>
 			<p class=\"prefs_column_text\"><strong>Name: </strong>"
-				. $author_session['name_first'] . ' ' 
+				. $author_session['name_first'] . ' '
 				. $author_session['name_middle'] . ' '
-				. $author_session['name_last'] 
+				. $author_session['name_last']
 				. "<br /><br />
 			<a href=\"#\" class=\"prefs_bold_lnk\">[ update profile ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ logout ]</a>
 			</p>
 			<div class=\"prefs_column_menu_head\">Search</div>
 			<p class=\"prefs_column_text\">
-			<form name=\"frm_find_client\" class=\"search_form\">
+			<form name=\"frm_find_client\" class=\"search_form\" action=\"listclients.php\" method=\"POST\">
 			Find client<br />
-			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\" />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
+			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\"";
+	if (isset($find_client_string)) echo " value='$find_client_string'";
+	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"Search\" class=\"search_form_btn\" />
 			</form>
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"POST\">
 			Find case<br />

@@ -3,6 +3,27 @@
 include('inc/inc.php');
 include_lcm('inc_acc');
 
+function highlight_matches($source,$match) {
+	// Initialize variables
+	$model = strtolower($source);
+	$match = strtolower($match);
+	$p = 0;
+	$result = '';
+	$ml = strlen($match);
+	if ($ml>0) {
+		$i = strpos($model,$match);
+
+		// Cycle each match
+		while (!($i === false)) {
+			$result .= (substr($source,$p,$i-$p) . '<b>' . substr($source,$i,$ml) . '</b>');
+			$p = $i + $ml;
+			$i = strpos($model,$match,$p);
+		}
+	}
+	$result .= substr($source,$p,strlen($source)-$p);
+	return $result;
+}
+
 // Prepare query
 $q = "SELECT lcm_case.id_case,title,public,pub_write
 		FROM lcm_case,lcm_case_author
@@ -34,11 +55,7 @@ while ($row = lcm_fetch_array($result)) {
 	// Show case title
 	echo '<tr><td>';
 	if (allowed($row['id_case'],'r')) echo '<a href="case_det.php?case=' . $row['id_case'] . '">';
-	if (strlen($find_case_string)>1) {
-		echo implode("<b>$find_case_string</b>",explode($find_case_string,$row['title']));
-	} else {
-		echo $row['title'];
-	}
+	echo highlight_matches($row['title'],$find_case_string);
 	if (allowed($row['id_case'],'r')) echo '</a>';
 	echo "</td>\n<td>";
 	if (allowed($row['id_case'],'e'))
