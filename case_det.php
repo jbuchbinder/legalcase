@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.50 2004/12/17 12:06:18 antzi Exp $
+	$Id: case_det.php,v 1.51 2004/12/17 12:07:55 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -84,9 +84,6 @@ if ($case > 0) {
 		echo _T('creation_date') . ': ' . format_date($row['date_creation']) . "<br>\n";
 
 		// [ML] FIXME: Not very clear how this should work
-		echo "<!-- ";
-		var_export($row);
-		echo "-->\n";
 		if ($row['date_assignment'])
 			echo _T('assignment_date') . ': ' .  format_date($row['date_assignment']) . "<br>\n";
 		else
