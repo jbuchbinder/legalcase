@@ -591,7 +591,7 @@ function extraire_lien ($regs) {
 		// petites corrections d'URL
 		if (ereg("^www\.[^@]+$",$lien_url))
 			$lien_url = "http://".$lien_url;
-		else if (strpos($lien_url, "@") && email_valide($lien_url))
+		else if (strpos($lien_url, "@") && is_valid_email($lien_url))
 			$lien_url = "mailto:".$lien_url;
 	}
 
