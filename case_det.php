@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.112 2005/03/19 15:48:09 mlutfy Exp $
+	$Id: case_det.php,v 1.113 2005/03/21 07:44:03 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -268,11 +268,12 @@ if ($case > 0) {
 			// Case appointments
 			//
 			case 'appointments' :
-				echo '<fieldset class="info_box">';
+				echo '<fieldset class="info_box">' . "\n";
 				echo '<div class="prefs_column_menu_head">' 
 					. "<div style='float: right'>" . lcm_help('agenda_intro') . "</div>"
 					. _T('case_subtitle_appointments') 
 					. '</div>';
+
 				echo "<p class=\"normal_text\">\n";
 
 				$q = "SELECT *
@@ -304,11 +305,11 @@ if ($case > 0) {
 					// Position to the page info start
 					if ($list_pos>0)
 						if (!lcm_data_seek($result,$list_pos))
-							die("Error seeking position $list_pos in the result");
+							lcm_panic("Error seeking position $list_pos in the result");
 					
 					// Show page of the list
 					for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-						echo "\t<tr>";
+						echo "<tr>\n";
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. date('d.m.y H:i',strtotime($row['start_time'])) . '</td>'; // FIXME [ML] use format_date for i18n
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
@@ -326,54 +327,14 @@ if ($case > 0) {
 							. '<a href="edit_app.php?app=' . $row['id_app'] . '" class="content_link">' . _T('edit') . '</a></td>';
 						echo "</tr>\n";
 					}
-					
-					echo "</table>\n\n";
-				
-					if ($number_of_rows>$prefs['page_rows']) {
-						echo '<table border="0" align="center" width="99%" class="page_numbers">
-					<tr><td align="left" width="15%">';
-				
-						// Show link to previous page
-						if ($list_pos>0) {
-							echo "<a href=\"case_det.php?case=$case&amp;tab=appointments&amp;list_pos=";
-							echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
-							if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-							echo '" class="content_link">< Prev</a> ';
-						}
-				
-						echo "</td>\n\t\t<td align='center' width='70%'>";
-				
-						// Show page numbers with direct links
-						$list_pages = ceil($number_of_rows / $prefs['page_rows']);
-						if ($list_pages>1) {
-							echo 'Go to page: '; // TRAD
-							for ($i=0 ; $i<$list_pages ; $i++) {
-								if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
-								else {
-									echo "<a href=\"case_det.php?case=$case&amp;tab=appointments&amp;list_pos="
-										. ($i*$prefs['page_rows']);
-									if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-									echo '" class="content_link">' . ($i+1) . '</a> ';
-								}
-							}
-						}
-						
-						echo "</td>\n\t\t<td align='right' width='15%'>";
-						
-						// Show link to next page
-						$next_pos = $list_pos + $prefs['page_rows'];
-						if ($next_pos<$number_of_rows) {
-							echo "<a href=\"case_det.php?case=$case&amp;tab=appointments&amp;list_pos=$next_pos";
-							if (strlen($find_case_string)>1) echo "&amp;find_case_string=" . rawurlencode($find_case_string);
-							echo '" class="content_link">Next ></a>'; // TRAD
-						}
-						
-						echo "</td>\n\t</tr>\n</table>\n";
-					}
-				
+
+					show_list_end($list_pos, $number_of_rows);
 				}
 
-				echo "<br /><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">New appointment</a><br /><br />\n"; // TRAD
+				echo "<p><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">New appointment</a></p>\n"; // TRAD
+
+				echo "</p>\n";
+				echo "</fieldset>\n";
 
 				break;
 			//
