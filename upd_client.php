@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.10 2005/02/08 19:06:07 antzi Exp $
+	$Id: upd_client.php,v 1.11 2005/03/18 15:01:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -37,10 +37,10 @@ foreach($_POST as $key => $value)
 //
 
 if (! $_SESSION['client']['name_first'])
-	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . 'Mandatory field.';
+	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . _T('warning_field_mandatory');
 
 if (! $_SESSION['client']['name_last'])
-	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . 'Mandatory field.';
+	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . _T('warning_field_mandatory');
 
 if (! ($_SESSION['client']['gender'] == 'unknown'
 		|| $_SESSION['client']['gender'] == 'female'
@@ -149,7 +149,7 @@ if (isset($_REQUEST['new_contact_value'])) {
 			if ($c_type_names[$cpt]) {
 				add_contact('client', $_SESSION['client']['id_client'], $c_type_names[$cpt], $new_contacts[$cpt]);
 			} else {
-				$_SESSION['errors']['new_contact_' . $cpt] = "Please specify the type of contact.";
+				$_SESSION['errors']['new_contact_' . $cpt] = "Please specify the type of contact."; // TRAD
 				$_SESSION['client']['new_contact_' . $cpt] = $new_contacts[$cpt];
 			}
 		}
@@ -157,7 +157,6 @@ if (isset($_REQUEST['new_contact_value'])) {
 		$cpt++;
 	}
 }
-
 
 
 // Go to the 'view details' page of the author

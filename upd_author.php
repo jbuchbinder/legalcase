@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.19 2005/01/20 14:02:41 mlutfy Exp $
+	$Id: upd_author.php,v 1.20 2005/03/18 14:59:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -84,7 +84,7 @@ function change_password($usr) {
 
 	// Confirm matching passwords
 	if ($usr['usr_new_passwd'] != $usr['usr_retype_passwd']) {
-		$_SESSION['errors']['password_confirm'] = "The passwords do not match.";
+		$_SESSION['errors']['password_confirm'] = _T('login_warning_password_dont_match');
 		return;
 	}
 
@@ -116,7 +116,7 @@ function change_username($id_author, $old_username, $new_username) {
 
 	if (! $ok) {
 		lcm_log("New username failed: " . $auth->error);
-		$_SESSION['errors']['username'] = "Failed to change the username: " . $auth->error;
+		$_SESSION['errors']['username'] = _T('login_warning_password_change_failed') . ' ' . $auth->error;
 		$_SESSION['usr']['username'] = $new_username;
 
 		return;
@@ -147,7 +147,7 @@ $fl = 'date_update = NOW()';
 
 // First name must have at least one character
 if (strlen(lcm_utf8_decode($usr['name_first'])) < 1) {
-	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . 'Must be at least 1 character';
+	$_SESSION['errors']['name_first'] = _T('person_input_name_first') . ' ' . _T('warning_field_mandatory');
 	$_SESSION['usr']['name_first'] = $usr['name_first'];
 } else {
 	$fl .= ", name_first = '" . clean_input($usr['name_first'])  . "'";
@@ -158,7 +158,7 @@ $fl .= ", name_middle = '" . clean_input($usr['name_middle']) . "'";
 
 // Last name must have at least one character
 if (strlen(lcm_utf8_decode($usr['name_last'])) < 1) {
-	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . 'Must be at least 1 character';
+	$_SESSION['errors']['name_last'] = _T('person_input_name_last') . ' ' . _T('warning_field_mandatory');
 	$_SESSION['usr']['name_last'] = $usr['name_last'];
 } else {
 	$fl .= ", name_last = '" . clean_input($usr['name_last'])  . "'";
@@ -277,10 +277,13 @@ if (count($_SESSION['errors'])) {
     exit;
 }
 
+// No errors, then delete session info
+$_SESSION['usr'] = array();
+
 // No errors: send user back to referer, or (if none) show author details.
 if (isset($usr['ref_edit_author']) && $usr['ref_edit_author'])
 	header('Location: ' . $usr['ref_edit_author']);
 else
-	header('Location: edit_author.php?author=' . $usr['id_author']);
+	header('Location: author_det.php?author=' . $usr['id_author']);
 
 ?>
