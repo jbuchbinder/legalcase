@@ -23,19 +23,22 @@ if (!@file_exists('data/inc_meta_cache.php'))
 // Can be done from any screen, but for now most is in config_author.php
 //
 
+// Set prefs_mod to true if prefs need to be saved in DB
+$prefs_mod = false; 
+
 // [ML] This is very important (but dirty hack) to change the language
 // from config_author.php but passing by lcm_cookie.php
-if ($sel_language)
+if (isset($_REQUEST['sel_language']))
 	$lang = $sel_language;
 else
 	$lang = $GLOBALS['HTTP_COOKIE_VARS']['lcm_lang'];
 
-if ($lang AND $lang <> $author_session['lang']) {
+if (isset($lang) AND $lang <> $author_session['lang']) {
 	// Boomerang via lcm_cookie to set a cookie and do all the dirty work
 	header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" .  urlencode($HTTP_REFERER));
 }
 
-if ($sel_theme) {
+if (isset($_REQUEST['sel_theme'])) {
 	// XSS risk: Theme names can only be alpha-numeric, "-" and "_"
 	$sel_theme = preg_replace("/[^-_a-zA-Z0-9]/", '', $sel_theme);
 
@@ -46,15 +49,19 @@ if ($sel_theme) {
 }
 
 // Set wide/narrow screen mode preference
-if ($sel_screen == 'narrow' || $sel_screen == 'wide') {
-	$prefs['screen'] = $sel_screen;
-	$prefs_mod = true;
+if (isset($sel_screen)) {
+	if ($sel_screen == 'narrow' || $sel_screen == 'wide') {
+		$prefs['screen'] = $sel_screen;
+		$prefs_mod = true;
+	}
 }
 
 // Set rows per page preference
-if (intval($page_rows) > 0) {
-	$prefs['page_rows'] = intval($page_rows);
-	$prefs_mod = true;
+if (isset($_REQUEST['page_rows'])) {
+	if (intval($_REQUEST['page_rows']) > 0) {
+		$prefs['page_rows'] = intval($_REQUEST['page_rows']);
+		$prefs_mod = true;
+	}
 }
 
 // Update user preferences if modified
