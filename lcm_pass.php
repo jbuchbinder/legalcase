@@ -5,10 +5,35 @@ include('inc/inc_version.php');
 include_lcm('inc_meta');
 include_lcm('inc_presentation');
 include_lcm('inc_session');
-include_lcm('inc_filters');
-include_lcm('inc_text'); // what for?
-include_lcm('inc_mail');
-include_lcm('inc_access'); // may be limited to only a few parts
+// include_lcm('inc_filters');
+// include_lcm('inc_text'); // what for?
+// include_lcm('inc_mail');
+// include_lcm('inc_access'); // may be limited to only a few parts
+
+
+// Returns a unique username based on what the user proposed
+// For example, if username "joe" exists, it will return "joe1".
+function get_unique_username($username) {
+	$username = strtolower($username);
+	$username = ereg_replace("[^a-zA-Z0-9]", "", $username);
+
+	if (!$username) $username = "user";
+	$unique_name = $username;
+
+	for ($i = 0; ; $i++) {
+		if ($i)
+			$unique_name = $username.$i;
+		else
+			$unique_name = $username;
+
+		$query = "SELECT id_author FROM lcm_author WHERE username='$unique_name'";
+		$result = lcm_query($query);
+
+		if (!lcm_num_rows($result)) break;
+	}
+
+	return $unique_name;
+}
 
 use_language_of_site();
 use_language_of_visitor();
@@ -102,58 +127,82 @@ if ($pass_forgotten == 'yes') {
 	echo "<p>" . _T('pass_info_why_register') . "</p>\n";
 
 	if ($email && ($name_first || $name_last)) {
-		$query = "SELECT * FROM lcm_author WHERE email='".addslashes($email)."'"; // XXX
+		// There is a risk that an author changes his e-mail
+		// after his account is created, to the e-mail of another
+		// person, and therefore block the other person from 
+		// registering. But then.. this would allow the other person
+		// to hijack the account, so it would be a stupid DoS.
+		$query = "SELECT id_of_person, status FROM lcm_contact as c, lcm_author as a
+					WHERE c.id_of_person = a.id_author
+					AND value=\"".addslashes($email)."\"
+					AND type_person = 'author'
+					AND type_contact = 1"; // XXX
 		$result = lcm_query($query);
 
 		$res = "<div class='reponse_formulaire'>";
 
 		// Test if the user already exists
 	 	if ($row = lcm_fetch_array($result)) {
-			$id_auteur = $row['id_author'];
-			$statut = $row['status'];
+			$id_author = $row['id_of_person'];
+			$status = $row['status'];
 
 			unset ($continue);
-			if ($statut == 'trash')
+			if ($status == 'trash')
 				$res .= "<b>"._T('form_forum_access_refuse')."</b>";
-			else if ($statut == 'nouveau') {
-				lcm_query("DELETE FROM spip_auteurs WHERE id_auteur=$id_auteur");
+			else if ($status == 'nouveau') {
+				lcm_query("DELETE FROM lcm_author WHERE id_author=$id_author");
 				$continue = true;
 			} else
 				$res .= "<b>"._T('form_forum_email_deja_enregistre')."</b>";
-		} else
+		} else {
 			$continue = true;
+		}
 
 		// Send identifiers by e-mail
 		if ($continue) {
 			include_lcm('inc_access');
-			$pass = creer_pass_aleatoire(8, $mail_inscription);
-			$login = test_login($mail_inscription);
-			$mdpass = md5($pass);
-			lcm_query("INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, status) ". "VALUES ('".addslashes($name_first)."', '".addslashes($name_middle)."', '".addslashes($name_last)."', '$username', '$mdpass', '$status')");
-			// TODO: e-mail
-			ecrire_acces();
+			include_lcm('inc_mail');
 
-			$site_name = read_meta("site_name");
-			$adresse_site = read_meta("adresse_site"); // XXX
+			if (! $pass) {
+				$pass = create_random_password(8, $username);
+			} else if ($pass != $pass2) {
+				// TODO: generate error
+			}
+
+			$login = get_unique_username($username);
+			$mdpass = md5($pass);
+			lcm_query("INSERT INTO lcm_author (name_first, name_middle, name_last, username, password, status) "
+				. "VALUES ('".addslashes($name_first)."', '".addslashes($name_middle)."', '".addslashes($name_last)."', '$username', '$mdpass', 'external')");
+
+			$id_author = lcm_insert_id();
+
+			// Add e-mail to lcm_contact
+			lcm_query("INSERT INTO lcm_contact (type_person, type_contact, id_of_person, value)
+						VALUES ('author', 1, $id_author, '" .  addslashes($email) . "')");
+
+			// Prepare the e-mail to send to the user
+			$site_name = read_meta('site_name');
+
+			// get from Link?
+			// $adresse_site = read_meta('adresse_site'); // XXX
+			$site_url = new Link("index.php");
 
 			$message = _T('form_forum_message_auto')."\n\n"._T('form_forum_bonjour')."\n\n";
-			if ($type == 'forum') {
-				$message .= _T('form_forum_voici1', array('nom_site_spip' => $nom_site_spip, 'adresse_site' => $adresse_site)) . "\n\n";
-			}
-			else {
-				$message .= _T('form_forum_voici2', array('nom_site_spip' => $nom_site_spip, 'adresse_site' => $adresse_site)) . "\n\n";
-			}
+			$message .= "_T('form_forum_voici2', array('nom_site_spip' => $nom_site_spip, 'adresse_site' => $site_url))" . "\n\n";
 			$message .= "- "._T('form_forum_login')." $login\n";
 			$message .= "- "._T('form_forum_pass')." $pass\n\n";
 
-			if (send_email($mail_inscription, "[$nom_site_spip] "._T('form_forum_identifiants'), $message)) {
-			  $res .=  _T('form_forum_identifiant_mail');
+			if (send_email($email, "[$site_name] " . _T('form_forum_identifiants'), $message)) {
+				// $res .=  _T('form_forum_identifiant_mail');
+				echo "<p>OK</p>";
 			}
 			else {
-				$res .= _T('form_forum_probleme_mail');
+				//  $res .= _T('form_forum_probleme_mail');
+				echo "<p>FAILED</p>";
 			}
 		}
 		$res .= "</div>";
+		echo $res;
 	} else {
 		// Show form to enter mail
 		$link = new Link;
@@ -180,8 +229,21 @@ if ($pass_forgotten == 'yes') {
 		echo "<b><label for='email'>" . _T('input_email') . "</label></b><br>";
 		echo "<input type='text' id='email' name='email' class='formo' value=\"$email\" size='40'></fieldset><p>\n";
 
-		 echo "<div align=\"right\"><input type=\"submit\" name='Validate' class='fondl' value=\""._T('button_validate')."\" /></div>";
-	  	echo "</form>\n";
+		echo "<fieldset><b>" . _T('input_connection_identifiers') . "</b><br/>";
+		echo "<b><label for='username'>" . _T('login_login') . "</label></b><br>";
+		echo "<small>" . _T('info_more_than_three') . "</small><br>";
+		echo "<input type='text' id='username' name='username' class='formo' value=\"$username\" size='40'><p>\n";
+	
+		echo "<b><label for='pass'>" . _T('login_password') . "</label></b><br>";
+		echo "<small>" . _T('pass_more_than_5_or_random')."</small><br>";
+		echo "<input type='password' id='pass' name='pass' class='formo' value=\"$pass\" size='40'><p>\n";
+
+		echo "<b><label for='pass2'>" . _T('login_password_confirm') . "</label></b><br>";
+		echo "<small>" . _T('info_password_confirm')."</small><br>";
+		echo "<input type='password' id='pass2' name='pass2' class='formo' value=\"$pass\" size='40'></fieldset><p>\n";
+
+		echo "<div align=\"right\"><input type=\"submit\" name='Validate' class='fondl' value=\""._T('button_validate')."\" /></div>";
+		echo "</form>\n";
 	}
 } else {
 	install_html_start(_T('title_error'), 'login');
