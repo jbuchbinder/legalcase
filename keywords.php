@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.22 2005/03/28 08:39:17 mlutfy Exp $
+	$Id: keywords.php,v 1.23 2005/03/29 15:56:22 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,7 +28,7 @@ include_lcm('inc_keywords');
 // Show all kwg for a given type (system, user, case, followup,
 // client, org, author).
 //
-function show_all_keywords($type = '') {
+function show_all_keywords_type($type = '') {
 	if (! $type)
 		$type = 'system';
 	
@@ -488,7 +488,7 @@ show_tabs($groups, $tab, $_SERVER['SCRIPT_NAME']);
 switch ($tab) {
 	case 'system' :
 	case 'user' :
-		show_all_keywords($tab);
+		show_all_keywords_type($tab);
 		break;
 	case 'maint' :
 		echo '<fieldset class="info_box">' . "\n";
