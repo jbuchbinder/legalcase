@@ -190,7 +190,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 		if ($flag_challenge_md5) {
 			// If javascript is active, we pass the login in the hidden field
 			echo "<script type=\"text/javascript\"><!--\n" . 
-				"document.write('" . addslashes(_T('login_login')) . " <b>$login</b><br/>" .
+				"document.write('" . addslashes(_T('login_login')) .  _T('typo_column') . " <b>$login</b><br/>" .
 				"<font size=\\'2\\'>[<a href=\\'lcm_cookie.php?cookie_admin=non&amp;url=".rawurlencode($action)."\\'>" . _T('login_other_identifier') . "</a>]</font>');\n" .
 				"//--></script>\n";
 		 	echo "<input type='hidden' name='session_login_hidden' value='$login' />";
