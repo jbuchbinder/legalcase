@@ -142,7 +142,7 @@ function lcm_page_start($title = "", $css_files = "") {
 							<li><a href=\"listorgs.php\" class=\"main_nav_btn\">" . _T('menu_main_org') . "</a></li>
 							<li><a href=\"listauthors.php\" class=\"main_nav_btn\">" . _T('menu_main_authors') . "</a></li>";
 							if($prefs['screen'] == "narrow") {
-								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">" . _T('menu_main_preferences') . "</a></li>\n";
+								echo "<li><a href=\"config_author.php\" class=\"main_nav_btn\">" . _T('menu_profile_preferences') . "</a></li>\n";
 							}
 	echo "
 						</ul>
