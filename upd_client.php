@@ -18,13 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.5 2004/11/23 13:29:00 mlutfy Exp $
+	$Id: upd_client.php,v 1.6 2005/01/13 15:04:06 mlutfy Exp $
 */
+
+session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
-
-session_start();
 
 // Register $errors array - just in case
 if (!session_is_registered("errors"))
@@ -72,7 +72,8 @@ if (count($errors)) {
 		die("$q<br>\nError ".lcm_errno().": ".lcm_error());
 
     // Clear the session
-    session_destroy();
+	// FIXME [ML] does this make sense, if we want to show errors afterwards?
+	// session_destroy();
 
     // Send user back to add/edit page's referer
     header('Location: ' . $client_data['ref_edit_client']);

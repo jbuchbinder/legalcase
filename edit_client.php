@@ -18,15 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.19 2004/12/10 10:34:15 antzi Exp $
+	$Id: edit_client.php,v 1.20 2005/01/13 15:04:06 mlutfy Exp $
 */
+
+session_start();
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-session_start();
-
-$client = intval($_GET['client']); // To be sure that we get exaclty the GET value
+$client = intval($_GET['client']);
 
 if (empty($errors)) {
     // Clear form data
@@ -35,6 +35,7 @@ if (empty($errors)) {
 
 	if ($client>0) {
 		// Register client as session variable
+		// XXX remove/fix this
 	    if (!session_is_registered("client"))
 			session_register("client");
 
@@ -47,6 +48,7 @@ if (empty($errors)) {
 			}
 		}
 	} else {
+		// XXX FIXME [ML] what for?
 		// Setup default values
 		$client_data['date_creation'] = date('Y-m-d H:i:s'); // now
 		$client_data['date_update'] = date('Y-m-d H:i:s'); // now
@@ -54,12 +56,12 @@ if (empty($errors)) {
 }
 
 if ($client>0) {
-	lcm_page_start("Edit client: "
+	lcm_page_start(_T('title_client_edit')
 		. $client_data['name_first'] . ' '
 		. $client_data['name_middle'] . ' '
 		. $client_data['name_last']);
 } else {
-	lcm_page_start("New client");
+	lcm_page_start(_T('title_client_new'));
 }
 
 ?>
@@ -99,21 +101,21 @@ if ($client>0) {
 			</td></tr>
 		<tr><td>Created on:</td>
 			<td><?php echo clean_output(date(_T('date_format_short'),strtotime($client_data['date_creation']))); ?></td></tr>
-		<tr><td>Citizen number:</td>
+		<tr><td><?php echo _T('person_input_citizen_number'); ?></td>
 			<td><input name="citizen_number" value="<?php echo clean_output($client_data['citizen_number']); ?>" class="search_form_txt"></td></tr>
-		<tr><td>Address:</td>
+		<tr><td><?php echo _T('person_input_address'); ?></td>
 			<td><textarea name="address" rows="3" class="frm_tarea"><?php echo clean_output($client_data['address']); ?></textarea></td></tr>
-		<tr><td>Civil status:</td>
+		<tr><td><?php echo _T('person_input_civil_status'); ?></td>
 			<td><input name="civil_status" value="<?php echo clean_output($client_data['civil_status']); ?>" class="search_form_txt"></td></tr>
-		<tr><td>Income:</td>
+		<tr><td><?php echo _T('person_input_income'); ?></td>
 			<td><input name="income" value="<?php echo clean_output($client_data['income']); ?>" class="search_form_txt"></td></tr>
 	</table>
 
 	<button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button>
-	<!-- [ML] button name="reset" type="reset" class="simple_form_btn">Reset</button -->
 	<input type="hidden" name="ref_edit_client" value="<?php echo $HTTP_REFERER ?>">
 </form>
 
 <?php
 	lcm_page_end();
+	session_destroy();
 ?>
