@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.45 2005/03/15 04:12:54 antzi Exp $
+	$Id: inc_db_upgrade.php,v 1.46 2005/03/25 13:14:04 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -636,6 +636,62 @@ function upgrade_database($old_db_version) {
 		  FULLTEXT KEY description (description))");
 
 		upgrade_db_version (28); 
+	}
+
+	if ($lcm_db_version_current < 29) {
+		lcm_query("CREATE TABLE lcm_keyword_case (
+			id_entry bigint(21) NOT NULL auto_increment,
+			id_case bigint(21) NOT NULL default '0',
+			PRIMARY KEY (id_entry),
+			KEY id_case (id_case))");
+
+		lcm_query("CREATE TABLE lcm_keyword_client (
+			id_entry bigint(21) NOT NULL auto_increment,
+			id_keyword bigint(21) NOT NULL default '0',
+			id_client bigint(21) NOT NULL default '0',
+			PRIMARY KEY (id_entry),
+			KEY id_client (id_client))");
+
+		lcm_query("CREATE TABLE lcm_keyword_org (
+			id_entry bigint(21) NOT NULL auto_increment,
+			id_keyword bigint(21) NOT NULL default '0',
+			id_org bigint(21) NOT NULL default '0',
+			PRIMARY KEY (id_entry),
+			KEY id_org (id_org))");
+
+		lcm_query("ALTER TABLE lcm_case ADD notes text NOT NULL AFTER alledged_crime");
+		lcm_query("ALTER TABLE lcm_client ADD notes text NOT NULL");
+
+		lcm_query("ALTER TABLE lcm_org 
+						ADD notes text NOT NULL default '',
+						ADD court_reg text NOT NULL default '',
+						ADD tax_number text NOT NULL default '',
+						ADD stat_number text NOT NULL default ''");
+
+		// Remove lcm_client.address = lcm_org.address and move to lcm_contacts
+		// If no one complains, we can remove the fields at the next upgrade
+		include_lcm('inc_contacts');
+		$id_address = get_contact_type_id('address_main');
+
+		lcm_query("INSERT INTO lcm_contact (type_person, id_of_person, value, type_contact)
+				SELECT 'client', id_client, address, " . $id_address . " 
+					FROM lcm_client
+					WHERE (address IS NOT NULL AND address != '')");
+
+		lcm_query("INSERT INTO lcm_contact (type_person, id_of_person, value, type_contact)
+				SELECT 'org', id_org, address, " . $id_address . " 
+					FROM lcm_org
+					WHERE (address IS NOT NULL AND address != '')");
+
+		upgrade_db_version (29); 
+	}
+
+	if ($lcm_db_version_current < 30) {
+		// [ML] If no one complained, uncomment the following:
+		// lcm_query("ALTER TABLE lcm_client DROP address");
+		// lcm_query("ALTER TABLE lcm_org DROP address");
+
+		// upgrade_db_version (30); 
 	}
 
 	return $log;
