@@ -4,9 +4,11 @@ include ("inc/inc_version.php");
 include_lcm ("inc_session");
 
 // Determine where we want to fallback after the operation
-if ($url)
-	$cible = new Link($url);
-else
+if ($_REQUEST['url']) {
+	$cible = new Link($_REQUEST['url']);
+	if ($_REQUEST['referer']) // see config_author.php
+		$cible->addVar('referer', $_REQUEST['referer']);
+} else
 	$cible = new Link('/');
 
 // Replay the cookie to renew lcm_session
@@ -191,8 +193,7 @@ if ($var_lang_lcm) {
 // Else, we do a HTTP refresh
 if (ereg("^Apache", $SERVER_SOFTWARE)) {
 	@header("Location: " . $cible->getUrl());
-}
-else {
+} else {
 	@header("Refresh: 0; url=" . $cible->getUrl());
 	echo "<html><head>";
 	echo "<meta http-equiv='Refresh' content='0; url=".$cible->getUrl()."'>";
