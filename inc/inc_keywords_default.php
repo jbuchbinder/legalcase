@@ -5,6 +5,8 @@ define('_INC_KEYWORDS_DEFAULT', '1');
 
 include_lcm('inc_keywords');
 
+global $system_keyword_groups;
+
 $system_keyword_groups = array (
 	array(
 		"name" => "followups",
@@ -105,12 +107,8 @@ $system_keyword_groups = array (
 	)
 );
 
-function create_groups($all_system_kwg) {
-
-	foreach ($all_system_kwg as $skwg) {
-
-		lcm_log("KWG: inserting " . skwg['name']);
-
+function create_groups($keyword_groups) {
+	foreach ($keyword_groups as $skwg) {
 		$q = "INSERT INTO lcm_keyword_group 
 				(name, title, description, type, policy, quantity, suggest, ac_admin, ac_author) 
 			VALUES (" 
@@ -122,14 +120,18 @@ function create_groups($all_system_kwg) {
 				. "'" . addslashes($skwg['quantity']) . "', "
 				. "'" . addslashes($skwg['suggest']) . "', "
 				. "'" . addslashes($skwg['ac_admin']) . "', "
-				. "'" . addslashes($skwg['ac_author']) . ")";
+				. "'" . addslashes($skwg['ac_author']) . "')";
 
 		$result = lcm_query($q);
 		$kwg_id = lcm_insert_id();
 
-		foreach ($skwg['keywords'] as $k) {
-			lcm_log("KW: inserting " . k['name'] . " in " . $skwg['name']);
+		if ($kwg_id < 1) {
+			lcm_log("create_groups: creation of keyword group seems to have failed. Aborting.");
+			lcm_log("-> Query way: " . $q);
+			return;
+		}
 
+		foreach ($skwg['keywords'] as $k) {
 			$q = "INSERT INTO lcm_keyword
 					(id_group, name, title, description, ac_author)
 				VALUES ("
@@ -143,6 +145,9 @@ function create_groups($all_system_kwg) {
 		}
 	}
 }
+
+echo "KWG = $system_keyword_groups";
+print_r($system_keyword_groups);
 
 ?>
 
