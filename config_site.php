@@ -29,7 +29,9 @@ function show_config_form() {
 	echo "<form name='upd_site_profile' method='post' action='config_site.php'>\n";
 	echo "\t<input type='hidden' name='conf_modified' value='yes'/>\n";
 
+	//
 	// *** INFO SITE
+	//
 	$site_name = read_meta('site_name');
 	$site_desc = read_meta('site_description');
 	$site_address = read_meta('site_address');
@@ -67,7 +69,9 @@ function show_config_form() {
 	echo "<p><input type='text' id='email_sysadmin' name='email_sysadmin' value='$email_sysadmin' size='40'/></p>\n";
 	echo "</td>\n</tr>\n</table>\n";
 
-	// *** COLLAB WORD
+	// 
+	// *** COLLAB WORK
+	//
 	$case_default_read = read_meta('case_default_read');
 	$case_default_write = read_meta('case_default_write');
 	$case_read_always = read_meta('case_read_always');
@@ -90,10 +94,12 @@ function show_config_form() {
 <small>(Cases usually have one or many authors specifically assigned to them. It is assumed that assigned authors can consult the case and it's follow-ups, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_1' value='1'";
+	// If by default read set to public
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_1' value='yes'";
 	if ($case_default_read) echo " checked";
 	echo "><label for='case_default_read_1'>Any author can view the case information of other authors, even if they are not on the case (better cooperation).</label></input></li>\n";
 
+	// If by default read not set to public
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_read' id='case_default_read_2' value=''";
 	if (!$case_default_read) echo " checked";
 	echo "><label for='case_default_read_2'>Only authors assigned to a case can view its information and follow-ups (better privacy).</label></input></li>\n";
@@ -105,11 +111,14 @@ function show_config_form() {
 <small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_1' value=''";
-	if (!$case_read_always) echo " checked";
-	echo "><label for='case_read_always_1'>Yes</label></input></li>\n";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_2' value='1'";
+	// If read always set to public
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_1' value='yes'";
 	if ($case_read_always) echo " checked";
+	echo "><label for='case_read_always_1'>Yes</label></input></li>\n";
+
+	// If read always set to not public
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_read_always' id='case_read_always_2' value=''";
+	if (!$case_read_always) echo " checked";
 	echo "><label for='case_read_always_2'>No, except if they have administrative rights.</label></input></li>\n";
 	echo "</ul>\n";
 
@@ -122,10 +131,12 @@ function show_config_form() {
 <small>(Cases usually have one or many authors specifically assigned to them. It is assumed that only assigned authors can add follow-up information to the case, but what about authors who are not assigned to the case?)</small></p>\n";
 
 	echo "<ul>";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_1' value='1'";
+	// If by default write set to public
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_1' value='yes'";
 	if ($case_default_write) echo " checked";
 	echo "><label for='case_default_write_1'>Any author can write the case information of other authors, even if they are not on the case (better cooperation).</label></input></li>\n";
 
+	// If by default write not set to public
 	echo "<li style='list-style-type: none;'><input type='radio' name='case_default_write' id='case_default_write_2' value=''";
 	if (!$case_default_write) echo " checked";
 	echo "><label for='case_default_write_2'>Only authors assigned to a case can write its information and follow-ups (better privacy).</label></input></li>\n";
@@ -137,16 +148,21 @@ function show_config_form() {
 <small>(This is used to avoid mistakes or to enforce a site policy.)</small></p>\n";
 
 	echo "<ul>";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value=''";
-	if (!$case_write_always) echo " checked";
-	echo "><label for='case_write_always_1'>Yes.</label></input></li>\n";
-	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_2' value='1'";
+	// If write always set to public
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_1' value='yes'";
 	if ($case_write_always) echo " checked";
+	echo "><label for='case_write_always_1'>Yes.</label></input></li>\n";
+
+	// If write always set to not public
+	echo "<li style='list-style-type: none;'><input type='radio' name='case_write_always' id='case_write_always_2' value=''";
+	if (!$case_write_always) echo " checked";
 	echo "><label for='case_write_always_2'>No, except if they have administrative rights.</label></input></li>\n";
 	echo "</ul>\n";
 	echo "</td>\n</tr>\n</table>\n";
 
+	//
 	// *** SELF-REGISTRATION
+	//
 	$site_open_subscription = read_meta('site_open_subscription');
 
 	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
@@ -186,6 +202,7 @@ function apply_conf_changes() {
 	global $site_desc;
 	global $site_address;
 	global $default_language;
+	global $email_sysadmin;
 	global $case_default_read;
 	global $case_default_write;
 	global $case_read_always;
@@ -232,13 +249,26 @@ function apply_conf_changes() {
 		}
 	}
 
-	// TODO: admin email
-
-	// TODO: Collab word
+	// Administrator e-mail
+	if (! empty($email_sysadmin)) {
+		if ($email_sysadmin != read_meta('email_sysadmin')) {
+			if (is_valid_email($email_sysadmin)) {
+				write_meta('email_sysadmin', $email_sysadmin);
+				array_push($log, "Sysadmin e-mail address et to <tt>"
+					. addslashes($email_sysadmin) . "</tt>.");
+			} else {
+				// FIXME not the best way of showing errors... 
+				array_push($log, "Sysadmin e-mail address <tt>"
+					. addslashes($email_sysadmin) . "</tt> is <b>not</b> a "
+					. "valid address. Modification not applied.");
+			}
+		}
+	}
 
 	// Default read policy
 	if ($case_default_read != read_meta('case_default_read')) {
-		write_meta('case_default_read',$case_default_read);
+		write_meta('case_default_read', ($case_default_read ? 'yes' : ''));
+
 		$entry = "Read access to cases set to '<tt>";
 		if ($case_default_read) $entry .= "public";
 		else $entry .= "restricted";
@@ -248,7 +278,8 @@ function apply_conf_changes() {
 
 	// Default write policy
 	if ($case_default_write != read_meta('case_default_write')) {
-		write_meta('case_default_write',$case_default_write);
+		write_meta('case_default_write', ($case_default_write ? 'yes' : ''));
+
 		$entry = "Write access to cases set to '<tt>";
 		if ($case_default_write) $entry .= "public";
 		else $entry .= "restricted";
@@ -258,7 +289,8 @@ function apply_conf_changes() {
 
 	// Read policy access
 	if ($case_read_always != read_meta('case_read_always')) {
-		write_meta('case_read_always',$case_read_always);
+		write_meta('case_read_always', ($case_read_always ? 'yes' : ''));
+
 		$entry = "Read access policy can by changed by <tt>";
 		if ($case_read_always) $entry .= "admin only";
 		else $entry .= "everybody";
@@ -268,7 +300,8 @@ function apply_conf_changes() {
 
 	// Write policy access
 	if ($case_write_always != read_meta('case_write_always')) {
-		write_meta('case_write_always',$case_write_always);
+		write_meta('case_write_always', ($case_write_always ? 'yes' : ''));
+
 		$entry = "Write access policy can be changed by <tt>";
 		if ($case_write_always) $entry .= "admin only";
 		else $entry .= "everybody";
