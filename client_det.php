@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.22 2005/02/22 18:01:58 antzi Exp $
+	$Id: client_det.php,v 1.23 2005/02/28 14:57:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -51,13 +51,16 @@ if ($client > 0) {
 			$gender = _T('info_not_available');
 
 
-		// [ML] TODO: Show as a list with UL + LI without bullets (accessibility)
-
 		// Show client details
 		lcm_page_start(_T('title_client_view') . ' ' . $row['name_first'] . ' ' .  $row['name_middle'] . ' ' . $row['name_last']);
 
 		// Show tabs
-		$groups = array('general','contacts','organisations','cases');
+		$groups = array(
+					'general' => _T('client_tab_general'),
+					'contacts' => _T('client_tab_contacts'),
+					'organisations' => _T('client_tab_organisations'),
+					'cases' => _T('client_tab_cases'));
+
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 0 );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
@@ -76,7 +79,7 @@ if ($client > 0) {
 		}
 
 		switch ($tab) {
-			case 0:
+			case 'general':
 				//
 				// Show client general information
 				//
@@ -98,15 +101,11 @@ if ($client > 0) {
 				echo "</p>\n";
 		
 				if ($edit)
-					echo '<br /><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "&nbsp;\n";
+					echo '<p><a href="edit_client.php?client=' . $row['id_client'] . '" class="edit_lnk">Edit client information</a>' . "</p>\n";
 		
-				echo '<a href="edit_case.php?case=0&attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
-				echo "Open new case involving this client";
-				echo "</a><br /><br />\n";
-				
 				echo "</fieldset>\n";
 				break;
-			case 1:
+			case 'contacts':
 				//
 				// Show client contacts (if any)
 				//
@@ -135,7 +134,7 @@ if ($client > 0) {
 				if ($i > 0)
 					echo $html;
 				break;
-			case 2:
+			case 'organisations':
 				//
 				// Show client associated organisations
 				//
@@ -175,11 +174,11 @@ if ($client > 0) {
 				
 				break;
 
-			case 3:
+			case 'cases':
 				//
-				// Show 5 recent cases - why 5? - [ML] because I'm lazy
-				// [ML] we should have a general "list case" function in a libracy..
+				// Show recent cases
 				// [AG] Since this info is on separate tab, they could be more, i.e. $prefs['page_rows']
+				//
 				$q = "SELECT clo.id_case, c.title, c.date_creation
 						FROM lcm_case_client_org as clo, lcm_case as c
 						WHERE id_client = " . $client . "
@@ -187,27 +186,30 @@ if ($client > 0) {
 						LIMIT " . $prefs['page_rows'];
 		
 				$result = lcm_query($q);
-				$html = "";
-				$cpt = 0;
-		
-				while ($row = lcm_fetch_array($result)) {
-					$html .= '<tr><td class="tbl_cont_' . ($cpt++ % 2 ? "dark" : "light") . '">' 
-						. '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">' 
-						.  $row['title'] 
-						. '</a></td></tr>' . "\n";
-				}
-		
-				if ($html) {
+
+				if (lcm_num_rows($result)) {
 					echo '<fieldset class="info_box">' . "\n";
 					echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_cases') . "</div>\n";
-					echo "<table>\n";
-					echo $html;
-					echo "</table>\n";
+					show_listcase_start();
+		
+					for ($cpt = 0; $row = lcm_fetch_array($result); $cpt++) {
+						show_listcase_item($row, $cpt);
+					}
+
+					show_listcase_end();
 					echo "</fieldset>\n";
 				}
 
 				break;
 		}
+
+		// Show this in all tabs
+		echo '<p>';
+		echo '<a href="edit_case.php?case=0&attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
+		echo "Open new case involving this client";
+		echo "</a>";
+		echo "</p>\n";
+				
 	} else die("There's no such client!");
 } else die("Which client?");
 
