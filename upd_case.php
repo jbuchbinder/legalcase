@@ -30,15 +30,15 @@ if (count($errors)) {
 } else {
 	//$cl='(id_case,title,id_court_archive,date_creation,date_assignment,legal_reason,alledged_crime,status)';
 	//$vl="($id_case,'$title','$id_court_archive','$date_creation','$date_assignment','$legal_reason','$alledged_crime','$status')";
-	$fl = "title='" . $case_data['title'] . "',
-			id_court_archive='" . $case_data['id_court_archive'] . "',";
+	$fl = "title='" . addslashes($case_data['title']) . "',
+			id_court_archive='" . addslashes($case_data['id_court_archive']) . "',";
 //			date_creation='" . $case_data['date_creation'] . "',
 // [AG] Creation date derived from MySQL server to prevent user manipulation
 	$fl .= "
-			date_assignment='" . $case_data['date_assignment'] . "',
-			legal_reason='" . $case_data['legal_reason'] . "',
-			alledged_crime='" . $case_data['alledged_crime'] . "',
-			status='" . $case_data['status'] . "',";
+			date_assignment='" . addslashes($case_data['date_assignment']) . "',
+			legal_reason='" . addslashes($case_data['legal_reason']) . "',
+			alledged_crime='" . addslashes($case_data['alledged_crime']) . "',
+			status='" . addslashes($case_data['status']) . "',";
 	if ($public) $fl .= "public=1";
 	else $fl .= "public=0";
 
