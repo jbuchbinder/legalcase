@@ -33,7 +33,7 @@ if ($list_pos>0)
 
 // Output table tags
 ?>
-<table border='1' width='99%'>
+<table border='0' class='tbl_data' width='99%'>
 	<tr>
 		<th class='tbl_head'>Name</th>
 		<th class='tbl_head'>Action</th>
