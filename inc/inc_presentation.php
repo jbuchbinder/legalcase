@@ -44,7 +44,8 @@ function lcm_html_start($title = "AUTO", $css_files = "") {
 <head>
 	<title>". ($lcm_site_name ? $lcm_site_name . " | " : '') . $title ."</title>
 	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". $charset ."\" />
-	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_basic_layout.css\" />\n";
+	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_basic_layout.css\" media=\"screen\" />
+	<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/lcm_print.css\" media=\"print\" />\n";
 
 	//
 	// Style sheets
