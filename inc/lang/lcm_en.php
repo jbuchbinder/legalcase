@@ -27,6 +27,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // B
 'button_next' => 'Next',
 'button_reload_page' => 'Reload this page',
+'button_reset' => 'Reset',
 'button_validate' => 'Validate',
 
 
@@ -87,6 +88,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // I
+'info_followup_involving' => 'Involving:',
+'info_followup_to_case' => 'To case:',
 'info_free_software' => 'Free software <a href=\'http://www.lcm.ngo-bg.org/en\' class=\'prefs_normal_lnk\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\' class=\'prefs_normal_lnk\'>GPL licence</a>.',
 'info_greetings' => 'Good day',
 'info_more_than_five' => '(More than 5 characters)',

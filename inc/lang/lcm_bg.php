@@ -27,6 +27,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // B
 'button_next' => 'По-нататък',
 'button_reload_page' => '<NEW>Reload this page',
+'button_reset' => '<NEW>Reset',
 'button_validate' => 'Изпращане',
 
 
@@ -55,7 +56,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_month_3' => '<NEW>March',
 'date_month_4' => '<NEW>April',
 'date_month_5' => '<NEW>May',
-'date_month_6' => '<NEW>June',
+'date_month_6' => 'юни',
 'date_month_7' => '<NEW>July',
 'date_month_8' => '<NEW>August',
 'date_month_9' => '<NEW>September',
@@ -87,6 +88,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // I
+'info_followup_involving' => '<NEW>Involving:',
+'info_followup_to_case' => '<NEW>To case:',
 'info_free_software' => '<NEW>Free software <a href=\'http://www.lcm.ngo-bg.org/en\' class=\'prefs_normal_lnk\'>distributed</a> under the <a href=\'http://www.gnu.org/licenses/gpl.html\' class=\'prefs_normal_lnk\'>GPL licence</a>.',
 'info_greetings' => '<NEW>Good day',
 'info_more_than_five' => '<NEW>(More than 5 characters)',
@@ -212,8 +215,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // T
 'title_error' => 'Грешка',
-'title_software' => '<MODIF>Подготовка на програмен продукт за управление на регистрация на юридическа практика',
-'title_software_article' => '<MODIF>&ETH;�&ETH;&frac34;&ETH;&#381;&ETH;&sup3;&ETH;&frac34;&Ntilde;�&ETH;&frac34;&ETH;&sup2;&ETH;&ordm;&ETH;&deg; &ETH;&frac12;&ETH;&deg; &ETH;&iquest;&Ntilde;&euro;&ETH;&frac34;&ETH;&sup3;&Ntilde;&euro;&ETH;&deg;&ETH;&frac14;&ETH;&micro;&ETH;&frac12; &ETH;&iquest;&Ntilde;&euro;&ETH;&frac34;&ETH;&#381;&Ntilde;�&ETH;&ordm;&Ntilde;� &ETH;&middot;&ETH;&deg; &Ntilde;�&ETH;&iquest;&Ntilde;&euro;&ETH;&deg;&ETH;&sup2;&ETH;&raquo;&ETH;&micro;&ETH;&frac12;&ETH;&#382;&ETH;&micro; &ETH;&frac12;&ETH;&deg; &Ntilde;&euro;&ETH;&micro;&ETH;&sup3;&ETH;&#382;&Ntilde;�&Ntilde;�&Ntilde;&euro;&ETH;&deg;&Ntilde;�&ETH;&#382;&Ntilde;� &ETH;&frac12;&ETH;&deg; &Ntilde;�&Ntilde;&euro;&ETH;&#382;&ETH;&#381;&ETH;&#382;&Ntilde;�&ETH;&micro;&Ntilde;�&ETH;&ordm;&ETH;&deg; &ETH;&iquest;&Ntilde;&euro;&ETH;&deg;&ETH;&ordm;&Ntilde;�&ETH;&#382;&ETH;&ordm;&ETH;&deg;',
+'title_software' => 'Програма за управление на юридически практики',
+'title_software_article' => 'Програма за управление на юридически практики',
 'title_software_description' => '<NEW>for not-for-profit legal advice centres',
 'title_technical_message' => '<NEW>Technical message',
 'title_technical_problem' => '<NEW>Technical problem',
