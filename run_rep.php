@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.11 2005/02/09 09:59:05 mlutfy Exp $
+	$Id: run_rep.php,v 1.12 2005/02/10 13:48:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -103,6 +103,22 @@ if (preg_match("/^lcm_(.*)$/", $my_line_table, $regs)) {
 	}
 }
 
+//
+// Fetch all filters for this report
+//
+
+$my_filters = array();
+
+$q = "SELECT f.table_name, f.field_name, v.type, v.value 
+		FROM lcm_rep_filter as v, lcm_fields as f
+		WHERE v.id_field = f.id_field
+		AND v.id_report = " . $rep;
+
+$result = lcm_query($q);
+
+while ($row = lcm_fetch_array($result))
+	array_push($my_filters, $row);
+
 
 //
 // Start building the SQL query for the report lines
@@ -110,15 +126,50 @@ if (preg_match("/^lcm_(.*)$/", $my_line_table, $regs)) {
 
 $my_line_fields = implode(", ", $my_lines);
 
-if ($my_line_fields && $my_line_fields_implicit) {
+if ($my_line_fields && $my_line_fields_implicit)
 	$my_line_fields .= ", " . $my_line_fields_implicit;
-}
 
 $q = "SELECT " . $my_line_fields . "
 		FROM " . $my_line_table;
-// TODO: WHERE .... (each line type can propose ready filters?)
+
+// Apply filters to this table
+$line_filters = array();
+
+foreach ($my_filters as $f) {
+	if ($f['table_name'] == $my_line_table) {
+		$temp = '';
+
+		if ($f['type']) 
+			$temp .= $f['field_name'];
+
+		switch($f['type']) {
+			case '':
+				// do nothing
+				break;
+			case 'num_eq':
+				$temp .= " = " . $f['value'];
+				break;
+			case 'num_lt':
+				$temp .= " < " . $f['value'];
+				break;
+
+			default:
+				lcm_panic("Internal error in run_report: unknown filter type (" . $f['type'] . ")");
+		}
+
+		if ($temp)
+			array_push($line_filters, $temp);
+	}
+}
+
+if (count($line_filters))
+	$q .= "\n WHERE " . implode(" AND ", $line_filters);
 
 $result = lcm_query($q);
+
+//
+// Ready for report line
+//
 
 echo "<table width='99%' border='1'>";
 
@@ -134,7 +185,9 @@ while ($row = lcm_fetch_array($result)) {
 
 	echo "</td>\n";
 
-	// Column information
+	//
+	// Prepare information for each column
+	//
 	foreach ($my_columns as $col) {
 		// Table-join condition
 		$from = $my_line_table;
@@ -142,7 +195,38 @@ while ($row = lcm_fetch_array($result)) {
 			$from .= ", " . $col['table_name'];
 
 		$where = '';
+		$filters = '';
+		$col_filters = array();
 
+		foreach ($my_filters as $f) {
+			if ($f['table_name'] == $col['table_name']) {
+				$temp = '';
+
+				if ($f['type'])
+					$temp .= $f['field_name'];
+		
+				switch($f['type']) {
+					case '':
+						// do nothing
+						break;
+					case 'num_eq':
+						$temp .= " = " . $f['value'];
+						break;
+					case 'num_lt':
+						$temp .= " < " . $f['value'];
+						break;
+		
+					default:
+						lcm_panic("Internal error in run_report: unknown filter type (" . $f['type'] . ")");
+				}
+		
+				if ($temp)
+					array_push($col_filters, $temp);
+			}
+		}
+
+		$filters = implode(" AND ", $col_filters);
+		
 		switch ($my_line_table) {
 			case 'lcm_case':
 				$where = " lcm_case.id_case = ";
@@ -209,6 +293,9 @@ while ($row = lcm_fetch_array($result)) {
 							WHERE " . $col['field_name'] . " = '" . $kw['name'] . "'
 								AND " . $where;
 
+					if ($filters)
+						$q1 .= " AND " . $filters;
+
 					$result1 = lcm_query($q1);
 
 					$val = lcm_fetch_array($result1);
@@ -223,6 +310,9 @@ while ($row = lcm_fetch_array($result)) {
 			$q1 = "SELECT " . $col['field_name'] . "
 					FROM " . $from . "
 					WHERE " . $where;
+
+			if ($filters)
+				$q1 .= " AND " . $filters;
 	
 			$result1 = lcm_query($q1);
 			$val = lcm_fetch_array($result1);
