@@ -18,13 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.66 2005/03/07 11:11:35 mlutfy Exp $
+	$Id: edit_fu.php,v 1.67 2005/03/09 14:51:52 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
-//include_lcm('inc_keywords_default');
+include_lcm('inc_keywords');
 
 // Initiate session
 // [ML] now in inc_auth session_start();
@@ -77,6 +77,51 @@ if (empty($_SESSION['errors'])) {
 			$_SESSION['fu_data']['id_case'] = $case; // Link to the case
 			$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 			$_SESSION['fu_data']['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+
+			// Check if the followup is created from appointment
+			$app = intval($_GET['app']);
+			if (! empty($app)) {
+				$q = "SELECT * FROM lcm_app WHERE id_app=$app";
+				$result = lcm_query($q);
+				if ($row = lcm_fetch_array($result)) {
+					$_SESSION['fu_data']['description'] = 'Following the ' . _T(get_kw_title($row['type']))
+						. ' (' . $row['title'] . ') from ' . format_date($row['start_time']);
+					
+					// Show appointment participants
+					$participants = array();
+					$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
+						FROM lcm_author_app, lcm_author
+						WHERE (id_app=$app AND lcm_author_app.id_author=lcm_author.id_author)";
+					$res_author = lcm_query($q);
+					if (lcm_num_rows($res_author)>0) {
+						while ($author = lcm_fetch_array($res_author)) {
+							$participants[] = njoin(array($author['name_first'],$author['name_middle'],$author['name_last']));
+						}
+					}
+					
+					// Show appointment clients
+					$q = "SELECT lcm_app_client_org.*,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
+						FROM lcm_app_client_org, lcm_client
+						LEFT JOIN  lcm_org ON lcm_app_client_org.id_org=lcm_org.id_org
+						WHERE (id_app=$app AND lcm_app_client_org.id_client=lcm_client.id_client)";
+					$res_client = lcm_query($q);
+					if (lcm_num_rows($res_client)>0) {
+						while ($client = lcm_fetch_array($res_client))
+							$participants[] = njoin(array($client['name_first'],$client['name_middle'],$client['name_last']))
+								. ( ($client['id_org'] > 0) ? " of " . $client['name'] : '');
+					}
+
+					$_SESSION['fu_data']['description'] .= ' involving ' . join(', ',$participants);
+
+					// Add separator
+					$_SESSION['fu_data']['description'] .= "\n--=+=--\n";
+
+					// Save appointment ID as session variable
+					$_SESSION['fu_data']['id_app'] = $app;
+				} else {
+					die("There's no such appointment!");
+				}
+			}
 		} else {
 			die("Add followup to which case?");
 		}
@@ -262,6 +307,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 	<input type="hidden" name="id_followup" value="<?php echo $_SESSION['fu_data']['id_followup']; ?>">
 	<input type="hidden" name="id_case" value="<?php echo $_SESSION['fu_data']['id_case']; ?>">
+	<input type="hidden" name="id_app" value="<?php echo $_SESSION['fu_data']['id_app']; ?>">
 	<input type="hidden" name="ref_edit_fu" value="<?php echo $_SESSION['fu_data']['ref_edit_fu']; ?>">
 </form>
 
