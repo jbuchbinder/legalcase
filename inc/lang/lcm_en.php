@@ -309,6 +309,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'new_followup' => 'New followup',
 
 
+// O
+'org_subtitle_representatives' => 'Organisation representatives',
+'org_subtitle_view_general' => 'General information',
+
+
 // P
 'parameter' => 'Parameter',
 'pass_back_to_site' => 'Back to the site entrance',
