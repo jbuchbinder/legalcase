@@ -398,7 +398,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 		$ret = "<form action='$post' method='post' style='margin:0px; padding:0px;'>";
 
 		if ($target)
-			$ret .= "<input type='hidden' name='url' value='$target'>";
+			$ret .= "<input type='hidden' name='url' value='$target'/>";
 
 		if ($text)
 			$ret .= $text;
@@ -408,7 +408,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 		$postcomplet = new Link($post);
 		if ($target) $postcomplet->addvar('url', $target);
 
-		$ret .= "\n<select name='$select_name' $style onChange=\"document.location.href='".$postcomplet->geturl()."&$select_name='+this.options[this.selectedIndex].value\">\n";
+		$ret .= "\n<select name='$select_name' $style onchange=\"document.location.href='".$postcomplet->geturl()."&$select_name='+this.options[this.selectedIndex].value\">\n";
 	} else {
 		// XXX TODO FIXME
 		// rename class 'forml' to 'form_lang' and adjust CSS
@@ -431,7 +431,7 @@ function menu_languages($select_name = 'var_lang_lcm', $default = '', $text = ''
 	$ret .= "</select>\n";
 
 	if ($select_name == 'var_lang_lcm') {
-		$ret .= "<noscript><input type='submit' name='Validate' value='&gt;&gt;'></noscript>";
+		$ret .= "<noscript><input type='submit' name='Validate' value='&gt;&gt;'/></noscript>";
 		$ret .= "</form>";
 	} 
 
