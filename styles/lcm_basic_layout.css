@@ -255,3 +255,14 @@ p.normal_text {
 a.content_link {
 	text-decoration: underline;
 }
+
+fieldset.conf_info_box {
+	margin: 0em 0em 1em 0em;
+	padding: 0.5em;
+	-moz-border-radius: 10px;
+	font-size: 12px;
+}
+
+small.sm_11 {
+	font-size: 11px;
+}
