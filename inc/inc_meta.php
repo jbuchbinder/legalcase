@@ -46,8 +46,6 @@ function effacer_meta($nom) {
 function ecrire_metas() {
 	global $meta, $meta_maj, $flag_ecrire;
 
-	echo lcm_getbacktrace();
-
 	lire_metas();
 
 	$s = '<'.'?php
