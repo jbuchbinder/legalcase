@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.77 2005/03/23 18:19:33 mlutfy Exp $
+	$Id: edit_fu.php,v 1.78 2005/03/25 08:11:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -203,7 +203,7 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 
 			?>
 			</select></td></tr>
-		<tr><td valign="top"><?php echo _T('fu_input_description'); ?></td>
+		<tr><td valign="top"><?php echo f_err_star('description') . _T('fu_input_description'); ?></td>
 			<td><textarea <?php echo $dis; ?> name="description" rows="15" cols="40" class="frm_tarea"><?php
 			echo clean_output($_SESSION['fu_data']['description']) . "</textarea></td></tr>\n";
 // Sum billed field
