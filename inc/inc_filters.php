@@ -36,7 +36,21 @@ function highlight_matches($source, $match) {
 function format_date($timestamp = '') {
 	// TODO: Check if the user specified a format
 
-	if ($timestamp)
+	if (! is_numeric($timestamp)) {
+		// FIXME: reacts strangely when date is 00:00:00 ...
+		$newtime = strtotime($timestamp);
+		if ($newtime != -1) {
+			lcm_log("Converted $timestamp to $newtime (" .  date(_T('date_format'), $newtime) . ")");
+			$timestamp = $newtime;
+		} else {
+			lcm_log("WARNING: Received strange date format: $timestamp");
+			return '';
+		}
+	}
+
+	if ($timestamp == 0)
+		return '';
+	else if ($timestamp)
 		return date(_T('date_format'), $timestamp);
 	else
 		return date(_T('date_format'));
