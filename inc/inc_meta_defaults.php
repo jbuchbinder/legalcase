@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta_defaults.php,v 1.10 2005/02/15 09:06:55 mlutfy Exp $
+	$Id: inc_meta_defaults.php,v 1.11 2005/03/01 09:18:08 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -71,6 +71,8 @@ function init_default_config() {
 		// ** Policy **
 		'client_name_middle' => 'yes',
 		'client_citizen_number' => 'no',
+		'client_civil_status' => 'yes',
+		'client_income' => 'yes',
 		'case_court_archive' => 'yes',
 		'case_assignment_date' => 'yes',
 		'case_alledged_crime' => 'yes',
