@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.31 2005/01/25 17:34:54 mlutfy Exp $
+	$Id: config_site.php,v 1.32 2005/02/10 09:19:56 makaveev Exp $
 */
 
 include ("inc/inc.php");
@@ -286,7 +286,7 @@ function show_config_form_policy() {
 	echo '<p class="prefs_column_menu_head"><b>' . _T('siteconf_subtitle_client_fields') . "</b></p>\n";
 	echo '<p><small class="sm_11">' . _T('siteconf_info_client_fields') . "</small></p>\n";
 
-	echo '<table width="350" class="tbl_usr_dtl">' . "\n";
+	echo '<table width="99%" class="tbl_usr_dtl">' . "\n";
 	echo '<tr><td width="300">' . _T('siteconf_input_name_middle') ."</td>\n"
 		. "<td>" . get_yes_no('client_name_middle', $client_name_middle) .  "</td>\n"
 		. "</tr>\n";
@@ -308,7 +308,7 @@ function show_config_form_policy() {
 	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_case_fields') . "</b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_case_fields') . "</small></p>\n";
 
-	echo "<table width=\"350\" class=\"tbl_usr_dtl\">";
+	echo "<table width=\"99%\" class=\"tbl_usr_dtl\">";
 	echo "<tr><td width=\"300\">" . _T('siteconf_input_court_archive') ."</td><td>"
 		. get_yes_no('case_court_archive', $case_court_archive)
 		. "</td></tr>\n";
@@ -331,7 +331,7 @@ function show_config_form_policy() {
 	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_followup_fields') . "</b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_followups_fields') . "</small></p>\n";
 
-	echo "<table width=\"350\" class=\"tbl_usr_dtl\">";
+	echo "<table width=\"99%\" class=\"tbl_usr_dtl\">";
 	echo "<tr><td width=\"300\">" . _T('siteconf_input_sum_billed') ."</td><td>"
 		. get_yes_no('fu_sum_billed', $fu_sum_billed)
 		. "</td></tr>\n";
