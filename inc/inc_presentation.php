@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.176 2005/03/22 11:55:57 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.177 2005/03/22 12:15:53 mlutfy Exp $
 */
 
 //
@@ -1287,7 +1287,7 @@ function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
 	show_list_end($current_pos, $number_of_rows);
 }
 
-function show_find_box($type, $string) {
+function show_find_box($type, $string, $dest = '') {
 	// the joy of patching around
 	switch ($type) {
 		case 'case':
@@ -1301,6 +1301,9 @@ function show_find_box($type, $string) {
 		default:
 			lcm_panic("invalid type: $type");
 	}
+
+	if ($dest)
+		$action = $dest;
 
 	echo '<form name="frm_find_' . $type . '" class="search_form" action="' . $action . '" method="get">' . "\n";
 	echo _T('input_search_' . $type) . "&nbsp;";
