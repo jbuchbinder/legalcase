@@ -26,6 +26,11 @@ a:hover {
 	font-size: 12px;
 }
 
+input[type=text], input[type=password] {
+	width: 100%; 
+	background-color: #FFDDAA;
+}
+
 /* This should be placed in some global CSS file */
 .box_warning {
 	border: 2px solid #ffff00;
