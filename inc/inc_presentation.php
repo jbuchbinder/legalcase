@@ -269,9 +269,11 @@ function lcm_page_end($credits = '') {
 	//
 	// Language choice (temporarely put here by [ML])
 	//
+	/* [ML] No longuer necessary
 	if ($GLOBALS['all_langs']) {
 		echo "<br/><div align=\"right\">" . menu_languages('var_lang_lcm') .  "</div>\n";
 	}
+	*/
 
 	echo "
 </body>
