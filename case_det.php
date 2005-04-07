@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.132 2005/04/05 14:02:15 makaveev Exp $
+	$Id: case_det.php,v 1.133 2005/04/07 23:25:06 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -291,22 +291,20 @@ if ($case > 0) {
 				echo "<p class=\"normal_text\">\n";
 
 				$q = "SELECT *
-					FROM lcm_app
+					FROM lcm_app as a
 					WHERE lcm_app.id_case=$case";
 				$result = lcm_query($q);
 				
 				// Get the number of rows in the result
 				$number_of_rows = lcm_num_rows($result);
 				if ($number_of_rows) {
-					echo "<table border='0' align='center' class='tbl_usr_dtl' width='99%'>\n";
-					echo "<tr>\n";
-					echo '<th class="heading">' . _Th('time_input_date_start') . '</th>';
-					echo '<th class="heading">' . ( ($prefs['time_intervals'] == 'absolute') ? _T('time_input_date_end') : _T('time_input_duration') ) . '</th>';
-					echo '<th class="heading">' . _Th('app_input_type') . '</th>';
-					echo '<th class="heading">' . _Th('app_input_title') . '</th>';
-					echo '<th class="heading">' . _Th('app_input_reminder') . '</th>';
-					echo "</tr>\n";
-				
+					$headers = array( array('title' => _Th('time_input_date_start')),
+							array('title' => ( ($prefs['time_intervals'] == 'absolute') ? _T('time_input_date_end') : _T('time_input_duration') ) ),
+							array('title' => _Th('app_input_type')),
+							array('title' => _Th('app_input_title')),
+							array('title' => _Th('app_input_reminder')) );
+					show_list_start($headers);
+
 					// Check for correct start position of the list
 					$list_pos = 0;
 					
@@ -392,17 +390,18 @@ if ($case > 0) {
 
 				echo "<p class=\"normal_text\">\n";
 
+				$headers = array();
 				$headers[0]['title'] = _Th('time_input_date_start');
 				$headers[0]['order'] = 'fu_order';
 				$headers[0]['default'] = 'ASC';
 				$headers[1]['title'] = ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length') );
-				$headers[1]['order'] = 'no_order';
+//				$headers[1]['order'] = 'no_order';
 				$headers[2]['title'] = _Th('case_input_author');
-				$headers[2]['order'] = 'no_order';
+//				$headers[2]['order'] = 'no_order';
 				$headers[3]['title'] = _Th('fu_input_type');
-				$headers[3]['order'] = 'no_order';
+//				$headers[3]['order'] = 'no_order';
 				$headers[4]['title'] = _Th('fu_input_description');
-				$headers[4]['order'] = 'no_order';
+//				$headers[4]['order'] = 'no_order';
 			
 				show_list_start($headers);
 			
