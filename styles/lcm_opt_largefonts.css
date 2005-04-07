@@ -161,3 +161,7 @@ a.set_fnt_sz {
 ul.err_list li {
 	font-size: 14px;
 }
+
+.sys_msg_box {
+	font-size: 14px;
+}

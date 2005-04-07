@@ -14,7 +14,6 @@ body {
 /* ============================================================ */
 
 #header {
-	/* height: 85px; */
 	text-align: left;
 	clear: both;
 }
@@ -517,6 +516,21 @@ ul.err_list li {
 	background: #efefef url("../images/jimmac/stock_draw-callouts.png") no-repeat 2px 0px;
 	padding: 5px 5px 5px 30px;
 	margin: 10px 5px 10px 5px;
+}
+
+/* Site config system message box */
+.sys_msg_box {
+	border: 1px solid #090;
+	color: #060;
+	font-weight: bold;
+	padding: 5px;
+	margin: 10px 5px 10px 5px;
+}
+
+.sys_msg_box ul li {
+	list-style-type: square;
+	font-weight: normal;
+	margin-bottom: 10px;
 }
 
 /* For the Small/Normal/Large Font size list */
