@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.52 2005/04/07 10:16:04 mlutfy Exp $
+	$Id: listcases.php,v 1.53 2005/04/07 10:22:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -75,7 +75,12 @@ echo '<select name="case_owner">';
 
 foreach ($types_owner as $t) {
 	$sel = ($case_owner == $t ? ' selected="selected" ' : '');
-	echo '<option value="' . $t . '"' . $sel . '>' . _T('case_filter_owner_' . $t) . "</option>\n";
+	echo '<option value="' . $t . '"' . $sel . '>' . _T('case_filter_owner_option_' . $t) . "</option>\n";
+}
+
+if ($author_session['status'] == 'admin') {
+	$sel = ($case_owner == 'all' ? ' selected="selected" ' : '');
+	echo '<option value="all"' . $sel . '>' . _T('case_filter_owner_option_all') . "</option>\n";
 }
 
 echo "</select>\n";
@@ -85,7 +90,7 @@ echo '<select name="case_period">';
 
 foreach ($types_period as $key => $val) {
 	$sel = ($case_period == $val ? ' selected="selected" ' : '');
-	echo '<option value="' . $val . '"' . $sel . '>' . _T('case_filter_period_' . $key) . "</option>\n";
+	echo '<option value="' . $val . '"' . $sel . '>' . _T('case_filter_period_option_' . $key) . "</option>\n";
 }
 
 $q_dates = "SELECT DISTINCT YEAR(date_creation) as year
@@ -95,7 +100,7 @@ $q_dates = "SELECT DISTINCT YEAR(date_creation) as year
 $result = lcm_query($q_dates);
 
 while($row = lcm_fetch_array($result))
-	echo '<option value="' . $row['year'] . '">' . $row['year'] . "</option>\n";
+	echo '<option value="' . $row['year'] . '">' . _T('case_filter_period_option_year', array('year' => $row['year'])) . "</option>\n";
 
 echo "</select>\n";
 
