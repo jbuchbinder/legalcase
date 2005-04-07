@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.60 2005/04/05 06:16:55 mlutfy Exp $
+	$Id: inc_filters.php,v 1.61 2005/04/07 16:14:41 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -228,7 +228,7 @@ function get_person_name($item) {
 	return njoin(array($item['name_first'], $item['name_middle'], $item['name_last']));
 }
 
-function get_person_initials($item) {
+function get_person_initials($item, $with_abbver = true) {
 	if (! is_array($item)) {
 		lcm_debug("get_person_name: parameter is not an array.");
 		return '';
@@ -244,6 +244,9 @@ function get_person_initials($item) {
 		$ret .= substr($item['name_middle'],0,floor(ord($item['name_first']) / 128) + 1);
 		$ret .= substr($item['name_last'],0,floor(ord($item['name_first']) / 128) + 1);
 	}
+
+	if ($with_abbver)
+		$ret = '<abbrev title="' . get_person_name($item) . '">' . $ret . '</abbrev>';
 
 	return $ret;
 }
