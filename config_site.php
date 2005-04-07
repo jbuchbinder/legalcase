@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.38 2005/04/04 07:26:27 mlutfy Exp $
+	$Id: config_site.php,v 1.39 2005/04/07 08:53:40 makaveev Exp $
 */
 
 include ("inc/inc.php");
@@ -566,7 +566,7 @@ lcm_page_start(_T('title_site_configuration'));
 
 // Show changes on screen
 if (! empty($log)) {
-	echo "<div align='left' style='border: 1px solid #00ff00; padding: 5px;'>\n";
+	echo "<div class=\"sys_msg_box\">\n";
 	echo "<div>" . _T('siteconf_info_changes_made') . "</div>\n";
 	echo "<ul>";
 
