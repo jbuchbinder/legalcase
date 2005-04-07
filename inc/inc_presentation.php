@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.204 2005/04/05 14:52:10 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.205 2005/04/07 14:39:50 mlutfy Exp $
 */
 
 //
@@ -1082,6 +1082,7 @@ function show_tabs_links($tab_list, $selected='', $sel_link=false) {
 }
 
 // XXX this does not work
+/*
 function get_list_pos(&$result) {
 	$list_pos = 0;
 	
@@ -1098,6 +1099,7 @@ function get_list_pos(&$result) {
 	
 	return $list_pos;
 }
+*/
 
 function show_list_start($headers = array()) {
 	echo '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
@@ -1144,9 +1146,10 @@ function show_list_start($headers = array()) {
 	echo "</tr>\n";
 }
 
-function show_list_end($current_pos = 0, $number_of_rows = 0, $allow_show_all = false) {
+function show_list_end($current_pos = 0, $number_of_rows = 0, $allow_show_all = false, $prefix = '') {
 	global $prefs;
 
+	$prefix_var = ($prefix ? $prefix . '_' : '');
 	echo "</table>\n";
 
 	//
@@ -1160,8 +1163,8 @@ function show_list_end($current_pos = 0, $number_of_rows = 0, $allow_show_all = 
 	}
 
 	$link = new Link();
-	$pos = $link->getVar('list_pos');
-	$link->delVar('list_pos');
+	$pos = $link->getVar($prefix_var . 'list_pos');
+	$link->delVar($prefix_var . 'list_pos');
 
 	// If we are showing "All" items, do not show navigation
 	if ($pos == 'all')
@@ -1173,9 +1176,9 @@ function show_list_end($current_pos = 0, $number_of_rows = 0, $allow_show_all = 
 	// Previous page
 	if ($current_pos > 0) {
 		if ($current_pos > $prefs['page_rows'])
-			$link->addVar('list_pos', $current_pos - $prefs['page_rows']);
+			$link->addVar($prefix_var . 'list_pos', $current_pos - $prefs['page_rows']);
 
-		echo '<a href="' . $link->getUrl() . '" class="content_link">'
+		echo '<a href="' . $link->getUrl($prefix) . '" class="content_link">'
 			. "&lt; " . _T('listnav_link_previous')
 			. '</a> ';
 	}
@@ -1193,19 +1196,19 @@ function show_list_end($current_pos = 0, $number_of_rows = 0, $allow_show_all = 
 			} else {
 				$current_pos_val = ($i * $prefs['page_rows']);
 				$link = new Link();
-				$link->delVar('list_pos');
+				$link->delVar($prefix_var . 'list_pos');
 
 				if ($current_pos_val > 0)
-					$link->addVar('list_pos', $current_pos_val);
+					$link->addVar($prefix_var . 'list_pos', $current_pos_val);
 				
-				echo '<a href="' . $link->getUrl() . '" class="content_link">' . ($i+1) . '</a> ';
+				echo '<a href="' . $link->getUrl($prefix) . '" class="content_link">' . ($i+1) . '</a> ';
 			}
 		}
 
 		if ($allow_show_all) {
-			$link->delVar('list_pos');
-			$link->addVar('list_pos', 'all');
-			echo '<a href="' . $link->getUrl() . '" class="content_link">' . _T('listnav_link_show_all') . '</a>';
+			$link->delVar($prefix_var . 'list_pos');
+			$link->addVar($prefix_var . 'list_pos', 'all');
+			echo '<a href="' . $link->getUrl($prefix) . '" class="content_link">' . _T('listnav_link_show_all') . '</a>';
 		}
 	}
 
@@ -1217,9 +1220,9 @@ function show_list_end($current_pos = 0, $number_of_rows = 0, $allow_show_all = 
 	if ($next_pos < $number_of_rows) {
 		$current_pos_val = $next_pos;
 		$link = new Link();
-		$link->addVar('list_pos', $current_pos_val);
+		$link->addVar($prefix_var . 'list_pos', $current_pos_val);
 
-		echo '<a href="' . $link->getUrl() . '" class="content_link">'
+		echo '<a href="' . $link->getUrl($prefix) . '" class="content_link">'
 			. _T('listnav_link_next') . " &gt;"
 			. '</a>';
 	}
