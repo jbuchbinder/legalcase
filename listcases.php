@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.54 2005/04/07 16:17:19 mlutfy Exp $
+	$Id: listcases.php,v 1.55 2005/04/07 17:04:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -58,7 +58,7 @@ $q_owner .= " ) ";
 //
 // For "Filter case date_creation"
 //
-$case_period = '365';
+$case_period = '91';
 if (isset($_REQUEST['case_period']))
 	$case_period = $_REQUEST['case_period'];
 
@@ -198,19 +198,14 @@ echo '<p class="normal_text">' . "\n";
 show_list_start($headers);
 
 $q = "SELECT fu.id_case, fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description,
-			a.name_first, a.name_middle, a.name_last,
-			c.title ";
+			a.name_first, a.name_middle, a.name_last, c.title 
+		FROM lcm_followup as fu, lcm_author as a, lcm_case as c 
+		WHERE fu.id_author = a.id_author 
+		  AND  c.id_case = fu.id_case ";
 			
 // Author of the follow-up
-if ($case_owner == 'all' && $author_session['status'] == 'admin') {
 
-	// all will be selected (admin only)
-	$q .= " FROM lcm_followup as fu, lcm_author as a
-			WHERE fu.id_author = a.id_author ";
-
-} else {
-
-	// Get list of cases on which author is assigned
+	// START - Get list of cases on which author is assigned
 	$q_temp = "SELECT c.id_case
 				FROM lcm_case_author as ca, lcm_case as c
 				WHERE ca.id_case = c.id_case
@@ -226,11 +221,10 @@ if ($case_owner == 'all' && $author_session['status'] == 'admin') {
 
 	while ($row = lcm_fetch_array($r_temp))
 		$list_cases[] = $row['id_case'];
+	// END - Get list of cases on which author is assigned
 
-	// Cases on which I am working (include colleagues)
-	$q .= " FROM lcm_followup as fu, lcm_author as a, lcm_case as c
-			WHERE fu.id_author = a.id_author 
-			  AND c.id_case = fu.id_case AND (";
+if (! ($case_owner == 'all' && $author_session['status'] == 'admin')) {
+	$q .= " AND ( ";
 
 	if ($case_owner == 'public')
 		$q .= " c.public = 1 OR ";
@@ -246,8 +240,12 @@ else // for year X
 
 
 // Add ordering
-if ($fu_order)
-	$q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
+$fu_order = "DESC";
+if (isset($_REQUEST['fu_order']))
+	if ($_REQUEST['fu_order'] == 'ASC' || $_REQUEST['fu_order'] == 'DESC')
+		$fu_order = $_REQUEST['fu_order'];
+
+$q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
 			
 $result = lcm_query($q);
 
