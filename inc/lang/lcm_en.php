@@ -116,6 +116,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_filter_owner_option_all' => 'All cases',
 'case_filter_owner_option_my' => 'My cases',
 'case_filter_owner_option_public' => 'Public cases',
+'case_filter_period_option_w1' => 'In the past 1 week',
 'case_filter_period_option_m1' => 'In the past 1 month',
 'case_filter_period_option_m3' => 'In the past 3 months',
 'case_filter_period_option_m6' => 'In the past 6 months',
