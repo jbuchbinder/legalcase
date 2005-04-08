@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.133 2005/04/07 23:25:06 antzi Exp $
+	$Id: case_det.php,v 1.134 2005/04/08 07:51:43 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -292,7 +292,7 @@ if ($case > 0) {
 
 				$q = "SELECT *
 					FROM lcm_app as a
-					WHERE lcm_app.id_case=$case";
+					WHERE a.id_case=$case";
 				$result = lcm_query($q);
 				
 				// Get the number of rows in the result
