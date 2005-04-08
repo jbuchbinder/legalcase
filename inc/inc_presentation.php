@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.206 2005/04/08 05:24:57 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.207 2005/04/08 15:54:15 mlutfy Exp $
 */
 
 //
@@ -1473,15 +1473,29 @@ function show_attachments_list($type, $id_type) {
 			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
 			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
 
+			// Delete icon
 			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
-			if ( ($GLOBALS['author_session']['status'] == 'admin') ||
-			     (($row['id_author'] == $GLOBALS['author_session']['id_author']) && ($type == 'case' ? allowed($id_type,'e') : true)) )
-				echo '<label for="id_rem_file' . $row['id_attachment'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_file' . $row['id_attachment'] . '" name="rem_file[]" value="' . $row['id_attachment'] . '" /></td>';	// TRAD
+
+			if ( ($GLOBALS['author_session']['status'] == 'admin') || (($row['id_author'] == $GLOBALS['author_session']['id_author']) && ($type == 'case' ? allowed($id_type,'e') : true)) )
+			{
+				echo '<label for="id_rem_file' . $row['id_attachment'] . '">';
+				echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" '
+					. 'alt="' . _T('file_info_delete') . '" title="' .  _T('file_info_delete') . '" />';
+				echo '</label>&nbsp;';
+				echo '<input type="checkbox" onclick="lcm_show(\'btn_delete\')" '
+					. 'id="id_rem_file' . $row['id_attachment'] . '" name="rem_file[]" '
+					. 'value="' . $row['id_attachment'] . '" />';
+			}
+
+			echo '</td>';
 			echo "</tr>\n";
 		}
 
 		echo "</table>\n";
-		echo "<br />\n";
+
+		echo '<p align="right" style="visibility: hidden">';
+		echo '<input type="submit" name="submit" id="btn_delete" value="' . _T('button_validate') . '" class="search_form_btn" />';
+		echo "</p>\n";
 	}
 }
 
