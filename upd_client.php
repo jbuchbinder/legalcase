@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.16 2005/03/30 07:32:10 mlutfy Exp $
+	$Id: upd_client.php,v 1.17 2005/04/08 16:24:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -128,7 +128,15 @@ if (count($_SESSION['errors'])) {
 	exit;
 }
 
+//
 // Go to the 'view details' page of the author
-header('Location: client_det.php?client=' . $_SESSION['client_data']['id_client']);
+//
+
+// small reminder, if the client was created from the "add client to case" (Case details)
+$attach = "";
+if (isset($_SESSION['client_data']['attach_case']))
+	$attach = "&attach_case=" . $_SESSION['client_data']['attach_case'];
+
+header('Location: client_det.php?client=' . $_SESSION['client_data']['id_client'] . $attach);
 
 ?>

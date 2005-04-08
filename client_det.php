@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.43 2005/04/01 11:10:40 mlutfy Exp $
+	$Id: client_det.php,v 1.44 2005/04/08 16:24:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -27,15 +27,19 @@ include_lcm('inc_contacts');
 
 $client = intval($_REQUEST['client']);
 
-if ($client > 0) {
-	$q="SELECT *
-		FROM lcm_client
-		WHERE lcm_client.id_client = $client";
+if (! ($client > 0))
+	die("Which client?");
 
-	$result = lcm_query($q);
+$q="SELECT *
+	FROM lcm_client
+	WHERE lcm_client.id_client = $client";
 
-	if ($row = lcm_fetch_array($result)) {
-		lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
+$result = lcm_query($q);
+
+if (! ($row = lcm_fetch_array($result)))
+	die("There's no such client.");
+
+lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 
 		/* Saved for future use
 			// Check for access rights
@@ -62,17 +66,21 @@ if ($client > 0) {
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
-		if (isset($_SESSION['client']['attach_case'])) {
+		if (isset($_REQUEST['attach_case'])) {
 			$q = "SELECT title
 					FROM lcm_case
-					WHERE id_case = " . intval($_SESSION['client']['attach_case']);
+					WHERE id_case = " . intval($_REQUEST['attach_case']);
 			$result = lcm_query($q);
 
 			while ($row1 = lcm_fetch_array($result)) {
-				echo '<p>' . 'The client was created and attached to the case: ' 
-					. '<a href="case_det.php?case=' . $_SESSION['client']['attach_case'] . '">' 
+				echo '<div class="sys_msg_box">';
+				echo '<ul>';
+				echo '<li>' . _Ti('client_info_created_attached')
+					. '<a class="content_link" href="case_det.php?case=' . $_REQUEST['attach_case'] . '">' 
 					. $row1['title'] 
-					. "</a></p>\n";
+					. "</a></li>\n";
+				echo "</ul>\n";
+				echo "</div>\n";
 			}
 		}
 
@@ -149,22 +157,35 @@ if ($client > 0) {
 				$i = 0;
 				while ($row1 = lcm_fetch_array($result)) {
 					echo "<tr>\n";
+
+					// Image
 					echo '<td width="25" align="center" class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
+
+					// Name of org
 					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '"><a style="display: block;" href="org_det.php?org=' . $row1['id_org'] .  '" class="content_link">' . $row1['name'] . "</a></td>\n";
-					echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
-					if ( ($GLOBALS['author_session']['status'] == 'admin') )
-						echo '<label for="id_rem_org_' . $row1['id_org'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_org_' . $row1['id_org'] . '" name="rem_orgs[]" value="' . $row1['id_org'] . '" /></td>';	// TRAD
+
+					// Delete association
+					echo '<td width="1%" nowrap="nowrap" class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
+
+					echo '<label for="id_rem_org_' . $row1['id_org'] . '">';
+					echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" '
+						. 'alt="' . _T('client_info_delete_org') . '" title="' . _T('client_info_delete_org') . '" />';
+					echo '</label>&nbsp;';
+					echo '<input type="checkbox" onclick="lcm_show(\'btn_delete\')" id="id_rem_org_' . $row1['id_org'] . '" name="rem_orgs[]" value="' . $row1['id_org'] . '" /></td>';
 
 					echo "</tr>\n";
 					$i++;
 				}
 				
 				echo "</table>";
+
+				echo '<div align="right" style="visibility: hidden">';
+				echo '<input type="submit" name="submit" id="btn_delete" value="' . _T('button_validate') . '" class="search_form_btn" />';
+				echo "</div>\n";
 		
 				if ($edit)
 					echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">Add organisation(s)</a><br />";
 
-				echo '<input type="submit" name="submit" value="' . 'Remove organization(s)' . '" class="search_form_btn" />' . "\n";	// TRAD
 				echo "</form>\n";
 
 				echo "<br /></fieldset>";
@@ -245,15 +266,16 @@ if ($client > 0) {
 				break;
 		}
 
-		// Show this in all tabs
-		echo '<p>';
-		echo '<a href="edit_case.php?case=0&amp;attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
-		echo _T('case_button_new');
-		echo "</a>";
-		echo "</p>\n";
+// Show this in all tabs
+echo '<p>';
+echo '<a href="edit_case.php?case=0&amp;attach_client=' . $row['id_client'] . '" class="create_new_lnk">';
+echo _T('case_button_new');
+echo "</a>";
+echo "</p>\n";
 				
-	} else die("There's no such client!");
-} else die("Which client?");
+// Clear session info
+$_SESSION['client_data'] = array();
+$_SESSION['errors'] = array();
 
 lcm_page_end();
 ?>
