@@ -446,6 +446,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw_followups_other_title' => 'Other',
 'kw_followups_reopening_title' => 'Reopening',
 'kw_followups_resumption_title' => 'Resumption',
+'kw_followups_stage_change_title' => 'Stage change',
 'kw_followups_suspension_title' => 'Suspension',
 'kw_followups_travel_title' => 'Travel',
 'kw_income_average_title' => 'Average',
