@@ -16,6 +16,10 @@ body {
 #header {
 	text-align: left;
 	clear: both;
+
+	/* [ML] Would fix zoom-out Firefox problem, but seems to
+	 * break MSIE according to Krasi's commit on March 31 */
+	/* min-height: 90px;  */
 }
 
 /* Maybe will be removed later */
