@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.14 2005/04/05 13:13:36 antzi Exp $
+	$Id: upd_app.php,v 1.15 2005/04/08 08:10:40 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -191,7 +191,8 @@ if (count($_SESSION['errors'])) {
 		lcm_query("INSERT INTO lcm_author_app SET id_app=$id_app,id_author=" . $GLOBALS['author_session']['id_author']);
 
 		// Add relationship with the parent followup (if any)
-		lcm_query("INSERT INTO lcm_app_fu SET id_app=$id_app,id_followup=" . $_SESSION['app_data']['id_followup'] . ",relation='parent'");
+		if (!empty($_SESSION['app_data']['id_followup']))
+			lcm_query("INSERT INTO lcm_app_fu SET id_app=$id_app,id_followup=" . $_SESSION['app_data']['id_followup'] . ",relation='parent'");
 
 	}
 
