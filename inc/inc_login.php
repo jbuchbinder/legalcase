@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.28 2005/03/29 06:36:21 mlutfy Exp $
+	$Id: inc_login.php,v 1.29 2005/04/08 17:16:57 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -47,8 +47,8 @@ function close_login() {
 }
 
 function login($cible, $prive = 'prive', $message_login='') {
-	$pass_popup = 'href="lcm_pass.php" target="lcm_pass" '
-		. ' onclick="' . "javascript:window.open('lcm_pass.php', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
+	$pass_popup = 'href="lcm_pass.php?register=yes" target="lcm_pass" '
+		. ' onclick="' . "javascript:window.open('lcm_pass.php?register=yes', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
 
 	$error = '';
 	$login = (isset($GLOBALS['var_login']) ? $GLOBALS['var_login'] : '');
