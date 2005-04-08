@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.55 2005/04/07 17:04:41 mlutfy Exp $
+	$Id: listcases.php,v 1.56 2005/04/08 05:42:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,6 +26,7 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 global $author_session;
+global $prefs;
 
 lcm_page_start(_T('title_my_cases'));
 lcm_bubble('case_list');
@@ -43,9 +44,16 @@ if (isset($_REQUEST['find_case_string'])) {
 //
 // For "Filter case owner"
 //
-$case_owner = 'my';
-if (isset($_REQUEST['case_owner']))
-	$case_owner = $_REQUEST['case_owner'];
+$prefs_change = false;
+
+$case_owner = $prefs['case_owner'];
+if (isset($_REQUEST['case_owner'])) {
+	if ($case_owner != $_REQUEST['case_owner']) {
+		$case_owner = $_REQUEST['case_owner'];
+		$prefs['case_owner'] = $_REQUEST['case_owner'];
+		$prefs_change = true;
+	}
+}
 
 // always include 'my' cases [ML] $q_owner is re-used below
 $q_owner .= " (a.id_author = " . $author_session['id_author'];
@@ -58,9 +66,20 @@ $q_owner .= " ) ";
 //
 // For "Filter case date_creation"
 //
-$case_period = '91';
-if (isset($_REQUEST['case_period']))
-	$case_period = $_REQUEST['case_period'];
+$case_period = $prefs['case_period'];
+if (isset($_REQUEST['case_period'])) {
+	if ($case_period != $_REQUEST['case_owner']) {
+		$case_period = $_REQUEST['case_period'];
+		$prefs['case_period'] = $_REQUEST['case_period'];
+		$prefs_change = true;
+	}
+}
+
+if ($prefs_change) {
+	lcm_query("UPDATE lcm_author
+				SET   prefs = '" . addslashes(serialize($prefs)) . "'
+				WHERE id_author = " . $author_session['id_author']);
+}
 
 //
 // Show filters form
