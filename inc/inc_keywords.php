@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.15 2005/03/29 16:10:57 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.16 2005/04/08 17:33:30 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -135,27 +135,47 @@ function get_kw_from_id($id_keyword) {
 }
 
 //
-// get_keywords_from_group_name: Returns all keywords inside a given group name.
+// get_keywords_in_group_name: Returns all keywords inside a given group name.
 // 
-function get_keywords_from_group_name($kwg_name) {
+function get_keywords_in_group_name($kwg_name, $visible_only = true) {
+	global $system_kwg;
 
-	// 1- Get ID for name (check cache first)
+	$ret = array();
 
-	// 2- call get_keywords_in_group_id()
+	if ($system_kwg[$kwg_name]) {
+		foreach($system_kwg[$kwg_name]['keywords'] as $kw)
+			if ($kw['ac_author'] == 'Y')
+				$ret[] = $kw;
 
-	lcm_panic("Not implemented");
+		return $ret;
+	}
+
+	// Not in cache, then get from DB
+	$query = "SELECT id_group 
+				FROM lcm_keyword_group
+				WHERE name = '" . $kwg_name . "'";
+	
+	$result = lcm_query($query);
+	
+	if ($row = lcm_fetch_array($result))
+		return get_keywords_in_group_id($row['id_group'], $visible_only);
+
+	lcm_panic("Keyword group not found: $kwg_name");
 }
 
 //
 // get_keywords_in_group_id: Returns all keywords inside a given
 // group ID.
 // 
-function get_keywords_in_group_id($kwg_id) {
+function get_keywords_in_group_id($kwg_id, $visible_only = true) {
 	$ret = array();
 
 	$query = "SELECT * 
 				FROM lcm_keyword
 				WHERE id_group = " . intval($kwg_id);
+	
+	if ($visible_only)
+		$query .= " AND ac_author = 'Y'";
 
 	$result = lcm_query($query);
 
