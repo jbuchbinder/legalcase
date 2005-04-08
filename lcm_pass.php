@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.16 2005/03/29 06:26:34 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.17 2005/04/08 17:13:07 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -290,32 +290,36 @@ function print_registration_form() {
 	echo "<fieldset><label><b>". _T('info_your_contact_information') . "</b><br></label>\n";
 
 	// [ML] Altough not most problematic, could be better. But if someone
-	// fixes here, please fix lcm_pass.php also (function print_registration_form())
+	// fixes here, please fix install.php also (step 4)
 	echo "<table border='0'>\n";
 	echo "<tr>\n";
 	echo "<td>
-			<small><label for='name_first'>" . _T('person_input_name_first') . "</label></small><br />
-			<input type='text' id='name_first' name='name_first' class='formo' value='$name_first' size='20'>
+			<label for='name_first'>" . f_err_star('name_first') . _Ti('person_input_name_first') . "</label><br />
+			<input type='text' style='width: 100%;' id='name_first' name='name_first' class='formo' value='$name_first' size='20'>
 		</td>\n";
 	echo "<td>
-			<small><label for='name_last'>" . _T('person_input_name_last') . "</label></small><br />
-			<input type='text' id='name_last' name='name_last' class='formo' value='$name_last' size='20'>
+			<label for='name_last'>" . f_err_star('name_last') . _Ti('person_input_name_last') . "</label><br />
+			<input type='text' style='width: 100%;' id='name_last' name='name_last' class='formo' value='$name_last' size='20'>
 		</td>\n";
 	echo "</tr>\n";
-	echo "</table>\n";
+	echo "<tr>\n";
+	echo "<td colspan='2'>";
 
-	echo "<b><label for='email'>" . _T('input_email') . "</label></b><br>";
-	echo "<input type='text' id='email' name='email' class='formo' value=\"$email\" size='40'></fieldset><p>\n";
+	echo "<p><label for='email'>" . f_err_star('email') .  _Ti('input_email') . "</label><br />";
+	echo "<input type='text' id='email' name='email' class='formo' value=\"$email\" size='40'></p>\n";
 
-	echo "<fieldset><b>" . _T('input_connection_identifiers') . "</b><br/>";
-	echo "<b><label for='username'>" . _T('login_login') . "</label></b><br>";
-	echo "<small>" . _T('info_more_than_three') . "</small><br>";
-	echo "<input type='text' id='username' name='username' class='formo' value=\"$username\" size='40'><p>\n";
+	// echo "<p><b>" . _T('input_connection_identifiers') . "</b></p>";
+	echo "<p><label for='username'>" . _Ti('authoredit_input_username') . "</label> ";
+	echo "<small>" . _T('info_more_than_three') . "</small><br />";
+	echo "<input type='text' id='username' name='username' class='formo' value=\"$username\" size='40'></p>\n";
 
 	echo "<small>" . _T('pass_info_password_by_mail') . "</small>\n";
 	echo "</fieldset>\n";
 
-	echo "<div align=\"right\"><input type=\"submit\" name='Validate' class='fondl' value=\""._T('button_validate')."\" /></div>";
+	echo "<p align=\"right\">";
+	echo '<button type="submit" name="Validate">' . _T('button_validate') . "</button>";
+	echo "</p>";
+
 	echo "</form>\n";
 }
 
@@ -333,11 +337,15 @@ else if ($_REQUEST['user_email']) {
 	send_cookie_by_email($_REQUEST['user_email']);
 }
 
-else if ($open_subscription == 'yes' || $open_subscription == 'moderated') {
-	if ($email) {
-		send_registration_by_email($email, $username, $name_first, $name_last);
+else if ($_REQUEST['register']) {
+	if ($open_subscription == 'yes' || $open_subscription == 'moderated') {
+		if ($email) {
+			send_registration_by_email($email, $username, $name_first, $name_last);
+		} else {
+			print_registration_form($email);
+		}
 	} else {
-		print_registration_form($email);
+		install_html_start(_T('pass_title_register'), 'login');
 	}
 }
 
