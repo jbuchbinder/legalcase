@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.56 2005/04/08 05:42:55 mlutfy Exp $
+	$Id: listcases.php,v 1.57 2005/04/08 08:15:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -248,7 +248,13 @@ if (! ($case_owner == 'all' && $author_session['status'] == 'admin')) {
 	if ($case_owner == 'public')
 		$q .= " c.public = 1 OR ";
 
-	$q .= " fu.id_case IN (" . implode(",", $list_cases) . "))";
+	// [ML] XXX FIXME TEMPORARY PATCH
+	// if user and no cases + no follow-ups...
+	if (count($list_cases))
+		$q .= " fu.id_case IN (" . implode(",", $list_cases) . "))";
+	else
+		$q .= " fu.id_case IN ( 0 ))";
+	
 }
 
 // Period (date_creation) to show
