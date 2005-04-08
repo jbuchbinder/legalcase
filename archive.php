@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.10 2005/03/22 13:14:45 mlutfy Exp $
+	$Id: archive.php,v 1.11 2005/04/08 07:02:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,7 +35,6 @@ if (isset($_REQUEST['find_case_string']))
 
 // Show page start
 lcm_page_start(_T('title_archives'));
-show_find_box('case', $find_case_string, '__self__');
 
 // Show tabs
 $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
@@ -43,6 +42,8 @@ $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.p
 		array('name' => _T('archives_tab_import'), 'url' => 'import_db.php')
 	);
 show_tabs_links($tabs,0);
+
+show_find_box('case', $find_case_string, '__self__');
 
 $q = "SELECT DISTINCT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author
