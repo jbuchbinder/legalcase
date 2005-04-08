@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.205 2005/04/07 14:39:50 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.206 2005/04/08 05:24:57 mlutfy Exp $
 */
 
 //
@@ -245,29 +245,12 @@ function lcm_page_start($title = "", $css_files = "", $meta = '') {
 	// Most of the header/navigation html
 	//
 	
-	echo "<div id='header'>
-		<a href='summary.php' class='balance_link'>&nbsp;</a>
-		<h1 class='lcm_main_head'><a href='summary.php' class='head_ttl_link'>" . $site_name . "</a></h1>
-		<div class='lcm_slogan'><a href='summary.php' class='head_subttl_link'>" . $site_desc . "</a></div>
+	echo '<div id="header">
+		<a href="summary.php" class="balance_link">&nbsp;</a>
+		<h1 class="lcm_main_head"><a href="summary.php" class="head_ttl_link">' . $site_name . '</a></h1>
+		<div class="lcm_slogan"><a href="summary.php" class="head_subttl_link">' . $site_desc . "</a></div>
 		<br />
-	</div>";
-	
-	/*
-	if($prefs['screen'] == "narrow")
-	{
-		//data from the refs_column - user name, links [My preferences] & [Logout]
-		echo "<div id=\"user_info_box_large_screen\">";
-		echo "<p class=\"prefs_column_text\"><strong>Name: </strong>"
-				. "<a href=\"edit_author.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
-				. $author_session['name_first'] . ' '
-				. $author_session['name_middle'] . ' '
-				. $author_session['name_last']
-				. "</a><br /><br />
-			<a href=\"config_author.php\" class=\"prefs_bold_lnk\">[ My preferences ]</a>&nbsp;&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_bold_lnk\">[ Logout ]</a>
-			</p>";
-		echo "</div>";
-	}
-	*/
+	</div>\n";
 	
 	echo "<div id='wrapper_". $prefs['screen'] ."'>
 		<div id=\"container_". $prefs['screen'] ."\">
