@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.26 2005/03/23 16:56:23 mlutfy Exp $
+	$Id: inc_auth.php,v 1.27 2005/04/08 05:41:56 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -140,6 +140,12 @@ function auth() {
 
 		if (! isset($prefs['font_size']) || ! $prefs['font_size'])
 			$prefs['font_size'] = 'medium_font';
+
+		if (! isset($prefs['case_owner']) || ! $prefs['case_owner'])
+			$prefs['case_owner'] = 'my';
+
+		if (! isset($prefs['case_period']) || ! $prefs['case_period'])
+			$prefs['case_period'] = '91';
 
 		if (! isset($prefs['mode']) || ! $prefs['mode'])
 			$prefs['mode'] = 'simple';
