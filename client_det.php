@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.44 2005/04/08 16:24:00 mlutfy Exp $
+	$Id: client_det.php,v 1.45 2005/04/08 16:45:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -136,14 +136,6 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 				echo '<form action="add_org_cli.php" method="post">' . "\n";
 				echo '<input type="hidden" name="client" value="' . $client . '" />' . "\n";
 				
-				echo '
-				<br /><table border="0" class="tbl_usr_dtl" width="100%">
-				<tr>
-					<th class="heading">&nbsp;</th>
-					<th class="heading">' . _Th('org_input_name') . '</th>
-					<th class="heading">&nbsp;</th>
-				</tr>';
-		
 				//
 				// Show organisation(s)
 				//
@@ -153,6 +145,20 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 							AND lcm_client_org.id_org=lcm_org.id_org";
 		
 				$result = lcm_query($q);
+				$show_table = false;
+
+				if (lcm_num_rows($result)) {
+					$show_table = true;
+
+					echo '<table border="0" class="tbl_usr_dtl" width="100%">' . "\n";
+					echo "<tr>\n";
+					echo '<th class="heading">&nbsp;</th>';
+					echo '<th class="heading">' . _Th('org_input_name') . '</th>';
+					echo '<th class="heading">&nbsp;</th>';
+					echo "</tr>\n";
+				} else {
+					// TODO info message?
+				}
 
 				$i = 0;
 				while ($row1 = lcm_fetch_array($result)) {
@@ -177,18 +183,18 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 					$i++;
 				}
 				
-				echo "</table>";
+				if ($show_table)
+					echo "</table>";
 
 				echo '<div align="right" style="visibility: hidden">';
 				echo '<input type="submit" name="submit" id="btn_delete" value="' . _T('button_validate') . '" class="search_form_btn" />';
 				echo "</div>\n";
 		
 				if ($edit)
-					echo "<br /><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">Add organisation(s)</a><br />";
+					echo "<p><a href=\"sel_org_cli.php?client=$client\" class=\"add_lnk\">" . _T('client_button_add_org') . "</a></p>";
 
 				echo "</form>\n";
-
-				echo "<br /></fieldset>";
+				echo "</fieldset>";
 				
 				break;
 

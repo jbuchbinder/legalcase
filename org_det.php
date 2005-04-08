@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.24 2005/03/31 15:08:19 mlutfy Exp $
+	$Id: org_det.php,v 1.25 2005/04/08 16:45:37 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -114,41 +114,54 @@ if ($row = lcm_fetch_array($result)) {
 		
 			if (lcm_num_rows($result)) {
 				$show_table = true;
-		?>
-				<table class="tbl_usr_dtl" width="100%">
-				<tr>
-					<th class="heading"><?php echo "#"; ?></th>
-					<th class="heading" width="99%"><?php echo _Th('person_input_name'); ?></th>
-					<th class="heading">&nbsp;</th>
-				</tr>
-		<?php
+
+				echo '<table class="tbl_usr_dtl" width="100%">' . "\n";
+				echo "<tr>\n";
+				echo '<th class="heading">' . "#" . '</th>';
+				echo '<th class="heading" width="99%">' . _Th('person_input_name') . '</th>';
+				echo '<th class="heading">&nbsp;</th>';
+				echo "</tr>\n";
+			} else {
+				// TODO info message?
 			}
 
 			$i = 0;
 			while ($row = lcm_fetch_array($result)) {
 				echo "<tr>\n";
+
+				// ID
 				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['id_client'] . '</td>';
+
+				// Name of client
 				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '"><a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 				echo get_person_name($row) . "</a></td>";
+
+				// Delete association
 				echo '<td nowrap="nowrap" class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
 
-				if ( ($GLOBALS['author_session']['status'] == 'admin') )
-					echo '<label for="id_rem_cli_' . $row['id_client'] . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;<input type="checkbox" id="id_rem_cli_' . $row['id_client'] . '" name="rem_clients[]" value="' . $row['id_client'] . '" /></td>';	// TRAD
+				echo '<label for="id_rem_cli_' . $row['id_client'] . '">';
+				echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" '
+					. 'alt="' . _T('org_info_delete_client') . '" title="' . _T('org_info_delete_client') . '" />';
+				echo '</label>&nbsp;';
+				echo '<input type="checkbox" onclick="lcm_show(\'btn_delete\')" id="id_rem_cli_' .  $row['id_client'] . '" name="rem_clients[]" value="' . $row['id_client'] . '" />';
 
+				echo '</td>';
 				echo "</tr>\n";
 				$i++;
 			}
 		
 			if ($show_table)
 				echo "</table>";
+
+			echo '<div align="right" style="visibility: hidden">';
+			echo '<input type="submit" name="submit" id="btn_delete" value="' . _T('button_validate') . '" class="search_form_btn" />';
+			echo "</div>\n";
 		
 			if ($edit)
-				echo "<br /><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">Add representative(s)</a><br />"; // TRAD
+				echo "<p><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">" . _T('org_button_add_rep') . "</a></p>";
 
-			echo '<input type="submit" name="submit" value="' . 'Remove representative(s)' . '" class="search_form_btn" />' . "\n";	// TRAD
 			echo "</form>\n";
-
-			echo "<br /></fieldset>";
+			echo "</fieldset>";
 
 			break;
 
