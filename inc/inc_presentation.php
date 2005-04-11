@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.208 2005/04/11 12:26:59 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.209 2005/04/11 13:14:41 mlutfy Exp $
 */
 
 //
@@ -401,8 +401,6 @@ function lcm_html_end() {
 		echo "// --></script>\n";
 	}
 
-	print_r($_SESSION);
-	
 	flush();
 }
 
