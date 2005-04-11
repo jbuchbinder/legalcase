@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.17 2005/04/01 16:51:39 antzi Exp $
+	$Id: fu_det.php,v 1.18 2005/04/11 16:02:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -46,7 +46,7 @@ if (isset($_GET['followup'])) {
 	die("Which follow-up?");
 }
 
-lcm_page_start("Follow-up details");
+lcm_page_start("Follow-up details"); // TRAD
 
 // Show a bit of background on the case
 $case = $fu_data['id_case'];
@@ -65,16 +65,18 @@ if ($app = lcm_fetch_array($res_app)) {
 }
 
 // Show child appointment, if any
-$q = "SELECT lcm_app.* FROM lcm_app_fu,lcm_app WHERE lcm_app_fu.id_followup=$followup AND lcm_app_fu.id_app=lcm_app.id_app AND lcm_app_fu.relation='parent'";
+$q = "SELECT lcm_app.* 
+		FROM lcm_app_fu,lcm_app 
+		WHERE lcm_app_fu.id_followup = $followup 
+		  AND lcm_app_fu.id_app = lcm_app.id_app 
+		  AND lcm_app_fu.relation = 'parent'";
+
 $res_app = lcm_query($q);
+
 if ($app = lcm_fetch_array($res_app)) {
 	echo '<li style="list-style-type: none;">' . _T('fu_input_child_appointment') . ' ';
 	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _T(get_kw_title($app['type']))
 		. ' (' . $app['title'] . ') from ' . format_date($app['start_time']) . "</a></li>\n"; // TRAD
-} else {
-	// Show create appointment from followup
-	echo '<li style="list-style-type: none;"><br /><a href="edit_app.php?case=' . $case . '&amp;followup=' . $followup
-		. '" class="create_new_lnk">Create new appointment from this followup' . "</a><br /></li>\n";	// TRAD
 }
 
 show_context_end();
@@ -118,6 +120,11 @@ show_context_end();
 		echo '<p><a href="edit_fu.php?followup=' . $fu_data['id_followup'] . '" class="edit_lnk">'
 				. "Edit follow-up" // TRAD
 				. '</a></p>';
+	}
+
+	if (! $app) {
+		// Show create appointment from followup
+		echo '<p><a href="edit_app.php?case=' . $case . '&amp;followup=' . $followup . '" class="create_new_lnk">Create new appointment related to this followup' . "</a></p>\n";  // TRAD
 	}
 	
 	lcm_page_end();
