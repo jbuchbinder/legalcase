@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.18 2005/04/11 07:18:14 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.19 2005/04/11 09:15:56 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -71,6 +71,7 @@ function get_kwg_applicable_for($type_obj, $id_obj) {
 				FROM lcm_keyword_" . $type_obj . " as ko, lcm_keyword as k, lcm_keyword_group as kwg
 				WHERE k.id_keyword = ko.id_keyword
 				  AND k.id_group = kwg.id_group
+				  AND ko.id_" . $type_obj . " = " . $id_obj . "
 				  AND kwg.quantity = 'one'";
 	
 	$result = lcm_query($query);
@@ -84,7 +85,7 @@ function get_kwg_applicable_for($type_obj, $id_obj) {
 	// Get list of keyword groups which can be applied to object
 	$query = "SELECT kwg.*, COUNT(k.id_keyword) as cpt
 				FROM lcm_keyword_group as kwg, lcm_keyword as k
-				WHERE (type = '$type_obj' ";
+				WHERE kwg.ac_author = 'Y' AND (type = '$type_obj' ";
 	
 	if ($type_obj == 'client' || $type_obj == 'org')
 		$query .= " OR type = 'client_org' ";
