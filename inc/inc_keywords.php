@@ -18,11 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.16 2005/04/08 17:33:30 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.17 2005/04/11 06:34:22 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
 define('_INC_KEYWORDS', '1');
+
+include_lcm('inc_filters');
 
 //
 // get_kwg_all: Returns all keyword groups (kwg) of a given
@@ -145,8 +147,9 @@ function get_keywords_in_group_name($kwg_name, $visible_only = true) {
 	if ($system_kwg[$kwg_name]) {
 		foreach($system_kwg[$kwg_name]['keywords'] as $kw)
 			if ($kw['ac_author'] == 'Y')
-				$ret[] = $kw;
+				$ret[_T($kw['title'])] = $kw;
 
+		asort($ret);
 		return $ret;
 	}
 
@@ -176,12 +179,15 @@ function get_keywords_in_group_id($kwg_id, $visible_only = true) {
 	
 	if ($visible_only)
 		$query .= " AND ac_author = 'Y'";
+	
+	$query .= " ORDER BY title ASC";
 
 	$result = lcm_query($query);
 
 	while ($row = lcm_fetch_array($result)) 
-		$ret[$row['name']] = $row;
+		$ret[_T($row['title'])] = $row;
 
+	asort($ret);
 	return $ret;
 }
 
