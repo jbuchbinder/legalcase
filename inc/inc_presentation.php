@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.207 2005/04/08 15:54:15 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.208 2005/04/11 12:26:59 mlutfy Exp $
 */
 
 //
@@ -400,6 +400,8 @@ function lcm_html_end() {
 		echo "document.img_session.src='lcm_cookie.php?change_session=oui';\n";
 		echo "// --></script>\n";
 	}
+
+	print_r($_SESSION);
 	
 	flush();
 }
@@ -1361,6 +1363,10 @@ function show_find_box($type, $string, $dest = '') {
 
 function show_context_start() {
 	echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
+}
+
+function show_context_item($string) {
+	echo '<li style="list-style-type: none;">' . $string . "</li>\n";
 }
 
 function show_context_case_title($id_case) {
