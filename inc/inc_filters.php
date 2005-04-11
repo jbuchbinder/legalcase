@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.61 2005/04/07 16:14:41 mlutfy Exp $
+	$Id: inc_filters.php,v 1.62 2005/04/11 08:13:32 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -259,6 +259,12 @@ function lcm_utf8_decode($string) {
 		return utf8_decode($string);
 	else
 		return $string;
+}
+
+// [ML] This is Spip's "supprimer_numero"
+function remove_number_prefix($string) {
+	$string = ereg_replace("^[[:space:]]*[0-9]+[.)".chr(176)."][[:space:]]+", "", $string);
+	return $string; 
 }
 
 function recup_date($numdate) {
@@ -731,7 +737,12 @@ function nom_mois($numdate) {
 	return affdate_base($numdate, 'nom_mois');
 }
 
+// year
 function annee($numdate) {
+	return affdate_base($numdate, 'annee');
+}
+
+function year($numdate) {
 	return affdate_base($numdate, 'annee');
 }
 
