@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.7 2005/04/11 13:00:32 mlutfy Exp $
+	$Id: inc_acc.php,v 1.8 2005/04/11 13:06:53 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -28,6 +28,10 @@ define('_INC_ACC', '1');
 function allowed($case, $access) {
 	// By default, do not allow access
 	$allow = false;
+
+	// Admins can access everything
+	if ($GLOBALS['author_session']['status'] == 'admin')
+		return true;
 
 	// Check if the case number is present
 	if ($case > 0) {
@@ -48,10 +52,6 @@ function allowed($case, $access) {
 
 			if ($row['status'] == 'deleted' || $row['status'] == 'closed')
 				$open = false;
-
-			// Give admin all rights, but check for write/edit/admin if closed/deleted
-			if ($GLOBALS['author_session']['status'] == 'admin')
-				$row['ac_read'] = $row['ac_write'] = $row['ac_edit'] = $row['ac_admin'] = 1;
 
 			// Walk each character in the required access rights list
 			for($i = 0; $i < strlen($access); $i++) {
