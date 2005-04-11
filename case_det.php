@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.136 2005/04/11 08:24:13 mlutfy Exp $
+	$Id: case_det.php,v 1.137 2005/04/11 11:39:02 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -89,25 +89,32 @@ if ($case > 0) {
 					. "</div>";
 				echo "<p class='normal_text'>";
 		
-				// Show users, assigned to the case
-				// TODO: use case_input_authors if many authors
-				echo _T('case_input_author') . ' ';
+				// Show users assigned to the case
 				$q = "SELECT id_case,lcm_author.id_author,name_first,name_middle,name_last
 					FROM lcm_case_author,lcm_author
 					WHERE (id_case=$case
 						AND lcm_case_author.id_author=lcm_author.id_author)";
 		
 				$authors = lcm_query($q);
+
+				if (lcm_num_rows($authors) > 1)
+					echo _Ti('case_input_authors');
+				else
+					echo _Ti('case_input_author');
 		
 				$q = '';
 				
+				// [ML] messy ...
 				while ($user = lcm_fetch_array($authors)) {
 				if(!$admin)
 					if ($q) $q .= "; \n";
 					
-					if ($admin) $q .= '<tr><td><a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
+					if ($admin)
+						$q .= '<tr><td><a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
+
 					$q .= clean_output(get_person_name($user));
-					if ($admin) $q .= '</a></td><td><a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" title="View author access rights on this case"><img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" /></a></td><td><a href="author_det.php?author='. $user['id_author'] .'" title="View author details"><img src="images/jimmac/stock_edit-16.png" width="16" height="16" border="0" /></a></td></tr>'; // TRAD
+					if ($admin) 
+						$q .= '</a></td><td><a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" title="View author access rights on this case"><img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" /></a></td><td><a href="author_det.php?author='. $user['id_author'] .'" title="View author details"><img src="images/jimmac/stock_edit-16.png" width="16" height="16" border="0" /></a></td></tr>'; // TRAD
 				}
 				
 				if($admin)
@@ -149,28 +156,35 @@ if ($case > 0) {
 				// Show case status
 				if ($edit) {
 					// Change status form
-					echo "<form action='set_case_status.php' method='get'>\n";
+					// echo "<form action='set_case_status.php' method='get'>\n";
+					echo "<form action='edit_fu.php' method='get'>\n";
 					echo "<input type='hidden' name='case' value='$case' />\n";
 
-					echo "\t" . _T('case_input_status') . "&nbsp;";
-					echo "\t<select name='status' class='sel_frm'>\n";
-					$statuses = array('draft','open','suspended','closed','merged', 'deleted');
-					foreach ($statuses as $s)
-						echo "\t\t<option" .  (($s == $row['status']) ? ' selected="selected"' : '') . ">" . _T('case_status_option_' . $s) . "</option>\n";
-					echo "\t</select>\n";
-					echo "\t<button type='submit' name='submit' value='set_status' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
+					echo _Ti('case_input_status');
+					echo "<select name='type' class='sel_frm' onchange='lcm_show(\"submit_status\")'>\n";
+
+					// in inc/inc_acc.php
+					$statuses = get_possible_case_statuses($row['status']);
+
+					foreach ($statuses as $s => $futype) {
+						$sel = ($s == $row['status'] ? ' selected="selected"' : '');
+						echo '<option value="' . $futype . '"' . $sel . '>' . _T('case_status_option_' . $s) . "</option>\n";
+					}
+
+					echo "</select>\n";
+					echo "<button type='submit' name='submit' id='submit_status' value='set_status' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 					echo "</form>\n";
 				} else {
-					echo _T('case_input_status') . "&nbsp;" . clean_output($row['status']) . "<br />\n";
+					echo _Ti('case_input_status') . clean_output($row['status']) . "<br />\n";
 				}
 
 				// Show case stage
 				if ($edit) {
 					// Change stage form
 					echo "<form action='set_case_stage.php' method='get'>\n";
-					echo "\t" . _T('case_input_stage') . "&nbsp;";
+					echo _T('case_input_stage');
 					echo "<input type='hidden' name='case' value='$case' />\n";
-					echo "\t<select name='stage' class='sel_frm'>\n";
+					echo "<select name='stage' class='sel_frm' onchange='lcm_show(\"submit_stage\")'>\n";
 
 					$stage_kws = get_keywords_in_group_name('stage');
 					foreach ($stage_kws as $kw) {
@@ -178,8 +192,8 @@ if ($case > 0) {
 						echo "\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
 					}
 				
-					echo "\t</select>\n";
-					echo "\t<button type='submit' name='submit' value='set_stage' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
+					echo "</select>\n";
+					echo "<button type='submit' name='submit' id='submit_stage' value='set_stage' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 					echo "</form>\n";
 				} else {
 					echo _T('case_input_stage') . "&nbsp;" . clean_output($row['stage']) . "<br />\n";
@@ -198,27 +212,15 @@ if ($case > 0) {
 				if ($admin) echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
 		
 				echo "<br />\n";
-			/*
-				echo "</fieldset>\n";
 
-				break;
-			//
-			// Case clients / organisations
-			//
-			case 'clients' :
 				//
-				// Main table for attached organisations and clients
+				// Show case client(s)
 				//
-				echo '<fieldset class="info_box">' . "\n";
-			*/
 				echo '<div class="prefs_column_menu_head">'
 					. "<div style='float: right'>" . lcm_help('clients_intro') . "</div>"
 					. _T('case_subtitle_clients') 
 					. "</div>\n";
 
-				//
-				// Show case client(s)
-				//
 				$q="SELECT cl.id_client, cl.name_first, cl.name_middle, cl.name_last
 					FROM lcm_case_client_org as clo, lcm_client as cl
 					WHERE id_case = $case AND clo.id_client = cl.id_client";
@@ -622,6 +624,7 @@ if ($case > 0) {
 
 	$_SESSION['errors'] = array();
 	$_SESSION['case_data'] = array();
+	$_SESSION['fu_data'] = array();
 
 	lcm_page_end();
 } else {
