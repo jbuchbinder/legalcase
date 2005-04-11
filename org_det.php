@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.25 2005/04/08 16:45:37 mlutfy Exp $
+	$Id: org_det.php,v 1.26 2005/04/11 16:15:50 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -38,8 +38,10 @@ $q = "SELECT *
 
 $result = lcm_query($q);
 
-if ($row = lcm_fetch_array($result)) {
-	lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
+if (! ($row = lcm_fetch_array($result))) 
+	die("There's no such organisation!");
+
+lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 
 	/* Saved for future use
 	// Check for access rights
@@ -246,7 +248,8 @@ if ($row = lcm_fetch_array($result)) {
 	echo "</a>";
 	echo "</p>\n";
 
-} else die("There's no such organisation!");
+$_SESSION['errors'] = array();
+$_SESSION['org_data'] = array();
 
 lcm_page_end();
 
