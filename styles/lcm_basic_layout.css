@@ -20,6 +20,8 @@ body {
 	/* [ML] Would fix zoom-out Firefox problem, but seems to
 	 * break MSIE according to Krasi's commit on March 31 */
 	/* min-height: 90px;  */
+	
+	min-height: 91px;
 }
 
 /* Maybe will be removed later */
@@ -144,7 +146,7 @@ a.balance_link {
 	float: left;
 	margin-top: 8px;
 	width: 85px;
-	height: 80px;
+	height: 76px;
 	display: block;
 	text-decoration: none;
 }
