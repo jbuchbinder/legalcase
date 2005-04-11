@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.6 2005/04/11 11:35:04 mlutfy Exp $
+	$Id: inc_acc.php,v 1.7 2005/04/11 13:00:32 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -29,17 +29,14 @@ function allowed($case, $access) {
 	// By default, do not allow access
 	$allow = false;
 
-	// Admins can access everything
-	if ($GLOBALS['author_session']['status'] == 'admin')
-		return true;
-
 	// Check if the case number is present
 	if ($case > 0) {
 
-		$q = "SELECT *
-				FROM lcm_case_author
-				WHERE (id_case = " . intval($case) . "
-					AND id_author= " . $GLOBALS['author_session']['id_author'] . ")";
+		$q = "SELECT ca.*, c.status
+				FROM lcm_case_author as ca, lcm_case as c
+				WHERE (ca.id_case = " . intval($case) . "
+					AND ca.id_author= " . $GLOBALS['author_session']['id_author'] . ")
+					AND ca.id_case = c.id_case";
 
 		$result = lcm_query($q);
 
@@ -47,6 +44,14 @@ function allowed($case, $access) {
 
 			// Set initial value to true, if $access parameter is set
 			$allow = (bool) $access;
+			$open = true;
+
+			if ($row['status'] == 'deleted' || $row['status'] == 'closed')
+				$open = false;
+
+			// Give admin all rights, but check for write/edit/admin if closed/deleted
+			if ($GLOBALS['author_session']['status'] == 'admin')
+				$row['ac_read'] = $row['ac_write'] = $row['ac_edit'] = $row['ac_admin'] = 1;
 
 			// Walk each character in the required access rights list
 			for($i = 0; $i < strlen($access); $i++) {
@@ -55,12 +60,16 @@ function allowed($case, $access) {
 						$allow &= ($row['ac_read']);
 						break;
 					case "w":
-						$allow &= ($row['ac_write']);
+						$allow &= ($row['ac_write'] && $open);
 						break;
 					case "e":
-						$allow &= ($row['ac_edit']);
+						$allow &= ($row['ac_edit'] && $open);
 						break;
 					case "a":
+						$allow &= ($row['ac_admin'] && $open);
+						break;
+					case "A":
+						// bypass 'closed' or 'deleted' (ex: case status for admin)
 						$allow &= ($row['ac_admin']);
 						break;
 					default:
