@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.89 2005/04/11 11:40:23 mlutfy Exp $
+	$Id: edit_fu.php,v 1.90 2005/04/11 12:05:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -158,8 +158,13 @@ if (empty($_SESSION['errors'])) {
 
 if (isset($_SESSION['followup']))
 	lcm_page_start(_T('title_fu_edit'));
-else
-	lcm_page_start(_T('title_fu_new'));
+else {
+	if (isset($_REQUEST['type'])) {
+		lcm_page_start(_T('title_fu_change_status'));
+	} else {
+		lcm_page_start(_T('title_fu_new'));
+	}
+}
 
 // Show a bit of background on the case
 show_context_start();
@@ -205,7 +210,11 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		</tr>
 		<tr>
 <?php
-			echo "<td>" . _T('fu_input_type') . "</td>\n";
+			if (isset($_REQUEST['type']))
+				echo "<td>" . _T('case_input_status') . "</td>\n";
+			else
+				echo "<td>" . _T('fu_input_type') . "</td>\n";
+
 			echo "<td>";
 		
 			if (isset($_REQUEST['type'])) {
