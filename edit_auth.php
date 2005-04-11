@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_auth.php,v 1.12 2005/04/07 16:53:15 mlutfy Exp $
+	$Id: edit_auth.php,v 1.13 2005/04/11 16:22:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -46,14 +46,21 @@ $q .= ')';
 
 $result = lcm_query($q);
 
-lcm_page_start("Edit author's rights on case $case"); // TRAD
+lcm_page_start("Edit access rights"); // TRAD
+
+// BUBBLE
+
+show_context_start();
+show_context_case_title($case);
+show_context_case_involving($case);
+show_context_end();
 
 echo '<form action="upd_auth.php" method="post">' . "\n";
 
 // TRAD TRAD TRAD ...
 ?>
 		<table border="0" class="tbl_usr_dtl" width="99%">
-			<tr><th align="center" class="heading">User</th>
+			<tr><th align="center" class="heading">&nbsp;</th>
 				<th align="center" class="heading">Read</th>
 				<th align="center" class="heading">Write</th>
 				<th align="center" class="heading">Edit</th>
