@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.91 2005/04/11 12:28:55 mlutfy Exp $
+	$Id: edit_fu.php,v 1.92 2005/04/11 16:10:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,8 +28,6 @@ include_lcm('inc_keywords');
 
 // Read the policy settings
 $fu_sum_billed = read_meta('fu_sum_billed');
-$fu_allow_modif = read_meta('fu_allow_modif');
-$modify = ($fu_allow_modif == 'yes');
 $admin = ($GLOBALS['author_session']['status']=='admin');
 
 if (empty($_SESSION['errors'])) {
@@ -131,9 +129,14 @@ if (empty($_SESSION['errors'])) {
 	}
 
 	// Check for access rights
-	$edit = allowed($_SESSION['fu_data']['id_case'],'e');
-	if (!($admin || $edit))
-		lcm_panic("You don't have permission to edit this case's information");
+	$edit  = allowed($_SESSION['fu_data']['id_case'], 'e');
+	$write = allowed($_SESSION['fu_data']['id_case'], 'w');
+
+	if (!($admin || $write))
+		lcm_panic("You don't have permission to add follow-ups to this case");
+
+	if (isset($_SESSION['followup']) && (! $edit))
+		lcm_panic("You do not have the permission to edit existing follow-ups");
 	
 	//
 	// Change status: check for if case status is different than current
@@ -193,14 +196,14 @@ show_context_end();
 echo show_all_errors($_SESSION['errors']);
 
 // Disable inputs when edit is not allowed for the field
-$dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
+$dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 ?>
 
 <form action="upd_fu.php" method="post">
 	<table class="tbl_usr_dtl" width="99%">
 		<tr><td><?php echo _T('fu_input_date_start'); ?></td>
 			<td><?php 
-				$name = (($admin || ($edit && $modify)) ? 'start' : '');
+				$name = (($admin || $edit) ? 'start' : '');
 				echo get_date_inputs($name, $_SESSION['fu_data']['date_start'], false);
 				echo ' ' . _T('time_input_time_at') . ' ';
 				echo get_time_inputs($name, $_SESSION['fu_data']['date_start']);
@@ -217,7 +220,17 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 					echo get_time_inputs($name, $_SESSION['fu_data']['date_end']);
 					echo f_err_star('date_end',$errors);
 				} else {
-					$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
+					$name = '';
+
+					// Buggy code, so isolated most important cases
+					if ($_SESSION['fu_data']['id_followup'] == 0)
+						$name = 'delta';
+					elseif ($edit)
+						$name = 'delta';
+					else
+						// user can 'finish' entering data
+						$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
+
 					$interval = ( ($_SESSION['fu_data']['date_end']!='0000-00-00 00:00:00') ?
 							strtotime($_SESSION['fu_data']['date_end']) - strtotime($_SESSION['fu_data']['date_start']) : 0);
 					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
