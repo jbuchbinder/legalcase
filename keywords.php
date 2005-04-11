@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.25 2005/04/11 07:18:14 mlutfy Exp $
+	$Id: keywords.php,v 1.26 2005/04/11 09:14:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -40,7 +40,18 @@ function show_all_keywords_type($type = '') {
 		
 		echo '<a name="' . $kwg['name'] . '"></a>' . "\n";
 		echo "<fieldset class='info_box'>\n";
-		echo "<div class='prefs_column_menu_head'><a href='?action=edit_group&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>" . _T($kwg['title']) . "</a></div>\n";
+		echo "<div class='prefs_column_menu_head'>";
+		echo "<a href='?action=edit_group&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>"
+			. _T($kwg['title']) 
+			. "</a>";
+
+		if ($kwg['type'] != 'system')
+			echo " - " . _Ti('keywords_input_type') .  _T('keywords_input_type_' . $kwg['type']);
+
+		if ($kwg['ac_author'] != 'Y')
+			echo " (hidden) "; // TRAD
+
+		echo "</div>\n";
 
 		$kw_all = get_keywords_in_group_id($kwg['id_group'], false);
 
@@ -140,7 +151,8 @@ function show_keyword_group_id($id_group) {
 	echo '<option value=""' . $sel . '>' . "none" . '</option>' . "\n"; // TRAD
 	
 	if ($id_group) {
-		foreach ($system_kwg[$kwg['name']]['keywords'] as $kw) {
+		$all_kw = get_keywords_in_group_name($kwg['name']);
+		foreach ($all_kw as $kw) {
 			$sel = ($kw['name'] == $kwg['suggest'] ? ' selected="selected"' : '');
 			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>' . "\n";
 		}
@@ -152,6 +164,7 @@ function show_keyword_group_id($id_group) {
 
 	// Name (only for new keywords, must be unique and cannot be changed)
 	echo "<td colspan='2'>";
+	echo "<p class='normal_text'>";
 	echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
 		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
 	if ($id_group) {
@@ -159,18 +172,20 @@ function show_keyword_group_id($id_group) {
 	} else {
 		echo '<input type="text" style="width:99%;" id="kwg_name" name="kwg_name" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
 	}
-	echo "</td>";
+	echo "</p>\n";
 
-	echo "</tr><tr>\n";
-	echo "<td colspan='2'><strong>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "</strong><br />\n";
+	echo "<p class='normal_text'>";
+	echo "<strong>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "</strong><br />\n";
 	echo "<input type='text' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
-	echo "</td>\n";
-	echo "</tr>\n";
-	echo "<tr></tr>\n";
-	echo "<td colspan='2'><strong>" . _T('keywords_input_description') . "</strong><br />\n";
+	echo "</p>\n";
+
+	echo "<p class='normal_text'>";
+	echo "<strong>" . _T('keywords_input_description') . "</strong><br />\n";
 	echo "<textarea id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
 	echo $kwg['description'];
 	echo "</textarea>\n";
+	echo "</p>\n";
+
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 
@@ -189,11 +204,23 @@ function show_keyword_group_id($id_group) {
 	echo '<td colspan="2">';
 	echo '<p>' . _T('keywords_info_quantity', array(quantity => $html_quantity)) . "</p>\n";
 	echo "</td>\n";
-
 	echo "</tr>\n";
+
+	if ($kwg['type'] != 'system') {
+		if (! $id_group)
+			$kwg['ac_author'] = 'Y';
+	
+		echo "<tr>\n";
+		echo '<td colspan="2">';
+		echo "<p>" . "Can authors use this keyword group? (otherwise it will be hidden)" 
+			. " " . get_yes_no('kwg_ac_author', $kwg['ac_author']) . "</p>\n"; // TRAD
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
+
 	echo "</table>\n\n";
 
-	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+	echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
 	echo "</form>\n";
 
 	// destroy error messages
@@ -284,6 +311,7 @@ function update_keyword_group($id_group) {
 	$kwg_type    = $_REQUEST['kwg_type'];    // user only
 	$kwg_policy  = $_REQUEST['kwg_policy'];  // user only
 	$kwg_quantity = $_REQUEST['kwg_quantity']; // user only
+	$kwg_ac_author = $_REQUEST['kwg_ac_author']; // user only
 
 	//
 	// Check for errors
@@ -310,6 +338,9 @@ function update_keyword_group($id_group) {
 	//
 
 	if (! $id_group) { // new
+		if ($kwg_type == 'system')
+			lcm_panic("Operation not allowed (type = $kwg_type)");
+	
 		$query = "INSERT INTO lcm_keyword_group
 					SET type = '" . clean_input($kwg_type) . "',
 						name = '" . clean_input($kwg_name) . "',
@@ -318,7 +349,7 @@ function update_keyword_group($id_group) {
 						suggest = '',
 						policy = '" . clean_input($kwg_policy) . "',
 						quantity = '" . clean_input($kwg_quantity) . "',
-						ac_author = 'Y',
+						ac_author = '" . clean_input($kwg_ac_author) . "',
 						ac_admin = 'Y'";
 
 		lcm_query($query);
@@ -334,6 +365,9 @@ function update_keyword_group($id_group) {
 		if ($kwg_info['type'] != 'system') {
 			$fl .= ", quantity = '" . clean_input($kwg_quantity) . "' ";
 			$fl .= ", policy = '" . clean_input($kwg_policy) . "' ";
+
+			if ($kwg_ac_author == 'Y' || $kwg_ac_author == 'N')
+				$fl .= ", ac_author = '" . clean_input($kwg_ac_author) . "' ";
 		}
 		
 		$fl .= ", description = '" . clean_input($kwg_desc) . "' ";
