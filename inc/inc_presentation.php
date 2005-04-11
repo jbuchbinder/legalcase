@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.209 2005/04/11 13:14:41 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.210 2005/04/11 16:12:27 mlutfy Exp $
 */
 
 //
@@ -713,7 +713,7 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 	$default_year = $split_date[0];
 
 	// If name is empty, disable fields
-	$dis = (($name) ? '' : 'disabled');
+	$dis = (($name) ? '' : 'disabled="disabled"');
 
 	$ret = '';
 	if ($table)
@@ -784,7 +784,7 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 	$default_seconds = $split_time[2];
 
 	// If name is empty, disable fields
-	$dis = (($name) ? '' : 'disabled');
+	$dis = (($name) ? '' : 'disabled="disabled"');
 
 	$ret = '';
 
@@ -864,7 +864,7 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	}
 
 	// If name is empty, disable fields
-	$dis = (($name) ? '' : 'disabled');
+	$dis = (($name) ? '' : 'disabled="disabled"');
 
 	$ret = '';
 
@@ -880,7 +880,7 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 			. "<!-- " . _T('select_time_days') . "<br/ -->\n";
 		
 		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
-		$ret .= " d, ";
+		$ret .= " d, "; // TRAD
 				
 		if ($table)
 			$ret .= "</td>\n";
@@ -889,7 +889,7 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	// Hour
 	if ($hours_only || !$select_hours) {
 		$ret .= "<input $dis size=\"4\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
-		$ret .= ($hours_only ? " hours\n" : " h, ");
+		$ret .= ($hours_only ? " hours\n" : " h, "); // TRAD
 	} else {
 		if ($table)
 			$ret .= "<td>\n"
@@ -904,7 +904,7 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	
 		$ret .= "</select>";
 		
-		$ret .= " h, ";
+		$ret .= " h, "; // TRAD
 	
 		if ($table)
 			$ret .= "</td>\n";
@@ -1272,7 +1272,7 @@ function show_listcase_item($item, $cpt, $custom = '') {
 	include('inc/inc_acc.php');
 	$case_court_archive = read_meta('case_court_archive');
 
-	$ac_read = allowed($item['id_case'],'r');
+	$ac_read = allowed($item['id_case'], 'r');
 	$ac_edit = allowed($item['id_case'], 'e');
 	$css = ($cpt %2 ? "dark" : "light");
 
