@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.62 2005/04/11 08:13:32 mlutfy Exp $
+	$Id: inc_filters.php,v 1.63 2005/04/11 08:25:26 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -324,14 +324,14 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 		$ret .= sprintf("%02d", $source[$prefix . 'month']) . '-';
 		$has_date = true;
 	} else {
-		$ret .= '00-';
+		$ret .= '01-';
 	}
 	
 	if (is_numeric($source[$prefix . 'day'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'day']);
 		$has_date = true;
 	} else {
-		$ret .= '00';
+		$ret .= '01';
 	}
 
 	$ret .= " ";
@@ -368,8 +368,12 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 
 	if ($has_date)
 		return $ret;
-	else
+	
+	if ($fallback) 
 		return $fallback;
+	
+	// Return empty date (0000-00-00 00:00:00 or 0000-01-01 23:59:59)
+	return $ret;
 }
 
 /* ********************************************************
