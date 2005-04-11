@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.138 2005/04/11 12:32:46 mlutfy Exp $
+	$Id: case_det.php,v 1.139 2005/04/11 13:04:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,9 +57,9 @@ if ($case > 0) {
 			die(_T('error_no_read_permission'));
 		}
 
-		$add = allowed($case,'w');
-		$edit = ($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'e');
-		$admin = ($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'a');
+		$add   = allowed($case,'w');
+		$edit  = allowed($case,'e');
+		$admin = allowed($case,'a');
 
 		// Show case details
 		lcm_page_start(_T('title_case_details') . " " . $row['title']);
@@ -153,8 +153,8 @@ if ($case > 0) {
 				echo _Ti('case_input_notes') . "<br />\n";
 				echo nl2br($row['notes']);
 
-				// Show case status
-				if ($edit) {
+				// Show case status (even if closed, admin can change, ex: re-open/delete)
+				if (allowed($case, 'A')) {
 					// Change status form
 					// echo "<form action='set_case_status.php' method='get'>\n";
 					echo "<form action='edit_fu.php' method='get'>\n";
@@ -179,7 +179,7 @@ if ($case > 0) {
 				}
 
 				// Show case stage
-				if ($edit && $row['status'] != 'closed' && $row['status'] != 'deleted') {
+				if ($admin) {
 					// Change stage form
 					// echo "<form action='set_case_stage.php' method='get'>\n";
 					echo "<form action='edit_fu.php' method='get'>\n";
