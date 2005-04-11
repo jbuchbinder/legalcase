@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.135 2005/04/08 17:34:36 mlutfy Exp $
+	$Id: case_det.php,v 1.136 2005/04/11 08:24:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -376,8 +376,8 @@ if ($case > 0) {
 				echo $link->getForm();
 
 				echo "<p class=\"normal_text\">\n";
-				$date_end = get_datetime_from_array($_REQUEST, 'date_end', 'end', date('Y-m-d H:i:s'));
-				$date_start = get_datetime_from_array($_REQUEST, 'date_start', 'start', $row['date_creation']);
+				$date_end = get_datetime_from_array($_REQUEST, 'date_end', 'end', '0000-00-00 00:00:00'); // date('Y-m-d H:i:s'));
+				$date_start = get_datetime_from_array($_REQUEST, 'date_start', 'start', '0000-00-00 00:00:00'); // $row['date_creation']);
 
 				echo _Ti('time_input_date_start');
 				echo get_date_inputs('date_start', $date_start);
@@ -396,29 +396,23 @@ if ($case > 0) {
 				$headers[0]['order'] = 'fu_order';
 				$headers[0]['default'] = 'ASC';
 				$headers[1]['title'] = ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length') );
-//				$headers[1]['order'] = 'no_order';
 				$headers[2]['title'] = _Th('case_input_author');
-//				$headers[2]['order'] = 'no_order';
 				$headers[3]['title'] = _Th('fu_input_type');
-//				$headers[3]['order'] = 'no_order';
 				$headers[4]['title'] = _Th('fu_input_description');
-//				$headers[4]['order'] = 'no_order';
 			
 				show_list_start($headers);
 			
-				$q = "SELECT fu.id_followup,
-						fu.date_start,
-						fu.date_end,
-						fu.type,
-						fu.description,
-						a.name_first,
-						a.name_middle,
-						a.name_last
+				$q = "SELECT fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description,
+						a.name_first, a.name_middle, a.name_last
 					FROM lcm_followup as fu, lcm_author as a
 					WHERE id_case = $case
-					  AND fu.id_author = a.id_author
-					  AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "')
-					  AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
+					  AND fu.id_author = a.id_author ";
+
+				if (year($date_start) != '0000')
+					$q .= " AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "')";
+
+				if (year($date_end) != '0000')
+					$q .= " AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
 			
 				// Add ordering
 				if ($fu_order) $q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
