@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.137 2005/04/11 11:39:02 mlutfy Exp $
+	$Id: case_det.php,v 1.138 2005/04/11 12:32:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -179,11 +179,13 @@ if ($case > 0) {
 				}
 
 				// Show case stage
-				if ($edit) {
+				if ($edit && $row['status'] != 'closed' && $row['status'] != 'deleted') {
 					// Change stage form
-					echo "<form action='set_case_stage.php' method='get'>\n";
+					// echo "<form action='set_case_stage.php' method='get'>\n";
+					echo "<form action='edit_fu.php' method='get'>\n";
 					echo _T('case_input_stage');
 					echo "<input type='hidden' name='case' value='$case' />\n";
+					echo "<input type='hidden' name='type' value='stage_change' />\n";
 					echo "<select name='stage' class='sel_frm' onchange='lcm_show(\"submit_stage\")'>\n";
 
 					$stage_kws = get_keywords_in_group_name('stage');
