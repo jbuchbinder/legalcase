@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.23 2005/03/29 15:56:22 mlutfy Exp $
+	$Id: keywords.php,v 1.24 2005/04/11 06:57:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,7 @@ function show_all_keywords_type($type = '') {
 		echo "<fieldset class='info_box'>\n";
 		echo "<div class='prefs_column_menu_head'><a href='?action=edit_group&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>" . _T($kwg['title']) . "</a></div>\n";
 
-		$kw_all = get_keywords_in_group_id($kwg['id_group']);
+		$kw_all = get_keywords_in_group_id($kwg['id_group'], false);
 
 		if (count($kw_all)) {
 			echo "<ul class='wo_blt'>\n";
@@ -51,7 +51,7 @@ function show_all_keywords_type($type = '') {
 				echo "\t<li>";
 				if ($suggest == $kw['name']) echo "<b>";
 				echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T($kw['title']) . "</a>";
-				if ($kw['ac_author'] != 'Y') echo " (hidden) ";
+				if ($kw['ac_author'] != 'Y') echo " (hidden) "; // TRAD
 				if ($suggest == $kw['name']) echo "</b>";
 				echo "</li>\n";
 			}
@@ -61,13 +61,13 @@ function show_all_keywords_type($type = '') {
 
 		echo '<p><a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
 			. 'id_group=' . $kwg['id_group'] . '">'
-			. 'Add a new keyword in this group' . "</a></p>\n";
+			. 'Add a new keyword in this group' . "</a></p>\n"; // TRAD
 	
 		echo "</fieldset>\n";
 	}
 
 	if ($type == 'user')
-		echo '<a href="keywords.php?action=edit_group&amp;id_group=0" class="create_new_lnk">Create a new keyword group</a>' . "\n";
+		echo '<a href="keywords.php?action=edit_group&amp;id_group=0" class="create_new_lnk">Create a new keyword group</a>' . "\n"; // TRAD
 
 }
 
@@ -101,7 +101,7 @@ function show_keyword_group_id($id_group) {
 	if ($kwg['type'] == 'system') {
 		echo _T('keywords_input_type_system');
 	} else {
-		$all_types = array("case", "followup", "client", "org", "client_org");  // "author"
+		$all_types = array("case", "client", "org", "client_org");  // "author", "followup"
 		
 		echo '<select name="kwg_type" id="kwg_type">';
 
@@ -137,7 +137,7 @@ function show_keyword_group_id($id_group) {
 	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
 	echo "<td>";
 	echo '<select name="kwg_suggest" class="sel_frm">';
-	echo '<option value=""' . $sel . '>' . "none" . '</option>' . "\n";
+	echo '<option value=""' . $sel . '>' . "none" . '</option>' . "\n"; // TRAD
 	
 	if ($id_group) {
 		foreach ($system_kwg[$kwg['name']]['keywords'] as $kw) {
@@ -242,7 +242,7 @@ function show_keyword_id($id_keyword = 0) {
 	// Name (only for new keywords, must be unique and cannot be changed)
 	if (! $id_keyword) {
 		echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
-			. "(short identifier, unique to this keyword group)" . "<br />\n";
+			. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
 		echo '<input type="text" id="kw_name" name="kw_name" value="' . $kw['name'] . '" class="search_form_txt" />' . "\n";
 		echo "<br /><br />\n";
 	}
@@ -347,7 +347,7 @@ function update_keyword_group($id_group) {
 	
 	write_metas(); // update inc_meta_cache.php
 
-	$tab = ($kw_type['system'] == 'system' ? 'system' : 'user');
+	$tab = ($kw_info['type'] == 'system' ? 'system' : 'user');
 	header("Location: keywords.php?tab=" . $tab . "#" . $kwg_info['name']);
 	exit;
 }
@@ -423,7 +423,7 @@ function update_keyword($id_keyword) {
 
 	write_metas(); // update inc_meta_cache.php
 
-	$tab = ($kw_type['system'] == 'system' ? 'system' : 'user');
+	$tab = ($kw_info['type'] == 'system' ? 'system' : 'user');
 	header("Location: keywords.php?tab=" . $tab . "#" . $kw_info['kwg_name']);
 	exit;
 }
@@ -474,6 +474,7 @@ if (isset($_REQUEST['action'])) {
 }
 
 lcm_page_start(_T('menu_admin_keywords'));
+lcm_bubble('keyword_list');
 
 //
 // Tabs
