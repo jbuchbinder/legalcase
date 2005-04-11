@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.5 2005/01/13 12:27:09 mlutfy Exp $
+	$Id: inc_acc.php,v 1.6 2005/04/11 11:35:04 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -72,6 +72,60 @@ function allowed($case, $access) {
 	}
 
 	return $allow;
+}
+
+// Returns an array with the possible case statuses
+// c.f. http://www.lcm.ngo-bg.org/article78.html
+function get_possible_case_statuses($status) {
+	$statuses = array();
+
+	if ($status == 'draft') {
+		$statuses = array('draft' => 'draft', 
+				'open' => 'opening',
+				// 'suspended' => 'suspension',
+				'closed' => 'conclusion',
+				'merged' => 'merge', 
+				'deleted' => 'deletion');
+	} elseif ($status == 'open') {
+		$statuses = array( // 'draft' => 'draft', 
+				'open' => 'opening',
+				'suspended' => 'suspension',
+				'closed' => 'conclusion',
+				'merged' => 'merge', 
+				'deleted' => 'deletion');
+	} elseif ($status == 'suspended') {
+		$statuses = array( // 'draft' => 'draft', 
+				'open' => 'opening',
+				'suspended' => 'suspension',
+				'closed' => 'conclusion',
+				'merged' => 'merge', 
+				'deleted' => 'deletion');
+	} elseif ($status == 'closed') {
+		$statuses = array( // 'draft' => 'draft', 
+				'open' => 'opening',
+				// 'suspended' => 'suspension',
+				'closed' => 'conclusion',
+				// 'merged' => 'merge', 
+				'deleted' => 'deletion');
+	} elseif ($status == 'merged') {
+		$statuses = array( // 'draft' => 'draft', 
+				// 'open' => 'opening',
+				// 'suspended' => 'suspension',
+				// 'closed' => 'conclusion',
+				'merged' => 'merge', 
+				'deleted' => 'deletion');
+	} elseif ($status == 'deleted') {
+		$statuses = array( // 'draft' => 'draft', 
+				'open' => 'opening',
+				// 'suspended' => 'suspension',
+				// 'closed' => 'conclusion',
+				// 'merged' => 'merge', 
+				'deleted' => 'deletion');
+	} else {
+		lcm_panic("unknown status: $status");
+	}
+
+	return $statuses;
 }
 
 ?>
