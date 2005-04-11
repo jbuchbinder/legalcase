@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.24 2005/04/11 06:57:54 mlutfy Exp $
+	$Id: keywords.php,v 1.25 2005/04/11 07:18:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -47,10 +47,10 @@ function show_all_keywords_type($type = '') {
 		if (count($kw_all)) {
 			echo "<ul class='wo_blt'>\n";
 
-			foreach ($kw_all as $kw) {
+			foreach ($kw_all as $key => $kw) {
 				echo "\t<li>";
 				if ($suggest == $kw['name']) echo "<b>";
-				echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T($kw['title']) . "</a>";
+				echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T(remove_number_prefix($kw['title'])) . "</a>";
 				if ($kw['ac_author'] != 'Y') echo " (hidden) "; // TRAD
 				if ($suggest == $kw['name']) echo "</b>";
 				echo "</li>\n";

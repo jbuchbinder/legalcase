@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.17 2005/04/11 06:34:22 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.18 2005/04/11 07:18:14 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -149,7 +149,9 @@ function get_keywords_in_group_name($kwg_name, $visible_only = true) {
 			if ($kw['ac_author'] == 'Y')
 				$ret[_T($kw['title'])] = $kw;
 
-		asort($ret);
+		ksort($ret);
+		reset($ret);
+
 		return $ret;
 	}
 
@@ -180,14 +182,14 @@ function get_keywords_in_group_id($kwg_id, $visible_only = true) {
 	if ($visible_only)
 		$query .= " AND ac_author = 'Y'";
 	
-	$query .= " ORDER BY title ASC";
-
 	$result = lcm_query($query);
 
 	while ($row = lcm_fetch_array($result)) 
-		$ret[_T($row['title'])] = $row;
+		$ret[$row['title']] = $row;
 
-	asort($ret);
+	ksort($ret);
+	reset($ret);
+
 	return $ret;
 }
 
