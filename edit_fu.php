@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.90 2005/04/11 12:05:11 mlutfy Exp $
+	$Id: edit_fu.php,v 1.91 2005/04/11 12:28:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -145,14 +145,22 @@ if (empty($_SESSION['errors'])) {
 				'merge' => 'merged', 
 				'deletion' => 'deleted');
 
-	if (isset($_REQUEST['type'])) {
+	if ($_REQUEST['submit'] == 'set_status') {
 		// Get case status
 		$result = lcm_query("SELECT status FROM lcm_case WHERE id_case = " . $case);
 		$row = lcm_fetch_array($result);
 	
 		if ($statuses[$_REQUEST['type']] == $row['status'])
 			header('Location: ' . $GLOBALS['HTTP_REFERER']);
+	}
 
+	if ($_REQUEST['submit'] == 'set_stage') {
+		// Get case stage
+		$result = lcm_query("SELECT stage FROM lcm_case WHERE id_case = " . $case);
+		$row = lcm_fetch_array($result);
+	
+		if ($statuses[$_REQUEST['stage']] == $row['stage'])
+			header('Location: ' . $GLOBALS['HTTP_REFERER']);
 	}
 }
 
@@ -170,6 +178,15 @@ else {
 show_context_start();
 show_context_case_title($case);
 show_context_case_involving($case);
+
+// For 'change status'
+if ($_REQUEST['submit'] == 'set_status')
+	show_context_item(_Ti('fu_input_current_status') . _T('case_status_option_' . $row['status']));
+
+// For 'change stage'
+if ($_REQUEST['submit'] == 'set_stage')
+	show_context_item(_Ti('fu_input_current_stage') . _T('kw_stage_' . $row['stage'] . '_title'));
+
 show_context_end();
 
 // Show the errors (if any)
@@ -210,17 +227,29 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 		</tr>
 		<tr>
 <?php
-			if (isset($_REQUEST['type']))
+			if ($_REQUEST['submit'] == 'set_status') {
+				// Change status
 				echo "<td>" . _T('case_input_status') . "</td>\n";
-			else
-				echo "<td>" . _T('fu_input_type') . "</td>\n";
+				echo "<td>";
 
-			echo "<td>";
-		
-			if (isset($_REQUEST['type'])) {
 				echo '<input type="hidden" name="type" value="' . $_REQUEST['type'] . '" />' . "\n";
 				echo _T('kw_followups_' . $_REQUEST['type'] . '_title');
+
+				echo "</td>\n";
+			} elseif ($_REQUEST['submit'] == 'set_stage') {
+				// Change stage
+				echo "<td>" . _T('case_input_stage') . "</td>\n";
+				echo "<td>";
+
+				echo '<input type="hidden" name="type" value="' . $_REQUEST['type'] . '" />' . "\n";
+				echo _T('kw_stage_' . $_REQUEST['stage'] . '_title');
+
+				echo "</td>\n";
 			} else {
+				// The usual follow-up
+				echo "<td>" . _T('fu_input_type') . "</td>\n";
+				echo "<td>";
+
 				echo '<select ' . $dis . ' name="type" size="1" class="sel_frm">' . "\n";
 
 				if ($_SESSION['fu_data']['type'])
@@ -236,9 +265,8 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 				}
 
 				echo "</select>\n";
+				echo "</td>\n";
 			}
-
-			echo "</td>\n";
 ?>
 		
 		</tr>
