@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.87 2005/04/05 14:48:31 mlutfy Exp $
+	$Id: edit_fu.php,v 1.88 2005/04/11 06:35:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -128,13 +128,6 @@ if (empty($_SESSION['errors'])) {
 
 			$_SESSION['fu_data']['description'] = str_replace('&nbsp;', ' ', $_SESSION['fu_data']['description']);
 
-			/*
-			   $_SESSION['fu_data']['description'] = 'Following the ' . _T(get_kw_title($row['type']))	
-			   . ' (' . $row['title'] . ') from ' . str_replace('&nbsp;', ' ', format_date($row['start_time']));
-
-			   $_SESSION['fu_data']['description'] .= ' involving ' . join(', ', $participants);
-			 */
-
 			// Set start and end times of the followup from the appointment
 			$_SESSION['fu_data']['date_start'] = $row['start_time'];
 			$_SESSION['fu_data']['date_end']   = $row['end_time'];
@@ -202,21 +195,29 @@ $dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
 			<td><select <?php echo $dis; ?> name="type" size="1" class="sel_frm">
 			<?php
 
-			global $system_kwg;
-
 			if ($_SESSION['fu_data']['type'])
 				$default_fu = $_SESSION['fu_data']['type'];
 			else
 				$default_fu = $system_kwg['followups']['suggest'];
 
+			$futype_kws = get_keywords_in_group_name('followups');
+
+			/* [ML] Should now be done in get_keywords_in_group_name()
 			$opts = array();
-			foreach($system_kwg['followups']['keywords'] as $kw)
+
+			foreach($futype_kws as $kw)
 				$opts[$kw['name']] = _T($kw['title']);
+
 			asort($opts);
 
 			foreach($opts as $k => $opt) {
 				$sel = ($k == $default_fu ? ' selected="selected"' : '');
 				echo "<option value='$k'$sel>$opt</option>\n";
+			} */
+
+			foreach($futype_kws as $kw) {
+				$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
+				echo '<option value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 			}
 
 			?>
