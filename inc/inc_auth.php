@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.27 2005/04/08 05:41:56 mlutfy Exp $
+	$Id: inc_auth.php,v 1.28 2005/04/12 19:48:12 antzi Exp $
 */
 
 // Execute this file only once
@@ -123,7 +123,7 @@ function auth() {
 		$connect_activer_imessage = "non "; //$row["imessage"];
 
 		// Set the users' preferences
-		$prefs = unserialize($row['prefs']);
+		$prefs = unserialize( ( get_magic_quotes_runtime() ? stripslashes($row['prefs']) : $row['prefs'] ) );
 
 		//
 		// Default values for some possibly unset preferences
