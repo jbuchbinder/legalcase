@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.57 2005/03/31 05:50:59 mlutfy Exp $
+	$Id: config_author.php,v 1.58 2005/04/12 19:53:25 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -345,7 +345,8 @@ if (isset($_POST['author_ui_modified']))
 if (isset($_POST['author_advanced_settings_modified']))
 	apply_author_advanced_settings_change();
 
-/* [ML] I find this useful only for debugging, otherwise confusing for the user
+// [ML] I find this useful only for debugging, otherwise confusing for the user
+/*
 if (count($log) > 0) {
 	lcm_page_start(_T('title_authorconf'),'','<meta http-equiv="refresh" content="5; url=' . $_POST['referer'] . '">');
 	show_changes();
