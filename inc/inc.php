@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.48 2005/04/04 06:43:16 mlutfy Exp $
+	$Id: inc.php,v 1.49 2005/04/12 19:50:43 antzi Exp $
 */
 
 // Test if LCM is installed
@@ -37,6 +37,9 @@ include_lcm('inc_filters');
 
 if (! @file_exists('inc/data/inc_meta_cache.php'))
 	write_metas();
+
+// [AG] Adding to validate later references to it
+global $author_session;
 
 //
 // Preferences for presentation
@@ -120,7 +123,7 @@ if (isset($_REQUEST['author_advanced_settings_modified'])) {
 // Update user preferences if modified
 if ($prefs_mod) {
 	lcm_query("UPDATE lcm_author
-				SET   prefs = '".addslashes(serialize($prefs))."'
+				SET   prefs = '" . addslashes(serialize($prefs)) . "'
 				WHERE id_author = " . $author_session['id_author']);
 }
 
