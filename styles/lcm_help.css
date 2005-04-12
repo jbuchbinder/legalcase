@@ -2,14 +2,11 @@
 /* Help pages styles */
 /* -------------------- */
 
-/* -------------------- */
-/* Help pages styles */
-/* -------------------- */
-
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	margin: 0;
 	padding: 0;
+	background: url("../images/lcm/help_back.gif") repeat-y 150px;
 }
 
 h1 {
@@ -22,6 +19,8 @@ h1 {
 	border-right: 1px solid #999;
 	color: #333;
 	background: #efefef;
+	font-size: 1.8em;
+	letter-spacing: -1px;
 }
 
 h2 {
@@ -34,8 +33,8 @@ h2 {
 #hlp_big_box {
 	width: 739px;
 	height: 525px;
-	border-bottom: 1px solid #999;
-	border-right: 1px solid #999;
+	/* border-bottom: 1px solid #999; */
+	/* border-right: 1px solid #999; */
 }
 
 #hlp_menu {
@@ -47,13 +46,14 @@ h2 {
 	float: right;
 	width: 588px;
 	height: 525px;
-	border-left: 1px solid #999;
+	/* border-left: 1px solid #999; */
+	/* overflow: auto; */
 }
 
 /* Real help content styles */
 
 .hlp_data {
-	margin: 5px 0px 0px 15px;
+	margin: 5px 15px 0px 15px;
 }
 
 .hlp_data p, .hlp_data div, .hlp_data ul li, .hlp_data li, .hlp_data textarea {
