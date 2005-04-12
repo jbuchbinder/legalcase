@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.72 2005/03/30 07:32:12 mlutfy Exp $
+	$Id: edit_case.php,v 1.73 2005/04/12 20:33:12 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -257,11 +257,11 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "</tr>\n";
 
 	// Public access rights
-	if ($_SESSION['case_data']['admin'] || !read_meta('case_read_always') || !read_meta('case_write_always')) {
+	if ( $_SESSION['case_data']['admin'] || (read_meta('case_read_always') != 'yes') || (read_meta('case_write_always') != 'yes') ) {
 		echo '<tr><td colspan="2">' . _T('case_input_collaboration') .  ' <br />
 				<ul>';
 
-		if (read_meta('case_read_always') == 'no' || $author_session['status'] == 'admin') {
+		if ( (read_meta('case_read_always') != 'yes') || $GLOBALS['author_session']['status'] == 'admin') {
 			echo '<li style="list-style-type: none;">';
 			echo '<input type="checkbox" name="public" id="case_public_read" value="yes"';
 
@@ -272,7 +272,7 @@ if ($_SESSION['case_data']['id_case']) {
 			echo '<label for="case_public_read">' . _T('case_input_collaboration_read') . "</label></li>\n";
 		}
 
-		if (!read_meta('case_write_always') || $_SESSION['case_data']['admin']) {
+		if ( (read_meta('case_write_always') != 'yes') || $_SESSION['case_data']['admin']) {
 			echo '<li style="list-style-type: none;">';
 			echo '<input type="checkbox" name="pub_write" id="case_public_write" value="yes"';
 
