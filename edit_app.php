@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.35 2005/04/05 13:19:16 mlutfy Exp $
+	$Id: edit_app.php,v 1.36 2005/04/12 07:54:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -143,8 +143,20 @@ if ($_SESSION['app_data']['id_case'] > 0) {
 echo show_all_errors($_SESSION['errors']);
 
 // Disable inputs when edit is not allowed for the field
-$dis = (($admin || ($edit && $modify)) ? '' : 'disabled');
+$admin = allowed($_SESSION['app_data']['id_case'], 'a');
+$write = allowed($_SESSION['app_data']['id_case'], 'w');
+$edit  = allowed($_SESSION['app_data']['id_case'], 'e');
 
+$dis = '';
+
+if ($_SESSION['app_data']['id_case']) {
+	if (! $edit)
+		$dis = 'disabled="disabled"';
+} else {
+	if (! $write)
+		$dis = 'disabled="disabled"';
+}
+// $dis = (($admin || ($edit && $modify)) ? '' : 'disabled="disabled"');
 
 ?>
 
