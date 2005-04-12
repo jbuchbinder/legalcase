@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.19 2005/04/11 09:15:56 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.20 2005/04/12 07:39:49 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -67,20 +67,24 @@ function get_kwg_applicable_for($type_obj, $id_obj) {
 		lcm_panic("Unknown type_obj: " . $type_obj);
 	
 	// Build 'NOT IN' list (already applied keywords, with quantity 'one')
-	$query = "SELECT DISTINCT kwg.id_group, kwg.quantity
-				FROM lcm_keyword_" . $type_obj . " as ko, lcm_keyword as k, lcm_keyword_group as kwg
-				WHERE k.id_keyword = ko.id_keyword
-				  AND k.id_group = kwg.id_group
-				  AND ko.id_" . $type_obj . " = " . $id_obj . "
-				  AND kwg.quantity = 'one'";
-	
-	$result = lcm_query($query);
+	$not_in_str = "";
 
-	$not_in_list = array();
-	while ($row = lcm_fetch_array($result))
-		array_push($not_in_list, $row['id_group']);
+	if ($id_obj) {
+		$query = "SELECT DISTINCT kwg.id_group, kwg.quantity
+					FROM lcm_keyword_" . $type_obj . " as ko, lcm_keyword as k, lcm_keyword_group as kwg
+					WHERE k.id_keyword = ko.id_keyword
+					  AND k.id_group = kwg.id_group
+					  AND ko.id_" . $type_obj . " = " . $id_obj . "
+					  AND kwg.quantity = 'one'";
+		
+		$result = lcm_query($query);
 	
-	$not_in_str = implode(',', $not_in_list);
+		$not_in_list = array();
+		while ($row = lcm_fetch_array($result))
+			array_push($not_in_list, $row['id_group']);
+		
+		$not_in_str = implode(',', $not_in_list);
+	}
 
 	// Get list of keyword groups which can be applied to object
 	$query = "SELECT kwg.*, COUNT(k.id_keyword) as cpt
