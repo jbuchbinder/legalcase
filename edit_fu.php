@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.92 2005/04/11 16:10:45 mlutfy Exp $
+	$Id: edit_fu.php,v 1.93 2005/04/12 07:46:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -255,6 +255,7 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				echo "<td>";
 
 				echo '<input type="hidden" name="type" value="' . $_REQUEST['type'] . '" />' . "\n";
+				echo '<input type="hidden" name="new_stage" value="' . $_REQUEST['stage'] . '" />' . "\n";
 				echo _T('kw_stage_' . $_REQUEST['stage'] . '_title');
 
 				echo "</td>\n";
