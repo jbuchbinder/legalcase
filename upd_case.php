@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.44 2005/04/05 05:54:54 mlutfy Exp $
+	$Id: upd_case.php,v 1.45 2005/04/12 21:17:42 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -67,20 +67,20 @@ if (count($_SESSION['errors'])) {
 
 	if ((read_meta('case_read_always') == 'yes') && $author_session['status'] != 'admin') {
 		// impose system setting
-		$public_access_rights .= "public=" . (read_meta('case_default_read') == 'yes' ? 1 : 0);
+		$public_access_rights .= "public=" . (int)(read_meta('case_default_read') == 'yes');
 	} else {
 		// write user selection
-		$public_access_rights .= "public=" . ($_SESSION['case_data']['public'] == 'yes' ? 1 : 0);
+		$public_access_rights .= "public=" . (int)($_SESSION['case_data']['public'] == 'yes');
 	}
 
 	lcm_log("status == " . $author_session['status']);
 
 	if ((read_meta('case_write_always') == 'yes') && $author_session['status'] != 'admin') {
 		// impose system setting
-		$public_access_rights .= ", pub_write=" . (read_meta('case_default_write') == 'yes' ? 1 : 0);
+		$public_access_rights .= ", pub_write=" . (int)(read_meta('case_default_write') == 'yes');
 	} else {
 		// write user selection
-		$public_access_rights .= ", pub_write=" . ($_SESSION['case_data']['pub_write'] == 'yes' ? 1 : 0);
+		$public_access_rights .= ", pub_write=" . (int)($_SESSION['case_data']['pub_write'] == 'yes');
 	}
 
 	if ($id_case > 0) {
