@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.50 2005/03/28 20:19:44 antzi Exp $
+	$Id: inc_db_upgrade.php,v 1.51 2005/04/12 19:42:23 antzi Exp $
 */
 
 // Execute this file only once
@@ -721,6 +721,13 @@ function upgrade_database($old_db_version) {
 								ADD INDEX (id_author)");
 
 		upgrade_db_version (31);
+	}
+
+	if ($lcm_db_version_current < 32) {
+		// [AG] Expanding author preferences field to fit all data
+		lcm_query("ALTER TABLE lcm_author CHANGE prefs prefs text NOT NULL");
+
+		upgrade_db_version (32);
 	}
 
 	return $log;

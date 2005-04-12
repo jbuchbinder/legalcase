@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.40 2005/03/28 20:19:43 antzi Exp $
+	$Id: inc_db_create.php,v 1.41 2005/04/12 19:42:23 antzi Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -144,7 +144,7 @@ function create_database() {
 		username VARCHAR(255) BINARY NOT NULL,
 		password tinytext NOT NULL,
 		lang VARCHAR(10) DEFAULT '' NOT NULL,
-		prefs tinytext NOT NULL,
+		prefs text NOT NULL,
 		status ENUM('admin', 'normal', 'external', 'trash', 'waiting', 'suspended') DEFAULT 'normal' NOT NULL,
 		cookie_recall tinytext NOT NULL,
 
