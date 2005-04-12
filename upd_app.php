@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.15 2005/04/08 08:10:40 mlutfy Exp $
+	$Id: upd_app.php,v 1.16 2005/04/12 07:59:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -166,12 +166,12 @@ if (count($_SESSION['errors'])) {
 	// Insert/update appointment
 	if ($id_app>0) {
 		// Update existing appointment
-		$q="UPDATE lcm_app SET $fl,date_update=NOW() WHERE id_app=$id_app";
+		$q="UPDATE lcm_app SET $fl,date_update=NOW() WHERE id_app = $id_app ";
 		// Only admin or appointment author itself could change it
 		if ( !($GLOBALS['author_session']['status'] === 'admin') )
-			$q .= "AND id_author=" . $GLOBALS['author_session']['id_author'];
-		if (!($result = lcm_query($q)))
-			lcm_panic("$q <br />\nError ".lcm_errno().": ".lcm_error());
+			$q .= " AND id_author = " . $GLOBALS['author_session']['id_author'];
+
+		$result = lcm_query($q);
 	} else {
 		// Add the new appointment
 		$q = "INSERT INTO lcm_app SET id_app=0";
