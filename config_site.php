@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.39 2005/04/07 08:53:40 makaveev Exp $
+	$Id: config_site.php,v 1.40 2005/04/12 21:08:42 antzi Exp $
 */
 
 include ("inc/inc.php");
@@ -490,7 +490,7 @@ function apply_conf_changes_policy() {
 			$old_value = read_meta($it);
 			if ($_REQUEST[$it] != $old_value) {
 				write_meta($it, $_REQUEST[$it]);
-				array_push($log, _Ti($trad) . now_and_before($_REQUEST[$it], $old_value));
+				array_push($log, _Ti($trad) . now_and_before( _T('info_' . $_REQUEST[$it]), _T('info_' . $old_value) ));
 			}
 		}
 	}
