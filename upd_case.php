@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.45 2005/04/12 21:17:42 antzi Exp $
+	$Id: upd_case.php,v 1.46 2005/04/12 21:26:35 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -109,9 +109,10 @@ if (count($_SESSION['errors'])) {
 				id_case=$id_case,
 				id_author=$id_author,
 				ac_read=1,
-				ac_write=1";
-		if (read_meta('case_allow_modif') == 'yes')
-			$q .= ", ac_edit=1, ac_admin=1";
+				ac_write=1,
+				ac_edit=" . (int)(read_meta('case_allow_modif') == 'yes') . ",
+				ac_admin=1";
+		// [AG] The user creating case should always have 'admin' access right, otherwise only admin could add new user(s) to the case
 		$result = lcm_query($q);
 
 		// Get author information
