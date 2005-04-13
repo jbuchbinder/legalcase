@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.21 2005/04/04 08:56:43 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.22 2005/04/13 20:19:51 antzi Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -180,6 +180,11 @@ function lcm_list_databases($host, $login, $pass, $port = 0) {
 function lcm_fetch_array($r) {
 	if ($r)
 		return mysql_fetch_array($r);
+}
+
+function lcm_fetch_assoc($r) {
+	if ($r)
+		return mysql_fetch_assoc($r);
 }
 
 function spip_fetch_array($r) {
