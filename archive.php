@@ -18,12 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.11 2005/04/08 07:02:53 mlutfy Exp $
+	$Id: archive.php,v 1.12 2005/04/13 20:21:58 antzi Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
+include_lcm('inc_impex');
 
 // Check access rights
 if ($GLOBALS['author_session']['status'] != 'admin') 
@@ -32,6 +33,11 @@ if ($GLOBALS['author_session']['status'] != 'admin')
 $find_case_string = '';
 if (isset($_REQUEST['find_case_string']))
 	$find_case_string = $_REQUEST['find_case_string'];
+
+if (!empty($_REQUEST['export']) && ($GLOBALS['author_session']['status'] == 'admin')) {
+	export('case', $_REQUEST['exp_format'], $find_case_string);
+	exit;
+}
 
 // Show page start
 lcm_page_start(_T('title_archives'));
@@ -43,7 +49,7 @@ $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.p
 	);
 show_tabs_links($tabs,0);
 
-show_find_box('case', $find_case_string, '__self__');
+show_find_box('case', $find_case_string, '__self__', (string)($GLOBALS['author_session']['status'] == 'admin') );
 
 $q = "SELECT DISTINCT lcm_case.id_case,title,status,public,pub_write
 		FROM lcm_case,lcm_case_author

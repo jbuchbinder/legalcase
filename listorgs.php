@@ -18,18 +18,24 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listorgs.php,v 1.18 2005/03/31 14:44:18 mlutfy Exp $
+	$Id: listorgs.php,v 1.19 2005/04/13 20:21:59 antzi Exp $
 */
 
 include('inc/inc.php');
+include_lcm('inc_impex');
 
 $find_org_string = '';
 if (isset($_REQUEST['find_org_string']))
 	$find_org_string = $_REQUEST['find_org_string'];
 
+if (!empty($_REQUEST['export']) && ($GLOBALS['author_session']['status'] == 'admin')) {
+	export('org', $_REQUEST['exp_format'], $find_org_string);
+	exit;
+}
+
 lcm_page_start(_T('title_org_list'));
 lcm_bubble('org_list');
-show_find_box('org', $find_org_string);
+show_find_box('org', $find_org_string, '', (string)($GLOBALS['author_session']['status'] == 'admin') );
 
 // List all organisations in the system + search criterion if any
 $q = "SELECT id_org,name
