@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.210 2005/04/11 16:12:27 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.211 2005/04/13 20:18:15 antzi Exp $
 */
 
 //
@@ -1324,7 +1324,7 @@ function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
 	show_list_end($current_pos, $number_of_rows);
 }
 
-function show_find_box($type, $string, $dest = '') {
+function show_find_box($type, $string, $dest = '', $export = '') {
 	// the joy of patching around
 	switch ($type) {
 		case 'case':
@@ -1355,6 +1355,13 @@ function show_find_box($type, $string, $dest = '') {
 	echo _T('input_search_' . $type) . "&nbsp;";
 	echo '<input type="text" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' .  $string . '" />';
 	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
+	if (!empty($export)) {
+		echo '&nbsp;Export&nbsp;this&nbsp;list&nbsp;in:';	// TRAD
+		echo '&nbsp;<input type="radio" name="exp_format" value="csv" checked="checked">CSV</input>';
+		echo '&nbsp;<input type="radio" name="exp_format" value="xml">XML</input>';
+		echo '&nbsp;format';	// TRAD
+		echo '&nbsp;<input type="submit" name="export" value="' . _T('button_export') . '" class="search_form_btn" />' . "\n";
+	}
 
 	echo "</form>\n";
 }
