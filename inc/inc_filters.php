@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.63 2005/04/11 08:25:26 mlutfy Exp $
+	$Id: inc_filters.php,v 1.64 2005/04/15 06:34:35 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -121,15 +121,22 @@ function format_time_interval($time, $hours_only=false, $hours_only_format='%.2f
 			if ($days) $ret[] = $days . 'd';
 			if ($hours) {
 				if ($hours_only)
-					$ret[] = sprintf($hours_only_format,$hours) . ( ($hours == 1.0) ? ' hr' : ' hrs');
+					$ret[] = sprintf($hours_only_format,$hours) . ( ($hours == 1.0) ? ' hr' : ' hrs'); // TRAD
 				else
-					$ret[] = $hours . 'h';
+					$ret[] = $hours . 'h'; // TRAD
 			}
-			if ($minutes) $ret[] = $minutes . 'm';
+			if ($minutes) $ret[] = $minutes . 'm'; // TRAD
 
 			return join(', ',$ret);
 		} else if ($time == 0) return '0';
 	} else return '';
+}
+
+function format_time_interval_prefs($time) {
+	global $prefs;
+
+	$hours_only = $prefs['time_intervals_notation'] == 'hours_only';
+	return format_time_interval($time, $hours_only);
 }
 
 function format_money($money) {
