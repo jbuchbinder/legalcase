@@ -289,6 +289,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'format_datetime_short' => '@day@ @month_short@ @year@, @hours@h@mins@',
 'format_time_short' => '@hours@:@mins@',
 'fu_info_after_event' => 'In relation with the event “@title@” at @date@, involving @participants@ ...',
+'fu_info_emptydesc' => 'No description.',
 'fu_input_child_appointment' => 'Followed by:',
 'fu_input_current_stage' => 'Current stage:',
 'fu_input_current_status' => 'Current status:',
