@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.72 2005/04/15 07:48:21 mlutfy Exp $
+	$Id: inc_version.php,v 1.73 2005/04/15 07:52:26 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -860,7 +860,7 @@ function _Tkw($grp, $val, $args = '') {
 		$kwg = get_keywords_in_group_name($grp, false);
 
 	if (count($kwg))
-		return _T($kwg[$val]['title']);
+		return _T(remove_number_prefix($kwg[$val]['title']));
 	else
 		lcm_panic("kwg not found");
 }

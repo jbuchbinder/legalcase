@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.141 2005/04/15 06:52:07 mlutfy Exp $
+	$Id: case_det.php,v 1.142 2005/04/15 07:52:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -471,7 +471,7 @@ if ($case > 0) {
 					echo '</td>';
 					
 					// Type
-					echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
+					echo '<td>' . _Tkw('followups', $row['type']) . '</td>';
 
 					// Description
 					if ($row['type'] == 'assignment' && is_numeric($row['description'])) {
