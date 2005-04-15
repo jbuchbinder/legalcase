@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.143 2005/04/15 09:29:35 mlutfy Exp $
+	$Id: case_det.php,v 1.144 2005/04/15 12:31:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -53,8 +53,14 @@ if ($case > 0) {
 	if ($row = lcm_fetch_array($result)) {
 
 		// Check for access rights
-		if (!(($GLOBALS['author_session']['status'] == 'admin') || $row['public'] || allowed($case,'r'))) {
-			die(_T('error_no_read_permission'));
+		if (! allowed($case, 'r')) {
+			// [ML] I usually would not care about such errors, since they happen
+			// only when the user messes around with URLs, but since I modified the 
+			// access control test, I am paranoid :-) Feel free to scrap later.
+			lcm_page_start(_T('title_error'));
+			echo _T('error_no_read_permission');
+			lcm_page_end();
+			exit;
 		}
 
 		$add   = allowed($case,'w');
@@ -76,6 +82,8 @@ if ($case > 0) {
 				'attachments' => _T('generic_tab_documents'));
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
+
+		echo show_all_errors($_SESSION['errors']);
 
 		switch ($tab) {
 			//
@@ -229,10 +237,14 @@ if ($case > 0) {
 				//
 				// Show case client(s)
 				//
+				echo '<a name="clients"></a>' . "\n";
 				echo '<div class="prefs_column_menu_head">'
 					. "<div style='float: right'>" . lcm_help('clients_intro') . "</div>"
 					. _T('case_subtitle_clients') 
 					. "</div>\n";
+
+				echo '<form action="add_client.php" method="get">' . "\n";
+				echo '<input type="hidden" name="case" value="' . $case . '" />' . "\n";
 
 				$q="SELECT cl.id_client, cl.name_first, cl.name_middle, cl.name_last
 					FROM lcm_case_client_org as clo, lcm_client as cl
@@ -247,12 +259,30 @@ if ($case > 0) {
 		
 					while ($row = lcm_fetch_array($result)) {
 						echo "<tr>\n";
+
+						// icon
 						echo '<td width="25" align="center">';
 						echo '<img src="images/jimmac/stock_person.png" alt="" height="16" width="16" />';
 						echo '</td>' . "\n";
+
+						// name
 						echo '<td><a style="display: block" href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 						echo  get_person_name($row);
 						echo "</a></td>\n";
+
+						// delete icon (if admin rights)
+						if ($admin) {
+							echo '<td width="1%" nowrap="nowrap">';
+							echo '<label for="id_del_client' . $row['id_client'] . '">';
+							echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" '
+								. 'alt="' . "Delete client association" . '" title="' .  "Delete" /* TRAD */ . '" />';
+							echo '</label>&nbsp;';
+							echo '<input type="checkbox" onclick="lcm_show(\'btn_delete\')" '
+								. 'id="id_del_client' . $row['id_client'] . '" name="id_del_client[]" '
+								. 'value="' . $row['id_client'] . '" />';
+							echo "</td>\n";
+						}
+
 						echo "</tr>\n";
 					}
 				}
@@ -274,26 +304,47 @@ if ($case > 0) {
 		
 					while ($row = lcm_fetch_array($result)) {
 						echo "<tr>\n";
+						// icon
 						echo '<td width="25" align="center"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
+
+						// name
 						echo '<td><a style="display: block;" href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
 						echo clean_output($row['name']);
 						echo "</a></td>\n";
+
+						// delete icon (if admin rights)
+						if ($admin) {
+							echo '<td width="1%" nowrap="nowrap">';
+							echo '<label for="id_del_org' . $row['id_org'] . '">';
+							echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" '
+								. 'alt="' . "Delete organisation association" . '" title="' .  "Delete" /* TRAD */ . '" />';
+							echo '</label>&nbsp;';
+							echo '<input type="checkbox" onclick="lcm_show(\'btn_delete\')" '
+								. 'id="id_del_org' . $row['id_org'] . '" name="id_del_org[]" '
+								. 'value="' . $row['id_org'] . '" />';
+							echo "</td>\n";
+						}
 
 						echo "</tr>\n";
 					}
 				}
 		
-				if ($header_shown)
+				if ($header_shown) {
 					echo "</table>\n\n";
-				else
+					echo '<p align="right" style="visibility: hidden">';
+					echo '<input type="submit" name="submit" id="btn_delete" value="' . _T('button_validate') . '" class="search_form_btn" />';
+					echo "</p>\n";
+				} else {
 					echo '<p class="normal_text">' . _T('case_info_client_emptylist') . "</p>\n";
-		
-				if ($add) {
-					echo "<p><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
-					echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a><br /></p>";
 				}
 		
-				echo "</fieldset>";
+				if ($admin) {
+					echo "<p><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
+					echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a><br /></p>\n";
+				}
+		
+				echo "</form>\n";
+				echo "</fieldset>\n";
 				break;
 
 			//
@@ -622,7 +673,10 @@ if ($case > 0) {
 
 				break;
 		}
-	} else die(_T('error_no_such_case'));
+	} else {
+		lcm_page_start(_T('title_error'));
+		echo _T('error_no_such_case');
+	}
 
 	$_SESSION['errors'] = array();
 	$_SESSION['case_data'] = array();
