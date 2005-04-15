@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.142 2005/04/15 07:52:09 mlutfy Exp $
+	$Id: case_det.php,v 1.143 2005/04/15 09:29:35 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -444,9 +444,6 @@ if ($case > 0) {
 					if (!lcm_data_seek($result,$list_pos))
 						lcm_panic("Error seeking position $list_pos in the result");
 			
-				// Set the length of short followup title
-				$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
-			
 				// Process the output of the query
 				for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
 					echo "<tr>\n";
@@ -474,16 +471,7 @@ if ($case > 0) {
 					echo '<td>' . _Tkw('followups', $row['type']) . '</td>';
 
 					// Description
-					if ($row['type'] == 'assignment' && is_numeric($row['description'])) {
-						$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $row['description']);
-						$author1 = lcm_fetch_array($res1);
-						$short_description = _T('case_info_author_assigned', array('name' => get_person_name($author1)));
-					} else{
-						if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
-							$short_description = $row['description'];
-						else
-							$short_description = substr($row['description'],0,$title_length) . '...';
-					}
+					$short_description = get_fu_description($row);
 			
 					echo '<td>';
 					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';

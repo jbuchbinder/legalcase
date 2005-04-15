@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.14 2005/04/04 08:18:57 mlutfy Exp $
+	$Id: app_det.php,v 1.15 2005/04/15 09:29:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,7 +35,7 @@ $q = "SELECT lcm_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.n
 $result = lcm_query($q);
 
 if ($row = lcm_fetch_array($result)) {
-	lcm_page_start(_T('title_app_view') . ' ' . $row['title']); // TRAD
+	lcm_page_start(_T('title_app_view') . ' ' . $row['title']);
 
 	echo '<fieldset class="info_box">' . "\n";
 	echo '<p class="normal_text">' . "\n";
@@ -117,21 +117,18 @@ if ($row = lcm_fetch_array($result)) {
 		echo '<br /><a href="edit_app.php?app=' . $row['id_app'] . '" class="create_new_lnk">' . _T('app_button_edit') . "</a><br />\n";
 
 	if ($row['id_case'] > 0) {
-//		echo '<br />';
-		// Show parent followup
-		$q = "SELECT lcm_app_fu.id_followup,lcm_followup.description FROM lcm_app_fu,lcm_followup
-			WHERE lcm_app_fu.id_app=" . $row['id_app'] . "
-				AND lcm_app_fu.id_followup=lcm_followup.id_followup
-				AND lcm_app_fu.relation='parent'";
+		// Show parent followup ([ML] fu.type necessary for short-desc)
+		$q = "SELECT a.id_followup, fu.description, fu.type
+				FROM lcm_app_fu as a, lcm_followup as fu
+				WHERE a.id_app = " . $row['id_app'] . "
+			  	  AND aid_followup = fu.id_followup
+				  AND a.relation = 'parent'";
 		$res_fu = lcm_query($q);
 		if (lcm_num_rows($res_fu) > 0) {
 			// Show parent followup title
 			$fu = lcm_fetch_array($res_fu);
-			$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
-			if (strlen(lcm_utf8_decode($fu['description'])) < $title_length)
-				$short_description = $fu['description'];
-			else
-				$short_description = substr($fu['description'],0,$title_length) . '...';
+
+			$short_description = get_fu_description($fu);
 			echo '<br />Consequent to:' . ' <a href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description . "</a><br />\n"; // TRAD
 		}
 		// Show child followup

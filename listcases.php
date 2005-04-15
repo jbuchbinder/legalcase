@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.57 2005/04/08 08:15:39 mlutfy Exp $
+	$Id: listcases.php,v 1.58 2005/04/15 09:29:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -104,7 +104,6 @@ if ($author_session['status'] == 'admin') {
 
 echo "</select>\n";
 
-echo "Period: "; // TRAD
 echo '<select name="case_period">';
 
 foreach ($types_period as $key => $val) {
@@ -289,9 +288,6 @@ if ($fu_list_pos > 0)
 	if (!lcm_data_seek($result,$fu_list_pos))
 		lcm_panic("Error seeking position $fu_list_pos in the result");
 			
-// Set the length of short followup title
-$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
-			
 // Process the output of the query
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
 	echo "<tr>\n";
@@ -320,16 +316,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 	echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
 
 	// Description
-	if ($row['type'] == 'assignment' && is_numeric($row['description'])) {
-		$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $row['description']);
-		$author1 = lcm_fetch_array($res1);
-		$short_description = _T('case_info_author_assigned', array('name' => get_person_name($author1)));
-	} else{
-		if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
-			$short_description = $row['description'];
-		else
-			$short_description = substr($row['description'],0,$title_length) . '...';
-	}
+	$short_description = get_fu_description($row);
 
 	echo '<td>';
 	echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';

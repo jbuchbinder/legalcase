@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.19 2005/04/15 07:46:35 mlutfy Exp $
+	$Id: author_det.php,v 1.20 2005/04/15 09:29:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -231,9 +231,6 @@ if ($author > 0) {
 					$show_all = true;
 				}
 			
-				// Set the length of short followup title
-				$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
-
 				// Process the output of the query
 				// [ML] I don't know if I'm drinking too much coffee, but "$list_pos == 'all'" would always return 1
 				for ($i = 0; (($i < $prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result)); $i++) {
@@ -263,16 +260,7 @@ if ($author > 0) {
 					echo $td . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
 
 					// Description
-					if ($row['type'] == 'assignment' && is_numeric($row['description'])) {
-						$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $row['description']);
-						$author1 = lcm_fetch_array($res1);
-						$short_description = _T('case_info_author_assigned', array('name' => get_person_name($author1)));
-					} else{
-						if (strlen(lcm_utf8_decode($row['description'])) < $title_length) 
-							$short_description = $row['description'];
-						else
-							$short_description = substr($row['description'],0,$title_length) . '...';
-					}
+					$short_description = get_fu_description($row);
 			
 					echo $td;
 					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
