@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.9 2005/04/11 13:50:30 mlutfy Exp $
+	$Id: inc_acc.php,v 1.10 2005/04/15 07:28:17 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -86,6 +86,25 @@ function allowed($case, $access) {
 	}
 
 	return $allow;
+}
+
+function allowed_author($author, $access) {
+	global $author_session;
+
+	// Admins can access everything
+	if ($author_session['status'] == 'admin')
+		return true;
+
+	// Check if the author ID is present
+	if (! (intval($author) > 0))
+		return false;
+
+	// We're not checking for various access rights at the moment,
+	// since for read/write it is the same test (author = self or admin)
+	if ($author_session['id_author'] == $author)
+		return true;
+	
+	return false;
 }
 
 // Returns an array with the possible case statuses
