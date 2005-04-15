@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.19 2005/04/05 11:55:12 makaveev Exp $
+	$Id: inc_contacts.php,v 1.20 2005/04/15 14:08:06 mlutfy Exp $
 */
 
 
@@ -228,7 +228,10 @@ function show_existing_contact($c, $num) {
 		. 'class="search_form_txt" size="35" value="' . clean_output($c['value']) . '"/>';
 	echo f_err('email', $_SESSION['errors']) . "";
 
-	echo '<label for="id_del_contact' . $num . '"><img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" /></label>&nbsp;<input type="checkbox" id="id_del_contact' . $num . '" name="del_contact_' . $c['id_contact'] . '"/>';
+	echo '<label for="id_del_contact' . $num . '">';
+	echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="' . _T('generic_info_delete_contact') . '" title="' . _T('generic_info_delete_contact') . '" />';
+	echo '</label>';
+	echo '&nbsp;<input type="checkbox" id="id_del_contact' . $num . '" name="del_contact_' . $c['id_contact'] . '"/>';
 
 	echo "</td>\n</tr>\n\n";
 }
@@ -245,56 +248,61 @@ function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_na
 		. f_err_star('new_contact_' . $num_new, $_SESSION['errors']);
 
 	if ($type_kw == "__add__") {
-		echo "Other contact:&nbsp;"; // TRAD
+		echo _Ti('generic_input_contact_other');
 	} else {
-		echo _Ti("kw_contacts_" . $type_kw . "_title");
+		// echo _Ti("kw_contacts_" . $type_kw . "_title");
+		echo _Ti(_Tkw('contacts', $type_kw));
 	}
 
 	echo '</td>';
 	echo '<td align="left" valign="top">';
 
+
+	// [ML] clean this.. one day...
+	// It avoids that the values in these fields get lost when there is an error after submitting the form
+	$value = '';
+	$type = '';
+
+	if ($type_person == 'client' || $type_person == 'org') {
+		if ($_SESSION[$type_person . '_data']['new_contact_type_name'][$num_new])
+			$type = $_SESSION[$type_person . '_data']['new_contact_type_name'][$num_new];
+
+		if ($_SESSION[$type_person . '_data']['new_contact_value'][$num_new])
+			$value = $_SESSION[$type_person . '_data']['new_contact_value'][$num_new];
+	} else if ($type_person == 'author') {
+		if ($_SESSION['usr']['new_contact_type_name'][$num_new])
+			$type = $_SESSION['usr']['new_contact_type_name'][$num_new];
+
+		if ($_SESSION['usr']['new_contact_value'][$num_new])
+			$value = $_SESSION['usr']['new_contact_value'][$num_new];
+	}
+
 	if ($type_name == "__add__") {
 		global $system_kwg;
 
 		echo "<div>\n";
-
 		echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $num_new . '" class="sel_frm">' . "\n";
 		echo "<option value=''>" . "- select contact type -" . "</option>\n"; // TRAD
 
-		foreach ($system_kwg['contacts']['keywords'] as $contact)
-			echo "<option value='" . $contact['name'] . "'>" . _T($contact['title']) . "</option>\n";
+		foreach ($system_kwg['contacts']['keywords'] as $contact) {
+			$sel = ($type == $contact['name'] ? 'selected="selected"' : '');
+			echo "<option value='" . $contact['name'] . "' $sel>" . _T($contact['title']) . "</option>\n";
+		}
 
 		echo "</select>\n";
-
 		echo "</div>\n";
+
 		echo "<div>\n";
 		echo '<input type="text" size="40" name="new_contact_value[]" id="new_contact_value_' . $num_new . '" ';
-
-		// [ML] clean this.. one day...
-		$value = '';
-
-		if ($type_person == 'client' || $type_person == 'org') {
-			if ($_SESSION[$type_person . '_data']['new_contact_value'][$num_new])
-				$value = $_SESSION[$type_person . '_data']['new_contact_value'][$num_new];
-		} else if ($type_person == 'author') {
-			if ($_SESSION['usr']['new_contact_value'][$num_new])
-				$value = $_SESSION['usr']['new_contact_value'][$num_new];
-		}
-					
 		echo ' value="' . $value . '" ';
-						
 		echo 'class="search_form_txt" />' . "\n";
 		echo "</div>\n";
-
-		echo "<!-- \n";
-		print_r($_SESSION);
-		echo "\n -->\n";
 	} else {
 		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $num_new . '" '
 			. 'type="hidden" value="' . $type_name . '" />' . "\n";
-	
+
 		echo '<input name="new_contact_value[]" id="new_contact_value_' . $num_new . '" type="text" '
-			. 'class="search_form_txt" size="35" value=""/>&nbsp;';
+			. 'class="search_form_txt" size="35" value="' . $value . '"/>&nbsp;';
 	}
 
 	echo "</td>\n";
@@ -320,7 +328,7 @@ function show_edit_contacts_form($type_person, $id_person) {
 	}
 
 	if (! $addrmain_exists) {
-		show_new_contact($cpt, $type_person, 'addressmain', 'address_main');
+		show_new_contact($cpt, $type_person, 'address_main', 'address_main');
 		$cpt_new++;
 	}
 
@@ -332,7 +340,7 @@ function show_edit_contacts_form($type_person, $id_person) {
 	}
 
 	if (! $emailmain_exists) {
-		show_new_contact($cpt_new, $type_person, 'emailmain', 'email_main');
+		show_new_contact($cpt_new, $type_person, 'email_main', 'email_main');
 		$cpt_new++;
 	}
 
