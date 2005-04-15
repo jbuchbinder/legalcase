@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.42 2005/04/05 13:14:25 antzi Exp $
+	$Id: upd_fu.php,v 1.43 2005/04/15 09:10:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,15 +42,10 @@ foreach($_POST as $key => $value)
 ///////////////////////////////////////////////////////////////////////
 // Convert day, month, year to date
 // Check submitted information
+
 // date_start
-//$unix_date_start = mktime($_SESSION['fu_data']['start_hour'],$_SESSION['fu_data']['start_minutes'],$_SESSION['fu_data']['start_seconds'],
-//			$_SESSION['fu_data']['start_month'],$_SESSION['fu_data']['start_day'],$_SESSION['fu_data']['start_year']);
-$_SESSION['fu_data']['date_start'] = $_SESSION['fu_data']['start_year'] . '-'
-					. $_SESSION['fu_data']['start_month'] . '-'
-					. $_SESSION['fu_data']['start_day'] . ' '
-					. (isset($_SESSION['fu_data']['start_hour']) ? $_SESSION['fu_data']['start_hour'] : '00') . ':'
-					. (isset($_SESSION['fu_data']['start_minutes']) ? $_SESSION['fu_data']['start_minutes'] : '00') . ':'
-					. (isset($_SESSION['fu_data']['start_seconds']) ? $_SESSION['fu_data']['start_seconds'] : '00');
+$_SESSION['fu_data']['date_start'] = get_datetime_from_array($_SESSION['fu_data'], 'start', 'start');
+
 $unix_date_start = strtotime($_SESSION['fu_data']['date_start']);
 
 if ( ($unix_date_start<0) || !checkdate($_SESSION['fu_data']['start_month'],$_SESSION['fu_data']['start_day'],$_SESSION['fu_data']['start_year']) )
@@ -66,22 +61,10 @@ if ($prefs['time_intervals']=='absolute') {
 		// Report error if some of the fields empty
 	elseif (!$_SESSION['fu_data']['end_year'] || !$_SESSION['fu_data']['end_month'] || !$_SESSION['fu_data']['end_day']) {
 		$_SESSION['errors']['date_end'] = 'Partial end date!';	// TRAD
-		$_SESSION['fu_data']['date_end'] = ($_SESSION['fu_data']['end_year'] ? $_SESSION['fu_data']['end_year'] : '0000') . '-'
-							. ($_SESSION['fu_data']['end_month'] ? $_SESSION['fu_data']['end_month'] : '00') . '-'
-							. ($_SESSION['fu_data']['end_day'] ? $_SESSION['fu_data']['end_day'] : '00') . ' '
-							. ($_SESSION['fu_data']['end_hour'] ? $_SESSION['fu_data']['end_hour'] : '00') . ':'
-							. ($_SESSION['fu_data']['end_minutes'] ? $_SESSION['fu_data']['end_minutes'] : '00') . ':'
-							. ($_SESSION['fu_data']['end_seconds'] ? $_SESSION['fu_data']['end_seconds'] : '00');
+		$_SESSION['fu_data']['date_end'] = get_datetime_from_array($_SESSION['fu_data'], 'end', 'start');
 	} else {
-		// Join fields and check resulting date
-//		$unix_date_end = mktime($_SESSION['fu_data']['end_hour'],$_SESSION['fu_data']['end_minutes'],$_SESSION['fu_data']['end_seconds'],
-//					 $_SESSION['fu_data']['end_month'],$_SESSION['fu_data']['end_day'],$_SESSION['fu_data']['end_year']);
-		$_SESSION['fu_data']['date_end'] = $_SESSION['fu_data']['end_year'] . '-'
-						. $_SESSION['fu_data']['end_month'] . '-'
-						. $_SESSION['fu_data']['end_day'] . ' '
-						. $_SESSION['fu_data']['end_hour'] . ':'
-						. $_SESSION['fu_data']['end_minutes'] . ':'
-					. (isset($_SESSION['fu_data']['end_seconds']) ? $_SESSION['fu_data']['end_seconds'] : '00');
+		$_SESSION['fu_data']['date_end'] = get_datetime_from_array($_SESSION['fu_data'], 'end', 'start');
+		
 		$unix_date_end = strtotime($_SESSION['fu_data']['date_end']);
 		if ( ($unix_date_end<0) || !checkdate($_SESSION['fu_data']['end_month'],$_SESSION['fu_data']['end_day'],$_SESSION['fu_data']['end_year']) )
 			$_SESSION['errors']['date_end'] = 'Invalid end date!';	// TRAD
@@ -104,8 +87,10 @@ if ($prefs['time_intervals']=='absolute') {
 }
 
 // Description
+/* [ML] This was requested to be optional (MG, PDO)
 if ( !(strlen($_SESSION['fu_data']['description']) > 0) )
 	$_SESSION['errors']['description'] = _Ti('fu_input_description') . _T('warning_field_mandatory');
+*/
 
 ///////////////////////////////////////////////////////////////////////
 //	Consequent appointment information error checking
