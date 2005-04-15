@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.95 2005/04/15 09:00:34 mlutfy Exp $
+	$Id: edit_fu.php,v 1.96 2005/04/15 09:37:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -192,7 +192,7 @@ if ($_REQUEST['submit'] == 'set_status')
 
 // For 'change stage'
 if ($_REQUEST['submit'] == 'set_stage')
-	show_context_item(_Ti('fu_input_current_stage') . _T('kw_stage_' . $row['stage'] . '_title'));
+	show_context_item(_Ti('fu_input_current_stage') . _Tkw('stage', $row['stage']));
 
 show_context_end();
 
@@ -217,7 +217,15 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 		<tr><td><?php echo f_err_star('date_end') . (($prefs['time_intervals'] == 'absolute') ? _T('fu_input_date_end') : _T('fu_input_time_length')); ?></td>
 			<td><?php 
 				if ($prefs['time_intervals'] == 'absolute') {
-					$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
+					// Buggy code, so isolated most important cases
+					if ($_SESSION['fu_data']['id_followup'] == 0)
+						$name = 'end';
+					elseif ($edit)
+						$name = 'end';
+					else
+						// user can 'finish' entering data
+						$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
+
 					echo get_date_inputs($name, $_SESSION['fu_data']['date_end']);
 					echo ' ';
 					echo _T('time_input_time_at') . ' ';
