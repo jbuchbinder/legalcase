@@ -18,11 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.18 2005/04/05 06:16:01 mlutfy Exp $
+	$Id: author_det.php,v 1.19 2005/04/15 07:46:35 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_contacts');
+include_lcm('inc_acc');
 
 global $prefs;
 $author = intval($_REQUEST['author']);
@@ -39,15 +40,19 @@ if ($author > 0) {
 		$fullname = get_person_name($author_data);
 		lcm_page_start(_T('title_author_view') . ' ' . $fullname);
 
-		// [ML] for future use? Would not be bad to have a link: "Go back to: <a..>ref_name</a>"
-		// echo "<p>REF = <a href='" . $_REQUEST['ref'] . "'>test</a>\n";
-
 		// Show tabs
-		$groups = array('general' => _T('generic_tab_general'),
+		if ($author == $author_session['id_author'] || $author_session['status'] == 'admin') {
+			$groups = array('general' => _T('generic_tab_general'),
 				'cases' => _T('generic_tab_cases'),
 				'followups' => _T('generic_tab_followups'),
-				'times' => _T('generic_tab_reports'));
-				// [ML] better not to support this, high risk of abuse // 'attachments' => _T('generic_tab_documents'));
+				'appointments' => _T('generic_tab_agenda'),
+				'times' => _T('generic_tab_reports')); 
+				// 'attachments' => _T('generic_tab_documents'));
+		} else {
+			$groups = array('general' => _T('generic_tab_general'),
+				'cases' => _T('generic_tab_cases'));
+		}
+
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 
 		// [ML] $_SERVER['REQUEST_URI']);
@@ -97,6 +102,10 @@ if ($author > 0) {
 						WHERE id_author = " . $author . "
 						AND a.id_case = c.id_case ";
 
+				// If user is looking at other user, show only public cases
+				if (! allowed_author($author, 'r'))
+					$q .= " AND c.public = 1";
+
 				// Sort cases by creation date
 				$case_order = 'DESC';
 				if (isset($_REQUEST['case_order']))
@@ -140,6 +149,10 @@ if ($author > 0) {
 			// Author followups
 			//
 			case 'followups' :
+
+				if (! allowed_author($author, 'r'))
+					die("Access denied");
+			
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' 
 					. "<div style='float: right'>" . lcm_help('author_followups') . "</div>"
@@ -298,8 +311,11 @@ if ($author > 0) {
 			// Time spent on case by authors
 			//
 			case 'times' :
-				// Get the information from database
 
+				if (! allowed_author($author, 'r'))
+					die("Access denied");
+
+				// Get the information from database
 				// List all case followups of this authors
 				$q = "SELECT
 						c.title,
@@ -372,6 +388,85 @@ if ($author > 0) {
 				echo "\t</table>\n</p></fieldset>\n";
 
 				break;
+
+			case 'appointments':
+				if (! allowed_author($author, 'r'))
+					die("Access denied");
+
+				$q = "SELECT lcm_app.*
+					FROM lcm_author_app,lcm_app
+					WHERE lcm_author_app.id_app=lcm_app.id_app
+						AND lcm_author_app.id_author=" . $GLOBALS['author_session']['id_author'];
+				
+				// Sort agenda by date/time of the appointments
+				$order = 'DESC';
+				if (isset($_REQUEST['order']))
+					if ($_REQUEST['order'] == 'ASC' || $_REQUEST['order'] == 'DESC')
+						$order = $_REQUEST['order'];
+				
+				$q .= " ORDER BY start_time " . $order;
+				
+				$result = lcm_query($q);
+				
+				// Get the number of rows in the result
+				$number_of_rows = lcm_num_rows($result);
+				if ($number_of_rows) {
+					$headers = array( array( 'title' => _Th('time_input_date_start'), 'order' => 'order', 'default' => 'DESC'),
+							array( 'title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ), 'order' => 'no_order'),
+							array( 'title' => _Th('app_input_type'), 'order' => 'no_order'),
+							array( 'title' => _Th('app_input_title'), 'order' => 'no_order'),
+							array( 'title' => _Th('app_input_reminder'), 'order' => 'no_order'));
+					show_list_start($headers);
+				
+					// Check for correct start position of the list
+					$list_pos = 0;
+					
+					if (isset($_REQUEST['list_pos']))
+						$list_pos = $_REQUEST['list_pos'];
+					
+					if ($list_pos>=$number_of_rows) $list_pos = 0;
+					
+					// Position to the page info start
+					if ($list_pos>0)
+						if (!lcm_data_seek($result,$list_pos))
+							lcm_panic("Error seeking position $list_pos in the result");
+					
+					// Show page of the list
+					for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+						echo "\t<tr>";
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. format_date($row['start_time'], 'short') . '</td>';
+				
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. ( ($prefs['time_intervals'] == 'absolute') ?
+								format_date($row['end_time'], 'short') :
+								format_time_interval(strtotime($row['end_time']) - strtotime($row['start_time']),
+											($prefs['time_intervals_notation'] == 'hours_only') )
+							) . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . _Tkw('appointments', $row['type']) . '</td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
+						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+							. format_date($row['reminder'], 'short') . '</td>';
+						echo "</tr>\n";
+					}
+				
+					show_list_end($list_pos, $number_of_rows);
+				}
+				
+				echo '<p><a href="edit_app.php?app=0" class="create_new_lnk">' . _T('app_button_new') . '</a></p>';
+
+				break;
+	
+			/*
+			case 'attachments':
+				echo "Not yet implemented";
+				
+				// Should show all attached documents by author
+				// but not allow to upload
+
+				break;
+			*/
 		}
 
 		lcm_page_end();
