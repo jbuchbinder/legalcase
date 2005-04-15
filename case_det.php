@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.139 2005/04/11 13:04:09 mlutfy Exp $
+	$Id: case_det.php,v 1.140 2005/04/15 06:36:03 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -141,6 +141,17 @@ if ($case > 0) {
 					if ($row['date_assignment'])
 						echo _Ti('case_input_date_assigned') . format_date($row['date_assignment']) . "<br />\n";
 				}
+
+				// Total time spent on case (redundant with "reports/times")
+				$query = "SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0, 
+									UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time 
+							FROM lcm_followup as fu 
+							WHERE fu.id_case = " . $row['id_case'];
+				
+				$result = lcm_query($query);
+				$row_tmp = lcm_fetch_array($result);
+
+				echo "Total time spent: " . format_time_interval_prefs($row_tmp['time']) . "<br />\n"; // TRAD
 		
 				echo _Ti('case_input_legal_reason') . clean_output($row['legal_reason']) . "<br />\n";
 				if ($case_alledged_crime == 'yes')
@@ -304,10 +315,11 @@ if ($case > 0) {
 				$number_of_rows = lcm_num_rows($result);
 				if ($number_of_rows) {
 					$headers = array( array('title' => _Th('time_input_date_start')),
-							array('title' => ( ($prefs['time_intervals'] == 'absolute') ? _T('time_input_date_end') : _T('time_input_duration') ) ),
+							array('title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ) ),
 							array('title' => _Th('app_input_type')),
 							array('title' => _Th('app_input_title')),
 							array('title' => _Th('app_input_reminder')) );
+
 					show_list_start($headers);
 
 					// Check for correct start position of the list
@@ -325,28 +337,20 @@ if ($case > 0) {
 					
 					// Show page of the list
 					for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-						echo "<tr>\n";
-						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. format_date($row['start_time'], 'short') . '</td>';
+						$css = ' class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '"';
 
-						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+						echo "<tr>\n";
+						echo "<td $css>" . format_date($row['start_time'], 'short') . '</td>';
+
+						echo "<td $css>"
 							. ( ($prefs['time_intervals'] == 'absolute') ?
-								date('d.m.y H:i',strtotime($row['end_time'])) : /* FIXME [ML] */
-								format_time_interval(strtotime($row['end_time']) - strtotime($row['start_time']),
-											($prefs['time_intervals_notation'] == 'hours_only') )
+								format_date($row['end_time'], 'short') : 
+								format_time_interval_prefs(strtotime($row['end_time']) - strtotime($row['start_time'])) 
 							) . '</td>';
 
-						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . $row['type'] . '</td>';
-
-						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
-						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. format_date($row['reminder'], 'short') . '</td>'; // FIXME [ML]
-
-						/* [ML] 
-						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. '<a href="edit_app.php?app=' . $row['id_app'] . '" class="content_link">' . _T('edit') . '</a></td>';
-						*/ 
+						echo "<td $css>" . $row['type'] . '</td>';
+						echo "<td $css>" . '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
+						echo "<td $css>" . format_date($row['reminder'], 'short') . '</td>';
 						echo "</tr>\n";
 					}
 
@@ -455,7 +459,7 @@ if ($case > 0) {
 						if ($fu_date_end) echo format_date($row['date_end'],'short');
 					} else {
 						$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
-						echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
+						echo format_time_interval_prefs($fu_time);
 					}
 					echo '</td>';
 
@@ -532,7 +536,10 @@ if ($case > 0) {
 
 				// Show table headers
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_times') . '</div>';
+				echo '<div class="prefs_column_menu_head">'
+					. "<div style='float: right'>" . lcm_help('reports_intro') . "</div>"
+					. _T('case_subtitle_times')
+					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
@@ -561,7 +568,7 @@ if ($case > 0) {
 					echo "<tr><td>";
 					echo get_person_name($row);
 					echo '</td><td align="right">';
-					echo format_time_interval($row['time'],($prefs['time_intervals_notation'] == 'hours_only'));
+					echo format_time_interval_prefs($row['time']);
 					echo "</td>\n";
 
 					if ($meta_sum_billed == 'yes') {
@@ -577,7 +584,7 @@ if ($case > 0) {
 				echo "<tr>\n";
 				echo "<td><strong>" . 'TOTAL:' . "</strong></td>\n"; // TRAD
 				echo "<td align='right'><strong>";
-				echo format_time_interval($total_time,($prefs['time_intervals_notation'] == 'hours_only'));
+				echo format_time_interval_prefs($total_time);
 				echo "</strong></td>\n";
 
 				if ($meta_sum_billed == 'yes') {
@@ -598,7 +605,10 @@ if ($case > 0) {
 				echo show_all_errors($_SESSION['errors']);
 
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('case_subtitle_attachments') . '</div>';
+				echo '<div class="prefs_column_menu_head">' 
+					. "<div style='float: right'>" . lcm_help('attachments') . "</div>"
+					. _T('case_subtitle_attachments') 
+					. '</div>';
 				echo "<p class=\"normal_text\">\n";
 
 				echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
