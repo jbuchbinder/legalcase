@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.65 2005/04/15 09:19:58 mlutfy Exp $
+	$Id: inc_filters.php,v 1.66 2005/04/15 09:25:04 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -264,7 +264,11 @@ function get_fu_description($item) {
 		return '';
 	}
 
+	global $prefs;
 	$short_description = '';
+
+	// Set the length of short followup title
+	$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
 
 	if ($item['type'] == 'assignment' && is_numeric($item['description'])) {
 		$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $item['description']);
