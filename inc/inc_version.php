@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.71 2005/04/12 19:42:24 antzi Exp $
+	$Id: inc_version.php,v 1.72 2005/04/15 07:48:21 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -848,6 +848,21 @@ function _Th($text, $args = '') {
 		$str = $regs[1];
 	
 	return $str;
+}
+
+function _Tkw($grp, $val, $args = '') {
+	global $system_kwg;
+	$kwg = array();
+
+	if ($system_kwg[$grp])
+		$kwg = $system_kwg[$grp]['keywords'];
+	else
+		$kwg = get_keywords_in_group_name($grp, false);
+
+	if (count($kwg))
+		return _T($kwg[$val]['title']);
+	else
+		lcm_panic("kwg not found");
 }
 
 // Main language of the site
