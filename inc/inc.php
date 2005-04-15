@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.49 2005/04/12 19:50:43 antzi Exp $
+	$Id: inc.php,v 1.50 2005/04/15 05:51:08 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -135,8 +135,8 @@ if (isset($lang) AND $lang <> $lcm_lang) {
 	// can disagree with $author_session['lang'] (e.g. login one user, set
 	// cookie, logout, login other user, conflict).
 	// [ML] Added $ref because some forms such as config_author.php expect it
-	$ref = (isset($_REQUEST['referer']) ? '&referer=' . $_REQUEST['referer'] : '');
-	header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" . $_SERVER['REQUEST_URI'] . $ref);
+	$ref = (isset($_REQUEST['referer']) ? '&referer=' . urlencode($_REQUEST['referer']) : '');
+	header("Location: lcm_cookie.php?var_lang_lcm=" . $lang . "&url=" . urlencode($_SERVER['REQUEST_URI']) . $ref);
 	exit;
 }
 
