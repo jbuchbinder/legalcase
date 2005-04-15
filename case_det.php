@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.140 2005/04/15 06:36:03 mlutfy Exp $
+	$Id: case_det.php,v 1.141 2005/04/15 06:52:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -244,17 +244,17 @@ if ($case > 0) {
 				if (lcm_num_rows($result)) {
 					$header_shown = true;
 					echo '<table border="0" width="99%" class="tbl_usr_dtl">' . "\n";
-				}
 		
-				while ($row = lcm_fetch_array($result)) {
-					echo "<tr>\n";
-					echo '<td width="25" align="center">';
-					echo '<img src="images/jimmac/stock_person.png" alt="" height="16" width="16" />';
-					echo '</td>' . "\n";
-					echo '<td><a style="display: block" href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
-					echo  get_person_name($row);
-					echo "</a></td>\n";
-					echo "</tr>\n";
+					while ($row = lcm_fetch_array($result)) {
+						echo "<tr>\n";
+						echo '<td width="25" align="center">';
+						echo '<img src="images/jimmac/stock_person.png" alt="" height="16" width="16" />';
+						echo '</td>' . "\n";
+						echo '<td><a style="display: block" href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
+						echo  get_person_name($row);
+						echo "</a></td>\n";
+						echo "</tr>\n";
+					}
 				}
 		
 				//
@@ -271,20 +271,22 @@ if ($case > 0) {
 						echo '<table border="0" width="99%" class="tbl_usr_dtl">' . "\n";
 						$header_shown = true;
 					}
-				}
 		
-				while ($row = lcm_fetch_array($result)) {
-					echo "<tr>\n";
-					echo '<td width="25" align="center"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
-					echo '<td><a style="display: block;" href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
-					echo clean_output($row['name']);
-					echo "</a></td>\n";
-		
-					echo "</tr>\n";
+					while ($row = lcm_fetch_array($result)) {
+						echo "<tr>\n";
+						echo '<td width="25" align="center"><img src="images/jimmac/stock_people.png" alt="" height="16" width="16" /></td>' . "\n";
+						echo '<td><a style="display: block;" href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
+						echo clean_output($row['name']);
+						echo "</a></td>\n";
+
+						echo "</tr>\n";
+					}
 				}
 		
 				if ($header_shown)
 					echo "</table>\n\n";
+				else
+					echo '<p class="normal_text">' . _T('case_info_client_emptylist') . "</p>\n";
 		
 				if ($add) {
 					echo "<p><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
