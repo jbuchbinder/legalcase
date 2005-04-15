@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.211 2005/04/13 20:18:15 antzi Exp $
+	$Id: inc_presentation.php,v 1.212 2005/04/15 06:48:14 mlutfy Exp $
 */
 
 //
@@ -1507,6 +1507,8 @@ function show_attachments_list($type, $id_type) {
 		echo '<p align="right" style="visibility: hidden">';
 		echo '<input type="submit" name="submit" id="btn_delete" value="' . _T('button_validate') . '" class="search_form_btn" />';
 		echo "</p>\n";
+	} else {
+		echo '<p class="normal_text">' . _T('file_info_emptylist') . "</p>\n";
 	}
 }
 
