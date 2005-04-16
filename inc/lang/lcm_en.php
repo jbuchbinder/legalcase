@@ -123,6 +123,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_filter_period_option_year' => 'Year @year@',
 'case_info_author_assigned' => '@name@: The user has been assigned to the case.',
 'case_info_client_emptylist' => 'There are no clients associated to this case.',
+'case_info_delete_client' => 'Remove this client from this case.',
+'case_info_delete_org' => 'Remove this organisation from this case.',
 'case_input_alledged_crime' => 'Alleged crime:',
 'case_input_author' => 'User:',
 'case_input_authors' => 'Users:',
@@ -305,6 +307,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // G
+'generic_info_delete_contact' => 'Remove this contact.',
+'generic_input_contact_other' => 'Other contact:',
 'generic_subtitle_contacts' => 'Contacts',
 'generic_subtitle_document_add' => 'Add a new document',
 'generic_subtitle_general' => 'General information',
