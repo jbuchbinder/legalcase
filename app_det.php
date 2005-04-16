@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.15 2005/04/15 09:29:34 mlutfy Exp $
+	$Id: app_det.php,v 1.16 2005/04/16 08:13:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -121,7 +121,7 @@ if ($row = lcm_fetch_array($result)) {
 		$q = "SELECT a.id_followup, fu.description, fu.type
 				FROM lcm_app_fu as a, lcm_followup as fu
 				WHERE a.id_app = " . $row['id_app'] . "
-			  	  AND aid_followup = fu.id_followup
+			  	  AND a.id_followup = fu.id_followup
 				  AND a.relation = 'parent'";
 		$res_fu = lcm_query($q);
 		if (lcm_num_rows($res_fu) > 0) {
