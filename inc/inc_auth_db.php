@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.20 2005/03/18 14:33:35 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.21 2005/04/16 06:47:54 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -173,7 +173,7 @@ class Auth_db {
 			return false;
 
 		// Check for username size
-		if (strlen(lcm_utf8_decode($new_username)) <= 3) {
+		if (strlen(lcm_utf8_decode($new_username)) < 3) {
 			$this->error = _T('login_warning_too_short');
 			return false;
 		}
