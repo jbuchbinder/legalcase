@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.19 2005/04/18 10:58:05 mlutfy Exp $
+	$Id: fu_det.php,v 1.20 2005/04/18 11:59:22 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -51,7 +51,7 @@ lcm_page_start(_T('title_fu_view'));
 // Show a bit of background on the case
 $case = $fu_data['id_case'];
 show_context_start();
-show_context_case_title($case);
+show_context_case_title($case, 'followups');
 show_context_case_involving($case);
 
 // Show parent appointment, if any
