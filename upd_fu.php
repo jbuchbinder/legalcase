@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.43 2005/04/15 09:10:39 mlutfy Exp $
+	$Id: upd_fu.php,v 1.44 2005/04/18 10:58:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -220,13 +220,22 @@ if (count($_SESSION['errors'])) {
 //	Followup information update
 ///////////////////////////////////////////////////////////////////////
 
-	// global $author_session;
-
-	$fl="	date_start   = '" . clean_input($_SESSION['fu_data']['date_start']) . "',
+	$fl=" date_start = '" . clean_input($_SESSION['fu_data']['date_start']) . "',
 		date_end     = '" . clean_input($_SESSION['fu_data']['date_end']) . "',
 		type         = '" . clean_input($_SESSION['fu_data']['type']) . "',
-		description  = '" . clean_input($_SESSION['fu_data']['description']) . "',
 		sumbilled    = '" . clean_input($_SESSION['fu_data']['sumbilled']) . "'";
+
+	if ($_SESSION['fu_data']['type'] == 'stage_change' || $_SESSION['fu_data']['type'] == 'status_change') {
+		$desc = array(
+					'description'  => clean_input($_SESSION['fu_data']['description']),
+					'conclusion'   => clean_input($_SESSION['fu_data']['conclusion']),
+					'sentence'     => clean_input($_SESSION['fu_data']['sentence']),
+					'sentence_val' => clean_input($_SESSION['fu_data']['sentence_val']));
+
+		$fl .= ", description = '" . serialize($desc) . "'";
+	} else {
+		$fl .= ", description  = '" . clean_input($_SESSION['fu_data']['description']) . "'";
+	}
 
 	if ($id_followup>0) {
 		// Check access rights

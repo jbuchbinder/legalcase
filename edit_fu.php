@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.96 2005/04/15 09:37:57 mlutfy Exp $
+	$Id: edit_fu.php,v 1.97 2005/04/18 10:58:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -55,6 +55,25 @@ if (empty($_SESSION['errors'])) {
 
 		// Set the case ID, to which this followup belongs
 		$case = $_SESSION['fu_data']['id_case'];
+
+		// Case conclusion, if appropriate
+
+		if ($_SESSION['fu_data']['type'] == 'stage_change') {
+			$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($_SESSION['fu_data']['description']) : $_SESSION['fu_data']['description']));
+
+			if ($tmp['description'])
+				$_SESSION['fu_data']['description'] = $tmp['description'];
+
+			if ($tmp['conclusion'])
+				$_SESSION['fu_data']['conclusion'] = $tmp['conclusion'];
+
+			if ($tmp['sentence'])
+				$_SESSION['fu_data']['sentence'] = $tmp['sentence'];
+
+			if ($tmp['sentence_val'])
+				$_SESSION['fu_data']['sentence_val'] = $tmp['sentence_val'];
+		}
+
 	} else {
 		unset($_SESSION['followup']);
 		$case = intval($_GET['case']);
@@ -75,6 +94,12 @@ if (empty($_SESSION['errors'])) {
 		$_SESSION['fu_data']['app_start_time'] = date('Y-m-d H:i:s');
 		$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s');
 		$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s');
+
+		if (isset($_REQUEST['stage']))
+			$_SESSION['fu_data']['case_stage'] = $_REQUEST['stage'];
+
+		if (isset($_REQUEST['type']))
+			$_SESSION['fu_data']['type'] = $_REQUEST['type'];
 
 		// Check if the followup is created from appointment
 		$app = intval($_GET['app']);
@@ -144,12 +169,9 @@ if (isset($_SESSION['followup']) && (! $edit))
 //
 // Change status: check for if case status is different than current
 //
-$statuses = array('draft' => 'draft',
-		'opening' => 'open',
-		'suspension' => 'suspended',
-		'conclusion' => 'closed',
-		'merge' => 'merged', 
-		'deletion' => 'deleted');
+
+include_lcm('inc_acc');
+$statuses = get_possible_case_statuses();
 
 if ($_REQUEST['submit'] == 'set_status') {
 	// Get case status
@@ -167,6 +189,19 @@ if ($_REQUEST['submit'] == 'set_stage') {
 
 	if ($statuses[$_REQUEST['stage']] == $row['stage'])
 		header('Location: ' . $GLOBALS['HTTP_REFERER']);
+}
+
+//
+// Decide whether to show 'conclusion' fields
+//
+$show_conclusion = false;
+
+if ($_REQUEST['submit'] == 'set_status' || $_REQUEST['submit'] == 'set_stage' || $_SESSION['fu_data']['type'] == 'stage_change')
+{
+	$show_conclusion = true;
+} elseif ($statuses[$_SESSION['type']]) {
+	// if type is a case status change
+	$show_conclusion = true;
 }
 
 //
@@ -250,8 +285,8 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				} ?>
 			</td>
 		</tr>
-		<tr>
 <?php
+			echo "<tr>\n";
 			if ($_REQUEST['submit'] == 'set_status') {
 				// Change status
 				echo "<td>" . _T('case_input_status') . "</td>\n";
@@ -261,14 +296,14 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				echo _T('kw_followups_' . $_REQUEST['type'] . '_title');
 
 				echo "</td>\n";
-			} elseif ($_REQUEST['submit'] == 'set_stage') {
+			} elseif ($_REQUEST['submit'] == 'set_stage' || $_SESSION['fu_data']['type'] == 'stage_change') {
 				// Change stage
 				echo "<td>" . _T('case_input_stage') . "</td>\n";
 				echo "<td>";
 
-				echo '<input type="hidden" name="type" value="' . $_REQUEST['type'] . '" />' . "\n";
-				echo '<input type="hidden" name="new_stage" value="' . $_REQUEST['stage'] . '" />' . "\n";
-				echo _T('kw_stage_' . $_REQUEST['stage'] . '_title');
+				echo '<input type="hidden" name="type" value="' . $_SESSION['fu_data']['type'] . '" />' . "\n";
+				echo '<input type="hidden" name="new_stage" value="' . $_SESSION['fu_data']['case_stage'] . '" />' . "\n";
+				echo _Tkw('stage', $_SESSION['fu_data']['case_stage']);
 
 				echo "</td>\n";
 			} else {
@@ -276,30 +311,95 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				echo "<td>" . _T('fu_input_type') . "</td>\n";
 				echo "<td>";
 
-				echo '<select ' . $dis . ' name="type" size="1" class="sel_frm">' . "\n";
+				if ($_SESSION['fu_data']['type'] == 'status_change') {
+					// This is for "edit follow-up", not the status/stage change itself
+					// Altough it could probably be better presented...
 
-				if ($_SESSION['fu_data']['type'])
-					$default_fu = $_SESSION['fu_data']['type'];
-				else
-					$default_fu = $system_kwg['followups']['suggest'];
+					echo '<input type="hidden" name="type" value="' . $_REQUEST['type'] . '" />' . "\n";
+					echo '<input type="hidden" name="new_stage" value="' . $_REQUEST['stage'] . '" />' . "\n";
+					echo _Tkw('followups', $_SESSION['fu_data']['type']);
+				} else {
+					echo '<select ' . $dis . ' name="type" size="1" class="sel_frm">' . "\n";
 
-				$futype_kws = get_keywords_in_group_name('followups');
+					if ($_SESSION['fu_data']['type'])
+						$default_fu = $_SESSION['fu_data']['type'];
+					else
+						$default_fu = $system_kwg['followups']['suggest'];
 
-				foreach($futype_kws as $kw) {
-					$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
-					echo '<option value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+					$futype_kws = get_keywords_in_group_name('followups');
+
+					foreach($futype_kws as $kw) {
+						$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
+						echo '<option value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+					}
+
+					echo "</select>\n";
+				}
+
+				echo "</td>\n";
+			}
+			echo "</tr>\n";
+
+			// Show 'conclusion' options
+			if ($show_conclusion) {
+				$kws_conclusion = get_keywords_in_group_name('conclusion');
+
+				echo "<tr>\n";
+				echo "<td>" . _Ti('fu_input_conclusion') . "</td>\n";
+				echo '<td>';
+				echo '<select ' . $dis . ' name="conclusion" size="1" class="sel_frm">' . "\n";
+
+				$default = '';
+				if ($_SESSION['fu_data']['conclusion'])
+					$default = $_SESSION['fu_data']['conclusion'];
+
+				foreach ($kws_conclusion as $kw) {
+					$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
+					echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 				}
 
 				echo "</select>\n";
 				echo "</td>\n";
+				echo "</tr>\n";
+
+				// If guilty, what sentence?
+				$kws_sentence = get_keywords_in_group_name('sentence');
+
+				echo "<tr>\n";
+				echo "<td>" . _Ti('fu_input_sentence') . "</td>\n";
+				echo '<td>';
+				echo '<select ' . $dis . ' name="sentence" size="1" class="sel_frm">' . "\n"; 
+				
+				$default = '';
+				if ($_SESSION['fu_data']['sentence'])
+					$default = $_SESSION['fu_data']['sentence'];
+
+				echo "<!-- " . $default . " -->\n";
+
+				foreach ($kws_sentence as $kw) {
+					$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
+					echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+				}
+
+				echo "</select>\n";
+
+				// If sentence, for how much?
+				echo '<input type="text" name="sentence_val" size="10" value="' . $_SESSION['fu_data']['sentence_val'] . '" />';
+				echo "</td>\n";
+				echo "</tr>\n";
 			}
-?>
-		
-		</tr>
-		<tr><td valign="top"><?php echo f_err_star('description') . _T('fu_input_description'); ?></td>
-			<td><textarea <?php echo $dis; ?> name="description" rows="15" cols="60" class="frm_tarea"><?php
-			echo clean_output($_SESSION['fu_data']['description']) . "</textarea></td></tr>\n";
-// Sum billed field
+
+		// Description
+		echo "<tr>\n";
+		echo '<td valign="top">' . f_err_star('description') . _T('fu_input_description') . "</td>\n";
+		echo '<td>';
+		echo '<textarea ' . $dis . ' name="description" rows="15" cols="60" class="frm_tarea">';
+		echo clean_output($_SESSION['fu_data']['description']);
+		echo "</textarea>";
+		echo "</td></tr>\n";
+
+
+		// Sum billed field
 			if ($fu_sum_billed == "yes") {
 ?>		<tr><td><?php echo _T('fu_input_sum_billed'); ?></td>
 			<td><input <?php echo $dis; ?> name="sumbilled" value="<?php echo
@@ -327,7 +427,7 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 			echo "<!-- Add appointment? -->\n";
 			echo '<p class="normal_text">';
 			echo '<input type="checkbox" name="add_appointment" id="box_new_app" onclick="display_block(\'new_app\', \'flip\')"; />';
-			echo '<label for="box_new_app">' . 'Add a future activity for this follow-up.' . '</label>'; // TRAD
+			echo '<label for="box_new_app">' . _T('fu_info_add_future_activity') . '</label>';
 			echo "</p>\n";
 
 			echo '<div id="new_app" style="display: none;">';
