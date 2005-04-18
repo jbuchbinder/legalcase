@@ -265,6 +265,84 @@ $system_keyword_groups = array (
 				"description" => "kw_stage_second_appeal_description",
 				"ac_author" => "Y"),
 		)
+	),
+
+	"conclusion" => array(
+		"name" => "conclusion",
+		"title" => "kwg_conclusion_title",
+		"description" => "kwg_conclusion_description",
+		"type" => "system",
+		"policy" => "optional",
+		"quantity" => "one",
+		"suggest" => "none",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array(
+			array (
+				"name" => "none",
+				"title" => "10. kw_conclusion_none_title",
+				"description" => "kw_conclusion_none_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "guilty",
+				"title" => "15. kw_conclusion_guilty_title",
+				"description" => "kw_conclusion_guilty_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "notguilty",
+				"title" => "20. kw_conclusion_notguilty_title",
+				"description" => "kw_conclusion_notguilty_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "cessation",
+				"title" => "25. kw_conclusion_cessation_title",
+				"description" => "kw_conclusion_cessation_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "reinvestigation",
+				"title" => "30. kw_conclusion_reinvestigation_title",
+				"description" => "kw_conclusion_reinvestigation_description",
+				"ac_author" => "Y")
+		)
+	),
+
+	"sentence" => array(
+		"name" => "sentence",
+		"title" => "kwg_sentence_title",
+		"description" => "kwg_sentence_title",
+		"type" => "system",
+		"policy" => "optional",
+		"quantity" => "one",
+		"suggest" => "none",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array(
+			array (
+				"name" => "none",
+				"title" => "10. kw_sentence_none_title",
+				"description" => "kw_sentence_none_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "fine",
+				"title" => "15. kw_sentence_fine_title",
+				"description" => "kw_sentence_fine_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "prison",
+				"title" => "20. kw_sentence_prison_title",
+				"description" => "kw_sentence_prison_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "probation",
+				"title" => "25. kw_sentence_probation_title",
+				"description" => "kw_sentence_probation_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "community",
+				"title" => "30. kw_sentence_community_title",
+				"description" => "kw_sentence_community_description",
+				"ac_author" => "Y")
+		)
 	)
 );
 
@@ -314,9 +392,6 @@ function create_groups($keyword_groups) {
 		}
 	}
 }
-
-//echo "KWG = $system_keyword_groups";
-//print_r($system_keyword_groups);
 
 ?>
 
