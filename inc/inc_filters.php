@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.66 2005/04/15 09:25:04 mlutfy Exp $
+	$Id: inc_filters.php,v 1.67 2005/04/18 10:46:10 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -258,7 +258,7 @@ function get_person_initials($item, $with_abbver = true) {
 	return $ret;
 }
 
-function get_fu_description($item) {
+function get_fu_description($item, $make_short = true) {
 	if (! is_array($item)) {
 		lcm_debug("get_fu_description: parameter is not an array.");
 		return '';
@@ -274,9 +274,14 @@ function get_fu_description($item) {
 		$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $item['description']);
 		$author1 = lcm_fetch_array($res1);
 		$short_description = _T('case_info_author_assigned', array('name' => get_person_name($author1)));
-	} else{
+	} elseif ($item['type'] == 'stage_change') {
+		$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($item['description']) : $item['description']));
+		$short_description = _Tkw('stage', $item['case_stage']);
+		if ($tmp['description'])
+			$short_description .= " / " . $tmp['description'];
+	} else {
 		if ($item['description']) {
-			if (strlen(lcm_utf8_decode($item['description'])) < $title_length) 
+			if ($make_short && strlen(lcm_utf8_decode($item['description'])) < $title_length) 
 				$short_description = $item['description'];
 			else
 				$short_description = substr($item['description'], 0, $title_length) . '...';
