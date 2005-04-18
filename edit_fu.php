@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.97 2005/04/18 10:58:04 mlutfy Exp $
+	$Id: edit_fu.php,v 1.98 2005/04/18 11:47:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,8 +57,7 @@ if (empty($_SESSION['errors'])) {
 		$case = $_SESSION['fu_data']['id_case'];
 
 		// Case conclusion, if appropriate
-
-		if ($_SESSION['fu_data']['type'] == 'stage_change') {
+		if ($_SESSION['fu_data']['type'] == 'stage_change' || is_status_change($_SESSION['fu_data']['type'])) {
 			$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($_SESSION['fu_data']['description']) : $_SESSION['fu_data']['description']));
 
 			if ($tmp['description'])
@@ -170,7 +169,6 @@ if (isset($_SESSION['followup']) && (! $edit))
 // Change status: check for if case status is different than current
 //
 
-include_lcm('inc_acc');
 $statuses = get_possible_case_statuses();
 
 if ($_REQUEST['submit'] == 'set_status') {
@@ -199,7 +197,7 @@ $show_conclusion = false;
 if ($_REQUEST['submit'] == 'set_status' || $_REQUEST['submit'] == 'set_stage' || $_SESSION['fu_data']['type'] == 'stage_change')
 {
 	$show_conclusion = true;
-} elseif ($statuses[$_SESSION['type']]) {
+} elseif (is_status_change($_SESSION['fu_data']['type'])) {
 	// if type is a case status change
 	$show_conclusion = true;
 }
@@ -287,13 +285,13 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 		</tr>
 <?php
 			echo "<tr>\n";
-			if ($_REQUEST['submit'] == 'set_status') {
+			if ($_REQUEST['submit'] == 'set_status' || is_status_change($_SESSION['fu_data']['type'])) {
 				// Change status
 				echo "<td>" . _T('case_input_status') . "</td>\n";
 				echo "<td>";
 
-				echo '<input type="hidden" name="type" value="' . $_REQUEST['type'] . '" />' . "\n";
-				echo _T('kw_followups_' . $_REQUEST['type'] . '_title');
+				echo '<input type="hidden" name="type" value="' . $_SESSION['fu_data']['type'] . '" />' . "\n";
+				echo _T('kw_followups_' . $_SESSION['fu_data']['type'] . '_title');
 
 				echo "</td>\n";
 			} elseif ($_REQUEST['submit'] == 'set_stage' || $_SESSION['fu_data']['type'] == 'stage_change') {
@@ -310,32 +308,21 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				// The usual follow-up
 				echo "<td>" . _T('fu_input_type') . "</td>\n";
 				echo "<td>";
+				echo '<select ' . $dis . ' name="type" size="1" class="sel_frm">' . "\n";
 
-				if ($_SESSION['fu_data']['type'] == 'status_change') {
-					// This is for "edit follow-up", not the status/stage change itself
-					// Altough it could probably be better presented...
+				if ($_SESSION['fu_data']['type'])
+					$default_fu = $_SESSION['fu_data']['type'];
+				else
+					$default_fu = $system_kwg['followups']['suggest'];
 
-					echo '<input type="hidden" name="type" value="' . $_REQUEST['type'] . '" />' . "\n";
-					echo '<input type="hidden" name="new_stage" value="' . $_REQUEST['stage'] . '" />' . "\n";
-					echo _Tkw('followups', $_SESSION['fu_data']['type']);
-				} else {
-					echo '<select ' . $dis . ' name="type" size="1" class="sel_frm">' . "\n";
+				$futype_kws = get_keywords_in_group_name('followups');
 
-					if ($_SESSION['fu_data']['type'])
-						$default_fu = $_SESSION['fu_data']['type'];
-					else
-						$default_fu = $system_kwg['followups']['suggest'];
-
-					$futype_kws = get_keywords_in_group_name('followups');
-
-					foreach($futype_kws as $kw) {
-						$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
-						echo '<option value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
-					}
-
-					echo "</select>\n";
+				foreach($futype_kws as $kw) {
+					$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
+					echo '<option value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 				}
 
+				echo "</select>\n";
 				echo "</td>\n";
 			}
 			echo "</tr>\n";
