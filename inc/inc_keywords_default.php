@@ -20,45 +20,50 @@ $system_keyword_groups = array (
 		"ac_author" => "Y",
 		"keywords" => array(
 			array (
+				"name" => "stage_change",
+				"title" => "kw_followups_stage_change_title",
+				"description" => "kw_followups_stage_change_description",
+				"ac_author" => "N"),
+			array (
 				"name" => "opening",
 				"title" => "kw_followups_opening_title",
 				"description" => "kw_followups_opening_description",
-				"ac_author" => "Y"),
+				"ac_author" => "N"),
 			array (
 				"name" => "assignment",
 				"title" => "kw_followups_assignment_title",
 				"description" => "kw_followups_assignment_description",
-				"ac_author" => "Y"),
+				"ac_author" => "N"),
 			array (
 				"name" => "suspension",
 				"title" => "kw_followups_suspension_title",
 				"description" => "kw_followups_suspension_description",
-				"ac_author" => "Y"),
+				"ac_author" => "N"),
 			array (
 				"name" => "resumption",
 				"title" => "kw_followups_resumption_title",
 				"description" => "kw_followups_resumption_description",
-				"ac_author" => "Y"),
+				"ac_author" => "N"),
 			array (
 				"name" => "delay",
 				"title" => "kw_followups_delay_title",
 				"description" => "kw_followups_delay_description",
-				"ac_author" => "Y"),
+				"ac_author" => "N"),
 			array (
 				"name" => "conclusion",
 				"title" => "kw_followups_conclusion_title",
 				"description" => "kw_followups_conclusion_description",
-				"ac_author" => "Y"),
+				"ac_author" => "N"),
 			array (
 				"name" => "reopening",
 				"title" => "kw_followups_reopening_title",
 				"description" => "kw_followups_reopening_description",
-				"ac_author" => "Y"),
+				"ac_author" => "N"),
 			array (
 				"name" => "merge",
 				"title" => "kw_followups_merge_title",
 				"description" => "kw_followups_merge_description",
-				"ac_author" => "Y"),
+				"ac_author" => "N"),
 			array (
 				"name" => "consultation",
 				"title" => "kw_followups_consultation_title",
