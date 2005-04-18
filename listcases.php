@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.58 2005/04/15 09:29:34 mlutfy Exp $
+	$Id: listcases.php,v 1.59 2005/04/18 10:40:43 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -215,7 +215,7 @@ echo '<p class="normal_text">' . "\n";
 			
 show_list_start($headers);
 
-$q = "SELECT fu.id_case, fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description,
+$q = "SELECT fu.id_case, fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description, fu.case_stage,
 			a.name_first, a.name_middle, a.name_last, c.title 
 		FROM lcm_followup as fu, lcm_author as a, lcm_case as c 
 		WHERE fu.id_author = a.id_author 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.20 2005/04/15 09:29:34 mlutfy Exp $
+	$Id: author_det.php,v 1.21 2005/04/18 10:40:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -198,7 +198,7 @@ if ($author > 0) {
 			
 				show_list_start($headers);
 			
-				$q = "SELECT id_followup, id_case, date_start, date_end, type, description
+				$q = "SELECT id_followup, id_case, date_start, date_end, type, description, case_stage
 					FROM lcm_followup
 					WHERE id_author = $author
 					  AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "')

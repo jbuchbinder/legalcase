@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.145 2005/04/15 12:37:09 mlutfy Exp $
+	$Id: case_det.php,v 1.146 2005/04/18 10:40:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -463,7 +463,7 @@ if ($case > 0) {
 			
 				show_list_start($headers);
 			
-				$q = "SELECT fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description,
+				$q = "SELECT fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description, fu.case_stage,
 						a.name_first, a.name_middle, a.name_last
 					FROM lcm_followup as fu, lcm_author as a
 					WHERE id_case = $case
