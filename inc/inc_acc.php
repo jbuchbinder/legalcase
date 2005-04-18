@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.11 2005/04/18 10:10:16 mlutfy Exp $
+	$Id: inc_acc.php,v 1.12 2005/04/18 11:43:42 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -165,6 +165,16 @@ function get_possible_case_statuses($status = '') {
 	}
 
 	return $statuses;
+}
+
+function is_status_change($type) {
+	$statuses = get_possible_case_statuses();
+
+	foreach($statuses as $key => $val)
+		if ($key == $type || $val == $type)
+			return true;
+	
+	return false;
 }
 
 ?>
