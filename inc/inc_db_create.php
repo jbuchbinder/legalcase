@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.41 2005/04/12 19:42:23 antzi Exp $
+	$Id: inc_db_create.php,v 1.42 2005/04/18 15:55:51 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -268,6 +268,8 @@ function create_database() {
 			id_entry bigint(21) NOT NULL auto_increment,
 			id_keyword bigint(21) NOT NULL default '0',
 			id_case bigint(21) NOT NULL default '0',
+			id_stage bigint(21) NOT NULL default '0',
+			value text NOT NULL default '',
 			PRIMARY KEY (id_entry),
 			KEY id_keyword (id_keyword),
 			KEY id_case (id_case))";
