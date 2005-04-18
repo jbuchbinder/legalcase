@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.73 2005/04/15 07:52:26 mlutfy Exp $
+	$Id: inc_version.php,v 1.74 2005/04/18 10:46:56 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -859,10 +859,14 @@ function _Tkw($grp, $val, $args = '') {
 	else
 		$kwg = get_keywords_in_group_name($grp, false);
 
-	if (count($kwg))
-		return _T(remove_number_prefix($kwg[$val]['title']));
-	else
+	if (count($kwg)) {
+		if ($kwg[$val])
+			return _T(remove_number_prefix($kwg[$val]['title']));
+		else
+			lcm_panic("kw not found");
+	} else {
 		lcm_panic("kwg not found");
+	}
 }
 
 // Main language of the site
