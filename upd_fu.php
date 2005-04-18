@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.44 2005/04/18 10:58:05 mlutfy Exp $
+	$Id: upd_fu.php,v 1.45 2005/04/18 12:57:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -225,7 +225,7 @@ if (count($_SESSION['errors'])) {
 		type         = '" . clean_input($_SESSION['fu_data']['type']) . "',
 		sumbilled    = '" . clean_input($_SESSION['fu_data']['sumbilled']) . "'";
 
-	if ($_SESSION['fu_data']['type'] == 'stage_change' || $_SESSION['fu_data']['type'] == 'status_change') {
+	if ($_SESSION['fu_data']['type'] == 'stage_change' || is_status_change($_SESSION['fu_data']['type'])) {
 		$desc = array(
 					'description'  => clean_input($_SESSION['fu_data']['description']),
 					'conclusion'   => clean_input($_SESSION['fu_data']['conclusion']),
