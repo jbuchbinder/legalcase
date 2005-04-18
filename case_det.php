@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.146 2005/04/18 10:40:44 mlutfy Exp $
+	$Id: case_det.php,v 1.147 2005/04/18 13:30:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -68,7 +68,7 @@ if ($case > 0) {
 		$admin = allowed($case,'a');
 
 		// Show case details
-		lcm_page_start(_T('title_case_details') . " " . $row['title']);
+		lcm_page_start(_T('title_case_details') . " " . $row['title'], '', '', 'cases_intro');
 
 		// [ML] This will probably never be implemented
 		// echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
@@ -239,7 +239,7 @@ if ($case > 0) {
 				//
 				echo '<a name="clients"></a>' . "\n";
 				echo '<div class="prefs_column_menu_head">'
-					. "<div style='float: right'>" . lcm_help('clients_intro') . "</div>"
+					. "<div style='float: right'>" . lcm_help('cases_participants') . "</div>"
 					. _T('case_subtitle_clients') 
 					. "</div>\n";
 
@@ -353,7 +353,7 @@ if ($case > 0) {
 			case 'appointments' :
 				echo '<fieldset class="info_box">' . "\n";
 				echo '<div class="prefs_column_menu_head">' 
-					. "<div style='float: right'>" . lcm_help('agenda_intro') . "</div>"
+					. "<div style='float: right'>" . lcm_help('tools_agenda') . "</div>"
 					. _T('case_subtitle_appointments') 
 					. '</div>';
 
@@ -422,7 +422,7 @@ if ($case > 0) {
 			case 'followups' :
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' 
-					. "<div style='float: right'>" . lcm_help('clients_followups') . "</div>"
+					. "<div style='float: right'>" . lcm_help('cases_followups') . "</div>"
 					. _T('case_subtitle_followups') 
 					. '</div>';
 
@@ -647,7 +647,7 @@ if ($case > 0) {
 
 				echo '<fieldset class="info_box">';
 				echo '<div class="prefs_column_menu_head">' 
-					. "<div style='float: right'>" . lcm_help('attachments') . "</div>"
+					. "<div style='float: right'>" . lcm_help('tools_documents') . "</div>"
 					. _T('case_subtitle_attachments') 
 					. '</div>';
 				echo "<p class=\"normal_text\">\n";
