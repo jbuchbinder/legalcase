@@ -113,7 +113,7 @@ function read_meta_upd($name) {
 	reset($kwg_all);
 	foreach ($kwg_all as $kwg) {
 		// Dump every keyword and field of the keyword group
-		$kw_all = get_keywords_in_group_id($kwg['id_group']);
+		$kw_all = get_keywords_in_group_id($kwg['id_group'], false);
 
 		foreach ($kw_all as $kw) {
 			$kw_name = $kw['name'];
