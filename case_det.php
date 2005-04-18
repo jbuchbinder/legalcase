@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.147 2005/04/18 13:30:10 mlutfy Exp $
+	$Id: case_det.php,v 1.148 2005/04/18 14:06:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -91,10 +91,8 @@ if ($case > 0) {
 			//
 			case 'general' :
 				echo "<fieldset class='info_box'>";
-				echo "<div class='prefs_column_menu_head'>"
-					. "<div style='float: right'>" . lcm_help('cases_intro') . "</div>"
-					. _T('generic_subtitle_general') 
-					. "</div>";
+				show_page_subtitle(_T('generic_subtitle_general'), 'cases_intro');
+
 				echo "<p class='normal_text'>";
 		
 				// Show users assigned to the case
@@ -238,10 +236,7 @@ if ($case > 0) {
 				// Show case client(s)
 				//
 				echo '<a name="clients"></a>' . "\n";
-				echo '<div class="prefs_column_menu_head">'
-					. "<div style='float: right'>" . lcm_help('cases_participants') . "</div>"
-					. _T('case_subtitle_clients') 
-					. "</div>\n";
+				show_page_subtitle(_T('case_subtitle_clients'), 'cases_participants');
 
 				echo '<form action="add_client.php" method="get">' . "\n";
 				echo '<input type="hidden" name="case" value="' . $case . '" />' . "\n";
@@ -352,10 +347,7 @@ if ($case > 0) {
 			//
 			case 'appointments' :
 				echo '<fieldset class="info_box">' . "\n";
-				echo '<div class="prefs_column_menu_head">' 
-					. "<div style='float: right'>" . lcm_help('tools_agenda') . "</div>"
-					. _T('case_subtitle_appointments') 
-					. '</div>';
+				show_page_subtitle(_T('case_subtitle_appointments'), 'tools_agenda');
 
 				echo "<p class=\"normal_text\">\n";
 
@@ -421,10 +413,7 @@ if ($case > 0) {
 			//
 			case 'followups' :
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' 
-					. "<div style='float: right'>" . lcm_help('cases_followups') . "</div>"
-					. _T('case_subtitle_followups') 
-					. '</div>';
+				show_page_subtitle(_T('case_subtitle_followups'), 'cases_followups');
 
 				// By default, show from "case creation date" to NOW().
 				$link = new Link();
@@ -577,10 +566,8 @@ if ($case > 0) {
 
 				// Show table headers
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">'
-					. "<div style='float: right'>" . lcm_help('reports_intro') . "</div>"
-					. _T('case_subtitle_times')
-					. '</div>';
+				show_page_subtitle(_T('case_subtitle_times'), 'reports_intro');
+
 				echo "<p class=\"normal_text\">\n";
 			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
@@ -646,10 +633,8 @@ if ($case > 0) {
 				echo show_all_errors($_SESSION['errors']);
 
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' 
-					. "<div style='float: right'>" . lcm_help('tools_documents') . "</div>"
-					. _T('case_subtitle_attachments') 
-					. '</div>';
+				show_page_subtitle(_T('case_subtitle_attachments'), 'tools_documents');
+
 				echo "<p class=\"normal_text\">\n";
 
 				echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";

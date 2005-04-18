@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.40 2005/04/12 21:08:42 antzi Exp $
+	$Id: config_site.php,v 1.41 2005/04/18 14:05:59 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -76,7 +76,7 @@ function show_config_form_general() {
 	echo '<input type="hidden" name="panel" value="general" />' . "\n";
 
 	echo '<fieldset class="conf_info_box">' . "\n";
-	echo '<div class="prefs_column_menu_head">' . _T('siteconf_subtitle_site_identification') . "</div>\n";
+	show_page_subtitle(_T('siteconf_subtitle_site_identification'), 'siteconfig_general');
 	
 	echo '<p><b><label for="site_name">' . _T('siteconf_input_site_name') . "</label></b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_site_name') . "</small></p>\n";
@@ -89,7 +89,7 @@ function show_config_form_general() {
 	echo "</fieldset>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'>" . _T('siteconf_subtitle_site_contacts') . "</div>\n";
+	show_page_subtitle(_T('siteconf_subtitle_site_contacts'), 'siteconfig_general');
 
 	echo "<p><b><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></b></p>\n";
 	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40' class='search_form_txt' /></p>\n";
@@ -113,7 +113,7 @@ function show_config_form_collab() {
 	echo "\t<input type='hidden' name='panel' value='collab'/>\n";
 	
 	echo '<fieldset class="conf_info_box">' . "\n";
-	echo '<div class="prefs_column_menu_head">' . _T('siteconf_subtitle_collab_work') . "</div>\n";
+	show_page_subtitle(_T('siteconf_subtitle_collab_work'), 'siteconfig_collab');
 
 	// READ ACCESS
 	echo "<p><b>" . _T('siteconf_input_access_read_choice') . "</b></p>\n";
@@ -184,7 +184,7 @@ function show_config_form_collab() {
 	$site_open_subscription = read_meta('site_open_subscription');
 	
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class=\"prefs_column_menu_head\">". _T('siteconf_subtitle_self_registration') ."</div>";
+	show_page_subtitle(_T('siteconf_subtitle_self_registration'), 'siteconfig_collab', 'selfreg');
 
 	echo "<p>" . _T('siteconf_info_self_registration') . "</p>\n";
 	echo "<ul>";
@@ -229,7 +229,7 @@ function show_config_form_regional() {
 	echo "\t<input type='hidden' name='panel' value='regional'/>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'>" . _T('siteconf_subtitle_regional') . "</div>\n";
+	show_page_subtitle(_T('siteconf_subtitle_regional'), 'siteconfig_regional');
 
 	echo "<p><b>" . _T('siteconf_input_default_lang') . "</b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_default_lang') . "</small></p>\n";
@@ -242,7 +242,8 @@ function show_config_form_regional() {
 	echo "</fieldset>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<div class='prefs_column_menu_head'><label for='available_regional'>" . _T('siteconf_subtitle_refresh_lang') . "</label></div>\n";
+	show_page_subtitle(_T('siteconf_subtitle_refresh_lang'), 'siteconfig_regional', 'refreshlang');
+
 	echo "<p>" . _T('siteconf_info_available_languages') . "</p>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='validate_refresh' id='Validate5' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
@@ -269,7 +270,8 @@ function show_config_form_policy() {
 
 	// ** CLIENTS
 	echo "<fieldset class='conf_info_box'>\n";
-	echo '<p class="prefs_column_menu_head"><b>' . _T('siteconf_subtitle_client_fields') . "</b></p>\n";
+	show_page_subtitle(_T('siteconf_subtitle_client_fields'), 'siteconfig_policy', 'clients');
+
 	echo '<p><small class="sm_11">' . _T('siteconf_info_client_fields') . "</small></p>\n";
 
 	echo '<table width="99%" class="tbl_usr_dtl">' . "\n";
@@ -299,7 +301,8 @@ function show_config_form_policy() {
 
 	// ** CASES
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_case_fields') . "</b></p>\n";
+	show_page_subtitle(_T('siteconf_subtitle_case_fields'), 'siteconfig_policy', 'cases');
+
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_case_fields') . "</small></p>\n";
 
 	echo "<table width=\"99%\" class=\"tbl_usr_dtl\">";
@@ -322,7 +325,8 @@ function show_config_form_policy() {
 
 	// ** FOLLOW-UPS
 	echo "<fieldset class='conf_info_box'>\n";
-	echo "<p class='prefs_column_menu_head'><b>" . _T('siteconf_subtitle_followup_fields') . "</b></p>\n";
+	show_page_subtitle(_T('siteconf_subtitle_followup_fields'), 'siteconfig_policy', 'followups');
+
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_followups_fields') . "</small></p>\n";
 
 	echo "<table width=\"99%\" class=\"tbl_usr_dtl\">";
@@ -545,7 +549,7 @@ global $author_session;
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	lcm_page_start(_T('title_site_configuration'));
+	lcm_page_start(_T('title_site_configuration'), '', '', 'siteconfig');
 	echo "<p>Warning: Access denied, not admin.\n";
 	lcm_page_end();
 	exit;
@@ -562,7 +566,7 @@ else if ($conf_modified_regional)
 
 // Once ready, show the form (must be done after changes are
 // applied so that they can be used in the header).
-lcm_page_start(_T('title_site_configuration'));
+lcm_page_start(_T('title_site_configuration'), '', '', 'siteconfig');
 
 // Show changes on screen
 if (! empty($log)) {
