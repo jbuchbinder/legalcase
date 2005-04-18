@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.10 2005/04/15 07:28:17 mlutfy Exp $
+	$Id: inc_acc.php,v 1.11 2005/04/18 10:10:16 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -109,7 +109,7 @@ function allowed_author($author, $access) {
 
 // Returns an array with the possible case statuses
 // c.f. http://www.lcm.ngo-bg.org/article78.html
-function get_possible_case_statuses($status) {
+function get_possible_case_statuses($status = '') {
 	$statuses = array();
 
 	if ($status == 'draft') {
@@ -155,7 +155,13 @@ function get_possible_case_statuses($status) {
 				// 'merged' => 'merge', 
 				'deleted' => 'deletion');
 	} else {
-		lcm_panic("unknown status: $status");
+		// Send back all
+		$statuses = array('draft' => 'draft', 
+				'open' => 'opening',
+				'suspended' => 'suspension',
+				'closed' => 'conclusion',
+				'merged' => 'merge', 
+				'deleted' => 'deletion');
 	}
 
 	return $statuses;
