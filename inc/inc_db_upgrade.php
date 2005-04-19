@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.52 2005/04/18 15:55:51 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.53 2005/04/19 06:41:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -57,28 +57,6 @@ function upgrade_database($old_db_version) {
 
 	if ($alter_test_log)
 		return $alter_test_log;
-
-	//
-	// Create new keywords (if necessary)
-	//
-
-	// Do not remove, or variables won't be declared
-	global $system_keyword_groups;
-	$system_keyword_groups = array();
-
-	include_lcm('inc_meta');
-	include_lcm('inc_keywords_default');
-	create_groups($system_keyword_groups);
-
-	//
-	// Create new meta (if necessary)
-	//
-
-	include_lcm('inc_meta_defaults');
-	init_default_config();
-	
-	// Rewrite metas in inc/data/inc_meta_cache.php, just to be sure
-	write_metas();
 
 	//
 	// Upgrade the database accordingly to the current version
@@ -737,6 +715,42 @@ function upgrade_database($old_db_version) {
 
 		upgrade_db_version (33);
 	}
+
+	if ($lcm_db_version_current < 34) {
+		// Add 'stage' type
+		lcm_query("ALTER TABLE lcm_keyword_group
+					CHANGE type type ENUM('system','case','stage','followup','client','org','client_org','author')");
+
+		// Used for stage court archives numbers
+		lcm_query("ALTER TABLE lcm_keyword
+					ADD hasvalue ENUM('Y', 'N') NOT NULL DEFAULT 'N' AFTER description");
+
+		upgrade_db_version (34);
+	}
+
+	//
+	// Create new keywords (if necessary)
+	// This must be done at the end, in case keyword DB structure changed
+	//
+
+	// Do not remove, or variables won't be declared
+	global $system_keyword_groups;
+	$system_keyword_groups = array();
+
+	include_lcm('inc_meta');
+	include_lcm('inc_keywords_default');
+	create_groups($system_keyword_groups);
+
+	//
+	// Create new meta (if necessary)
+	// This must be done at the end, in case meta DB structure changed
+	//
+
+	include_lcm('inc_meta_defaults');
+	init_default_config();
+	
+	// Rewrite metas in inc/data/inc_meta_cache.php, just to be sure
+	write_metas();
 
 	return $log;
 }
