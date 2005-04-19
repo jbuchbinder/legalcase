@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_help.php,v 1.6 2005/03/08 11:14:40 mlutfy Exp $
+	$Id: lcm_help.php,v 1.7 2005/04/19 09:53:57 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -78,6 +78,7 @@ if ($code) {
 				'cases' => array('cases_intro', 'cases_participants', 'cases_followups'),
 				'clients' => array('clients_intro', 'clients_org'),
 				'authors' => array('authors_intro', 'authors_admin'),
+				'tools' => array('tools_agenda', 'tools_documents'),
 				'siteconfig' => array('siteconfig_general', 'siteconfig_collab', 'siteconfig_policy', 'siteconfig_regional'),
 				'archives' => array('archives_intro', 'archives_export', 'archives_import'),
 				'reports' => array('reports_intro'), 
