@@ -432,10 +432,10 @@ function create_groups($keyword_groups) {
 				. "'" . addslashes($skwg['ac_author']) . "')";
 
 		$result = lcm_query($q);
-		$kwg_id = lcm_insert_id();
-
-		/*
+		
 		// Findout under what ID is this group stored
+		// Note: Do this instead of lcm_insert_id() because the keyword might not have been 
+		// inserted, so using lcm_insert_id() would re-create ALL keywords using the latest kwg id...
 		$q = "SELECT id_group,name FROM lcm_keyword_group WHERE name='" . addslashes($skwg['name']) . "'";
 		$result = lcm_query($q);
 		$row = lcm_fetch_array($result);
@@ -448,7 +448,6 @@ function create_groups($keyword_groups) {
 			lcm_log("-> Query was: " . $q);
 			return;
 		}
-		*/
 
 		// Insert keywords data into database table
 		foreach ($skwg['keywords'] as $k) {
