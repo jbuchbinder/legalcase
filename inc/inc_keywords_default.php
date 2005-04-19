@@ -314,7 +314,7 @@ $system_keyword_groups = array (
 	"sentence" => array(
 		"name" => "sentence",
 		"title" => "kwg_sentence_title",
-		"description" => "kwg_sentence_title",
+		"description" => "kwg_sentence_description",
 		"type" => "system",
 		"policy" => "optional",
 		"quantity" => "one",
@@ -348,6 +348,70 @@ $system_keyword_groups = array (
 				"description" => "kw_sentence_community_description",
 				"ac_author" => "Y")
 		)
+	),
+
+	// [ML] I am prefixing with _, to show that it is system-created,
+	// because at this point, we have no garanty that the user has not
+	// already created a kwg with this name.
+	"_refnumbers" => array (
+		"name" => "_refnumbers",
+		"title" => "kwg__refnumbers_title",
+		"description" => "kwg__refnumbers_description",
+		"type" => "stage",
+		"policy" => "optional",
+		"quantity" => "many",
+		"suggest" => "",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array (
+			array (
+				"name" => "initialrefnum",
+				"title" => "10. kw__refnumbers_initialrefnum_title",
+				"description" => "kw__refnumbers_initialrefnum_description",
+				"hasvalue" => "Y",
+				"ac_author" => "N" ),
+			array (
+				"name" => "filenum",
+				"title" => "12. kw__refnumbers_filenum_title",
+				"description" => "kw__refnumbers_filenum_description",
+				"hasvalue" => "Y",
+				"ac_author" => "N" ),
+			array (
+				"name" => "courtarchive",
+				"title" => "14. kw__refnumbers_courtarchive_title",
+				"description" => "kw__refnumbers_courtarchive_description",
+				"hasvalue" => "Y",
+				"ac_author" => "Y" ),
+		)
+	),
+
+	"_institutions" => array (
+		"name" => "_institutions",
+		"title" => "kwg__institutions_title",
+		"description" => "kwg__institutions_description",
+		"type" => "stage",
+		"policy" => "optional",
+		"quantity" => "one",
+		"suggest" => "",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array (
+			array (
+				"name" => "institution001",
+				"title" => "1. kw__institutions_001_title",
+				"description" => "kw__institutions_001_description",
+				"ac_author" => "Y" ),
+			array (
+				"name" => "institution002",
+				"title" => "1. kw__institutions_002_title",
+				"description" => "kw__institutions_002_description",
+				"ac_author" => "Y" ),
+			array (
+				"name" => "institution003",
+				"title" => "1. kw__institutions_003_title",
+				"description" => "kw__institutions_003_description",
+				"ac_author" => "Y" )
+		)
 	)
 );
 
@@ -368,7 +432,9 @@ function create_groups($keyword_groups) {
 				. "'" . addslashes($skwg['ac_author']) . "')";
 
 		$result = lcm_query($q);
+		$kwg_id = lcm_insert_id();
 
+		/*
 		// Findout under what ID is this group stored
 		$q = "SELECT id_group,name FROM lcm_keyword_group WHERE name='" . addslashes($skwg['name']) . "'";
 		$result = lcm_query($q);
@@ -376,21 +442,27 @@ function create_groups($keyword_groups) {
 		$kwg_id = $row['id_group'];
 
 		// If group is not successfully created or its ID is not found, report error
+		// [ML] Failed SQL insert generates lcm_panic(), so this becomes useless.
 		if ($kwg_id < 1) {
 			lcm_log("create_groups: creation of keyword group seems to have failed. Aborting.");
 			lcm_log("-> Query was: " . $q);
 			return;
 		}
+		*/
 
 		// Insert keywords data into database table
 		foreach ($skwg['keywords'] as $k) {
+			if (! isset($k['hasvalue']))
+				$k['hasvalue'] = 'N';
+
 			$q = "INSERT IGNORE INTO lcm_keyword
-					(id_group, name, title, description, ac_author)
+					(id_group, name, title, description, hasvalue, ac_author)
 				VALUES ("
 					. $kwg_id . ", "
 					. "'" . addslashes($k['name']) . "', "
 					. "'" . addslashes($k['title']) . "', "
 					. "'" . addslashes($k['description']) . "', "
+					. "'" . addslashes($k['hasvalue']) . "', "
 					. "'" . addslashes($k['ac_author']) . "')";
 
 			$result = lcm_query($q);
