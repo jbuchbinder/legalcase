@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.100 2005/04/18 13:23:33 mlutfy Exp $
+	$Id: edit_fu.php,v 1.101 2005/04/19 07:41:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -137,7 +137,7 @@ if (empty($_SESSION['errors'])) {
 
 			// First i18n attempt..
 			$_SESSION['fu_data']['description'] = _T('fu_info_after_event', array(
-						'title' => _Ti(get_kw_title($row['type'])) . $row['title'],
+						'title' => _Ti(_Tkw('appointments', $row['type'])) . $row['title'],
 						'date' => format_date($row['start_time']),
 						'participants' => join(', ', $participants)));
 
