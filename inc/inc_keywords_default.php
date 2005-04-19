@@ -403,12 +403,12 @@ $system_keyword_groups = array (
 				"ac_author" => "Y" ),
 			array (
 				"name" => "institution002",
-				"title" => "1. kw__institutions_002_title",
+				"title" => "2. kw__institutions_002_title",
 				"description" => "kw__institutions_002_description",
 				"ac_author" => "Y" ),
 			array (
 				"name" => "institution003",
-				"title" => "1. kw__institutions_003_title",
+				"title" => "3. kw__institutions_003_title",
 				"description" => "kw__institutions_003_description",
 				"ac_author" => "Y" )
 		)
