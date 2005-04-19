@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.21 2005/04/19 08:01:55 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.22 2005/04/19 08:49:10 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -275,6 +275,9 @@ function get_keywords_applied_to($type, $id, $id_sec = 0) {
 				WHERE id_" . $type . " = " . $id . " 
 				  AND kwinfo.id_keyword = kwlist.id_keyword
 				  AND kwg.id_group = kwinfo.id_group";
+
+		if ($type == 'case')
+			$query .= " AND kwlist.id_stage = 0";
 	}
 	
 	$result = lcm_query($query);
@@ -314,22 +317,22 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 				. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
 
 			echo "<td>";
-			echo '<input type="hidden" name="kwg_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
-			echo '<input type="hidden" name="kw_entry[]" value="' . $kw['id_entry'] . '" />' . "\n";
-			echo '<select name="kw_value[]">';
+			echo '<input type="hidden" name="kwg_id_' . $type_obj . '[]" value="' . $kwg['id_group'] . '" />' . "\n";
+			echo '<input type="hidden" name="kw_entry_' . $type_obj . '[]" value="' . $kw['id_entry'] . '" />' . "\n";
+			echo '<select name="kw_value_' . $type_obj . '[]">';
 			echo '<option value="">' . '' . "</option>\n";
 
 			$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
 			foreach ($kw_for_kwg as $kw1) {
 				$sel = ($kw1['id_keyword'] == $kw['id_keyword'] ? ' selected="selected"' : '');
-				echo '<option value="' . $kw1['id_keyword'] . '"' . $sel . '>' . _T($kw1['title']) . "</option>\n";
+				echo '<option value="' . $kw1['id_keyword'] . '"' . $sel . '>' . _T(remove_number_prefix($kw1['title'])) . "</option>\n";
 			}
 
 			echo "</select>\n";
 
-			echo '<label for="id_del_keyword' . $cpt . '">'
+			echo '<label for="id_del_keyword_' . $type_obj . $cpt . '">'
 				. '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" />' // TRAD
-				. '</label>&nbsp;<input type="checkbox" id="id_del_keyword' . $cpt . '" name="kw_del_' . $cpt . '"/>';
+				. '</label>&nbsp;<input type="checkbox" id="id_del_keyword' . $type_obj . $cpt . '" name="kw_del_' . $type_obj . $cpt . '"/>';
 
 			echo "</td>\n";
 			echo "</tr>\n";
@@ -345,18 +348,18 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 
 	foreach ($kwg_for_case as $kwg) {
 		echo "<tr>\n";
-		echo '<td>' . f_err_star('keyword_' . $cpt_kw) . _Ti($kwg['title']) 
+		echo '<td>' . f_err_star('keyword_' . $type_obj . $cpt_kw) . _Ti($kwg['title']) 
 			. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
 
 		$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
 		if (count($kw_for_kwg)) {
 			echo "<td>";
-			echo '<input type="hidden" name="new_kwg_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
-			echo '<select name="new_keyword_value[]">';
+			echo '<input type="hidden" name="new_kwg_' . $type_obj . '_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
+			echo '<select name="new_keyword_' . $type_obj . '_value[]">';
 			echo '<option value="">' . '' . "</option>\n";
 
 			foreach ($kw_for_kwg as $kw)
-				echo '<option value="' . $kw['id_keyword'] . '">' . _T($kw['title']) . "</option>\n";
+				echo '<option value="' . $kw['id_keyword'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 
 			echo "</select>\n";
 			echo "</td>\n";
@@ -369,15 +372,15 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 	}
 }
 
-function update_keywords_request($type_obj, $id_obj) {
+function update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 
 	//
 	// Update existing keywords
 	//
-	if (isset($_REQUEST['kw_value'])) {
-		$kw_entries = $_REQUEST['kw_entry'];
-		$kw_values  = $_REQUEST['kw_value'];
-		$kwg_ids    = $_REQUEST['kwg_id'];
+	if (isset($_REQUEST['kw_value_' . $type_obj])) {
+		$kw_entries = $_REQUEST['kw_entry_' . $type_obj];
+		$kw_values  = $_REQUEST['kw_value_' . $type_obj];
+		$kwg_ids    = $_REQUEST['kwg_id_' . $type_obj];
 
 		// Check if the keywords provided are really attached to the object
 		for ($cpt = 0; $kw_entries[$cpt]; $cpt++) {
@@ -385,13 +388,25 @@ function update_keywords_request($type_obj, $id_obj) {
 		}
 
 		for ($cpt = 0; isset($kw_entries[$cpt]); $cpt++) {
-			if ($_REQUEST['kw_del_' . $cpt] || empty($kw_values[$cpt])) {
-				$query = "DELETE FROM lcm_keyword_" . $type_obj . "
-							WHERE id_entry = " . $kw_entries[$cpt];
+			if ($_REQUEST['kw_del_' . $type_obj . $cpt] || empty($kw_values[$cpt])) {
+				if ($type_obj == 'stage') {
+					$query = "DELETE FROM lcm_keyword_case
+								WHERE id_entry = " . $kw_entries[$cpt];
+				} else {
+					$query = "DELETE FROM lcm_keyword_" . $type_obj . "
+								WHERE id_entry = " . $kw_entries[$cpt];
+				}
 			} else if ($kw_values[$cpt]) {
-				$query = "UPDATE lcm_keyword_" . $type_obj . " 
-							SET id_keyword = " . $kw_values[$cpt] . "
-							WHERE id_entry = " . $kw_entries[$cpt];
+				if ($type_obj == 'stage') {
+					$query = "UPDATE lcm_keyword_case
+								SET id_keyword = " . $kw_values[$cpt] . ",
+									id_stage = " . $id_obj_sec;
+				} else {
+					$query = "UPDATE lcm_keyword_" . $type_obj . " 
+								SET id_keyword = " . $kw_values[$cpt];
+				}
+
+				$query .= " WHERE id_entry = " . $kw_entries[$cpt];
 			}
 
 			lcm_query($query);
@@ -402,10 +417,10 @@ function update_keywords_request($type_obj, $id_obj) {
 	// New keywords
 	//
 
-	if ($id_obj && isset($_REQUEST['new_keyword_value'])) {
+	if ($id_obj && isset($_REQUEST['new_keyword_' . $type_obj . '_value'])) {
 		$cpt = 0;
-		$new_keywords = $_REQUEST['new_keyword_value'];
-		$new_kwg_id = $_REQUEST['new_kwg_id'];
+		$new_keywords = $_REQUEST['new_keyword_' . $type_obj . '_value'];
+		$new_kwg_id = $_REQUEST['new_kwg_' . $type_obj . '_id'];
 
 		while(isset($new_keywords[$cpt])) {
 			// Process new keywords which have a value
@@ -416,9 +431,17 @@ function update_keywords_request($type_obj, $id_obj) {
 				// optionally, we can validate whether it makes sense
 				// to apply this kwg to this 'object' ... (TODO ?)
 
-				$query = "INSERT INTO lcm_keyword_" . $type_obj . "
-						SET id_keyword = " . $new_keywords[$cpt] . ",
-							id_" . $type_obj . " = " . $id_obj;
+				if ($type_obj == 'stage') {
+					$query = "INSERT INTO lcm_keyword_case
+							SET id_keyword = " . $new_keywords[$cpt] . ",
+								id_case  = " . $id_obj . ",
+								id_stage = " . $id_obj_sec;
+				} else {
+					$query = "INSERT INTO lcm_keyword_" . $type_obj . "
+							SET id_keyword = " . $new_keywords[$cpt] . ",
+								id_" . $type_obj . " = " . $id_obj;
+				}
+
 
 				lcm_query($query);
 			}
