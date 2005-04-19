@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.217 2005/04/18 14:07:39 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.218 2005/04/19 07:08:56 mlutfy Exp $
 */
 
 //
@@ -1250,7 +1250,7 @@ function show_listclient_end($current_pos = 0, $number_of_rows = 0) {
 
 // see listcases.php for example
 function show_listcase_start() {
-	$case_court_archive = read_meta('case_court_archive');
+	// [ML] $case_court_archive = read_meta('case_court_archive');
 
 	$cpt = 0;
 	$headers = array();
@@ -1268,23 +1268,30 @@ function show_listcase_start() {
 	$headers[$cpt]['order'] = 'no_order';
 	$cpt++;
 
+	/* [ML]
 	if ($case_court_archive == 'yes') {
 		$headers[$cpt]['title'] = _Th('case_input_court_archive');
 		$headers[$cpt]['order'] = 'no_order';
 		$cpt++;
 	}
+	*/
 
 	// XXX actually, it would be nice to be able to order..
 	// but this would require us to put numbers in status names
 	$headers[$cpt]['title'] = _Th('case_input_status');
 	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+
+	$headers[$cpt]['title'] = '';
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
 
 	show_list_start($headers);
 }
 
 function show_listcase_item($item, $cpt, $custom = '') {
 	include('inc/inc_acc.php');
-	$case_court_archive = read_meta('case_court_archive');
+	// [ML] $case_court_archive = read_meta('case_court_archive');
 
 	$ac_read = allowed($item['id_case'], 'r');
 	$ac_edit = allowed($item['id_case'], 'e');
@@ -1314,11 +1321,12 @@ function show_listcase_item($item, $cpt, $custom = '') {
 	echo "</td>\n";
 	
 	// Court archive ID
+	/* [ML]
 	if ($case_court_archive == 'yes') {
 		echo "<td class='tbl_cont_" . $css . "'>";
 		echo highlight_matches(clean_output($item['id_court_archive']),$find_case_string);
 		echo "</td>\n";
-	}
+	} */
 	
 	// Status
 	echo "<td class='tbl_cont_" . $css . "'>";
