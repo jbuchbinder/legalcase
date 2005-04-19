@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.46 2005/04/19 10:20:57 mlutfy Exp $
+	$Id: upd_fu.php,v 1.47 2005/04/19 10:46:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -98,14 +98,11 @@ if ( !(strlen($_SESSION['fu_data']['description']) > 0) )
 if (isset($_SESSION['fu_data']['add_appointment'])) {
 	// Convert day, month, year, hour, minute to date/time
 	// Check submitted information
-	// start_time
-	$_SESSION['fu_data']['app_start_time'] = $_SESSION['fu_data']['app_start_year'] . '-'
-						. $_SESSION['fu_data']['app_start_month'] . '-'
-						. $_SESSION['fu_data']['app_start_day'] . ' '
-						. (isset($_SESSION['fu_data']['app_start_hour']) ? $_SESSION['fu_data']['app_start_hour'] : '00') . ':'
-						. (isset($_SESSION['fu_data']['app_start_minutes']) ? $_SESSION['fu_data']['app_start_minutes'] : '00') . ':'
-						. (isset($_SESSION['fu_data']['app_start_seconds']) ? $_SESSION['fu_data']['app_start_seconds'] : '00');
-	
+
+	//
+	// Start time
+	//
+	$_SESSION['fu_data']['app_start_time'] = get_datetime_from_array($_SESSION['fu_data'], 'app_start', 'start');
 	$unix_app_start_time = strtotime($_SESSION['fu_data']['app_start_time']);
 	
 	if ( ($unix_app_start_time<0) || !checkdate($_SESSION['fu_data']['app_start_month'],$_SESSION['fu_data']['app_start_day'],$_SESSION['fu_data']['app_start_year']) )
@@ -123,12 +120,7 @@ if (isset($_SESSION['fu_data']['add_appointment'])) {
 			// Report error if some of the fields empty TODO
 		elseif (!$_SESSION['fu_data']['app_end_year'] || !$_SESSION['fu_data']['app_end_month'] || !$_SESSION['fu_data']['app_end_day']) {
 			$_SESSION['errors']['app_end_time'] = 'Partial appointment end time!';
-			$_SESSION['fu_data']['app_end_time'] = ($_SESSION['fu_data']['app_end_year'] ? $_SESSION['fu_data']['app_end_year'] : '0000') . '-'
-								. ($_SESSION['fu_data']['app_end_month'] ? $_SESSION['fu_data']['app_end_month'] : '00') . '-'
-								. ($_SESSION['fu_data']['app_end_day'] ? $_SESSION['fu_data']['app_end_day'] : '00') . ' '
-								. ($_SESSION['fu_data']['app_end_hour'] ? $_SESSION['fu_data']['app_end_hour'] : '00') . ':'
-								. ($_SESSION['fu_data']['app_end_minutes'] ? $_SESSION['fu_data']['app_end_minutes'] : '00') . ':'
-								. ($_SESSION['fu_data']['app_end_seconds'] ? $_SESSION['fu_data']['app_end_seconds'] : '00');
+			$_SESSION['fu_data']['app_end_time'] = get_datetime_from_array($_SESSION['fu_data'], 'app_end', 'start');
 		} else {
 			// Join fields and check resulting date
 			$_SESSION['fu_data']['app_end_time'] = $_SESSION['fu_data']['app_end_year'] . '-'
@@ -237,15 +229,15 @@ if (count($_SESSION['errors'])) {
 		$fl .= ", description  = '" . clean_input($_SESSION['fu_data']['description']) . "'";
 	}
 
-	if ($id_followup>0) {
-		// Check access rights
+	if ($id_followup > 0) {
+		// Edit of existing follow-up
 		if (!allowed($_SESSION['fu_data']['id_case'],'e')) 
 			lcm_panic("You don't have permission to modify this case's information. (" . $_SESSION['fu_data']['id_case'] . ")");
 
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
 		$result = lcm_query($q);
 	} else {
-		// Check access rights
+		// New follow-up
 		if (!allowed($_SESSION['fu_data']['id_case'],'w'))
 			lcm_panic("You don't have permission to add information to this case. (" . $_SESSION['fu_data']['id_case'] . ")");
 
