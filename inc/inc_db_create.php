@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.42 2005/04/18 15:55:51 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.43 2005/04/19 06:40:35 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -257,6 +257,7 @@ function create_database() {
 		name VARCHAR(255) NOT NULL,
 		title text NOT NULL DEFAULT '',
 		description text NOT NULL DEFAULT '',
+		hasvalue ENUM('Y', 'N') NOT NULL DEFAULT 'N',
 		ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
 		PRIMARY KEY (id_keyword))";
 
@@ -307,7 +308,7 @@ function create_database() {
 		name VARCHAR(255) NOT NULL,
 		title text NOT NULL DEFAULT '',
 		description text NOT NULL DEFAULT '',
-		type ENUM('system', 'case', 'followup', 'client', 'org', 'author'),
+		type ENUM('system', 'case', 'stage', 'followup', 'client', 'org', 'client_org', 'author'),
 		policy ENUM('optional', 'recommended', 'mandatory') DEFAULT 'optional',
 		quantity ENUM('one', 'many') DEFAULT 'one',
 		suggest text NOT NULL DEFAULT '',
