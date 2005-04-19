@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.22 2005/04/19 08:49:10 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.23 2005/04/19 09:55:59 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -265,7 +265,7 @@ function get_keywords_applied_to($type, $id, $id_sec = 0) {
 	if ($type == 'stage') {
 		$query = "SELECT kwlist.*, kwinfo.*, kwg.title as kwg_title
 				FROM lcm_keyword_case as kwlist, lcm_keyword as kwinfo, lcm_keyword_group as kwg
-				WHERE id_" . $type . " = " . $id . " 
+				WHERE id_case = " . $id . " 
 				  AND kwinfo.id_keyword = kwlist.id_keyword
 				  AND kwg.id_group = kwinfo.id_group
 				  AND kwlist.id_stage = " . $id_sec;
@@ -290,11 +290,16 @@ function get_keywords_applied_to($type, $id, $id_sec = 0) {
 }
 
 // show keywords in (ex) 'case_det.php', therefore, it is in a <p> ... </p>
-function show_all_keywords($type_obj, $id_obj) {
-	$all_kw = get_keywords_applied_to($type_obj, $id_obj);
+function show_all_keywords($type_obj, $id_obj, $id_obj_sec = 0) {
+	$all_kw = get_keywords_applied_to($type_obj, $id_obj, $id_obj_sec);
 
 	foreach ($all_kw as $kw) {
-		echo _Ti($kw['kwg_title']) . $kw['title'] . "<br/>\n";
+		echo _Ti($kw['kwg_title']) . _T(remove_number_prefix($kw['title']));
+
+		if ($kw['value'])
+			echo ": " . $kw['value']; // TRAD ?
+
+		echo "<br/>\n";
 	}
 }
 
@@ -311,6 +316,7 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 	
 		foreach ($current_kws as $kw) {
 			$kwg = get_kwg_from_id($kw['id_group']);
+			$show_kw_value = false;
 		
 			echo "<tr>\n";
 			echo "<td>" . f_err_star('FIXME') . _Ti($kwg['title'])
@@ -324,6 +330,9 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 
 			$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
 			foreach ($kw_for_kwg as $kw1) {
+				if ($kw1['hasvalue'] == 'Y')
+					$show_kw_value = true;
+
 				$sel = ($kw1['id_keyword'] == $kw['id_keyword'] ? ' selected="selected"' : '');
 				echo '<option value="' . $kw1['id_keyword'] . '"' . $sel . '>' . _T(remove_number_prefix($kw1['title'])) . "</option>\n";
 			}
@@ -334,6 +343,11 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 				. '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" />' // TRAD
 				. '</label>&nbsp;<input type="checkbox" id="id_del_keyword' . $type_obj . $cpt . '" name="kw_del_' . $type_obj . $cpt . '"/>';
 
+			if ($show_kw_value) {
+				echo "<br />\n";
+				echo '<input type="text" name="kw_entryval_' . $type_obj . $cpt . '" ' . 'value="' . $kw["value"] . '" />' . "\n";
+			}
+			
 			echo "</td>\n";
 			echo "</tr>\n";
 			$cpt++;
@@ -358,10 +372,25 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 			echo '<select name="new_keyword_' . $type_obj . '_value[]">';
 			echo '<option value="">' . '' . "</option>\n";
 
-			foreach ($kw_for_kwg as $kw)
-				echo '<option value="' . $kw['id_keyword'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+			$show_kw_value = false;
+
+			foreach ($kw_for_kwg as $kw) {
+				if ($kw['hasvalue'] == 'Y')
+					$show_kw_value = true;
+
+				$sel = ($kwg['suggest'] == $kw['name'] ? ' selected="selected" ' : '');
+				echo '<option ' . $sel . ' value="' . $kw['id_keyword'] . '">' 
+					. _T(remove_number_prefix($kw['title']))
+					. "</option>\n";
+			}
 
 			echo "</select>\n";
+
+			if ($show_kw_value) {
+				echo "<br />\n";
+				echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt . '" ' . 'value="" />' . "\n";
+			}
+
 			echo "</td>\n";
 		} else {
 			// This should not happen, we should get only non-empty groups
@@ -405,6 +434,9 @@ function update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 					$query = "UPDATE lcm_keyword_" . $type_obj . " 
 								SET id_keyword = " . $kw_values[$cpt];
 				}
+
+				if ($_REQUEST['kw_entryval_' . $type_obj . $cpt])
+					$query .= ", value = '" . $_REQUEST['kw_entryval_' . $type_obj . $cpt] . "'";
 
 				$query .= " WHERE id_entry = " . $kw_entries[$cpt];
 			}
