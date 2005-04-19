@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.23 2005/04/19 09:55:59 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.24 2005/04/19 10:50:06 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -75,7 +75,7 @@ function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 					FROM lcm_keyword_case as ko, lcm_keyword as k, lcm_keyword_group as kwg
 					WHERE k.id_keyword = ko.id_keyword
 					  AND k.id_group = kwg.id_group
-					  AND ko.id_" . $type_obj . " = " . $id_obj . "
+					  AND ko.id_case = " . $id_obj . "
 					  AND ko.id_stage = " . $id_obj_sec . "
 					  AND kwg.quantity = 'one'";
 		} else {
