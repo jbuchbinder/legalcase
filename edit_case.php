@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.74 2005/04/12 20:52:24 antzi Exp $
+	$Id: edit_case.php,v 1.75 2005/04/19 08:17:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -52,10 +52,6 @@ if (empty($_SESSION['errors'])) {
 
 	// Find out if this is existing or new case
 	$existing = ($case > 0);
-
-	// Set author ID by session data
-	// [ML] XXX FIXME: absurd! this is written in the database, there may be many authors
-	$_SESSION['case_data']['id_author'] = $GLOBALS['author_session']['id_author'];
 
 	if ($existing) {
 		// Check access rights
@@ -101,7 +97,7 @@ if (!$existing && isset($_REQUEST['attach_client'])) {
 		if ($info = lcm_fetch_array($result)) {
 			$_SESSION['case_data']['title'] = get_person_name($info);
 		} else {
-			die("No such client #" . $attach_client);
+			lcm_panic("No such client #" . $attach_client);
 		}
 	}
 }
@@ -121,7 +117,7 @@ if (!$existing && isset($_REQUEST['attach_org'])) {
 		if ($info = lcm_fetch_array($result)) {
 			$_SESSION['case_data']['title'] = $info['name'];
 		} else {
-			die("No such organisation #" . $attach_org);
+			lcm_panic("No such organisation #" . $attach_org);
 		}
 	}
 }
@@ -163,7 +159,6 @@ if ($attach_client || $attach_org)
 
 // Start edit case form
 echo "<form action=\"upd_case.php\" method=\"post\">
-<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['case_data']['id_author'] . "\" />
 <table class=\"tbl_usr_dtl\">\n";
 
 if ($attach_client)
@@ -186,12 +181,13 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "</td></tr>\n";
 	
 	// Court archive ID
+	/* [ML] will be in keyword
 	if ($case_court_archive == 'yes') {
 		echo '<tr><td><label for="input_id_court_archive">' . _T('case_input_court_archive') . "</label></td>\n";
 		echo '<td><input size="35" name="id_court_archive" id="input_id_court_archive" value="'
 			. clean_output($_SESSION['case_data']['id_court_archive']) 
 			. '" class="search_form_txt" /></td></tr>' . "\n";
-	}
+	} */
 
 	// Legal reason
 	echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
@@ -216,6 +212,14 @@ if ($_SESSION['case_data']['id_case']) {
 	// Keywords (if any)
 	include_lcm('inc_keywords');
 	show_edit_keywords_form('case', $_SESSION['case_data']['id_case']);
+
+	$id_stage = 0; // new case, stage not yet known
+	if ($_SESSION['case_data']['stage']) {
+		$stage = get_kw_from_name('stage', $_SESSION['case_data']['stage']);
+		$id_stage = $stage['id_keyword'];
+	}
+
+	show_edit_keywords_form('stage', $_SESSION['case_data']['id_case'], $id_stage);
 
 	// Notes
 	echo "<tr>\n";
