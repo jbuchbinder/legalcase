@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.101 2005/04/19 07:41:06 mlutfy Exp $
+	$Id: edit_fu.php,v 1.102 2005/04/19 10:11:25 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -244,7 +244,7 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				echo get_date_inputs($name, $_SESSION['fu_data']['date_start'], false);
 				echo ' ' . _T('time_input_time_at') . ' ';
 				echo get_time_inputs($name, $_SESSION['fu_data']['date_start']);
-				echo f_err_star('date_start', $errors); ?>
+				?>
 			</td>
 		</tr>
 		<tr><td><?php echo f_err_star('date_end') . (($prefs['time_intervals'] == 'absolute') ? _T('fu_input_date_end') : _T('fu_input_time_length')); ?></td>
@@ -263,7 +263,6 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 					echo ' ';
 					echo _T('time_input_time_at') . ' ';
 					echo get_time_inputs($name, $_SESSION['fu_data']['date_end']);
-					echo f_err_star('date_end',$errors);
 				} else {
 					$name = '';
 
@@ -279,14 +278,64 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 					$interval = ( ($_SESSION['fu_data']['date_end']!='0000-00-00 00:00:00') ?
 							strtotime($_SESSION['fu_data']['date_end']) - strtotime($_SESSION['fu_data']['date_start']) : 0);
 					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
-					echo f_err_star('date_end',$errors);
 				} ?>
 			</td>
 		</tr>
 <?php
-			echo "<tr>\n";
+
+	// Show 'conclusion' options
+	if ($show_conclusion) {
+		$kws_conclusion = get_keywords_in_group_name('conclusion');
+
+		echo "<tr>\n";
+		echo "<td>" . _Ti('fu_input_conclusion') . "</td>\n";
+		echo '<td>';
+		echo '<select ' . $dis . ' name="conclusion" size="1" class="sel_frm">' . "\n";
+
+		$default = '';
+		if ($_SESSION['fu_data']['conclusion'])
+			$default = $_SESSION['fu_data']['conclusion'];
+
+		foreach ($kws_conclusion as $kw) {
+			$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
+			echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+		}
+
+		echo "</select>\n";
+		echo "</td>\n";
+		echo "</tr>\n";
+
+		// If guilty, what sentence?
+		$kws_sentence = get_keywords_in_group_name('sentence');
+
+		echo "<tr>\n";
+		echo "<td>" . _Ti('fu_input_sentence') . "</td>\n";
+		echo '<td>';
+		echo '<select ' . $dis . ' name="sentence" size="1" class="sel_frm">' . "\n"; 
+
+		$default = '';
+		if ($_SESSION['fu_data']['sentence'])
+			$default = $_SESSION['fu_data']['sentence'];
+
+		echo "<!-- " . $default . " -->\n";
+
+		foreach ($kws_sentence as $kw) {
+			$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
+			echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+		}
+
+		echo "</select>\n";
+
+		// If sentence, for how much?
+		echo '<input type="text" name="sentence_val" size="10" value="' . $_SESSION['fu_data']['sentence_val'] . '" />';
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
+
+
 			if ($_REQUEST['submit'] == 'set_status' || is_status_change($_SESSION['fu_data']['type'])) {
 				// Change status
+				echo "<tr>\n";
 				echo "<td>" . _T('case_input_status') . "</td>\n";
 				echo "<td>";
 
@@ -294,9 +343,11 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				echo _T('kw_followups_' . $_SESSION['fu_data']['type'] . '_title');
 
 				echo "</td>\n";
+				echo "</tr>\n";
 			} elseif ($_REQUEST['submit'] == 'set_stage' || $_SESSION['fu_data']['type'] == 'stage_change') {
 				// Change stage
-				echo "<td>" . _T('case_input_stage') . "</td>\n";
+				echo "<tr>\n";
+				echo "<td>" . _T('fu_input_next_stage') . "</td>\n";
 				echo "<td>";
 
 				echo '<input type="hidden" name="type" value="' . $_SESSION['fu_data']['type'] . '" />' . "\n";
@@ -304,8 +355,16 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				echo _Tkw('stage', $_SESSION['fu_data']['case_stage']);
 
 				echo "</td>\n";
+				echo "</tr>\n";
+
+				// Update stage keywords (if any)
+				include_lcm('inc_keywords');
+				$stage = get_kw_from_name('stage', $_SESSION['fu_data']['case_stage']);
+				$id_stage = $stage['id_keyword'];
+				show_edit_keywords_form('stage', $_SESSION['fu_data']['id_case'], $id_stage);
 			} else {
 				// The usual follow-up
+				echo "<tr>\n";
 				echo "<td>" . _T('fu_input_type') . "</td>\n";
 				echo "<td>";
 				echo '<select ' . $dis . ' name="type" size="1" class="sel_frm">' . "\n";
@@ -323,55 +382,6 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				}
 
 				echo "</select>\n";
-				echo "</td>\n";
-			}
-			echo "</tr>\n";
-
-			// Show 'conclusion' options
-			if ($show_conclusion) {
-				$kws_conclusion = get_keywords_in_group_name('conclusion');
-
-				echo "<tr>\n";
-				echo "<td>" . _Ti('fu_input_conclusion') . "</td>\n";
-				echo '<td>';
-				echo '<select ' . $dis . ' name="conclusion" size="1" class="sel_frm">' . "\n";
-
-				$default = '';
-				if ($_SESSION['fu_data']['conclusion'])
-					$default = $_SESSION['fu_data']['conclusion'];
-
-				foreach ($kws_conclusion as $kw) {
-					$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
-					echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
-				}
-
-				echo "</select>\n";
-				echo "</td>\n";
-				echo "</tr>\n";
-
-				// If guilty, what sentence?
-				$kws_sentence = get_keywords_in_group_name('sentence');
-
-				echo "<tr>\n";
-				echo "<td>" . _Ti('fu_input_sentence') . "</td>\n";
-				echo '<td>';
-				echo '<select ' . $dis . ' name="sentence" size="1" class="sel_frm">' . "\n"; 
-				
-				$default = '';
-				if ($_SESSION['fu_data']['sentence'])
-					$default = $_SESSION['fu_data']['sentence'];
-
-				echo "<!-- " . $default . " -->\n";
-
-				foreach ($kws_sentence as $kw) {
-					$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
-					echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
-				}
-
-				echo "</select>\n";
-
-				// If sentence, for how much?
-				echo '<input type="text" name="sentence_val" size="10" value="' . $_SESSION['fu_data']['sentence_val'] . '" />';
 				echo "</td>\n";
 				echo "</tr>\n";
 			}
