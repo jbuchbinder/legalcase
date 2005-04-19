@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.20 2005/04/12 07:39:49 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.21 2005/04/19 08:01:55 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -35,7 +35,7 @@ function get_kwg_all($type, $exclude_empty = false) {
 	$ret = array();
 
 	if ($type == 'user')
-		$in_type = "IN ('case', 'followup', 'client', 'org', 'client_org')";
+		$in_type = "IN ('case', 'stage', 'followup', 'client', 'org', 'client_org')";
 	else
 		$in_type = "= '" . addslashes($type) . "'";
 
@@ -60,22 +60,32 @@ function get_kwg_all($type, $exclude_empty = false) {
 	return $ret;
 }
 
-function get_kwg_applicable_for($type_obj, $id_obj) {
+function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 	$ret = array();
 
-	if (! ($type_obj == 'case' || $type_obj == 'client' || $type_obj == 'org' || $type_obj == 'author'))
+	if (! ($type_obj == 'case' || $type_obj == 'stage' || $type_obj == 'client' || $type_obj == 'org' || $type_obj == 'author'))
 		lcm_panic("Unknown type_obj: " . $type_obj);
 	
 	// Build 'NOT IN' list (already applied keywords, with quantity 'one')
 	$not_in_str = "";
 
 	if ($id_obj) {
-		$query = "SELECT DISTINCT kwg.id_group, kwg.quantity
+		if ($type_obj == 'stage') {
+			$query = "SELECT DISTINCT kwg.id_group, kwg.quantity
+					FROM lcm_keyword_case as ko, lcm_keyword as k, lcm_keyword_group as kwg
+					WHERE k.id_keyword = ko.id_keyword
+					  AND k.id_group = kwg.id_group
+					  AND ko.id_" . $type_obj . " = " . $id_obj . "
+					  AND ko.id_stage = " . $id_obj_sec . "
+					  AND kwg.quantity = 'one'";
+		} else {
+			$query = "SELECT DISTINCT kwg.id_group, kwg.quantity
 					FROM lcm_keyword_" . $type_obj . " as ko, lcm_keyword as k, lcm_keyword_group as kwg
 					WHERE k.id_keyword = ko.id_keyword
 					  AND k.id_group = kwg.id_group
 					  AND ko.id_" . $type_obj . " = " . $id_obj . "
 					  AND kwg.quantity = 'one'";
+		}
 		
 		$result = lcm_query($query);
 	
@@ -125,6 +135,18 @@ function get_kwg_from_id($id_group) {
 	return lcm_fetch_array($result);
 }
 
+function get_kwg_from_name($kwg_name) {
+	$query = "SELECT *
+				FROM lcm_keyword_group
+				WHERE name = '" . $kwg_name . "'";
+	$result = lcm_query($query);
+
+	if (! lcm_num_rows($result))
+		lcm_panic("Invalid keyword group (ID = " . $id_group . ")");
+
+	return lcm_fetch_array($result);
+}
+
 //
 // get_kw_from_id: Returns the keyword associated with the provided ID.
 //
@@ -138,6 +160,30 @@ function get_kw_from_id($id_keyword) {
 	if (! lcm_num_rows($result))
 		lcm_panic("Invalid keyword (ID = " . $id_keyword . ")");
 
+	return lcm_fetch_array($result);
+}
+
+function get_kw_from_name($kwg_name, $kw_name) {
+	global $system_kwg;
+
+	if (! $kwg_name)
+		lcm_panic("missing kwg_name");
+
+	if (! $kw_name)
+		lcm_panic("missing kw_name");
+
+	// Check cache
+	if (isset($system_kwg[$kwg_name]['keywords'][$kw_name]))
+		return $system_kwg[$kwg_name]['keywords'][$kw_name];
+
+	// Get from DB
+	$kwg_info = get_kwg_from_name($kwg_name);
+	$query = "SELECT *
+				FROM lcm_keyword
+				WHERE id_group = " . $kwg_info['id_group'] . "
+				  AND name = '" . $kw_name . "'";
+	
+	$result = lcm_query($query);
 	return lcm_fetch_array($result);
 }
 
@@ -211,26 +257,25 @@ function check_if_kwg_name_unique($name) {
 	return (lcm_num_rows($result) == 0);
 }
 
-// Get keyword title
-function get_kw_title($name) {
-	$query = "SELECT title FROM lcm_keyword WHERE name='" . clean_input($name) . "'";
-	$result = lcm_query($query);
-	if ($row = lcm_fetch_array($result))
-		return $row['title'];
-	else
-		return false;
-}
-
 // Return a list of keywords attached to type (case/client/org/..) for a given ID
-function get_keywords_applied_to($type, $id) {
-	if (! ($type == 'case' || $type == 'client' || $type == 'org' || $type == 'author'))
+function get_keywords_applied_to($type, $id, $id_sec = 0) {
+	if (! ($type == 'case' || $type == 'stage' || $type == 'client' || $type == 'org' || $type == 'author'))
 		lcm_panic("Unknown type: " . $type);
 	
-	$query = "SELECT kwlist.*, kwinfo.*, kwg.title as kwg_title
+	if ($type == 'stage') {
+		$query = "SELECT kwlist.*, kwinfo.*, kwg.title as kwg_title
+				FROM lcm_keyword_case as kwlist, lcm_keyword as kwinfo, lcm_keyword_group as kwg
+				WHERE id_" . $type . " = " . $id . " 
+				  AND kwinfo.id_keyword = kwlist.id_keyword
+				  AND kwg.id_group = kwinfo.id_group
+				  AND kwlist.id_stage = " . $id_sec;
+	} else {
+		$query = "SELECT kwlist.*, kwinfo.*, kwg.title as kwg_title
 				FROM lcm_keyword_" . $type . " as kwlist, lcm_keyword as kwinfo, lcm_keyword_group as kwg
 				WHERE id_" . $type . " = " . $id . " 
 				  AND kwinfo.id_keyword = kwlist.id_keyword
 				  AND kwg.id_group = kwinfo.id_group";
+	}
 	
 	$result = lcm_query($query);
 
@@ -250,15 +295,15 @@ function show_all_keywords($type_obj, $id_obj) {
 	}
 }
 
-function show_edit_keywords_form($type_obj, $id_obj) {
-	if (! ($type_obj == 'case' || $type_obj == 'client' || $type_obj == 'org'))
+function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
+	if (! ($type_obj == 'case' || $type_obj == 'stage' || $type_obj == 'client' || $type_obj == 'org'))
 		lcm_panic("Invalid object type requested");
 
 	//
 	// Show current keywords (already attached to object)
 	//
 	if ($id_obj) {
-		$current_kws = get_keywords_applied_to($type_obj, $id_obj);
+		$current_kws = get_keywords_applied_to($type_obj, $id_obj, $id_obj_sec);
 		$cpt = 0;
 	
 		foreach ($current_kws as $kw) {
@@ -295,7 +340,7 @@ function show_edit_keywords_form($type_obj, $id_obj) {
 	//
 	// New keywords
 	//
-	$kwg_for_case = get_kwg_applicable_for($type_obj, $id_obj);
+	$kwg_for_case = get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec);
 	$cpt_kw = 0;
 
 	foreach ($kwg_for_case as $kwg) {
