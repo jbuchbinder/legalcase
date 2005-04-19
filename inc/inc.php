@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.51 2005/04/18 15:58:20 mlutfy Exp $
+	$Id: inc.php,v 1.52 2005/04/19 10:31:13 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -30,6 +30,7 @@ if (!@file_exists('inc/config/inc_connect.php')) {
 include ('inc/inc_version.php');
 
 include_lcm('inc_auth');
+include_lcm('inc_acc');
 include_lcm('inc_presentation');
 include_lcm('inc_text');
 include_lcm('inc_filters');
