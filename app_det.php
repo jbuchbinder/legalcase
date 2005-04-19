@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.16 2005/04/16 08:13:55 mlutfy Exp $
+	$Id: app_det.php,v 1.17 2005/04/19 10:40:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -129,7 +129,7 @@ if ($row = lcm_fetch_array($result)) {
 			$fu = lcm_fetch_array($res_fu);
 
 			$short_description = get_fu_description($fu);
-			echo '<br />Consequent to:' . ' <a href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description . "</a><br />\n"; // TRAD
+			echo '<br />Consequent to:' . ' <a class="content_link" href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description . "</a><br />\n"; // TRAD
 		}
 		// Show child followup
 		$q = "SELECT lcm_app_fu.id_followup,lcm_followup.description FROM lcm_app_fu,lcm_followup
