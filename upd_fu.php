@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.45 2005/04/18 12:57:18 mlutfy Exp $
+	$Id: upd_fu.php,v 1.46 2005/04/19 10:20:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -308,6 +308,16 @@ if (count($_SESSION['errors'])) {
 			$result = lcm_query($q);
 		}
 	}
+
+//
+// Update stage keywords
+//
+if ($_REQUEST['new_stage']) {
+	include_lcm('inc_keywords');
+	$stage_info = get_kw_from_name('stage', $_REQUEST['new_stage']);
+	$id_stage = $stage_info['id_keyword'];
+	update_keywords_request('stage', $id_case, $id_stage);
+}
 
 ///////////////////////////////////////////////////////////////////////
 //	Consequent appointment information update
