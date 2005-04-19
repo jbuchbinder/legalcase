@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.21 2005/04/19 07:42:18 mlutfy Exp $
+	$Id: fu_det.php,v 1.22 2005/04/19 07:43:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -79,7 +79,7 @@ $res_app = lcm_query($q);
 
 if ($app = lcm_fetch_array($res_app)) {
 	echo '<li style="list-style-type: none;">' . _T('fu_input_child_appointment') . ' ';
-	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _T(get_kw_title($app['type']))
+	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _Tkw('appointments', $app['type'])
 		. ' (' . $app['title'] . ') from ' . format_date($app['start_time']) . "</a></li>\n"; // TRAD
 }
 
