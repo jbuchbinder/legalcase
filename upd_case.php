@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.46 2005/04/12 21:26:35 antzi Exp $
+	$Id: upd_case.php,v 1.47 2005/04/19 09:08:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -127,10 +127,6 @@ if (count($_SESSION['errors'])) {
 				SET id_followup = 0, id_case = $id_case, id_author = $id_author, type = 'assignment',
 					date_start = NOW(), date_end = NOW(), description='" . $id_author . "'";
 
-		// [ML] Now in translation system
-		//	$q .= njoin(array($author_data['name_first'], $author_data['name_middle'], $author_data['name_last']));
-		//	$q .= " created the case and is auto-assigned to it',date_start=NOW()"; // TRAD
-
 		$result = lcm_query($q);
 
 		// Set case date_assigned to NOW()
@@ -144,6 +140,10 @@ if (count($_SESSION['errors'])) {
 	// Keywords
 	include_lcm('inc_keywords');
 	update_keywords_request('case', $id_case);
+
+	$stage = get_kw_from_name('stage', $_SESSION['case_data']['stage']);
+	$id_stage = $stage['id_keyword'];
+	update_keywords_request('stage', $id_case, $id_stage);
 
 	// [ML] I don't understand why: header("Location: $ref_edit_case");
 	// [AG] Because "edit_case" could be invoked from diferent places i.e. edit existing case or add new or other.
