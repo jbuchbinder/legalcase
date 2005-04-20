@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.24 2005/04/19 10:50:06 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.25 2005/04/20 08:56:10 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -474,6 +474,8 @@ function update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 								id_" . $type_obj . " = " . $id_obj;
 				}
 
+				if ($_REQUEST['new_kw_entryval_' . $type_obj . $cpt])
+					$query .= ", value = '" . $_REQUEST['new_kw_entryval_' . $type_obj . $cpt] . "'";
 
 				lcm_query($query);
 			}
