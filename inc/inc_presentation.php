@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.218 2005/04/19 07:08:56 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.219 2005/04/20 09:22:19 mlutfy Exp $
 */
 
 //
@@ -1457,7 +1457,7 @@ function show_context_case_involving($id_case) {
 	foreach ($all_clients as $client) {
 		if ($client['id_client']) {
 			echo '<a href="client_det.php?client=' . $client['id_client'] . '" class="content_link">'
-				. njoin(array($client['name_first'],$client['name_middle'],$client['name_last']))
+				. get_person_name($client)
 				. '</a>';
 	
 			if (++$current < $numrows)
@@ -1475,6 +1475,34 @@ function show_context_case_involving($id_case) {
 	
 	if ($numrows > 0)
 		echo "</li>\n";
+}
+
+function show_context_stage($id_case, $id_stage) {
+	if (! (is_numeric($id_case) && $id_case > 0)) {
+		lcm_log("Warning: show_context_casename, id_case not a number > 0: $id_case");
+		return;
+	}
+
+	if (! (is_numeric($id_stage) && $id_stage > 0)) {
+		lcm_log("Warning: show_context_casename, id_stage not a number > 0: $id_stage");
+		return;
+	}
+
+	include_lcm('inc_keywords');
+	$kws = get_keywords_applied_to('stage', $id_case, $id_stage);
+
+	foreach($kws as $kw) {
+		echo '<li style="list-style-type: none;">';
+
+		if ($kw['value']) {
+			echo _Ti(remove_number_prefix($kw['title']));
+			echo $kw['value'];
+		} else {
+			echo _Ti(remove_number_prefix($kw['kwg_title'])) . _T(remove_number_prefix($kw['title']));
+		}
+
+		echo "</li>\n";
+	}
 }
 
 function show_context_end() {
