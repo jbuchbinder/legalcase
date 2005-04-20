@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.103 2005/04/20 08:48:00 mlutfy Exp $
+	$Id: edit_fu.php,v 1.104 2005/04/20 10:26:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -51,7 +51,7 @@ if (empty($_SESSION['errors'])) {
 			foreach($row as $key=>$value) {
 				$_SESSION['fu_data'][$key] = $value;
 			}
-		} else die("There's no such follow-up!");
+		} else lcm_panic("Edit follow-up: invalid 'follow-up id': " . $_SESSION['followup']);
 
 		// Set the case ID, to which this followup belongs
 		$case = $_SESSION['fu_data']['id_case'];
@@ -103,12 +103,13 @@ if (empty($_SESSION['errors'])) {
 
 		if (isset($_REQUEST['stage']))
 			$new_stage = $_REQUEST['stage'];
-			// $_SESSION['fu_data']['case_stage'] = $_REQUEST['stage'];
 
 		if (isset($_REQUEST['type']))
 			$_SESSION['fu_data']['type'] = $_REQUEST['type'];
 
+		//
 		// Check if the followup is created from appointment
+		//
 		$app = intval($_GET['app']);
 		if (! empty($app)) {
 			$q = "SELECT * FROM lcm_app WHERE id_app=$app";
@@ -143,20 +144,16 @@ if (empty($_SESSION['errors'])) {
 						. ( ($client['id_org'] > 0) ? " of " . $client['name'] : ''); // TRAD
 			}
 
-			// First i18n attempt..
+			// Propose a description based on the appointment
 			$_SESSION['fu_data']['description'] = _T('fu_info_after_event', array(
 						'title' => _Ti(_Tkw('appointments', $row['type'])) . $row['title'],
 						'date' => format_date($row['start_time']),
 						'participants' => join(', ', $participants)));
 
-			$_SESSION['fu_data']['description'] = str_replace('&nbsp;', ' ', $_SESSION['fu_data']['description']);
-
-			// Set start and end times of the followup from the appointment
+			$_SESSION['fu_data']['id_app'] = $app;
 			$_SESSION['fu_data']['date_start'] = $row['start_time'];
 			$_SESSION['fu_data']['date_end']   = $row['end_time'];
-
-			// Save appointment ID as session variable
-			$_SESSION['fu_data']['id_app'] = $app;
+			$_SESSION['fu_data']['description'] = str_replace('&nbsp;', ' ', $_SESSION['fu_data']['description']);
 		}
 	}
 }
@@ -233,6 +230,26 @@ if ($_REQUEST['submit'] == 'set_status')
 // For 'change stage'
 if (isset($old_stage))
 	show_context_item(_Ti('fu_input_current_stage') . _Tkw('stage', $old_stage));
+
+// Show stage information [ML] Not very efficient, I know, but I prefer to avoid spagetti
+if ($_SESSION['fu_data']['case_stage']) {
+	// if editing an existing followup..
+	$stage_info = get_kw_from_name('stage', $_SESSION['fu_data']['case_stage']);
+	$id_stage = $stage_info['id_keyword'];
+	show_context_stage($case, $id_stage);
+} elseif (isset($old_stage)) {
+	// setting new stage
+	$stage_info = get_kw_from_name('stage', $old_stage);
+	$id_stage = $stage_info['id_keyword'];
+	show_context_stage($case, $id_stage);
+} else {
+	// Normal follow-up
+	$result = lcm_query("SELECT stage FROM lcm_case WHERE id_case = " . $case);
+	$row = lcm_fetch_array($result);
+	$stage_info = get_kw_from_name('stage', $row['stage']);
+	$id_stage = $stage_info['id_keyword'];
+	show_context_stage($case, $id_stage);
+}
 
 show_context_end();
 
@@ -374,7 +391,6 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 
 				if (isset($new_stage)) {
 					// Update stage keywords (if any)
-					include_lcm('inc_keywords');
 					$stage = get_kw_from_name('stage', $new_stage); // $_SESSION['fu_data']['case_stage']);
 					$id_stage = $stage['id_keyword'];
 					show_edit_keywords_form('stage', $_SESSION['fu_data']['id_case'], $id_stage);
