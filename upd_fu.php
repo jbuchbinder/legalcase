@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.47 2005/04/19 10:46:55 mlutfy Exp $
+	$Id: upd_fu.php,v 1.48 2005/04/20 08:47:02 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -217,7 +217,16 @@ if (count($_SESSION['errors'])) {
 		type         = '" . clean_input($_SESSION['fu_data']['type']) . "',
 		sumbilled    = '" . clean_input($_SESSION['fu_data']['sumbilled']) . "'";
 
-	if ($_SESSION['fu_data']['type'] == 'stage_change' || is_status_change($_SESSION['fu_data']['type'])) {
+	if ($_SESSION['fu_data']['type'] == 'stage_change') {
+		$desc = array(
+					'description'  => clean_input($_SESSION['fu_data']['description']),
+					'conclusion'   => clean_input($_SESSION['fu_data']['conclusion']),
+					'sentence'     => clean_input($_SESSION['fu_data']['sentence']),
+					'sentence_val' => clean_input($_SESSION['fu_data']['sentence_val']),
+					'new_stage'    => clean_input($_SESSION['fu_data']['new_stage']));
+
+		$fl .= ", description = '" . serialize($desc) . "'";
+	} elseif (is_status_change($_SESSION['fu_data']['type'])) {
 		$desc = array(
 					'description'  => clean_input($_SESSION['fu_data']['description']),
 					'conclusion'   => clean_input($_SESSION['fu_data']['conclusion']),

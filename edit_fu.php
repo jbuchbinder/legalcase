@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.102 2005/04/19 10:11:25 mlutfy Exp $
+	$Id: edit_fu.php,v 1.103 2005/04/20 08:48:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -56,10 +56,17 @@ if (empty($_SESSION['errors'])) {
 		// Set the case ID, to which this followup belongs
 		$case = $_SESSION['fu_data']['id_case'];
 
+		// If editing "stage change"..
+		if ($row['type'] == 'stage_change') 
+			$old_stage = $row['case_stage'];
+
+		// Get new stage from description field
+		$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($_SESSION['fu_data']['description']) : $_SESSION['fu_data']['description']));
+		if (isset($tmp['new_stage']))
+			$new_stage = $tmp['new_stage'];
+
 		// Case conclusion, if appropriate
 		if ($_SESSION['fu_data']['type'] == 'stage_change' || is_status_change($_SESSION['fu_data']['type'])) {
-			$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($_SESSION['fu_data']['description']) : $_SESSION['fu_data']['description']));
-
 			if ($tmp['description'])
 				$_SESSION['fu_data']['description'] = $tmp['description'];
 
@@ -95,7 +102,8 @@ if (empty($_SESSION['errors'])) {
 		$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s');
 
 		if (isset($_REQUEST['stage']))
-			$_SESSION['fu_data']['case_stage'] = $_REQUEST['stage'];
+			$new_stage = $_REQUEST['stage'];
+			// $_SESSION['fu_data']['case_stage'] = $_REQUEST['stage'];
 
 		if (isset($_REQUEST['type']))
 			$_SESSION['fu_data']['type'] = $_REQUEST['type'];
@@ -166,7 +174,7 @@ if (isset($_SESSION['followup']) && (! $edit))
 	lcm_panic("You do not have the permission to edit existing follow-ups");
 
 //
-// Change status: check for if case status is different than current
+// Change status/stage: check for if case status/stage is different than current
 //
 
 $statuses = get_possible_case_statuses();
@@ -184,6 +192,7 @@ if ($_REQUEST['submit'] == 'set_stage') {
 	// Get case stage
 	$result = lcm_query("SELECT stage FROM lcm_case WHERE id_case = " . $case);
 	$row = lcm_fetch_array($result);
+	$old_stage = $row['stage'];
 
 	if ($statuses[$_REQUEST['stage']] == $row['stage'])
 		header('Location: ' . $GLOBALS['HTTP_REFERER']);
@@ -194,11 +203,9 @@ if ($_REQUEST['submit'] == 'set_stage') {
 //
 $show_conclusion = false;
 
-if ($_REQUEST['submit'] == 'set_status' || $_REQUEST['submit'] == 'set_stage' || $_SESSION['fu_data']['type'] == 'stage_change')
-{
+if ($_REQUEST['submit'] == 'set_status' || $_REQUEST['submit'] == 'set_stage') {
 	$show_conclusion = true;
-} elseif (is_status_change($_SESSION['fu_data']['type'])) {
-	// if type is a case status change
+} elseif ($_SESSION['fu_data']['type'] == 'stage_change' || is_status_change($_SESSION['fu_data']['type'])) {
 	$show_conclusion = true;
 }
 
@@ -219,13 +226,13 @@ show_context_start();
 show_context_case_title($case, 'followups');
 show_context_case_involving($case);
 
-// For 'change status'
+// For 'change status' // FIXME (for edit existing fu?)
 if ($_REQUEST['submit'] == 'set_status')
 	show_context_item(_Ti('fu_input_current_status') . _T('case_status_option_' . $row['status']));
 
 // For 'change stage'
-if ($_REQUEST['submit'] == 'set_stage')
-	show_context_item(_Ti('fu_input_current_stage') . _Tkw('stage', $row['stage']));
+if (isset($old_stage))
+	show_context_item(_Ti('fu_input_current_stage') . _Tkw('stage', $old_stage));
 
 show_context_end();
 
@@ -351,17 +358,27 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				echo "<td>";
 
 				echo '<input type="hidden" name="type" value="' . $_SESSION['fu_data']['type'] . '" />' . "\n";
-				echo '<input type="hidden" name="new_stage" value="' . $_SESSION['fu_data']['case_stage'] . '" />' . "\n";
-				echo _Tkw('stage', $_SESSION['fu_data']['case_stage']);
+
+				// This is to compensate an old bug, when 'case stage' was not stored in fu.description
+				// and therefore editing a follow-up would not give correct information.
+				// Bug was in CVS of 0.4.3 between 19-20 April 2005. Should not affect many people.
+				if (isset($new_stage)) {
+					echo '<input type="hidden" name="new_stage" value="' .  $new_stage . '" />' . "\n";
+					echo _Tkw('stage', $new_stage);
+				} else {
+					echo "New stage information not available";
+				}
 
 				echo "</td>\n";
 				echo "</tr>\n";
 
-				// Update stage keywords (if any)
-				include_lcm('inc_keywords');
-				$stage = get_kw_from_name('stage', $_SESSION['fu_data']['case_stage']);
-				$id_stage = $stage['id_keyword'];
-				show_edit_keywords_form('stage', $_SESSION['fu_data']['id_case'], $id_stage);
+				if (isset($new_stage)) {
+					// Update stage keywords (if any)
+					include_lcm('inc_keywords');
+					$stage = get_kw_from_name('stage', $new_stage); // $_SESSION['fu_data']['case_stage']);
+					$id_stage = $stage['id_keyword'];
+					show_edit_keywords_form('stage', $_SESSION['fu_data']['id_case'], $id_stage);
+				}
 			} else {
 				// The usual follow-up
 				echo "<tr>\n";
