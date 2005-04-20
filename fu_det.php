@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.22 2005/04/19 07:43:10 mlutfy Exp $
+	$Id: fu_det.php,v 1.23 2005/04/20 09:48:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,10 +30,10 @@ if (isset($_GET['followup'])) {
 	$followup=intval($_GET['followup']);
 
 	// Fetch the details on the specified follow-up
-	$q="SELECT lcm_followup.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
-		FROM lcm_followup, lcm_author
-		WHERE id_followup=$followup
-			AND lcm_followup.id_author=lcm_author.id_author";
+	$q="SELECT fu.*, a.name_first, a.name_middle, a.name_last
+		FROM lcm_followup as fu, lcm_author as a
+		WHERE id_followup = $followup
+			AND fu.id_author = a.id_author";
 
 	$result = lcm_query($q);
 
@@ -81,6 +81,14 @@ if ($app = lcm_fetch_array($res_app)) {
 	echo '<li style="list-style-type: none;">' . _T('fu_input_child_appointment') . ' ';
 	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _Tkw('appointments', $app['type'])
 		. ' (' . $app['title'] . ') from ' . format_date($app['start_time']) . "</a></li>\n"; // TRAD
+}
+
+// Show stage information
+if ($fu_data['case_stage']) {
+	// if editing an existing followup..
+	$stage_info = get_kw_from_name('stage', $_SESSION['fu_data']['case_stage']);
+	$id_stage = $stage_info['id_keyword'];
+	show_context_stage($case, $id_stage);
 }
 
 show_context_end();
