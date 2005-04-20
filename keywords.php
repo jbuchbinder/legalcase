@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.29 2005/04/19 09:54:35 mlutfy Exp $
+	$Id: keywords.php,v 1.30 2005/04/20 08:22:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -49,7 +49,7 @@ function show_all_keywords_type($type = '') {
 			echo " - " . _Ti('keywords_input_type') .  _T('keywords_input_type_' . $kwg['type']);
 
 		if ($kwg['ac_author'] != 'Y')
-			echo " (hidden) "; // TRAD
+			echo ' ' . _T('keywords_info_kwg_hidden');
 
 		echo "</div>\n";
 
@@ -62,7 +62,7 @@ function show_all_keywords_type($type = '') {
 				echo "\t<li>";
 				if ($suggest == $kw['name']) echo "<b>";
 				echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T(remove_number_prefix($kw['title'])) . "</a>";
-				if ($kw['ac_author'] != 'Y') echo " (hidden) "; // TRAD
+				if ($kw['ac_author'] != 'Y') echo ' ' . _T('keywords_info_kw_hidden');
 				if ($suggest == $kw['name']) echo "</b>";
 				echo "</li>\n";
 			}
@@ -72,13 +72,14 @@ function show_all_keywords_type($type = '') {
 
 		echo '<p><a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
 			. 'id_group=' . $kwg['id_group'] . '">'
-			. 'Add a new keyword in this group' . "</a></p>\n"; // TRAD
+			. _T('keywords_button_kw_new') . "</a></p>\n";
 	
 		echo "</fieldset>\n";
 	}
 
 	if ($type == 'user')
-		echo '<a href="keywords.php?action=edit_group&amp;id_group=0" class="create_new_lnk">Create a new keyword group</a>' . "\n"; // TRAD
+		echo '<p><a href="keywords.php?action=edit_group&amp;id_group=0" class="create_new_lnk">'
+			. _T('keywords_button_kwg_new') . '</a></p>' . "\n";
 
 }
 
@@ -163,15 +164,12 @@ function show_keyword_group_id($id_group) {
 	echo "</tr><tr>\n";
 
 	// Name (only for new keywords, must be unique and cannot be changed)
+	$disabled = ($id_group ? ' disabled="disabled" ' : '');
 	echo "<td colspan='2'>";
 	echo "<p class='normal_text'>";
 	echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
 		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
-	if ($id_group) {
-		echo $kwg['name'];
-	} else {
-		echo '<input type="text" style="width:99%;" id="kwg_name" name="kwg_name" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
-	}
+	echo '<input ' . $disabled . ' type="text" style="width:99%;" id="kwg_name" name="kwg_name" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
 	echo "</p>\n";
 
 	echo "<p class='normal_text'>";
@@ -212,8 +210,9 @@ function show_keyword_group_id($id_group) {
 	
 		echo "<tr>\n";
 		echo '<td colspan="2">';
-		echo "<p>" . "Can authors use this keyword group? (otherwise it will be hidden)" 
-			. " " . get_yes_no('kwg_ac_author', $kwg['ac_author']) . "</p>\n"; // TRAD
+		echo '<p class="normal_text">'
+			. _T('keywords_info_kwg_ac_author') . " " . get_yes_no('kwg_ac_author', $kwg['ac_author'])
+			. "</p>\n";
 		echo "</td>\n";
 		echo "</tr>\n";
 	}
@@ -267,12 +266,12 @@ function show_keyword_id($id_keyword = 0) {
 	echo '<input type="hidden" name="id_group" value="' . $kw['id_group'] . '" />' . "\n"; // for new keyword only
 
 	// Name (only for new keywords, must be unique and cannot be changed)
-	if (! $id_keyword) {
-		echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
-			. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
-		echo '<input type="text" id="kw_name" name="kw_name" value="' . $kw['name'] . '" class="search_form_txt" />' . "\n";
-		echo "<br /><br />\n";
-	}
+	echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
+		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
+
+	$disabled = ($id_keyword ? ' disabled="disabled" ' : '');
+	echo '<input ' . $disabled . ' type="text" id="kw_name" name="kw_name" value="' . $kw['name'] . '" class="search_form_txt" />' . "\n";
+	echo "<br /><br />\n";
 	
 	// Title
 	echo "<strong>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "</strong><br />\n";
@@ -286,7 +285,9 @@ function show_keyword_id($id_keyword = 0) {
 	echo "</textarea>\n";
 	
 	// Ac_author
-	echo "<p>" . "Can authors use this keyword? (otherwise it will be hidden)<br />" . get_yes_no('kw_ac_author', $kw['ac_author']) . "</p>\n"; // TRAD
+	echo '<p class="normal_text">'
+		. _T('keywords_info_kw_ac_author') . ' ' . get_yes_no('kw_ac_author', $kw['ac_author'])
+		. "</p>\n";
 
 	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 	echo "</form>\n";
