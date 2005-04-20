@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.22 2005/04/08 11:19:57 makaveev Exp $
+	$Id: inc_calendar.php,v 1.23 2005/04/20 07:44:40 antzi Exp $
 */
 
 
@@ -1983,14 +1983,14 @@ function sql_calendrier_agenda ($mois, $annee) {
 	while($row=spip_fetch_array($result_messages)){
 		$rv[journum($row['date_heure'])] = 1;
 	} */
-	$result_messages=lcm_query("SELECT lcm_app.reminder
+	$result_messages=lcm_query("SELECT lcm_app.start_time
 					FROM lcm_app, lcm_author_app
 					WHERE lcm_author_app.id_author='" . $GLOBALS['author_session']['id_author'] . "'
 					AND lcm_app.id_app=lcm_author_app.id_app
-					AND reminder >= '$annee-$mois-1'
-					AND reminder < DATE_ADD('$annee-$mois-1', INTERVAL 1 MONTH)");
+					AND start_time >= '$annee-$mois-1'
+					AND start_time < DATE_ADD('$annee-$mois-1', INTERVAL 1 MONTH)");
 	while($row=lcm_fetch_array($result_messages)){
-		$rv[journum($row['reminder'])] = 1;
+		$rv[journum($row['start_time'])] = 1;
 	}
 	return $rv;
 }
