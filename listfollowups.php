@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listfollowups.php,v 1.2 2005/04/15 09:30:44 mlutfy Exp $
+	$Id: listfollowups.php,v 1.3 2005/04/21 20:39:46 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -301,23 +301,30 @@ $c = 0;
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
 	// Change row appearance
 	$css = ($i %2 ? "dark" : "light");
-
+	
+	
 	// Show case subdivision, if necessary
 	if ($row['id_case'] != $c) {
-		echo '<tr><th colspan="6">';
-		echo '<a href="case_det.php?case=' . $row['id_case'] . '">';
+		echo '<tr><td colspan="6">&nbsp;</td></tr>';
+		echo '<tr><th colspan="5">';
+		
+		echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
+		
+		echo '<img src="images/jimmac/stock_edit-16.png" width="16" height="16" alt="" border="0" />&nbsp;';
+
 		echo 'Case #' . $row['id_case'] . " - '" . $row['title'] . "'";
 		echo '&nbsp;(' . $row['status'] . ')';
-		echo '</a>';
-		echo '&nbsp;<a href="edit_fu.php?case=' . $row['id_case'] . '" class="create_new_lnk">' . 'Add new followup' . '</a>';
+		echo '</a></th>';
+		echo '<th><a href="edit_fu.php?case=' . $row['id_case'] . '" class="create_new_lnk">' . 'Add new followup' . '</a>';
 		echo "</th></tr>\n";
+		
 		$c = $row['id_case'];
 	}
 	
 	echo "<tr>\n";
 
 	// Id followup
-	echo '<td class="tbl_cont_' . $css . '">' . $row['id_followup'] . '</td>';
+	echo '<td class="tbl_cont_' . $css . '"><img src="images/lcm/dotted_angle.gif" width="15" height="15" align="left" />&nbsp;' . $row['id_followup'] . '</td>';
 					
 	// Start date
 	echo '<td class="tbl_cont_' . $css . '">' . format_date($row['date_start'], 'short') . '</td>';
@@ -347,6 +354,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 	echo '</td>';
 
 	echo "</tr>\n";
+
 }
 
 show_list_end($fu_list_pos, $number_of_rows, false, 'fu');
