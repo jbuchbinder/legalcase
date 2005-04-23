@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.68 2005/04/18 11:50:29 mlutfy Exp $
+	$Id: inc_filters.php,v 1.69 2005/04/23 11:58:40 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -416,6 +416,11 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 	
 	// Return empty date (0000-00-00 00:00:00 or 0000-01-01 23:59:59)
 	return $ret;
+}
+
+function checkdate_sql($date) {
+	$tmp = recup_date($date);
+	return checkdate($tmp[1], $tmp[2], $tmp[0]);
 }
 
 /* ********************************************************
