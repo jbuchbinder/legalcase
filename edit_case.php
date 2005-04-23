@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.75 2005/04/19 08:17:36 mlutfy Exp $
+	$Id: edit_case.php,v 1.76 2005/04/23 11:59:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -73,6 +73,7 @@ if (empty($_SESSION['errors'])) {
 
 	} else {
 		// Set default values for the new case
+		$_SESSION['case_data']['date_assignment'] = date('Y-m-d H:i:s');
 		$_SESSION['case_data']['public'] = (int) (read_meta('case_default_read') == 'yes');
 		$_SESSION['case_data']['pub_write'] = (int) (read_meta('case_default_write') == 'yes');
 		$_SESSION['case_data']['status'] = 'draft';
@@ -179,6 +180,16 @@ if ($_SESSION['case_data']['id_case']) {
 		. clean_output($_SESSION['case_data']['title'])
 		. '" class="search_form_txt" />';
 	echo "</td></tr>\n";
+
+	// Date of earlier assignment
+	if ($case_assignment_date == 'yes') {
+		echo "<tr>\n";
+		echo "<td>" . f_err_star('date_assignment') . _Ti('case_input_date_assigned') . "</td>\n";
+		echo "<td>" 
+			. get_date_inputs('assignment', $_SESSION['case_data']['date_assignment'], false)
+			. "</td>\n";
+		echo "</tr>\n";
+	}
 	
 	// Court archive ID
 	/* [ML] will be in keyword
