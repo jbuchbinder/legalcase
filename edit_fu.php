@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.104 2005/04/20 10:26:53 mlutfy Exp $
+	$Id: edit_fu.php,v 1.105 2005/04/25 10:14:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -228,7 +228,7 @@ if ($_REQUEST['submit'] == 'set_status')
 	show_context_item(_Ti('fu_input_current_status') . _T('case_status_option_' . $row['status']));
 
 // For 'change stage'
-if (isset($old_stage))
+if (isset($old_stage) && $old_stage)
 	show_context_item(_Ti('fu_input_current_stage') . _Tkw('stage', $old_stage));
 
 // Show stage information [ML] Not very efficient, I know, but I prefer to avoid spagetti
@@ -237,7 +237,7 @@ if ($_SESSION['fu_data']['case_stage']) {
 	$stage_info = get_kw_from_name('stage', $_SESSION['fu_data']['case_stage']);
 	$id_stage = $stage_info['id_keyword'];
 	show_context_stage($case, $id_stage);
-} elseif (isset($old_stage)) {
+} elseif (isset($old_stage) && $old_stage) {
 	// setting new stage
 	$stage_info = get_kw_from_name('stage', $old_stage);
 	$id_stage = $stage_info['id_keyword'];
@@ -246,9 +246,12 @@ if ($_SESSION['fu_data']['case_stage']) {
 	// Normal follow-up
 	$result = lcm_query("SELECT stage FROM lcm_case WHERE id_case = " . $case);
 	$row = lcm_fetch_array($result);
-	$stage_info = get_kw_from_name('stage', $row['stage']);
-	$id_stage = $stage_info['id_keyword'];
-	show_context_stage($case, $id_stage);
+
+	if ($row['stage']) {
+		$stage_info = get_kw_from_name('stage', $row['stage']);
+		$id_stage = $stage_info['id_keyword'];
+		show_context_stage($case, $id_stage);
+	}
 }
 
 show_context_end();
