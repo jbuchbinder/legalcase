@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.41 2005/04/18 14:05:59 mlutfy Exp $
+	$Id: config_site.php,v 1.42 2005/04/25 12:43:26 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -76,7 +76,7 @@ function show_config_form_general() {
 	echo '<input type="hidden" name="panel" value="general" />' . "\n";
 
 	echo '<fieldset class="conf_info_box">' . "\n";
-	show_page_subtitle(_T('siteconf_subtitle_site_identification'), 'siteconfig_general');
+	show_page_subtitle(_T('siteconf_subtitle_site_identification'), 'siteconfig_general', 'identification');
 	
 	echo '<p><b><label for="site_name">' . _T('siteconf_input_site_name') . "</label></b></p>\n";
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_site_name') . "</small></p>\n";
@@ -89,7 +89,7 @@ function show_config_form_general() {
 	echo "</fieldset>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	show_page_subtitle(_T('siteconf_subtitle_site_contacts'), 'siteconfig_general');
+	show_page_subtitle(_T('siteconf_subtitle_site_contacts'), 'siteconfig_general', 'contacts');
 
 	echo "<p><b><label for='site_address'>" . _T('siteconf_input_site_address') . "</label></b></p>\n";
 	echo "<p><input type='text' id='site_address' name='site_address' value='$site_address' size='40' class='search_form_txt' /></p>\n";
@@ -113,7 +113,7 @@ function show_config_form_collab() {
 	echo "\t<input type='hidden' name='panel' value='collab'/>\n";
 	
 	echo '<fieldset class="conf_info_box">' . "\n";
-	show_page_subtitle(_T('siteconf_subtitle_collab_work'), 'siteconfig_collab');
+	show_page_subtitle(_T('siteconf_subtitle_collab_work'), 'siteconfig_collab', 'collab');
 
 	// READ ACCESS
 	echo "<p><b>" . _T('siteconf_input_access_read_choice') . "</b></p>\n";
@@ -242,7 +242,7 @@ function show_config_form_regional() {
 	echo "</fieldset>\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
-	show_page_subtitle(_T('siteconf_subtitle_refresh_lang'), 'siteconfig_regional', 'refreshlang');
+	show_page_subtitle(_T('siteconf_subtitle_refresh_lang'));
 
 	echo "<p>" . _T('siteconf_info_available_languages') . "</p>\n";
 
