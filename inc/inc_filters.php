@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.69 2005/04/23 11:58:40 mlutfy Exp $
+	$Id: inc_filters.php,v 1.70 2005/04/25 10:10:41 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -276,7 +276,11 @@ function get_fu_description($item, $make_short = true) {
 		$short_description = _T('case_info_author_assigned', array('name' => get_person_name($author1)));
 	} elseif ($item['type'] == 'stage_change' || is_status_change($item['type'])) {
 		$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($item['description']) : $item['description']));
-		$short_description = _Tkw('stage', $item['case_stage']);
+
+		// for backward compatibility, make it optional
+		if ($item['case_stage'])
+			$short_description = _Tkw('stage', $item['case_stage']);
+
 		if ($tmp['description'])
 			$short_description .= " / " . $tmp['description'];
 	} else {
@@ -289,6 +293,9 @@ function get_fu_description($item, $make_short = true) {
 			$short_description = _T('fu_info_emptydesc');
 		}
 	}
+
+	if (empty($short_description))
+		$short_description = _T('info_not_available');
 
 	return $short_description;
 }
