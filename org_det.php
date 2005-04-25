@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.26 2005/04/11 16:15:50 mlutfy Exp $
+	$Id: org_det.php,v 1.27 2005/04/25 15:52:53 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -89,8 +89,12 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 			if ($edit)
 				echo '<p><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">'
 					. _T('org_button_edit')
-					. '</a></p><br />';
-		
+					. "</a></p>\n";
+
+			if ($GLOBALS['author_session']['status'] == 'admin')
+				echo '<p><a href="export.php?item=org&amp;id=' . $row['id_org'] . '" class="edit_lnk">' . _T('export_organization_information') . "</a></p>\n";
+
+			echo '<br />';
 			echo "</fieldset>\n";
 
 			break;

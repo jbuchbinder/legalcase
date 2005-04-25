@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.149 2005/04/19 09:55:10 mlutfy Exp $
+	$Id: case_det.php,v 1.150 2005/04/25 15:52:52 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -231,7 +231,10 @@ if ($case > 0) {
 		
 				if ($edit && $modify)
 					echo '<p><a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a></p>';
-		
+
+				if ($GLOBALS['author_session']['status'] == 'admin')
+					echo '<p><a href="export.php?item=case&amp;id=' . $row['id_case'] . '" class="edit_lnk">' . _T('export_case_information') . '</a></p>';
+
 				if ($admin) echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
 		
 				echo "<br />\n";

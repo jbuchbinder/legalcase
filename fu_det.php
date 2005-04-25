@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.23 2005/04/20 09:48:34 mlutfy Exp $
+	$Id: fu_det.php,v 1.24 2005/04/25 15:52:53 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -165,6 +165,9 @@ if ($case_allow_modif == 'yes' && $edit) {
 		. _T('fu_button_edit')
 		. '</a></p>';
 }
+
+if ($GLOBALS['author_session']['status'] == 'admin')
+	echo '<p><a href="export.php?item=followup&amp;id=' . $fu_data['id_followup'] . '" class="edit_lnk">' . _T('export_followup_information') . "</a></p>\n";
 
 if (! $app) {
 	// Show create appointment from followup
