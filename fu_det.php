@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.25 2005/04/26 06:23:27 mlutfy Exp $
+	$Id: fu_det.php,v 1.26 2005/04/26 08:51:46 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -47,6 +47,8 @@ if (isset($_GET['followup'])) {
 }
 
 lcm_page_start(_T('title_fu_view'));
+
+echo '<fieldset class="info_box">';
 
 // Show a bit of background on the case
 $case = $fu_data['id_case'];
@@ -160,14 +162,18 @@ echo "</table>\n";
 $case_allow_modif = read_meta('case_allow_modif');
 $edit = ($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'e');
 
+echo "<br />";
+
 if ($case_allow_modif == 'yes' && $edit) {
-	echo '<p><a href="edit_fu.php?followup=' . $fu_data['id_followup'] . '" class="edit_lnk">'
+	echo '<a href="edit_fu.php?followup=' . $fu_data['id_followup'] . '" class="edit_lnk">'
 		. _T('fu_button_edit')
-		. '</a></p>';
+		. '</a>';
 }
 
 if ($GLOBALS['author_session']['status'] == 'admin')
-	echo '<p><a href="export.php?item=followup&amp;id=' . $fu_data['id_followup'] . '" class="edit_lnk">' . _T('export_button_followup') . "</a></p>\n";
+	echo '<a href="export.php?item=followup&amp;id=' . $fu_data['id_followup'] . '" class="exp_lnk">' . _T('export_button_followup') . "</a>\n";
+
+echo "<br /><br /></fieldset>";
 
 if (! $app) {
 	// Show create appointment from followup
