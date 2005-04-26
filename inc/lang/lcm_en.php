@@ -273,6 +273,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'error_no_rep_name' => 'Report should have a title!',
 'error_no_such_case' => 'There\'s no such case!',
 'error_no_such_user' => 'There is no such user in the database. How did you get in?',
+'export_button_case' => 'Export case information',
+'export_button_client' => 'Export client information',
+'export_button_followup' => 'Export follow-up information',
+'export_button_org' => 'Export organisation information',
 
 
 // F
@@ -303,6 +307,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'fu_input_description' => 'Description:',
 'fu_input_for_case' => 'To case:',
 'fu_input_involving_clients' => 'Involving:',
+'fu_input_next_stage' => 'New stage:',
 'fu_input_parent_appointment' => 'Related to:',
 'fu_input_sentence' => 'Sentence:',
 'fu_input_sum_billed' => 'Sum billed:',
@@ -433,6 +438,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
+'keywords_button_kw_new' => 'Add a new keyword in this group',
+'keywords_button_kwg_new' => 'Create a new keyword group',
+'keywords_info_kw_ac_author' => 'Can authors use this keyword? (otherwise it will be hidden)',
+'keywords_info_kw_hidden' => '(hidden)',
+'keywords_info_kwg_ac_author' => 'Can authors use this keyword group? (otherwise it will be hidden)',
+'keywords_info_kwg_hidden' => '(hidden)',
 'keywords_info_maintenance' => 'It is possible that, between LCM upgrades, a problem could have occured while updating the system keyword groups. To force the system keywords groups to be updated again, click on the validation button below. This will not affect your existing configuration.',
 'keywords_info_quantity' => 'Users can select @quantity@ of this group in a given situation (case, follow-up, etc.).',
 'keywords_input_description' => 'Description:',
@@ -554,14 +565,14 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // M
 'menu_admin' => 'Administration',
 'menu_admin_archives' => 'Archives',
-'menu_admin_archives_tooltip' => 'Administrative pannel for archival tools of the system.',
+'menu_admin_archives_tooltip' => 'Administrative panel for archival tools of the system.',
 'menu_admin_filters' => 'Filters',
 'menu_admin_keywords' => 'Keywords',
-'menu_admin_keywords_tooltip' => 'Administrative pannel for the keyword system.',
+'menu_admin_keywords_tooltip' => 'Administrative panel for the keyword system.',
 'menu_admin_reports' => 'Reports',
-'menu_admin_reports_tooltip' => 'Administrative pannel to create and generate activity reports.',
+'menu_admin_reports_tooltip' => 'Administrative panel to create and generate activity reports.',
 'menu_admin_siteconf' => 'Site configuration',
-'menu_admin_siteconf_tooltip' => 'Administrative pannel to adapt the system to the work habits of your organisation.',
+'menu_admin_siteconf_tooltip' => 'Administrative panel to adapt the system to the work habits of your organisation.',
 'menu_agenda' => 'Agenda',
 'menu_calendar' => 'Calendar',
 'menu_fontsize' => 'Font size',
