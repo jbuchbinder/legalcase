@@ -132,7 +132,7 @@ ul.simple_list li {
 	font-size: 12px;
 }
 
-a.add_lnk,a.create_new_lnk,a.edit_lnk,a.run_lnk {
+a.add_lnk,a.create_new_lnk,a.edit_lnk,a.run_lnk, a.exp_lnk {
 	font-size: 11px;
 }
 

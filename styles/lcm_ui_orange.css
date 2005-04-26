@@ -270,6 +270,12 @@ a.edit_lnk {
 	border: 1px solid #000;
 }
 
+a.exp_lnk {
+	background-color: #666;
+	color: #f60;
+	border: 1px solid #000;
+}
+
 /*
 a.edit_lnk:hover {
 	background-color: #999;

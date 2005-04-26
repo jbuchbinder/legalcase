@@ -463,6 +463,15 @@ a.edit_lnk {
 	-moz-border-radius: 5px;
 }
 
+a.exp_lnk {
+	padding: 4px 4px 4px 22px;
+	margin-left: 5px;
+	background: url("../images/jimmac/stock_export-16.png") no-repeat 2px 4px;
+	font-weight: bold;
+	text-decoration: none;
+	-moz-border-radius: 5px;
+}
+
 a.run_lnk {
 	padding: 4px 4px 4px 22px;
 	margin-left: 5px;

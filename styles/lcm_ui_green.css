@@ -245,6 +245,12 @@ a.edit_lnk {
 	border: 1px solid #666633;
 }
 
+a.exp_lnk {
+	background-color: #d7dabd;
+	color: #600;
+	border: 1px solid #666633;
+}
+
 /*
 a.edit_lnk:hover {
 	background-color: #e7e7d6;
