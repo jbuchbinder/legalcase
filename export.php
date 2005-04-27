@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export.php,v 1.2 2005/04/27 21:49:57 antzi Exp $
+	$Id: export.php,v 1.3 2005/04/27 23:00:22 antzi Exp $
 */
 
 include('inc/inc_auth.php');
@@ -35,16 +35,16 @@ if (!empty($_REQUEST['id']))
 
 switch ($item) {
 	case 'case' :
-		$data = get_case($id,_GET_ALL);
+		$data = load_case($id,_GET_ALL);
 		break;
 	case 'followup' :
-		$data = get_followup($id,_GET_ALL);
+		$data = load_followup($id,_GET_ALL);
 		break;
 	case 'client' :
-		$data = get_client($id,_GET_ALL);
+		$data = load_client($id,_GET_ALL);
 		break;
 	case 'org' :
-		$data = get_org($id,_GET_ALL);
+		$data = load_org($id,_GET_ALL);
 		break;
 	default :
 		lcm_panic("Incorrect export item type!");
