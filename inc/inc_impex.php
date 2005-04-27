@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_impex.php,v 1.2 2005/04/25 15:59:36 antzi Exp $
+	$Id: inc_impex.php,v 1.3 2005/04/27 23:01:28 antzi Exp $
 */
 
 // Execute this file only once
@@ -158,44 +158,48 @@ function export($type, $format, $search = '') {
 }
 
 //---------------------------------------------------------------------------------------
-// Get/Put item functions
+// Load/Put item functions
 //---------------------------------------------------------------------------------------
 // The following functions read from/write to database various items
 
-// Get scope constants
-define("_GET_ALL",65535);	// Temporary, allows 16 flags
-define("_GET_CASE",1);		// Get case(s) data
-define("_GET_FU",2);		// Get followup(s) data
-define("_GET_CLIENT",4);	// Get client(s) data
-define("_GET_ORG",8);		// Get organization(s) data
-define("_GET_ATTACHMENT",16);	// Get attachment(s)
+// Load scope constants
+define("_LOAD_ALL",65535);	// Temporary, allows 16 flags
+define("_LOAD_CASE",1);		// Load case(s) data
+define("_LOAD_FU",2);		// Load followup(s) data
+define("_LOAD_CLIENT",4);	// Load client(s) data
+define("_LOAD_ORG",8);		// Load organization(s) data
+define("_LOAD_ATTACHMENT",16);	// Load attachment(s)
+define("_LOAD_CONTACTS",32);	// Load contacts information
 
-// Gets case from database; $id - case ID; $scope - what information to get
-function get_case($id, $scope = 0) {
-	// Get case data
+// Loads case from database; $id - case ID; $scope - what information to load
+function load_case($id, $scope = 0) {
+	// Initialize variables
+	$case_data = array();
+
+	// Load case data
 	$result = lcm_query("SELECT * FROM lcm_case WHERE id_case=$id");
 	$case_data['case']["ID$id"] = lcm_fetch_assoc($result);
 
-	// Get the associated items - followups, clients, orgs, attachnments
-	if ($scope & _GET_FU) {
+	// Load the associated items - followups, clients, orgs, attachnments
+	if ($scope & _LOAD_FU) {
 		$result = lcm_query("SELECT * FROM lcm_followup WHERE id_case=$id");
 		while ($row = lcm_fetch_assoc($result)) {
-			$case_data = array_merge_recursive($case_data, get_followup($row['id_followup']));
+			$case_data = array_merge_recursive($case_data, load_followup($row['id_followup']));
 		}
 	}
-	if ($scope & _GET_CLIENT) {
+	if ($scope & _LOAD_CLIENT) {
 		$result = lcm_query("SELECT * FROM lcm_case_client_org WHERE id_case=$id AND id_client>0");
 		while ($row = lcm_fetch_assoc($result)) {
-			$case_data = array_merge_recursive($case_data, get_client($row['id_client'], _GET_ATTACHMENT));
+			$case_data = array_merge_recursive($case_data, load_client($row['id_client'], _LOAD_ATTACHMENT));
 		}
 	}
-	if ($scope & _GET_ORG) {
+	if ($scope & _LOAD_ORG) {
 		$result = lcm_query("SELECT * FROM lcm_case_client_org WHERE id_case=$id AND id_org>0");
 		while ($row = lcm_fetch_assoc($result)) {
-			$case_data = array_merge_recursive($case_data, get_org($row['id_org'], _GET_ATTACHMENT));
+			$case_data = array_merge_recursive($case_data, load_org($row['id_org'], _LOAD_ATTACHMENT));
 		}
 	}
-	if ($scope & _GET_ATTACHMENT) {
+	if ($scope & _LOAD_ATTACHMENT) {
 		$result = lcm_query("SELECT * FROM lcm_case_attachment WHERE id_case=$id");
 		while ($row = lcm_fetch_assoc($result)) {
 			$row['content'] = base64_encode($row['content']);
@@ -206,40 +210,84 @@ function get_case($id, $scope = 0) {
 	return $case_data;
 }
 
-// Gets followup from database; $id - followup ID; $scope - what information to get
-function get_followup($id, $scope = 0) {
-	// Get followup data
+// Loads followup from database; $id - followup ID; $scope - what information to load
+function load_followup($id, $scope = 0) {
+	// Initialize variables
+	$fu_data = array();
+
+	// Load followup data
 	$result = lcm_query("SELECT * FROM lcm_followup WHERE id_followup=$id");
 	$fu_data['followup']["ID$id"] = lcm_fetch_assoc($result);
 
-	// Get the associated items - cases
-	if ($scope & _GET_CASE) {
-		$fu_data = array_merge_recursive($fu_data, get_case($fu_data['followup']["ID$id"]['id_case']));
+	// Load the associated items - cases
+	if ($scope & _LOAD_CASE) {
+		$fu_data = array_merge_recursive($fu_data, load_case($fu_data['followup']["ID$id"]['id_case']));
 	}
 
 	return $fu_data;
 }
 
-// Gets client from database; $id - client ID; $scope - what information to get
-function get_client($id, $scope = 0) {
-	// Get client data
+// Loads keyword from database; $id - keyword ID
+function load_kw($id, $scope = 0) {
+	// Initialize variables
+	$kw_data = array();
+
+	// Load keyword data
+	$result = lcm_query("SELECT * FROM lcm_keyword WHERE id_keyword=$id");
+	$kw_data['keyword']["ID$id"] = lcm_fetch_assoc($result);
+
+	// Load the associated keyword group
+	if ($kw_data['keyword']["ID$id"]['id_group']>0 && $scope>0)
+		$kw_data = array_merge_recursive($kw_data, load_kwg($kw_data['keyword']["ID$id"]['id_group']));
+
+	return $kw_data;
+}
+
+// Loads keyword group from database; $id - keyword ID; $scope - what information to load
+function load_kwg($id, $scope = 0) {
+	// Initialize variables
+	$kwg_data = array();
+
+	// Load keyword group data
+	$result = lcm_query("SELECT * FROM lcm_keyword_group WHERE id_group=$id");
+	$kwg_data['keyword_group']["ID$id"] = lcm_fetch_assoc($result);
+
+	// Load the group member keyword(s)
+	if ($scope>0) {
+		$res_kw = lcm_query("SELECT * FROM lcm_keyword WHERE id_group=" . $kwg_data['keyword_group']["ID$id"]['id_group']);
+		while ($row = lcm_fetch_assoc($res_kw)) {
+			$kw_data = array();
+			$kw_data['keyword']["ID" . $row['id_keyword']] = $row;
+			$kwg_data = array_merge_recursive($kwg_data, $kw_data);
+		}
+	}
+
+	return $kwg_data;
+}
+
+// Loads client from database; $id - client ID; $scope - what information to load
+function load_client($id, $scope = 0) {
+	// Initialize variables
+	$client_data = array();
+
+	// Load client data
 	$result = lcm_query("SELECT * FROM lcm_client WHERE id_client=$id");
 	$client_data['client']["ID$id"] = lcm_fetch_assoc($result);
 
-	// Get the associated items - cases, orgs, attachnments
-	if ($scope & _GET_CASE) {
+	// Load the associated items - cases, orgs, attachnments
+	if ($scope & _LOAD_CASE) {
 		$result = lcm_query("SELECT * FROM lcm_case_client_org WHERE id_client=$id");
 		while ($row = lcm_fetch_assoc($result)) {
-			$client_data = array_merge_recursive($client_data, get_case($row['id_case'], $scope & _GET_ATTACHMENT));
+			$client_data = array_merge_recursive($client_data, load_case($row['id_case'], $scope & _LOAD_ATTACHMENT));
 		}
 	}
-	if ($scope & _GET_ORG) {
+	if ($scope & _LOAD_ORG) {
 		$result = lcm_query("SELECT * FROM lcm_client_org WHERE id_client=$id AND id_org>0");
 		while ($row = lcm_fetch_assoc($result)) {
-			$client_data = array_merge_recursive($client_data, get_org($row['id_org'], $scope & _GET_ATTACHMENT));
+			$client_data = array_merge_recursive($client_data, load_org($row['id_org'], $scope & _LOAD_ATTACHMENT));
 		}
 	}
-	if ($scope & _GET_ATTACHMENT) {
+	if ($scope & _LOAD_ATTACHMENT) {
 		$result = lcm_query("SELECT * FROM lcm_client_attachment WHERE id_client=$id");
 		while ($row = lcm_fetch_assoc($result)) {
 			$row['content'] = base64_encode($row['content']);
@@ -247,33 +295,52 @@ function get_client($id, $scope = 0) {
 		}
 	}
 
+	if ($scope & _LOAD_CONTACTS) {
+		$result = lcm_query("	SELECT * FROM lcm_contact WHERE type_person='client' AND id_person=$id");
+		while ($row = lcm_fetch_assoc($result)) {
+			$client_data['client']["ID$id"]['contact']['ID' . $row['id_contact']] = $row;
+			$client_data = array_merge_recursive($client_data, load_kw($row['type_contact']));
+		}
+	}
+
 	return $client_data;
 }
 
-// Gets organization from database; $id - org ID; $scope - what information to get
-function get_org($id, $scope = 0) {
-	// Get organization data
+// Loads organization from database; $id - org ID; $scope - what information to load
+function load_org($id, $scope = 0) {
+	// Initialize variables
+	$org_data = array();
+
+	// Load organization data
 	$result = lcm_query("SELECT * FROM lcm_org WHERE id_org=$id");
 	$org_data['organization']["ID$id"] = lcm_fetch_assoc($result);
 
-	// Get the associated items - cases, clients, attachnments
-	if ($scope & _GET_CASE) {
+	// Load the associated items - cases, clients, attachnments
+	if ($scope & _LOAD_CASE) {
 		$result = lcm_query("SELECT * FROM lcm_case_client_org WHERE id_org=$id");
 		while ($row = lcm_fetch_assoc($result)) {
-			$org_data = array_merge_recursive($org_data, get_case($row['id_case'], $scope & _GET_ATTACHMENT));
+			$org_data = array_merge_recursive($org_data, load_case($row['id_case'], $scope & _LOAD_ATTACHMENT));
 		}
 	}
-	if ($scope & _GET_CLIENT) {
+	if ($scope & _LOAD_CLIENT) {
 		$result = lcm_query("SELECT * FROM lcm_client_org WHERE id_org=$id AND id_client>0");
 		while ($row = lcm_fetch_assoc($result)) {
-			$org_data = array_merge_recursive($org_data, get_client($row['id_client'], $scope & _GET_ATTACHMENT));
+			$org_data = array_merge_recursive($org_data, load_client($row['id_client'], $scope & _LOAD_ATTACHMENT));
 		}
 	}
-	if ($scope & _GET_ATTACHMENT) {
+	if ($scope & _LOAD_ATTACHMENT) {
 		$result = lcm_query("SELECT * FROM lcm_org_attachment WHERE id_org=$id");
 		while ($row = lcm_fetch_assoc($result)) {
 			$row['content'] = base64_encode($row['content']);
 			$org_data['organization']["ID$id"]['attachment']['ID' . $row['id_attachment']] = $row;
+		}
+	}
+
+	if ($scope & _LOAD_CONTACTS) {
+		$result = lcm_query("	SELECT * FROM lcm_contact WHERE type_person='org' AND id_person=$id");
+		while ($row = lcm_fetch_assoc($result)) {
+			$org_data['organization']["ID$id"]['contact']['ID' . $row['id_contact']] = $row;
+			$org_data = array_merge_recursive($org_data, load_kw($row['type_contact']));
 		}
 	}
 
