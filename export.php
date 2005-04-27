@@ -18,12 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export.php,v 1.1 2005/04/25 15:57:22 antzi Exp $
+	$Id: export.php,v 1.2 2005/04/27 21:49:57 antzi Exp $
 */
 
+include('inc/inc_auth.php');
 include('inc/inc_filters.php');
 include('inc/inc_impex.php');
 include('inc/inc_xml.php');
+
+if ($GLOBALS['author_session']['status'] != 'admin')
+	lcm_panic("You don't have permission to export!");
 
 $item = clean_input($_REQUEST['item']);
 if (!empty($_REQUEST['id']))
