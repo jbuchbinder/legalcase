@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.59 2005/04/18 10:40:43 mlutfy Exp $
+	$Id: listcases.php,v 1.60 2005/04/27 16:48:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -89,7 +89,7 @@ $types_period = array('m1' => 30, 'm3' => 91, 'm6' => 182, 'y1' => 365); // 30 d
 
 echo '<form action="listcases.php" method="get">' . "\n";
 echo "<p class=\"normal_text\">\n";
-echo "Filter: "; // TRAD
+echo _T('input_filter_case_owner');
 echo '<select name="case_owner">';
 
 foreach ($types_owner as $t) {
@@ -127,14 +127,14 @@ echo "</p>\n";
 echo "</form>\n";
 
 // Select cases of which the current user is author
-$q = "SELECT c.id_case, title, id_court_archive, status, public, pub_write, date_creation
+$q = "SELECT DISTINCT c.id_case, title, status, public, pub_write, date_creation
 		FROM lcm_case as c, lcm_case_author as a
 		WHERE (c.id_case = a.id_case ";
 
 if (strlen($find_case_string) > 0) {
 	$q .= " AND ( (c.id_case LIKE '%$find_case_string%')
-				OR (c.title LIKE '%$find_case_string%') 
-				OR (id_court_archive LIKE '%$find_case_string%') )";
+				OR (c.title LIKE '%$find_case_string%') )";
+	// [ML]	moving out to kw		OR (id_court_archive LIKE '%$find_case_string%') )";
 }
 
 $q .= ")";
@@ -195,7 +195,7 @@ echo '<p><a href="edit_client.php" class="create_new_lnk">' . _T('client_button_
 //
 
 echo '<a name="fu"></a>' . "\n";
-echo "<div class='prefs_column_menu_head'>" . 'Recent follow-ups' . "</div>\n";
+show_page_subtitle(_T('case_subtitle_recent_followups'));
 
 $headers[0]['title'] = "#";
 $headers[0]['order'] = 'no_order';
