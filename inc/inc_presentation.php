@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.219 2005/04/20 09:22:19 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.220 2005/04/28 06:55:00 mlutfy Exp $
 */
 
 //
@@ -1353,6 +1353,7 @@ function show_find_box($type, $string, $dest = '') {
 		case 'case':
 		case 'client':
 		case 'author':
+		case 'rep':
 			$action = 'list' . $type . 's.php';
 			break;
 		case 'org':
