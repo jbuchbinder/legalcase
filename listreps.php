@@ -18,26 +18,39 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.7 2005/03/02 17:29:17 antzi Exp $
+	$Id: listreps.php,v 1.8 2005/04/28 07:06:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
+global $author_session;
+
+// Restrict page to administrators
+if ($author_session['status'] != 'admin') {
+	lcm_page_start(_T('title_rep_list'));
+	echo "<p>Warning: Access denied, not admin.\n"; // TRAD
+	lcm_page_end();
+	exit;
+}
+
+//
+// For "find report"
+//
+$find_rep_string = '';
+if (isset($_REQUEST['find_rep_string']))
+	$find_rep_string = $_GET['find_rep_string'];
+
+lcm_page_start(_T('title_report_list'));
+// lcm_bubble('report_list');
+show_find_box('rep', $find_rep_string);
+
 $q = "SELECT id_report,title
 		FROM lcm_report";
 
 // Add search criteria if any
-$find_rep_string = '';
-
-if (isset($_GET['find_rep_string']))
-	$find_rep_string = $_GET['find_rep_string'];
-
 if (strlen($find_rep_string)>1) {
 	$q .= " WHERE (title LIKE '%$find_rep_string%')";
-	lcm_page_start("Reports, containing '$find_rep_string':");
-} else {
-	lcm_page_start("List of reports");
 }
 
 $result = lcm_query($q);
@@ -58,11 +71,13 @@ if ($list_pos>0)
 	if (!lcm_data_seek($result,$list_pos))
 		die("Error seeking position $list_pos in the result");
 
-?>
+$headers = array();
+$headers[0]['title'] = _Th('person_input_name');
+$headers[0]['order'] = 'order_name_first';
+$headers[0]['default'] = 'ASC';
 
-<table border='0' align='center' class='tbl_usr_dtl' width='99%'>
-	<tr><th colspan="2" class='heading'>Description</th></tr>
-<?php
+show_list_start($headers);
+
 // Process the output of the query
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
 	// Show report title
@@ -73,63 +88,18 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	if (true) echo '</a>';
 	echo "</td>\n";
 	
-	/*
-	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if (true)
-		echo '<a href="edit_rep.php?rep=' . $row['id_report'] . '" class="content_link">Edit</a>';
-	echo "</td>\n";
-	*/
-
+	/* [ML]
 	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	if (true)
 		echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="content_link">Run</a>';
 	echo "</td>";
+	*/
 	echo "</tr>\n";
 }
 
-?>
-</table>
+show_list_end($list_pos, $number_of_rows);
 
-<table border='0' align='center' width='99%' class='page_numbers'>
-	<tr><td align="left" width="15%"><?php
-
-// Show link to previous page
-if ($list_pos>0) {
-	echo '<a href="listreps.php?list_pos=';
-	echo ( ($list_pos>$prefs['page_rows']) ? ($list_pos - $prefs['page_rows']) : 0);
-	if (strlen($find_rep_string)>1) echo "&amp;find_rep_string=" . rawurlencode($find_rep_string);
-	echo '" class="content_link">< Prev</a> ';
-}
-
-echo "</td>\n\t\t<td align='center' width='70%'>";
-
-// Show page numbers with direct links
-$list_pages = ceil($number_of_rows / $prefs['page_rows']);
-if ($list_pages>1) {
-	echo 'Go to page: ';
-	for ($i=0 ; $i<$list_pages ; $i++) {
-		if ($i==floor($list_pos / $prefs['page_rows'])) echo '[' . ($i+1) . '] ';
-		else {
-			echo '<a href="listreps.php?list_pos=' . ($i*$prefs['page_rows']);
-			if (strlen($find_rep_string)>1) echo "&amp;find_rep_string=" . rawurlencode($find_rep_string);
-			echo '" class="content_link">' . ($i+1) . '</a> ';
-		}
-	}
-}
-
-echo "</td>\n\t\t<td align='right' width='15%'>";
-
-// Show link to next page
-$next_pos = $list_pos + $prefs['page_rows'];
-if ($next_pos<$number_of_rows) {
-	echo "<a href=\"listreps.php?list_pos=$next_pos";
-	if (strlen($find_rep_string)>1) echo "&amp;find_rep_string=" . rawurlencode($find_rep_string);
-	echo '" class="content_link">Next ></a>';
-}
-
-echo "</td>\n\t</tr>\n</table>\n";
-?>
-<a href="edit_rep.php?rep=0" class="create_new_lnk">Create new report</a><br /><br />
-<?php
+echo '<p><a href="edit_rep.php?rep=0" class="create_new_lnk">' . _T('rep_button_new') . "</a></p>\n";
 lcm_page_end();
+
 ?>
