@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.152 2005/04/26 08:37:25 makaveev Exp $
+	$Id: case_det.php,v 1.153 2005/04/28 06:46:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -379,16 +379,23 @@ if ($case > 0) {
 					
 					if (isset($_REQUEST['list_pos']))
 						$list_pos = $_REQUEST['list_pos'];
-					
-					if ($list_pos>=$number_of_rows) $list_pos = 0;
-					
-					// Position to the page info start
-					if ($list_pos>0)
-						if (!lcm_data_seek($result,$list_pos))
-							lcm_panic("Error seeking position $list_pos in the result");
+
+					if (is_numeric($list_pos)) {
+						if ($list_pos >= $number_of_rows)
+							$list_pos = 0;
+
+						// Position to the page info start
+						if ($list_pos > 0)
+							if (!lcm_data_seek($result,$list_pos))
+								lcm_panic("Error seeking position $list_pos in the result");
+
+						$show_all = false;
+					} elseif ($list_pos == 'all') {
+						$show_all = true;
+					}
 					
 					// Show page of the list
-					for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+					for ($i = 0 ; ((($i<$prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result))) ; $i++) {
 						$css = ' class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '"';
 
 						echo "<tr>\n";
@@ -400,13 +407,13 @@ if ($case > 0) {
 								format_time_interval_prefs(strtotime($row['end_time']) - strtotime($row['start_time'])) 
 							) . '</td>';
 
-						echo "<td $css>" . $row['type'] . '</td>';
+						echo "<td $css>" . _Tkw('appointments', $row['type']) . '</td>';
 						echo "<td $css>" . '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
 						echo "<td $css>" . format_date($row['reminder'], 'short') . '</td>';
 						echo "</tr>\n";
 					}
 
-					show_list_end($list_pos, $number_of_rows);
+					show_list_end($list_pos, $number_of_rows, true);
 				}
 
 				echo "<p><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">" . _T('app_button_new') . "</a></p>\n";
@@ -482,9 +489,20 @@ if ($case > 0) {
 				
 				if (isset($_REQUEST['list_pos']))
 					$list_pos = $_REQUEST['list_pos'];
+
+				if (is_numeric($list_pos)) {
+					if ($list_pos >= $number_of_rows)
+						$list_pos = 0;
 				
-				if ($list_pos >= $number_of_rows)
-					$list_pos = 0;
+					// Position to the page info start
+					if ($list_pos > 0)
+						if (!lcm_data_seek($result,$list_pos))
+							lcm_panic("Error seeking position $list_pos in the result");
+				
+					$show_all = false;
+				} elseif ($list_pos == 'all') {
+					$show_all = true;
+				}
 				
 				// Position to the page info start
 				if ($list_pos > 0)
@@ -492,7 +510,7 @@ if ($case > 0) {
 						lcm_panic("Error seeking position $list_pos in the result");
 			
 				// Process the output of the query
-				for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
+				for ($i = 0 ; ((($i<$prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result))); $i++) {
 					echo "<tr>\n";
 					
 					// Start date
@@ -527,7 +545,7 @@ if ($case > 0) {
 					echo "</tr>\n";
 				}
 			
-				show_list_end($list_pos, $number_of_rows);
+				show_list_end($list_pos, $number_of_rows, true);
 
 				echo "<br />\n";
 
