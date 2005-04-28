@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.17 2005/04/08 17:13:07 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.18 2005/04/28 06:30:03 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -142,10 +142,10 @@ function send_cookie_by_email($my_email) {
 	}
 
 	if ($row['status'] == 'trash' OR $row['password'] == '') {
-		// TODO
+		// TODO TRAD
 		echo "<p>" . _T('pass_error_acces_refuse') . "</p>";
 	} else if ($row['status'] == 'waiting') {
-		// TODO
+		// TODO TRAD
 		echo "<p>" . _T('pass_error_waiting_moderator') . "</p>";
 	} else if ($row['id_of_person']) {
 		$cookie = create_uniq_id();
@@ -153,7 +153,7 @@ function send_cookie_by_email($my_email) {
 				SET cookie_recall = '$cookie'
 				WHERE id_author = " . $row['id_of_person']);
 
-		$site_name = read_meta('site_name');
+		$site_name = _T(read_meta('site_name'));
 		$site_address = read_meta('site_address');
 
 		$message  = _T('pass_mail_cookie1') . "\n";
@@ -221,11 +221,13 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 		$status = $row['status'];
 
 		unset ($continue);
-		if ($status == 'trash')
+		if ($status == 'trash') {
+			echo "<br />\n";
 			echo "<div class='box_error'>" . _T('pass_registration_denied') . "</div>\n";
-		else if ($status == 'nouveau') {
+		} else if ($status == 'nouveau') {
 			lcm_query("DELETE FROM lcm_author WHERE id_author=$id_author");
 		} else {
+			echo "<br />\n";
 			echo "<div class='box_error'>" . _T('pass_warning_already_registered') . "</div>\n";
 			return;
 		}
@@ -286,6 +288,7 @@ function print_registration_form() {
 
 	echo "<p>" . _T('pass_info_why_register') . "</p>\n";
 	echo "<form method='get' action='$url' style='border: 0px; margin: 0px;'>\n";
+	echo '<input type="hidden" name="register" value="yes" />' . "\n";
 
 	echo "<fieldset><label><b>". _T('info_your_contact_information') . "</b><br></label>\n";
 
