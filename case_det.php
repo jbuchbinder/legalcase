@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.153 2005/04/28 06:46:12 mlutfy Exp $
+	$Id: case_det.php,v 1.154 2005/04/28 10:20:20 makaveev Exp $
 */
 
 include('inc/inc.php');
@@ -230,14 +230,14 @@ if ($case > 0) {
 				echo "</p>\n";
 		
 				if ($edit && $modify)
-					echo '<a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a>';
+					echo '<p><a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a></p>';
 
 				if ($GLOBALS['author_session']['status'] == 'admin')
-					echo '<a href="export.php?item=case&amp;id=' . $row['id_case'] . '" class="exp_lnk">' . _T('export_button_case') . '</a>';
+					echo '<p><a href="export.php?item=case&amp;id=' . $row['id_case'] . '" class="exp_lnk">' . _T('export_button_case') . '</a></p>';
 
-				if ($admin) echo '<a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a>';
+				if ($admin) echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
 		
-				echo "<br /><br />\n";
+				echo "<br />\n";
 
 				//
 				// Show case client(s)
