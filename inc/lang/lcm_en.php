@@ -153,6 +153,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_subtitle_clients' => 'Case clients',
 'case_subtitle_followups' => 'Case follow-ups (completed activities for this case)',
 'case_subtitle_general' => 'General case information',
+'case_subtitle_recent_followups' => 'Recent follow-ups',
 'case_subtitle_times' => 'Total time spent on the case',
 'case_warning_no_title' => 'Please enter a case title.',
 'client_button_add_org' => 'Associate with an organisation',
@@ -391,11 +392,13 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_your_contact_information' => 'Your contact information ...',
 'input_connection_identifiers' => 'Your connection identifiers ...',
 'input_email' => 'E-mail address:',
+'input_filter_case_owner' => 'Filter:',
 'input_search_author' => 'Find user:',
 'input_search_case' => 'Find case:',
 'input_search_client' => 'Find client:',
 'input_search_org' => 'Find organisation:',
 'input_search_organisation' => 'Find organisation:',
+'input_search_rep' => 'Find report:',
 'install_connection_login' => 'Connection login',
 'install_connection_password' => 'Connection password',
 'install_connection_succeeded' => 'Connection succeeded.',
@@ -658,6 +661,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // R
+'rep_button_new' => 'Create a new report',
 'rep_title' => 'Title',
 'report_id' => 'Report ID',
 
@@ -770,6 +774,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_org_new' => 'New organisation:',
 'title_org_select_client' => '@name_org@: Select representatives...',
 'title_org_view' => 'Organisation:',
+'title_rep_view' => 'Report details:',
+'title_report_list' => 'List of reports:',
 'title_site_configuration' => 'Site configuration',
 'title_software' => 'Legal Case Management',
 'title_software_article' => 'The Legal Case Management system',
