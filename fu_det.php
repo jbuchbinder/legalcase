@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.26 2005/04/26 08:51:46 makaveev Exp $
+	$Id: fu_det.php,v 1.27 2005/04/29 07:55:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -88,7 +88,8 @@ if ($app = lcm_fetch_array($res_app)) {
 // Show stage information
 if ($fu_data['case_stage']) {
 	// if editing an existing followup..
-	$stage_info = get_kw_from_name('stage', $_SESSION['fu_data']['case_stage']);
+	if ($_SESSION['fu_data']['case_stage'])
+		$stage_info = get_kw_from_name('stage', $_SESSION['fu_data']['case_stage']);
 	$id_stage = $stage_info['id_keyword'];
 	show_context_stage($case, $id_stage);
 }
