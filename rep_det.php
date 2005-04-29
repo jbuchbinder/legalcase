@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.22 2005/02/10 15:33:16 mlutfy Exp $
+	$Id: rep_det.php,v 1.23 2005/04/29 05:35:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -70,29 +70,31 @@ $rep_info['col_src_name'] = $tmp_info['table_name'];
 // Show info on the report
 //
 
-lcm_page_start("Report details: " . $rep_info['title']);
+lcm_page_start(_T('title_rep_view') . " " . $rep_info['title'], '', '', 'report_intro');
+lcm_bubble("The report function is still in development."); // XXX
 
 $edit = (($GLOBALS['author_session']['status'] == 'admin') ||
 		($rep_info['id_author'] == $GLOBALS['author_session']['id_author']));
 
 echo "<fieldset class='info_box'>";
-echo "<div class='prefs_column_menu_head'>" . "Report details" . "</div>\n";
+show_page_subtitle(_T('generic_subtitle_general'), 'report_intro');
 
 if ($rep_info['description'])
 	echo '<p class="normal_text">' . $rep_info['description'] . '</p>' . "\n";
 
 echo "<p class='normal_text'>";
-echo "Created on: " . format_date($rep_info['date_creation']) . "<br/>\n";
+echo _Ti('time_input_date_creation') . format_date($rep_info['date_creation']) . "<br/>\n";
 
+// [ML] Not particularly useful for now, except audit
 if ($rep_info['date_creation'] != $rep_info['date_update'])
-	echo "Last update: " . format_date($rep_info['date_update']) . "<br/>\n";
+	echo "<!-- Last update: " . format_date($rep_info['date_update']) . "<br/ -->\n";
 
 echo "<br />\n";
 
 if ($edit)
-	echo '<a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . "Edit this report" . '</a>&nbsp;';
+	echo '<a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . "Edit report" . '</a>&nbsp;'; // TRAD
 
-echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">Run this report</a><br /><br />';
+echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">Run report</a><br /><br />'; // TRAD
 echo "</p></fieldset>";
 
 //
@@ -101,7 +103,7 @@ echo "</p></fieldset>";
 
 echo '<a name="line"></a>' . "\n";
 echo "<fieldset class='info_box'>";
-echo "<div class='prefs_column_menu_head'>" . "Report line information" . "</div>\n";
+show_page_subtitle("Report line information", 'report_edit', 'line'); // TRAD
 
 // Extract source type, if any
 if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
@@ -186,7 +188,10 @@ echo "</fieldset>\n";
 //	List the columns in the report
 //
 		echo '<a name="column"></a>' . "\n";
-		echo "<fieldset class='info_box'><div class='prefs_column_menu_head'>Report columns</div><p class='normal_text'>";
+		echo "<fieldset class='info_box'>\n";
+		show_page_subtitle("Report columns", 'report_edit', 'columns');
+		
+		echo "<p class='normal_text'>";
 		//echo '<h3>Report columns:</h3>';
 		echo "\n\t\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 		echo "<tr><th class='heading'>#</th>
@@ -280,25 +285,6 @@ if ($edit) {
 	echo "\t<input type='hidden' name='rep' value='$rep' />\n";
 	echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
-	// Get column order
-	echo "\t\t<tr><th class='heading'>Position</th><td>\n";
-	echo "\t\t\t<select name='order' class='sel_frm'>\n";
-
-	$i = 1;
-	while ($i<$last_order) {
-		echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n";
-		$i++;
-	}
-
-	echo "\t\t\t\t<option selected label='Add at the end' value='$i'>Add at the end</option>\n";
-	echo "\t\t\t</select>\n";
-	//			echo "<input type='text' name='order' value='$last_order' size='2' />";
-	echo "\t\t</td></tr>\n";
-
-	// Get column header
-	echo "\t\t<tr><th class='heading'>Header</th>\n";
-	echo "\t\t\t<td><input type='text' name='header' class='search_form_txt' /></td></tr>\n";
-
 	// Get field from list
 	echo "\t\t<tr><th class='heading'>Contents</th>\n";
 	echo "\t\t\t<td><select name='field' class='sel_frm'>\n";
@@ -323,6 +309,26 @@ if ($edit) {
 	echo "\t\t\t</select></td>\n";
 	echo "\t\t</tr>\n";
 
+
+	// Get column order
+	echo "\t\t<tr><th class='heading'>Position</th><td>\n";
+	echo "\t\t\t<select name='order' class='sel_frm'>\n";
+
+	$i = 1;
+	while ($i<$last_order) {
+		echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n";
+		$i++;
+	}
+
+	echo "\t\t\t\t<option selected label='Add at the end' value='$i'>Add at the end</option>\n";
+	echo "\t\t\t</select>\n";
+	//			echo "<input type='text' name='order' value='$last_order' size='2' />";
+	echo "\t\t</td></tr>\n";
+
+	// Get column header
+	echo "\t\t<tr><th class='heading'>Header</th>\n";
+	echo "\t\t\t<td><input type='text' name='header' class='search_form_txt' /></td></tr>\n";
+
 	// Get grouping setting
 	echo "\t\t<tr><th class='heading'>Grouping</th>\n";
 	echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
@@ -342,7 +348,7 @@ if ($edit) {
 	echo "\t\t</tr>";
 
 	echo "\t</table>\n";
-	echo "\t<br /><button type='submit' class='simple_form_btn'>Add column</button>\n";
+	echo "<p><button type='submit' class='simple_form_btn'>" . _T('button_validate') . "</button></p>\n";
 	echo "</form>\n";
 }
 
