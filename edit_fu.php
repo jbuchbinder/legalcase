@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.105 2005/04/25 10:14:09 mlutfy Exp $
+	$Id: edit_fu.php,v 1.106 2005/04/29 10:34:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -67,7 +67,8 @@ if (empty($_SESSION['errors'])) {
 
 		// Case conclusion, if appropriate
 		if ($_SESSION['fu_data']['type'] == 'stage_change' || is_status_change($_SESSION['fu_data']['type'])) {
-			if ($tmp['description'])
+			// description might be empty
+			if (isset($tmp['description']))
 				$_SESSION['fu_data']['description'] = $tmp['description'];
 
 			if ($tmp['conclusion'])
