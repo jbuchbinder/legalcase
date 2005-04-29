@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.48 2005/04/23 11:59:45 mlutfy Exp $
+	$Id: upd_case.php,v 1.49 2005/04/29 08:00:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -130,8 +130,14 @@ if (count($_SESSION['errors'])) {
 
 		// Add 'assignment' followup to the case
 		$q = "INSERT INTO lcm_followup
-				SET id_followup = 0, id_case = $id_case, id_author = $id_author, type = 'assignment',
-					date_start = NOW(), date_end = NOW(), description='" . $id_author . "'";
+				SET id_followup = 0,
+					id_case = $id_case, 
+					id_author = $id_author,
+					type = 'assignment',
+					case_stage = '" . clean_input($_SESSION['case_data']['stage']) . "',
+					date_start = NOW(),
+					date_end = NOW(),
+					description='" . $id_author . "'";
 
 		$result = lcm_query($q);
 
