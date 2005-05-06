@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.6 2005/02/10 13:09:41 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.7 2005/05/06 13:15:56 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -160,7 +160,8 @@ if (isset($_REQUEST['select_col_type']) && isset($_REQUEST['select_col_name'])) 
 	// if (! ($rep_info['col_src_type'] && $rep_info['col_src_name'])) {
 		$query = "UPDATE lcm_report
 					SET col_src_type = '" . clean_input($_REQUEST['select_col_type']) . "',
-						col_src_name = '" . clean_input($_REQUEST['select_col_name']) .  "'";
+						col_src_name = '" . clean_input($_REQUEST['select_col_name']) .  "'
+					WHERE id_report = " . $rep;
 
 		lcm_query($query);
 	// }
@@ -173,7 +174,8 @@ if (isset($_REQUEST['select_line_type']) && isset($_REQUEST['select_line_name'])
 	// if (! ($rep_info['line_src_type'] && $rep_info['line_src_name'])) {
 		$query = "UPDATE lcm_report
 					SET line_src_type = '" . clean_input($_REQUEST['select_line_type']) . "',
-						line_src_name = '" . clean_input($_REQUEST['select_line_name']) . "'";
+						line_src_name = '" . clean_input($_REQUEST['select_line_name']) . "'
+					WHERE id_report = " . $rep;
 
 		lcm_query($query);
 	// }
