@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.25 2005/04/20 08:56:10 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.26 2005/05/06 13:09:57 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -36,20 +36,24 @@ function get_kwg_all($type, $exclude_empty = false) {
 
 	if ($type == 'user')
 		$in_type = "IN ('case', 'stage', 'followup', 'client', 'org', 'client_org')";
-	else
+	elseif ($type)
 		$in_type = "= '" . addslashes($type) . "'";
 
 	if ($exclude_empty) {
 		$query = "SELECT kwg.*, COUNT(k.id_keyword) as cpt
 					FROM lcm_keyword_group as kwg, lcm_keyword as k
-					WHERE type $in_type
-					  AND kwg.id_group = k.id_group
-					GROUP BY id_group
-					HAVING cpt > 0";
+					WHERE kwg.id_group = k.id_group ";
+
+		if ($in_type)
+			$query .= " AND type $in_type ";
+
+		$query .= " GROUP BY id_group HAVING cpt > 0";
 	} else {
 		$query = "SELECT *
-					FROM lcm_keyword_group
-					WHERE type $in_type";
+					FROM lcm_keyword_group ";
+
+		if ($in_type)
+			$query .= " WHERE type $in_type ";
 	}
 
 	$result = lcm_query($query);
