@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.13 2005/05/09 07:48:02 mlutfy Exp $
+	$Id: run_rep.php,v 1.14 2005/05/09 14:17:56 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -291,23 +291,6 @@ if ($rep_info['line_src_type'] == 'table' && preg_match("/^lcm_(.*)$/", $my_line
 }
 
 //
-// Fetch all filters for this report
-//
-
-$my_filters = array();
-
-$q = "SELECT f.table_name, f.field_name, v.type, v.value 
-		FROM lcm_rep_filter as v, lcm_fields as f
-		WHERE v.id_field = f.id_field
-		AND v.id_report = " . $rep;
-
-$result = lcm_query($q);
-
-while ($row = lcm_fetch_array($result))
-	array_push($my_filters, $row);
-
-
-//
 // Start building the SQL query for the report lines
 //
 
@@ -381,50 +364,132 @@ if ($rep_info['line_src_type'] == 'table') {
 if (isset($left_joins))
 	$q .= $left_joins;
 
+
+//
+// Fetch all filters for this report
+//
+
+$my_filters = array();
+
+$q_fil = "SELECT v.id_filter, f.table_name, f.field_name, v.type, v.value 
+		FROM lcm_rep_filter as v, lcm_fields as f
+		WHERE v.id_field = f.id_field
+		AND v.id_report = " . $rep;
+
+$result = lcm_query($q_fil);
+
+while ($row = lcm_fetch_array($result))
+	array_push($my_filters, $row);
+
+// Apply filters
+$line_filters = array();
+
+function apply_filter($f) {
+	$ret = '';
+
+	$filter_conv = array(
+			"eq" => "=",
+			"lt" => "<",
+			"le" => "<=",
+			"gt" => ">",
+			"ge" => ">="
+			);
+
+	if (! $f['type'])
+		return '';
+
+	if ($f['type'] == 'date_in') {
+		$dates = array();
+
+		if ($f['value']) {
+			$dates = explode(";", $f['value']);
+		} else {
+			$dates[0] = get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . '_start');
+			$dates[1] = get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . '_end');
+		}
+		$ret .= "(DATE_FORMAT(" . $f['field_name'] . ", '%Y-%m-%d') >= DATE_FORMAT('" . $dates[0] . "', '%Y-%m-%d')" 
+			. " AND DATE_FORMAT(" . $f['field_name'] . ", '%Y-%m-%d') <= DATE_FORMAT('" . $dates[1] . "', '%Y-%m-%d')) ";
+	} else {
+		$foo = explode("_", $f['type']); // ex: date_eq
+		$filter_type = $foo[0]; // date
+		$filter_op = $foo[1]; // eq
+
+		if (! $f['value'])
+			if (isset($_REQUEST['filter_val' . $f['id_filter']]))
+				$f['value'] = $_REQUEST['filter_val' . $f['id_filter']];
+
+		// FIELD OPERATOR 'VALUE'
+		if ($filter_conv[$filter_op]) {
+			switch($filter_type) {
+				case 'date':
+					$ret .= "DATE_FORMAT(" . $f['field_name'] . ", '%Y-%m-%d')"
+						. " " . $filter_conv[$filter_op] . " " 
+						. "DATE_FORMAT('" . $f['value'] . "', '%Y-%m-%d') ";
+					break;
+				case 'text':
+					$ret .= $f['field_name'] 
+						. " " . $filter_conv[$filter_op] . " "
+						. "'" . $f['value'] . "' ";
+				default: // number
+					$ret .= $f['field_name']
+						. " " . $filter_conv[$filter_op] . " "
+						. $f['value'] . " ";
+			}
+		} else {
+			lcm_log("no filter_conv for $filter_op ?");
+			return '';
+		}
+	}
+
+	return $ret;
+}
+
+foreach ($my_filters as $f) {
+	if ($f['table_name'] == $my_line_table) { // FIXME .. and col filters?
+		if ($f['value'] || isset($_REQUEST['filter_val' . $f['id_filter']]) 
+			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_start", 'year_only')
+			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'year_only'))
+		{
+			$fil_sql = apply_filter($f);
+
+			if ($fil_sql)
+				array_push($line_filters, $fil_sql);
+		} else {
+			$is_missing_filters = true;
+		}
+	}
+}
+
+if ($is_missing_filters) {
+	echo '<p class="normal_text">' . "Please enter the values for the report:" . "</p>\n"; // TRAD
+	include_lcm('inc_conditions');
+	show_report_filters($rep, true);
+	exit;
+}
+
+if (count($line_filters))
+	$q .= "\n WHERE " . implode(" AND ", $line_filters);
+
+//
+// Add the last "where" conditions
+//
+
 if (count($q_where)) {
-	$tmp = implode(" AND ", $q_where);
-	$q .= "WHERE " . $tmp;
+	if (! count($line_filters))
+		$q .= " WHERE ";
+
+	$q = implode(" AND ", $q_where);
 }
 
 if ($do_grouping) {
 	$q .= " GROUP BY " . $my_line_fields;
 }
 
+//
+// Ready!
+//
+
 echo "\n\n<!-- QUERY = " . $q . " -->\n\n";
-
-// Apply filters to this table
-$line_filters = array();
-
-foreach ($my_filters as $f) {
-	if ($f['table_name'] == $my_line_table) {
-		$temp = '';
-
-		if ($f['type']) 
-			$temp .= $f['field_name'];
-
-		switch($f['type']) {
-			case '':
-				// do nothing
-				break;
-			case 'num_eq':
-				$temp .= " = " . $f['value'];
-				break;
-			case 'num_lt':
-				$temp .= " < " . $f['value'];
-				break;
-
-			default:
-				lcm_panic("Internal error in run_report: unknown filter type (" . $f['type'] . ")");
-		}
-
-		if ($temp)
-			array_push($line_filters, $temp);
-	}
-}
-
-if (count($line_filters))
-	$q .= "\n WHERE " . implode(" AND ", $line_filters);
-
 $result = lcm_query($q);
 
 //
