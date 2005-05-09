@@ -18,12 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.23 2005/04/29 05:35:04 mlutfy Exp $
+	$Id: rep_det.php,v 1.24 2005/05/09 07:39:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
+include_lcm('inc_keywords');
 
 $rep = intval($_GET['rep']);
 
@@ -79,22 +80,17 @@ $edit = (($GLOBALS['author_session']['status'] == 'admin') ||
 echo "<fieldset class='info_box'>";
 show_page_subtitle(_T('generic_subtitle_general'), 'report_intro');
 
+echo "<p class='normal_text'>";
+echo _Ti('rep_title') . $rep_info['title'] . "<br />\n";
+echo _Ti('time_input_date_creation') . format_date($rep_info['date_creation']) . "</p>\n";
+
 if ($rep_info['description'])
 	echo '<p class="normal_text">' . $rep_info['description'] . '</p>' . "\n";
 
-echo "<p class='normal_text'>";
-echo _Ti('time_input_date_creation') . format_date($rep_info['date_creation']) . "<br/>\n";
-
-// [ML] Not particularly useful for now, except audit
-if ($rep_info['date_creation'] != $rep_info['date_update'])
-	echo "<!-- Last update: " . format_date($rep_info['date_update']) . "<br/ -->\n";
-
-echo "<br />\n";
-
 if ($edit)
-	echo '<a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . "Edit report" . '</a>&nbsp;'; // TRAD
+	echo '<p><a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . "Edit report" . '</a>&nbsp;'; // TRAD
 
-echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">Run report</a><br /><br />'; // TRAD
+echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">Run report</a><br />'; // TRAD
 echo "</p></fieldset>";
 
 //
@@ -107,7 +103,13 @@ show_page_subtitle("Report line information", 'report_edit', 'line'); // TRAD
 
 // Extract source type, if any
 if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
-	echo "<p class='normal_text'>Source: " . $rep_info['line_src_type'] . " -> " . $rep_info['line_src_name'];
+	if ($rep_info['line_src_type'] == 'keyword') {
+		$kwg = get_kwg_from_name($rep_info['line_src_name']);
+		echo "<p class='normal_text'>Source: " . $rep_info['line_src_type'] 
+			. " (" . $kwg['type'] . ") -> " . $rep_info['line_src_name']; // TRAD
+	} else {
+		echo "<p class='normal_text'>Source: " . $rep_info['line_src_type'] . " -> " . $rep_info['line_src_name']; // TRAD
+	}
 
 	// Show list of fields for line, if any
 	$my_fields = array();
@@ -125,7 +127,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 
 		while ($line = lcm_fetch_array($result_lines)) {
 			echo "<tr>\n";
-			echo "<td>" . $line['description'] . "</td>\n";
+			echo "<td>" . _Th($line['description']) . "</td>\n";
 			echo "<td><a href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
 				. "remove=line" . "&amp;" . "id_line=" . $line['id_line'] . "' class='content_link'>" . "Remove" . "</a></td>\n";
 			echo "</tr>\n";
@@ -157,7 +159,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 		echo "<select name='id_field' class='sel_frm'>";
 
 		while ($row = lcm_fetch_array($result)) {
-			echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
+			echo "<option value='" . $row['id_field'] . "'>" . _Th($row['description']) . "</option>\n";
 		}
 		
 		echo "</select>\n";
@@ -168,7 +170,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 } else {
 	echo "<form action='upd_rep_field.php' name='frm_line_source' method='post'>\n";
 	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-	echo "<p class='normal_text'>Select source: ";
+	echo "<p class='normal_text'>Select source table: "; // TRAD
 	echo "<input name='select_line_type' value='table' type='hidden' />\n";
 	echo "<select name='select_line_name' class='sel_frm'>
 			<option value='author'>Author</option>
@@ -180,6 +182,24 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	echo "<button class='simple_form_btn' name='validate_line_source'>" . _T('button_validate') . "</button>\n";
 	echo "</p>\n";
 	echo "</form>\n";
+
+	echo "<form action='upd_rep_field.php' name='frm_line_source' method='post'>\n";
+	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+	echo "<p class='normal_text'>or keyword: "; // TRAD
+	echo "<input name='select_line_type' value='keyword' type='hidden' />\n";
+
+	$all_kwgs = get_kwg_all('', true);
+
+	echo "<select name='select_line_name' class='sel_frm'>\n";
+
+	foreach ($all_kwgs as $kwg)
+		echo "<option value='" . $kwg['name'] . "'>" . $kwg['type'] . " - " . _T(remove_number_prefix($kwg['title'])) . "</option>\n";
+
+	echo "</select>\n";
+
+	echo "<button class='simple_form_btn' name='validate_line_source_kw'>" . _T('button_validate') . "</button>\n";
+	echo "</p>\n";
+	echo "</form>\n";
 }
 
 echo "</fieldset>\n";
@@ -187,22 +207,22 @@ echo "</fieldset>\n";
 //
 //	List the columns in the report
 //
-		echo '<a name="column"></a>' . "\n";
-		echo "<fieldset class='info_box'>\n";
-		show_page_subtitle("Report columns", 'report_edit', 'columns');
+
+	echo '<a name="column"></a>' . "\n";
+	echo "<fieldset class='info_box'>\n";
+	show_page_subtitle("Report columns", 'report_edit', 'columns');
 		
-		echo "<p class='normal_text'>";
-		//echo '<h3>Report columns:</h3>';
-		echo "\n\t\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-		echo "<tr><th class='heading'>#</th>
-	<th class='heading'>Header</th>
-	<th class='heading'>Table</th>
-	<th class='heading'>Contents</th>
-	<th class='heading'>Group</th>
-	<th class='heading'>Sort</th>
-	<th class='heading'>Total</th>
-	<th class='heading'>Action</th>
-</tr>";
+	echo "<p class='normal_text'>\n";
+	echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+	echo "<tr><th class='heading'>#</th>
+		<th class='heading'>Header</th>
+		<th class='heading'>Table</th>
+		<th class='heading'>Contents</th>
+		<th class='heading'>Group</th>
+		<th class='heading'>Sort</th>
+		<th class='heading'>Total</th>
+		<th class='heading'>Action</th>
+	</tr>";
 
 		// Show fields included in this report
 		$q = "SELECT lcm_rep_col.*,lcm_fields.description, lcm_fields.table_name
@@ -281,7 +301,7 @@ echo "</fieldset>\n";
 //
 
 if ($edit) {
-	echo "<form action='add_rep_col.php' method='POST'>\n";
+	echo "<form action='add_rep_col.php' method='post'>\n";
 	echo "\t<input type='hidden' name='rep' value='$rep' />\n";
 	echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
@@ -311,7 +331,7 @@ if ($edit) {
 
 
 	// Get column order
-	echo "\t\t<tr><th class='heading'>Position</th><td>\n";
+	echo "\t\t<tr><th class='heading'>Position</th><td>\n"; // TRAD
 	echo "\t\t\t<select name='order' class='sel_frm'>\n";
 
 	$i = 1;
@@ -360,7 +380,7 @@ echo "</fieldset>\n";
 
 echo '<a name="filter"></a>' . "\n";
 echo "<fieldset class='info_box'>";
-echo "<div class='prefs_column_menu_head'>" . "Report filters" . "</div>\n";
+show_page_subtitle("Report filters", 'report_edit', 'filters');
 
 // List filters attached to this report
 $query = "SELECT *
@@ -413,11 +433,11 @@ if (lcm_num_rows($result)) {
 					$result_author = lcm_query($q);
 
 					echo "<select name='filter_value'>\n";
-					echo "<option value=''>-- select from list--</option>\n";
+					echo "<option value=''>-- select from list--</option>\n"; // TRAD
 
 					while ($author = lcm_fetch_array($result_author)) {
 						$sel = ($filter['value'] == $author['id_author'] ? ' selected="selected"' : '');
-						echo "<option value='" . $author['id_author'] . "'" . $sel . ">" . $author['name_first'] . " " . $author['name_middle'] . " " . $author['name_last'] . "</option>\n";
+						echo "<option value='" . $author['id_author'] . "'" . $sel . ">" . $author['id_author'] . " : " . get_person_name($author) . "</option>\n";
 					}
 
 					echo "</select>\n";
