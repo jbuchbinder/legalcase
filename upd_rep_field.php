@@ -18,10 +18,11 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.7 2005/05/06 13:15:56 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.8 2005/05/09 15:39:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
+include_lcm('inc_filters');
 
 // Clean the POST values
 $rep = intval($_REQUEST['rep']);
@@ -132,7 +133,6 @@ if (isset($_REQUEST['update'])) {
 
 	if ($update == 'filter') {
 		$type = clean_input($_REQUEST['filter_type']);
-		$value = clean_input($_REQUEST['filter_value']);
 
 		$fields = array();
 		$flist = "";
@@ -140,8 +140,27 @@ if (isset($_REQUEST['update'])) {
 		if ($type)
 			array_push($fields, "type = '" . $type . "'");
 
-		if ($value)
-			array_push($fields, "value = '" . $value . "'");
+		switch($type) {
+			// For dates, it is important to fallback on null date so that the
+			// user can clear out/delete a date previously entered.
+			case 'date_eq': // not very important whether start/end, will be sql IN_YEAR()
+			case 'date_le': // ex: date <= 2005 becomes date <= 2005-01-01 00:00:00
+			case 'date_ge': // ex: date >= 2005 becomes date >= 2005-01-01 00:00:00
+			case 'date_lt': // ex: date < 2005 becomes date < 2005-01-01 00:00:00
+				$date = get_datetime_from_array($_REQUEST, 'date', 'start', '0000-00-00 00:00:00');
+				array_push($fields, "value = IF(TO_DAYS('$date') > 0, '" . $date . "', '')");
+				break;
+			case 'date_gt': // ex: date > 2005 becomes date > 2005-12-31 23:59:59
+				$date = get_datetime_from_array($_REQUEST, 'date', 'end', '0000-00-00 00:00:00');
+				array_push($fields, "value = IF(TO_DAYS('$date') > 0, '" . $date . "', '')");
+				break;
+			case 'date_in':
+
+				break;
+			default:
+				$value = clean_input($_REQUEST['filter_value']);
+				array_push($fields, "value = '" . $value . "'");
+		}
 
 		if (count($fields))
 			$flist = implode(", ", $fields);
