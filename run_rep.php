@@ -18,10 +18,120 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.12 2005/02/10 13:48:12 mlutfy Exp $
+	$Id: run_rep.php,v 1.13 2005/05/09 07:48:02 mlutfy Exp $
 */
 
 include('inc/inc.php');
+include_lcm('inc_keywords');
+
+function get_table_suffix($table) {
+	if ($table == 'lcm_author')
+		return "a";
+	elseif ($table == 'lcm_followup')
+		return "fu";
+	elseif ($table == 'lcm_case')
+		return "c";
+	elseif ($table == 'lcm_client')
+		return "cl";
+
+	return "";
+}
+
+function suffix_table($table) {
+	$suffix = get_table_suffix($table);
+
+	if ($suffix)
+		return " as " . get_table_suffix($table) . " ";
+	else
+		return "";
+}
+
+function suffix_field($table, $field) {
+	$suffix = get_table_suffix($table);
+
+	if (preg_match("/^IF/", $field))
+		return $field;
+
+	if ($suffix)
+		return $suffix . "." . $field;
+	else
+		return $table . "." . $field;
+}
+
+function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
+	$sql = "";
+
+	lcm_log("join_tables: " . $table1 . " - " . $table2 . " id1 = " . $id1 . " id2 = " . $id2);
+
+	switch($table1) {
+		case 'lcm_author':
+			switch($table2) {
+				case 'lcm_author':
+					lcm_panic("linking author with author: not recommended");
+					break;
+				case 'lcm_case':
+					$sql .= " a.id_author = c.id_author ";
+					if ($id1)
+						$sql .= " AND a.id_author = $id1 ";
+					if ($id2)
+						$sql .= " AND c.id_author = $id2 ";
+					break;
+				case 'lcm_followup':
+					$sql .= " a.id_author = fu.id_author ";
+					if ($id1)
+						$sql .= " AND a.id_author = $id1 ";
+					if ($id2)
+						$sql .= " AND fu.id_author = $id2 ";
+					break;
+				case 'lcm_client':
+					lcm_panic("not implemented");
+					break;
+				case 'lcm_org':
+					lcm_panic("not implemented");
+					break;
+				case '':
+					if ($id1)
+						$sql  .= " AND id_author = $id1 ";
+					break;
+				default:
+					lcm_panic("case not implemented ($table2)");
+					break;
+			}
+
+			break;
+
+		case 'lcm_case':
+			switch($table2) {
+				case '':
+					if ($id1)
+						$sql .= " AND id_case = $id1 ";
+			}
+
+			break;
+
+		case 'lcm_followup':
+
+			break;
+
+		case 'lcm_client':
+
+			break;
+
+		case 'lcm_org':
+
+			break;
+	}
+
+	return $sql;
+}
+
+// Restrict page to administrators
+if ($author_session['status'] != 'admin') {
+	lcm_page_start('Run report', '', '', 'report_intro'); // TRAD
+	echo "<p>Warning: Access denied, not admin.\n"; // TRAD
+	lcm_page_end();
+	exit;
+}
 
 // Report ID
 $rep = intval($_GET['rep']);
@@ -36,35 +146,37 @@ $q = "SELECT *
 
 $result = lcm_query($q);
 
-if ($row = lcm_fetch_array($result))
-	lcm_page_start("Report: " . $row['title']);
+if ($rep_info = lcm_fetch_array($result))
+	lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
 else
 	die("There is no such report!");
 
-echo "<p>" . $row['description'] . "</p>\n";
+if ($rep_info['description'])
+	echo "<p>" . $rep_info['description'] . "</p>\n";
+
+if (! $rep_info['line_src_name']) {
+	$errors = array("You must select at least a source for the report line information."); // TRAD
+	echo show_all_errors($errors);
+	echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">Back</a></p>'; // TRAD
+	lcm_page_end();
+	exit;
+}
+
+$my_line_table = "lcm_" . $rep_info['line_src_name'];
 
 //
-// Get report columns fields, store into $my_columns for later
+// For eventual report headers
 //
 
-$my_columns = array();
-$q = "SELECT f.id_field, f.field_name, f.table_name, f.enum_type
-		FROM lcm_rep_col as c, lcm_fields as f
-		WHERE c.id_report = $rep
-			AND c.id_field = f.id_field
-		ORDER BY c.col_order";
-
-$result = lcm_query($q);
-
-while ($row = lcm_fetch_array($result))
-	array_push($my_columns, $row);
+// for each array item will be a hash with 'description', 'filter' and 'enum_type'
+$headers = array();
 
 //
 // Get report line fields, store into $my_lines for later
 //
 
 $my_lines = array();
-$q = "SELECT field_name, table_name
+$q = "SELECT f.id_field, f.field_name, f.table_name, f.enum_type, f.description
 		FROM lcm_rep_line as l, lcm_fields as f
 		WHERE id_report = " . $rep . "
 		AND l.id_field = f.id_field
@@ -74,30 +186,105 @@ $result = lcm_query($q);
 
 while ($row = lcm_fetch_array($result)) {
 	$my_line_table = $row['table_name'];
-	array_push($my_lines, $row['field_name']);
+	array_push($my_lines, suffix_field($row['table_name'], $row['field_name']));
+	array_push($headers, $row);
 }
 
-if (! empty($my_lines) && ! $my_line_table)
-	lcm_panic("Internal error: line fields are present, but no source table was specified");
+// No fields were specified: show them all (avoids errors)
+if (! count($my_lines)) {
+	if ($rep_info['line_src_type'] == 'table') {
+		$q = "SELECT * 
+			FROM lcm_fields 
+			WHERE table_name = '$my_line_table'
+			AND field_name != 'count(*)'";
+		$result = lcm_query($q);
+
+		while ($row = lcm_fetch_array($result)) {
+			$my_line_table = $row['table_name'];
+			array_push($my_lines, suffix_field($row['table_name'], $row['field_name']));
+			array_push($headers, $row);
+		}
+	} elseif ($rep_info['line_src_type'] == 'keyword') {
+		$kwg = get_kwg_from_name($rep_info['line_src_name']);
+		// XXX dirty hack, headers print function refers directly to 'description'
+		$kwg['description'] = _T(remove_number_prefix($kwg['title']));
+		array_push($my_lines, "k.name");
+		array_push($headers, $kwg);
+	}
+}
 
 //
-// Add implicit fields, if necesary
+// Get report columns fields, store into $my_columns for later
+//
+
+$do_grouping = false;
+$my_columns = array();
+$q = "SELECT f.id_field, f.field_name, f.table_name, f.enum_type, f.description
+		FROM lcm_rep_col as c, lcm_fields as f
+		WHERE c.id_report = $rep
+			AND c.id_field = f.id_field
+		ORDER BY c.col_order";
+
+$result = lcm_query($q);
+
+while ($row = lcm_fetch_array($result)) {
+	$my_col_table = $row['table_name'];
+	if ($row['field_name'] == "count(*)")
+		$do_grouping = true;
+	
+	if ($row['enum_type']) {
+		$enum = split(":", $row['enum_type']);
+
+		if ($enum[0] == 'keyword') {
+			if ($enum[1] == 'system_kwg') {
+				include_lcm('inc_keywords');
+				$kws = get_keywords_in_group_name($enum[2]);
+				$i = 1;
+				$left_joins = "";
+
+				foreach ($kws as $k) {
+					$name = $row['field_name'];
+					$prefix = "";
+
+					$sql = "LCM_SQL: SELECT count(*) FROM lcm_followup WHERE type = '" . $k['name'] . "'";
+
+					$k['description'] = $k['title'];
+					array_push($headers, $k);
+					array_push($my_columns, "1 as \"" . $sql ."\"");
+
+					$i++;
+				}
+
+				$do_grouping = true;
+			} else {
+				echo "\n\n QUERY = " . $q . " \n\n";
+				lcm_panic("Not yet implemented -" . $enum[1] . "-");
+			}
+		} elseif ($enum[0] == 'list') {
+
+		} else {
+			echo "\n\n QUERY = " . $q . " \n\n";
+			lcm_panic("Not yet implemented -" . $enum[0] . "-");
+		}
+	} else {
+		array_push($my_columns, $row['field_name']);
+		array_push($headers, $row);
+	}
+}
+
+//
+// Add implicit fields.
 // For example, if we select fields from lcm_author, we should include id_author
 // even if we don't want to show it (for table joining, later).
 // 
 
 $my_line_fields_implicit = "";
 
-if (preg_match("/^lcm_(.*)$/", $my_line_table, $regs)) {
-	$temp = "id_" . $regs[1];
-	$temp_exists = false;
+if ($rep_info['line_src_type'] == 'table' && preg_match("/^lcm_(.*)$/", $my_line_table, $regs)) {
+	$temp = get_table_suffix($my_line_table);
 
-	// Add it only if it was not already selected
-	foreach($my_lines as $l)
-		if ($l == $temp)
-			$temp_exists = true;
-	
-	if (! $temp_exists) {
+	if ($temp) {
+		$temp .= ".id_" . $regs[1];
 		$my_line_fields_implicit = $temp;
 		echo "<!-- Implicit param: " . $my_line_fields_implicit . " -->\n";
 	}
@@ -125,12 +312,85 @@ while ($row = lcm_fetch_array($result))
 //
 
 $my_line_fields = implode(", ", $my_lines);
+$my_col_fields  = implode(", ", $my_columns);
 
 if ($my_line_fields && $my_line_fields_implicit)
 	$my_line_fields .= ", " . $my_line_fields_implicit;
 
-$q = "SELECT " . $my_line_fields . "
-		FROM " . $my_line_table;
+$q = "SELECT " . $my_line_fields;
+$q_where = array();
+
+// Hide implicit fields, but allow them to be in 'group by' if necessary
+if ($my_line_fields_implicit)
+	$q .= " as 'LCM_HIDE_ID' ";
+
+if ($my_col_fields)
+	$q .= ", " . $my_col_fields;
+
+if ($rep_info['line_src_type'] == 'table') {
+	$q .= " FROM " . $my_line_table . suffix_table($my_line_table);
+} elseif ($rep_info['line_src_type'] == 'keyword') {
+	$q .= " FROM lcm_keyword as k 
+			LEFT JOIN lcm_keyword_group as kwg on (k.id_group = kwg.id_group AND kwg.name = '" . $rep_info['line_src_name'] . "')";
+
+	$q_where[] = "kwg.name IS NOT NULL";
+}
+
+// Join condition
+if ($rep_info['line_src_type'] == 'table') {
+	switch ($my_line_table) {
+		case 'lcm_author':
+			switch($my_col_table) {
+				case 'lcm_followup':
+					$q .= " LEFT JOIN lcm_followup as fu ON (fu.id_author = a.id_author) ";
+					break;
+			}
+			break;
+
+		case 'lcm_case':
+			switch($my_col_table) {
+				case 'lcm_followup':
+					$q .= " LEFT JOIN lcm_followup as fu ON (fu.id_case = c.id_case) ";
+					break;
+
+			}
+			break;
+
+		case 'lcm_followup':
+			switch($my_col_table) {
+				case 'lcm_author':
+					$q .= " LEFT JOIN lcm_author as a ON (a.id_author = fu.id_author) ";
+			}
+			break;
+
+		default:
+			echo "\n\n QUERY = " . $q . " \n\n";
+			lcm_panic("unknown join on my_line_table: $my_line_table");
+	}
+} elseif ($rep_info['line_src_type'] == 'keyword') {
+	switch($rep_info['line_src_name']) {
+		default:
+			switch($my_col_table) {
+				case 'lcm_case':
+					$q .= " LEFT JOIN lcm_keyword_case as kc ON (kc.id_keyword = k.id_keyword) ";
+					break;
+			}
+	}
+}
+
+if (isset($left_joins))
+	$q .= $left_joins;
+
+if (count($q_where)) {
+	$tmp = implode(" AND ", $q_where);
+	$q .= "WHERE " . $tmp;
+}
+
+if ($do_grouping) {
+	$q .= " GROUP BY " . $my_line_fields;
+}
+
+echo "\n\n<!-- QUERY = " . $q . " -->\n\n";
 
 // Apply filters to this table
 $line_filters = array();
@@ -171,325 +431,66 @@ $result = lcm_query($q);
 // Ready for report line
 //
 
-echo "<table width='99%' border='1'>";
+echo "<table class='tbl_usr_dtl' width='98%' align='center' border='1'>";
+echo "<tr>\n";
+foreach ($headers as $h) {
+	echo "<th class='heading'>" . _Th(remove_number_prefix($h['description'])) . "</th>\n";
+}
+echo "</tr>\n";
+
+$cpt_lines = 0;
+$cpt_col = 0;
 
 while ($row = lcm_fetch_array($result)) {
+	$cpt_lines++;
 	echo "<tr>\n";
 
-	// Line information
-	echo "<td>\n";
+	foreach ($row as $key => $val) {
+		if ((! is_numeric($key)) && ($key != 'LCM_HIDE_ID')) {
+			$css = 'class="tbl_cont_' . ($cpt_lines % 2 ? "light" : "dark") . '"';
+			$align = 'align="left"';
 
-	// Show only the explicitely requested fields, not implicit
-	foreach ($my_lines as $l)
-		echo $row[$l] . " ";
+			//
+			// Special cases
+			//
+			if ($headers[$cpt_col]['field_name'] == 'description')
+				$val = get_fu_description($row);
 
-	echo "</td>\n";
+			if ($val == "1" && preg_match("/^LCM_SQL: (.*)/", $key, $regs)) {
+				$q_col = $regs[1];
+				$q_col .= join_tables($my_line_table, '', $row['LCM_HIDE_ID'], 0);
+				
+				$result_tmp = lcm_query($q_col);
 
-	//
-	// Prepare information for each column
-	//
-	foreach ($my_columns as $col) {
-		// Table-join condition
-		$from = $my_line_table;
-		if ($col['table_name'] != $my_line_table)
-			$from .= ", " . $col['table_name'];
+				$val = "";
 
-		$where = '';
-		$filters = '';
-		$col_filters = array();
-
-		foreach ($my_filters as $f) {
-			if ($f['table_name'] == $col['table_name']) {
-				$temp = '';
-
-				if ($f['type'])
-					$temp .= $f['field_name'];
-		
-				switch($f['type']) {
-					case '':
-						// do nothing
-						break;
-					case 'num_eq':
-						$temp .= " = " . $f['value'];
-						break;
-					case 'num_lt':
-						$temp .= " < " . $f['value'];
-						break;
-		
-					default:
-						lcm_panic("Internal error in run_report: unknown filter type (" . $f['type'] . ")");
+				while($row_tmp = lcm_fetch_array($result_tmp)) {
+					$val .= $row_tmp[0];
 				}
-		
-				if ($temp)
-					array_push($col_filters, $temp);
-			}
-		}
-
-		$filters = implode(" AND ", $col_filters);
-		
-		switch ($my_line_table) {
-			case 'lcm_case':
-				$where = " lcm_case.id_case = ";
-				break;
-			case 'lcm_author': 
-				$where = " lcm_author.id_author = ";
-				break;
-			case 'lcm_client':
-				$where = " lcm_client.id_client = ";
-				break;
-			case 'lcm_followup':
-				$where = " lcm_followup.id_followup = " . $row['id_followup'];
-				// $where .= " lcm_followup.id_author ";
-				break;
-			default:
-				lcm_panic("internal error: table = " . $my_line_table);
-		}
-
-		switch ($col['table_name']) {
-			case 'lcm_case':
-				if ($my_line_table == 'lcm_author') {
-					$from  .= ", lcm_case_author";
-					$where .= "lcm_case_author.id_author AND lcm_case_author.id_case = lcm_case.id_case";
-
-					// This can be determined automatically
-					$where .= " AND lcm_author.id_author = " . $row['id_author'];
-				}
-				break;
-			case 'lcm_author': 
-				$where .= " lcm_author.id_author ";
-				break;
-			case 'lcm_client':
-				$where .= " lcm_client.id_client ";
-				break;
-			case 'lcm_followup':
-				if ($my_line_table != 'lcm_followup')
-					$where .= " lcm_followup.id_author ";
-
-				if ($my_line_table == 'lcm_author') {
-					$where .= " AND lcm_followup.id_author = " . $row['id_author'];
-				}
-
-				break;
-			default:
-				lcm_panic("internal error: table = " . $col['table_name']);
-
-		}
-
-		if ($col['enum_type']) {
-			$enum_info = explode(":", $col['enum_type']);
-			$enum_src = $enum_info[0]; // keyword
-			$enum_type = $enum_info[1]; // system_kwg
-			$enum_group = $enum_info[2]; // ex: followups
-
-			if ($enum_src == 'keyword') {
-				global $system_kwg;
-
-				foreach ($system_kwg[$enum_group]['keywords'] as $kw) {
-					lcm_log("TYPE = " . $kw['name']);
-
-					// FIXME: COUNT(*), AVG(date_end - date_start), SUM(date_end - date_start)
-					$q1 = "SELECT COUNT(*)
-							FROM " . $from . "
-							WHERE " . $col['field_name'] . " = '" . $kw['name'] . "'
-								AND " . $where;
-
-					if ($filters)
-						$q1 .= " AND " . $filters;
-
-					$result1 = lcm_query($q1);
-
-					$val = lcm_fetch_array($result1);
-					echo "<td>" . $val[0] . "</td>\n";
-
-				}
-			} else {
-				lcm_panic("unknown enum_src = " . $enum_src);
 			}
 
-		} else {
-			$q1 = "SELECT " . $col['field_name'] . "
-					FROM " . $from . "
-					WHERE " . $where;
-
-			if ($filters)
-				$q1 .= " AND " . $filters;
-	
-			$result1 = lcm_query($q1);
-			$val = lcm_fetch_array($result1);
-	
-			echo "<td>" . $val[0] . "</td>\n";
+			switch ($headers[$cpt_col]['filter']) {
+				case 'date_length':
+					$val = format_time_interval_prefs($val);
+					break;
+				case 'date':
+					$val = format_date($val, 'short');
+					break;
+				case 'number':
+					$align = 'align="right"';
+			}
+		
+			echo '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
+			$cpt_col = ($cpt_col + 1) % count($headers);
 		}
 	}
-	
+
 	echo "</tr>\n";
 }
 
 echo "</table>\n";
 
-/*
-
-//
-// Get report columns
-//
-$q = "SELECT *
-		FROM lcm_rep_col as c, lcm_fields as f
-		WHERE c.id_report = $rep
-			AND c.id_field = f.id_field
-		ORDER BY c.col_order";
-
-$result = lcm_query($q);
-
-// Process report column data to prepare SQL query
-$fl = '';		// fields list
-$ta = array();	// tables array
-$sl = '';		// sort list
-$sl_text = '';	// Sorting explaination
-
-while ($row = lcm_fetch_array($result)) {
-	if ($fl) $fl .= ',';
-
-	$fl .= $row['table_name'] . '.' . $row['field_name'] . " AS '" . $row['header'] . "'";
-
-	if (!in_array($row['table_name'],$ta))
-		$ta[] = $row['table_name'];
-
-	if ($row['sort']) {
-		if ($sl) $sl .= ',';
-		$sl .= $row['table_name'] . '.' . $row['field_name'] . " " . $row['sort'];
-		$sl_text .= ( $sl_text ? ', "' : '"' ) . $row['description'] . '"';
-	}
-
-	if ($row['total']) {
-		$totals[$row['col_order']] = 0;
-	}
-}
-
-// Get report filters
-$q = "SELECT lcm_filter.*
-		FROM lcm_rep_filters,lcm_filter
-		WHERE (id_report=$rep
-			AND lcm_rep_filters.id_filter = lcm_filter.id_filter)";
-
-$result = lcm_query($q);
-
-// Process each filter
-$filter_text = '';
-while ($filter = lcm_fetch_array($result)) {
-	// Add filter name to the list
-	$filter_text .= ( $filter_text ? ', "' : '"' ) . $filter['title'] . '"';
-	// Get filter conditions
-	$q = "SELECT *
-			FROM lcm_filter_conds,lcm_fields
-			WHERE (lcm_filter_conds.id_filter=" . $filter['id_filter'] . "
-				AND lcm_filter_conds.id_field=lcm_fields.id_field)
-			ORDER BY lcm_filter_conds.cond_order";
-	$res_cond = lcm_query($q);
-
-	// Process conditions
-	$cl = '';	// Conditions list
-	while ($condition = lcm_fetch_array($res_cond)) {
-		// Add logical operand, if necessary
-		$cl .= ( $cl ? ' ' . $filter['type'] . ' (' : '(');
-		// Add field and table if not added yet
-		$cl .= $condition['table_name'] . '.' . $condition['field_name'];
-		if (!in_array($condition['table_name'],$ta)) $ta[] = $condition['table_name'];
-		// Add condition operand and value
-		switch ($condition['type']) {
-			case 1:
-				$cl .= '=' . $condition['value'];
-				break;
-			case 2:
-				$cl .= '<' . $condition['value'];
-				break;
-			case 3:
-				$cl .= '>' . $condition['value'];
-				break;
-			case 4:
-				$cl .= " LIKE '%" . $condition['value'] . "%'";
-				break;
-			case 5:
-				$cl .= " LIKE '" . $condition['value'] . "%'";
-				break;
-			case 6:
-				$cl .= " LIKE '%" . $condition['value'] . "%'";
-				break;
-
-		}
-		$cl .= ')';
-	}
-}
-
-$wl = ( ($cl) ? "($cl)" : '');	// WHERE clause list
-
-// Add implied relations between tables included in the report
-if (in_array('lcm_case',$ta) && in_array('lcm_author',$ta)) {
-	$ta[] = 'lcm_case_author';
-
-	if ($wl)
-		$wl .= ' AND ';
-
-	$wl .= ' lcm_case.id_case = lcm_case_author.id_case AND lcm_author.id_author = lcm_case_author.id_author';
-}
-
-// Convert array of table names into string list
-$tl = implode(',',$ta);
-
-echo "\n<!-- ";
-echo "\t * FL = $fl\n";
-echo "\t * TL = $tl\n";
-echo "\t * WL = $wl\n";
-echo "-->\n";
-
-
-if ($fl && $tl) { //  && $wl) {
-	// Get report data
-	$q = "SELECT $fl
-			FROM $tl\n";
-	
-	if ($wl)
-		$q .= "\tWHERE ($wl)\n";
-
-	if ($sl)
-		$q .= "\tORDER BY $sl";
-
-	$result = lcm_query($q);
-
-	// Diagnostic: show query into HTML
-	echo "<!-- query is: '$q' -->\n";
-
-	// Show report data
-	if (lcm_num_rows($result)>0) {
-		if ($sl_text) echo "Sorted by: $sl_text<br>\n";
-		if ($filter_text) echo "Filters applied: $filter_text<br>\n";
-		echo "<table border='0' class='tbl_usr_dtl'>\n";
-		echo "\t<tr>\n";
-		// Show column headers
-		for ($i=0; $i<mysql_num_fields($result); $i++) {
-			echo "\t\t<th class='heading'>" . mysql_field_name($result,$i) . "</th>\n";
-		}
-		echo "\t</tr>\n";
-		// Show report data rows
-		while ($row = lcm_fetch_array($result)) {
-			echo "\t<tr>\n";
-			for ($j=0; $j<$i; $j++) {
-				echo "\t\t<td>" . $row[$j] . "</td>\n";
-				if (isset($totals[$j+1])) $totals[$j+1] += $row[$j];
-			}
-			echo "\t</tr>\n";
-		}
-		// Show totals (if any)
-		echo "\t<tr>\n";
-		for ($i=0; $i<mysql_num_fields($result); $i++) {
-			echo "\t\t<td>" . ($totals[$i+1] ? '<strong>' . $totals[$i+1] . '</strong>' : '') . "</td>\n";
-		}
-		echo "\t</tr>\n";
-
-		echo "</table>";
-	}
-}
-*/
-
-echo '<p><a href="' . ($GLOBALS['HTTP_REFERER'] ? $GLOBALS['HTTP_REFERER'] : "rep_det.php?rep=$rep") . '" class="run_lnk">Back</a></p>';
+echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">Back</a></p>'; // TRAD
 
 lcm_page_end();
 
