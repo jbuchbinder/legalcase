@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.24 2005/05/09 07:39:49 mlutfy Exp $
+	$Id: rep_det.php,v 1.25 2005/05/09 15:41:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -90,7 +90,8 @@ if ($rep_info['description'])
 if ($edit)
 	echo '<p><a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . "Edit report" . '</a>&nbsp;'; // TRAD
 
-echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">Run report</a><br />'; // TRAD
+echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">Generate report</a>&nbsp;'; // TRAD
+echo '<a href="run_rep.php?export=csv&amp;rep=' . $rep_info['id_report'] . '" class="exp_lnk">Export report</a>'; // TRAD
 echo "</p></fieldset>";
 
 //
@@ -382,163 +383,11 @@ echo '<a name="filter"></a>' . "\n";
 echo "<fieldset class='info_box'>";
 show_page_subtitle("Report filters", 'report_edit', 'filters');
 
-// List filters attached to this report
-$query = "SELECT *
-			FROM lcm_rep_filter as v, lcm_fields as f
-			WHERE id_report = " . $rep . "
-			AND f.id_field = v.id_field";
-
-$result = lcm_query($query);
-
-if (lcm_num_rows($result)) {
-	echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-
-	while ($filter = lcm_fetch_array($result)) {
-		echo "<form action='upd_rep_field.php' name='frm_line_additem' method='get'>\n";
-		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-		echo "<input name='update' value='filter' type='hidden' />\n";
-		echo "<input name='id_filter' value='" . $filter['id_filter'] . "' type='hidden' />\n";
-		echo "<tr>\n";
-		echo "<td>" . $filter['field_name'] . "</td>\n";
-
-		// Type of filter
-		echo "<td>";
-		echo "<select name='filter_type'>\n";
-
-		$all_filters = array(
-			'number' => array('none', 'num_eq', 'num_lt', 'num_le', 'num_gt', 'num_ge'),
-			'date' => array('none', 'data_in', 'date_lt', 'date_le', 'date_gt', 'date_ge', 'date_year', 'date_month', 'date_week', 'date_day'),
-			'text' => array('none', 'text_eq')
-		);
-
-		if (! $all_filters[$filter['filter']])
-			lcm_panic("Internal error: wrong filter type");
-
-		foreach ($all_filters[$filter['filter']] as $f) {
-			$sel = ($filter['type'] == $f ? ' selected="selected"' : '');
-			echo "<option value='" . $f . "'" . $sel . ">" . _T('filter_' . $f) . "</option>\n";
-		}
-
-		echo "</select>\n";
-		echo "</td>\n";
-
-		// Value for filter
-		echo "<td>";
-
-		switch ($filter['type']) {
-			case 'num_eq':
-				if ($filter['field_name'] == 'id_author') {
-					// XXX make this a function
-					$q = "SELECT * FROM lcm_author WHERE status IN ('admin', 'normal', 'external')";
-					$result_author = lcm_query($q);
-
-					echo "<select name='filter_value'>\n";
-					echo "<option value=''>-- select from list--</option>\n"; // TRAD
-
-					while ($author = lcm_fetch_array($result_author)) {
-						$sel = ($filter['value'] == $author['id_author'] ? ' selected="selected"' : '');
-						echo "<option value='" . $author['id_author'] . "'" . $sel . ">" . $author['id_author'] . " : " . get_person_name($author) . "</option>\n";
-					}
-
-					echo "</select>\n";
-					break;
-				}
-			case 'num_lt':
-			case 'num_gt':
-				echo '<input style="width: 99%;" type="text" name="filter_value" value="' . $filter['value'] . '" />';
-				break;
-
-			case 'date_in':
-				// TODO
-				break;
-			case 'date_lt':
-			case 'date_lt':
-			case 'date_gt':
-				// TODO
-				break;
-			case 'date_year':
-				// TODO
-				break;
-			case 'date_month':
-				// TODO
-				break;
-			case 'date_week':
-				// TODO
-				break;
-			case 'date_day':
-				// TODO
-				break;
-			case 'text_eq':
-				echo '<input style="width: 99%;" type="text" name="filter_value" value="' . $filter['value'] . '" />';
-				break;
-			default:
-				echo "<!-- no type -->\n";
-		}
-		
-		echo "</td>\n";
-
-		// Button to validate
-		echo "<td>";
-		echo "<button class='simple_form_btn' name='validate_filter_addfield'>" . _T('button_validate') . "</button>\n";
-		echo "</td>\n";
-
-		// Link for "Remove"
-		echo "<td><a class='content_link' href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
-			. "remove=filter" . "&amp;" . "id_filter=" . $filter['id_filter'] . "'>" . "X" . "</a></td>\n";
-		echo "</tr>\n";
-		echo "</form>\n";
-	}
-
-	echo "</table>\n";
-}
-
-
-// List all available fields in selected tables for report
-$query = "SELECT *
-			FROM lcm_fields
-			WHERE ";
-
-$sources = array();
-
-if ($rep_info['line_src_name'])
-	array_push($sources, "'lcm_" . $rep_info['line_src_name'] .  "'");
-
-if ($rep_info['col_src_name'])
-	array_push($sources, "'" /* lcm_" . */ . $rep_info['col_src_name'] . "'");
-
-// List only filters if table were selected as sources (line/col)
-if (count($sources)) {
-	$query .= " table_name IN ( " . implode(" , ", $sources) . " ) AND ";
-
-	$query .= " filter != 'none'";
-
-	echo "<!-- QUERY: $query -->\n";
-
-	$result = lcm_query($query);
-
-	if (lcm_num_rows($result)) {
-		echo "<form action='upd_rep_field.php' name='frm_line_additem' method='get'>\n";
-		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-		echo "<input name='add' value='filter' type='hidden' />\n";
-
-		echo "<p class='normal_text'>" . "Add a filter based on this field:" . " ";
-		echo "<select name='id_field'>\n";
-
-		while ($row = lcm_fetch_array($result)) {
-			echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
-		}
-
-		echo "</select>\n";
-		echo "<button class='simple_form_btn' name='validate_filter_addfield'>" . _T('button_validate') . "</button>\n";
-		echo "</p>\n";
-		echo "</form>\n";
-	}
-} else {
-	echo "<p>To apply filters, first select the source tables for report line and columns.</p>";
-}
+include_lcm('inc_conditions');
+show_report_filters($rep, false);
 
 echo "</fieldset>\n";
 
-	lcm_page_end();
+lcm_page_end();
 
 ?>
