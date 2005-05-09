@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.14 2005/05/09 14:17:56 mlutfy Exp $
+	$Id: run_rep.php,v 1.15 2005/05/09 15:37:27 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -133,8 +133,8 @@ if ($author_session['status'] != 'admin') {
 	exit;
 }
 
-// Report ID
-$rep = intval($_GET['rep']);
+$rep = intval($_GET['rep']); // Report ID
+$headers_sent = false;
 
 //
 // Show title and description of the report
@@ -146,15 +146,27 @@ $q = "SELECT *
 
 $result = lcm_query($q);
 
-if ($rep_info = lcm_fetch_array($result))
+if (! ($rep_info = lcm_fetch_array($result)))
+	die("Report # " . $rep . " doest not exist.");
+	
+if ($_REQUEST['export'] == 'csv') {
+	header("Content-Type: text/comma-separated-values");
+	header('Content-Disposition: filename="' . $rep_info['title'] . '.csv"');
+	header("Content-Description: " . $rep_info['title']);
+	// header("Content-Transfer-Encoding: binary");
+} else {
 	lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
-else
-	die("There is no such report!");
+	$headers_sent = true;
 
-if ($rep_info['description'])
-	echo "<p>" . $rep_info['description'] . "</p>\n";
+	if ($rep_info['description'])
+		echo "<p>" . $rep_info['description'] . "</p>\n";
+}
 
 if (! $rep_info['line_src_name']) {
+	// We will print an error, so send headers if not already done
+	if (! $headers_sent)
+		lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
+
 	$errors = array("You must select at least a source for the report line information."); // TRAD
 	echo show_all_errors($errors);
 	echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">Back</a></p>'; // TRAD
@@ -286,7 +298,6 @@ if ($rep_info['line_src_type'] == 'table' && preg_match("/^lcm_(.*)$/", $my_line
 	if ($temp) {
 		$temp .= ".id_" . $regs[1];
 		$my_line_fields_implicit = $temp;
-		echo "<!-- Implicit param: " . $my_line_fields_implicit . " -->\n";
 	}
 }
 
@@ -461,6 +472,9 @@ foreach ($my_filters as $f) {
 }
 
 if ($is_missing_filters) {
+	if (! $headers_sent)
+		lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
+
 	echo '<p class="normal_text">' . "Please enter the values for the report:" . "</p>\n"; // TRAD
 	include_lcm('inc_conditions');
 	show_report_filters($rep, true);
@@ -489,26 +503,45 @@ if ($do_grouping) {
 // Ready!
 //
 
-echo "\n\n<!-- QUERY = " . $q . " -->\n\n";
+if ($headers_sent)
+	echo "\n\n<!-- QUERY = " . $q . " -->\n\n";
+
 $result = lcm_query($q);
 
 //
 // Ready for report line
 //
 
-echo "<table class='tbl_usr_dtl' width='98%' align='center' border='1'>";
-echo "<tr>\n";
-foreach ($headers as $h) {
-	echo "<th class='heading'>" . _Th(remove_number_prefix($h['description'])) . "</th>\n";
+if ($headers_sent) {
+	echo "<table class='tbl_usr_dtl' width='98%' align='center' border='1'>";
+	echo "<tr>\n";
+
+	$h_before = '<th class="heading">';
+	$h_between = '';
+	$h_after  = "</th>\n";
+} else {
+	$h_before = '"';
+	$h_between = ', ';
+	$h_after = "\"";
 }
-echo "</tr>\n";
+
+foreach ($headers as $h) {
+	echo $h_before . _Th(remove_number_prefix($h['description'])) . $h_after . $h_between;
+}
+
+if ($headers_sent)
+	echo "</tr>\n";
+else
+	echo "\n"; // CSV export
 
 $cpt_lines = 0;
 $cpt_col = 0;
 
 while ($row = lcm_fetch_array($result)) {
 	$cpt_lines++;
-	echo "<tr>\n";
+
+	if ($headers_sent)
+		echo "<tr>\n";
 
 	foreach ($row as $key => $val) {
 		if ((! is_numeric($key)) && ($key != 'LCM_HIDE_ID')) {
@@ -545,18 +578,29 @@ while ($row = lcm_fetch_array($result)) {
 					$align = 'align="right"';
 			}
 		
-			echo '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
+			if ($headers_sent)
+				echo '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
+			else { // if ($_REQUEST['export'] == 'csv')
+				$val = str_replace('"', '""', $val); // escape " character (csv)
+				echo '"' . $val . '" , ';
+			}
+
 			$cpt_col = ($cpt_col + 1) % count($headers);
 		}
 	}
 
-	echo "</tr>\n";
+	if ($headers_sent)
+		echo "</tr>\n";
+	else // // if ($_REQUEST['export'] == 'csv')
+		echo "\n";
 }
 
-echo "</table>\n";
+if ($headers_sent) {
+	echo "</table>\n";
 
-echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">Back</a></p>'; // TRAD
+	echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">Back</a></p>'; // TRAD
+	lcm_page_end();
+}
 
-lcm_page_end();
 
 ?>
