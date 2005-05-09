@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.70 2005/04/25 10:10:41 mlutfy Exp $
+	$Id: inc_filters.php,v 1.71 2005/05/09 13:58:20 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -421,8 +421,43 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 	if ($fallback) 
 		return $fallback;
 	
-	// Return empty date (0000-00-00 00:00:00 or 0000-01-01 23:59:59)
+	// Return empty date (0000-01-01 00:00:00 or 0000-01-01 23:59:59)
 	return $ret;
+}
+
+function isset_datetime_from_array($source, $prefix, $check = 'year_only') {
+	if ($prefix)
+		$prefix = $prefix . '_';
+
+	if (! is_numeric($source[$prefix . 'year']))
+		return false;
+
+	if ($check == 'year_only')
+		return true;
+
+	if (! is_numeric($source[$prefix . 'month'])) 
+		return false;
+	
+	if (! is_numeric($source[$prefix . 'day']))
+		return false;
+
+	if ($check == 'date_only') 
+		return true;
+
+	if (! is_numeric($source[$prefix . 'hour']))
+		return false;
+
+	if (! is_numeric($source[$prefix . 'minutes']))
+		return false;
+
+	if ($check != 'with_seconds')
+		return true;
+	
+	// For fanatics.. :-)
+	if (! is_numeric($source[$prefix . 'seconds']))
+		return false;
+
+	return true;
 }
 
 function checkdate_sql($date) {
