@@ -662,6 +662,19 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // R
 'rep_button_new' => 'Create a new report',
+'rep_filter_date_eq' => '=',
+'rep_filter_date_ge' => '≥',
+'rep_filter_date_gt' => '>',
+'rep_filter_date_in' => 'in',
+'rep_filter_date_le' => '≤',
+'rep_filter_date_lt' => '<',
+'rep_filter_none' => 'none',
+'rep_filter_num_eq' => '=',
+'rep_filter_num_ge' => '≥',
+'rep_filter_num_gt' => '>',
+'rep_filter_num_le' => '≤',
+'rep_filter_num_lt' => '<',
+'rep_filter_text_eq' => '=',
 'rep_title' => 'Title',
 'report_id' => 'Report ID',
 
