@@ -265,7 +265,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'edit' => 'Edit',
 'edit_case_information' => 'Edit case information',
 'edit_filter_details' => 'Edit filter details',
-'edit_rep_details' => 'Edit report details',
 'error_add_auth_no_rights' => 'You don\'t have permission to add access rights to this case!',
 'error_no_case_name' => 'Case should have a name!',
 'error_no_case_specified' => 'No case was specified',
@@ -596,7 +595,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // N
 'new_followup' => 'New followup',
-'new_report' => 'New report',
 
 
 // O
@@ -661,7 +659,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // R
+'rep_button_edit' => 'Edit report details',
+'rep_button_exportcsv' => 'Export the report',
+'rep_button_goback' => 'Go back to the report details',
 'rep_button_new' => 'Create a new report',
+'rep_button_run' => 'Generate the report',
 'rep_filter_date_eq' => '=',
 'rep_filter_date_ge' => '≥',
 'rep_filter_date_gt' => '>',
@@ -675,8 +677,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'rep_filter_num_le' => '≤',
 'rep_filter_num_lt' => '<',
 'rep_filter_text_eq' => '=',
-'rep_title' => 'Title',
-'report_id' => 'Report ID',
+'rep_input_description' => 'Description:',
+'rep_input_id' => 'Report ID:',
+'rep_input_title' => 'Title:',
+'rep_subtitle_column' => 'Report column information',
+'rep_subtitle_line' => 'Report line information',
+'rep_warning_atleastlineinfo' => 'You must select at least the source for the report line information.',
 
 
 // S
@@ -788,7 +794,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_org_select_client' => '@name_org@: Select representatives...',
 'title_org_view' => 'Organisation:',
 'title_rep_view' => 'Report details:',
-'title_report_list' => 'List of reports:',
+'title_report_list' => 'List of reports',
 'title_site_configuration' => 'Site configuration',
 'title_software' => 'Legal Case Management',
 'title_software_article' => 'The Legal Case Management system',
@@ -809,6 +815,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_field_mandatory' => 'Mandatory field.',
 'warning_field_mandatory_all' => 'All of the fields below are mandatory.',
 'warning_forbidden_area' => 'Forbidden area',
+'warning_forbidden_not_admin' => 'Access denied: you do not have the administrative right to access this section.',
 'warning_operation_failed' => 'The operation failed.',
 'warning_panic_is_useful' => 'An unexpected error has occured, but the information provided below will help the software developers to fix the error. Please copy-paste the message below and send it by e-mail to legalcase-devel@lists.sf.net.',
 'warning_sql_connection_failed' => 'Connection to SQL database server failed.',
