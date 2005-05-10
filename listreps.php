@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.8 2005/04/28 07:06:29 mlutfy Exp $
+	$Id: listreps.php,v 1.9 2005/05/10 08:38:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,10 +26,11 @@ include_lcm('inc_filters');
 
 global $author_session;
 
+lcm_page_start(_T('title_report_list'), '', '', 'report_intro');
+
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	lcm_page_start(_T('title_rep_list'));
-	echo "<p>Warning: Access denied, not admin.\n"; // TRAD
+	echo "<p>" . _T('warning_forbidden_not_admin') . "</p>\n";
 	lcm_page_end();
 	exit;
 }
@@ -41,7 +42,6 @@ $find_rep_string = '';
 if (isset($_REQUEST['find_rep_string']))
 	$find_rep_string = $_GET['find_rep_string'];
 
-lcm_page_start(_T('title_report_list'));
 // lcm_bubble('report_list');
 show_find_box('rep', $find_rep_string);
 
@@ -88,12 +88,6 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	if (true) echo '</a>';
 	echo "</td>\n";
 	
-	/* [ML]
-	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	if (true)
-		echo '<a href="run_rep.php?rep=' . $row['id_report'] . '" class="content_link">Run</a>';
-	echo "</td>";
-	*/
 	echo "</tr>\n";
 }
 
