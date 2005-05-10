@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_conditions.php,v 1.4 2005/05/09 15:38:31 mlutfy Exp $
+	$Id: inc_conditions.php,v 1.5 2005/05/10 08:06:19 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -88,7 +88,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 			}
 
 			echo "<tr>\n";
-			echo "<td>" . $filter['field_name'] . "</td>\n";
+			echo "<td>" . _Th($filter['description']) . "</td>\n";
 
 			// Type of filter
 			echo "<td>";
@@ -100,14 +100,19 @@ function show_report_filters($id_report, $is_runtime = false) {
 					);
 
 			if ($all_filters[$filter['filter']]) {
-				echo "<select name='filter_type'>\n";
+				// At runtime, if a filter has been selected, do not allow select
+				if ($filter['type'] && $is_runtime) {
+					echo _T('rep_filter_' . $filter['type']);
+				} else {
+					echo "<select name='filter_type'>\n";
 
-				foreach ($all_filters[$filter['filter']] as $f) {
-					$sel = ($filter['type'] == $f ? ' selected="selected"' : '');
-					echo "<option value='" . $f . "'" . $sel . ">" . _T('filter_' . $f) . "</option>\n";
+					foreach ($all_filters[$filter['filter']] as $f) {
+						$sel = ($filter['type'] == $f ? ' selected="selected"' : '');
+						echo "<option value='" . $f . "'" . $sel . ">" . _T('rep_filter_' . $f) . "</option>\n";
+					}
+
+					echo "</select>\n";
 				}
-
-				echo "</select>\n";
 			} else {
 				// XXX Should happen only if a filter was removed in a future version, e.g. rarely
 				// or between development releases.
@@ -131,7 +136,9 @@ function show_report_filters($id_report, $is_runtime = false) {
 						echo "<option value=''>-- select from list--</option>\n"; // TRAD
 
 						while ($author = lcm_fetch_array($result_author)) {
-							$sel = ($filter['value'] == $author['id_author'] ? ' selected="selected"' : '');
+							// Check for already submitted value
+							$sel = (($filter['value'] == $author['id_author'] || $_REQUEST['filter_val' . $filter['id_filter']] == $author['id_author'])
+								? ' selected="selected"' : '');
 							echo "<option value='" . $author['id_author'] . "'" . $sel . ">" . $author['id_author'] . " : " . get_person_name($author) . "</option>\n";
 						}
 
