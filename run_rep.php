@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.17 2005/05/10 10:41:03 mlutfy Exp $
+	$Id: run_rep.php,v 1.18 2005/05/10 14:10:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,6 +33,10 @@ function get_table_suffix($table) {
 		return "c";
 	elseif ($table == 'lcm_client')
 		return "cl";
+	elseif ($table == 'lcm_case_client_org')
+		return "cco";
+	elseif ($table == 'lcm_case_author')
+		return "ca";
 
 	return "";
 }
@@ -46,7 +50,7 @@ function suffix_table($table) {
 		return "";
 }
 
-function suffix_field($table, $field) {
+function prefix_field($table, $field) {
 	$suffix = get_table_suffix($table);
 
 	if (preg_match("/^IF/", $field))
@@ -59,29 +63,30 @@ function suffix_field($table, $field) {
 }
 
 function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
-	$sql = "";
+	$from  = ""; // select .. FROM [here] (for dependancies between tables)
+	$from_glue = ""; // for joining the FROM
+	$where = ""; // the usual stuff (LEFT JOIN ON .., WHERE ..)
 
-	lcm_log("join_tables: " . $table1 . " - " . $table2 . " id1 = " . $id1 . " id2 = " . $id2);
+	lcm_debug("join_tables: " . $table1 . " - " . $table2 . " id1 = " . $id1 . " id2 = " . $id2);
+
+	$table_keys = array(
+		"lcm_case" => "id_case",
+		"lcm_author" => "id_author",
+		"lcm_followup" => "id_followup",
+		"lcm_client" => "id_client",
+		"lcm_org" => "id_org" );
+
+	if ($table1 == $table2)
+		lcm_panic("Linking with self: not yet supported");
 
 	switch($table1) {
 		case 'lcm_author':
 			switch($table2) {
-				case 'lcm_author':
-					lcm_panic("linking author with author: not recommended");
-					break;
 				case 'lcm_case':
-					$sql .= " a.id_author = c.id_author ";
-					if ($id1)
-						$sql .= " AND a.id_author = $id1 ";
-					if ($id2)
-						$sql .= " AND c.id_author = $id2 ";
+					$where .= " a.id_author = c.id_author ";
 					break;
 				case 'lcm_followup':
-					$sql .= " a.id_author = fu.id_author ";
-					if ($id1)
-						$sql .= " AND a.id_author = $id1 ";
-					if ($id2)
-						$sql .= " AND fu.id_author = $id2 ";
+					$where .= " a.id_author = fu.id_author ";
 					break;
 				case 'lcm_client':
 					lcm_panic("not implemented");
@@ -90,8 +95,6 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 					lcm_panic("not implemented");
 					break;
 				case '':
-					if ($id1)
-						$sql  .= " AND id_author = $id1 ";
 					break;
 				default:
 					lcm_panic("case not implemented ($table2)");
@@ -103,26 +106,66 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 		case 'lcm_case':
 			switch($table2) {
 				case '':
-					if ($id1)
-						$sql .= " AND id_case = $id1 ";
+					break;
+				case 'lcm_followup':
+					$where .= " c.id_case = fu.id_case ";
+					break;
+				default:
+					lcm_panic("not coded");
 			}
 
 			break;
 
 		case 'lcm_followup':
+			switch($table2) {
+				case '':
+					break;
+				case 'lcm_author':
+					$where .= " fu.id_author = a.id_author ";
+					break;
+				default:
+					lcm_panic("not coded");
+			}
 
 			break;
 
 		case 'lcm_client':
-
+			switch($table2) {
+				case '':
+					break;
+				case 'lcm_case':
+					$from   = " lcm_case_client_org as cco ";
+					$from_glue .= " cl.id_client = cco.id_client AND c.id_case = cco.id_case ";
+					$where .= " cl.id_client = cco.id_client ";
+					break;
+				default:
+					lcm_panic("not coded");
+			}
 			break;
 
 		case 'lcm_org':
+			switch($table2) {
+				default:
+					lcm_panic("not coded");
+			}
 
 			break;
+
+		default:
+			lcm_panic("not coded");
 	}
 
-	return $sql;
+	if ($id1) {
+		if ($id2)
+			$where .= " AND " . prefix_field($table1, $table_keys[$table1]) . " = $id1 ";
+		else
+			$where .= " AND " . $table_keys[$table1] . " = $id1 ";
+	}
+	
+	if ($id2)
+		$where .= " AND " . prefix_field($table2, $table_keys[$table2]) . " = $id2 ";
+
+	return array($from, $from_glue, $where);
 }
 
 // Restrict page to administrators
@@ -193,7 +236,7 @@ $result = lcm_query($q);
 
 while ($row = lcm_fetch_array($result)) {
 	$my_line_table = $row['table_name'];
-	array_push($my_lines, suffix_field($row['table_name'], $row['field_name']));
+	array_push($my_lines, prefix_field($row['table_name'], $row['field_name']));
 	array_push($headers, $row);
 }
 
@@ -208,7 +251,7 @@ if (! count($my_lines)) {
 
 		while ($row = lcm_fetch_array($result)) {
 			$my_line_table = $row['table_name'];
-			array_push($my_lines, suffix_field($row['table_name'], $row['field_name']));
+			array_push($my_lines, prefix_field($row['table_name'], $row['field_name']));
 			array_push($headers, $row);
 		}
 	} elseif ($rep_info['line_src_type'] == 'keyword') {
@@ -247,7 +290,6 @@ while ($row = lcm_fetch_array($result)) {
 				include_lcm('inc_keywords');
 				$kws = get_keywords_in_group_name($enum[2]);
 				$i = 1;
-				$left_joins = "";
 
 				foreach ($kws as $k) {
 					$name = $row['field_name'];
@@ -327,34 +369,18 @@ if ($rep_info['line_src_type'] == 'table') {
 
 // Join condition
 if ($rep_info['line_src_type'] == 'table') {
-	switch ($my_line_table) {
-		case 'lcm_author':
-			switch($my_col_table) {
-				case 'lcm_followup':
-					$q .= " LEFT JOIN lcm_followup as fu ON (fu.id_author = a.id_author) ";
-					break;
-			}
-			break;
+	// join my_line_table with my_col_table
+	if ($my_col_table) {
+		// from join (ex: dependancy on middle tables, such as Author-Case => lcm_case_author)
+		$deps = join_tables($my_line_table, $my_col_table);
+	
+		if ($deps[0])
+			$q .= ", " . $deps[0]; // FROM
 
-		case 'lcm_case':
-			switch($my_col_table) {
-				case 'lcm_followup':
-					$q .= " LEFT JOIN lcm_followup as fu ON (fu.id_case = c.id_case) ";
-					break;
+		if ($deps[1])
+			$q_where[] = $deps[1];
 
-			}
-			break;
-
-		case 'lcm_followup':
-			switch($my_col_table) {
-				case 'lcm_author':
-					$q .= " LEFT JOIN lcm_author as a ON (a.id_author = fu.id_author) ";
-			}
-			break;
-
-		default:
-			echo "\n\n QUERY = " . $q . " \n\n";
-			lcm_panic("unknown join on my_line_table: $my_line_table");
+		$q .= " LEFT JOIN " . $my_col_table . suffix_table($my_col_table) . " ON (" . $deps[2] . " ) ";
 	}
 } elseif ($rep_info['line_src_type'] == 'keyword') {
 	switch($rep_info['line_src_name']) {
@@ -366,10 +392,6 @@ if ($rep_info['line_src_type'] == 'table') {
 			}
 	}
 }
-
-if (isset($left_joins))
-	$q .= $left_joins;
-
 
 //
 // Fetch all filters for this report
@@ -495,7 +517,7 @@ if (count($q_where)) {
 	if (! count($line_filters))
 		$q .= " WHERE ";
 
-	$q = implode(" AND ", $q_where);
+	$q .= implode(" AND ", $q_where);
 }
 
 if ($do_grouping) {
@@ -558,8 +580,9 @@ while ($row = lcm_fetch_array($result)) {
 				$val = get_fu_description($row);
 
 			if ($val == "1" && preg_match("/^LCM_SQL: (.*)/", $key, $regs)) {
+				$deps = join_tables($my_line_table, '', $row['LCM_HIDE_ID'], 0);
 				$q_col = $regs[1];
-				$q_col .= join_tables($my_line_table, '', $row['LCM_HIDE_ID'], 0);
+				$q_col .= $deps[2]; // WHERE [...]
 				
 				$result_tmp = lcm_query($q_col);
 
