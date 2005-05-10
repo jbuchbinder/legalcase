@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.15 2005/05/09 15:37:27 mlutfy Exp $
+	$Id: run_rep.php,v 1.16 2005/05/10 10:17:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -127,14 +127,15 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	lcm_page_start('Run report', '', '', 'report_intro'); // TRAD
-	echo "<p>Warning: Access denied, not admin.\n"; // TRAD
+	lcm_page_start(_T('title_rep_run'), '', '', 'report_intro');
+	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
 	lcm_page_end();
 	exit;
 }
 
 $rep = intval($_GET['rep']); // Report ID
 $headers_sent = false;
+$_SESSION['errors'] = array();
 
 //
 // Show title and description of the report
@@ -148,36 +149,30 @@ $result = lcm_query($q);
 
 if (! ($rep_info = lcm_fetch_array($result)))
 	die("Report # " . $rep . " doest not exist.");
+
+if (! $rep_info['line_src_name']) {
+	$_SESSION['errors']['rep_line'] = _T('rep_warning_atleastlineinfo');
+	header('Location: rep_det.php?rep=' . $rep);
+	exit;
+}
 	
 if ($_REQUEST['export'] == 'csv') {
 	header("Content-Type: text/comma-separated-values");
 	header('Content-Disposition: filename="' . $rep_info['title'] . '.csv"');
 	header("Content-Description: " . $rep_info['title']);
-	// header("Content-Transfer-Encoding: binary");
+	header("Content-Transfer-Encoding: binary");
 } else {
-	lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
+	lcm_page_start(_T('title_rep_run') . " " . $rep_info['title'], '', '', 'report_intro');
 	$headers_sent = true;
 
 	if ($rep_info['description'])
 		echo "<p>" . $rep_info['description'] . "</p>\n";
 }
 
-if (! $rep_info['line_src_name']) {
-	// We will print an error, so send headers if not already done
-	if (! $headers_sent)
-		lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
-
-	$errors = array("You must select at least a source for the report line information."); // TRAD
-	echo show_all_errors($errors);
-	echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">Back</a></p>'; // TRAD
-	lcm_page_end();
-	exit;
-}
-
 $my_line_table = "lcm_" . $rep_info['line_src_name'];
 
 //
-// For eventual report headers
+// For report headers (used later)
 //
 
 // for each array item will be a hash with 'description', 'filter' and 'enum_type'
@@ -441,6 +436,7 @@ function apply_filter($f) {
 					$ret .= $f['field_name'] 
 						. " " . $filter_conv[$filter_op] . " "
 						. "'" . $f['value'] . "' ";
+					break;
 				default: // number
 					$ret .= $f['field_name']
 						. " " . $filter_conv[$filter_op] . " "
@@ -466,7 +462,11 @@ foreach ($my_filters as $f) {
 			if ($fil_sql)
 				array_push($line_filters, $fil_sql);
 		} else {
-			$is_missing_filters = true;
+			// For now, we ignore filters without type (eq/lt/gt/..) 
+			// because it's a bit messy to allow input at runtime
+			// (because of fields for filter value)
+			if ($f['type'])
+				$is_missing_filters = true;
 		}
 	}
 }
@@ -567,6 +567,18 @@ while ($row = lcm_fetch_array($result)) {
 				}
 			}
 
+			// Translate values based on keywords (ex: fu.type)
+			if ($headers[$cpt_col]['enum_type']) {
+				$enum = split(":", $headers[$cpt_col]['enum_type']);
+
+				if ($enum[0] == 'keyword') {
+					if ($enum[1] == 'system_kwg') {
+						if ($val) // XXX lcm_panic if kw does not exist
+							$val = _Tkw($enum[2], $val);
+					}
+				}
+			}
+
 			switch ($headers[$cpt_col]['filter']) {
 				case 'date_length':
 					$val = format_time_interval_prefs($val);
@@ -576,8 +588,9 @@ while ($row = lcm_fetch_array($result)) {
 					break;
 				case 'number':
 					$align = 'align="right"';
+					break;
 			}
-		
+
 			if ($headers_sent)
 				echo '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
 			else { // if ($_REQUEST['export'] == 'csv')
@@ -598,7 +611,7 @@ while ($row = lcm_fetch_array($result)) {
 if ($headers_sent) {
 	echo "</table>\n";
 
-	echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">Back</a></p>'; // TRAD
+	echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">' . _T('rep_button_goback') . "</a></p>\n";
 	lcm_page_end();
 }
 
