@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.16 2005/05/10 10:17:46 mlutfy Exp $
+	$Id: run_rep.php,v 1.17 2005/05/10 10:41:03 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -377,7 +377,7 @@ if (isset($left_joins))
 
 $my_filters = array();
 
-$q_fil = "SELECT v.id_filter, f.table_name, f.field_name, v.type, v.value 
+$q_fil = "SELECT v.id_filter, f.table_name, f.field_name, f.description, v.type, v.value 
 		FROM lcm_rep_filter as v, lcm_fields as f
 		WHERE v.id_field = f.id_field
 		AND v.id_report = " . $rep;
@@ -438,6 +438,9 @@ function apply_filter($f) {
 						. "'" . $f['value'] . "' ";
 					break;
 				default: // number
+					if ($f['description'] == 'time_input_length')
+						$f['value'] = " " . $f['value'] . " * 3600 ";
+
 					$ret .= $f['field_name']
 						. " " . $filter_conv[$filter_op] . " "
 						. $f['value'] . " ";
@@ -579,10 +582,10 @@ while ($row = lcm_fetch_array($result)) {
 				}
 			}
 
+			if ($headers[$cpt_col]['description'] == 'time_input_length')
+				$val = format_time_interval_prefs($val);
+
 			switch ($headers[$cpt_col]['filter']) {
-				case 'date_length':
-					$val = format_time_interval_prefs($val);
-					break;
 				case 'date':
 					$val = format_date($val, 'short');
 					break;
