@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_conditions.php,v 1.5 2005/05/10 08:06:19 mlutfy Exp $
+	$Id: inc_conditions.php,v 1.6 2005/05/10 10:15:26 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -165,8 +165,40 @@ function show_report_filters($id_report, $is_runtime = false) {
 					echo get_date_inputs($name . '_end', $filter['value']); // FIXME
 					break;
 				case 'text_eq':
-					$name = ($is_runtime ? "filter_val" . $filter['id_filter'] : 'date');
-					echo '<input style="width: 99%;" type="text" name="' . $name . '" value="' . $filter['value'] . '" />';
+					$name = ($is_runtime ? "filter_val" . $filter['id_filter'] : 'filter_value');
+
+					if ($filter['enum_type']) {
+						$enum = explode(":", $filter['enum_type']);
+
+						if ($enum[0] == 'keyword') {
+							if ($enum[1] == 'system_kwg') {
+								$all_kw = get_keywords_in_group_name($enum[2]);
+
+								echo '<select name="' . $name . '">' . "\n";
+								echo '<option value="">' . "-- select from list--" . "</option>\n"; // TRAD
+
+								foreach ($all_kw as $kw) {
+									$sel = (($filter['value'] == $kw['name'] || $_REQUEST['filter_val' .  $filter['id_filter']] == $kw['name']) ? ' selected="selected" ' : '');
+									echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _Tkw($enum[2], $kw['name']) . "</option>\n";
+								}
+
+								echo "</select>\n";
+							}
+						} elseif ($enum[0] == 'list') {
+							$items = split(",", $enum[1]);
+
+							echo '<select name="' . $name . '">' . "\n";
+							echo '<option value="">' . "-- select from list--" . "</option>\n"; // TRAD
+
+							foreach ($items as $i)
+								echo '<option value="' . $i . '">' . $i . "</option>\n";
+
+							echo "</select>\n";
+						}
+					} else {
+						echo '<input style="width: 99%;" type="text" name="' . $name . '" value="' . $filter['value'] . '" />';
+					}
+
 					break;
 				default:
 					echo "<!-- no type -->\n";
@@ -227,11 +259,11 @@ function show_report_filters($id_report, $is_runtime = false) {
 			echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
 			echo "<input name='add' value='filter' type='hidden' />\n";
 
-			echo "<p class='normal_text'>" . "Add a filter based on this field:" . " "; // TRAD
+			echo "<p class='normal_text'>" . _Ti('rep_input_filter_add');
 			echo "<select name='id_field'>\n";
 
 			while ($row = lcm_fetch_array($result)) {
-				echo "<option value='" . $row['id_field'] . "'>" . $row['description'] . "</option>\n";
+				echo "<option value='" . $row['id_field'] . "'>" . _Th($row['description']) . "</option>\n";
 			}
 
 			echo "</select>\n";
