@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.13 2005/02/09 10:34:20 mlutfy Exp $
+	$Id: edit_rep.php,v 1.14 2005/05/10 13:35:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -72,9 +72,9 @@ if (empty($_SESSION['errors'])) {
 
 // Start the page with the proper title
 if ($_SESSION['existing']) 
-	lcm_page_start(_T('edit_rep_details'));
+	lcm_page_start(_T('title_rep_edit') . " " . $_SESSION['rep_data']['title']);
 else 
-	lcm_page_start(_T('new_report'));
+	lcm_page_start(_T('title_rep_new'));
 
 if (! empty($_SESSION['errors']))
 	echo show_all_errors($_SESSION['errors']);
@@ -84,7 +84,7 @@ echo "<fieldset class=\"info_box\">\n";
 echo "\n<form action='upd_rep.php' method='post'>\n";
 
 if ($_SESSION['rep_data']['id_report']) {
-	echo "<strong>". _T('report_id') . ":</strong>&nbsp;" . $_SESSION['rep_data']['id_report'] . "
+	echo "<strong>". _Ti('rep_input_id') . "</strong>&nbsp;" . $_SESSION['rep_data']['id_report'] . "
 		<input type=\"hidden\" name=\"id_report\" value=\"" .
 		$_SESSION['rep_data']['id_report'] . "\">\n";
 		
@@ -98,10 +98,11 @@ echo "<strong>". _T('author_id') . ":</strong>&nbsp;" . $_SESSION['rep_data']['i
 echo "<input type=\"hidden\" name=\"id_author\" value=\"" . $_SESSION['rep_data']['id_author'] . "\" />\n";
 
 // Title of report
-echo "<p>" . f_err_star('title', $_SESSION['errors']) ."<strong>". _T('rep_title') . ":</strong><br /><input name=\"title\" value=\"" . clean_output($_SESSION['rep_data']['title']) . "\" class=\"search_form_txt\"></p>\n";
+echo "<p>" . f_err_star('title', $_SESSION['errors']) ."<strong>". _Ti('rep_input_title') . "</strong><br />";
+echo '<input name="title" value="' . clean_output($_SESSION['rep_data']['title']) . '" class="search_form_txt"></p>' . "\n";
 
 // Description
-echo '<p>' . "<strong>Description:</strong><br />\n";
+echo '<p>' . "<strong>" . _Ti('rep_input_description') . "</strong><br />\n";
 echo '<textarea name="description" rows="5" cols="40" class="frm_tarea">';
 echo $_SESSION['rep_data']['description'];
 echo "</textarea></p>\n";
@@ -155,6 +156,7 @@ echo "</fieldset>";
 
 // Clear errors
 $_SESSION['errors'] = array();
+$_SESSION['rep_data'] = array();
 
 lcm_page_end();
 
