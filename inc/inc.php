@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.52 2005/04/19 10:31:13 mlutfy Exp $
+	$Id: inc.php,v 1.53 2005/05/10 09:34:18 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -147,7 +147,7 @@ if (isset($lang) AND $lang <> $lcm_lang) {
 
 $installed_db_version = read_meta('lcm_db_version');
 
-if ($installed_db_version <> $lcm_db_version) {
+if ($installed_db_version < $lcm_db_version) {
 	lcm_page_start(_T('title_upgrade_database'));
 	if (! isset($installed_version))
 		$installed_version = "old version";
