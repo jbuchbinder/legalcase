@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.9 2005/05/10 08:38:05 mlutfy Exp $
+	$Id: listreps.php,v 1.10 2005/05/10 08:49:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,11 +26,10 @@ include_lcm('inc_filters');
 
 global $author_session;
 
-lcm_page_start(_T('title_report_list'), '', '', 'report_intro');
-
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	echo "<p>" . _T('warning_forbidden_not_admin') . "</p>\n";
+	lcm_page_start(_T('title_report_list'), '', '', 'report_intro');
+	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
 	lcm_page_end();
 	exit;
 }
@@ -42,6 +41,7 @@ $find_rep_string = '';
 if (isset($_REQUEST['find_rep_string']))
 	$find_rep_string = $_GET['find_rep_string'];
 
+lcm_page_start(_T('title_report_list'), '', '', 'report_intro');
 // lcm_bubble('report_list');
 show_find_box('rep', $find_rep_string);
 

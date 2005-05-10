@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.25 2005/05/09 15:41:41 mlutfy Exp $
+	$Id: rep_det.php,v 1.26 2005/05/10 08:49:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,12 +26,19 @@ include_lcm('inc_filters');
 include_lcm('inc_conditions');
 include_lcm('inc_keywords');
 
+// Restrict page to administrators
+if ($author_session['status'] != 'admin') {
+	lcm_page_start(_T('title_rep_view'), '', '', 'report_intro');
+	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
+	lcm_page_end();
+	exit;
+}
+
 $rep = intval($_GET['rep']);
 
 if (! $rep > 0) {
-	lcm_page_start(_T('title_error'));
-	echo "<p>" . 'Error: no report specified' . "</p>\n";
-	lcm_page_end();
+	header("Location: listreps.php");
+	exit;
 }
 
 //
@@ -47,7 +54,7 @@ $rep_info = lcm_fetch_array($result);
 
 if (! $rep_info) {
 	lcm_page_start(_T('title_error'));
-	echo "<p>The report does not exist (ID = " . $rep . ").</p>";
+	echo '<p class="normal_text">' . "The report does not exist (ID = " . $rep . ")." . "</p>";
 	lcm_page_end();
 	exit;
 }
@@ -72,7 +79,7 @@ $rep_info['col_src_name'] = $tmp_info['table_name'];
 //
 
 lcm_page_start(_T('title_rep_view') . " " . $rep_info['title'], '', '', 'report_intro');
-lcm_bubble("The report function is still in development."); // XXX
+echo show_all_errors($_SESSION['errors']);
 
 $edit = (($GLOBALS['author_session']['status'] == 'admin') ||
 		($rep_info['id_author'] == $GLOBALS['author_session']['id_author']));
@@ -88,10 +95,10 @@ if ($rep_info['description'])
 	echo '<p class="normal_text">' . $rep_info['description'] . '</p>' . "\n";
 
 if ($edit)
-	echo '<p><a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . "Edit report" . '</a>&nbsp;'; // TRAD
+	echo '<p><a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . _T('rep_button_edit') . '</a>&nbsp;';
 
-echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">Generate report</a>&nbsp;'; // TRAD
-echo '<a href="run_rep.php?export=csv&amp;rep=' . $rep_info['id_report'] . '" class="exp_lnk">Export report</a>'; // TRAD
+echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">' . _T('rep_button_run') . '</a>&nbsp;';
+echo '<a href="run_rep.php?export=csv&amp;rep=' . $rep_info['id_report'] . '" class="exp_lnk">' . _T('rep_button_exportcsv') . '</a>';
 echo "</p></fieldset>";
 
 //
@@ -100,13 +107,13 @@ echo "</p></fieldset>";
 
 echo '<a name="line"></a>' . "\n";
 echo "<fieldset class='info_box'>";
-show_page_subtitle("Report line information", 'report_edit', 'line'); // TRAD
+show_page_subtitle(_T('rep_subtitle_line'), 'report_edit', 'line');
 
 // Extract source type, if any
 if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	if ($rep_info['line_src_type'] == 'keyword') {
 		$kwg = get_kwg_from_name($rep_info['line_src_name']);
-		echo "<p class='normal_text'>Source: " . $rep_info['line_src_type'] 
+		echo '<p class="normal_text">' . "Source: " . $rep_info['line_src_type'] // TRAD
 			. " (" . $kwg['type'] . ") -> " . $rep_info['line_src_name']; // TRAD
 	} else {
 		echo "<p class='normal_text'>Source: " . $rep_info['line_src_type'] . " -> " . $rep_info['line_src_name']; // TRAD
@@ -139,7 +146,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	} else {
 		// Allow to change the source table
 		echo ' <a href="upd_rep_field.php?rep=' . $rep_info['id_report'] 
-				. '&amp;unselect_line=1" class="content_link">' . "Remove" . '</a>';
+				. '&amp;unselect_line=1" class="content_link">' . "Remove" . '</a>'; // TRAD
 		echo "</p>\n";
 	}
 
@@ -156,7 +163,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
 		echo "<input name='add' value='line' type='hidden' />\n";
 
-		echo "<p class='normal_text'>Add an item: ";
+		echo "<p class='normal_text'>Add an item: "; // TRAD
 		echo "<select name='id_field' class='sel_frm'>";
 
 		while ($row = lcm_fetch_array($result)) {
@@ -171,8 +178,8 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 } else {
 	echo "<form action='upd_rep_field.php' name='frm_line_source' method='post'>\n";
 	echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-	echo "<p class='normal_text'>Select source table: "; // TRAD
-	echo "<input name='select_line_type' value='table' type='hidden' />\n";
+	echo '<p class="normal_text">' . f_err_star('rep_line') . "Select source table: "; // TRAD
+	echo "<input name='select_line_type' value='table' type='hidden' />\n"; // TRAD TRAD TRAD
 	echo "<select name='select_line_name' class='sel_frm'>
 			<option value='author'>Author</option>
 			<option value='case'>Case</option>
@@ -211,7 +218,7 @@ echo "</fieldset>\n";
 
 	echo '<a name="column"></a>' . "\n";
 	echo "<fieldset class='info_box'>\n";
-	show_page_subtitle("Report columns", 'report_edit', 'columns');
+	show_page_subtitle(_T('rep_subtitle_column'), 'report_edit', 'columns');
 		
 	echo "<p class='normal_text'>\n";
 	echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
@@ -389,5 +396,8 @@ show_report_filters($rep, false);
 echo "</fieldset>\n";
 
 lcm_page_end();
+
+// Clear errors
+$_SESSION['errors'] = array();
 
 ?>
