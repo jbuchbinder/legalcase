@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.26 2005/05/10 08:49:16 mlutfy Exp $
+	$Id: rep_det.php,v 1.27 2005/05/11 10:51:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -85,19 +85,20 @@ $edit = (($GLOBALS['author_session']['status'] == 'admin') ||
 		($rep_info['id_author'] == $GLOBALS['author_session']['id_author']));
 
 echo "<fieldset class='info_box'>";
-show_page_subtitle(_T('generic_subtitle_general'), 'report_intro');
+show_page_subtitle(_T('generic_subtitle_general'), 'reports_intro');
 
 echo "<p class='normal_text'>";
-echo _Ti('rep_title') . $rep_info['title'] . "<br />\n";
+echo _Ti('rep_input_id') . $rep_info['id_report'] . "<br />\n";
+echo _Ti('rep_input_title') . $rep_info['title'] . "<br />\n";
 echo _Ti('time_input_date_creation') . format_date($rep_info['date_creation']) . "</p>\n";
 
 if ($rep_info['description'])
 	echo '<p class="normal_text">' . $rep_info['description'] . '</p>' . "\n";
 
 if ($edit)
-	echo '<p><a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . _T('rep_button_edit') . '</a>&nbsp;';
+	echo '<p><a href="edit_rep.php?rep=' . $rep_info['id_report'] . '" class="edit_lnk">' . _T('rep_button_edit') . '</a></p>';
 
-echo '<a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">' . _T('rep_button_run') . '</a>&nbsp;';
+echo '<p><a href="run_rep.php?rep=' . $rep_info['id_report'] . '" class="run_lnk">' . _T('rep_button_run') . '</a>&nbsp;';
 echo '<a href="run_rep.php?export=csv&amp;rep=' . $rep_info['id_report'] . '" class="exp_lnk">' . _T('rep_button_exportcsv') . '</a>';
 echo "</p></fieldset>";
 
@@ -107,7 +108,7 @@ echo "</p></fieldset>";
 
 echo '<a name="line"></a>' . "\n";
 echo "<fieldset class='info_box'>";
-show_page_subtitle(_T('rep_subtitle_line'), 'report_edit', 'line');
+show_page_subtitle(_T('rep_subtitle_line'), 'reports_edit', 'line');
 
 // Extract source type, if any
 if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
@@ -125,7 +126,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 		FROM lcm_rep_line as rl, lcm_fields as f
 		WHERE id_report = " . $rep_info['id_report'] . "
 			AND rl.id_field = f.id_field
-		ORDER BY col_order ASC";
+		ORDER BY col_order, id_line ASC";
 
 	$result_lines = lcm_query($query);
 
@@ -137,7 +138,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 			echo "<tr>\n";
 			echo "<td>" . _Th($line['description']) . "</td>\n";
 			echo "<td><a href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
-				. "remove=line" . "&amp;" . "id_line=" . $line['id_line'] . "' class='content_link'>" . "Remove" . "</a></td>\n";
+				. "remove=line" . "&amp;" . "id_line=" . $line['id_line'] . "' class='content_link'>" . "X" . "</a></td>\n";
 			echo "</tr>\n";
 			array_push($my_fields, $line['id_field']);
 		}
@@ -159,11 +160,16 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	$result = lcm_query($query);
 
 	if (lcm_num_rows($result)) {
+		echo "\n<br />\n\n";
+
 		echo "<form action='upd_rep_field.php' name='frm_line_additem' method='get'>\n";
 		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
 		echo "<input name='add' value='line' type='hidden' />\n";
 
-		echo "<p class='normal_text'>Add an item: "; // TRAD
+		echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+		echo "<tr>\n";
+		echo "<th class='heading'>" . _Ti('rep_input_item_add') . "</th>\n";
+		echo "<td>\n";
 		echo "<select name='id_field' class='sel_frm'>";
 
 		while ($row = lcm_fetch_array($result)) {
@@ -171,8 +177,11 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 		}
 		
 		echo "</select>\n";
-		echo "<button class='simple_form_btn' name='validate_line_additem'>" . _T('button_validate') . "</button>\n";
-		echo "</p>\n";
+		echo "</td>\n";
+		echo "</tr>\n";
+		echo "</table>\n";
+		
+		echo "<p><button class='simple_form_btn' name='validate_line_additem'>" . _T('button_validate') . "</button></p>\n";
 		echo "</form>\n";
 	}
 } else {
@@ -181,7 +190,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	echo '<p class="normal_text">' . f_err_star('rep_line') . "Select source table: "; // TRAD
 	echo "<input name='select_line_type' value='table' type='hidden' />\n"; // TRAD TRAD TRAD
 	echo "<select name='select_line_name' class='sel_frm'>
-			<option value='author'>Author</option>
+			<option value='author'>User</option>
 			<option value='case'>Case</option>
 			<option value='client'>Client</option>
 			<option value='followup'>Follow-up</option>
@@ -216,59 +225,68 @@ echo "</fieldset>\n";
 //	List the columns in the report
 //
 
-	echo '<a name="column"></a>' . "\n";
-	echo "<fieldset class='info_box'>\n";
-	show_page_subtitle(_T('rep_subtitle_column'), 'report_edit', 'columns');
+echo '<a name="column"></a>' . "\n";
+echo "<fieldset class='info_box'>\n";
+show_page_subtitle(_T('rep_subtitle_column'), 'reports_edit', 'columns');
 		
-	echo "<p class='normal_text'>\n";
-	echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-	echo "<tr><th class='heading'>#</th>
-		<th class='heading'>Header</th>
-		<th class='heading'>Table</th>
-		<th class='heading'>Contents</th>
-		<th class='heading'>Group</th>
-		<th class='heading'>Sort</th>
-		<th class='heading'>Total</th>
-		<th class='heading'>Action</th>
-	</tr>";
+echo "<p class='normal_text'>\n";
+echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+echo "<tr>\n";
+// [ML] echo "<th class='heading'>#</th> ";
 
-		// Show fields included in this report
-		$q = "SELECT lcm_rep_col.*,lcm_fields.description, lcm_fields.table_name
-			FROM lcm_rep_col,lcm_fields
-			WHERE (id_report=$rep
-				AND lcm_rep_col.id_field=lcm_fields.id_field)
-			ORDER BY 'col_order'";
-		// Do the query
-		$cols = lcm_query($q);
-		$rows = lcm_num_rows($cols);
-		// Show the results
-		while ($column = lcm_fetch_array($cols)) {
-			// Display column order
-			echo '<tr><td>' . $column['col_order'] . "</td>\n";
+// [ML] removing for now, not so useful
+// <th class='heading'>Header</th>
 
-			// Display column header
-			echo '<td>';
-			if ($edit) echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
-			echo clean_output($column['header']);
-			if ($edit) echo '</a>';
-			echo "</td>\n";
+echo "<th class='heading'>Table</th>
+	<th class='heading'>Contents</th>
+	<th class='heading'>Group</th>
+	<th class='heading'>Sort</th>
+	<th class='heading'>Total</th>
+	<th class='heading'>Action</th> \n";
+echo "</tr>\n";
 
-			// Display column table (temporary, [ML])
-			echo '<td>';
-			echo $column['table_name'];
-			echo "</td>\n";
+// Show fields included in this report
+$q = "SELECT lcm_rep_col.*,lcm_fields.description, lcm_fields.table_name, lcm_fields.field_name
+		FROM lcm_rep_col,lcm_fields
+		WHERE id_report=$rep
+		  AND lcm_rep_col.id_field=lcm_fields.id_field
+		ORDER BY col_order, id_column ASC";
 
-			// Display column description
-			echo '<td>';
-			if ($edit) echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
-			echo clean_output($column['description']);
-			if ($edit) echo '</a>';
-			echo "</td>\n";
+$cols = lcm_query($q);
+$rows = lcm_num_rows($cols);
 
-			//Display column grouping
-			echo '<td>';
-			echo ($column['col_group'] ? $column['col_group'] : "None");
-			echo "</td>\n";
+while ($column = lcm_fetch_array($cols)) {
+	// Display column order
+	// [ML] echo '<tr><td>' . $column['col_order'] . "</td>\n";
+
+	// Display column header
+	/* [ML]
+	echo '<td>';
+	if ($edit)
+		echo '<a href="edit_rep_col.php?rep=' . $rep . '&amp;col=' . $column['id_column'] . '" class="content_link">';
+
+	echo clean_output($column['header']);
+
+	if ($edit)
+		echo '</a>';
+
+	echo "</td>\n";
+	*/
+
+	// Display column table/description
+	echo '<td>';
+	echo _T('rep_info_table_' . $column['table_name']);
+	echo "</td>\n";
+
+	// Display column description
+   echo '<td>';
+   echo _Th($column['description']);
+   echo "</td>\n";
+
+	//Display column grouping
+	echo '<td>';
+	echo ($column['col_group'] ? $column['col_group'] : "None");
+	echo "</td>\n";
 
 			//Display sort setting
 			echo '<td>';
@@ -301,8 +319,10 @@ echo "</fieldset>\n";
 			echo "</td>\n";
 			echo "</tr>\n";
 			$last_order = $column['col_order']+1;
-		}
-		echo "\t\t</table><br>\n";
+}
+
+echo "</table>\n";
+echo "<br />\n";
 
 //
 //	Display add new column form
@@ -310,13 +330,14 @@ echo "</fieldset>\n";
 
 if ($edit) {
 	echo "<form action='add_rep_col.php' method='post'>\n";
-	echo "\t<input type='hidden' name='rep' value='$rep' />\n";
-	echo "\t<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+	echo "<input type='hidden' name='rep' value='$rep' />\n";
+	echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 
 	// Get field from list
-	echo "\t\t<tr><th class='heading'>Contents</th>\n";
-	echo "\t\t\t<td><select name='field' class='sel_frm'>\n";
-	echo "\t\t\t\t<option selected disabled label='' value=''>-- Select column content from the list --</option>";
+	echo "<tr>\n";
+	echo "<th class='heading'>" . _Ti('rep_input_item_add') . "</th>\n";
+	echo "<td><select name='field' class='sel_frm'>\n";
+	echo "<option selected='selected' disabled='disabled' label='' value=''>-- Select column content from the list --</option>";
 
 	$q = "SELECT * FROM lcm_fields ORDER BY table_name,description";
 	$fields = lcm_query($q);
@@ -326,10 +347,9 @@ if ($edit) {
 		if ($field['table_name']!=$table) {
 			if (!$table) echo "\t\t\t\t</optgroup>\n";
 			$table = $field['table_name'];
-			echo "\t\t\t\t<optgroup label='$table'>\n";
+			echo "\t\t\t\t<optgroup label='" . _T('rep_info_table_' . $table) . "'>\n";
 		}
-		//				echo "<option label='" . $field['description'] . "' value='" . $field['id_field'] . "'>" . $field['description'] . "</option>\n";
-		echo "\t\t\t\t\t<option value='" . $field['id_field'] . "'>" . $field['description'] . "</option>\n";
+		echo "\t\t\t\t\t<option value='" . $field['id_field'] . "'>" . _Th($field['description']) . "</option>\n";
 
 	}
 
@@ -354,8 +374,11 @@ if ($edit) {
 	echo "\t\t</td></tr>\n";
 
 	// Get column header
+	// [ML] removing for now
+	/*
 	echo "\t\t<tr><th class='heading'>Header</th>\n";
 	echo "\t\t\t<td><input type='text' name='header' class='search_form_txt' /></td></tr>\n";
+	*/
 
 	// Get grouping setting
 	echo "\t\t<tr><th class='heading'>Grouping</th>\n";
@@ -388,7 +411,7 @@ echo "</fieldset>\n";
 
 echo '<a name="filter"></a>' . "\n";
 echo "<fieldset class='info_box'>";
-show_page_subtitle("Report filters", 'report_edit', 'filters');
+show_page_subtitle(_T('rep_subtitle_filters'), 'reports_edit', 'filters');
 
 include_lcm('inc_conditions');
 show_report_filters($rep, false);
