@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_auth.php,v 1.13 2005/04/11 16:22:12 mlutfy Exp $
+	$Id: edit_auth.php,v 1.14 2005/05/12 13:39:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,8 +28,12 @@ include_lcm('inc_filters');
 // Initialise variables
 $case = intval($_GET['case']);
 
-if (! ($case > 0))
-	die("Which case?");
+if (! ($case > 0)) {
+	lcm_page_start(_T('title_error'));
+	echo "<p>" . _T('error_no_case_specified') . "</p>\n";
+	lcm_page_end();
+	exit;
+}
 
 if (! allowed($case,'a'))
 	die("You don't have permission to edit this case's access rights.");
@@ -46,65 +50,65 @@ $q .= ')';
 
 $result = lcm_query($q);
 
-lcm_page_start("Edit access rights"); // TRAD
-
-// BUBBLE
+lcm_page_start(_T('title_case_edit_ac'));
+lcm_bubble('case_ac');
 
 show_context_start();
 show_context_case_title($case);
 show_context_case_involving($case);
 show_context_end();
 
-echo '<form action="upd_auth.php" method="post">' . "\n";
-
-// TRAD TRAD TRAD ...
 ?>
-		<table border="0" class="tbl_usr_dtl" width="99%">
-			<tr><th align="center" class="heading">&nbsp;</th>
-				<th align="center" class="heading">Read</th>
-				<th align="center" class="heading">Write</th>
-				<th align="center" class="heading">Edit</th>
-				<th align="center" class="heading">Admin</th>
-			</tr>
+
+<form action="upd_auth.php" method="post">
+	<table border="0" class="tbl_usr_dtl" width="99%">
+	<tr>
+		<th align="center" class="heading"><?php echo _Th('case_input_author'); ?></th>
+		<th align="center" class="heading"><?php echo "Role"; ?></th>
+	</tr>
+
 <?php
 
 		while ($row = lcm_fetch_array($result)) {
 			echo "<tr>\n";
 
+			// User name
 			echo '<td align="left">';
-			echo get_person_name($row) . "</td>\n";
+			echo '<a href="author_det.php?author=' . $row['id_author'] . '" class="content_link"'
+				. ' title="' . _T('case_tooltip_view_author_details', array('author' => get_person_name($row))) . '">'
+				. get_person_name($row) 
+				. '</a>';
+			echo "</td>\n";
 
+			// Access rights in case
 			echo '<td align="center">';
-			echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_read]" . '" value="1"';
-			if ($row['ac_read']) echo ' checked';
-			echo "></td>\n";
+			echo '<select name="auth[' . $row['id_author'] . ']">' . "\n";
 
-			echo '<td align="center">';
-			echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_write]" . '" value="1"';
-			if ($row['ac_write']) echo ' checked';
-			echo "></td>\n";
+			$all_rights = array('read', 'write', /* 'edit', */ 'admin', '', 'remove');
 
-			echo '<td align="center">';
-			echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_edit]" . '" value="1"';
-			if ($row['ac_edit']) echo ' checked';
-			echo "></td>\n";
+			foreach($all_rights as $ac) {
+				$sel = ($row['ac_' . $ac] ? ' selected="selected" ' : '');
+				$dis = (! $ac ? ' disabled="disabled" ' : '');
+				$title = ($ac ? _T('case_input_option_ac_' . $ac) : '');
+				echo '<option value="' . $ac . '"' . $sel . $dis . '>' . $title . "</option>\n";
+			}
 
-			echo '<td align="center">';
-			echo '<input type="checkbox" name="auth[' . $row['id_author'] . "][ac_admin]" . '" value="1"';
-			if ($row['ac_admin']) echo ' checked';
-			echo "></td>\n";
+			echo "</select>\n";
+			echo "</td>\n";
+
+			echo "</tr>\n";
 		}
 	?>
 
-			</tr>
-		</table>
+	</table>
 
-		<p><button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button></p>
-		<input type="hidden" name="case" value="<?php echo $case; ?>">
-		<input type="hidden" name="ref_edit_auth" value="<?php echo $HTTP_REFERER; ?>">
+	<p><button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button></p>
+	<input type="hidden" name="case" value="<?php echo $case; ?>" />
 
-	</form>
+<?
+	$link = new Link($GLOBALS['HTTP_REFERER']);
+	echo '<input type="hidden" name="ref_edit_auth" value="' . $link->getUrl() . '"/>' . "\n";
+	echo "</form>\n";
 
-<?php
 	lcm_page_end();
 ?>
