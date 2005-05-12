@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.27 2005/05/11 10:51:18 mlutfy Exp $
+	$Id: rep_det.php,v 1.28 2005/05/12 13:59:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -117,7 +117,8 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 		echo '<p class="normal_text">' . "Source: " . $rep_info['line_src_type'] // TRAD
 			. " (" . $kwg['type'] . ") -> " . $rep_info['line_src_name']; // TRAD
 	} else {
-		echo "<p class='normal_text'>Source: " . $rep_info['line_src_type'] . " -> " . $rep_info['line_src_name']; // TRAD
+		echo "<p class='normal_text'>" . "Source: " . $rep_info['line_src_type'] 
+			. " -> " . _T('rep_info_table_lcm_' . $rep_info['line_src_name']); // TRAD
 	}
 
 	// Show list of fields for line, if any
@@ -256,6 +257,8 @@ $cols = lcm_query($q);
 $rows = lcm_num_rows($cols);
 
 while ($column = lcm_fetch_array($cols)) {
+	echo "<tr>\n";
+
 	// Display column order
 	// [ML] echo '<tr><td>' . $column['col_order'] . "</td>\n";
 
@@ -337,25 +340,31 @@ if ($edit) {
 	echo "<tr>\n";
 	echo "<th class='heading'>" . _Ti('rep_input_item_add') . "</th>\n";
 	echo "<td><select name='field' class='sel_frm'>\n";
-	echo "<option selected='selected' disabled='disabled' label='' value=''>-- Select column content from the list --</option>";
+	echo "<option selected='selected' disabled='disabled' label='' value=''>-- Select column content from the list --</option>\n"; // TRAD
 
-	$q = "SELECT * FROM lcm_fields ORDER BY table_name,description";
+	$q = "SELECT * 
+			FROM lcm_fields 
+			ORDER BY table_name,description";
 	$fields = lcm_query($q);
 	$table = '';
 
 	while ($field = lcm_fetch_array($fields)) {
-		if ($field['table_name']!=$table) {
-			if (!$table) echo "\t\t\t\t</optgroup>\n";
-			$table = $field['table_name'];
-			echo "\t\t\t\t<optgroup label='" . _T('rep_info_table_' . $table) . "'>\n";
-		}
-		echo "\t\t\t\t\t<option value='" . $field['id_field'] . "'>" . _Th($field['description']) . "</option>\n";
+		if ($table && $field['table_name'] != $table) {
+			echo "</optgroup>\n";
 
+			$table = $field['table_name'];
+			echo "<optgroup label='" . _T('rep_info_table_' . $table) . "'>\n";
+		}
+
+		echo "\t<option value='" . $field['id_field'] . "'>" . _Th($field['description']) . "</option>\n";
 	}
 
-	if ($table) echo "\t\t\t\t</optgroup>\n";
-	echo "\t\t\t</select></td>\n";
-	echo "\t\t</tr>\n";
+	if ($table)
+		echo "</optgroup>\n";
+
+	echo "</select>\n";
+	echo "</td>\n";
+	echo "</tr>\n";
 
 
 	// Get column order
@@ -364,11 +373,11 @@ if ($edit) {
 
 	$i = 1;
 	while ($i<$last_order) {
-		echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n";
+		echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n"; // TRAD
 		$i++;
 	}
 
-	echo "\t\t\t\t<option selected label='Add at the end' value='$i'>Add at the end</option>\n";
+	echo "\t\t\t\t<option selected='selected' label='Add at the end' value='$i'>Add at the end</option>\n";
 	echo "\t\t\t</select>\n";
 	//			echo "<input type='text' name='order' value='$last_order' size='2' />";
 	echo "\t\t</td></tr>\n";
@@ -383,7 +392,7 @@ if ($edit) {
 	// Get grouping setting
 	echo "\t\t<tr><th class='heading'>Grouping</th>\n";
 	echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
-	echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
+	echo "\t\t\t\t<option selected='selected' label='None' value=''>None</option>\n";
 	echo "\t\t\t\t<option label='Count' value='COUNT'>COUNT</option>\n";
 	echo "\t\t\t\t<option label='Sum' value='SUM'>SUM</option>\n";
 	echo "\t\t\t</select></td>\n";
@@ -392,7 +401,7 @@ if ($edit) {
 	// Get sort setting
 	echo "\t\t<tr><th class='heading'>Sorting</th>\n";
 	echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
-	echo "\t\t\t\t<option selected label='None' value=''>None</option>\n";
+	echo "\t\t\t\t<option selected='selected' label='None' value=''>None</option>\n";
 	echo "\t\t\t\t<option label='Ascending' value='asc'>Ascending</option>\n";
 	echo "\t\t\t\t<option label='Descending' value='desc'>Descending</option>\n";
 	echo "\t\t\t</select></td>\n";
@@ -403,6 +412,7 @@ if ($edit) {
 	echo "</form>\n";
 }
 
+echo "</p>\n";
 echo "</fieldset>\n";
 
 //
