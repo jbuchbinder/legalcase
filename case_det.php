@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.154 2005/04/28 10:20:20 makaveev Exp $
+	$Id: case_det.php,v 1.155 2005/05/12 13:43:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -100,40 +100,39 @@ if ($case > 0) {
 					WHERE (id_case=$case
 						AND lcm_case_author.id_author=lcm_author.id_author)";
 		
-				$authors = lcm_query($q);
+				$authors_result = lcm_query($q);
+				$cpt = 0;
 
 				if (lcm_num_rows($authors) > 1)
 					echo _Ti('case_input_authors');
 				else
 					echo _Ti('case_input_author');
-		
-				$q = '';
-				
-				// [ML] messy ...
-				while ($user = lcm_fetch_array($authors)) {
-				if(!$admin)
-					if ($q) $q .= "; \n";
-					
-					if ($admin)
-						$q .= '<tr><td><a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" class="content_link">';
 
-					$q .= clean_output(get_person_name($user));
-					if ($admin) 
-						$q .= '</a></td><td><a href="edit_auth.php?case=' . $case . '&amp;author=' . $user['id_author'] . '" title="View author access rights on this case"><img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" /></a></td><td><a href="author_det.php?author='. $user['id_author'] .'" title="View author details"><img src="images/jimmac/stock_edit-16.png" width="16" height="16" border="0" /></a></td></tr>'; // TRAD
+				while ($author = lcm_fetch_array($authors_result)) {
+					if ($cpt)
+						echo "; ";
+
+					$name = htmlspecialchars(get_person_name($author));
+
+					echo '<a href="author_det.php?author=' . $author['id_author'] . '" class="content_link"'
+						. ' title="' . _T('case_tooltip_view_author_details', array('author' => $name)) . '">'
+						. $name
+						. "</a>";
+
+					if ($admin) {
+						echo '&nbsp;<a href="edit_auth.php?case=' . $case . '&amp;author=' . $author['id_author'] . '"'
+							. ' title="' .
+							_T('case_tooltip_view_access_rights', array('author' => $name)) . '">'
+							. '<img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" />'
+							. '</a>';
+					}
+
+					$cpt++;
 				}
-				
-				if($admin)
-					echo "<table border=\"0\" class=\"tbl_usr_dtl\">\n";
-				
-				echo "$q\n";
-				
-				if($admin)
-					echo "</table>\n";
-				
+		
 				echo "<br />";
 				
-				// [ML] Added ID back, since it was requested by users/testers
-				// as a way to cross-reference paper documentation
+				// Case ID
 				echo "\n" . _Ti('case_input_id') . $row['id_case'] . "<br />\n";
 		
 				if ($case_court_archive == 'yes')
@@ -174,10 +173,9 @@ if ($case > 0) {
 				echo _Ti('case_input_notes') . "<br />\n";
 				echo nl2br($row['notes']);
 
-				// Show case status (even if closed, admin can change, ex: re-open/delete)
-				if (allowed($case, 'A')) {
+				// Show case status (if closed, only site admin can re-open)
+				if (allowed($case, 'a')) {
 					// Change status form
-					// echo "<form action='set_case_status.php' method='get'>\n";
 					echo "<form action='edit_fu.php' method='get'>\n";
 					echo "<input type='hidden' name='case' value='$case' />\n";
 
@@ -202,11 +200,11 @@ if ($case > 0) {
 				// Show case stage
 				if ($admin) {
 					// Change stage form
-					// echo "<form action='set_case_stage.php' method='get'>\n";
 					echo "<form action='edit_fu.php' method='get'>\n";
-					echo _T('case_input_stage');
 					echo "<input type='hidden' name='case' value='$case' />\n";
 					echo "<input type='hidden' name='type' value='stage_change' />\n";
+
+					echo _Ti('case_input_stage');
 					echo "<select name='stage' class='sel_frm' onchange='lcm_show(\"submit_stage\")'>\n";
 
 					$stage_kws = get_keywords_in_group_name('stage');
@@ -219,7 +217,7 @@ if ($case > 0) {
 					echo "<button type='submit' name='submit' id='submit_stage' value='set_stage' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 					echo "</form>\n";
 				} else {
-					echo _T('case_input_stage') . "&nbsp;" . clean_output($row['stage']) . "<br />\n";
+					echo _Ti('case_input_stage') . clean_output($row['stage']) . "<br />\n";
 				}
 
 				echo _Ti('case_input_collaboration');
@@ -235,7 +233,8 @@ if ($case > 0) {
 				if ($GLOBALS['author_session']['status'] == 'admin')
 					echo '<p><a href="export.php?item=case&amp;id=' . $row['id_case'] . '" class="exp_lnk">' . _T('export_button_case') . '</a></p>';
 
-				if ($admin) echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
+				if ($admin)
+					echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
 		
 				echo "<br />\n";
 
