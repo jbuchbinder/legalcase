@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: add_auth.php,v 1.13 2005/04/04 06:12:45 mlutfy Exp $
+	$Id: add_auth.php,v 1.14 2005/05/12 15:39:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,7 +57,8 @@ if (! ($case > 0)) {
 
 				// Add 'assigned' followup to the case
 				$q = "INSERT INTO lcm_followup
-						SET id_followup = 0, id_case = $case, 
+						SET date_start = NOW(), date_end = NOW(),
+							id_followup = 0, id_case = $case, 
 							id_author = " . $GLOBALS['author_session']['id_author'] . ",
 							type = 'assignment', 
 							description = '" . $author_data['id_author'] . "'";
