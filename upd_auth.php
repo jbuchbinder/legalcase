@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_auth.php,v 1.4 2005/05/12 13:40:33 mlutfy Exp $
+	$Id: upd_auth.php,v 1.5 2005/05/12 14:04:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -76,7 +76,7 @@ foreach ($auth as $id => $access) {
 					id_followup = 0, id_case = $case, 
 					id_author = " . $GLOBALS['author_session']['id_author'] . ",
 					type = 'unassignment', 
-					description = '" . $author_data['id_author'] . "'";
+					description = '" . $id . "'";
 
 		$result = lcm_query($q);
 	} else {
