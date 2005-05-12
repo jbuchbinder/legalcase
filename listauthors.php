@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.28 2005/03/31 14:44:18 mlutfy Exp $
+	$Id: listauthors.php,v 1.29 2005/05/12 15:00:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -100,7 +100,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 
 	// Author status
 	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-	echo clean_output($row['status']);
+	echo _T('authoredit_input_status_' . $row['status']);
 	echo "</td>\n";
 
 	echo "</tr>\n";
