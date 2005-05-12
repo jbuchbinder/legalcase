@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.42 2005/04/25 12:43:26 mlutfy Exp $
+	$Id: config_site.php,v 1.43 2005/05/12 13:48:58 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -550,7 +550,7 @@ global $author_session;
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
 	lcm_page_start(_T('title_site_configuration'), '', '', 'siteconfig');
-	echo "<p>Warning: Access denied, not admin.\n";
+	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
 	lcm_page_end();
 	exit;
 }

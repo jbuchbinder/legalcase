@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.155 2005/05/12 13:43:32 mlutfy Exp $
+	$Id: case_det.php,v 1.156 2005/05/12 13:48:58 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -155,7 +155,7 @@ if ($case > 0) {
 				$result = lcm_query($query);
 				$row_tmp = lcm_fetch_array($result);
 
-				echo "Total time spent: " . format_time_interval_prefs($row_tmp['time']) . "<br />\n"; // TRAD
+				echo _Ti('case_input_total_time') . format_time_interval_prefs($row_tmp['time']) . "<br />\n";
 		
 				echo _Ti('case_input_legal_reason') . clean_output($row['legal_reason']) . "<br />\n";
 				if ($case_alledged_crime == 'yes')
