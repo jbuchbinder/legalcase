@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_auth.php,v 1.10 2005/03/22 13:37:50 mlutfy Exp $
+	$Id: sel_auth.php,v 1.11 2005/05/12 14:59:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,8 +28,12 @@ global $prefs;
 
 $case = intval($_REQUEST['case']);
 
-if (! ($case > 0))
-	die("Which case?");
+if (! ($case > 0)) {
+	lcm_page_start(_T('title_error'));
+	echo "<p>" . _T('error_no_case_specified') . "</p>\n";
+	lcm_page_end();
+	exit;
+}
 
 $destination = "case_det.php?id_case=" . $case;
 
@@ -47,7 +51,7 @@ $q = "SELECT *
 
 $result = lcm_query($q);
 
-$q = "SELECT id_author,name_first,name_middle,name_last
+$q = "SELECT id_author, name_first, name_middle, name_last, status
 		FROM lcm_author
 		WHERE id_author NOT IN (0";
 
@@ -67,13 +71,24 @@ if (strlen($_REQUEST['find_author_string']) > 1) {
 		. " OR (name_last LIKE '%$find_author_string%'))";
 }
 
+// Sort authors by status
+$order_set = false;
+$order_status = '';
+if (isset($_REQUEST['order_status']))
+	if ($_REQUEST['order_status'] == 'ASC' || $_REQUEST['order_status'] == 'DESC') {
+		$order_status = $_REQUEST['order_status'];
+		$q .= " ORDER BY status " . $order_status;
+		$order_set = true;
+	}
+
 // Sort by name_first
 $order_name = 'ASC';
 if (isset($_REQUEST['order_name']))
 	if ($_REQUEST['order_name'] == 'ASC' || $_REQUEST['order_name'] == 'DESC')
 		$order_name = $_REQUEST['order_name'];
 		
-$q .= " ORDER BY name_first " . $order_name;
+$q .= ($order_set ? " , " : " ORDER BY ");
+$q .= " name_first " . $order_name;
 
 $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
@@ -93,7 +108,7 @@ if ($list_pos > 0)
 
 // Check if any author(s) available for selection
 if (lcm_num_rows($result) > 0)
-	lcm_page_start("Select users(s)"); // TRAD
+	lcm_page_start("Add a user to the case");
 else {
 	header('Location: ' . $dest_link->getUrlForHeader());
 	exit;
@@ -112,6 +127,8 @@ $headers[0]['title'] = '';
 $headers[0]['order'] = 'no_order';
 $headers[1]['title'] = _Th('person_input_name');
 $headers[1]['order'] = 'order_name';
+$headers[2]['title'] = _Th('authoredit_input_status');
+$headers[2]['order'] = 'order_status';
 
 show_list_start($headers);
 
@@ -121,6 +138,7 @@ for ($i = 0; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ;
 	echo '<input type="checkbox" name="authors[]" value="' . $row['id_author'] . '" />';
 	echo "</td>\n";
 	echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . get_person_name($row) . "</td>\n";
+	echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . _T('authoredit_input_status_' . $row['status']) . "</td>\n";
 	echo "</tr>\n";
 }
 
