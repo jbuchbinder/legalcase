@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.220 2005/04/28 06:55:00 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.221 2005/05/12 14:27:32 mlutfy Exp $
 */
 
 //
@@ -448,13 +448,16 @@ if($prefs['screen'] == "wide") {
 			<div class=\"prefs_column_menu_head\"><div class=\"sm_profile\">" . _T('menu_profile') . "</div>
 			</div>
 			<p class=\"prefs_column_text\">"
-				. "<a href=\"author_det.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
+				. '<a href="author_det.php?author=' . $author_session['id_author'] . '" class="prefs_normal_lnk"'
+				. ' title="' . _T('case_tooltip_view_author_details', array('author' => get_person_name($author_session))) . '">'
 				. get_person_name($author_session)
 				. "</a><br /><br />
-			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
+			<a href=\"config_author.php\" class=\"prefs_myprefs\">" . _T('menu_profile_preferences') . "</a><br /><br />
+			<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
 			</p><br />
 			<div class=\"prefs_column_menu_head\"><div class=\"sm_search\">" . _T('menu_search') . "</div>
 			</div>
+
 			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
 			<p class=\"prefs_column_text\">
 			" . _T('input_search_case') . "<br />
@@ -505,13 +508,15 @@ if($prefs['screen'] == "wide") {
 	//data from the refs_column - user name, links [My preferences] & [Logout]
 		echo "<div id=\"user_info_box_large_screen\">";
 		echo "<p class=\"prefs_column_text\">"
-				. "<a href=\"author_det.php?author=" .  $author_session['id_author'] . "\" class=\"prefs_normal_lnk\">"
+				. '<a href="author_det.php?author=' . $author_session['id_author'] . '" class="prefs_normal_lnk"'
+				. ' title="' . _T('case_tooltip_view_author_details', array('author' => get_person_name($author_session))) . '">'
 				. get_person_name($author_session)
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\" class=\"set_fnt_sz\">&nbsp;A-&nbsp;</a>&nbsp;
 				<a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('medium_font')\" class=\"set_fnt_sz\">&nbsp;A&nbsp;&nbsp;</a>&nbsp;
-				<a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\" class=\"set_fnt_sz\">&nbsp;A+&nbsp;</a>&nbsp;&nbsp;<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\">" . _T('menu_profile_logout') . "</a>
-			</p>";
+				<a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\" class=\"set_fnt_sz\">&nbsp;A+&nbsp;</a>&nbsp;&nbsp;"
+				. "<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
+			</p>"; // TRAD (Small, Normal, Large text)
 		echo "</div>";
 }
 
@@ -667,8 +672,8 @@ function help_page_start($page_title) {
 		'tools' => array('tools_agenda', 'tools_documents'),
 		'siteconfig' => array('siteconfig_general', 'siteconfig_collab', 'siteconfig_policy', 'siteconfig_regional'),
 		'archives' => array('archives_intro', 'archives_export', 'archives_import'),
-		'reports' => array('reports_intro'), 
-		'keywords' => array('keywords_intro', 'keywords_new'),
+		'reports' => array('reports_intro', 'reports_edit'), 
+		'keywords' => array('keywords_intro', 'keywords_new_group', 'keywords_new', 'keywords_remove'),
 		'about' => array('about_contrib', 'about_license')); 
 
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
