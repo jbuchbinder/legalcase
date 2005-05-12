@@ -35,6 +35,11 @@ $system_keyword_groups = array (
 				"description" => "kw_followups_assignment_description",
 				"ac_author" => "N"),
 			array (
+				"name" => "unassignment",
+				"title" => "kw_followups_unassignment_title",
+				"description" => "kw_followups_unassignment_description",
+				"ac_author" => "N"),
+			array (
 				"name" => "suspension",
 				"title" => "kw_followups_suspension_title",
 				"description" => "kw_followups_suspension_description",
