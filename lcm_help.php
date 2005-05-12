@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_help.php,v 1.7 2005/04/19 09:53:57 mlutfy Exp $
+	$Id: lcm_help.php,v 1.8 2005/05/12 13:47:26 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -81,8 +81,8 @@ if ($code) {
 				'tools' => array('tools_agenda', 'tools_documents'),
 				'siteconfig' => array('siteconfig_general', 'siteconfig_collab', 'siteconfig_policy', 'siteconfig_regional'),
 				'archives' => array('archives_intro', 'archives_export', 'archives_import'),
-				'reports' => array('reports_intro'), 
-				'keywords' => array('keywords_intro', 'keywords_new'),
+				'reports' => array('reports_intro', 'reports_edit'), 
+				'keywords' => array('keywords_intro', 'keywords_new_group', 'keywords_new', 'keywords_remove'),
 				'about' => array('about_contrib', 'about_license')); 
 
 			if (isset($toc[$code])) {
