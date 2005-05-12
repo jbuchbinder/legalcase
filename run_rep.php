@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.18 2005/05/10 14:10:39 mlutfy Exp $
+	$Id: run_rep.php,v 1.19 2005/05/12 13:50:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -83,7 +83,9 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 		case 'lcm_author':
 			switch($table2) {
 				case 'lcm_case':
-					$where .= " a.id_author = c.id_author ";
+					$from   = " lcm_case_author as ca ";
+					$from_glue .= " a.id_author = ca.id_author AND c.id_case = ca.id_case ";
+					$where .= " a.id_author = ca.id_author ";
 					break;
 				case 'lcm_followup':
 					$where .= " a.id_author = fu.id_author ";
@@ -230,7 +232,7 @@ $q = "SELECT f.id_field, f.field_name, f.table_name, f.enum_type, f.description
 		FROM lcm_rep_line as l, lcm_fields as f
 		WHERE id_report = " . $rep . "
 		AND l.id_field = f.id_field
-		ORDER BY col_order ASC";
+		ORDER BY col_order, id_line ASC";
 
 $result = lcm_query($q);
 
@@ -269,11 +271,11 @@ if (! count($my_lines)) {
 
 $do_grouping = false;
 $my_columns = array();
-$q = "SELECT f.id_field, f.field_name, f.table_name, f.enum_type, f.description
+$q = "SELECT *
 		FROM lcm_rep_col as c, lcm_fields as f
 		WHERE c.id_report = $rep
 			AND c.id_field = f.id_field
-		ORDER BY c.col_order";
+		ORDER BY c.col_order, id_column ASC";
 
 $result = lcm_query($q);
 
@@ -289,19 +291,16 @@ while ($row = lcm_fetch_array($result)) {
 			if ($enum[1] == 'system_kwg') {
 				include_lcm('inc_keywords');
 				$kws = get_keywords_in_group_name($enum[2]);
-				$i = 1;
 
 				foreach ($kws as $k) {
-					$name = $row['field_name'];
-					$prefix = "";
+					$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE type = '" . $k['name'] . "'";
 
-					$sql = "LCM_SQL: SELECT count(*) FROM lcm_followup WHERE type = '" . $k['name'] . "'";
-
+					// For report headers
+					$k['filter_special'] = 'time_length'; // XXX
 					$k['description'] = $k['title'];
+
 					array_push($headers, $k);
 					array_push($my_columns, "1 as \"" . $sql ."\"");
-
-					$i++;
 				}
 
 				$do_grouping = true;
@@ -316,7 +315,7 @@ while ($row = lcm_fetch_array($result)) {
 			lcm_panic("Not yet implemented -" . $enum[0] . "-");
 		}
 	} else {
-		array_push($my_columns, $row['field_name']);
+		array_push($my_columns, prefix_field($row['table_name'], $row['field_name']));
 		array_push($headers, $row);
 	}
 }
@@ -450,9 +449,9 @@ function apply_filter($f) {
 		if ($filter_conv[$filter_op]) {
 			switch($filter_type) {
 				case 'date':
-					$ret .= "DATE_FORMAT(" . $f['field_name'] . ", '%Y-%m-%d')"
+					$ret .= "DATE_FORMAT(" . prefix_field($f['table_name'], $f['field_name']) . ", '%Y-%m-%d')"
 						. " " . $filter_conv[$filter_op] . " " 
-						. "DATE_FORMAT('" . $f['value'] . "', '%Y-%m-%d') ";
+						. "DATE_FORMAT('" . get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter']) . "', '%Y-%m-%d') ";
 					break;
 				case 'text':
 					$ret .= $f['field_name'] 
@@ -477,10 +476,11 @@ function apply_filter($f) {
 }
 
 foreach ($my_filters as $f) {
-	if ($f['table_name'] == $my_line_table) { // FIXME .. and col filters?
+	// if ($f['table_name'] == $my_line_table) { // FIXME .. and col filters?
 		if ($f['value'] || isset($_REQUEST['filter_val' . $f['id_filter']]) 
 			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_start", 'year_only')
-			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'year_only'))
+			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'year_only')
+			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'], 'year_only'))
 		{
 			$fil_sql = apply_filter($f);
 
@@ -493,7 +493,7 @@ foreach ($my_filters as $f) {
 			if ($f['type'])
 				$is_missing_filters = true;
 		}
-	}
+	// }
 }
 
 if ($is_missing_filters) {
@@ -514,9 +514,11 @@ if (count($line_filters))
 //
 
 if (count($q_where)) {
-	if (! count($line_filters))
+	if (count($line_filters))
+		$q .= " AND ";
+	else
 		$q .= " WHERE ";
-
+	
 	$q .= implode(" AND ", $q_where);
 }
 
@@ -605,6 +607,9 @@ while ($row = lcm_fetch_array($result)) {
 				}
 			}
 
+			// Maybe formalise 'time_length' filter, but check SQL pre-filter also
+			if ($headers[$cpt_col]['filter_special'] == 'time_length')
+				$val = format_time_interval_prefs($val);
 			if ($headers[$cpt_col]['description'] == 'time_input_length')
 				$val = format_time_interval_prefs($val);
 
