@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.31 2005/05/13 13:57:59 mlutfy Exp $
+	$Id: fu_det.php,v 1.32 2005/05/13 14:21:25 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -31,7 +31,7 @@ if (isset($_GET['followup'])) {
 
 	// Fetch the details on the specified follow-up
 	$q="SELECT fu.*, a.name_first, a.name_middle, a.name_last,
-			IF(fu.date_end - fu.date_start > 0, fu.date_end - fu.date_start, 0) as length
+			IF(UNIX_TIMESTAMP(fu.date_end) > 0, UNIX_TIMESTAMP(fu.date_end) - UNIX_TIMESTAMP(fu.date_start), 0) as length
 		FROM lcm_followup as fu, lcm_author as a
 		WHERE id_followup = $followup
 			AND fu.id_author = a.id_author";
