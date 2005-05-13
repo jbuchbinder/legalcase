@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.13 2005/04/15 11:29:22 mlutfy Exp $
+	$Id: archive.php,v 1.14 2005/05/13 10:07:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,9 +26,13 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 include_lcm('inc_impex');
 
-// Check access rights
-if ($GLOBALS['author_session']['status'] != 'admin') 
-	die("You don't have the right to list all cases!");
+// Restrict page to administrators
+if ($author_session['status'] != 'admin') {
+	lcm_page_start(_T('title_archives'), '', '', 'archives_intro');
+	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
+	lcm_page_end();
+	exit;
+}
 
 $find_case_string = '';
 if (isset($_REQUEST['find_case_string']))
@@ -40,7 +44,7 @@ if (!empty($_REQUEST['export']) && ($GLOBALS['author_session']['status'] == 'adm
 }
 
 // Show page start
-lcm_page_start(_T('title_archives'));
+lcm_page_start(_T('title_archives'), '', '', 'archives_intro');
 
 // Show tabs
 $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),

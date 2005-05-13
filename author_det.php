@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.23 2005/05/13 10:00:15 mlutfy Exp $
+	$Id: author_det.php,v 1.24 2005/05/13 10:07:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -41,7 +41,7 @@ $result = lcm_query($q);
 
 	if ($author_data = lcm_fetch_array($result)) {
 		$fullname = get_person_name($author_data);
-		lcm_page_start(_T('title_author_view') . ' ' . $fullname);
+		lcm_page_start(_T('title_author_view') . ' ' . $fullname, '', '', 'authors_intro');
 
 		// Show tabs
 		if ($author == $author_session['id_author'] || $author_session['status'] == 'admin') {

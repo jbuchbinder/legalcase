@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.61 2005/05/13 06:50:15 mlutfy Exp $
+	$Id: listcases.php,v 1.62 2005/05/13 10:07:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,7 +28,7 @@ include_lcm('inc_filters');
 global $author_session;
 global $prefs;
 
-lcm_page_start(_T('title_my_cases'));
+lcm_page_start(_T('title_my_cases'), '', '', 'cases_intro');
 lcm_bubble('case_list');
 
 //

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.29 2005/05/12 15:00:39 mlutfy Exp $
+	$Id: listauthors.php,v 1.30 2005/05/13 10:07:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -29,7 +29,7 @@ $find_author_string = '';
 if (isset($_REQUEST['find_author_string']))
 	$find_author_string = $_REQUEST['find_author_string'];
 
-lcm_page_start(_T('title_author_list'));
+lcm_page_start(_T('title_author_list'), '', '', 'authors_intro');
 lcm_bubble('author_list');
 show_find_box('author', $find_author_string);
 

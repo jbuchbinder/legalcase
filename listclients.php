@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.33 2005/04/13 20:21:58 antzi Exp $
+	$Id: listclients.php,v 1.34 2005/05/13 10:06:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -34,7 +34,7 @@ if (!empty($_REQUEST['export']) && ($GLOBALS['author_session']['status'] == 'adm
 	exit;
 }
 
-lcm_page_start(_T('title_client_list'));
+lcm_page_start(_T('title_client_list'), '', '', 'clients_intro');
 lcm_bubble('client_list');
 show_find_box('client', $find_client_string, '', (string)($GLOBALS['author_session']['status'] == 'admin') );
 
