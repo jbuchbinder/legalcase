@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.71 2005/05/09 13:58:20 mlutfy Exp $
+	$Id: inc_filters.php,v 1.72 2005/05/13 06:46:15 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -258,6 +258,11 @@ function get_person_initials($item, $with_abbver = true) {
 	return $ret;
 }
 
+function lcm_unserialize($string) {
+	$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($string) : $string));
+	return $tmp;
+}
+
 function get_fu_description($item, $make_short = true) {
 	if (! is_array($item)) {
 		lcm_debug("get_fu_description: parameter is not an array.");
@@ -274,8 +279,12 @@ function get_fu_description($item, $make_short = true) {
 		$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $item['description']);
 		$author1 = lcm_fetch_array($res1);
 		$short_description = _T('case_info_author_assigned', array('name' => get_person_name($author1)));
+	} elseif ($item['type'] == 'unassignment' && is_numeric($item['description'])) {
+		$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $item['description']);
+		$author1 = lcm_fetch_array($res1);
+		$short_description = _T('case_info_author_unassigned', array('name' => get_person_name($author1)));
 	} elseif ($item['type'] == 'stage_change' || is_status_change($item['type'])) {
-		$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($item['description']) : $item['description']));
+		$tmp = lcm_unserialize($item['description']);
 
 		// for backward compatibility, make it optional
 		if ($item['case_stage'])
@@ -283,12 +292,23 @@ function get_fu_description($item, $make_short = true) {
 
 		if ($tmp['description'])
 			$short_description .= " / " . $tmp['description'];
+
+		if ($tmp['conclusion'])
+			$short_description .= " " . _Ti('fu_input_conclusion') . _Tkw('conclusion', $tmp['conclusion']);
+
+		if ($tmp['sentence'])
+			$short_description .= " " . _Ti('fu_input_sentence') . _Tkw('sentence', $tmp['sentence']);
+
+		if ($tmp['sentence_val'])
+			$short_description .= ": " . $tmp['sentence_val'];
 	} else {
 		if ($item['description']) {
 			if ($make_short && strlen(lcm_utf8_decode($item['description'])) < $title_length) 
 				$short_description = $item['description'];
 			else
 				$short_description = substr($item['description'], 0, $title_length) . '...';
+
+			$short_description = clean_output($short_description);
 		} else {
 			$short_description = _T('fu_info_emptydesc');
 		}
