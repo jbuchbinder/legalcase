@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.29 2005/04/26 08:44:49 makaveev Exp $
+	$Id: org_det.php,v 1.30 2005/05/13 09:35:47 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -54,10 +54,10 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 
 	// Show tabs
 	$groups = array(
-				'general' => _T('generic_tab_general'),
-				'representatives' => _T('generic_tab_representatives'),
-				'cases' => _T('generic_tab_cases'),
-				'attachments' => _T('generic_tab_documents'));
+		'general' => array('name' => _T('generic_tab_general'), 'tooltip' => _T('generic_subtitle_general')),
+		// 'representatives' => _T('generic_tab_representatives'),
+		'cases' => array('name' => _T('generic_tab_cases'), 'tooltip' => _T('org_subtitle_cases')),
+		'attachments' => array('name' => _T('generic_tab_documents'), 'tooltip' => _T('org_subtitle_attachments')));
 
 	$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 	show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
@@ -68,7 +68,7 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 		//
 		case 'general':
 			echo '<fieldset class="info_box">';
-			echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_general') . "</div>\n";
+			show_page_subtitle(_T('generic_subtitle_general')); // XXX help?
 			echo '<p class="normal_text">';
 		
 			echo _Ti('org_input_id') . $row['id_org'] . "<br />\n";
@@ -87,14 +87,13 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 			show_all_contacts('org', $row['id_org']);
 
 			if ($edit)
-				echo '<a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">'
+				echo '<p><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">'
 					. _T('org_button_edit')
-					. "</a>\n";
+					. "</a></p>\n";
 
 			if ($GLOBALS['author_session']['status'] == 'admin')
-				echo '<a href="export.php?item=org&amp;id=' . $row['id_org'] . '" class="exp_lnk">' . _T('export_button_org') . "</a>\n";
+				echo '<p><a href="export.php?item=org&amp;id=' . $row['id_org'] . '" class="exp_lnk">' . _T('export_button_org') . "</a></p>\n";
 
-			echo '<br /><br />';
 			echo "</fieldset>\n";
 
 			break;
@@ -206,7 +205,9 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 
 			if (lcm_num_rows($result)) {
 				echo '<fieldset class="info_box">' . "\n";
-				echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_cases') . "</div>\n";
+				show_page_subtitle(_T('org_subtitle_cases'), 'cases_participants');
+
+				echo "<p class=\"normal_text\">\n";
 				show_listcase_start();
 
 				for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
@@ -214,6 +215,7 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 				}
 
 				show_listcase_end($list_pos, $number_of_rows);
+				echo "</p>\n";
 				echo "</fieldset>\n";
 			}
 
@@ -223,9 +225,9 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 		//
 		case 'attachments' :
 			echo '<fieldset class="info_box">';
-			echo '<div class="prefs_column_menu_head">' . _T('org_subtitle_documents') . '</div>';
-			echo "<p class=\"normal_text\">\n";
+			show_page_subtitle(_T('org_subtitle_attachments'), 'tools_documents');
 
+			echo "<p class=\"normal_text\">\n";
 			echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
 			echo '<input type="hidden" name="org" value="' . $org . '" />' . "\n";
 
@@ -239,6 +241,7 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 			echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 			echo "</form>\n";
 
+			echo "</p>\n";
 			echo '</fieldset>';
 
 			break;

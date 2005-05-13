@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.158 2005/05/13 08:16:55 mlutfy Exp $
+	$Id: case_det.php,v 1.159 2005/05/13 09:35:47 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -73,12 +73,12 @@ if ($case > 0) {
 		// echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
 
 		// Show tabs
-		$groups = array('general' => _T('generic_tab_general'),
-				// [ML] 'clients' => _T('generic_tab_clients'),
-				'followups' => _T('generic_tab_followups'),
-				'appointments' => _T('generic_tab_agenda'),
-				'times' => _T('generic_tab_reports'),
-				'attachments' => _T('generic_tab_documents'));
+		$groups = array(
+			'general' => array('name' => _T('generic_tab_general'), 'tooltip' => _T('case_subtitle_general')),
+			'followups' => array('name' => _T('generic_tab_followups'), 'tooltip' => _T('case_subtitle_followups')),
+			'appointments' => array('name' => _T('generic_tab_agenda'), 'tooltip' => _T('case_subtitle_appointments')),
+			'times' => array('name' => _T('generic_tab_reports'), 'tooltip' => _T('case_subtitle_times')),
+			'attachments' => array('name' => _T('generic_tab_documents'), 'tooltip' => _T('case_subtitle_attachments')));
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
@@ -234,7 +234,7 @@ if ($case > 0) {
 					$row = lcm_fetch_array($r_tmp);
 
 					if ($row) {
-						echo '<div style="background: #dddddd;">';
+						echo '<div style="background: #f0f0f0; padding: 4px; border: 1px solid #aaa;">';
 						echo _Ti('fu_input_conclusion');
 						echo get_fu_description($row);
 						echo ' <a class="content_link" href="fu_det.php?followup=' . $row['id_followup'] . '">...</a>';

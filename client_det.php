@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.48 2005/04/26 08:43:01 makaveev Exp $
+	$Id: client_det.php,v 1.49 2005/05/13 09:35:47 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -39,7 +39,7 @@ $result = lcm_query($q);
 if (! ($row = lcm_fetch_array($result)))
 	die("There's no such client.");
 
-lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
+lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row), '', '', 'clients_intro');
 
 		/* Saved for future use
 			// Check for access rights
@@ -58,10 +58,10 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 
 		// Show tabs
 		$groups = array(
-					'general' => _T('generic_tab_general'),
-					'organisations' => _T('generic_tab_org'),
-					'cases' => _T('generic_tab_cases'),
-					'attachments' => _T('generic_tab_documents'));
+			'general' => array('name' => _T('generic_tab_general'), 'tooltip' => _T('generic_subtitle_general')),
+			// 'organisations' => _T('generic_tab_org'),
+			'cases' => array('name' => _T('generic_tab_cases'), 'tooltip' => _T('client_subtitle_cases')),
+			'attachments' => array('name' => _T('generic_tab_documents'), 'tooltip' => _T('client_subtitle_attachments')));
 
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
@@ -90,7 +90,7 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 				// Show client general information
 				//
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_general') . "</div>\n";
+				show_page_subtitle(_T('generic_subtitle_general'), 'clients_intro');
 		
 				echo '<p class="normal_text">';
 				echo _Ti('client_input_id') . $row['id_client'] . "<br/>\n";
@@ -98,13 +98,13 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 				echo _Ti('person_input_gender') . $gender . "<br/>\n";
 		
 				if (read_meta('client_citizen_number') == 'yes')
-					echo _T('person_input_citizen_number') . ' ' . $row['citizen_number'] . "<br/>\n";
+					echo _Ti('person_input_citizen_number') . $row['citizen_number'] . "<br/>\n";
 		
 				if (read_meta('client_civil_status') == 'yes')
-					echo _Ti('person_input_civil_status') . $row['civil_status'] . "<br/>\n";
+					echo _Ti('person_input_civil_status') . _Tkw('civilstatus', $row['civil_status']) . "<br/>\n";
 
 				if (read_meta('client_income') == 'yes')
-					echo _Ti('person_input_income') . $row['income'] . "<br/>\n";
+					echo _Ti('person_input_income') . _Tkw('income', $row['income']) . "<br/>\n";
 
 				include_lcm('inc_keywords');
 				show_all_keywords('client', $row['id_client']);
@@ -205,7 +205,6 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 			case 'cases':
 				//
 				// Show recent cases
-				// [AG] Since this info is on separate tab, they could be more, i.e. $prefs['page_rows']
 				//
 
 				$q = "SELECT clo.id_case, c.title, c.date_creation, c.id_court_archive, c.status
@@ -238,14 +237,16 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 
 				if (lcm_num_rows($result)) {
 					echo '<fieldset class="info_box">' . "\n";
-					echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_cases') . "</div>\n";
+					show_page_subtitle(_T('client_subtitle_cases'), 'cases_participants');
+
+					echo "<p class=\"normal_text\">\n";
 					show_listcase_start();
 		
-					for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
+					for ($cpt = 0; (($i<$prefs['page_rows']) && ($row1 = lcm_fetch_array($result))); $cpt++)
 						show_listcase_item($row1, $cpt);
-					}
 
 					show_listcase_end($list_pos, $number_of_rows);
+					echo "</p>\n";
 					echo "</fieldset>\n";
 				}
 
@@ -255,7 +256,7 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row));
 			//
 			case 'attachments' :
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('client_subtitle_attachments') . '</div>';
+				show_page_subtitle(_T('client_subtitle_attachments'), 'tools_documents');
 				echo "<p class=\"normal_text\">\n";
 
 				echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
