@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.22 2005/05/13 06:50:15 mlutfy Exp $
+	$Id: author_det.php,v 1.23 2005/05/13 10:00:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,29 +28,41 @@ include_lcm('inc_acc');
 global $prefs;
 $author = intval($_REQUEST['author']);
 
-if ($author > 0) {
-	// Get author data
-	$q = "SELECT *
-			FROM lcm_author
-			WHERE id_author = $author";
-	$result = lcm_query($q);
+if (! ($author > 0)) {
+	header("Location: listauthors.php");
+	exit;
+}
+
+// Get author data
+$q = "SELECT *
+		FROM lcm_author
+		WHERE id_author = $author";
+$result = lcm_query($q);
 
 	if ($author_data = lcm_fetch_array($result)) {
-		// Start the page
 		$fullname = get_person_name($author_data);
 		lcm_page_start(_T('title_author_view') . ' ' . $fullname);
 
 		// Show tabs
 		if ($author == $author_session['id_author'] || $author_session['status'] == 'admin') {
-			$groups = array('general' => _T('generic_tab_general'),
-				'cases' => _T('generic_tab_cases'),
-				'followups' => _T('generic_tab_followups'),
-				'appointments' => _T('generic_tab_agenda'),
-				'times' => _T('generic_tab_reports')); 
+			$groups = array(
+				'general' => array('name' => _T('generic_tab_general'),
+								'tooltip' => _T('generic_subtitle_general', array('author' => $fullname))),
+				'cases' => array('name' => _T('generic_tab_cases'),
+								'tooltip' => _T('author_subtitle_cases', array('author' => $fullname))),
+				'followups' => array('name' => _T('generic_tab_followups'),
+								'tooltip' => _T('author_subtitle_followups', array('author' => $fullname))),
+				'appointments' => array('name' => _T('generic_tab_agenda'), 
+								'tooltip' => _T('author_subtitle_appointments', array('author' => $fullname))),
+				'times' => array('name' => _T('generic_tab_reports'),
+								'tooltip' => _T('author_subtitle_reports', array('author' => $fullname)))); 
 				// 'attachments' => _T('generic_tab_documents'));
 		} else {
-			$groups = array('general' => _T('generic_tab_general'),
-				'cases' => _T('generic_tab_cases'));
+			$groups = array(
+				'general' => array('name' => _T('generic_tab_general'),
+								'tooltip' => _T('generic_subtitle_general', array('author' => $fullname))),
+				'cases' => array('name' => _T('generic_tab_cases'),
+								'tooltip' => _T('author_subtitle_cases', array('author' => $fullname))));
 		}
 
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
@@ -68,7 +80,7 @@ if ($author > 0) {
 				// Show client general information
 				//
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' . _T('generic_subtitle_general') . "</div>\n";
+				show_page_subtitle(_T('generic_subtitle_general'), 'authors_intro');
 
 				echo '<p class="normal_text">';
 				echo _Ti('authoredit_input_id') . $author_data['id_author'] . "<br />\n";
@@ -131,9 +143,7 @@ if ($author > 0) {
 
 				if (lcm_num_rows($result)) {
 					echo '<fieldset class="info_box">' . "\n";
-					echo '<div class="prefs_column_menu_head">' 
-						.  _T('author_subtitle_cases', array('author' => get_person_name($author_data)))
-						. "</div>\n";
+					show_page_subtitle(_T('author_subtitle_cases', array('author' => get_person_name($author_data)), 'cases_participants'));
 					show_listcase_start();
 		
 					for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
@@ -154,10 +164,7 @@ if ($author > 0) {
 					die("Access denied");
 			
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' 
-					. "<div style='float: right'>" . lcm_help('author_followups') . "</div>"
-					. _T('author_subtitle_followups', array('author' => get_person_name($author_data)))
-					. '</div>';
+				show_page_subtitle(_T('author_subtitle_followups', array('author' => get_person_name($author_data))), 'cases_followups');
 
 				// By default, show from "now() - 1 month" to NOW().
 				$link = new Link();
@@ -317,11 +324,9 @@ if ($author > 0) {
 
 				// Show table headers
 				echo '<fieldset class="info_box">';
-				echo '<div class="prefs_column_menu_head">' 
-					. _T('author_subtitle_reports', array('author' => get_person_name($author_data))) 
-					. '</div>';
+				show_page_subtitle(_T('author_subtitle_reports', array('author' => get_person_name($author_data))), 'reports_intro');
+
 				echo "<p class=\"normal_text\">\n";
-			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 				echo "<tr>\n";
 				echo "<th class='heading'>" . _Th('author_input_case') . "</th>\n";
@@ -373,13 +378,19 @@ if ($author > 0) {
 				
 				echo "</tr>\n";
 
-				echo "\t</table>\n</p></fieldset>\n";
+				echo "</table>\n";
+				echo "</p>\n";
+				echo "</fieldset>\n";
 
 				break;
 
 			case 'appointments':
 				if (! allowed_author($author, 'r'))
 					die("Access denied");
+
+				echo '<fieldset class="info_box">';
+				show_page_subtitle(_T('author_subtitle_appointments', array('author' => get_person_name($author_data))), 'tools_agenda');
+				echo "<p class=\"normal_text\">\n";
 
 				$q = "SELECT lcm_app.*
 					FROM lcm_author_app,lcm_app
@@ -442,6 +453,9 @@ if ($author > 0) {
 					show_list_end($list_pos, $number_of_rows);
 				}
 				
+				echo "</p>\n";
+				echo "</fieldset>\n";
+
 				echo '<p><a href="edit_app.php?app=0" class="create_new_lnk">' . _T('app_button_new') . '</a></p>';
 
 				break;
@@ -461,8 +475,5 @@ if ($author > 0) {
 	} else {
 		die("There's no such author!");
 	}
-} else {
-	die("Which author?");
-}
 
 ?>
