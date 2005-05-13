@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.28 2005/05/13 06:50:15 mlutfy Exp $
+	$Id: fu_det.php,v 1.29 2005/05/13 09:10:50 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -46,7 +46,7 @@ if (isset($_GET['followup'])) {
 	die("Which follow-up?");
 }
 
-lcm_page_start(_T('title_fu_view'));
+lcm_page_start(_T('title_fu_view'), '', '', 'cases_followups');
 
 echo '<fieldset class="info_box">';
 
@@ -124,7 +124,7 @@ echo "</tr>\n";
 
 // Conclusion for case/status change
 if ($fu_data['type'] == 'status_change' || $fu_data['type'] == 'stage_change') {
-	$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($fu_data['description']) : $fu_data['description'])); // FIXME
+	$tmp = lcm_unserialize($fu_data['description']);
 
 	echo "<tr>\n";
 	echo '<td>' . _Ti('fu_input_conclusion') . "</td>\n";
@@ -142,7 +142,7 @@ $desc = get_fu_description($fu_data, false);
 
 echo "<tr>\n";
 echo '<td valign="top">' . _T('fu_input_description') . "</td>\n";
-echo '<td>' . nl2br($desc) . "</td>\n";
+echo '<td>' . $desc . "</td>\n";
 echo "</tr>\n";
 
 // Sum billed (if activated from policy)
