@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listfollowups.php,v 1.3 2005/04/21 20:39:46 makaveev Exp $
+	$Id: listfollowups.php,v 1.4 2005/05/13 06:50:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -350,7 +350,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 	$short_description = get_fu_description($row);
 
 	echo '<td class="tbl_cont_' . $css . '">';
-	echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
+	echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . $short_description . '</a>';
 	echo '</td>';
 
 	echo "</tr>\n";

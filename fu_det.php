@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.27 2005/04/29 07:55:06 mlutfy Exp $
+	$Id: fu_det.php,v 1.28 2005/05/13 06:50:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -142,7 +142,7 @@ $desc = get_fu_description($fu_data, false);
 
 echo "<tr>\n";
 echo '<td valign="top">' . _T('fu_input_description') . "</td>\n";
-echo '<td>' . nl2br(clean_output($desc)) . "</td>\n";
+echo '<td>' . nl2br($desc) . "</td>\n";
 echo "</tr>\n";
 
 // Sum billed (if activated from policy)

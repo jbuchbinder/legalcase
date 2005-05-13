@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.156 2005/05/12 13:48:58 mlutfy Exp $
+	$Id: case_det.php,v 1.157 2005/05/13 06:50:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -538,7 +538,7 @@ if ($case > 0) {
 					$short_description = get_fu_description($row);
 			
 					echo '<td>';
-					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
+					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . $short_description . '</a>';
 					echo '</td>';
 			
 					echo "</tr>\n";

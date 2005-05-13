@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.21 2005/04/18 10:40:44 mlutfy Exp $
+	$Id: author_det.php,v 1.22 2005/05/13 06:50:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -263,7 +263,7 @@ if ($author > 0) {
 					$short_description = get_fu_description($row);
 			
 					echo $td;
-					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
+					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . $short_description . '</a>';
 					echo "</td>\n";
 			
 					echo "</tr>\n";

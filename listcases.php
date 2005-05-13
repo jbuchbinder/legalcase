@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.60 2005/04/27 16:48:45 mlutfy Exp $
+	$Id: listcases.php,v 1.61 2005/05/13 06:50:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -319,7 +319,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 	$short_description = get_fu_description($row);
 
 	echo '<td>';
-	echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . clean_output($short_description) . '</a>';
+	echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . $short_description . '</a>';
 	echo '</td>';
 
 	echo "</tr>\n";
