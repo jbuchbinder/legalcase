@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.223 2005/05/13 13:17:53 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.224 2005/05/13 14:32:04 mlutfy Exp $
 */
 
 //
@@ -888,18 +888,17 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	$ret = '';
 
 	if ($table && !$hours_only)
-		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n<tr>\n";
+		$ret .= '<table cellpadding="3" cellspacing="3">' . "\n<tr>\n";
 		
 	// Days
 	if ($hours_only) {
 		$ret .= "<input type=\"hidden\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" value=\"$days\" />\n";
 	} else {
 		if ($table)
-			$ret .= "<td>\n"
-			. "<!-- " . _T('select_time_days') . "<br/ -->\n";
+			$ret .= "<td>\n";
 		
 		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
-		$ret .= " d, "; // TRAD
+		$ret .= "&nbsp;" . _T('time_info_short_day') . ", ";
 				
 		if ($table)
 			$ret .= "</td>\n";
@@ -908,11 +907,10 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	// Hour
 	if ($hours_only || !$select_hours) {
 		$ret .= "<input $dis size=\"4\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
-		$ret .= ($hours_only ? " hours\n" : " h, "); // TRAD
+		$ret .= _T('time_info_short_hour');
 	} else {
 		if ($table)
-			$ret .= "<td>\n"
-			. "<!-- " . _T('select_time_hour') . "<br/ -->\n";
+			$ret .= "<td>\n";
 
 		$ret .= "<select $dis name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\">\n";
 	
@@ -923,7 +921,7 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	
 		$ret .= "</select>";
 		
-		$ret .= " h, "; // TRAD
+		$ret .= "&nbsp;" . _T('time_info_short_hour') . ", ";
 	
 		if ($table)
 			$ret .= "</td>\n";
@@ -934,8 +932,7 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 		$ret .= "<input type=\"hidden\" name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" value=\"$minutes\" />\n";
 	} else {
 		if ($table)
-			$ret .= "<td>\n"
-			. "<!-- " . _T('select_time_minutes') . "<br/ -->\n";
+			$ret .= "<td>\n";
 		
 		$ret .= "<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
 	
@@ -945,13 +942,13 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 		}
 	
 		$ret .= "</select>";
-		$ret .= " m";
+		$ret .= "&nbsp;" . _T('time_info_short_min');
 	
 		if ($table)
 			$ret .= "</td>\n";
 	}
 
-	if ($table && !$hours_only) $ret .= "</tr></table>\n";
+	if ($table && !$hours_only) $ret .= "</tr>\n</table>\n";
 
 	return $ret;
 }
