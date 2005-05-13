@@ -37,6 +37,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'archives_tab_all_cases' => 'All cases',
 'archives_tab_export' => 'Backup',
 'archives_tab_import' => 'Restore',
+'author_subtitle_appointments' => 'Future activities or tasks for @author@.',
 'author_subtitle_cases' => 'Cases involving @author@',
 'author_subtitle_followups' => 'Latest follow-ups by @author@',
 'author_subtitle_reports' => 'Activity reports for @author@',
@@ -782,6 +783,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // T
 'time_info_before_start' => 'before start time.',
+'time_info_short_day' => 'd',
+'time_info_short_hour' => 'h',
+'time_info_short_min' => 'm',
 'time_input_date_creation' => 'Creation date:',
 'time_input_date_end' => 'End:',
 'time_input_date_start' => 'Start:',

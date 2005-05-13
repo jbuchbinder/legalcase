@@ -37,6 +37,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'archives_tab_all_cases' => 'Всички случаи',
 'archives_tab_export' => 'Архивиране',
 'archives_tab_import' => 'Възстановяване',
+'author_subtitle_appointments' => '<NEW>Future activities or tasks for @author@.',
 'author_subtitle_cases' => 'Случаи, в които @author@ участва',
 'author_subtitle_followups' => 'Последните продължения от @author@',
 'author_subtitle_reports' => 'Отчети за активността на @author@',
@@ -782,6 +783,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // T
 'time_info_before_start' => 'преди началото.',
+'time_info_short_day' => 'д',
+'time_info_short_hour' => 'ч',
+'time_info_short_min' => 'м',
 'time_input_date_creation' => 'Дата на създане:',
 'time_input_date_end' => 'Край:',
 'time_input_date_start' => 'Начало:',
