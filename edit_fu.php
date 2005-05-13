@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.106 2005/04/29 10:34:19 mlutfy Exp $
+	$Id: edit_fu.php,v 1.107 2005/05/13 06:27:47 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -399,6 +399,17 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 					$id_stage = $stage['id_keyword'];
 					show_edit_keywords_form('stage', $_SESSION['fu_data']['id_case'], $id_stage);
 				}
+			} elseif ($_SESSION['fu_data']['type'] == 'assignment' || $_SESSION['fu_data']['type'] == 'unassignment') {
+				// Do not allow assignment/un-assignment follow-ups to be changed
+				echo "<tr>\n";
+				echo "<td>" . _T('fu_input_next_stage') . "</td>\n";
+				echo "<td>";
+
+				echo '<input type="hidden" name="type" value="' . $_SESSION['fu_data']['type'] . '" />' . "\n";
+				echo _Tkw('followups', $_SESSION['fu_data']['type']);
+
+				echo "</td>\n";
+				echo "</tr>\n";
 			} else {
 				// The usual follow-up
 				echo "<tr>\n";
@@ -412,11 +423,18 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 					$default_fu = $system_kwg['followups']['suggest'];
 
 				$futype_kws = get_keywords_in_group_name('followups');
+				$kw_found = false;
 
 				foreach($futype_kws as $kw) {
 					$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
-					echo '<option value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+					if ($sel) $kw_found = true;
+					echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 				}
+
+				// Exotic case where the FU keyword was hidden by the administrator,
+				// but an old follow-up using that keyword is being edited.
+				if (! $kw_found)
+					echo '<option selected="selected" value="' . $default_fu . '">' . _Tkw('followups', $default_fu) . "</option>\n";
 
 				echo "</select>\n";
 				echo "</td>\n";
@@ -427,9 +445,17 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 		echo "<tr>\n";
 		echo '<td valign="top">' . f_err_star('description') . _T('fu_input_description') . "</td>\n";
 		echo '<td>';
-		echo '<textarea ' . $dis . ' name="description" rows="15" cols="60" class="frm_tarea">';
-		echo clean_output($_SESSION['fu_data']['description']);
-		echo "</textarea>";
+
+		if ($_SESSION['fu_data']['type'] == 'assignment' || $_SESSION['fu_data']['type'] == 'unassignment') {
+			// Do not allow edit of assignment
+			echo '<input type="hidden" name="description" value="' . $_SESSION['fu_data']['description'] . '" />' . "\n";
+			echo get_fu_description($_SESSION['fu_data']);
+		} else {
+			echo '<textarea ' . $dis . ' name="description" rows="15" cols="60" class="frm_tarea">';
+			echo clean_output($_SESSION['fu_data']['description']);
+			echo "</textarea>";
+		}
+
 		echo "</td></tr>\n";
 
 
