@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.157 2005/05/13 06:50:15 mlutfy Exp $
+	$Id: case_det.php,v 1.158 2005/05/13 08:16:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -218,6 +218,29 @@ if ($case > 0) {
 					echo "</form>\n";
 				} else {
 					echo _Ti('case_input_stage') . clean_output($row['stage']) . "<br />\n";
+				}
+
+				// If case closed, show conclusion
+				if ($row['status'] == 'closed') {
+					// get the last relevant conclusion
+					$q_tmp = "SELECT * 
+								FROM lcm_followup
+								WHERE id_case = $case
+								  AND (type = 'conclusion'
+								   OR type = 'stage_change')
+								ORDER BY id_followup DESC 
+								LIMIT 1";
+					$r_tmp = lcm_query($q_tmp);
+					$row = lcm_fetch_array($r_tmp);
+
+					if ($row) {
+						echo '<div style="background: #dddddd;">';
+						echo _Ti('fu_input_conclusion');
+						echo get_fu_description($row);
+						echo ' <a class="content_link" href="fu_det.php?followup=' . $row['id_followup'] . '">...</a>';
+						echo "</div>\n";
+						echo "<br />\n";
+					}
 				}
 
 				echo _Ti('case_input_collaboration');
