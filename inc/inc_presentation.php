@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.221 2005/05/12 14:27:32 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.222 2005/05/13 09:12:27 mlutfy Exp $
 */
 
 //
@@ -1037,14 +1037,22 @@ function show_tabs($tab_list, $selected, $url_base) {
 	// Display tabs
 	foreach($tab_list as $key => $tab) {
 		if ($key != $selected) {
-			echo "\t<li><a href=\"$url_base?";
+			$a_title = "";
+			if (is_array($tab))
+				$a_title = 'title="' . $tab['tooltip'] . '"';
+
+			echo "\t<li><a $a_title href=\"$url_base?";
 			if (count($params)>0) echo join('&amp;',$params) . '&amp;';
 			echo 'tab=' . $key . "\">";
 		} else {
 			echo "\t<li class=\"active\">";
 		}
 
-		echo $tab;
+		if (is_array($tab))
+			echo $tab['name'];
+		else
+			echo $tab;
+
 		if ($key != $selected) echo "</a>";
 		echo "</li>\n";
 	}
