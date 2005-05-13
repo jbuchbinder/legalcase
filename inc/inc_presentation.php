@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.222 2005/05/13 09:12:27 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.223 2005/05/13 13:17:53 mlutfy Exp $
 */
 
 //
@@ -1616,6 +1616,20 @@ function show_navmenu_item($dest, $name) {
 		. 'title="' . htmlspecialchars(_T('menu_' . $name . '_tooltip')) . '">'
 		. _T('menu_' . $name) 
 		. "</a></li>\n";
+}
+
+// Returns the author's name and a link to its details page.
+function get_author_link($item) {
+	if (! is_array($item)) {
+		lcm_log("Warning: show_author_link() was not given an array");
+		return;
+	}
+
+	return '<a class="content_link" '
+		. 'href="author_det.php?author=' . $item['id_author'] . '" '
+		. 'title="' . _T('case_tooltip_view_author_details', array('author' => get_person_name($item))) . '">'
+		. get_person_name($item)
+		. "</a>";
 }
 
 ?>
