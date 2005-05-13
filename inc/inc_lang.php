@@ -10,27 +10,58 @@ define('_INC_LANG', '1');
 // [ML] "force" parameter might be useless
 //
 function load_language_file($lang, $module = 'lcm', $force = false) {
-	if (@file_exists('inc/lang/'.$module.'_'.$lang.'.php')) {
-		$GLOBALS['idx_lang'] = 'i18n_'.$module.'_'.$lang;
-		include_lcm('lang/'.$module.'_'.$lang);
-		lcm_debug($module . "_" . $lang . ": Language file loaded");
+	$name = $module . '_' . $lang;
+
+	if (@is_readable('inc/lang/' . $name . '.php')) {
+		$GLOBALS['idx_lang'] = 'i18n_' . $name;
+		include_lcm('lang/' . $name);
+		lcm_debug($name . ": Language file loaded");
 	} else {
 		// If the language file of the module does not exist, we fallback
 		// on English, which *by definition* must exist. We then recopy the
 		// 'en' table in the variable related to the requested language
-		if (@file_exists('inc/lang/'.$module.'_en.php')) {
+		if (@is_readable('inc/lang/'.$module.'_en.php')) {
 			$GLOBALS['idx_lang'] = 'i18n_'.$module.'_en';
 			include_lcm('lang/'.$module.'_en');
 		}
-		$GLOBALS['i18n_'.$module.'_'.$lang] = $GLOBALS['i18n_'.$module.'_en'];
-		lcm_debug("Fellback on English");
+
+		$GLOBALS['i18n_' . $name] = $GLOBALS['i18n_'.$module.'_en'];
+		lcm_log("Translation does not exist or file not readable. Fellback on English");
 	}
 
+	lcm_debug($name . ": " . count($GLOBALS['i18n_' . $name]) . " string(s)");
+
 	// The local system administrator can overload official strings
-	if (@file_exists('lang/perso.php')) {
-		include_lcm('lang/perso');
+	if (@is_readable('inc/lang/perso.php')) {
+		lcm_debug("Loading inc/lang/perso.php");
+		overload_lang('lang/perso');
+	}
+	
+	if (@is_readable('inc/lang/perso_' . $lang . '.php')) {
+		lcm_debug("Loading inc/lang/perso_" . $lang . ".php");
+		overload_lang('lang/perso_' . $lang);
 	}
 }
+
+
+//
+// Overload the current language file
+//
+function overload_lang($f) {
+	$idx_lang_current = $GLOBALS['idx_lang'];
+	$GLOBALS['idx_lang'] .= '_temp';
+	include_lcm($f);
+
+	if (is_array($GLOBALS[$GLOBALS['idx_lang']]))
+		foreach ($GLOBALS[$GLOBALS['idx_lang']] as $var => $val)
+			$GLOBALS[$idx_lang_current][$var] = $val; 
+
+	lcm_debug($f . ": " . count($GLOBALS[$GLOBALS['idx_lang']]) . " string(s)");
+
+	unset ($GLOBALS[$GLOBALS['idx_lang']]);
+	$GLOBALS['idx_lang'] = $idx_lang_current;
+}
+
 
 //
 // Change the current language
@@ -38,7 +69,7 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 function lcm_set_language($lang) {
 	global $all_langs, $lcm_lang_rtl, $lcm_lang_right, $lcm_lang_left, $lcm_lang_dir, $spip_dir_lang;
 
-	$liste_langues = $all_langs.','.read_meta('langues_multilingue');
+	$liste_langues = $all_langs.','.read_meta('available_languages');
 
  	if ($lang && ereg(",$lang,", ",$liste_langues,")) {
 		$GLOBALS['lcm_lang'] = $lang;
@@ -53,11 +84,6 @@ function lcm_set_language($lang) {
 	}
 	else
 		return false;
-}
-
-function changer_langue($lang) {
-	lcm_log("Use of deprecated function changer_langue(), use lcm_set_language instead");
-	return lcm_set_language($lang);
 }
 
 //
@@ -105,11 +131,17 @@ function translate_string($code, $args) {
 
 	while (!$text AND (list(,$module) = each ($modules))) {
 		$var = "i18n_".$module."_".$lcm_lang;
+		$load = false;
+
 		if (! isset($GLOBALS[$var]))
 			load_language_file($lcm_lang, $module);
 
-		if (!isset($GLOBALS[$var][$code]))
+		/* [ML] This does not really seem necessary, and makes useless (minor) overhead
+		if (!isset($GLOBALS[$var][$code])) {
+			lcm_debug("code = " . $code);
 			load_language_file($lcm_lang, $module, $code);
+			$load = true;
+		} */
 
 		if (isset($GLOBALS[$var][$code]))
 			$cache_lang[$lcm_lang][$code] = 1;
