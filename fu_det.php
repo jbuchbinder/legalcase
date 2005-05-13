@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.29 2005/05/13 09:10:50 mlutfy Exp $
+	$Id: fu_det.php,v 1.30 2005/05/13 13:56:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,7 +30,8 @@ if (isset($_GET['followup'])) {
 	$followup=intval($_GET['followup']);
 
 	// Fetch the details on the specified follow-up
-	$q="SELECT fu.*, a.name_first, a.name_middle, a.name_last
+	$q="SELECT fu.*, a.name_first, a.name_middle, a.name_last,
+			IF(fu.date_end - fu.date_start > 0, fu.date_end - fu.date_start, 0) as length
 		FROM lcm_followup as fu, lcm_author as a
 		WHERE id_followup = $followup
 			AND fu.id_author = a.id_author";
@@ -66,7 +67,7 @@ $res_app = lcm_query($q);
 
 if ($app = lcm_fetch_array($res_app)) {
 	echo '<li style="list-style-type: none;">' . _T('fu_input_parent_appointment') . ' ';
-	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _Tkw('appointments', $app['type'])
+	echo '<a class="content_link" href="app_det.php?app=' . $app['id_app'] . '">' . _Tkw('appointments', $app['type'])
 		. ' (' . $app['title'] . ') from ' . format_date($app['start_time']) . "</a></li>\n"; // TRAD
 }
 
@@ -81,7 +82,7 @@ $res_app = lcm_query($q);
 
 if ($app = lcm_fetch_array($res_app)) {
 	echo '<li style="list-style-type: none;">' . _T('fu_input_child_appointment') . ' ';
-	echo '<a href="app_det.php?app=' . $app['id_app'] . '">' . _Tkw('appointments', $app['type'])
+	echo '<a class="content_link" href="app_det.php?app=' . $app['id_app'] . '">' . _Tkw('appointments', $app['type'])
 		. ' (' . $app['title'] . ') from ' . format_date($app['start_time']) . "</a></li>\n"; // TRAD
 }
 
@@ -101,19 +102,25 @@ echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
 // Author
 echo "<tr>\n";
 echo '<td>' . _Ti('case_input_author') . "</td>\n";
-echo '<td>' . get_person_name($fu_data) . "</td>\n";
+echo '<td>' . get_author_link($fu_data) . "</td>\n";
 echo "</tr>\n";
 
 // Date start
 echo "<tr>\n";
-echo '<td>' . _Ti('fu_input_date_start') . "</td>\n";
+echo '<td>' . _Ti('time_input_date_start') . "</td>\n";
 echo '<td>' . format_date($fu_data['date_start']) . "</td>\n";
 echo "</tr>\n";
 
 // Date end
 echo "<tr>\n";
-echo '<td>' . _Ti('fu_input_date_end') . "</td>\n";
+echo '<td>' . _Ti('time_input_date_end') . "</td>\n";
 echo '<td>' . format_date($fu_data['date_end']) . "</td>\n";
+echo "</tr>\n";
+
+// Date length
+echo "<tr>\n";
+echo '<td>' . _Ti('time_input_length') . "</td>\n";
+echo '<td>' . format_time_interval($fu_data['length']) . "</td>\n";
 echo "</tr>\n";
 
 // FU type
