@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.30 2005/05/13 13:56:38 mlutfy Exp $
+	$Id: fu_det.php,v 1.31 2005/05/13 13:57:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -120,7 +120,7 @@ echo "</tr>\n";
 // Date length
 echo "<tr>\n";
 echo '<td>' . _Ti('time_input_length') . "</td>\n";
-echo '<td>' . format_time_interval($fu_data['length']) . "</td>\n";
+echo '<td>' . format_time_interval_prefs($fu_data['length']) . "</td>\n";
 echo "</tr>\n";
 
 // FU type
