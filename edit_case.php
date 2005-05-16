@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.76 2005/04/23 11:59:45 mlutfy Exp $
+	$Id: edit_case.php,v 1.77 2005/05/16 08:43:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -125,10 +125,10 @@ if (!$existing && isset($_REQUEST['attach_org'])) {
 
 
 // Start page and title
-if ($existing) lcm_page_start(_T('title_case_edit'));
-else lcm_page_start(_T('title_case_new'));
-
-echo "<div style='float: right'>" . lcm_help("case_edit") . "</div>\n";
+if ($existing)
+	lcm_page_start(_T('title_case_edit'), '', '', 'cases_intro#edit');
+else
+	lcm_page_start(_T('title_case_new'), '', '', 'cases_intro#new');
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
