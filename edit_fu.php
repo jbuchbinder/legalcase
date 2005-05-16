@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.107 2005/05/13 06:27:47 mlutfy Exp $
+	$Id: edit_fu.php,v 1.108 2005/05/16 08:52:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -214,7 +214,10 @@ if (isset($_SESSION['followup']))
 	lcm_page_start(_T('title_fu_edit'), '', '', 'cases_followups');
 else {
 	if (isset($_REQUEST['type'])) {
-		lcm_page_start(_T('title_fu_change_status'), '', '', 'cases_followups');
+		if ($_REQUEST['type'] == 'stage_change')
+			lcm_page_start(_T('title_fu_change_stage'), '', '', 'cases_intro#stage');
+		else
+			lcm_page_start(_T('title_fu_change_status'), '', '', 'cases_intro#status');
 	} else {
 		lcm_page_start(_T('title_fu_new'), '', '', 'cases_followups');
 	}
