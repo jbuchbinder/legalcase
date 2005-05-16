@@ -56,7 +56,7 @@ h2 {
 	margin: 5px 15px 0px 15px;
 }
 
-.hlp_data p, .hlp_data div, .hlp_data ul li, .hlp_data li, .hlp_data textarea {
+.hlp_data p, .hlp_data div, .hlp_data ul li, .hlp_data li, .hlp_data dl, .hlp_data textarea {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
 }
@@ -64,6 +64,10 @@ h2 {
 .hlp_data li {
 	margin-left: 25px;
 	list-style-type: square;
+}
+
+.hlp_data dl {
+	margin-left: 25px;
 }
 
 .hlp_data textarea {
