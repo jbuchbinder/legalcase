@@ -9,7 +9,7 @@ function get_default_repfields() {
 		array(
 			"table_name" => "lcm_case",
 			"field_name" => "id_case",
-			"description" => "id_case",
+			"description" => "case_input_id",
 			"enum_type" => "",
 			"filter" => "number"),
 		array(
@@ -152,6 +152,12 @@ function get_default_repfields() {
 			"description" => "person_input_gender",
 			"enum_type" => "list:female,male,unknown",
 			"filter" => "text"),
+		array(
+			"table_name" => "lcm_client",
+			"field_name" => "count(*)",
+			"description" => "count",
+			"enum_type" => "",
+			"filter" => "number"),
 		/* LCM_FOLLOWUP */
 		array(
 			"table_name" => "lcm_followup",
@@ -168,7 +174,7 @@ function get_default_repfields() {
 		array(
 			"table_name" => "lcm_followup",
 			"field_name" => "id_author",
-			"description" => "author_input_id",
+			"description" => "authoredit_input_id",
 			"enum_type" => "",
 			"filter" => "number"),
 		array(
@@ -176,7 +182,13 @@ function get_default_repfields() {
 			"field_name" => "type",
 			"description" => "fu_input_type",
 			"enum_type" => "keyword:system_kwg:followups",
-			"filter" => "number"),
+			"filter" => "text"),
+		array(
+			"table_name" => "lcm_followup",
+			"field_name" => "case_stage",
+			"description" => "case_input_stage",
+			"enum_type" => "keyword:system_kwg:stage",
+			"filter" => "text"),
 		array(
 			"table_name" => "lcm_followup",
 			"field_name" => "description",
@@ -188,7 +200,7 @@ function get_default_repfields() {
 			"field_name" => "sumbilled",
 			"description" => "fu_input_sum_billed",
 			"enum_type" => "",
-			"filter" => "number"),
+			"filter" => "currency"),
 		array(
 			"table_name" => "lcm_followup",
 			"field_name" => "date_start",
@@ -206,7 +218,7 @@ function get_default_repfields() {
 			"field_name" => "IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)",
 			"description" => "time_input_length",
 			"enum_type" => "",
-			"filter" => "date"),
+			"filter" => "number"),
 		array(
 			"table_name" => "lcm_followup",
 			"field_name" => "count(*)",
@@ -271,3 +283,4 @@ function create_repfields($rep_fields) {
 		}
 	}
 }
+
