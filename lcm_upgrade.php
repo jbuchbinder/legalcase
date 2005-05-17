@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_upgrade.php,v 1.9 2005/04/19 06:25:13 mlutfy Exp $
+	$Id: lcm_upgrade.php,v 1.10 2005/05/17 13:51:50 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -58,6 +58,13 @@ if ($lcm_db_version <> $current_version) {
 	lcm_page_end();
 } else {
 	lcm_page_start("No database upgrade needed"); // TRAD
+
+	/* [ML] For testing stuff 
+	include_lcm('inc_db_upgrade');
+	include_lcm('inc_repfields_defaults');
+	$fields = get_default_repfields();
+	create_repfields($fields);
+	*/
 
 	echo '<p class="normal_text"><a class="content_link" href="index.php">' . _T('info_upgrade_database5') . "</a></p>\n";
 
