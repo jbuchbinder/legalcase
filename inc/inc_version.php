@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.76 2005/04/23 12:11:15 mlutfy Exp $
+	$Id: inc_version.php,v 1.77 2005/05/17 09:06:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -39,25 +39,9 @@ function magic_unquote($table) {
 	}
 }
 
-// [ML] I think that this is absolutely without impact because
-// we use PHP >= 4.1. Still, I don't feel like breaking anything
-// at the moment, so I will leave it.
-// [AG] The following code breaks my escaping procedures AND
-// does unneeded work, unquoting things, which has to be quoted again
-// before going into database. I will disable it now, if something breaks,
-// bug me.
-/*@set_magic_quotes_runtime(0);
-if (@get_magic_quotes_gpc()) {
-	magic_unquote('_GET');
-	magic_unquote('_POST');
-	magic_unquote('_COOKIE');
-
-	if (@ini_get('register_globals'))
-		magic_unquote('GLOBALS');
-}*/
-
 //
 // Dirty against the register_globals to 'Off' (PHP 4.1.x)
+// [ML] probably not used anymore, test one day..
 //
 $INSECURE = array();
 
@@ -85,25 +69,6 @@ feed_globals('HTTP_COOKIE_VARS', true, true);
 feed_globals('HTTP_GET_VARS');
 feed_globals('HTTP_POST_VARS');
 feed_globals('HTTP_SERVER_VARS', false);
-
-
-// With register_globals to Off in PHP4, we need to use the new
-// HTTP_POST_FILES variable for the uploaded files (does not work
-// under PHP3). 
-/* [ML] Not useful, we depend on PHP >= 4.1 anyway, therefore we use $_FILES
-function feed_post_files($table) {
-	global $INSECURE;
-	if (is_array($GLOBALS[$table])) {
-		reset($GLOBALS[$table]);
-		while (list($key, $val) = each($GLOBALS[$table])) {
-			$GLOBALS[$key] = $INSECURE[$key] = $val['tmp_name'];
-			$GLOBALS[$key.'_name'] = $INSECURE[$key.'_name'] = $val['name'];
-		}
-	}
-}
-
-feed_post_files('HTTP_POST_FILES');
-*/
 
 
 //  ************************************
@@ -194,7 +159,6 @@ $author_session = '';
 $connect_status = '';
 $hash_recherche = '';
 $hash_recherche_strict = '';
-
 
 //
 // PHP version information
@@ -861,7 +825,7 @@ function _Tkw($grp, $val, $args = '') {
 
 	if (count($kwg)) {
 		if ($kwg[$val])
-			return _T(remove_number_prefix($kwg[$val]['title']));
+			return _T(remove_number_prefix($kwg[$val]['title']), $args);
 		else
 			lcm_panic("kw not found");
 	} else {
@@ -885,7 +849,8 @@ function lcm_log($message, $type = 'lcm') {
 
 	// Keep about 20Kb of data per file, on 4 files (.1, .2, .3)
 	// generates about 80Kb in total per log type.
-	if (@filesize($logfile) > 20 * 1024) {
+	$kb_size = ($GLOBALS['debug'] ? 100 : 20);
+	if (@filesize($logfile) > $kb_size * 1024) {
 		$rotate = true;
 		$message .= "[-- rotate --]\n";
 	}
@@ -1024,8 +989,10 @@ function lcm_getbacktrace()
 }
 
 function lcm_panic($message) {
+	global $lcm_version, $lcm_db_version;
+
 	echo "<p>" . _T('warning_panic_is_useful') . "</p>\n";
-	$error = "[INTERNAL] " . $message . "\n";
+	$error = "[INTERNAL] (v" . $lcm_version . "-db" . $lcm_db_version . ") " . $message . "\n";
 	$error .= lcm_getbacktrace();
 
 	lcm_log($error);
