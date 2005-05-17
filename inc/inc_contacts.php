@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.21 2005/05/17 07:36:44 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.22 2005/05/17 07:57:27 mlutfy Exp $
 */
 
 
@@ -57,6 +57,9 @@ function get_contact_type_id($name) {
 function get_contacts($type_person, $id, $type_contact = '', $not = '') {
 	global $system_kwg;
 	$contacts = array();
+
+	if (! $id)
+		return $contacts;
 
 	// In case there is still some deprecated code
 	if ($type_contact == 'email')
@@ -108,6 +111,9 @@ function get_contacts($type_person, $id, $type_contact = '', $not = '') {
 }
 
 function get_contact_by_id($id_contact) {
+	if (! $id_contact)
+		return NULL;
+
 	$query = "SELECT *
 				FROM lcm_contact
 				WHERE id_contact = " . intval($id_contact);
@@ -121,6 +127,9 @@ function get_contact_by_id($id_contact) {
 }
 
 function add_contact($type_person, $id_person, $type_contact, $value) {
+	if (! $id_person)
+		lcm_panic("add_contact: no id_person was provided");
+
 	if ($type_contact == 'email')
 		$type_contact = get_contact_type_id('email_main');
 	else
