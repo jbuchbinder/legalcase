@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.20 2005/05/17 13:01:07 mlutfy Exp $
+	$Id: run_rep.php,v 1.21 2005/05/17 13:39:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -181,10 +181,15 @@ function get_print_value($val, $h, $headers_sent, $css) {
 		$val = format_time_interval_prefs($val);
 	if ($h['description'] == 'time_input_length')
 		$val = format_time_interval_prefs($val);
-
+	
 	switch ($h['filter']) {
 		case 'date':
-			$val = format_date($val, 'short');
+			if ($val)
+				$val = format_date($val, 'short');
+			break;
+		case 'currency':
+			if ($val)
+				$val = format_money($val);
 			break;
 		case 'number':
 			$align = 'align="right"';
@@ -721,7 +726,8 @@ if ($headers_sent)
 	echo "<tr>";
 
 foreach ($headers as $h) {
-	if ($h['filter'] == 'number' || $h['filter'] == 'date')
+	if ((! preg_match('/^id_.*/', $h['field_name']))
+		&& ($h['filter'] == 'number' || $h['filter'] == 'currency' || $h['filter_special'] == 'time_length'))
 		echo get_print_value($h['total'], $h, $headers_sent, $css);
 	elseif ($cpt_tmp == 0)
 		echo get_print_value('TOTAL', $h, $headers_sent, $css); // TRAD
