@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.74 2005/05/13 14:20:14 mlutfy Exp $
+	$Id: inc_filters.php,v 1.75 2005/05/17 09:07:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -308,7 +308,8 @@ function get_fu_description($item, $make_short = true) {
 			$short_description .= "\n" . _Ti('fu_input_conclusion') . _Tkw('conclusion', $tmp['conclusion']);
 
 		if ($tmp['sentence'])
-			$short_description .= "\n" . _Ti('fu_input_sentence') . _Tkw('sentence', $tmp['sentence']);
+			$short_description .= "\n" . _Ti('fu_input_sentence')
+				. _Tkw('sentence', $tmp['sentence'], array('currency' => read_meta('currency')));
 
 		if ($tmp['sentence_val'])
 			$short_description .= ": " . $tmp['sentence_val'];
