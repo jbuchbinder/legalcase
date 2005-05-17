@@ -1,52 +1,43 @@
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
 
 
 
-  <p class="spip">This step consists of entering the necessary information for the connection of LCM to the SQL
-  database server.</p>
 
+  <p>Тази стъпка се състои във въвеждането на необходимата информация за връзката на ПУЮП към SQL-сървъра на базата от данни.</p>
 
-  <ul class="noindent">
-    <li>&nbsp;Database address: this information should be “localhost”, but it could also be your site’s address
-    (“www.mysite.org”) depending on the configuration of the server.</li>
+  <dl>
+    <dt><strong>Адрес на базата за данни</strong></dt>
+
+    <dd>това поле трябва да съдържа &bdquo;localhost&ldquo;, но може също така да бъде и адреса на вашия сайт (&bdquo;www.mysite.org&ldquo;) в зависимост от конфигурацията на сървъра.</dd>
+
+    <dt><strong>Име на връзка</strong></dt>
+
+    <dd>най-често това е същото потребителско име, което използвате за да качвате файловете си чрез FTP или SSH.</dd>
+
+    <dt><strong>Парола за връзка</strong></dt>
+
+    <dd>най-често това е същата парола, която използвате за да получите достъп до сайта си през FTP или SSH.</dd>
+  </dl>
+
+  <p><em>Не можете да си измислите тези настройки. Това, че не знаете техните стойности означава, че Вашият доставчик не Ви ги е предоставил. Накратко, ако нямате подръка тази информация, не можете да продължите нататък.</em></p>
+
+  <ul>
+    <li>Ако не сте администратор на сървъра, трябва директно да се свържете с него/нея. Някои доставчици на Интернет-пространство предоставят тази информация на някоя от страниците си или изискват специфична процедура за това.</li>
+
+    <li>Ако сте администратор на сървъра, можете да създадете база данни за ПУЮП чрез следните команди:</li>
   </ul>
-
-
-  <ul class="noindent">
-    <li>&nbsp;Connection login: it is often the same login you use to upload your files by FTP or SSH.</li>
-  </ul>
-
-
-  <ul class="noindent">
-    <li>&nbsp;Connection password: it is often the same password as the one you use to access your site by FTP or
-    SSH.</li>
-  </ul>
-
-  <p class="spip"><strong class="spip">These settings cannot be invented: not knowing them means that your host has not
-  given them to you. Therefore: if you do not have this information at hand you cannot continue.</strong></p>
-
-
-  <ul class="noindent">
-    <li>&nbsp;If you are not the server administrator: you must contact him/her directly. Some Internet hosts provide
-    such information in an online guide or require a specific procedure for that.</li>
-  </ul>
-
-
-  <ul class="noindent">
-    <li>&nbsp;If you are the server administrator: you can create a database for LCM with the following commands:</li>
-  </ul>
-
-  <form action="/" method="get">
-    <textarea readonly='readonly' cols='40' rows='3' class='spip_cadre' dir='ltr'>
+  <pre>
 $ mysql -u root
 mysql&gt; create database lcm;
-mysql&gt; grant all on lcm.* to lcm_user@localhost identified by 'somepassword';
-  </form>
+mysql&gt; grant all on lcm.* to lcm_user@localhost identified by 'mypassword';
+</pre>
 
-  <p class="spip">In the above example, we create a database named “lcm” and later create a new user named “lcm_user”
-  to whom we give full access to the “lcm” database.</p>
+  <p>В горния пример създаваме база данни с име &bdquo;lcm&ldquo; и след това създаваме нов потребител с име &bdquo;lcm_user&ldquo;, на който даваме пълен достъп до базата &bdquo;lcm&ldquo;.</p>
 
-  <p class="spip">The “lcm_user” and “somepassword” will then be the connection login and connection password
-  respectively for continuing the installation.</p>
+  <p>Така &bdquo;lcm_user&ldquo; и &bdquo;mypassword&ldquo; ще бъдат съответно име и парола на връзката с която можете да продължите инсталацията.</p>
 
-  <p class="spip">Please note that the best way to connect to your database depends on your local server
-  configuration.</p>
+  <p>Моля обърнете внимание, че най-подходящият начин за свързане с Вашата база данни зависи от конкретната конфигурация на локалния Ви сървър.</p>
