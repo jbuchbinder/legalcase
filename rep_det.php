@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.28 2005/05/12 13:59:04 mlutfy Exp $
+	$Id: rep_det.php,v 1.29 2005/05/17 13:50:22 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -115,7 +115,7 @@ if ($rep_info['line_src_type'] && $rep_info['line_src_name']) {
 	if ($rep_info['line_src_type'] == 'keyword') {
 		$kwg = get_kwg_from_name($rep_info['line_src_name']);
 		echo '<p class="normal_text">' . "Source: " . $rep_info['line_src_type'] // TRAD
-			. " (" . $kwg['type'] . ") -> " . $rep_info['line_src_name']; // TRAD
+			. " (" . $kwg['type'] . ") -> " . _T(remove_number_prefix($kwg['title'])); // TRAD
 	} else {
 		echo "<p class='normal_text'>" . "Source: " . $rep_info['line_src_type'] 
 			. " -> " . _T('rep_info_table_lcm_' . $rep_info['line_src_name']); // TRAD
