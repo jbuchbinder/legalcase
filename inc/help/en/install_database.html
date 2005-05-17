@@ -1,44 +1,37 @@
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
 
 
 
-  <p class="spip">This step consists of entering the necessary information for the connection of LCM to the SQL
-  database server.</p>
 
+  <p>This step consists of entering the necessary information for the connection of LCM to the SQL database server.</p>
 
-  <ul class="noindent">
-    <li>&nbsp;Database address: this information should be “localhost”, but it could also be your site’s address
-    (“www.mysite.org”) depending on the configuration of the server.<br /></li>
+  <ul>
+    <li>Database address: this information should be “localhost”, but it could also be your site’s address (“www.mysite.org”) depending on the configuration of the server.</li>
 
-    <li>&nbsp;Connection login: it is often the same login you use to upload your files by FTP or SSH.<br /></li>
+    <li>Connection login: it is often the same login you use to upload your files by FTP or SSH.</li>
 
-    <li>&nbsp;Connection password: it is often the same password as the one you use to access your site by FTP or
-    SSH.</li>
+    <li>Connection password: it is often the same password as the one you use to access your site by FTP or SSH.</li>
   </ul>
 
-  <p class="spip"><strong class="spip">These settings cannot be invented: not knowing them means that your host has not
-  given them to you. Therefore: if you do not have this information at hand you cannot continue.</strong></p>
+  <p><em>These settings cannot be invented: not knowing them means that your host has not given them to you. Therefore: if you do not have this information at hand you cannot continue.</em></p>
 
+  <ul>
+    <li>If you are not the server administrator: you must contact him/her directly. Some Internet hosts provide such information in an online guide or require a specific procedure for that.</li>
 
-  <ul class="noindent">
-    <li>&nbsp;If you are not the server administrator: you must contact him/her directly. Some Internet hosts provide
-    such information in an online guide or require a specific procedure for that.<br /></li>
-
-    <li>&nbsp;If you are the server administrator: you can create a database for LCM with the following commands:</li>
+    <li>If you are the server administrator: you can create a database for LCM with the following commands:</li>
   </ul>
-
-  <form action="/" method="get">
-    <textarea readonly='readonly' cols='40' rows='3' class='spip_cadre' dir='ltr'>
+  <pre>
 $ mysql -u root
 mysql&gt; create database lcm;
-mysql&gt; grant all on lcm.* to lcm_user@localhost identified by 'somepassword';
-</textarea>
-  </form>
+mysql&gt; grant all on lcm.* to lcm_user@localhost identified by 'mypassword';
+</pre>
 
-  <p class="spip">In the above example, we create a database named “lcm” and later create a new user named “lcm_user”
-  to whom we give full access to the “lcm” database.</p>
+  <p>In the above example, we create a database named “lcm” and later create a new user named “lcm_user” to whom we give full access to the “lcm” database.</p>
 
-  <p class="spip">The “lcm_user” and “somepassword” will then be the connection login and connection password
-  respectively for continuing the installation.</p>
+  <p>The “lcm_user” and “mypassword” will then be the connection login and connection password respectively for continuing the installation.</p>
 
-  <p class="spip">Please note that the best way to connect to your database depends on your local server
-  configuration.</p>
+  <p>Please note that the best way to connect to your database depends on your local server configuration.</p>

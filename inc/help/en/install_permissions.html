@@ -1,33 +1,34 @@
+<!--Converted with LaTeX2HTML 2002-2-1 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
 
 
 
-  <p class="spip">When you install LCM files, some directories will not be configured correctly: therefore, you must
-  modify their configuration through your usual FTP or SSH client.</p>
 
-  <p class="spip">Since LCM writes information on the disk, you must give the web server the permission to “write” in
-  the following directories:<br /></p>
+  <p>When you install LCM files, some directories will not be configured correctly: therefore, you must modify their configuration through your usual FTP or SSH client.</p>
 
-  <ul class="noindent">
-    <li>&nbsp;/log<br /></li>
+  <p>Since LCM writes information on the disk, you must give the web server the permission to ``write'' in the following directories:</p>
 
-    <li>&nbsp;/inc/data<br /></li>
+  <ul>
+    <li>/log</li>
 
-    <li>&nbsp;/inc/config</li>
+    <li>/inc/data</li>
+
+    <li>/inc/config</li>
   </ul>
 
-  <p class="spip">FTP “clients” differ in their functions but the procedure is generally thus:</p>
+  <p>FTP ``clients'' differ in their functions but the procedure is generally thus:</p>
 
+  <ul>
+    <li>Select the folder of which you want to modify the permissions;</li>
 
-  <ul class="noindent">
-    <li>&nbsp;Select the folder of which you want to modify the permissions;<br /></li>
+    <li>Find in your FTP client a feature called ``change (or modify or set permissions'';</li>
 
-    <li>&nbsp;Find in your FTP client a feature called “change (or modify or set permissions”;<br /></li>
+    <li>If this feature appears as a graphical interface, check the box corresponding to ``Write'' for the ``Others'' (or ``World'' or ``All users'');</li>
 
-    <li>&nbsp;If this feature appears as a graphical interface, check the box corresponding to “Write” for the “Others”
-    (or “World” or “All users”);<br /></li>
-
-    <li>&nbsp;If this feature appears in “text” mode, the numeric configuration is “0777”.</li>
+    <li>If this feature appears in ``text'' mode, the numeric configuration is ``0777''.</li>
   </ul>
 
-  <p class="spip">When you make this modification for every directory indicated by the installation system, you must
-  reload the page and the procedure will resume automatically.</p>
+  <p>When you make this modification for every directory indicated by the installation system, you must reload the page and the procedure will resume automatically.</p>
