@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.20 2005/04/15 14:08:06 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.21 2005/05/17 07:36:44 mlutfy Exp $
 */
 
 
@@ -133,6 +133,7 @@ function add_contact($type_person, $id_person, $type_contact, $value) {
 	lcm_query($query);
 }
 
+// Access rights check is the responsability of parent function
 function update_contact($id_contact, $new_value) {
 	if (! $id_contact)
 		lcm_panic("update_contact: no id_contact was provided");
@@ -144,13 +145,10 @@ function update_contact($id_contact, $new_value) {
 	lcm_query($query);
 }
 
+// Access rights check is the responsability of parent function
 function delete_contact($id_contact) {
 	if (! $id_contact)
 		lcm_panic("delete_contact: no id_contact was provided");
-	
-	// XXX [ML] should we check for access rights?
-	// Currently it is done by the calling function
-	// Used in edit_author, edit_client, edit_org, 
 	
 	$query = "DELETE FROM lcm_contact
 				WHERE id_contact = " . intval($id_contact);
@@ -403,7 +401,6 @@ function update_contacts_request($type_person, $id_of_person) {
 		$contacts = $_REQUEST['contact_value'];
 		$c_ids = $_REQUEST['contact_id'];
 		$c_types = $_REQUEST['contact_type'];
-		// $c_delete = $_REQUEST['del_contact'];
 
 		//
 		// Check if the contacts provided are really attached to the person
@@ -418,7 +415,7 @@ function update_contacts_request($type_person, $id_of_person) {
 					$valid = true;
 
 			if (! $valid)
-				lcm_panic("Invalid modification of contacts detected.");
+				lcm_panic("Invalid modification of existing contact detected.");
 		}
 
 		for ($cpt = 0; isset($c_ids[$cpt]); $cpt++) {
