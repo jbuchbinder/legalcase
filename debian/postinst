@@ -1,0 +1,58 @@
+#!/bin/sh
+if [  -d /etc/apache ]
+then
+	cd /etc/apache
+	ln -s /usr/share/legalcase/apache/legalcase.conf
+	echo "Include /etc/apache/legalcase.conf" >> /etc/apache/httpd.conf
+	apache-modconf apache enable mod_php4
+fi
+
+if [  -d /etc/apache2 ]
+then
+	cd /etc/apache2/sites-enabled/
+	ln -s /usr/share/legalcase/apache2/legalcase.conf
+	apache-modconf apache2 enable mod_php4
+fi
+
+if [  -d /etc/apache-ssl ]
+then
+        cd /etc/apache-ssl
+        ln -s /usr/share/legalcase/apache/legalcase.conf
+        echo "Include /etc/apache-ssl/legalcase.conf" >> /etc/apache-ssl/httpd.conf
+        apache-modconf apache-ssl enable mod_php4
+fi
+				
+chown -R www-data:www-data /usr/share/legalcase/
+
+
+### turn on mysql extension
+if [  -d /etc/php4/apache ]
+then
+	echo "extension=mysql.so" >>/etc/php4/apache/php.ini
+fi
+
+if [  -d /etc/php4/apache2 ]
+then
+        echo "extension=mysql.so" >>/etc/php4/apache2/php.ini
+fi
+
+### restart apache server
+echo " "
+echo "Restarting the apache server(s)"
+sleep 0.2
+
+if [ -e /etc/init.d/apache ]
+then
+	/etc/init.d/apache restart
+fi
+if [ -e /etc/init.d/apache2 ]
+then
+	/etc/init.d/apache2 restart
+fi
+if [ -e /etc/init.d/apache-ssl ]
+then
+	/etc/init.d/apache-ssl restart
+fi
+
+# dialog --title "LCM is Installed" \
+#	--msgbox "Legal Case Management (LCM) System was installed. Look at \"http://`hostname`/legalcase\"." 7 39

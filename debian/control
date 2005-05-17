@@ -1,0 +1,17 @@
+Source: legalcase
+Section: web
+Priority: optional
+Maintainer: Peter Slavov <pslavov@i-space.org>
+
+Package: legalcase
+Version: 0.4.5-1
+Architecture: all
+Depends: apache | apache-ssl | apache2 , php4 (>=4.0.3), mysql-client, php4-mysql
+Recommends: mysql-server (>= 3.23)
+Suggests: 
+Installed-Size: 2292
+Description: The legal case management (LCM) 
+ system is a software aimed for use by not-for-profit 
+ legal advice centres in order to make better follow-ups
+ of their cases, including client consultations and court
+ events.

@@ -1,0 +1,131 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+CFLAGS = -Wall -g
+DESTDIR=$(CURDIR)/debian/legalcase
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir -v
+	# Add here commands to configure the package.
+
+	touch configure-stamp
+	dh_clean -v
+
+debian/po/templates.pot: debian/legalcase.templates
+	@debconf-updatepo
+
+build: build-stamp
+# debian/po/templates.pot
+	find log -type d -exec chmod 755 {} \;
+	chmod 644 styles/*css
+	chmod 777 inc/data/
+	chmod 777 inc/config/
+
+build-stamp: configure-stamp 
+	dh_testdir -v
+
+	# Add here commands to compile the package.
+	#$(MAKE)
+	#/usr/bin/docbook-to-man debian/legalcase.sgml > legalcase.1
+
+	touch build-stamp
+
+clean:
+	dh_testdir 
+	dh_testroot 
+	rm -f build-stamp configure-stamp
+	rm -Rf $(DESTDIR)
+	if [ -f debian/files ] ; then rm debian/files ; fi
+
+
+install: build
+	dh_testdir 
+	dh_testroot 
+	dh_clean -k 
+	dh_installdirs 
+
+	# [ML] not sure..
+	mkdir -p $(DESTDIR)/usr/share/legalcase/
+
+	# Add here commands to install the package into debian/legalcase.
+	cp INSTALL* $(DESTDIR)/usr/share/legalcase
+	cp AUTHORS $(DESTDIR)/usr/share/legalcase
+	cp THANKS $(DESTDIR)/usr/share/legalcase
+	
+	cp -Rp *.php $(DESTDIR)/usr/share/legalcase
+	cp -Rp images $(DESTDIR)/usr/share/legalcase
+	cp -Rp inc $(DESTDIR)/usr/share/legalcase
+	cp -Rp log $(DESTDIR)/usr/share/legalcase
+	cp -Rp styles $(DESTDIR)/usr/share/legalcase
+
+	#dh_movefiles -i --sourcedir=debian/legalcase
+	#cp -p doc/apache*.conf $(DESTDIR)/etc/legalcase
+	#cp -p doc/legalcase.inc_connect.template $(DESTDIR)/etc/legalcase
+	#cp -p doc/legalcase.sqldump.sql $(DESTDIR)/usr/share/legalcase/bin
+	#chmod 0644 $(DESTDIR)/etc/legalcase/apache*.conf
+	#chmod 777 $(DESTDIR)/usr/share/legalcase/ecrire/
+
+	#cp -p doc/legalcase-configure $(DESTDIR)/usr/bin
+	#cp -p doc/legalcase-configure.config $(DESTDIR)/usr/share/legalcase/bin
+	#cp -p doc/legalcase.functions $(DESTDIR)/usr/share/legalcase/bin
+	#cp -p doc/filelist.txt $(DESTDIR)/usr/share/legalcase/bin
+	#cp -p doc/dirlist.txt $(DESTDIR)/usr/share/legalcase/bin
+        
+	# Install lintian override file
+	mkdir -p debian/legalcase/usr/share/lintian/overrides
+	install -m 644 debian/legalcase.lintianoverrides \
+        	debian/legalcase/usr/share/lintian/overrides/legalcase
+
+	touch install-stamp
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir 
+	dh_testroot 
+	dh_installchangelogs  
+	dh_installdocs 
+	dh_installexamples 
+#	dh_install
+#	dh_installmenu
+	dh_installdebconf	
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman 
+	dh_link 
+	dh_strip 
+	dh_compress 
+	dh_fixperms 
+#	dh_perl
+#	dh_python
+#	dh_makeshlibs
+	dh_installdeb 
+	dh_shlibdeps 
+	dh_gencontrol 
+	dh_md5sums 
+	dh_builddeb 
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

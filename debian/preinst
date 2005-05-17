@@ -1,0 +1,3 @@
+#!/bin/bash
+
+#mv /boot/grub/menu.lst  /boot/grub/menu.lst.old
