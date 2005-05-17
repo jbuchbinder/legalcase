@@ -75,6 +75,12 @@ h2 {
 	border: 1px solid #333;
 }
 
+.hlp_data pre {
+	border: 1px solid #aaa;
+	background: #f0f0f0;
+	padding: 4px;
+}
+
 .hlp_data a {
 	color: #f30;
 	text-decoration: underline;
