@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_conditions.php,v 1.6 2005/05/10 10:15:26 mlutfy Exp $
+	$Id: inc_conditions.php,v 1.7 2005/05/17 13:46:44 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -153,16 +153,17 @@ function show_report_filters($id_report, $is_runtime = false) {
 
 				case 'date_eq':
 				case 'date_lt':
-				case 'date_lt':
+				case 'date_le':
 				case 'date_gt':
+				case 'date_ge':
 					$name = ($is_runtime ? "filter_val" . $filter['id_filter'] : 'date');
 					echo get_date_inputs($name, $filter['value']); // FIXME
 					break;
 				case 'date_in':
 					$name = ($is_runtime ? "filter_val" . $filter['id_filter'] : 'date');
-					echo get_date_inputs($name . '_start', $filter['value']); // FIXME
+					echo get_date_inputs($name . '_start', $filter['value']);
 					echo "<br />\n";
-					echo get_date_inputs($name . '_end', $filter['value']); // FIXME
+					echo get_date_inputs($name . '_end', $filter['value']);
 					break;
 				case 'text_eq':
 					$name = ($is_runtime ? "filter_val" . $filter['id_filter'] : 'filter_value');
@@ -190,8 +191,10 @@ function show_report_filters($id_report, $is_runtime = false) {
 							echo '<select name="' . $name . '">' . "\n";
 							echo '<option value="">' . "-- select from list--" . "</option>\n"; // TRAD
 
-							foreach ($items as $i)
-								echo '<option value="' . $i . '">' . $i . "</option>\n";
+							foreach ($items as $i) {
+								$sel = (($filter['value'] == $i || $_REQUEST['filter_val' .  $filter['id_filter']] == $i) ? ' selected="selected" ' : '');
+								echo '<option value="' . $i . '"' . $sel . '>' . $i . "</option>\n";
+							}
 
 							echo "</select>\n";
 						}
@@ -242,13 +245,26 @@ function show_report_filters($id_report, $is_runtime = false) {
 	if ($rep_info['line_src_name'])
 		array_push($sources, "'lcm_" . $rep_info['line_src_name'] .  "'");
 
-	if ($rep_info['col_src_name'])
-		array_push($sources, "'" /* lcm_" . */ . $rep_info['col_src_name'] . "'");
+	// [ML] This is never set.
+	// if ($rep_info['col_src_name'])
+	//	array_push($sources, "'" /* lcm_" . */ . $rep_info['col_src_name'] . "'");
+
+	// Fetch all tables available as rep colums
+	$q_tmp = "SELECT DISTINCT table_name 
+				FROM lcm_rep_col as rp, lcm_fields as f
+				WHERE rp.id_field = f.id_field
+				  AND rp.id_report = " . $id_report;
+	
+	$result_tmp = lcm_query($q_tmp);
+
+	while ($row = lcm_fetch_array($result_tmp))
+		array_push($sources, "'" . $row['table_name'] . "'");
 
 	// List only filters if table were selected as sources (line/col)
 	if (count($sources)) {
 		$query .= " table_name IN ( " . implode(" , ", $sources) . " ) AND ";
 		$query .= " filter != 'none'";
+		$query .= " ORDER BY table_name ";
 
 		echo "<!-- QUERY: $query -->\n";
 
@@ -263,7 +279,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 			echo "<select name='id_field'>\n";
 
 			while ($row = lcm_fetch_array($result)) {
-				echo "<option value='" . $row['id_field'] . "'>" . _Th($row['description']) . "</option>\n";
+				echo "<option value='" . $row['id_field'] . "'>" . _Ti('rep_info_table_' . $row['table_name']) . _Th($row['description']) . "</option>\n";
 			}
 
 			echo "</select>\n";
