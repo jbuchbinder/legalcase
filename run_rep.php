@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.19 2005/05/12 13:50:30 mlutfy Exp $
+	$Id: run_rep.php,v 1.20 2005/05/17 13:01:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -54,6 +54,9 @@ function prefix_field($table, $field) {
 	$suffix = get_table_suffix($table);
 
 	if (preg_match("/^IF/", $field))
+		return $field;
+
+	if (preg_match("/^count\(\*\)/", $field))
 		return $field;
 
 	if ($suffix)
@@ -154,7 +157,7 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 			break;
 
 		default:
-			lcm_panic("not coded");
+			// lcm_panic("not coded - $table1");
 	}
 
 	if ($id1) {
@@ -168,6 +171,34 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 		$where .= " AND " . prefix_field($table2, $table_keys[$table2]) . " = $id2 ";
 
 	return array($from, $from_glue, $where);
+}
+
+function get_print_value($val, $h, $headers_sent, $css) {
+	$ret = "";
+
+	// Maybe formalise 'time_length' filter, but check SQL pre-filter also
+	if ($h['filter_special'] == 'time_length')
+		$val = format_time_interval_prefs($val);
+	if ($h['description'] == 'time_input_length')
+		$val = format_time_interval_prefs($val);
+
+	switch ($h['filter']) {
+		case 'date':
+			$val = format_date($val, 'short');
+			break;
+		case 'number':
+			$align = 'align="right"';
+			break;
+	}
+
+	if ($headers_sent)
+		$ret = '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
+	else { // if ($_REQUEST['export'] == 'csv')
+		$val = str_replace('"', '""', $val); // escape " character (csv)
+		$ret = '"' . $val . '" , ';
+	}
+
+	return $ret;
 }
 
 // Restrict page to administrators
@@ -222,13 +253,14 @@ $my_line_table = "lcm_" . $rep_info['line_src_name'];
 
 // for each array item will be a hash with 'description', 'filter' and 'enum_type'
 $headers = array();
+$do_grouping = false;
 
 //
 // Get report line fields, store into $my_lines for later
 //
 
 $my_lines = array();
-$q = "SELECT f.id_field, f.field_name, f.table_name, f.enum_type, f.description
+$q = "SELECT *
 		FROM lcm_rep_line as l, lcm_fields as f
 		WHERE id_report = " . $rep . "
 		AND l.id_field = f.id_field
@@ -240,6 +272,9 @@ while ($row = lcm_fetch_array($result)) {
 	$my_line_table = $row['table_name'];
 	array_push($my_lines, prefix_field($row['table_name'], $row['field_name']));
 	array_push($headers, $row);
+
+	if ($row['field_name'] == 'count(*)')
+		$do_grouping = true;
 }
 
 // No fields were specified: show them all (avoids errors)
@@ -269,7 +304,6 @@ if (! count($my_lines)) {
 // Get report columns fields, store into $my_columns for later
 //
 
-$do_grouping = false;
 $my_columns = array();
 $q = "SELECT *
 		FROM lcm_rep_col as c, lcm_fields as f
@@ -309,7 +343,15 @@ while ($row = lcm_fetch_array($result)) {
 				lcm_panic("Not yet implemented -" . $enum[1] . "-");
 			}
 		} elseif ($enum[0] == 'list') {
+			$items = split(',', $enum[1]);
 
+			foreach($items as $i) {
+				// XXX should add 'where' clauses only (kwg above too..)
+				$q_where_add = "LCM_SQL: cl.gender = '" . $i . "'";
+				$tmp = array('description' => $i, 'filter' => 'number'); // XXX TRAD?
+				array_push($my_columns, "2 as \"" . $q_where_add . "\"");
+				array_push($headers, $tmp);
+			}
 		} else {
 			echo "\n\n QUERY = " . $q . " \n\n";
 			lcm_panic("Not yet implemented -" . $enum[0] . "-");
@@ -321,20 +363,25 @@ while ($row = lcm_fetch_array($result)) {
 }
 
 //
-// Add implicit fields.
+// Add implicit fields if there will be a join table
 // For example, if we select fields from lcm_author, we should include id_author
 // even if we don't want to show it (for table joining, later).
 // 
 
 $my_line_fields_implicit = "";
 
-if ($rep_info['line_src_type'] == 'table' && preg_match("/^lcm_(.*)$/", $my_line_table, $regs)) {
+if ($rep_info['line_src_type'] == 'table'
+	&& preg_match("/^lcm_(.*)$/", $my_line_table, $regs)
+	&& count($my_columns))
+{
 	$temp = get_table_suffix($my_line_table);
 
 	if ($temp) {
 		$temp .= ".id_" . $regs[1];
 		$my_line_fields_implicit = $temp;
 	}
+} elseif ($rep_info['line_src_type'] == 'keyword' && count($my_columns)) {
+	$my_line_fields_implicit = 'k.id_keyword';
 }
 
 //
@@ -360,8 +407,8 @@ if ($my_col_fields)
 if ($rep_info['line_src_type'] == 'table') {
 	$q .= " FROM " . $my_line_table . suffix_table($my_line_table);
 } elseif ($rep_info['line_src_type'] == 'keyword') {
-	$q .= " FROM lcm_keyword as k 
-			LEFT JOIN lcm_keyword_group as kwg on (k.id_group = kwg.id_group AND kwg.name = '" . $rep_info['line_src_name'] . "')";
+	$q .= " FROM lcm_keyword as k "
+		. " LEFT JOIN lcm_keyword_group as kwg on (k.id_group = kwg.id_group AND kwg.name = '" . $rep_info['line_src_name'] . "')";
 
 	$q_where[] = "kwg.name IS NOT NULL";
 }
@@ -388,6 +435,13 @@ if ($rep_info['line_src_type'] == 'table') {
 				case 'lcm_case':
 					$q .= " LEFT JOIN lcm_keyword_case as kc ON (kc.id_keyword = k.id_keyword) ";
 					break;
+				case 'lcm_client':
+					$q .= " LEFT JOIN lcm_keyword_client as kc ON (kc.id_keyword = k.id_keyword) ";
+					if ($my_line_table != 'lcm_client')
+						$q .= " LEFT JOIN lcm_client as cl ON (cl.id_client = kc.id_client) ";
+					break;
+				default:
+					lcm_panic("not implemented");
 			}
 	}
 }
@@ -523,7 +577,15 @@ if (count($q_where)) {
 }
 
 if ($do_grouping) {
-	$q .= " GROUP BY " . $my_line_fields;
+	$group_fields = "";
+	$tmp = array();
+
+	foreach($my_lines as $l)
+		if (! preg_match("/.*count\(\*\)/", $l))
+			$tmp[] = $l;
+
+	$group_fields = implode(',', $tmp);
+	$q .= " GROUP BY " . $group_fields;
 }
 
 //
@@ -593,6 +655,35 @@ while ($row = lcm_fetch_array($result)) {
 				while($row_tmp = lcm_fetch_array($result_tmp)) {
 					$val .= $row_tmp[0];
 				}
+			} elseif ($val == "2" && preg_match("/^LCM_SQL: (.*)/", $key, $regs)) {
+				$tmp = $regs[1];
+
+				$q_col = "SELECT count(*) ";
+				$q_col .= strstr($q, "FROM");
+
+				//
+				// Experimental magic
+				//
+				$tmp .= " AND k.id_keyword = " . $row['LCM_HIDE_ID'];
+
+				if (preg_match("/.*WHERE.*/", $q_col))
+					$q_col = preg_replace("/WHERE/", "WHERE $tmp AND ", $q_col);
+				else
+					$q_col .= " WHERE $tmp ";
+
+				$foo = split(" ", $tmp);
+				if (preg_match("/.*GROUP BY.*/", $q_col))
+					$q_col = preg_replace("/GROUP BY.*/", "GROUP BY " . $foo[0], $q_col);
+				else
+					$q_col .= " GROUP BY " . $foo[0];
+
+				$result_tmp = lcm_query($q_col);
+
+				$val = "";
+
+				while($row_tmp = lcm_fetch_array($result_tmp)) {
+					$val .= $row_tmp[0];
+				}
 			}
 
 			// Translate values based on keywords (ex: fu.type)
@@ -607,28 +698,9 @@ while ($row = lcm_fetch_array($result)) {
 				}
 			}
 
-			// Maybe formalise 'time_length' filter, but check SQL pre-filter also
-			if ($headers[$cpt_col]['filter_special'] == 'time_length')
-				$val = format_time_interval_prefs($val);
-			if ($headers[$cpt_col]['description'] == 'time_input_length')
-				$val = format_time_interval_prefs($val);
-
-			switch ($headers[$cpt_col]['filter']) {
-				case 'date':
-					$val = format_date($val, 'short');
-					break;
-				case 'number':
-					$align = 'align="right"';
-					break;
-			}
-
-			if ($headers_sent)
-				echo '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
-			else { // if ($_REQUEST['export'] == 'csv')
-				$val = str_replace('"', '""', $val); // escape " character (csv)
-				echo '"' . $val . '" , ';
-			}
-
+			// For end 'total' (works with datetime/number)
+			$headers[$cpt_col]['total'] += $val;
+			echo get_print_value($val, $headers[$cpt_col], $headers_sent, $css);
 			$cpt_col = ($cpt_col + 1) % count($headers);
 		}
 	}
@@ -638,6 +710,29 @@ while ($row = lcm_fetch_array($result)) {
 	else // // if ($_REQUEST['export'] == 'csv')
 		echo "\n";
 }
+
+// 
+// Footer
+//
+$css = 'class="tbl_cont_' . (($cpt_lines + 1) % 2 ? "light" : "dark") . '"';
+$cpt_tmp = 0;
+
+if ($headers_sent)
+	echo "<tr>";
+
+foreach ($headers as $h) {
+	if ($h['filter'] == 'number' || $h['filter'] == 'date')
+		echo get_print_value($h['total'], $h, $headers_sent, $css);
+	elseif ($cpt_tmp == 0)
+		echo get_print_value('TOTAL', $h, $headers_sent, $css); // TRAD
+	else
+		echo get_print_value('', $h, $headers_sent, $css);
+	
+	$cpt_tmp++;
+}
+
+if ($headers_sent)
+	echo "</tr>";
 
 if ($headers_sent) {
 	echo "</table>\n";
