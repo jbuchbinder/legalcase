@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.108 2005/05/16 08:52:39 mlutfy Exp $
+	$Id: edit_fu.php,v 1.109 2005/05/17 09:01:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -352,7 +352,9 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 
 		foreach ($kws_sentence as $kw) {
 			$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
-			echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+			echo '<option ' . $sel . ' value="' . $kw['name'] . '">'
+				. _T(remove_number_prefix($kw['title']), array('currency' => read_meta('currency')))
+				. "</option>\n";
 		}
 
 		echo "</select>\n";
