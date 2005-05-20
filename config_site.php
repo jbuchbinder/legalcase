@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.43 2005/05/12 13:48:58 mlutfy Exp $
+	$Id: config_site.php,v 1.44 2005/05/20 12:02:58 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -384,7 +384,8 @@ function apply_conf_changes_general() {
 		if ($email_sysadmin != $old_email) {
 			if (is_valid_email($email_sysadmin)) {
 				write_meta('email_sysadmin', $email_sysadmin);
-				array_push($log, _Ti('siteconf_input_admin_email') . now_and_before(addslashes($email_sysadmin, $old_email)));
+				array_push($log, _Ti('siteconf_input_admin_email')
+					. now_and_before(clean_input($email_sysadmin), $old_email));
 			} else {
 				// FIXME not the best way of showing errors... 
 				array_push($log, "Sysadmin e-mail address <tt>"
