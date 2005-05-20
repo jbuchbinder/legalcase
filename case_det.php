@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.159 2005/05/13 09:35:47 mlutfy Exp $
+	$Id: case_det.php,v 1.160 2005/05/20 12:21:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -103,7 +103,7 @@ if ($case > 0) {
 				$authors_result = lcm_query($q);
 				$cpt = 0;
 
-				if (lcm_num_rows($authors) > 1)
+				if (lcm_num_rows($authors_result) > 1)
 					echo _Ti('case_input_authors');
 				else
 					echo _Ti('case_input_author');
