@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.16 2005/03/22 13:37:50 mlutfy Exp $
+	$Id: sel_client.php,v 1.17 2005/05/20 12:20:38 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -77,7 +77,7 @@ $q2 .= " ORDER BY name_first " . $order_name;
 
 $result = lcm_query($q2);
 
-lcm_page_start("Select client(s)"); // TRAD
+lcm_page_start(_T('title_case_add_client'));
 
 show_context_start();
 show_context_case_title($case);
@@ -100,7 +100,7 @@ echo '<form action="add_client.php" method="post">' . "\n";
 
 $headers[0]['title'] = "";
 $headers[0]['order'] = 'no_order';
-$headers[1]['title'] = "Client name"; // TRAD
+$headers[1]['title'] = _Th('person_input_name');
 $headers[1]['order'] = 'order_name';
 $headers[1]['default'] = 'ASC';
 
@@ -124,7 +124,9 @@ for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) 
 }
 
 echo "<tr>\n";
-echo '<td colspan="2"><a href="edit_client.php?attach_case=' . $case . '" class="content_link">' . 'Create a new client and attach to case' .  '</a></td>' . "\n"; // TRAD
+echo '<td colspan="2"><p><a href="edit_client.php?attach_case=' . $case . '" class="create_new_lnk">' 
+	. _T('client_button_new_for_case')
+	.  '</a></p></td>' . "\n";
 echo "</tr>\n";
 
 show_list_end($list_pos, $number_of_rows);
