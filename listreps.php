@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.12 2005/05/26 13:06:10 mlutfy Exp $
+	$Id: listreps.php,v 1.13 2005/05/26 15:53:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -54,14 +54,12 @@ if (strlen($find_rep_string)>1) {
 }
 
 // Sort reports by nem
-$order_set = false;
 $order_title = 'ASC';
 if (isset($_REQUEST['order_title']))
-	if ($_REQUEST['order_title'] == 'ASC' || $_REQUEST['order_title'] == 'DESC') {
+	if ($_REQUEST['order_title'] == 'ASC' || $_REQUEST['order_title'] == 'DESC')
 		$order_title = $_REQUEST['order_title'];
-		$q .= " ORDER BY title " . $order_title;
-		$order_set = true;
-	}
+
+$q .= " ORDER BY title " . $order_title;
 
 $result = lcm_query($q);
 
