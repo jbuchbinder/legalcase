@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.29 2005/05/17 13:50:22 mlutfy Exp $
+	$Id: rep_det.php,v 1.30 2005/05/26 15:54:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -349,13 +349,13 @@ if ($edit) {
 	$table = '';
 
 	while ($field = lcm_fetch_array($fields)) {
-		if ($table && $field['table_name'] != $table) {
+		if ($table && $field['table_name'] != $table)
 			echo "</optgroup>\n";
 
-			$table = $field['table_name'];
-			echo "<optgroup label='" . _T('rep_info_table_' . $table) . "'>\n";
-		}
+		if ($field['table_name'] != $table)
+			echo "<optgroup label='" . _T('rep_info_table_' . $field['table_name']) . "'>\n";
 
+		$table = $field['table_name'];
 		echo "\t<option value='" . $field['id_field'] . "'>" . _Th($field['description']) . "</option>\n";
 	}
 
