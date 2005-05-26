@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.11 2005/05/13 10:06:59 mlutfy Exp $
+	$Id: listreps.php,v 1.12 2005/05/26 13:06:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -53,6 +53,16 @@ if (strlen($find_rep_string)>1) {
 	$q .= " WHERE (title LIKE '%$find_rep_string%')";
 }
 
+// Sort reports by nem
+$order_set = false;
+$order_title = 'ASC';
+if (isset($_REQUEST['order_title']))
+	if ($_REQUEST['order_title'] == 'ASC' || $_REQUEST['order_title'] == 'DESC') {
+		$order_title = $_REQUEST['order_title'];
+		$q .= " ORDER BY title " . $order_title;
+		$order_set = true;
+	}
+
 $result = lcm_query($q);
 
 // Get the number of rows in the result
@@ -73,7 +83,7 @@ if ($list_pos>0)
 
 $headers = array();
 $headers[0]['title'] = _Th('person_input_name');
-$headers[0]['order'] = 'order_name_first';
+$headers[0]['order'] = 'order_title';
 $headers[0]['default'] = 'ASC';
 
 show_list_start($headers);
