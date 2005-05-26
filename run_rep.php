@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.21 2005/05/17 13:39:57 mlutfy Exp $
+	$Id: run_rep.php,v 1.22 2005/05/26 16:02:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -86,7 +86,8 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 		case 'lcm_author':
 			switch($table2) {
 				case 'lcm_case':
-					$from   = " lcm_case_author as ca ";
+					// $from = " LEFT JOIN lcm_case_author as ca ON (a.id_author = ca.id_author AND c.id_case = ca.id_case) ";
+					$from   = " , lcm_case_author as ca ";
 					$from_glue .= " a.id_author = ca.id_author AND c.id_case = ca.id_case ";
 					$where .= " a.id_author = ca.id_author ";
 					break;
@@ -139,7 +140,7 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 				case '':
 					break;
 				case 'lcm_case':
-					$from   = " lcm_case_client_org as cco ";
+					$from   = " , lcm_case_client_org as cco ";
 					$from_glue .= " cl.id_client = cco.id_client AND c.id_case = cco.id_case ";
 					$where .= " cl.id_client = cco.id_client ";
 					break;
@@ -171,6 +172,137 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 		$where .= " AND " . prefix_field($table2, $table_keys[$table2]) . " = $id2 ";
 
 	return array($from, $from_glue, $where);
+}
+
+function get_filters_sql($id_report, $obj_type = '', $obj_name = '') {
+	$ret = "";
+
+	$is_missing_filters = false;
+	$my_filters = get_filters($id_report, $obj_type, $obj_name);
+	$clauses = array();
+
+	// Apply the filter values and check for missing values
+	foreach ($my_filters as $f) {
+		if ($f['value'] || isset($_REQUEST['filter_val' . $f['id_filter']]) 
+			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_start", 'year_only')
+			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'year_only')
+			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'], 'year_only'))
+		{
+			$filter_sql = apply_filter($f);
+
+			if ($filter_sql)
+				array_push($clauses, $filter_sql);
+		} else {
+			// For now, we ignore filters without type (eq/lt/gt/..) 
+			// because it's a bit messy to allow input at runtime
+			// (because of fields for filter value)
+			if ($f['type'])
+				$is_missing_filters = true;
+		}
+	}
+
+	if ($is_missing_filters) {
+		global $rep;
+		global $headers_sent; // XXX hmm, not clean
+
+		if (! $headers_sent)
+			lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
+
+		echo '<p class="normal_text">' . "Please enter the values for the report:" . "</p>\n"; // TRAD
+		include_lcm('inc_conditions');
+		show_report_filters($rep, true);
+		exit;
+	}
+
+	$ret = implode(" AND ", $clauses);
+	return $ret;
+}
+
+function get_filters($id_report, $obj_type = '', $obj_name = '') {
+	$my_filters = array();
+
+	$q_fil = "SELECT v.id_filter, f.table_name, f.field_name, f.description, v.type, v.value 
+		FROM lcm_rep_filter as v, lcm_fields as f
+		WHERE v.id_field = f.id_field
+		AND v.id_report = " . $id_report;
+	
+	// XXX not sure how to deal with keywords
+	if ($obj_type && $obj_name)
+		$q_fil .= " AND f.table_name IN ($obj_name) ";
+
+	$result = lcm_query($q_fil);
+
+	while ($row = lcm_fetch_array($result))
+		array_push($my_filters, $row);
+
+	return $my_filters;
+}
+
+function apply_filter($f) {
+	$ret = '';
+
+	$filter_conv = array(
+			"eq" => "=",
+			"lt" => "<",
+			"le" => "<=",
+			"gt" => ">",
+			"ge" => ">="
+			);
+
+	if (! $f['type'])
+		return '';
+
+	if ($f['type'] == 'date_in') {
+		$dates = array();
+
+		if ($f['value']) {
+			$dates = explode(";", $f['value']);
+		} else {
+			$dates[0] = get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . '_start', 'start');
+			$dates[1] = get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . '_end', 'end');
+		}
+
+		$ret .= "(DATE_FORMAT(" . prefix_field($f['table_name'], $f['field_name']) . ", '%Y-%m-%d') "
+			.   " >= DATE_FORMAT('" . $dates[0] . "', '%Y-%m-%d')" 
+			. " AND DATE_FORMAT(" . prefix_field($f['table_name'], $f['field_name']) . ", '%Y-%m-%d') "
+			.   " <= DATE_FORMAT('" . $dates[1] . "', '%Y-%m-%d')) ";
+	} else {
+		$foo = explode("_", $f['type']); // ex: date_eq
+		$filter_type = $foo[0]; // date
+		$filter_op = $foo[1]; // eq
+
+		if (! $f['value'])
+			if (isset($_REQUEST['filter_val' . $f['id_filter']]))
+				$f['value'] = $_REQUEST['filter_val' . $f['id_filter']];
+
+		// FIELD OPERATOR 'VALUE'
+		if ($filter_conv[$filter_op]) {
+			switch($filter_type) {
+				case 'date':
+					$ret .= "DATE_FORMAT(" . prefix_field($f['table_name'], $f['field_name']) . ", '%Y-%m-%d')"
+						. " " . $filter_conv[$filter_op] . " " 
+						. "DATE_FORMAT('" . get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter']) . "', '%Y-%m-%d') ";
+					break;
+				case 'text':
+					$ret .= $f['field_name'] 
+						. " " . $filter_conv[$filter_op] . " "
+						. "'" . $f['value'] . "' ";
+					break;
+				default: // number
+					if ($f['description'] == 'time_input_length')
+						$f['value'] = " " . $f['value'] . " * 3600 ";
+
+					$ret .= $f['field_name']
+						. " " . $filter_conv[$filter_op] . " "
+						. $f['value'] . " ";
+			}
+		} else {
+			lcm_log("no filter_conv for $filter_op ?");
+			return '';
+		}
+	}
+
+	return $ret;
 }
 
 function get_print_value($val, $h, $headers_sent, $css) {
@@ -309,7 +441,9 @@ if (! count($my_lines)) {
 // Get report columns fields, store into $my_columns for later
 //
 
+$do_special_join = false;
 $my_columns = array();
+
 $q = "SELECT *
 		FROM lcm_rep_col as c, lcm_fields as f
 		WHERE c.id_report = $rep
@@ -328,10 +462,10 @@ while ($row = lcm_fetch_array($result)) {
 
 		if ($enum[0] == 'keyword') {
 			if ($enum[1] == 'system_kwg') {
-				include_lcm('inc_keywords');
 				$kws = get_keywords_in_group_name($enum[2]);
 
 				foreach ($kws as $k) {
+					// XXX this is too specific for a given case (sum(time) of activity type per author)
 					$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE type = '" . $k['name'] . "'";
 
 					// For report headers
@@ -341,6 +475,15 @@ while ($row = lcm_fetch_array($result)) {
 					array_push($headers, $k);
 					array_push($my_columns, "1 as \"" . $sql ."\"");
 				}
+
+				// TOTAL for this enum
+				$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE 1 ";
+
+				$k['filter_special'] = 'time_length'; // XXX
+				$k['description'] = "TOTAL"; // TRAD
+
+				array_push($headers, $k);
+				array_push($my_columns, "1 as \"" . $sql ."\"");
 
 				$do_grouping = true;
 			} else {
@@ -361,9 +504,44 @@ while ($row = lcm_fetch_array($result)) {
 			echo "\n\n QUERY = " . $q . " \n\n";
 			lcm_panic("Not yet implemented -" . $enum[0] . "-");
 		}
+	} elseif ($my_line_table == 'lcm_author' && $row['table_name'] == 'lcm_case' && $row['field_name'] == 'count(*)') {
+		// TODO: ADD FILTERS?
+		$kws = get_keywords_in_group_name('stage');
+
+		// Get filters that might apply
+		$my_filters = get_filters_sql($rep, 'table', "'lcm_case'");
+		$sql_filter = ($my_filters ? " AND " . $my_filters : "");
+
+		foreach ($kws as $k) {
+			$sql = "LCM_SQL: SELECT count(*) FROM lcm_case as c "
+				. " LEFT JOIN lcm_case_author as ca ON (c.id_case = ca.id_case) "
+				. " WHERE c.stage = '" . $k['name'] . "' "
+				. $sql_filter;
+
+			// For report headers
+			$k['filter'] = 'number';
+			$k['description'] = $k['title'];
+
+			array_push($headers, $k);
+			array_push($my_columns, "1 as \"" . $sql ."\"");
+		}
+
+		// TOTAL for this enum
+		$sql = "LCM_SQL: SELECT count(*) FROM lcm_case as c, lcm_case_author as ca "
+			. " WHERE c.id_case = ca.id_case "
+			. $sql_filter;
+
+		$k['filter'] = 'number';
+		$k['description'] = "TOTAL"; // TRAD
+
+		array_push($headers, $k);
+		array_push($my_columns, "1 as \"" . $sql ."\"");
+
+		$do_grouping = true;
 	} else {
 		array_push($my_columns, prefix_field($row['table_name'], $row['field_name']));
 		array_push($headers, $row);
+		$do_special_join = true;
 	}
 }
 
@@ -421,12 +599,12 @@ if ($rep_info['line_src_type'] == 'table') {
 // Join condition
 if ($rep_info['line_src_type'] == 'table') {
 	// join my_line_table with my_col_table
-	if ($my_col_table) {
+	if ($my_col_table && $do_special_join) {
 		// from join (ex: dependancy on middle tables, such as Author-Case => lcm_case_author)
 		$deps = join_tables($my_line_table, $my_col_table);
 	
 		if ($deps[0])
-			$q .= ", " . $deps[0]; // FROM
+			$q .= $deps[0]; // FROM
 
 		if ($deps[1])
 			$q_where[] = $deps[1];
@@ -455,125 +633,21 @@ if ($rep_info['line_src_type'] == 'table') {
 // Fetch all filters for this report
 //
 
-$my_filters = array();
+$tmp_tables = "'$my_line_table'";
+if ($my_col_table && $do_special_join)
+	$tmp_tables .= ",'$my_col_table'";
 
-$q_fil = "SELECT v.id_filter, f.table_name, f.field_name, f.description, v.type, v.value 
-		FROM lcm_rep_filter as v, lcm_fields as f
-		WHERE v.id_field = f.id_field
-		AND v.id_report = " . $rep;
+$my_filters_sql = get_filters_sql($rep, 'table', $tmp_tables);
 
-$result = lcm_query($q_fil);
-
-while ($row = lcm_fetch_array($result))
-	array_push($my_filters, $row);
-
-// Apply filters
-$line_filters = array();
-
-function apply_filter($f) {
-	$ret = '';
-
-	$filter_conv = array(
-			"eq" => "=",
-			"lt" => "<",
-			"le" => "<=",
-			"gt" => ">",
-			"ge" => ">="
-			);
-
-	if (! $f['type'])
-		return '';
-
-	if ($f['type'] == 'date_in') {
-		$dates = array();
-
-		if ($f['value']) {
-			$dates = explode(";", $f['value']);
-		} else {
-			$dates[0] = get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . '_start');
-			$dates[1] = get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . '_end');
-		}
-		$ret .= "(DATE_FORMAT(" . $f['field_name'] . ", '%Y-%m-%d') >= DATE_FORMAT('" . $dates[0] . "', '%Y-%m-%d')" 
-			. " AND DATE_FORMAT(" . $f['field_name'] . ", '%Y-%m-%d') <= DATE_FORMAT('" . $dates[1] . "', '%Y-%m-%d')) ";
-	} else {
-		$foo = explode("_", $f['type']); // ex: date_eq
-		$filter_type = $foo[0]; // date
-		$filter_op = $foo[1]; // eq
-
-		if (! $f['value'])
-			if (isset($_REQUEST['filter_val' . $f['id_filter']]))
-				$f['value'] = $_REQUEST['filter_val' . $f['id_filter']];
-
-		// FIELD OPERATOR 'VALUE'
-		if ($filter_conv[$filter_op]) {
-			switch($filter_type) {
-				case 'date':
-					$ret .= "DATE_FORMAT(" . prefix_field($f['table_name'], $f['field_name']) . ", '%Y-%m-%d')"
-						. " " . $filter_conv[$filter_op] . " " 
-						. "DATE_FORMAT('" . get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter']) . "', '%Y-%m-%d') ";
-					break;
-				case 'text':
-					$ret .= $f['field_name'] 
-						. " " . $filter_conv[$filter_op] . " "
-						. "'" . $f['value'] . "' ";
-					break;
-				default: // number
-					if ($f['description'] == 'time_input_length')
-						$f['value'] = " " . $f['value'] . " * 3600 ";
-
-					$ret .= $f['field_name']
-						. " " . $filter_conv[$filter_op] . " "
-						. $f['value'] . " ";
-			}
-		} else {
-			lcm_log("no filter_conv for $filter_op ?");
-			return '';
-		}
-	}
-
-	return $ret;
-}
-
-foreach ($my_filters as $f) {
-	// if ($f['table_name'] == $my_line_table) { // FIXME .. and col filters?
-		if ($f['value'] || isset($_REQUEST['filter_val' . $f['id_filter']]) 
-			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_start", 'year_only')
-			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'year_only')
-			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'], 'year_only'))
-		{
-			$fil_sql = apply_filter($f);
-
-			if ($fil_sql)
-				array_push($line_filters, $fil_sql);
-		} else {
-			// For now, we ignore filters without type (eq/lt/gt/..) 
-			// because it's a bit messy to allow input at runtime
-			// (because of fields for filter value)
-			if ($f['type'])
-				$is_missing_filters = true;
-		}
-	// }
-}
-
-if ($is_missing_filters) {
-	if (! $headers_sent)
-		lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
-
-	echo '<p class="normal_text">' . "Please enter the values for the report:" . "</p>\n"; // TRAD
-	include_lcm('inc_conditions');
-	show_report_filters($rep, true);
-	exit;
-}
-
-if (count($line_filters))
-	$q .= "\n WHERE " . implode(" AND ", $line_filters);
+if ($my_filters_sql)
+	$q .= "\n WHERE " . $my_filters_sql;
 
 //
 // Add the last "where" conditions
 //
 
 if (count($q_where)) {
-	if (count($line_filters))
+	if (count($my_filters))
 		$q .= " AND ";
 	else
 		$q .= " WHERE ";
