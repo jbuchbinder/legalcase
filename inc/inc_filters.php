@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.75 2005/05/17 09:07:07 mlutfy Exp $
+	$Id: inc_filters.php,v 1.76 2005/05/27 05:32:39 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -407,14 +407,14 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 		$ret .= sprintf("%02d", $source[$prefix . 'month']) . '-';
 		$has_date = true;
 	} else {
-		$ret .= '01-';
+		$ret .= ($type == 'start' ? '01-' : '12-');
 	}
 	
 	if (is_numeric($source[$prefix . 'day'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'day']);
 		$has_date = true;
 	} else {
-		$ret .= '01';
+		$ret .= ($type == 'start' ? '01' : '31');
 	}
 
 	$ret .= " ";
@@ -423,30 +423,21 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 		$ret .= sprintf("%02d", $source[$prefix . 'hour']) . ':';
 		$has_date = true;
 	} else {
-		if ($type == 'start')
-			$ret .= '00:';
-		else
-			$ret .= '23:';
+		$ret .= ($type == 'start' ? '00:' : '23:');
 	}
 
 	if (is_numeric($source[$prefix . 'minutes'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'minutes']) . ':';
 		$has_date = true;
 	} else {
-		if ($type == 'start')
-			$ret .= '00:';
-		else
-			$ret .= '59:';
+		$ret .= ($type == 'start' ? '00:' : '59:');
 	}
 	
 	if (is_numeric($source[$prefix . 'seconds'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'seconds']);
 		$has_date = true;
 	} else {
-		if ($type == 'start')
-			$ret .= '00';
-		else
-			$ret .= '59';
+		$ret .= ($type == 'start' ? '00' : '59');
 	}
 
 	if ($has_date)
