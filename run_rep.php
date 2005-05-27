@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.22 2005/05/26 16:02:14 mlutfy Exp $
+	$Id: run_rep.php,v 1.23 2005/05/27 07:34:48 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -305,7 +305,7 @@ function apply_filter($f) {
 	return $ret;
 }
 
-function get_print_value($val, $h, $headers_sent, $css) {
+function get_ui_print_value($val, $h, $css) {
 	$ret = "";
 
 	// Maybe formalise 'time_length' filter, but check SQL pre-filter also
@@ -328,15 +328,30 @@ function get_print_value($val, $h, $headers_sent, $css) {
 			break;
 	}
 
-	if ($headers_sent)
-		$ret = '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
-	else { // if ($_REQUEST['export'] == 'csv')
+	if ($_REQUEST['export'] == 'csv') {
 		$val = str_replace('"', '""', $val); // escape " character (csv)
 		$ret = '"' . $val . '" , ';
+	} else {
+		$ret = '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
 	}
 
 	return $ret;
 }
+
+function get_ui_start_line() {
+	if ($_REQUEST['export'] == 'csv')
+		return "";
+	else
+		return "<tr>\n";
+}
+
+function get_ui_end_line() {
+	if ($_REQUEST['export'] == 'csv')
+		return "\n";
+	else
+		return "</tr>\n";
+}
+
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
@@ -444,6 +459,11 @@ if (! count($my_lines)) {
 $do_special_join = false;
 $my_columns = array();
 
+/*
+if ($row['src_type' == 'table' && ! preg_match('/^lcm_/', $src_name))
+	$src_name = 'lcm_' . $src_name;
+*/
+
 $q = "SELECT *
 		FROM lcm_rep_col as c, lcm_fields as f
 		WHERE c.id_report = $rep
@@ -454,6 +474,7 @@ $result = lcm_query($q);
 
 while ($row = lcm_fetch_array($result)) {
 	$my_col_table = $row['table_name'];
+
 	if ($row['field_name'] == "count(*)")
 		$do_grouping = true;
 	
@@ -543,6 +564,52 @@ while ($row = lcm_fetch_array($result)) {
 		array_push($headers, $row);
 		$do_special_join = true;
 	}
+}
+
+if ($rep_info['col_src_type'] == 'keyword' && ! count($my_columns)) {
+	$kwg = get_kwg_from_name($rep_info['col_src_name']);
+	$kws = get_keywords_in_group_name($rep_info['col_src_name']);
+
+	$my_filters = get_filters_sql($rep, 'table', "'lcm_case'");
+	$sql_filter = ($my_filters ? " AND " . $my_filters : "");
+	$all_kw_names = array();
+
+	// TODO: For the moment, this is limited to crossing the author table
+	// with 'case' keywords. (ex: type-of-crimes, per author, where
+	// line = author(name) and col = kw.type-of-crime
+
+	foreach ($kws as $kw) {
+		// XXX dirty hack, headers print function refers directly to 'description'
+		$kw['description'] = _T(remove_number_prefix($kw['title']));
+		$kw['filter'] = 'number';
+
+		$sql = "LCM_SQL: SELECT count(*) FROM lcm_keyword_" . $kwg['type'] . " as ka, "
+			. " lcm_case_author as ca, lcm_keyword as k " 
+			. " WHERE k.id_keyword = ka.id_keyword "
+			. " AND ca.id_case = ka.id_case " // XXX
+			. " AND k.name = '" . $kw['name'] . "'"
+			. $sql_filter;
+		
+		array_push($my_columns, "1 as \"" . $sql ."\"");
+		array_push($headers, $kw);
+		$all_kw_names[] = $kw['name'];
+	}
+
+	// TOTAL for this enum
+	// Note: the k.name IN (...) is because other keywords might be associated 
+	// with this case/client/etc
+	$sql = "LCM_SQL: SELECT count(*) FROM lcm_keyword_" . $kwg['type'] . " as ka, "
+		. " lcm_case_author as ca, lcm_keyword as k " 
+		. " WHERE k.id_keyword = ka.id_keyword "
+		. " AND ca.id_case = ka.id_case " // XXX
+		. " AND k.name IN ('" . implode("','", $all_kw_names) . "')"
+		. $sql_filter;
+
+	$k['filter'] = 'number';
+	$k['description'] = "TOTAL"; // TRAD
+
+	array_push($headers, $k);
+	array_push($my_columns, "1 as \"" . $sql ."\"");
 }
 
 //
@@ -697,19 +764,13 @@ foreach ($headers as $h) {
 	echo $h_before . _Th(remove_number_prefix($h['description'])) . $h_after . $h_between;
 }
 
-if ($headers_sent)
-	echo "</tr>\n";
-else
-	echo "\n"; // CSV export
+echo get_ui_end_line();
 
 $cpt_lines = 0;
 $cpt_col = 0;
 
-while ($row = lcm_fetch_array($result)) {
-	$cpt_lines++;
-
-	if ($headers_sent)
-		echo "<tr>\n";
+for ($cpt_lines = $cpt_col = 0; $row = lcm_fetch_array($result); $cpt_lines++) {
+	echo get_ui_start_line();
 
 	foreach ($row as $key => $val) {
 		if ((! is_numeric($key)) && ($key != 'LCM_HIDE_ID')) {
@@ -779,15 +840,12 @@ while ($row = lcm_fetch_array($result)) {
 
 			// For end 'total' (works with datetime/number)
 			$headers[$cpt_col]['total'] += $val;
-			echo get_print_value($val, $headers[$cpt_col], $headers_sent, $css);
+			echo get_ui_print_value($val, $headers[$cpt_col], $css);
 			$cpt_col = ($cpt_col + 1) % count($headers);
 		}
 	}
 
-	if ($headers_sent)
-		echo "</tr>\n";
-	else // // if ($_REQUEST['export'] == 'csv')
-		echo "\n";
+	echo get_ui_end_line();
 }
 
 // 
@@ -796,23 +854,21 @@ while ($row = lcm_fetch_array($result)) {
 $css = 'class="tbl_cont_' . (($cpt_lines + 1) % 2 ? "light" : "dark") . '"';
 $cpt_tmp = 0;
 
-if ($headers_sent)
-	echo "<tr>";
+echo get_ui_start_line();
 
 foreach ($headers as $h) {
 	if ((! preg_match('/^id_.*/', $h['field_name']))
 		&& ($h['filter'] == 'number' || $h['filter'] == 'currency' || $h['filter_special'] == 'time_length'))
-		echo get_print_value($h['total'], $h, $headers_sent, $css);
+		echo get_ui_print_value($h['total'], $h, $css);
 	elseif ($cpt_tmp == 0)
-		echo get_print_value('TOTAL', $h, $headers_sent, $css); // TRAD
+		echo get_ui_print_value('TOTAL', $h, $css); // TRAD
 	else
-		echo get_print_value('', $h, $headers_sent, $css);
+		echo get_ui_print_value('', $h, $css);
 	
 	$cpt_tmp++;
 }
 
-if ($headers_sent)
-	echo "</tr>";
+echo get_ui_end_line();
 
 if ($headers_sent) {
 	echo "</table>\n";
