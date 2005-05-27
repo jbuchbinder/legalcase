@@ -18,15 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.8 2005/05/09 15:39:30 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.9 2005/05/27 07:58:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-// Clean the POST values
 $rep = intval($_REQUEST['rep']);
-// $order = intval($_REQUEST['order']);
 
 // After returning to the page referer, jump to a specific place
 // Ex: #line, #column, #filter, etc.
@@ -221,23 +219,6 @@ if (isset($_REQUEST['unselect_line'])) {
 	lcm_query($query);
 	$ref_tag = "#line";
 }
-
-/*
-if (($rep>0) && ($order)) {
-	// Remove the column
-	$q = "DELETE FROM lcm_rep_col
-			WHERE id_report=$rep
-			AND col_order=$order";
-	$result = lcm_query($q);
-
-	// Change order of the rest of the columns
-	$q = "UPDATE lcm_rep_col
-			SET col_order=col_order-1
-			WHERE (id_report=$rep
-				AND col_order>$order)";
-	$result = lcm_query($q);
-
-} */
 
 header("Location: " . $GLOBALS['HTTP_REFERER'] . $ref_tag);
 
