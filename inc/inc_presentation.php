@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.224 2005/05/13 14:32:04 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.225 2005/05/28 10:36:53 mlutfy Exp $
 */
 
 //
@@ -318,7 +318,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 			FROM lcm_app, lcm_author_app as a
 			WHERE (a.id_author=" . $GLOBALS['author_session']['id_author'] . "
 				AND lcm_app.id_app=a.id_app
-				AND start_time LIKE '" . date('Y-m-d') ."%')
+				AND DATE_FORMAT(start_time,'%Y-%m-%d') = CURDATE() )
 			ORDER BY reminder ASC";
 
 	$result = lcm_query($q);
