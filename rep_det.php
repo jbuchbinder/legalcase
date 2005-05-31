@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.32 2005/05/31 10:12:27 mlutfy Exp $
+	$Id: rep_det.php,v 1.33 2005/05/31 11:39:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -32,7 +32,7 @@ function show_report_field_edit($type, $rep_info) {
 	$src_type = $rep_info[$type . '_src_type'];
 	$src_name = $rep_info[$type . '_src_name'];
 
-	if ($src_type == 'table' && ! preg_match('/^lcm_/', $src_name))
+	if ($src_type == 'table' && $src_name && ! preg_match('/^lcm_/', $src_name))
 		$src_name = 'lcm_' . $src_name;
 
 	// Extract source type, if any
@@ -246,177 +246,6 @@ echo "<fieldset class='info_box'>";
 show_page_subtitle(_T('rep_subtitle_column'), 'reports_edit', 'columns');
 show_report_field_edit('col', $rep_info);
 echo "</fieldset>\n";
-
-//
-//	List the columns in the report
-//
-
-/*
-echo '<a name="column"></a>' . "\n";
-echo "<fieldset class='info_box'>\n";
-show_page_subtitle(_T('rep_subtitle_column'), 'reports_edit', 'columns');
-		
-echo "<p class='normal_text'>\n";
-echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-echo "<tr>\n";
-// [ML] echo "<th class='heading'>#</th> ";
-
-// [ML] removing for now, not so useful
-// <th class='heading'>Header</th>
-
-echo "<th class='heading'>Table</th>
-	<th class='heading'>Contents</th>
-	<th class='heading'>Group</th>
-	<th class='heading'>Sort</th>
-	<th class='heading'>Total</th>
-	<th class='heading'>Action</th> \n";
-echo "</tr>\n";
-
-// Show fields included in this report
-$q = "SELECT lcm_rep_col.*,lcm_fields.description, lcm_fields.table_name, lcm_fields.field_name
-		FROM lcm_rep_col,lcm_fields
-		WHERE id_report=$rep
-		  AND lcm_rep_col.id_field=lcm_fields.id_field
-		ORDER BY col_order, id_column ASC";
-
-$cols = lcm_query($q);
-$rows = lcm_num_rows($cols);
-
-while ($column = lcm_fetch_array($cols)) {
-	echo "<tr>\n";
-
-	// Display column table/description
-	echo '<td>';
-	echo _T('rep_info_table_' . $column['table_name']);
-	echo "</td>\n";
-
-	// Display column description
-   echo '<td>';
-   echo _Th($column['description']);
-   echo "</td>\n";
-
-	//Display column grouping
-	echo '<td>';
-	echo ($column['col_group'] ? $column['col_group'] : "None");
-	echo "</td>\n";
-
-			//Display sort setting
-			echo '<td>';
-			switch ($column['sort']) {
-				case 'asc':
-					echo "Asc";
-					break;
-				case 'desc':
-					echo "Desc";
-					break;
-				default:
-					echo "None";
-			}
-			echo "</td>\n";
-
-			// Display total setting
-			echo '<td>' . (($column['total']) ? 'Yes' : 'No') . "</td>\n";
-
-			// Display allowed actions
-			echo '<td>';
-			if ($edit) {
-				if ($column['col_order'] > 1)
-					echo "<a class='content_link' href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;old=" . $column['col_order'] . "&amp;new=" . ($column['col_order']-1) . "'>^</a> ";
-				if ($column['col_order'] < $rows)
-					echo "<a class='content_link' href='move_rep_col.php?rep=$rep&amp;col=" . $column['id_column'] . "&amp;old=" . $column['col_order'] . "&amp;new=" . ($column['col_order']+1) . "'>v</a> ";
-				echo "<a href='upd_rep_field.php?rep=$rep" . "&amp;" 
-						. "remove=column" . "&amp;" . "id_column=" . $column['id_column'] . "' "
-						. "class='content_link'>" . "X" . "</a>";
-			}
-			echo "</td>\n";
-			echo "</tr>\n";
-			$last_order = $column['col_order']+1;
-}
-
-echo "</table>\n";
-echo "<br />\n";
-
-//
-//	Display add new column form
-//
-
-if ($edit) {
-	echo "<form action='add_rep_col.php' method='post'>\n";
-	echo "<input type='hidden' name='rep' value='$rep' />\n";
-	echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-
-	// Get field from list
-	echo "<tr>\n";
-	echo "<th class='heading'>" . _Ti('rep_input_item_add') . "</th>\n";
-	echo "<td><select name='field' class='sel_frm'>\n";
-	echo "<option selected='selected' disabled='disabled' label='' value=''>-- Select column content from the list --</option>\n"; // TRAD
-
-	$q = "SELECT * 
-			FROM lcm_fields 
-			ORDER BY table_name,description";
-	$fields = lcm_query($q);
-	$table = '';
-
-	while ($field = lcm_fetch_array($fields)) {
-		if ($table && $field['table_name'] != $table)
-			echo "</optgroup>\n";
-
-		if ($field['table_name'] != $table)
-			echo "<optgroup label='" . _T('rep_info_table_' . $field['table_name']) . "'>\n";
-
-		$table = $field['table_name'];
-		echo "\t<option value='" . $field['id_field'] . "'>" . _Th($field['description']) . "</option>\n";
-	}
-
-	if ($table)
-		echo "</optgroup>\n";
-
-	echo "</select>\n";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-
-	// Get column order
-	echo "\t\t<tr><th class='heading'>Position</th><td>\n"; // TRAD
-	echo "\t\t\t<select name='order' class='sel_frm'>\n";
-
-	$i = 1;
-	while ($i<$last_order) {
-		echo "\t\t\t\t<option label='Insert before column $i' value='$i'>Insert before column $i</option>\n"; // TRAD
-		$i++;
-	}
-
-	echo "\t\t\t\t<option selected='selected' label='Add at the end' value='$i'>Add at the end</option>\n";
-	echo "\t\t\t</select>\n";
-	//			echo "<input type='text' name='order' value='$last_order' size='2' />";
-	echo "\t\t</td></tr>\n";
-
-	// Get grouping setting
-	echo "\t\t<tr><th class='heading'>Grouping</th>\n";
-	echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
-	echo "\t\t\t\t<option selected='selected' label='None' value=''>None</option>\n";
-	echo "\t\t\t\t<option label='Count' value='COUNT'>COUNT</option>\n";
-	echo "\t\t\t\t<option label='Sum' value='SUM'>SUM</option>\n";
-	echo "\t\t\t</select></td>\n";
-	echo "\t\t</tr>";
-
-	// Get sort setting
-	echo "\t\t<tr><th class='heading'>Sorting</th>\n";
-	echo "\t\t\t<td><select name='sort' class='sel_frm'>\n";
-	echo "\t\t\t\t<option selected='selected' label='None' value=''>None</option>\n";
-	echo "\t\t\t\t<option label='Ascending' value='asc'>Ascending</option>\n";
-	echo "\t\t\t\t<option label='Descending' value='desc'>Descending</option>\n";
-	echo "\t\t\t</select></td>\n";
-	echo "\t\t</tr>";
-
-	echo "\t</table>\n";
-	echo "<p><button type='submit' class='simple_form_btn'>" . _T('button_validate') . "</button></p>\n";
-	echo "</form>\n";
-}
-
-echo "</p>\n";
-echo "</fieldset>\n";
-*/
 
 //
 // Report filters
