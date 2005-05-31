@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.23 2005/05/27 07:34:48 mlutfy Exp $
+	$Id: run_rep.php,v 1.24 2005/05/31 09:57:37 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -183,10 +183,11 @@ function get_filters_sql($id_report, $obj_type = '', $obj_name = '') {
 
 	// Apply the filter values and check for missing values
 	foreach ($my_filters as $f) {
-		if ($f['value'] || isset($_REQUEST['filter_val' . $f['id_filter']]) 
-			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_start", 'year_only')
-			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'year_only')
-			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'], 'year_only'))
+		if ($f['value']
+			|| isset($_REQUEST['filter_val' . $f['id_filter']]) // text or number
+			|| isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'], 'year_only') // date
+			|| (isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_start", 'year_only') // interval
+			   && isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'year_only')))
 		{
 			$filter_sql = apply_filter($f);
 
@@ -216,6 +217,40 @@ function get_filters_sql($id_report, $obj_type = '', $obj_name = '') {
 
 	$ret = implode(" AND ", $clauses);
 	return $ret;
+}
+
+function show_filters_info($id_report) {
+	$my_filters = get_filters($id_report);
+
+	foreach ($my_filters as $f) {
+		if (! $f['value']) {
+			// Value may be provided by $_REQUEST
+			if (isset($_REQUEST['filter_val' . $f['id_filter']])) { 
+				// text or number
+				$f['value'] = $_REQUEST['filter_val' . $f['id_filter']];
+			} elseif (isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'], 'year_only')) {
+				// Date
+				$f['value'] = format_date(get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'], 'year_only'), 'short');
+			} elseif (isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_start", 'year_only')
+				&& isset_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'year_only'))
+			{
+				// Date interval
+				$f['value'] = format_date(get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_start", 'start'), 'short');
+				$f['value'] .= " - ";
+				$f['value'] .= format_date(get_datetime_from_array($_REQUEST, 'filter_val' . $f['id_filter'] . "_end", 'end'), 'short');
+			} else {
+				// Should never happen
+				$f['value'] = _T('info_not_available');
+			}
+		}
+	
+		// Example: "Follow-up - Start: in 1 Apr 05, 00h00 - 31 Dec 05, 23h59"
+		// or.....: Table - Field: type_filter value
+		echo '<p class="normal_text">' 
+			. _T('rep_info_table_' . $f['table_name']) . " - " . _Ti($f['description'])
+			. _T('rep_filter_' . $f['type']) . " " . $f['value']
+			. "</p>\n";
+	}
 }
 
 function get_filters($id_report, $obj_type = '', $obj_name = '') {
@@ -394,7 +429,7 @@ if ($_REQUEST['export'] == 'csv') {
 	$headers_sent = true;
 
 	if ($rep_info['description'])
-		echo "<p>" . $rep_info['description'] . "</p>\n";
+		echo '<p class="normal_text">' . $rep_info['description'] . "</p>\n";
 }
 
 $my_line_table = "lcm_" . $rep_info['line_src_name'];
@@ -483,11 +518,20 @@ while ($row = lcm_fetch_array($result)) {
 
 		if ($enum[0] == 'keyword') {
 			if ($enum[1] == 'system_kwg') {
+				// There is a 'bug' in this, because reporting sum(fu-type-time) for each case,
+				// will not show hidden keywords, which include 'case_stage'. But it's odd to 
+				// put a time in case_stage anyway, and showing 'hidden' keywords is not very
+				// appropriate in this situation.
 				$kws = get_keywords_in_group_name($enum[2]);
+
+				// Get filters that might apply
+				$my_filters = get_filters_sql($rep, 'table', "'" . $row['table_name'] . "'");
+				$sql_filter = ($my_filters ? " AND " . $my_filters : "");
 
 				foreach ($kws as $k) {
 					// XXX this is too specific for a given case (sum(time) of activity type per author)
-					$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE type = '" . $k['name'] . "'";
+					$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE type = '" . $k['name'] . "' "
+						. $sql_filter;
 
 					// For report headers
 					$k['filter_special'] = 'time_length'; // XXX
@@ -498,7 +542,8 @@ while ($row = lcm_fetch_array($result)) {
 				}
 
 				// TOTAL for this enum
-				$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE 1 ";
+				$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE 1 "
+					. $sql_filter;
 
 				$k['filter_special'] = 'time_length'; // XXX
 				$k['description'] = "TOTAL"; // TRAD
@@ -742,6 +787,12 @@ if ($headers_sent)
 	echo "\n\n<!-- QUERY = " . $q . " -->\n\n";
 
 $result = lcm_query($q);
+
+//
+// Show filters applied
+//
+
+show_filters_info($rep);
 
 //
 // Ready for report line
