@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.14 2005/05/10 13:35:41 mlutfy Exp $
+	$Id: edit_rep.php,v 1.15 2005/05/31 10:07:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -105,6 +105,12 @@ echo '<input name="title" value="' . clean_output($_SESSION['rep_data']['title']
 echo '<p>' . "<strong>" . _Ti('rep_input_description') . "</strong><br />\n";
 echo '<textarea name="description" rows="5" cols="40" class="frm_tarea">';
 echo $_SESSION['rep_data']['description'];
+echo "</textarea></p>\n";
+
+// Notes
+echo '<p>' . "<strong>" . _Ti('rep_input_notes') . "</strong><br />\n";
+echo '<textarea name="notes" rows="5" cols="40" class="frm_tarea">';
+echo $_SESSION['rep_data']['notes'];
 echo "</textarea></p>\n";
 
 //	if ($admin || !read_meta('case_read_always') || !read_meta('case_write_always')) {
