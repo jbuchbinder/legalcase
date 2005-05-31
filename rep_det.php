@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.31 2005/05/27 09:12:16 mlutfy Exp $
+	$Id: rep_det.php,v 1.32 2005/05/31 10:12:27 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -150,7 +150,7 @@ function show_report_field_edit($type, $rep_info) {
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	lcm_page_start(_T('title_rep_view'), '', '', 'report_intro');
+	lcm_page_start(_T('title_rep_view'), '', '', 'reports_intro');
 	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
 	lcm_page_end();
 	exit;
@@ -203,7 +203,7 @@ if (! $rep_info['col_src_name']) {
 // Show info on the report
 //
 
-lcm_page_start(_T('title_rep_view') . " " . $rep_info['title'], '', '', 'report_intro');
+lcm_page_start(_T('title_rep_view') . " " . $rep_info['title'], '', '', 'reports_intro');
 echo show_all_errors($_SESSION['errors']);
 
 $edit = (($GLOBALS['author_session']['status'] == 'admin') ||
