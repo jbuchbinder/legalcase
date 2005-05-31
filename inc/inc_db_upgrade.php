@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.54 2005/05/09 12:34:40 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.55 2005/05/31 10:09:37 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -680,7 +680,6 @@ function upgrade_database($old_db_version) {
 	}
 	
 	if ($lcm_db_version_current < 31) {
-		// [ML] If no one complained, uncomment the following:
 		lcm_query("ALTER TABLE lcm_client DROP address");
 		lcm_query("ALTER TABLE lcm_org DROP address");
 
@@ -736,6 +735,11 @@ function upgrade_database($old_db_version) {
 		create_repfields($fields);
 
 		upgrade_db_version (35);
+	}
+	
+	if ($lcm_db_version_current < 36) {
+		lcm_query("ALTER TABLE lcm_report ADD notes text NOT NULL DEFAULT '' AFTER description");
+		upgrade_db_version (36);
 	}
 
 	//
