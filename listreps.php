@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.13 2005/05/26 15:53:09 mlutfy Exp $
+	$Id: listreps.php,v 1.14 2005/05/31 15:50:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -92,7 +92,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 	echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 
 	if (true) echo '<a href="rep_det.php?rep=' . $row['id_report'] . '" class="content_link">';
-	echo highlight_matches(clean_output($row['title']),$find_rep_string);
+	echo highlight_matches(clean_output(remove_number_prefix($row['title'])),$find_rep_string);
 	if (true) echo '</a>';
 	echo "</td>\n";
 	

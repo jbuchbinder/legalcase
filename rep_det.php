@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.33 2005/05/31 11:39:29 mlutfy Exp $
+	$Id: rep_det.php,v 1.34 2005/05/31 15:50:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -203,7 +203,7 @@ if (! $rep_info['col_src_name']) {
 // Show info on the report
 //
 
-lcm_page_start(_T('title_rep_view') . " " . $rep_info['title'], '', '', 'reports_intro');
+lcm_page_start(_T('title_rep_view') . " " . remove_number_prefix($rep_info['title']), '', '', 'reports_intro');
 echo show_all_errors($_SESSION['errors']);
 
 $edit = (($GLOBALS['author_session']['status'] == 'admin') ||
@@ -214,7 +214,7 @@ show_page_subtitle(_T('generic_subtitle_general'), 'reports_intro');
 
 echo "<p class='normal_text'>";
 echo _Ti('rep_input_id') . $rep_info['id_report'] . "<br />\n";
-echo _Ti('rep_input_title') . $rep_info['title'] . "<br />\n";
+echo _Ti('rep_input_title') . remove_number_prefix($rep_info['title']) . "<br />\n";
 echo _Ti('time_input_date_creation') . format_date($rep_info['date_creation']) . "</p>\n";
 
 if ($rep_info['description'])
@@ -241,7 +241,7 @@ echo "</fieldset>\n";
 // Matrix column (Experimental)
 //
 
-echo '<a name="line"></a>' . "\n";
+echo '<a name="col"></a>' . "\n";
 echo "<fieldset class='info_box'>";
 show_page_subtitle(_T('rep_subtitle_column'), 'reports_edit', 'columns');
 show_report_field_edit('col', $rep_info);

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.24 2005/05/31 09:57:37 mlutfy Exp $
+	$Id: run_rep.php,v 1.25 2005/05/31 15:50:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -207,7 +207,7 @@ function get_filters_sql($id_report, $obj_type = '', $obj_name = '') {
 		global $headers_sent; // XXX hmm, not clean
 
 		if (! $headers_sent)
-			lcm_page_start("Report: " . $rep_info['title'], '', '', 'report_intro'); // TRAD
+			lcm_page_start("Report: " . remove_number_prefix($rep_info['title']), '', '', 'report_intro'); // TRAD
 
 		echo '<p class="normal_text">' . "Please enter the values for the report:" . "</p>\n"; // TRAD
 		include_lcm('inc_conditions');
@@ -344,10 +344,15 @@ function get_ui_print_value($val, $h, $css) {
 	$ret = "";
 
 	// Maybe formalise 'time_length' filter, but check SQL pre-filter also
-	if ($h['filter_special'] == 'time_length')
+	if ($h['filter_special'] == 'time_length') {
 		$val = format_time_interval_prefs($val);
-	if ($h['description'] == 'time_input_length')
+		if (! $val)
+			$val = 0;
+	} elseif ($h['description'] == 'time_input_length') {
 		$val = format_time_interval_prefs($val);
+		if (! $val)
+			$val = 0;
+	}
 	
 	switch ($h['filter']) {
 		case 'date':
@@ -357,9 +362,13 @@ function get_ui_print_value($val, $h, $css) {
 		case 'currency':
 			if ($val)
 				$val = format_money($val);
+			else
+				$val = 0;
 			break;
 		case 'number':
 			$align = 'align="right"';
+			if (! $val)
+				$val = 0;
 			break;
 	}
 
@@ -421,11 +430,11 @@ if (! $rep_info['line_src_name']) {
 	
 if ($_REQUEST['export'] == 'csv') {
 	header("Content-Type: text/comma-separated-values");
-	header('Content-Disposition: filename="' . $rep_info['title'] . '.csv"');
-	header("Content-Description: " . $rep_info['title']);
+	header('Content-Disposition: filename="' . remove_number_prefix($rep_info['title']) . '.csv"');
+	header("Content-Description: " . remove_number_prefix($rep_info['title']));
 	header("Content-Transfer-Encoding: binary");
 } else {
-	lcm_page_start(_T('title_rep_run') . " " . $rep_info['title'], '', '', 'report_intro');
+	lcm_page_start(_T('title_rep_run') . " " . remove_number_prefix($rep_info['title']), '', '', 'report_intro');
 	$headers_sent = true;
 
 	if ($rep_info['description'])
@@ -494,10 +503,8 @@ if (! count($my_lines)) {
 $do_special_join = false;
 $my_columns = array();
 
-/*
-if ($row['src_type' == 'table' && ! preg_match('/^lcm_/', $src_name))
-	$src_name = 'lcm_' . $src_name;
-*/
+// if ($row['src_type' == 'table' && ! preg_match('/^lcm_/', $src_name))
+//	$src_name = 'lcm_' . $src_name;
 
 $q = "SELECT *
 		FROM lcm_rep_col as c, lcm_fields as f
