@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.14 2005/05/13 10:07:05 mlutfy Exp $
+	$Id: archive.php,v 1.15 2005/05/31 15:50:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,7 +28,7 @@ include_lcm('inc_impex');
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	lcm_page_start(_T('title_archives'), '', '', 'archives_intro');
+	lcm_page_start(_T('title_archives'), '', '' /* , 'archives_intro' */);
 	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
 	lcm_page_end();
 	exit;
@@ -44,7 +44,7 @@ if (!empty($_REQUEST['export']) && ($GLOBALS['author_session']['status'] == 'adm
 }
 
 // Show page start
-lcm_page_start(_T('title_archives'), '', '', 'archives_intro');
+lcm_page_start(_T('title_archives'), '', '' /* , 'archives_intro' */ );
 
 // Show tabs
 $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
@@ -53,13 +53,11 @@ $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.p
 	);
 show_tabs_links($tabs,0);
 
-// [ML] Use seperate function
-// show_find_box('case', $find_case_string, '__self__', (string)($GLOBALS['author_session']['status'] == 'admin') );
 show_find_box('case', $find_case_string, '__self__');
 
-$q = "SELECT DISTINCT lcm_case.id_case,title,status,public,pub_write
-		FROM lcm_case,lcm_case_author
-		WHERE (lcm_case.id_case=lcm_case_author.id_case";
+$q = "SELECT DISTINCT c.id_case, title, status, public, pub_write, c.date_creation
+		FROM lcm_case as c, lcm_case_author as ca
+		WHERE (c.id_case = ca.id_case";
 
 // Add search criteria if any
 if (strlen($find_case_string) > 1) {
