@@ -150,7 +150,7 @@ function get_default_repfields() {
 			"table_name" => "lcm_client",
 			"field_name" => "gender",
 			"description" => "person_input_gender",
-			"enum_type" => "list:female,male,unknown",
+			"enum_type" => "list:female,male,unknown:person_input_gender_",
 			"filter" => "text"),
 		array(
 			"table_name" => "lcm_client",
