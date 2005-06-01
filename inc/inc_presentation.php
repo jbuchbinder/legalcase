@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.227 2005/06/01 07:40:55 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.228 2005/06/01 09:54:35 mlutfy Exp $
 */
 
 //
@@ -450,11 +450,10 @@ if($prefs['screen'] == "wide") {
 			</div>
 			<p class=\"prefs_column_text\">"
 				. '<a href="author_det.php?author=' . $author_session['id_author'] . '" class="prefs_normal_lnk"'
-				. ' title="' . _T('case_tooltip_view_author_details', array('author' => get_person_name($author_session))) . '">'
-				. get_person_name($author_session)
+				. ' title="' . _T('case_tooltip_view_author_details', array('author' => htmlspecialchars(get_person_name($author_session)))) . '">' . get_person_name($author_session)
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" . _T('menu_profile_preferences') . "</a><br /><br />
-			<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
+			<a href=\"lcm_cookie.php?logout=" . htmlspecialchars($author_session['username']) ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
 			</p><br />
 			<div class=\"prefs_column_menu_head\"><div class=\"sm_search\">" . _T('menu_search') . "</div>
 			</div>
@@ -510,13 +509,12 @@ if($prefs['screen'] == "wide") {
 		echo "<div id=\"user_info_box_large_screen\">";
 		echo "<p class=\"prefs_column_text\">"
 				. '<a href="author_det.php?author=' . $author_session['id_author'] . '" class="prefs_normal_lnk"'
-				. ' title="' . _T('case_tooltip_view_author_details', array('author' => get_person_name($author_session))) . '">'
-				. get_person_name($author_session)
+				. ' title="' . _T('case_tooltip_view_author_details', array('author' => htmlspecialchars(get_person_name($author_session)))) . '">' . get_person_name($author_session)
 				. "</a><br /><br />
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" .  _T('menu_profile_preferences') . "</a><br /><br /><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\" class=\"set_fnt_sz\">&nbsp;A-&nbsp;</a>&nbsp;
 				<a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('medium_font')\" class=\"set_fnt_sz\">&nbsp;A&nbsp;&nbsp;</a>&nbsp;
 				<a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\" class=\"set_fnt_sz\">&nbsp;A+&nbsp;</a>&nbsp;&nbsp;"
-				. "<a href=\"lcm_cookie.php?logout=".  $author_session['username'] ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
+				. "<a href=\"lcm_cookie.php?logout=" . htmlspecialchars($author_session['username']) ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
 			</p>"; // TRAD (Small, Normal, Large text)
 		echo "</div>";
 }
