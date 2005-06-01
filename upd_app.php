@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.16 2005/04/12 07:59:11 mlutfy Exp $
+	$Id: upd_app.php,v 1.17 2005/06/01 11:49:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -36,53 +36,45 @@ if (isset($_REQUEST['id_app']))
 foreach($_POST as $key => $value)
     $_SESSION['app_data'][$key]=$value;
 
+//
+// Check access rights
+//
+
+$ac = get_ac_app($id_app);
+
+// XXX FIXME make better check?
+if (! $ac['w'])
+	die("access denied");
+
 // Convert day, month, year, hour, minute to date/time
 // Check submitted information
-// start_time
-$_SESSION['app_data']['start_time'] = $_SESSION['app_data']['start_year'] . '-'
-					. $_SESSION['app_data']['start_month'] . '-'
-					. $_SESSION['app_data']['start_day'] . ' '
-					. (isset($_SESSION['app_data']['start_hour']) ? $_SESSION['app_data']['start_hour'] : '00') . ':'
-					. (isset($_SESSION['app_data']['start_minutes']) ? $_SESSION['app_data']['start_minutes'] : '00') . ':'
-					. (isset($_SESSION['app_data']['start_seconds']) ? $_SESSION['app_data']['start_seconds'] : '00');
 
+// XXX for some reason (bad memory), date_start doesn't allow the user to leave
+// some fields empty, but date_end (in absolute more) does. Hence extra validation.
+
+//
+// Start date
+//
+$_SESSION['app_data']['start_time'] = get_datetime_from_array($_SESSION['app_data'], 'start', 'start');
 $unix_start_time = strtotime($_SESSION['app_data']['start_time']);
 
-if ( ($unix_start_time<0) || !checkdate($_SESSION['app_data']['start_month'],$_SESSION['app_data']['start_day'],$_SESSION['app_data']['start_year']) )
-	$_SESSION['errors']['start_time'] = 'Invalid start time!'; // TRAD
-//else 
-//	$_SESSION['app_data']['start_time'] = date('Y-m-d H:i:s', $unix_start_time);
+if (($unix_start_time < 0) || ! checkdate_sql($_SESSION['app_data']['start_time']))
+	$_SESSION['errors']['start_time'] = _Ti('time_input_date_start') . 'Invalid date'; // TRAD
 
 //
-// End time
+// End date
 //
 if ($prefs['time_intervals'] == 'absolute') {
+	$_SESSION['app_data']['end_time'] = get_datetime_from_array($_SESSION['app_data'], 'end', 'start');
+
 	// Set to default empty date if all fields empty
-	if (!($_SESSION['app_data']['end_year'] || $_SESSION['app_data']['end_month'] || $_SESSION['app_data']['end_day']))
-		$_SESSION['app_data']['end_time'] = '0000-00-00 00:00:00';
-		// Report error if some of the fields empty TODO
-	elseif (!$_SESSION['app_data']['end_year'] || !$_SESSION['app_data']['end_month'] || !$_SESSION['app_data']['end_day']) {
-		$_SESSION['errors']['end_time'] = 'Partial end time!';
-		$_SESSION['app_data']['end_time'] = ($_SESSION['app_data']['end_year'] ? $_SESSION['app_data']['end_year'] : '0000') . '-'
-							. ($_SESSION['app_data']['end_month'] ? $_SESSION['app_data']['end_month'] : '00') . '-'
-							. ($_SESSION['app_data']['end_day'] ? $_SESSION['app_data']['end_day'] : '00') . ' '
-							. ($_SESSION['app_data']['end_hour'] ? $_SESSION['app_data']['end_hour'] : '00') . ':'
-							. ($_SESSION['app_data']['end_minutes'] ? $_SESSION['app_data']['end_minutes'] : '00') . ':'
-							. ($_SESSION['app_data']['end_seconds'] ? $_SESSION['app_data']['end_seconds'] : '00');
+	if (! isset_datetime_from_array($_SESSION['app_data'], 'end', 'date_only')) { 
+		$_SESSION['errors']['end_time'] = _Ti('time_input_date_end') . 'Invalid date'; // TRAD
 	} else {
-		// Join fields and check resulting date
-		$_SESSION['app_data']['end_time'] = $_SESSION['app_data']['end_year'] . '-'
-							. $_SESSION['app_data']['end_month'] . '-'
-							. $_SESSION['app_data']['end_day'] . ' '
-							. $_SESSION['app_data']['end_hour'] . ':'
-							. $_SESSION['app_data']['end_minutes'] . ':'
-					. (isset($_SESSION['app_data']['end_seconds']) ? $_SESSION['app_data']['end_seconds'] : '00');
 		$unix_end_time = strtotime($_SESSION['app_data']['end_time']);
 
-		if ( ($unix_end_time<0) || !checkdate($_SESSION['app_data']['end_month'],$_SESSION['app_data']['end_day'],$_SESSION['app_data']['end_year']) )
-			$_SESSION['errors']['end_time'] = 'Invalid end time!';
-//		else 
-//			$_SESSION['app_data']['end_time'] = date('Y-m-d H:i:s',$unix_end_time);
+		if (($unix_end_time < 0) || !checkdate_sql($_SESSION['app_data']['end_time'])) 
+			$_SESSION['errors']['end_time'] = _Ti('time_input_date_end') . 'Invalid date'; // TRAD
 	}
 } else {
 	if ( ! (isset($_SESSION['app_data']['delta_days']) && (!is_numeric($_SESSION['app_data']['delta_days']) || $_SESSION['app_data']['delta_days'] < 0) ||
@@ -99,6 +91,9 @@ if ($prefs['time_intervals'] == 'absolute') {
 	}
 }
 
+if (!count($_SESSION['errors']) && $unix_end_time < $unix_start_time)
+	$_SESSION['errors']['end_time'] = "The date interval is not valid (end before start)"; // TRAD
+
 // reminder
 if ($prefs['time_intervals']=='absolute') {
 	// Set to default empty date if all fields empty
@@ -106,27 +101,15 @@ if ($prefs['time_intervals']=='absolute') {
 		$_SESSION['app_data']['reminder'] = '0000-00-00 00:00:00';
 		// Report error if some of the fields empty
 	elseif (!$_SESSION['app_data']['reminder_year'] || !$_SESSION['app_data']['reminder_month'] || !$_SESSION['app_data']['reminder_day']) {
-		$_SESSION['errors']['reminder'] = 'Partial reminder time!'; // TRAD
-		$_SESSION['app_data']['reminder'] = ($_SESSION['app_data']['reminder_year'] ? $_SESSION['app_data']['reminder_year'] : '0000') . '-'
-							. ($_SESSION['app_data']['reminder_month'] ? $_SESSION['app_data']['reminder_month'] : '00') . '-'
-							. ($_SESSION['app_data']['reminder_day'] ? $_SESSION['app_data']['reminder_day'] : '00') . ' '
-							. ($_SESSION['app_data']['reminder_hour'] ? $_SESSION['app_data']['reminder_hour'] : '00') . ':'
-							. ($_SESSION['app_data']['reminder_minutes'] ? $_SESSION['app_data']['reminder_minutes'] : '00') . ':'
-							. ($_SESSION['app_data']['reminder_seconds'] ? $_SESSION['app_data']['reminder_seconds'] : '00');
+		$_SESSION['errors']['reminder'] = 'Incomplete reminder time'; // TRAD
+		$_SESSION['app_data']['reminder'] = get_datetime_from_array($_SESSION['app_data'], 'reminder', 'start');
 	} else {
 		// Join fields and check resulting time
-		$_SESSION['app_data']['reminder'] = $_SESSION['app_data']['reminder_year'] . '-'
-						. $_SESSION['app_data']['reminder_month'] . '-'
-						. $_SESSION['app_data']['reminder_day'] . ' '
-						. $_SESSION['app_data']['reminder_hour'] . ':'
-						. $_SESSION['app_data']['reminder_minutes'] . ':'
-					. (isset($_SESSION['app_data']['reminder_seconds']) ? $_SESSION['app_data']['reminder_seconds'] : '00');
+		$_SESSION['app_data']['reminder'] = get_datetime_from_array($_SESSION['app_data'], 'reminder', 'start');
 		$unix_reminder_time = strtotime($_SESSION['app_data']['reminder']);
 
 		if ( ($unix_reminder_time<0) || !checkdate($_SESSION['app_data']['reminder_month'],$_SESSION['app_data']['reminder_day'],$_SESSION['app_data']['reminder_year']) )
 			$_SESSION['errors']['reminder'] = 'Invalid reminder time!'; // TRAD
-//		else 
-//			$_SESSION['app_data']['reminder'] = date('Y-m-d H:i:s',$unix_reminder_time);
 	}
 } else {
 	if ( ! (isset($_SESSION['app_data']['rem_offset_days']) && (!is_numeric($_SESSION['app_data']['rem_offset_days']) || $_SESSION['app_data']['rem_offset_days'] < 0) ||
