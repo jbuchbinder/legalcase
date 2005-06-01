@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.80 2005/05/31 15:56:47 mlutfy Exp $
+	$Id: inc_version.php,v 1.81 2005/06/01 21:14:38 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -142,10 +142,10 @@ if (@file_exists('inc/my_options.php'))
 	include('inc/my_options.php');
 
 // Current version of LCM
-$lcm_version = 0.45;
+$lcm_version = 0.60;
 
 // Current version of LCM shown on screen
-$lcm_version_shown = "0.4.5";
+$lcm_version_shown = "0.6.0";
 
 // Current version of LCM database
 $lcm_db_version = 36;
