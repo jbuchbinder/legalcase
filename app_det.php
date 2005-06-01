@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.20 2005/06/01 12:19:38 mlutfy Exp $
+	$Id: app_det.php,v 1.21 2005/06/01 12:24:02 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,7 @@ $result = lcm_query($q);
 if (! ($row = lcm_fetch_array($result)))
 	die("There is no such appointment.");
 
-lcm_page_start(_T('title_app_view') . ' ' . $row['title']);
+lcm_page_start(_T('title_app_view') . ' ' . $row['title'], '', '', 'tools_agenda');
 
 echo '<fieldset class="info_box">' . "\n";
 echo '<p class="normal_text">' . "\n";

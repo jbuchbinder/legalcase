@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.38 2005/06/01 11:48:43 mlutfy Exp $
+	$Id: edit_app.php,v 1.39 2005/06/01 12:24:02 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -126,9 +126,9 @@ if (empty($_SESSION['errors'])) {
 }
 
 if ($_SESSION['app_data']['id_app'] > 0)
-	lcm_page_start(_T('title_app_edit'));
+	lcm_page_start(_T('title_app_edit'), '', '', 'tools_agenda');
 else
-	lcm_page_start(_T('title_app_new'));
+	lcm_page_start(_T('title_app_new'), '', '', 'tools_agenda');
 
 if ($_SESSION['app_data']['id_case'] > 0) {
 	// Show a bit of background on the case
