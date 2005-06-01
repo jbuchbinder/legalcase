@@ -49,7 +49,7 @@ function lcm_add_session($author, $id_session) {
 	$texte = "<"."?php\n";
 	reset($vars);
 	while (list(, $var) = each($vars)) {
-		$texte .= "\$GLOBALS['author_session']['$var'] = '".addslashes($author[$var])."';\n";
+		$texte .= "\$GLOBALS['author_session']['$var'] = '". addslashes($author[$var]) . "';\n";
 	}
 	$texte .= "?".">\n";
 
@@ -98,6 +98,12 @@ function verifier_session($id_session) {
 		$GLOBALS['author_session']['ip_change'] = true;
 		lcm_add_session($GLOBALS['author_session'], $id_session);
 	}
+
+	// Clean included data from session file
+	// It used to be done in inc_version, but makes more sense only here
+	// Example where it applies: lcm_author.name_first = Math'ieu, etc.
+	foreach ($GLOBALS['author_session'] as $key => $val)
+		$GLOBALS['author_session'][$key] = stripslashes($val);
 
 	return $ok;
 }
