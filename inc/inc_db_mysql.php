@@ -18,11 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.22 2005/04/13 20:19:51 antzi Exp $
+	$Id: inc_db_mysql.php,v 1.23 2005/06/01 10:50:33 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
 define('_INC_DB_MYSQL', '1');
+
+if (! function_exists(mysql_query))
+	die("ERROR: MySQL is not correctly installed. Verify that the php-mysql
+	module is installed and that the php.ini has something similar to
+	'extension=mysql.so'. Refer to the user's manual FAQ for more information.");
 
 //
 // SQL query functions
