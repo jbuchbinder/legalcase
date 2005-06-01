@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.22 2005/05/17 07:57:27 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.23 2005/06/01 08:07:10 mlutfy Exp $
 */
 
 
@@ -148,7 +148,7 @@ function update_contact($id_contact, $new_value) {
 		lcm_panic("update_contact: no id_contact was provided");
 
 	$query = "UPDATE lcm_contact
-				SET value = '" . addslashes($new_value) . "'
+				SET value = '" . clean_input($new_value) . "'
 				WHERE id_contact = " . intval($id_contact);
 
 	lcm_query($query);
@@ -177,7 +177,7 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 
 	$id = intval($id);
 //	$type_contact = intval($type_contact);
-	$value = addslashes($value);
+	$value = clean_input($value);
 
 	$query = "SELECT id_contact
 				FROM lcm_contact
