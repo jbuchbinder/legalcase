@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.37 2005/06/01 11:08:31 mlutfy Exp $
+	$Id: edit_app.php,v 1.38 2005/06/01 11:48:43 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -27,6 +27,11 @@ include_lcm('inc_filters');
 
 $admin = ($GLOBALS['author_session']['status']=='admin');
 $title_onfocus = '';
+
+$ac = get_ac_app($_GET['app']);
+
+if (! $ac['w'])
+	die("access denied");
 
 if (empty($_SESSION['errors'])) {
 	// Clear form data
