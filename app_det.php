@@ -18,12 +18,17 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.17 2005/04/19 10:40:13 mlutfy Exp $
+	$Id: app_det.php,v 1.18 2005/06/01 11:44:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
 $app = intval($_GET['app']);
+
+$ac = get_ac_app($app);
+
+if (! $ac['r'])
+	die("access denied");
 
 $q = "SELECT lcm_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last,lcm_case.title AS case_title
 	FROM lcm_app, lcm_author_app, lcm_author
@@ -54,6 +59,7 @@ if ($row = lcm_fetch_array($result)) {
 	echo "<br />\n";
 
 
+	/* [ML] removing: not really useful for now 
 	$end_time = vider_date($row['end_time']);
 	$reminder = vider_date($row['reminder']);
 	if ($prefs['time_intervals'] == 'absolute') {
@@ -67,8 +73,10 @@ if ($row = lcm_fetch_array($result)) {
 			. format_time_interval($reminder_offset,($prefs['time_intervals_notation'] == 'hours_only'))
 			. " " . _T('time_info_before_start') . "<br />\n";
 	}
+	*/
 
 	echo "<br />\n";
+
 	echo _Ti('app_input_created_by') . get_person_name($row) . "<br />\n";
 
 	if ($row['case_title'])
