@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.226 2005/05/31 15:56:19 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.227 2005/06/01 07:40:55 mlutfy Exp $
 */
 
 //
@@ -163,10 +163,11 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 	// Style sheets
 	//
 
+	if (! $prefs['theme'])
+		$prefs['theme'] = 'green'; // c.f. inc_auth.php, auth()
+
 	if (@file_exists("styles/lcm_ui_" . $prefs['theme'] . ".css")) {
 		echo "\t" . '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_ui_' . $prefs['theme'] . '.css" />' . "\n";
-	} else {
-		echo "\t" . '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_ui_default.css" />' . "\n";
 	}
 	
 	// It is the responsability of the function caller to make sure that
