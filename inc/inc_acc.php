@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.12 2005/04/18 11:43:42 mlutfy Exp $
+	$Id: inc_acc.php,v 1.13 2005/06/01 10:57:28 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -105,6 +105,111 @@ function allowed_author($author, $access) {
 		return true;
 	
 	return false;
+}
+
+// NOTE: Unlike other allowed() functions, we return an array of rights
+// This avoids making many SQL calls on the DB to get edit/write/admin..
+function get_ac_app($app, $case) {
+	global $author_session;
+
+	// Admins can access everything
+	if ($author_session['status'] == 'admin')
+		return array('r' => true, 'w' => true, 'e' => true, 'a' => true);
+
+	// Check if the app ID is present
+	$app = intval($app);
+	if ($app < 0) // internal error
+		return array('r' => false, 'w' => false, 'e' => false, 'a' => false);
+
+	// Basic rights
+	$allow = array('r' => false, 'w' => false, 'e' => false, 'a' => false);
+	
+	// This gets set later, if appropriate
+	$id_case = 0;
+	$id_author = 0;
+
+	if ($app) {
+		// Existing appointment
+
+		//
+		// Check right on case associated with app, if any
+		// + fetch case access rights. Do not trust the client
+		// provided $case
+		//
+		$query = "SELECT *
+			FROM lcm_app as p
+			LEFT JOIN lcm_case_author as ca ON p.id_case = ca.id_case
+			LEFT JOIN lcm_case as c ON p.id_case = c.id_case
+			WHERE id_app = " . $app;
+
+		$result = lcm_query($query);
+
+		if (! ($row_app = lcm_fetch_array($result)))
+			return false; // Case does not exist, should not happen
+
+		$id_case = $row_app['id_case'];
+		$id_author = $row_app['id_author'];
+	} else {
+		// New appointment
+		$id_author = $author_session['id_author'];
+
+		if ($case) {
+			$id_case = intval($case);
+
+			if (! ($id_case > 0))
+				return false;
+
+			// Get AC for case
+			$query = "SELECT *
+				FROM lcm_case as c 
+				LEFT JOIN lcm_case_author as ca ON c.id_case = ca.id_case
+				WHERE c.id_case = " . $id_case;
+
+			$result = lcm_query($query);
+
+			if (! ($row_app = lcm_fetch_array($result)))
+				return false; // Case does not exist, should not happen
+		}
+	}
+
+	//
+	// General idea:
+	// If case: use case access rights
+	// Else, check if user is the creator of the app
+	//
+
+	// READ ac
+	if ($id_case) {
+		$allow['r'] = ($row_app['ac_read'] || ($row_app['ac_read'] != '0' && $row_app['public']));
+	} else {
+		$allow['r'] = ($id_author == $author_session['id_author']);
+	}
+
+	// WRITE ac
+	if ($id_case) {
+		$allow['w'] = ($row_app['ac_write'] || ($row_app['ac_write'] != '0' && $row_app['pub_write']));
+		$allow['w'] &= $case_open;
+	} else {
+		$allow['w'] = ($id_author == $author_session['id_author']);
+	}
+
+	// EDIT ac
+	if ($id_case) {
+		$allow['e'] = $row_app['ac_edit'];
+		$allow['e'] &= $case_open;
+	} else {
+		$allow['e'] = ($id_author == $author_session['id_author']);
+	}
+
+	// ADMIN ac
+	if ($id_case) {
+		$allow['a'] = $row_app['ac_admin'];
+		$allow['a'] &= $case_open;
+	} else {
+		$allow['a'] = ($id_author == $author_session['id_author']);
+	}
+
+	return $allow;
 }
 
 // Returns an array with the possible case statuses
