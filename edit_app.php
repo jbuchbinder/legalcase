@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.36 2005/04/12 07:54:36 mlutfy Exp $
+	$Id: edit_app.php,v 1.37 2005/06/01 11:08:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -64,9 +64,6 @@ if (empty($_SESSION['errors'])) {
 				
 		} else die("There's no such appointment!");
 
-		// Set the case ID, to which this appointment belongs
-		//$case = $_SESSION['app_data']['id_case'];
-		$modify = ($_SESSION['app_data']['id_author'] == $GLOBALS['author_session']['id_author']);
 	} else {
 		// This is new appointment
 		$_SESSION['app_data']['id_app'] = 0;
@@ -85,9 +82,6 @@ if (empty($_SESSION['errors'])) {
 					$_SESSION['app_data']['id_case'] = $row['id_case'];
 			}
 		}
-
-
-		$modify = true;
 
 		// Setup default values
 		$_SESSION['app_data']['title'] = _T('title_app_new');
@@ -143,20 +137,13 @@ if ($_SESSION['app_data']['id_case'] > 0) {
 echo show_all_errors($_SESSION['errors']);
 
 // Disable inputs when edit is not allowed for the field
-$admin = allowed($_SESSION['app_data']['id_case'], 'a');
-$write = allowed($_SESSION['app_data']['id_case'], 'w');
-$edit  = allowed($_SESSION['app_data']['id_case'], 'e');
+$ac = get_ac_app($app, $_SESSION['app_data']['id_case']);
 
-$dis = '';
+$admin = $ac['a'];
+$write = $ac['w'];
+$edit  = $ac['e'];
 
-if ($_SESSION['app_data']['id_case']) {
-	if (! $edit)
-		$dis = 'disabled="disabled"';
-} else {
-	if (! $write)
-		$dis = 'disabled="disabled"';
-}
-// $dis = (($admin || ($edit && $modify)) ? '' : 'disabled="disabled"');
+$dis = ($edit ? '' : 'disabled="disabled"');
 
 ?>
 
@@ -170,7 +157,7 @@ if ($_SESSION['app_data']['id_case']) {
 	echo "<td>" . f_err_star('start_time') . _T('app_input_date_start') . "</td>\n";
 	echo "<td>";
 
-	$name = (($admin || ($edit && $modify)) ? 'start' : '');
+	$name = ($edit ? 'start' : '');
 	echo get_date_inputs($name, $_SESSION['app_data']['start_time'], false);
 	echo ' ' . _T('time_input_time_at') . ' ';
 	echo get_time_inputs($name, $_SESSION['app_data']['start_time']);
@@ -211,10 +198,14 @@ if ($_SESSION['app_data']['id_case']) {
 		</tr>
 
 		<!-- Reminder -->
-		<tr>
 		
 <?php
-	
+	/*
+	[ML] Removing this because it's rather confusing + little gain in usability.
+	Might be good in the future if we send e-mail reminders, for example.
+
+	echo "<tr>\n";
+
 	if ($prefs['time_intervals'] == 'absolute') {
 		echo "<td>" . f_err_star('reminder') . _T('app_input_reminder_time') . "</td>\n";
 		echo "<td>";
@@ -240,9 +231,10 @@ if ($_SESSION['app_data']['id_case']) {
 		echo "</td>\n";
 	}
 
-?>
+	echo "</tr>\n";
+	*/
 
-		</tr>
+?>
 
 		<!-- Appointment title -->
 		<tr><td valign="top"><?php echo f_err_star('title') . _T('app_input_title'); ?></td>
@@ -307,7 +299,7 @@ if ($_SESSION['app_data']['id_case']) {
 			WHERE id_author NOT IN (" . join(',',$author_ids) . ")";
 		$result = lcm_query($q);
 		echo "\t\t\t<select name=\"author\">\n";
-		echo "\t\t\t\t<option selected='selected' value=\"0\">- Select author -</option>\n"; // TRAD
+		echo "\t\t\t\t<option selected='selected' value=\"0\"> ... </option>\n"; // TRAD
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t\t<option value=\"" . $row['id_author'] . '">'
 				. get_person_name($row)
@@ -347,7 +339,7 @@ if ($_SESSION['app_data']['id_case']) {
 		
 		$result = lcm_query($q);
 		echo "\t\t\t<select name=\"client\">\n";
-		echo "\t\t\t\t<option selected='selected' value=\"0\">- Select client -</option>\n"; // TRAD
+		echo "\t\t\t\t<option selected='selected' value=\"0\"> ... </option>\n"; // TRAD
 		while ($row = lcm_fetch_array($result)) {
 			echo "\t\t\t\t<option value=\"" . $row['id_client'] . ':' . $row['id_org'] . '">'
 				. get_person_name($row)
