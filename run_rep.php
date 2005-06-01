@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.25 2005/05/31 15:50:26 mlutfy Exp $
+	$Id: run_rep.php,v 1.26 2005/06/01 21:05:23 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -491,7 +491,7 @@ if (! count($my_lines)) {
 		$kwg = get_kwg_from_name($rep_info['line_src_name']);
 		// XXX dirty hack, headers print function refers directly to 'description'
 		$kwg['description'] = _T(remove_number_prefix($kwg['title']));
-		array_push($my_lines, "k.name");
+		array_push($my_lines, "k.title as 'TRAD'");
 		array_push($headers, $kwg);
 	}
 }
@@ -569,7 +569,7 @@ while ($row = lcm_fetch_array($result)) {
 			foreach($items as $i) {
 				// XXX should add 'where' clauses only (kwg above too..)
 				$q_where_add = "LCM_SQL: cl.gender = '" . $i . "'";
-				$tmp = array('description' => $i, 'filter' => 'number'); // XXX TRAD?
+				$tmp = array('description' => _T($enum[2] . $i), 'filter' => 'number');
 				array_push($my_columns, "2 as \"" . $q_where_add . "\"");
 				array_push($headers, $tmp);
 			}
@@ -734,6 +734,8 @@ if ($rep_info['line_src_type'] == 'table') {
 	switch($rep_info['line_src_name']) {
 		default:
 			switch($my_col_table) {
+				case '':
+					break;
 				case 'lcm_case':
 					$q .= " LEFT JOIN lcm_keyword_case as kc ON (kc.id_keyword = k.id_keyword) ";
 					break;
@@ -779,7 +781,9 @@ if ($do_grouping) {
 	$tmp = array();
 
 	foreach($my_lines as $l)
-		if (! preg_match("/.*count\(\*\)/", $l))
+		if (preg_match("/(.*) as .*/", $l, $regs))
+			$tmp[] = $regs[1];
+		elseif (! preg_match("/.*count\(\*\)/", $l))
 			$tmp[] = $l;
 
 	$group_fields = implode(',', $tmp);
@@ -882,6 +886,8 @@ for ($cpt_lines = $cpt_col = 0; $row = lcm_fetch_array($result); $cpt_lines++) {
 				while($row_tmp = lcm_fetch_array($result_tmp)) {
 					$val .= $row_tmp[0];
 				}
+			} elseif ($key == 'TRAD') {
+				$val = _T($val);
 			}
 
 			// Translate values based on keywords (ex: fu.type)
@@ -893,6 +899,9 @@ for ($cpt_lines = $cpt_col = 0; $row = lcm_fetch_array($result); $cpt_lines++) {
 						if ($val) // XXX lcm_panic if kw does not exist
 							$val = _Tkw($enum[2], $val);
 					}
+				} elseif ($enum[0] == 'list') {
+					if ($enum[2])
+						$val = _T($enum[2] . $val);
 				}
 			}
 
