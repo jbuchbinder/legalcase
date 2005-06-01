@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.13 2005/06/01 10:57:28 mlutfy Exp $
+	$Id: inc_acc.php,v 1.14 2005/06/01 13:13:06 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -109,24 +109,25 @@ function allowed_author($author, $access) {
 
 // NOTE: Unlike other allowed() functions, we return an array of rights
 // This avoids making many SQL calls on the DB to get edit/write/admin..
-function get_ac_app($app, $case) {
+function get_ac_app($app, $case = 0) {
 	global $author_session;
 
-	// Admins can access everything
-	if ($author_session['status'] == 'admin')
-		return array('r' => true, 'w' => true, 'e' => true, 'a' => true);
+	// Basic rights
+	$allow = array('r' => false, 'w' => false, 'e' => false, 'a' => false);
 
 	// Check if the app ID is present
 	$app = intval($app);
 	if ($app < 0) // internal error
-		return array('r' => false, 'w' => false, 'e' => false, 'a' => false);
+		return $allow;
 
-	// Basic rights
-	$allow = array('r' => false, 'w' => false, 'e' => false, 'a' => false);
+	// Admins can access everything
+	if ($author_session['status'] == 'admin')
+		return array('r' => true, 'w' => true, 'e' => true, 'a' => true);
 	
 	// This gets set later, if appropriate
 	$id_case = 0;
 	$id_author = 0;
+	$case_open = true;
 
 	if ($app) {
 		// Existing appointment
@@ -136,7 +137,7 @@ function get_ac_app($app, $case) {
 		// + fetch case access rights. Do not trust the client
 		// provided $case
 		//
-		$query = "SELECT *
+		$query = "SELECT *, p.id_author as p_id_author
 			FROM lcm_app as p
 			LEFT JOIN lcm_case_author as ca ON p.id_case = ca.id_case
 			LEFT JOIN lcm_case as c ON p.id_case = c.id_case
@@ -145,10 +146,14 @@ function get_ac_app($app, $case) {
 		$result = lcm_query($query);
 
 		if (! ($row_app = lcm_fetch_array($result)))
-			return false; // Case does not exist, should not happen
+			return $allow; // Case does not exist, should not happen
 
+		// Using p_id_author because lcm_case_author also has an id_author
+		$id_author = $row_app['p_id_author'];
 		$id_case = $row_app['id_case'];
-		$id_author = $row_app['id_author'];
+
+		if ($row_app['status'] == 'deleted' || $row_app['status'] == 'closed')
+			$case_open = false;
 	} else {
 		// New appointment
 		$id_author = $author_session['id_author'];
@@ -157,7 +162,7 @@ function get_ac_app($app, $case) {
 			$id_case = intval($case);
 
 			if (! ($id_case > 0))
-				return false;
+				return $allow;
 
 			// Get AC for case
 			$query = "SELECT *
@@ -168,7 +173,10 @@ function get_ac_app($app, $case) {
 			$result = lcm_query($query);
 
 			if (! ($row_app = lcm_fetch_array($result)))
-				return false; // Case does not exist, should not happen
+				return $allow; // Case does not exist, should not happen
+
+			if ($row_app['status'] == 'deleted' || $row_app['status'] == 'closed')
+				$case_open = false;
 		}
 	}
 
