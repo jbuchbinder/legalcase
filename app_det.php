@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.18 2005/06/01 11:44:05 mlutfy Exp $
+	$Id: app_det.php,v 1.19 2005/06/01 12:18:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,20 +30,22 @@ $ac = get_ac_app($app);
 if (! $ac['r'])
 	die("access denied");
 
-$q = "SELECT lcm_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last,lcm_case.title AS case_title
-	FROM lcm_app, lcm_author_app, lcm_author
-	LEFT JOIN lcm_case ON (lcm_case.id_case = lcm_app.id_case)
-	WHERE (lcm_app.id_app=$app
-		AND lcm_author_app.id_app=$app
-		AND lcm_author_app.id_author=" . $GLOBALS['author_session']['id_author'] . "
-		AND lcm_app.id_author=lcm_author.id_author)";
+// Get the authors participating in the appointment
+$q = "SELECT p.*, a.name_first, a.name_middle, a.name_last, c.title AS case_title
+	FROM lcm_app as p, lcm_author as a
+	LEFT JOIN lcm_case as c ON (c.id_case = p.id_case)
+	WHERE p.id_app = $app
+		AND p.id_author = a.id_author";
+
 $result = lcm_query($q);
 
-if ($row = lcm_fetch_array($result)) {
-	lcm_page_start(_T('title_app_view') . ' ' . $row['title']);
+if (! ($row = lcm_fetch_array($result)))
+	die("There is no such appointment.");
 
-	echo '<fieldset class="info_box">' . "\n";
-	echo '<p class="normal_text">' . "\n";
+lcm_page_start(_T('title_app_view') . ' ' . $row['title']);
+
+echo '<fieldset class="info_box">' . "\n";
+echo '<p class="normal_text">' . "\n";
 	
 	echo _Ti('app_input_title') . $row['title'] . "<br />\n";
 	echo _Ti('app_input_type') . $row['type'] . "<br />\n";
@@ -84,12 +86,16 @@ if ($row = lcm_fetch_array($result)) {
 			. '<a href="case_det.php?case=' .  $row['id_case'] . '" class="content_link">' . $row['case_title']
 			. "</a><br />\n";
 
+	//
 	// Show appointment participants
-	$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
-		FROM lcm_author_app, lcm_author
-		WHERE (id_app=" . $row['id_app'] . "
-			AND lcm_author_app.id_author=lcm_author.id_author)";
+	//
+	$q = "SELECT ap.*, a.name_first, a.name_middle, a.name_last
+		FROM lcm_author_app as ap, lcm_author as a
+		WHERE (ap.id_app=" . $app . "
+			AND ap.id_author = a.id_author)";
+
 	$res_author = lcm_query($q);
+
 	if (lcm_num_rows($res_author)>0) {
 		echo "Participants: "; // TRAD
 		$participants = array();
@@ -121,7 +127,7 @@ if ($row = lcm_fetch_array($result)) {
 	}
 
 	// Show edit appointment button
-	if ($row['id_author'] == $GLOBALS['author_session']['id_author'])
+	if ($ac['e'])
 		echo '<br /><a href="edit_app.php?app=' . $row['id_app'] . '" class="create_new_lnk">' . _T('app_button_edit') . "</a><br />\n";
 
 	if ($row['id_case'] > 0) {
@@ -131,7 +137,9 @@ if ($row = lcm_fetch_array($result)) {
 				WHERE a.id_app = " . $row['id_app'] . "
 			  	  AND a.id_followup = fu.id_followup
 				  AND a.relation = 'parent'";
+
 		$res_fu = lcm_query($q);
+
 		if (lcm_num_rows($res_fu) > 0) {
 			// Show parent followup title
 			$fu = lcm_fetch_array($res_fu);
@@ -139,12 +147,15 @@ if ($row = lcm_fetch_array($result)) {
 			$short_description = get_fu_description($fu);
 			echo '<br />Consequent to:' . ' <a class="content_link" href="fu_det.php?followup=' . $fu['id_followup'] . '">' . $short_description . "</a><br />\n"; // TRAD
 		}
+
 		// Show child followup
 		$q = "SELECT lcm_app_fu.id_followup,lcm_followup.description FROM lcm_app_fu,lcm_followup
 			WHERE lcm_app_fu.id_app=" . $row['id_app'] . "
 				AND lcm_app_fu.id_followup=lcm_followup.id_followup
 				AND lcm_app_fu.relation='child'";
+
 		$res_fu = lcm_query($q);
+
 		if (lcm_num_rows($res_fu) > 0) {
 			// Show child followup title
 			$fu = lcm_fetch_array($res_fu);
@@ -159,6 +170,7 @@ if ($row = lcm_fetch_array($result)) {
 			echo '<br /><a href="edit_fu.php?case=' . $row['id_case'] . '&amp;app=' . $row['id_app']
 				. '" class="create_new_lnk">Create new followup from this appointment';	// TRAD
 		}
+
 		echo "</a><br />\n";
 
 		// Show link back to the case details
@@ -169,6 +181,5 @@ if ($row = lcm_fetch_array($result)) {
 	echo "</fieldset>\n";
 
 	lcm_page_end();
-} else die("There is no such appointment!");
 
 ?>
