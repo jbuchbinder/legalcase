@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.39 2005/06/01 12:24:02 mlutfy Exp $
+	$Id: edit_app.php,v 1.40 2005/06/14 21:33:55 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -57,7 +57,8 @@ if (empty($_SESSION['errors'])) {
 			$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
 				FROM lcm_author_app,lcm_author
 				WHERE lcm_author_app.id_author=lcm_author.id_author
-					AND id_app=" . $_SESSION['app_data']['id_app'];
+					AND id_app=" . $_SESSION['app_data']['id_app'] . "
+				ORDER BY name_first,name_middle,name_last";
 			$result = lcm_query($q);
 
 			while ($row = lcm_fetch_array($result))
@@ -301,7 +302,8 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		
 		$q = "SELECT id_author,name_first,name_middle,name_last
 			FROM lcm_author
-			WHERE id_author NOT IN (" . join(',',$author_ids) . ")";
+			WHERE id_author NOT IN (" . join(',',$author_ids) . ")
+			ORDER BY name_first,name_middle,name_last";
 		$result = lcm_query($q);
 		echo "\t\t\t<select name=\"author\">\n";
 		echo "\t\t\t\t<option selected='selected' value=\"0\"> ... </option>\n"; // TRAD
@@ -322,7 +324,8 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 			FROM lcm_client,lcm_app_client_org
 			LEFT JOIN lcm_org USING (id_org)
 			WHERE id_app=" . $_SESSION['app_data']['id_app'] . "
-				AND lcm_client.id_client=lcm_app_client_org.id_client";
+				AND lcm_client.id_client=lcm_app_client_org.id_client
+			ORDER BY lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name";
 		$result = lcm_query($q);
 		$q = '';
 		while ($row = lcm_fetch_array($result)) {
@@ -340,7 +343,8 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 			LEFT JOIN lcm_client_org AS co USING (id_client)
 			LEFT JOIN lcm_org AS o ON (co.id_org=o.id_org)
 			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=" . $_SESSION['app_data']['id_app'] . ")
-			WHERE id_app IS NULL";
+			WHERE id_app IS NULL
+			ORDER BY c.name_first,c.name_last,o.name";
 		
 		$result = lcm_query($q);
 		echo "\t\t\t<select name=\"client\">\n";
