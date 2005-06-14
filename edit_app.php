@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.40 2005/06/14 21:33:55 antzi Exp $
+	$Id: edit_app.php,v 1.41 2005/06/14 22:33:44 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -119,7 +119,8 @@ if (empty($_SESSION['errors'])) {
 	$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
 		FROM lcm_author_app,lcm_author
 		WHERE lcm_author_app.id_author=lcm_author.id_author
-			AND id_app=" . $_SESSION['app_data']['id_app'];
+			AND id_app=" . $_SESSION['app_data']['id_app'] . "
+		ORDER BY name_first,name_middle,name_last";
 	$result = lcm_query($q);
 	$_SESSION['authors'] = array();
 	while ($row = lcm_fetch_array($result))
