@@ -18,16 +18,17 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listfollowups.php,v 1.4 2005/05/13 06:50:15 mlutfy Exp $
+	$Id: listfollowups.php,v 1.5 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
+include_lcm('inc_keywords');
 
 global $author_session;
 
-lcm_page_start(_T('title_recent_followups'));
+lcm_page_start(_T('case_subtitle_recent_followups'));
 //lcm_bubble('case_list');
 
 //-----------------------------------------------
@@ -68,7 +69,7 @@ $types_period = array('w1' => 7, 'm1' => 30, 'm3' => 91, 'm6' => 182, 'y1' => 36
 
 echo '<form action="listfollowups.php" method="get">' . "\n";
 echo "<p class=\"normal_text\">\n";
-echo "Filter: "; // TRAD
+echo _T('input_filter_case_owner');
 echo '<select name="case_owner">';
 
 foreach ($types_owner as $t) {
@@ -83,7 +84,6 @@ if ($author_session['status'] == 'admin') {
 
 echo "</select>\n";
 
-echo "Period: "; // TRAD
 echo '<select name="case_period">';
 
 foreach ($types_period as $key => $val) {
@@ -184,19 +184,19 @@ echo '<p><a href="edit_client.php" class="create_new_lnk">' . _T('client_button_
 echo '<a name="fu"></a>' . "\n";
 //echo "<div class='prefs_column_menu_head'>" . 'Recent follow-ups' . "</div>\n";
 
-$headers[0]['title'] = "#";
+// $headers[0]['title'] = "#";
 //$headers[0]['order'] = 'no_order';
-$headers[1]['title'] = _Th('time_input_date_start');
-$headers[1]['order'] = 'fu_order';
-$headers[1]['default'] = 'DESC';
-$headers[2]['title'] = (($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length'));
+$headers[0]['title'] = _Th('time_input_date_start');
+$headers[0]['order'] = 'fu_order';
+$headers[0]['default'] = 'DESC';
+$headers[1]['title'] = (($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length'));
+//$headers[1]['order'] = 'no_order';
+$headers[2]['title'] = _Th('case_input_author');
 //$headers[2]['order'] = 'no_order';
-$headers[3]['title'] = _Th('case_input_author');
+$headers[3]['title'] = _Th('fu_input_type');
 //$headers[3]['order'] = 'no_order';
-$headers[4]['title'] = _Th('fu_input_type');
+$headers[4]['title'] = _Th('fu_input_description');
 //$headers[4]['order'] = 'no_order';
-$headers[5]['title'] = _Th('fu_input_description');
-//$headers[5]['order'] = 'no_order';
 
 echo '<p class="normal_text">' . "\n";
 
@@ -299,24 +299,21 @@ $title_length = (($prefs['screen'] == "wide") ? 48 : 115);
 // Process the output of the query
 $c = 0;
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
-	// Change row appearance
 	$css = ($i %2 ? "dark" : "light");
-	
 	
 	// Show case subdivision, if necessary
 	if ($row['id_case'] != $c) {
-		echo '<tr><td colspan="6">&nbsp;</td></tr>';
+		echo '<tr><td colspan="5">&nbsp;</td></tr>';
 		echo '<tr><th colspan="5">';
 		
 		echo '<a href="case_det.php?case=' . $row['id_case'] . '" class="content_link">';
 		
 		echo '<img src="images/jimmac/stock_edit-16.png" width="16" height="16" alt="" border="0" />&nbsp;';
 
-		echo 'Case #' . $row['id_case'] . " - '" . $row['title'] . "'";
-		echo '&nbsp;(' . $row['status'] . ')';
+		echo '#' . $row['id_case'] . " - '" . $row['title'] . "'";
+		echo '&nbsp;(' . _T('case_status_option_' . $row['status']) . ')';
 		echo '</a></th>';
-		echo '<th><a href="edit_fu.php?case=' . $row['id_case'] . '" class="create_new_lnk">' . 'Add new followup' . '</a>';
-		echo "</th></tr>\n";
+		echo "</tr>\n";
 		
 		$c = $row['id_case'];
 	}
@@ -324,7 +321,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 	echo "<tr>\n";
 
 	// Id followup
-	echo '<td class="tbl_cont_' . $css . '"><img src="images/lcm/dotted_angle.gif" width="15" height="15" align="left" />&nbsp;' . $row['id_followup'] . '</td>';
+	// echo '<td class="tbl_cont_' . $css . '"><img src="images/lcm/dotted_angle.gif" width="15" height="15" align="left" />&nbsp;' . $row['id_followup'] . '</td>';
 					
 	// Start date
 	echo '<td class="tbl_cont_' . $css . '">' . format_date($row['date_start'], 'short') . '</td>';
@@ -336,7 +333,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 		if ($fu_date_end) echo format_date($row['date_end'],'short');
 	} else {
 		$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
-		echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
+		echo format_time_interval_prefs($fu_time);
 	}
 	echo '</td>';
 
@@ -344,7 +341,7 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $
 	echo '<td class="tbl_cont_' . $css . '">' . get_person_initials($row) . '</td>';
 
 	// Type
-	echo '<td class="tbl_cont_' . $css . '">' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
+	echo '<td class="tbl_cont_' . $css . '">' . _Tkw('followups', $row['type']) . '</td>';
 
 	// Description
 	$short_description = get_fu_description($row);

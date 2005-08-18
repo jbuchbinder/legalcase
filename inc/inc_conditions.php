@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_conditions.php,v 1.7 2005/05/17 13:46:44 mlutfy Exp $
+	$Id: inc_conditions.php,v 1.8 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -65,6 +65,11 @@ function show_report_filters($id_report, $is_runtime = false) {
 		WHERE id_report = " . $id_report . "
 		AND f.id_field = v.id_field";
 
+	// If generating the report (as opposed to editing), show filters
+	// who have a filter type (eq, neq, in, ..), but no value.
+	if ($is_runtime)
+		$query .= " AND v.type != '' AND v.value = '' ";
+
 	$result = lcm_query($query);
 
 	if (lcm_num_rows($result)) {
@@ -96,7 +101,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 			$all_filters = array(
 					'number' => array('none', 'num_eq', 'num_lt', 'num_le', 'num_gt', 'num_ge'),
 					'date' => array('none', 'date_eq', 'date_in', 'date_lt', 'date_le', 'date_gt', 'date_ge'),
-					'text' => array('none', 'text_eq')
+					'text' => array('none', 'text_eq', 'text_neq')
 					);
 
 			if ($all_filters[$filter['filter']]) {
@@ -166,6 +171,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 					echo get_date_inputs($name . '_end', $filter['value']);
 					break;
 				case 'text_eq':
+				case 'text_neq':
 					$name = ($is_runtime ? "filter_val" . $filter['id_filter'] : 'filter_value');
 
 					if ($filter['enum_type']) {
@@ -176,7 +182,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 								$all_kw = get_keywords_in_group_name($enum[2]);
 
 								echo '<select name="' . $name . '">' . "\n";
-								echo '<option value="">' . "-- select from list--" . "</option>\n"; // TRAD
+								echo '<option value="">' . "..." . "</option>\n"; // TRAD
 
 								foreach ($all_kw as $kw) {
 									$sel = (($filter['value'] == $kw['name'] || $_REQUEST['filter_val' .  $filter['id_filter']] == $kw['name']) ? ' selected="selected" ' : '');
@@ -189,11 +195,16 @@ function show_report_filters($id_report, $is_runtime = false) {
 							$items = split(",", $enum[1]);
 
 							echo '<select name="' . $name . '">' . "\n";
-							echo '<option value="">' . "-- select from list--" . "</option>\n"; // TRAD
+							echo '<option value="">' . "..." . "</option>\n"; // TRAD
 
 							foreach ($items as $i) {
+								$tmp = $i;
+
+								if ($enum[2])
+									$tmp = _T($enum[2] . $tmp);
+
 								$sel = (($filter['value'] == $i || $_REQUEST['filter_val' .  $filter['id_filter']] == $i) ? ' selected="selected" ' : '');
-								echo '<option value="' . $i . '"' . $sel . '>' . $i . "</option>\n";
+								echo '<option value="' . $i . '"' . $sel . '>' . $tmp . "</option>\n";
 							}
 
 							echo "</select>\n";
@@ -244,12 +255,10 @@ function show_report_filters($id_report, $is_runtime = false) {
 
 	if ($rep_info['line_src_name'])
 		array_push($sources, "'lcm_" . $rep_info['line_src_name'] .  "'");
-
-	// [ML] This is never set.
-	// if ($rep_info['col_src_name'])
-	//	array_push($sources, "'" /* lcm_" . */ . $rep_info['col_src_name'] . "'");
-
+	
 	// Fetch all tables available as rep colums
+	// (this is not like rep line, because the source is not always in
+	// lcm_report, but this should be 'fixed')
 	$q_tmp = "SELECT DISTINCT table_name 
 				FROM lcm_rep_col as rp, lcm_fields as f
 				WHERE rp.id_field = f.id_field
@@ -259,6 +268,25 @@ function show_report_filters($id_report, $is_runtime = false) {
 
 	while ($row = lcm_fetch_array($result_tmp))
 		array_push($sources, "'" . $row['table_name'] . "'");
+
+	// Fetch all keyword sources
+	if ($rep_info['col_src_type'] == 'keyword') {
+		$kwg = get_kwg_from_name($rep_info['col_src_name']);
+
+		if ($kwg['type'] == 'system') {
+			switch($kwg['name']) {
+				// TODO 
+				// [ML] I have no real cases for now.
+			}
+		} else {
+			if ($kwg['type'] == 'client_org') {
+				array_push($sources, "'lcm_client'");
+				array_push($sources, "'lcm_org'");
+			} else {
+				array_push($sources, "'lcm_" . $kwg['type'] . "'");
+			}
+		}
+	}
 
 	// List only filters if table were selected as sources (line/col)
 	if (count($sources)) {

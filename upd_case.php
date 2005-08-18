@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.49 2005/04/29 08:00:15 mlutfy Exp $
+	$Id: upd_case.php,v 1.50 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -36,7 +36,7 @@ foreach($_POST as $key => $value)
 
 // Check case data for validity
 if (!$_SESSION['case_data']['title'])
-	$_SESSION['errors']['title'] = _T('case_warning_no_title');
+	$_SESSION['errors']['title'] = _Ti('case_input_title') . _T('warning_field_mandatory');
 
 // Date assignment (check only if a date is provided)
 $_SESSION['case_data']['date_assignment'] = get_datetime_from_array($_SESSION['case_data'], 'assignment', 'start', date('Y-m-d H:i:s'));
@@ -79,8 +79,6 @@ if (count($_SESSION['errors'])) {
 		$public_access_rights .= "public=" . (int)($_SESSION['case_data']['public'] == 'yes');
 	}
 
-	lcm_log("status == " . $author_session['status']);
-
 	if ((read_meta('case_write_always') == 'yes') && $author_session['status'] != 'admin') {
 		// impose system setting
 		$public_access_rights .= ", pub_write=" . (int)(read_meta('case_default_write') == 'yes');
@@ -103,6 +101,19 @@ if (count($_SESSION['errors'])) {
 			$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
 
 		$result = lcm_query($q);
+
+		// Update lcm_stage entry for case creation (of first stage!)
+		// [ML] This doesn't make so much sense, but better than nothing imho..
+		$q = "SELECT min(id_entry) as id_entry FROM lcm_stage WHERE id_case = $id_case";
+		$tmp_result = lcm_query($q);
+	
+		if (($tmp_row = lcm_fetch_array($tmp_result))) {
+			$q = "UPDATE lcm_stage
+					SET date_creation = '" . $_SESSION['case_data']['date_assignment'] . "'
+					WHERE id_entry = " . $tmp_row['id_entry'];
+
+			lcm_query($q);
+		}
 	} else {
 		// This is new case
 		$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,$public_access_rights";
@@ -139,14 +150,17 @@ if (count($_SESSION['errors'])) {
 					date_end = NOW(),
 					description='" . $id_author . "'";
 
-		$result = lcm_query($q);
+		lcm_query($q);
+		$id_followup = lcm_insert_id();
 
-		// Set case date_assigned to NOW()
-		$q = "UPDATE lcm_case
-				SET date_assignment = NOW()
-				WHERE id_case = $id_case";
+		// Add lcm_stage entry
+		$q = "INSERT INTO lcm_stage SET
+				id_case = $id_case,
+				kw_case_stage = '" . clean_input($_SESSION['case_data']['stage']) . "',
+				date_creation = '" . $_SESSION['case_data']['date_assignment'] . "',
+				id_fu_creation = $id_followup";
 
-		$result = lcm_query($q);
+		lcm_query($q);
 	}
 
 	// Keywords

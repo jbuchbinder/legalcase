@@ -1,3 +1,23 @@
+legalcase (0.6.2-3) unstable; urgency=low
+
+  * Fixed compat problem for building package.
+  * .. ?
+
+ -- Mathieu Lutfy (bgm) <mathieu@bidon.ca>  Tue, 16 Aug 2005 18:49:03 -0400
+
+legalcase (0.6.2-2) unstable; urgency=low
+
+  * Fixed signing of package.
+  * Better default permissions on inc/data/, inc/config/ and log/.
+
+ -- Mathieu Lutfy (bgm) <mathieu@bidon.ca>  Mon, 15 Aug 2005 15:24:41 +0200
+
+legalcase (0.6.2-1) unstable; urgency=low
+
+  * Sync with upstream.
+
+ -- Mathieu Lutfy <mathieu@bidon.ca>  Wed, 10 Aug 2005 16:27:56 +0200
+
 legalcase (0.4.5-1) unstable; urgency=low
 
   * Experimental release.

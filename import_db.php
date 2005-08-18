@@ -18,86 +18,112 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.10 2005/02/24 16:26:08 mlutfy Exp $
+	$Id: import_db.php,v 1.11 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
 
+if (! isset($_SESSION['errors']))
+	$_SESSION['errors'] = array();
+
 $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
 		array('name' => _T('archives_tab_export'), 'url' => 'export_db.php'),
 		array('name' => _T('archives_tab_import'), 'url' => 'import_db.php')
 	);
 
-function get_parameters() {
-	lcm_page_start(_T('title_archives'));
+function show_import_form() {
+	lcm_page_start(_T('title_archives')); // HELP?
 
-	// Show tabs
 	global $tabs;
-	show_tabs_links($tabs,2);
+	show_tabs_links($tabs, 2);
+	lcm_bubble('archive_restore');
 
-	// Show tab header
-	echo "Import database\n";
-	
-	// Create form
-	echo "\n<form action='import_db.php' method='POST'>\n";
-	
-	// Select backup to restore
+	// Show the errors (if any)
+	echo show_all_errors($_SESSION['errors']);
+
+	// Upload backup form
+	echo '<form enctype="multipart/form-data" action="import_db.php" method="post">' . "\n";
+	echo '<input type="hidden" name="action" value="upload_file" />' . "\n";
+	echo '<input type="hidden" name="MAX_FILE_SIZE" value="5000000" />' . "\n";
+
 	echo "<fieldset class='info_box'>\n";
-	echo "<strong>Select backup to restore</strong><br />";
-	echo "\t<select name='name' class='sel_frm'>\n";
-	// Read existing backups
+	show_page_subtitle(_T('archives_subtitle_upload')); // HELP
+
+	echo '<p class="normal_text">' . _T('archives_info_how_to_upload') . "</p>\n";
+	echo '<p class="normal_text">' . _Ti('file_input_name');
+	echo '<input type="file" name="filename" size="40" value="" /> ';
+	echo '<input type="submit" name="submit" id="btn_upload" value="' . _T('button_validate') . '" class="search_form_btn" />';
+	echo "</p>\n";
+
+	echo "</fieldset>\n";
+	echo "</form>\n";
+
+	// Restore backup form
+	echo '<form action="import_db.php" method="post">' . "\n";
+	echo '<input type="hidden" name="action" value="import" />' . "\n";
+
+	echo "<fieldset class='info_box'>\n";
+	show_page_subtitle(_T('archives_subtitle_restore')); // HELP
+
+	echo "<strong>" . _Ti('archives_input_select_backup') . "</strong><br />";
+	echo "<select name='file' class='sel_frm'>\n";
+
 	$storage = opendir('inc/data');
-	while (false !== ($file = readdir($storage))) {
-//		var_dump($file);
-		if (is_dir("inc/data/$file") && (strpos($file,'db-')===0)) {
+	while (($file = readdir($storage))) {
+		if (is_dir("inc/data/$file") && (strpos($file,'db-')===0))
 			echo "\t\t<option value='" . substr($file,3) . "'>" . substr($file,3) . "</option>\n";
-		}
 	}
-//	echo "\t\t<option selected>-- Create new file --</option>\n";
-	echo "\t</select>\n";
+	echo "</select>\n";
 	
 	// Select restore type
-	echo "<br />\n";
 	echo "<p class='normal_text'>\n";
-	echo "\t<input type='radio' name='restore_type' value='clean' id='r1' checked /><label for='r1'>&nbsp;<strong>Clean</strong></label><br />Import backup data into empty database. This will return database in the exact state at the time of backup.<br /><br />\n";
-	echo "\t<input type='radio' name='restore_type' value='replace' id='r2' /><label for='r2'>&nbsp;<strong>Replace</strong></label><br /> Imported backup data will replace the existing. This is usefull to undo the changes made in the database since last backup, without losing the new information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br /><br />\n";
-	echo "\t<input type='radio' name='restore_type' value='ignore' id='r3' /><label for='r3'>&nbsp;<strong>Append</strong></label><br /> Only backup data NOT existing in the database will be imported. This is usefull to import data lost since last backup, without changing the existing information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br /><br />\n";
-	echo "\t<button type='submit' class='simple_form_btn'>Import</button>\n";
+	echo "<input type='radio' name='restore_type' value='clean' id='r1' /><label for='r1'>&nbsp;<strong>" . _T('archives_input_option_restore') .  "</strong></label><br />" . _T('archives_info_option_restore') . "<br /><br />\n";
+	
+	// [ML] This is confusing as hell. I understand the aim from DB point of view
+	// but I don't understand the aim from the admin's point of view.
+	// echo "<input type='radio' name='restore_type' value='replace' id='r2' /><label for='r2'>&nbsp;<strong>Replace (experimental!)</strong></label><br /> Imported backup data will replace the existing. This is usefull to undo the changes made in the database since last backup, without losing the new information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br /><br />\n";
+
+	echo "<input type='radio' name='restore_type' value='ignore' id='r3' /><label for='r3'>&nbsp;<strong>" . _T('archives_input_option_sync') . " (experimental!)</strong></label><br /> Only backup data NOT existing in the database will be imported. This is usefull to import data lost since last backup, without changing the existing information. Warning: This operation could break database integrity, especially if importing data between different LCM installations.<br /><br />\n"; // TRAD
+
+	echo "<button type='submit' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 	echo "</p>\n";
 	echo "</fieldset\n>";
 	echo "</form>\n";
 
 	lcm_page_end();
+	$_SESSION['errors'] = array();
 }
 
 function import_database($input_filename) {
 	global $tabs;
 
-	// Clean input data
 	$input_filename = clean_input($input_filename);
-	// Check if file exists
 	$root = addslashes(getcwd());
 	$dir = "$root/inc/data/db-$input_filename";
+
 	if (file_exists($dir)) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
-			lcm_page_start(_T('title_archives'));
-
-			// Show tabs
+			lcm_page_start(_T('title_archives')); // HELP?
 			show_tabs_links($tabs,2,true);
 
-			// Show tab header
-			echo "Warning!\n";
-
 			echo "<fieldset class='info_box'>\n";
-			echo "<form action='import_db.php' method='POST'>\n";
-			echo "\tRestore operation will overwrite your database. Are you sure?<br />\n";
-			echo "\t<button type='submit' class='simple_form_btn' name='conf' value='yes'>Yes</button>\n";
-			echo "\t<button type='submit' class='simple_form_btn' name='conf' value='no'>No</button>\n";
-			echo "\t<input type='hidden' name='name' value='$input_filename' />\n";
-			echo "\t<input type='hidden' name='restore_type' value='" . $_POST['restore_type'] . "' />\n";
+			show_page_subtitle(_T('generic_subtitle_warning')); // HELP?
+
+			echo "<p class='normal_text'><img src='images/jimmac/icon_warning.gif' alt='' "
+				. "align='right' height='48' width='48' />" 
+				. _T('archives_info_restore_will_delete')
+				. "</p>\n";
+
+			echo "<form action='import_db.php' method='post'>\n";
+			echo '<input type="hidden" name="action" value="import" />' . "\n";
+
+			echo "<button type='submit' class='simple_form_btn' name='conf' value='yes'>" . _T('info_yes') . "</button>\n";
+			echo "<button type='submit' class='simple_form_btn' name='conf' value='no'>" . _T('info_no') . "</button>\n";
+			echo "<input type='hidden' name='file' value='$input_filename' />\n";
+			echo "<input type='hidden' name='restore_type' value='" . $_POST['restore_type'] . "' />\n";
 			echo "</form>";
 			echo "</fieldset\n>";
 			lcm_page_end();
@@ -106,8 +132,9 @@ function import_database($input_filename) {
 	}
 
 	// Get saved database version
-	if (false === ($fh = fopen("$dir/db-version",'r')))
-		die("System error: Could not open file '$dir/db-version");
+	if (! ($fh = fopen("$dir/db-version",'r')))
+		lcm_panic("System error: Could not open file '$dir/db-version");
+
 	$backup_db_version = intval(fread($fh,10));
 	fclose($fh);
 
@@ -117,12 +144,13 @@ function import_database($input_filename) {
 	// Recreate tables
 	if ( ($_POST['restore_type'] == 'clean') || ($backup_db_version < read_meta('lcm_db_version')) ) {
 		// Open backup dir
-		if (false === ($dh = opendir("$dir/")))
-			die("System error: Could not open directory '$dir'!");
+		if (! ($dh = opendir("$dir/")))
+			lcm_panic("System error: Could not open directory '$dir'");
 
-		while (false !== ($file = readdir($dh))) {
+		while (($file = readdir($dh))) {
 			// Get table name
 			$table = substr($file,0,-10);
+
 			// Add path to filename
 			$file = "$dir/$file";
 			if (strlen($file) > 10) {
@@ -146,16 +174,16 @@ function import_database($input_filename) {
 	}	// Old backup version
 	else if ($backup_db_version > read_meta('lcm_db_version')) {
 		// Backup version newer than installed db version
-		lcm_page_start(_T('title_archives'));
+		lcm_page_start(_T('title_archives')); // FIXME TRAD? HELP?
 		
 		// Show tabs
 		show_tabs_links($tabs,2,true);
 
 		// Show tab header
-		echo "Version mismatch!\n";
+		echo "Version mismatch!\n"; // TRAD
 
 		echo "<fieldset class='info_box'>\n";
-		echo "Backup database version is newer than the installed database.";
+		echo "Backup database version is newer than the installed database."; // TRAD
 		echo "</fieldset\n>";
 		lcm_page_end();
 		return;
@@ -170,11 +198,12 @@ function import_database($input_filename) {
 	
 	// Change backup dir permissions, so MySQL could read from it.
 	chmod($dir,0755);
-	// Open backup dir
-	if (false === ($dh = opendir("$dir/")))
-		die("System error: Could not open directory '$dir'!");
 
-	while (false !== ($file = readdir($dh))) {
+	// Open backup dir
+	if (! ($dh = opendir("$dir/")))
+		lcm_panic("System error: Could not open directory '$dir'");
+
+	while (($file = readdir($dh))) {
 		// Get table name
 		$table = substr($file,0,-5);
 		// Add path to filename
@@ -182,7 +211,8 @@ function import_database($input_filename) {
 		if (strlen($file) > 5) {
 			if (is_file($file) && (substr($file,-5) === ".data")) {
 				// If restore_type='clean', clear the table
-				if ($_POST['restore_type'] == 'clean') lcm_query("TRUNCATE TABLE $table");
+				if ($_POST['restore_type'] == 'clean')
+					lcm_query("TRUNCATE TABLE $table");
 				
 				$q = "LOAD DATA INFILE '$file' ";
 				$q .= (($_POST['restore_type'] == 'replace') ? 'REPLACE' : 'IGNORE');
@@ -195,6 +225,7 @@ function import_database($input_filename) {
 			}
 		}
 	}
+
 	closedir($dh);
 
 	// Change backup dir permissions back
@@ -206,30 +237,114 @@ function import_database($input_filename) {
 	// Debugging
 	//lcm_query("use lcm");
 
-	lcm_page_start(_T('title_archives'));
-
-	// Show tabs
+	lcm_page_start(_T('title_archives')); // FIXME TRAD? HELP?
 	show_tabs_links($tabs,2,true);
 
-	// Show tab header
-	echo "Import finished\n";
+	echo '<div class="sys_msg_box">' . "\n";
+	show_page_subtitle("Import finished"); // FIXME TRAD? HELP?
 
-	echo "<fieldset class='info_box'>\n";
-	echo "Backup '$input_filename' was successfully imported into database.";
-	echo "</fieldset\n>";
+	echo "Backup '$input_filename' was successfully imported into database."; // TRAD
+	echo "</div\n>";
 	lcm_page_end();
 
-}	// import_database()
+}
+
+function upload_backup_file() {
+	// File name and extention
+	$fname = "";
+	$fext  = "";
+
+	// Clear all previous errors
+	$_SESSION['errors'] = array();
+
+	if (! is_uploaded_file($_FILES['filename']['tmp_name'])) {
+		// FIXME: error message
+		$_SESSION['errors']['upload_file'] = '1 - not a valid file'; // TRAD
+		return;
+	}
+
+	if (! ($_FILES['filename']['size'] > 0)) {
+		// FIXME: error message
+		$_SESSION['errors']['upload_file'] = 'size is zero'; // TRAD
+		return;
+	}
+
+	// File should be: name.tar or name.tar.gz or name.tgz
+	// name can be pretty much anything, since it will be rawurlencoded()
+	// if it is prefixed with "db-", it will be removed and later added again
+	if (preg_match("/^(db-)?(.+)\.(tar(\.gz)?|tgz)$/", $_FILES['filename']['name'], $regs)) {
+		$fname = rawurlencode($regs[2]);
+		$fext  = $regs[3];
+	} else {
+		// FIXME: error
+		$_SESSION['errors']['upload_file'] = 'name not accepted'; // TRAD
+		return;
+	}
+
+	$cpt = 0;
+	while (file_exists("inc/data/db-" . $fname . ($cpt ? "-" . $cpt : '') . "." . $fext))
+		$cpt++;
+
+	$fname_full = "inc/data/db-" . $fname . ($cpt ? "-" . $cpt : '') . "." . $fext;
+
+	if (! move_uploaded_file($_FILES['filename']['tmp_name'], $fname_full)) {
+		// FIXME: error message
+		$_SESSION['errors']['upload_file'] = 'move_uploaded_file freaked out'; // TRAD
+		return;
+	}
+
+	if (is_file($fname_full)) {
+		// unpackage
+		@include("Archive/Tar.php");
+		$tar_worked = false;
+
+		if (class_exists("Archive_Tar")) {
+			$tar_worked = true;
+			$tar_object = new Archive_Tar($fname_full);
+			$tar_object->setErrorHandling(PEAR_ERROR_PRINT);
+
+			// XXX is this safe to do this here? What if file exists?
+			// FIXME: check extractList() to modify dest path
+			$tar_object->extract();
+		} else {
+			$_SESSION['errors']['upload_file'] = "Archive::Tar not installed"; // TRAD
+			return;
+		}
+	} else {
+		lcm_panic("This should not happen...");
+	}
+}
 
 //
 // Main
 //
-if ($_POST['name']) {
-	// Proceed with import
-	$log = import_database($_POST['name']);
-} else {
-	// Get import parameters
-	get_parameters();
+
+global $author_session;
+
+// Restrict page to administrators
+if ($author_session['status'] != 'admin') {
+	lcm_page_start(_T('title_archives'), '', '', ''); // FIXME TRAD? HELP?
+	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
+	lcm_page_end();
+	exit;
 }
+
+switch($_REQUEST['action']) {
+	case 'upload_file':
+		upload_backup_file($_REQUEST['file']);
+		show_import_form();
+		break;
+	case 'import':
+		if ($_REQUEST['file']) {
+			import_database($_REQUEST['file']);
+		} else {
+			// FIXME: show error message
+			show_import_form();
+		}
+		break;
+	default:
+		show_import_form();
+}
+
 
 ?>

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_acc.php,v 1.14 2005/06/01 13:13:06 mlutfy Exp $
+	$Id: inc_acc.php,v 1.15 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -215,6 +215,109 @@ function get_ac_app($app, $case = 0) {
 		$allow['a'] &= $case_open;
 	} else {
 		$allow['a'] = ($id_author == $author_session['id_author']);
+	}
+
+	return $allow;
+}
+
+function get_ac_client($client) {
+	global $author_session;
+
+	// Basic rights
+	$allow = array('r' => false, 'w' => false, 'e' => false, 'a' => false);
+	
+	// Check if the app ID is present
+	$client = intval($client);
+	if ($app < 0) // internal error
+		return $allow;
+
+	// Admins can access everything
+	if ($author_session['status'] == 'admin')
+		return array('r' => true, 'w' => true, 'e' => true, 'a' => true);
+
+	// Access control procedure:
+	// 1- Check global site configuration (to see if AC is required)
+	// 2- Check if org is already on a case for which the user is working on
+	// NOTE: "edit" and "admin" are not yet defined nor implemented.
+	$meta_client_read  = read_meta('client_share_read');
+	$meta_client_write = read_meta('client_share_write');
+
+	if (! ($meta_client_read == 'no')) {
+		$allow['r'] = true;
+
+		if (! ($meta_client_write == 'no'))
+			$allow['w'] = $allow['e'] = true;
+	}
+
+	if ($allow['r'] == false || $allow['w'] == false) {
+		// Check if author is associated to a case with this org
+		$q = "SELECT count(*) as cpt, sum(ac_read) as ac_read, 
+					sum(ac_write) as ac_write, sum(ac_edit) as ac_edit, sum(ac_admin) as ac_admin
+				FROM lcm_case_client_org as cco, lcm_case_author as ca
+				WHERE ca.id_author = " . $author_session['id_author'] . "
+				  AND cco.id_client = " . $client . "
+				  AND ca.id_case = cco.id_case";
+
+		$result = lcm_query($q);
+
+		if ($row = lcm_fetch_array($result)) {
+			$allow['r'] = ($row['ac_read'] > 0);
+			$allow['w'] = ($row['ac_write'] > 0);
+			$allow['e'] = ($row['ac_edit'] > 0);
+			$allow['a'] = ($row['ac_admin'] > 0);
+		}
+	}
+
+	return $allow;
+}
+
+function get_ac_org($org) {
+	global $author_session;
+
+	// Basic rights
+	$allow = array('r' => false, 'w' => false, 'e' => false, 'a' => false);
+	
+	// Check if the app ID is present
+	$org = intval($org);
+	if ($app < 0) // internal error
+		return $allow;
+
+	// Admins can access everything
+	if ($author_session['status'] == 'admin')
+		return array('r' => true, 'w' => true, 'e' => true, 'a' => true);
+
+	// Access control procedure:
+	// 1- Check global site configuration (to see if AC is required)
+	// 2- Check if org is already on a case for which the user is working on
+	// NOTE: "edit" and "admin" are not yet defined nor implemented.
+	$meta_org_read  = read_meta('org_share_read');
+	$meta_org_write = read_meta('org_share_write');
+
+	// Use double-negation to avoid problems if meta not up-to-date
+	if (! ($meta_org_read == 'no')) {
+		$allow['r'] = true;
+
+		if (! ($meta_org_write == 'no'))
+			$allow['w'] = $allow['e'] = true;
+	}
+
+	if ($allow['r'] == false || $allow['w'] == false) {
+		// Check if author is associated to a case with this org
+		$q = "SELECT count(*) as cpt, sum(ac_read) as ac_read, 
+					sum(ac_write) as ac_write, sum(ac_edit) as ac_edit, sum(ac_admin) as ac_admin
+				FROM lcm_case_client_org as cco, lcm_case_author as ca
+				WHERE ca.id_author = " . $author_session['id_author'] . "
+				  AND cco.id_org = " . $org . "
+				  AND ca.id_case = cco.id_case";
+
+		$result = lcm_query($q);
+
+		if ($row = lcm_fetch_array($result)) {
+			$allow['r'] = ($row['ac_read'] > 0);
+			$allow['w'] = ($row['ac_write'] > 0);
+			$allow['e'] = ($row['ac_edit'] > 0);
+			$allow['a'] = ($row['ac_admin'] > 0);
+		}
 	}
 
 	return $allow;

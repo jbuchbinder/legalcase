@@ -18,13 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.29 2005/04/08 17:16:57 mlutfy Exp $
+	$Id: inc_login.php,v 1.30 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
 define('_INC_LOGIN', '1');
 
-include('inc/inc_version.php');
 include_lcm('inc_meta');
 include_lcm('inc_session');
 include_lcm('inc_filters');
@@ -51,28 +50,27 @@ function login($cible, $prive = 'prive', $message_login='') {
 		. ' onclick="' . "javascript:window.open('lcm_pass.php?register=yes', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
 
 	$error = '';
-	$login = (isset($GLOBALS['var_login']) ? $GLOBALS['var_login'] : '');
-	$essai_auth_http = (isset($GLOBALS['var_essai_auth_http']) ? $GLOBALS['var_essai_auth_http'] : '');
-	$logout = (isset($GLOBALS['var_logout']) ? $GLOBALS['var_logout'] : '');
+	$login = (isset($_REQUEST['var_login']) ? $_REQUEST['var_login'] : '');
+	// [ML] useless 
+	// $essai_auth_http = (isset($GLOBALS['var_essai_auth_http']) ? $GLOBALS['var_essai_auth_http'] : '');
+	$logout = (isset($_REQUEST['var_logout']) ? $_REQUEST['var_logout'] : '');
 
 	// If the cookie fails, inc_auth tried to redirect to lcm_cookie who
 	// then tried to put a cookie. If it is not there, it is "cookie failed"
 	// who is there, and it's probably a bookmark on privet=yes and not
 	// a cookie failure.
-	if (isset($GLOBALS['var_cookie_failed']))
-		$cookie_failed = ($GLOBALS['lcm_session'] != 'cookie_test_failed');
-	else
-		$cookie_failed = "";
+	$cookie_failed = "";
+
+	if (isset($_REQUEST['var_cookie_failed']))
+		$cookie_failed = ($_COOKIE['lcm_session'] != 'cookie_test_failed');
 
 	global $author_session;
-	global $lcm_session, $PHP_AUTH_USER, $ignore_auth_http;
-	global $lcm_admin;
-	global $php_module;
+	global $lcm_session;
 	global $clean_link;
 
-	if (!$cible) {
-		if (isset($GLOBALS['var_url']) && $GLOBALS['var_url'])
-			$cible = new Link($GLOBALS['var_url']);
+	if (!$cible) { // cible = destination
+		if (isset($_REQUEST['var_url']) && $_REQUEST['var_url'])
+			$cible = new Link($_REQUEST['var_url']);
 		else 
 			$cible = new Link('index.php');
 	}
@@ -94,16 +92,19 @@ function login($cible, $prive = 'prive', $message_login='') {
 		if ($url != $GLOBALS['clean_link']->getUrl())
 			@Header("Location: " . $cible->getUrlForHeader());
 
-		echo "<a href='$url'>"._T('login_this_way')."</a>\n";
+		// [ML] This is making problems for no reason, we use login only 
+		// for one mecanism (entering the system).
+		// echo "<a href='$url'>"._T('login_this_way')."</a>\n";
+		echo "<a class='content_link' href='index.php'>"._T('login_this_way')."</a>\n";
 		return;
 	}
 
-	if (isset($GLOBALS['var_erreur']) && $GLOBALS['var_erreur'] == 'pass')
+	if (isset($_REQUEST['var_erreur']) && $_REQUEST['var_erreur'] == 'pass')
 		$error = _T('login_password_incorrect');
 
 	// The login is memorized in the cookie for a possible future admin login
-	if (!$login) {
-		if (ereg("^@(.*)$", $lcm_admin, $regs))
+	if ((!$login) && isset($_COOKIE['lcm_admin'])) {
+		if (ereg("^@(.*)$", $_COOKIE['lcm_admin'], $regs))
 			$login = $regs[1];
 	} else if ($login == '-1')
 		$login = '';
@@ -158,7 +159,17 @@ function login($cible, $prive = 'prive', $message_login='') {
 		$error = _T('login_warning_cookie');
 
 	echo open_login();
+
+	// [ML] Looks like there is no reason why to use $clean_link (defined in inc_version.php)
+	// It would cause very strange bugs when the "feed_globals()" were removed from inc_version
+	// and in the end, well, it looks rather useless.
+	//
+	// Strange bugs were caused because $action would be "./" and therefore it
+	// would call index.php -> listcases.php -> includes inc_auth.php who then
+	// calls auth(), who redirects to the login page.
+
 	$action = $clean_link->getUrl();
+	// $action = "lcm_login.php";
 
 	if ($login) {
 		// Shows the login form, including the MD5 javascript

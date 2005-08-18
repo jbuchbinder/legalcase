@@ -18,11 +18,10 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.49 2005/05/13 09:35:47 mlutfy Exp $
+	$Id: client_det.php,v 1.50 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
 include_lcm('inc_contacts');
 
 $client = intval($_REQUEST['client']);

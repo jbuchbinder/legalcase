@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.160 2005/05/20 12:21:54 mlutfy Exp $
+	$Id: case_det.php,v 1.161 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -31,10 +31,11 @@ $case = intval($_GET['case']);
 $fu_order = "DESC";
 
 // Read site configuration settings
-$case_court_archive = read_meta('case_court_archive');
+$case_court_archive   = read_meta('case_court_archive');
 $case_assignment_date = read_meta('case_assignment_date');
-$case_alledged_crime = read_meta('case_alledged_crime');
-$case_allow_modif = read_meta('case_allow_modif');
+$case_alledged_crime  = read_meta('case_alledged_crime');
+$case_legal_reason    = read_meta('case_legal_reason');
+$case_allow_modif     = read_meta('case_allow_modif');
 $modify = ($case_allow_modif == 'yes');
 
 if (isset($_GET['fu_order']))
@@ -150,14 +151,17 @@ if ($case > 0) {
 				$query = "SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0, 
 									UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time 
 							FROM lcm_followup as fu 
-							WHERE fu.id_case = " . $row['id_case'];
+							WHERE fu.id_case = " . $row['id_case'] . "
+							  AND fu.hidden = 'N'";
 				
 				$result = lcm_query($query);
 				$row_tmp = lcm_fetch_array($result);
 
 				echo _Ti('case_input_total_time') . format_time_interval_prefs($row_tmp['time']) . "<br />\n";
 		
-				echo _Ti('case_input_legal_reason') . clean_output($row['legal_reason']) . "<br />\n";
+				if ($case_legal_reason == 'yes')
+					echo _Ti('case_input_legal_reason') . clean_output($row['legal_reason']) . "<br />\n";
+
 				if ($case_alledged_crime == 'yes')
 					echo _Ti('case_input_alledged_crime') . clean_output($row['alledged_crime']) . "<br />\n";
 
@@ -165,9 +169,13 @@ if ($case > 0) {
 				include_lcm('inc_keywords');
 				show_all_keywords('case', $row['id_case']);
 
-				$stage = get_kw_from_name('stage', $row['stage']);
-				$id_stage = $stage['id_keyword'];
-				show_all_keywords('stage', $row['id_case'], $id_stage);
+				if ($row['stage']) {
+					// There should always be a stage, but in early versions, < 0.6.0,
+					// it might have been missing, causing a lcm_panic().
+					$stage = get_kw_from_name('stage', $row['stage']);
+					$id_stage = $stage['id_keyword'];
+					show_all_keywords('stage', $row['id_case'], $id_stage);
+				}
 
 				// Notes
 				echo _Ti('case_input_notes') . "<br />\n";
@@ -194,7 +202,7 @@ if ($case > 0) {
 					echo "<button type='submit' name='submit' id='submit_status' value='set_status' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 					echo "</form>\n";
 				} else {
-					echo _Ti('case_input_status') . clean_output($row['status']) . "<br />\n";
+					echo _Ti('case_input_status') . _T('case_status_option_' . $row['status']) . "<br />\n";
 				}
 
 				// Show case stage
@@ -210,14 +218,14 @@ if ($case > 0) {
 					$stage_kws = get_keywords_in_group_name('stage');
 					foreach ($stage_kws as $kw) {
 						$sel = ($kw['name'] == $row['stage'] ? ' selected="selected"' : '');
-						echo "\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
+						echo "\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 					}
 				
 					echo "</select>\n";
 					echo "<button type='submit' name='submit' id='submit_stage' value='set_stage' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 					echo "</form>\n";
 				} else {
-					echo _Ti('case_input_stage') . clean_output($row['stage']) . "<br />\n";
+					echo _Ti('case_input_stage') . _Tkw('stage', $row['stage']) . "<br />\n";
 				}
 
 				// If case closed, show conclusion
@@ -474,22 +482,11 @@ if ($case > 0) {
 				echo "</p>\n";
 				echo "</form>\n";
 
-
 				echo "<p class=\"normal_text\">\n";
-
-				$headers = array();
-				$headers[0]['title'] = _Th('time_input_date_start');
-				$headers[0]['order'] = 'fu_order';
-				$headers[0]['default'] = 'ASC';
-				$headers[1]['title'] = ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length') );
-				$headers[2]['title'] = _Th('case_input_author');
-				$headers[3]['title'] = _Th('fu_input_type');
-				$headers[4]['title'] = _Th('fu_input_description');
-			
-				show_list_start($headers);
+				show_listfu_start('case');
 			
 				$q = "SELECT fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description, fu.case_stage,
-						a.name_first, a.name_middle, a.name_last
+						fu.hidden, a.name_first, a.name_middle, a.name_last
 					FROM lcm_followup as fu, lcm_author as a
 					WHERE id_case = $case
 					  AND fu.id_author = a.id_author ";
@@ -532,50 +529,18 @@ if ($case > 0) {
 						lcm_panic("Error seeking position $list_pos in the result");
 			
 				// Process the output of the query
-				for ($i = 0 ; ((($i<$prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result))); $i++) {
-					echo "<tr>\n";
-					
-					// Start date
-					echo '<td>' . format_date($row['date_start'], 'short') . '</td>';
-					
-					// Time
-					echo '<td>';
-					$fu_date_end = vider_date($row['date_end']);
-					if ($prefs['time_intervals'] == 'absolute') {
-						if ($fu_date_end) echo format_date($row['date_end'],'short');
-					} else {
-						$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
-						echo format_time_interval_prefs($fu_time);
-					}
-					echo '</td>';
-
-					// Author initials
-					echo '<td>';
-					echo get_person_initials($row);
-					echo '</td>';
-					
-					// Type
-					echo '<td>' . _Tkw('followups', $row['type']) . '</td>';
-
-					// Description
-					$short_description = get_fu_description($row);
-			
-					echo '<td>';
-					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . $short_description . '</a>';
-					echo '</td>';
-			
-					echo "</tr>\n";
-				}
+				for ($i = 0 ; ((($i<$prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result))); $i++)
+					show_listfu_item($row, $i, 'case');
 			
 				show_list_end($list_pos, $number_of_rows, true);
-
-				echo "<br />\n";
-
-				if ($add)
-					echo "<a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a>&nbsp;\n";
-
-				echo "<br /><br />\n";
 				echo "</p>\n";
+
+				if ($add) {
+					echo '<p class="normal_text">';
+					echo "<a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a>&nbsp;\n";
+					echo "</p>\n";
+				}
+
 				echo "</fieldset>\n";
 				
 				break;
@@ -607,7 +572,9 @@ if ($case > 0) {
 							UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time,
 						sum(sumbilled) as sumbilled
 					FROM  lcm_author as a, lcm_followup as fu
-					WHERE fu.id_author = a.id_author AND fu.id_case = $case
+					WHERE fu.id_author = a.id_author
+					  AND fu.id_case = $case
+					  AND fu.hidden = 'N'
 					GROUP BY fu.id_author";
 				$result = lcm_query($q);
 
@@ -657,7 +624,7 @@ if ($case > 0) {
 
 				// Show total case hours
 				echo "<tr>\n";
-				echo "<td><strong>" . 'TOTAL:' . "</strong></td>\n"; // TRAD
+				echo "<td><strong>" . _Ti('generic_input_total') . "</strong></td>\n";
 				echo "<td align='right'><strong>";
 				echo format_time_interval_prefs($total_time);
 				echo "</strong></td>\n";

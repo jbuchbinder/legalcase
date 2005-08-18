@@ -18,12 +18,50 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.24 2005/05/13 10:07:05 mlutfy Exp $
+	$Id: author_det.php,v 1.25 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_contacts');
 include_lcm('inc_acc');
+include_lcm('inc_keywords');
+
+function get_date_range_fields() {
+	$ret = array();
+
+	// By default, show from "now() - 1 month" to NOW().
+	$link = new Link();
+	$link->delVar('date_start_day');
+	$link->delVar('date_start_month');
+	$link->delVar('date_start_year');
+	$link->delVar('date_end_day');
+	$link->delVar('date_end_month');
+	$link->delVar('date_end_year');
+	$ret['html'] =  $link->getForm();
+
+	$ret['html'] .= "<p class=\"normal_text\">\n";
+	$ret['date_end'] = get_datetime_from_array($_REQUEST, 'date_end', 'end', "-1");
+	$ret['date_start'] = get_datetime_from_array($_REQUEST, 'date_start', 'start',
+					date('Y-m-d H:i:s', strtotime("-1 month" . ($ret['date_end'] != "-1" ? $ret['date_end'] : date('Y-m-d H:i:s')))));
+
+	$ret['html'] .= _Ti('time_input_date_start');
+	$ret['html'] .= get_date_inputs('date_start', $ret['date_start']);
+
+	$ret['html'] .= _Ti('time_input_date_end');
+	if ($ret['date_end'] == "-1")
+		$ret['html'] .= get_date_inputs('date_end');
+	else
+		$ret['html'] .= get_date_inputs('date_end', $ret['date_end']);
+
+	$ret['html'] .= ' <button name="submit" type="submit" value="submit" class="simple_form_btn">'
+				. _T('button_validate') 
+				. "</button>\n";
+
+	$ret['html'] .= "</p>\n";
+	$ret['html'] .= "</form>\n";
+
+	return $ret;
+}
 
 global $prefs;
 $author = intval($_REQUEST['author']);
@@ -71,6 +109,8 @@ $result = lcm_query($q);
 		// [ML] Forcing 'author_det.php' else some vars really get carried for nothing (see fu tab + dates)
 		show_tabs($groups,$tab, "author_det.php?author=$author"); 
 
+		echo '<fieldset class="info_box">';
+
 		switch ($tab) {
 			//
 			// General tab
@@ -79,13 +119,13 @@ $result = lcm_query($q);
 				//
 				// Show client general information
 				//
-				echo '<fieldset class="info_box">';
 				show_page_subtitle(_T('generic_subtitle_general'), 'authors_intro');
 
 				echo '<p class="normal_text">';
 				echo _Ti('authoredit_input_id') . $author_data['id_author'] . "<br />\n";
 				echo _Ti('person_input_name') . get_person_name($author_data) . "<br />\n";
 				echo _Ti('authoredit_input_status') . _T('authoredit_input_status_' . $author_data['status']) . "<br />\n";
+				echo _Ti('time_input_date_creation') . format_date($author_data['date_creation']) . "<br />\n";
 
 				echo "</p>\n";
 				
@@ -101,18 +141,25 @@ $result = lcm_query($q);
 						echo '<p class="normal_text"><a href="edit_author.php?author=' . $author . '" class="edit_lnk">'
 							. _T('authoredit_button_edit') . "</a></p>\n";
 
-				echo "</fieldset>\n";
-
 				break;
 			//
 			// Cases tab
 			//
 			case 'cases':
 				// Show recent cases
+				show_page_subtitle(_T('author_subtitle_cases', array('author' => get_person_name($author_data)), 'cases_participants'));
+
+				$foo = get_date_range_fields();
+				echo $foo['html'];
+				
 				$q = "SELECT c.id_case, title, date_creation, id_court_archive, status
 						FROM lcm_case_author as a, lcm_case as c
 						WHERE id_author = " . $author . "
-						AND a.id_case = c.id_case ";
+							AND a.id_case = c.id_case 
+							AND UNIX_TIMESTAMP(date_creation) >= UNIX_TIMESTAMP('" . $foo['date_start'] . "') ";
+
+				if ($foo['date_end'] != "-1")
+					$q .= " AND UNIX_TIMESTAMP(date_creation) <= UNIX_TIMESTAMP('" . $foo['date_end'] . "')";
 
 				// If user is looking at other user, show only public cases
 				if (! allowed_author($author, 'r'))
@@ -142,8 +189,7 @@ $result = lcm_query($q);
 						lcm_panic("Error seeking position $list_pos in the result");
 
 				if (lcm_num_rows($result)) {
-					echo '<fieldset class="info_box">' . "\n";
-					show_page_subtitle(_T('author_subtitle_cases', array('author' => get_person_name($author_data)), 'cases_participants'));
+					echo "<p class=\"normal_text\">\n";
 					show_listcase_start();
 		
 					for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
@@ -151,69 +197,40 @@ $result = lcm_query($q);
 					}
 
 					show_listcase_end($list_pos, $number_of_rows);
-					echo "</fieldset>\n";
+					echo "</p>\n";
 				}
 
 				break;
 			//
 			// Author followups
 			//
-			case 'followups' :
-
+			case 'followups':
 				if (! allowed_author($author, 'r'))
 					die("Access denied");
 			
-				echo '<fieldset class="info_box">';
 				show_page_subtitle(_T('author_subtitle_followups', array('author' => get_person_name($author_data))), 'cases_followups');
 
-				// By default, show from "now() - 1 month" to NOW().
-				$link = new Link();
-				$link->delVar('date_start_day');
-				$link->delVar('date_start_month');
-				$link->delVar('date_start_year');
-				$link->delVar('date_end_day');
-				$link->delVar('date_end_month');
-				$link->delVar('date_end_year');
-				echo $link->getForm();
+				$foo = get_date_range_fields();
+
+				$date_start = $foo['date_start'];
+				$date_end   = $foo['date_end'];
+
+				echo $foo['html'];
 
 				echo "<p class=\"normal_text\">\n";
-				$date_end = get_datetime_from_array($_REQUEST, 'date_end', 'end', date('Y-m-d H:i:s'));
-				$date_start = get_datetime_from_array($_REQUEST, 'date_start', 'start', date('Y-m-d H:i:s', strtotime("-1 month" . $date_end)));
-
-				echo _Ti('time_input_date_start');
-				echo get_date_inputs('date_start', $date_start);
-
-				echo _Ti('time_input_date_end');
-				echo get_date_inputs('date_end', $date_end);
-				echo ' <button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-				echo "</p>\n";
-				echo "</form>\n";
-
-				echo "<p class=\"normal_text\">\n";
-
-				$headers[0]['title'] = _Th('time_input_date_start');
-				$headers[0]['order'] = 'fu_order';
-				$headers[0]['default'] = 'ASC';
-				$headers[1]['title'] = _Th('time_input_length');
-				$headers[1]['order'] = 'no_order';
-				$headers[2]['title'] = _Th('case_input_id');
-				$headers[2]['order'] = 'no_order';
-				$headers[3]['title'] = _Th('fu_input_type');
-				$headers[3]['order'] = 'no_order';
-				$headers[4]['title'] = _Th('fu_input_description');
-				$headers[4]['order'] = 'no_order';
+				show_listfu_start('author');
 			
-				show_list_start($headers);
-			
-				$q = "SELECT id_followup, id_case, date_start, date_end, type, description, case_stage
+				$q = "SELECT id_followup, id_case, date_start, date_end, type, description, case_stage, hidden
 					FROM lcm_followup
 					WHERE id_author = $author
-					  AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "')
-					  AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
+					  AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" .  $date_start . "') ";
+
+				if ($date_end != "-1")
+					$q .= " AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
 			
 				// Add ordering
-				if ($fu_order) $q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
-
+				if ($fu_order)
+					$q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
 			
 				$result = lcm_query($q);
 
@@ -240,44 +257,10 @@ $result = lcm_query($q);
 			
 				// Process the output of the query
 				// [ML] I don't know if I'm drinking too much coffee, but "$list_pos == 'all'" would always return 1
-				for ($i = 0; (($i < $prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result)); $i++) {
-					echo "<tr>\n";
-					$td = '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">';
-					
-					// Start date
-					echo $td . format_date($row['date_start'], 'short') . '</td>';
-					
-					// Time
-					echo $td;
-					$fu_date_end = vider_date($row['date_end']);
-					if ($prefs['time_intervals'] == 'absolute') {
-						if ($fu_date_end) echo format_date($row['date_end'],'short');
-					} else {
-						$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
-						echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
-					}
-					echo "</td>\n";
+				for ($i = 0; (($i < $prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result)); $i++)
+					show_listfu_item($row, $i, 'author');
 
-					// Case ID
-					echo $td;
-					echo '<a class="content_link" href="case_det.php?case=' . $row['id_case'] . '">' . $row['id_case'] . "</a>";
-					echo "</td>\n";
-
-					// Type
-					echo $td . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
-
-					// Description
-					$short_description = get_fu_description($row);
-			
-					echo $td;
-					echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . $short_description . '</a>';
-					echo "</td>\n";
-			
-					echo "</tr>\n";
-				}
-			
 				show_list_end($list_pos, $number_of_rows, true);
-
 				echo "</p>\n";
 
 				// Total hours for period
@@ -291,96 +274,152 @@ $result = lcm_query($q);
 				$row = lcm_fetch_array($result);
 				
 				echo '<p class="normal_text">';
-				echo 'Total hours: ' . format_time_interval($row['total_time'], true) . "<br />\n"; // TRAD
+				echo _Ti('generic_input_total')
+					. format_time_interval($row['total_time'], true)
+					. " " . _T('time_info_short_hour')
+					. "<br />\n";
 				echo "</p>\n";
-
-				// echo "<p class='content_link'>\n";
-				// echo '<a href="case_activity.php?case=' . $case . '" class="create_new_lnk">' . 'Printable list of activities' . "</a>\n";	// TRAD
-				// echo "<br /><br />\n";
-			
-				// echo "</p>\n";
-				echo "</fieldset>\n";
 				
 				break;
 			//
 			// Time spent on case by authors
 			//
 			case 'times' :
-
 				if (! allowed_author($author, 'r'))
 					die("Access denied");
 
-				// Get the information from database
-				// List all case followups of this authors
-				$q = "SELECT
-						c.title,
-						sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0,
-							UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time,
-						sum(sumbilled) as sumbilled
-					FROM  lcm_case as c, lcm_followup as fu
-					WHERE fu.id_case = c.id_case AND fu.id_author = $author
-					GROUP BY fu.id_case";
-				$result = lcm_query($q);
-
+				// List time spent for each case
 				// Show table headers
-				echo '<fieldset class="info_box">';
 				show_page_subtitle(_T('author_subtitle_reports', array('author' => get_person_name($author_data))), 'reports_intro');
 
-				echo "<p class=\"normal_text\">\n";
-				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
-				echo "<tr>\n";
-				echo "<th class='heading'>" . _Th('author_input_case') . "</th>\n";
-				echo "<th class='heading' width='1%' nowrap='nowrap'>" . 'Time spent' . ' (' . 'hrs' . ")</th>\n"; // TRAD
+				function show_report_for_user($author, $date_start, $date_end, $type) {
+					if ($type == "case") {
+						$q = "SELECT c.title, c.id_case, 
+								sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0,
+									UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time,
+								sum(sumbilled) as sumbilled 
+						 	  FROM lcm_case as c, lcm_followup as fu 
+							  WHERE fu.id_case = c.id_case AND fu.id_author = $author
+								AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "') ";
 
-				$total_time = 0;
-				$total_sum_billed = 0.0;
-				$meta_sum_billed = read_meta('fu_sum_billed');
+						if ($date_end != "-1") 
+							$q .= " AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
 
-				if ($meta_sum_billed == 'yes') {
-					$currency = read_meta('currency');
-					echo "<th class='heading' width='1%' nowrap='nowrap'>" . _Th('fu_input_sum_billed') . ' (' . $currency . ")</th>\n";
-				}
+						$q .= " GROUP BY fu.id_case";
+					} elseif ($type == "fu") {
+						$q = "SELECT fu.type,
+								sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0,
+									UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time,
+								sum(sumbilled) as sumbilled 
+						 	  FROM lcm_followup as fu 
+							  WHERE fu.id_author = $author
+								AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "') ";
 
-				echo "</tr>\n";
+						if ($date_end != "-1")
+							$q .= " AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "') ";
 
-				// Show table contents & calculate total
-				while ($row = lcm_fetch_array($result)) {
-					echo "<!-- Total = " . $total_sum_billed . " - row = " . $row['sumbilled'] . " -->\n";
+						$q .= " GROUP BY fu.type";
+					} elseif ($type == "agenda") {
+						$q = "SELECT ap.type,
+								sum(IF(UNIX_TIMESTAMP(ap.end_time) > 0,
+									UNIX_TIMESTAMP(ap.end_time)-UNIX_TIMESTAMP(ap.start_time), 0)) as time
+						 	  FROM lcm_app as ap
+							  WHERE ap.id_author = $author
+							  	AND ap.id_case = 0
+								AND UNIX_TIMESTAMP(start_time) >= UNIX_TIMESTAMP('" . $date_start . "') ";
 
-					$total_time += $row['time'];
-					$total_sum_billed += $row['sumbilled'];
+						if ($date_end != "-1")
+							$q .= " AND UNIX_TIMESTAMP(end_time) <= UNIX_TIMESTAMP('" . $date_end . "') ";
 
-					echo '<tr><td>' . $row['title'] . '</td><td align="right">';
-					echo format_time_interval($row['time'],($prefs['time_intervals_notation'] == 'hours_only'));
-					echo "</td>\n";
-
-					if ($meta_sum_billed == 'yes') {
-						echo '<td align="right">';
-						echo format_money($row['sumbilled']);
-						echo "</td>\n";
+						$q .= " GROUP BY ap.type";
 					}
-					
+
+					$result = lcm_query($q);
+
+					echo "<p class=\"normal_text\">\n";
+					echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
+					echo "<tr>\n";
+
+					echo '<th class="heading">'
+						. _T('case_subtitle_times_by_' . $type)
+						. "</th>\n";
+
+					echo "<th class='heading' width='1%' nowrap='nowrap'>" 
+						. _Th('case_input_total_time') . ' (' . _T('time_info_short_hour') . ")"
+						. "</th>\n";
+
+					$total_time = 0;
+					$total_sum_billed = 0.0;
+
+					$meta_sum_billed = (read_meta('fu_sum_billed') == 'yes');
+					$meta_sum_billed &= ($type == "case" || $type == "fu");
+
+					if ($meta_sum_billed) {
+						$currency = read_meta('currency');
+						echo "<th class='heading' width='1%' nowrap='nowrap'>" . _Th('fu_input_sum_billed') . ' (' . $currency . ")</th>\n";
+					}
+
 					echo "</tr>\n";
-				}
 
-				// Show total case hours
-				echo "<tr>\n";
-				echo "<td><strong>" . 'TOTAL:' . "</strong></td>\n"; // TRAD
-				echo "<td align='right'><strong>";
-				echo format_time_interval($total_time,($prefs['time_intervals_notation'] == 'hours_only'));
-				echo "</strong></td>\n";
+					// Show table contents & calculate total
+					while ($row = lcm_fetch_array($result)) {
+						echo "<tr>\n";
+						echo "<!-- Total = " . $total_sum_billed . " - row = " . $row['sumbilled'] . " -->\n";
+	
+						$total_time += $row['time'];
+						$total_sum_billed += $row['sumbilled'];
+	
+						echo '<td>';
+						
+						if ($type == "case") {
+							echo '<a class="content_link" href="case_det.php?case=' . $row['id_case'] . '">'
+								.  $row['title'] 
+								. '</a>';
+						} elseif ($type == "fu") {
+							echo  _Tkw("followups", $row['type']);
+						} elseif ($type == "agenda") {
+							echo _Tkw("appointments", $row['type']);
+						}
+						
+						echo '</td>';
 
-				if ($meta_sum_billed == 'yes') {
-					echo '<td align="right"><strong>';
-					echo format_money($total_sum_billed);
+						echo '<td align="right">'
+						. format_time_interval_prefs($row['time'])
+						. "</td>\n";
+	
+						if ($meta_sum_billed) {
+							echo '<td align="right">';
+							echo format_money($row['sumbilled']);
+							echo "</td>\n";
+						}
+	
+						echo "</tr>\n";
+					}
+
+					// Show total case hours
+					echo "<tr>\n";
+					echo "<td><strong>" . _Ti('generic_input_total') . "</strong></td>\n";
+					echo "<td align='right'><strong>";
+					echo format_time_interval_prefs($total_time);
 					echo "</strong></td>\n";
+
+					if ($meta_sum_billed) {
+						echo '<td align="right"><strong>';
+						echo format_money($total_sum_billed);
+						echo "</strong></td>\n";
+					}
+
+					echo "</tr>\n";
+					echo "</table>\n";
+					echo "</p>\n";
 				}
 				
-				echo "</tr>\n";
+				$foo = get_date_range_fields();
+				echo $foo['html'];
 
-				echo "</table>\n";
-				echo "</p>\n";
-				echo "</fieldset>\n";
+				show_report_for_user($author, $foo['date_start'], $foo['date_end'], 'case');
+				show_report_for_user($author, $foo['date_start'], $foo['date_end'], 'fu');
+				show_report_for_user($author, $foo['date_start'], $foo['date_end'], 'agenda');
 
 				break;
 
@@ -388,14 +427,26 @@ $result = lcm_query($q);
 				if (! allowed_author($author, 'r'))
 					die("Access denied");
 
-				echo '<fieldset class="info_box">';
 				show_page_subtitle(_T('author_subtitle_appointments', array('author' => get_person_name($author_data))), 'tools_agenda');
+
+				$foo = get_date_range_fields();
+
+				$date_start = $foo['date_start'];
+				$date_end   = $foo['date_end'];
+
+				echo $foo['html'];
+
 				echo "<p class=\"normal_text\">\n";
 
-				$q = "SELECT lcm_app.*
-					FROM lcm_author_app,lcm_app
-					WHERE lcm_author_app.id_app=lcm_app.id_app
-						AND lcm_author_app.id_author=" . $GLOBALS['author_session']['id_author'];
+				$q = "SELECT ap.*
+					FROM lcm_author_app as aa, lcm_app as ap
+					WHERE aa.id_app = ap.id_app
+						AND UNIX_TIMESTAMP(start_time) >= UNIX_TIMESTAMP('" . $date_start . "') ";
+
+				if ($date_end != "-1") 
+					$q .= " AND UNIX_TIMESTAMP(end_time) <= UNIX_TIMESTAMP('" . $date_end . "') ";
+
+				$q .= " AND aa.id_author = " . $GLOBALS['author_session']['id_author'];
 				
 				// Sort agenda by date/time of the appointments
 				$order = 'DESC';
@@ -413,8 +464,8 @@ $result = lcm_query($q);
 					$headers = array( array( 'title' => _Th('time_input_date_start'), 'order' => 'order', 'default' => 'DESC'),
 							array( 'title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ), 'order' => 'no_order'),
 							array( 'title' => _Th('app_input_type'), 'order' => 'no_order'),
-							array( 'title' => _Th('app_input_title'), 'order' => 'no_order'),
-							array( 'title' => _Th('app_input_reminder'), 'order' => 'no_order'));
+							array( 'title' => _Th('app_input_title'), 'order' => 'no_order'));
+							// array( 'title' => _Th('app_input_reminder'), 'order' => 'no_order'));
 					show_list_start($headers);
 				
 					// Check for correct start position of the list
@@ -445,8 +496,9 @@ $result = lcm_query($q);
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' . _Tkw('appointments', $row['type']) . '</td>';
 						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
 							. '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
-						echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
-							. format_date($row['reminder'], 'short') . '</td>';
+						// [ML] removed, not very useful.
+						// echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">'
+						//	. format_date($row['reminder'], 'short') . '</td>';
 						echo "</tr>\n";
 					}
 				
@@ -454,7 +506,6 @@ $result = lcm_query($q);
 				}
 				
 				echo "</p>\n";
-				echo "</fieldset>\n";
 
 				echo '<p><a href="edit_app.php?app=0" class="create_new_lnk">' . _T('app_button_new') . '</a></p>';
 
@@ -471,6 +522,7 @@ $result = lcm_query($q);
 			*/
 		}
 
+		echo "</fieldset>\n";
 		lcm_page_end();
 	} else {
 		die("There's no such author!");

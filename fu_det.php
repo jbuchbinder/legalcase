@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.32 2005/05/13 14:21:25 mlutfy Exp $
+	$Id: fu_det.php,v 1.33 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -47,6 +47,11 @@ if (isset($_GET['followup'])) {
 	die("Which follow-up?");
 }
 
+// For 'edit case' button + 'undelete' message
+$case_allow_modif = read_meta('case_allow_modif');
+$edit = allowed($case,'e');
+$admin = allowed($case, 'a');
+
 lcm_page_start(_T('title_fu_view'), '', '', 'cases_followups');
 
 echo '<fieldset class="info_box">';
@@ -55,6 +60,7 @@ echo '<fieldset class="info_box">';
 $case = $fu_data['id_case'];
 show_context_start();
 show_context_case_title($case, 'followups');
+show_context_case_stage($case, $fu_data['id_followup']);
 show_context_case_involving($case);
 
 // Show parent appointment, if any
@@ -97,6 +103,15 @@ if ($fu_data['case_stage']) {
 
 show_context_end();
 
+if ($fu_data['hidden'] == 'Y') {
+	echo '<p class="normal_text"><strong>' . _T('fu_info_is_deleted') . "</strong>";
+
+	if ($admin)
+		echo " " . _T('fu_info_is_deleted2');
+	
+	echo "</p>\n";
+}
+
 echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
 
 // Author
@@ -126,7 +141,7 @@ echo "</tr>\n";
 // FU type
 echo "<tr>\n";
 echo '<td>' . _Ti('fu_input_type') . "</td>\n";
-echo '<td>' . _T('kw_followups_' . $fu_data['type'] . '_title') . "</td>\n";
+echo '<td>' . _Tkw('followups', $fu_data['type']) . "</td>\n";
 echo "</tr>\n";
 
 // Conclusion for case/status change
@@ -135,12 +150,18 @@ if ($fu_data['type'] == 'status_change' || $fu_data['type'] == 'stage_change') {
 
 	echo "<tr>\n";
 	echo '<td>' . _Ti('fu_input_conclusion') . "</td>\n";
-	echo '<td>' . $tmp['conclusion'] . "</td>\n";
+
+	echo '<td>';
+
+	if (read_meta('case_result') == 'yes' && $tmp['result'])
+		echo _Tkw('_crimresults', $tmp['result']) . "<br />\n";
+	
+	echo _Tkw('conclusion', $tmp['conclusion']) . "</td>\n";
 	echo "</tr>\n";
 
 	echo "<tr>\n";
 	echo '<td>' . _Ti('fu_input_sentence') . "</td>\n";
-	echo '<td>' . $tmp['sentence'] . "</td>\n";
+	echo '<td>' . _Tkw('sentence', $tmp['sentence']) . "</td>\n";
 	echo "</tr>\n";
 }
 
@@ -165,13 +186,9 @@ if ($fu_sum_billed == 'yes') {
 }
 				
 echo "</table>\n";
-
-// Show 'edit case' button if allowed
-$case_allow_modif = read_meta('case_allow_modif');
-$edit = ($GLOBALS['author_session']['status'] == 'admin') || allowed($case,'e');
-
 echo "<br />";
 
+// Edit button
 if ($case_allow_modif == 'yes' && $edit) {
 	echo '<a href="edit_fu.php?followup=' . $fu_data['id_followup'] . '" class="edit_lnk">'
 		. _T('fu_button_edit')

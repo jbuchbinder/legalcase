@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.77 2005/05/16 08:43:30 mlutfy Exp $
+	$Id: edit_case.php,v 1.78 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,10 +26,11 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 // Read site configuration preferences
-$case_court_archive = read_meta('case_court_archive');
+$case_court_archive   = read_meta('case_court_archive');
 $case_assignment_date = read_meta('case_assignment_date');
-$case_alledged_crime = read_meta('case_alledged_crime');
-$case_allow_modif = read_meta('case_allow_modif');
+$case_alledged_crime  = read_meta('case_alledged_crime');
+$case_legal_reason    = read_meta('case_legal_reason');
+$case_allow_modif     = read_meta('case_allow_modif');
 
 if (empty($_SESSION['errors'])) {
 
@@ -201,13 +202,15 @@ if ($_SESSION['case_data']['id_case']) {
 	} */
 
 	// Legal reason
-	echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
-	echo '<td>';
-	echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
-	echo clean_output($_SESSION['case_data']['legal_reason']);
-	echo "</textarea>";
-	echo "</td>\n";
-	echo "</tr>\n";
+	if ($case_legal_reason == 'yes') {
+		echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
+		echo '<td>';
+		echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
+		echo clean_output($_SESSION['case_data']['legal_reason']);
+		echo "</textarea>";
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
 
 	// Alledged crime
 	if ($case_alledged_crime == 'yes') {
@@ -266,7 +269,7 @@ if ($_SESSION['case_data']['id_case']) {
 	echo '<td><select name="stage" id="input_stage" class="sel_frm">' . "\n";
 	foreach($system_kwg['stage']['keywords'] as $kw) {
 		$sel = ($kw['name'] == $_SESSION['case_data']['stage'] ? ' selected="selected"' : '');
-		echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
+		echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 	}
 	echo "</select></td>\n";
 	echo "</tr>\n";

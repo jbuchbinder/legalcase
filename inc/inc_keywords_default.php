@@ -5,9 +5,8 @@ define('_INC_KEYWORDS_DEFAULT', '1');
 
 include_lcm('inc_keywords');
 
-global $system_keyword_groups;
-
-$system_keyword_groups = array (
+function get_default_keywords() {
+  $system_keyword_groups = array (
 	"followups" => array(
 		"name" => "followups",
 		"title" => "kwg_followups_title",
@@ -58,6 +57,11 @@ $system_keyword_groups = array (
 				"name" => "conclusion",
 				"title" => "kw_followups_conclusion_title",
 				"description" => "kw_followups_conclusion_description",
+				"ac_author" => "N"),
+			array (
+				"name" => "deletion",
+				"title" => "kw_followups_deletion_title",
+				"description" => "kw_followups_deletion_description",
 				"ac_author" => "N"),
 			array (
 				"name" => "reopening",
@@ -356,8 +360,67 @@ $system_keyword_groups = array (
 	),
 
 	// [ML] I am prefixing with _, to show that it is system-created,
-	// because at this point, we have no garanty that the user has not
-	// already created a kwg with this name.
+	// because at this point in the development process, we have no 
+	// garanty that the user has not already created a kwg with this name.
+	"_crimresults" => array(
+		"name" => "_crimresults",
+		"title" => "kwg__crimresults_title",
+		"description" => "kwg__crimresults_title",
+		"type" => "system",
+		"policy" => "optional",
+		"quantity" => "one",
+		"suggest" => "none",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array(
+			array (
+				"name" => "none",
+				"title" => "10. kw__crimresults_none_title",
+				"description" => "kw__crimresults_none_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "res001", // sentence
+				"title" => "15. kw__crimresults_res001_title",
+				"description" => "kw__crimresults_res001_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "res002", // decision
+				"title" => "20. kw__crimresults_res002_title",
+				"description" => "kw__crimresults_res002_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "res003", // agreement
+				"title" => "25. kw__crimresults_res003_title",
+				"description" => "kw__crimresults_res003_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "res004", // liberation of criminal responsability
+				"title" => "30. kw__crimresults_res004_title",
+				"description" => "kw__crimresults_res004_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "res005", // cessation
+				"title" => "35. kw__crimresults_res005_title",
+				"description" => "kw__crimresults_res005_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "res006", // stopped
+				"title" => "40. kw__crimresults_res006_title",
+				"description" => "kw__crimresults_res006_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "res007", // ruling
+				"title" => "45. kw__crimresults_res007_title",
+				"description" => "kw__crimresults_res007_description",
+				"ac_author" => "Y"),
+			array (
+				"name" => "res008", // other
+				"title" => "50. kw__crimresults_res008_title",
+				"description" => "kw__crimresults_res008_description",
+				"ac_author" => "Y"),
+		)
+	),
+
 	"_refnumbers" => array (
 		"name" => "_refnumbers",
 		"title" => "kwg__refnumbers_title",
@@ -418,7 +481,10 @@ $system_keyword_groups = array (
 				"ac_author" => "Y" )
 		)
 	)
-);
+  );
+
+  return $system_keyword_groups;
+}
 
 function create_groups($keyword_groups) {
 	foreach ($keyword_groups as $skwg) {

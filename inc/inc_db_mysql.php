@@ -18,13 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.23 2005/06/01 10:50:33 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.24 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
 define('_INC_DB_MYSQL', '1');
 
-if (! function_exists(mysql_query))
+if (! function_exists("mysql_query"))
 	die("ERROR: MySQL is not correctly installed. Verify that the php-mysql
 	module is installed and that the php.ini has something similar to
 	'extension=mysql.so'. Refer to the user's manual FAQ for more information.");
@@ -33,8 +33,12 @@ if (! function_exists(mysql_query))
 // SQL query functions
 //
 
+function lcm_sql_server_info() {
+	return "MySQL " . @mysql_get_server_info();
+}
+
 function lcm_query_db($query, $accept_fail = false) {
-	global $spip_mysql_link;
+	global $lcm_mysql_link;
 	static $tt = 0;
 
 	$my_debug   = $GLOBALS['sql_debug'];
@@ -45,8 +49,8 @@ function lcm_query_db($query, $accept_fail = false) {
 	if ($my_profile)
 		$m1 = microtime();
 
-	if ($GLOBALS['mysql_recall_link'] AND $spip_mysql_link)
-		$result = mysql_query($query, $spip_mysql_link);
+	if ($GLOBALS['mysql_recall_link'] AND $lcm_mysql_link)
+		$result = mysql_query($query, $lcm_mysql_link);
 	else 
 		$result = mysql_query($query);
 
@@ -121,20 +125,24 @@ function process_query($query) {
 //
 
 function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
-	global $spip_mysql_link, $lcm_mysql_db;	// for multiple connections
+	global $lcm_mysql_link, $lcm_mysql_db;	// for multiple connections
 
-	if ($link && $db) {
+	lcm_debug("lcm_connect_db: host = $host, login = $login, pass =~ " . strlen($pass) . " chars", "lcm");
+
+	if (! $login)
+		lcm_panic("missing login?");
+
+	if ($link && $db)
 		return mysql_select_db($db);
-	}
 
 	if ($port > 0) $host = "$host:$port";
-	$spip_mysql_link = @mysql_connect($host, $login, $pass);
+	$lcm_mysql_link = @mysql_connect($host, $login, $pass);
 
-	if ($db) {
+	if ($lcm_mysql_link && $db) {
 		$lcm_mysql_db = $db;
 		return @mysql_select_db($db);
 	} else {
-		return $spip_mysql_link;
+		return $lcm_mysql_link;
 	}
 }
 

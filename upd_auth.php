@@ -18,11 +18,10 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_auth.php,v 1.5 2005/05/12 14:04:52 mlutfy Exp $
+	$Id: upd_auth.php,v 1.6 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
-include('inc/inc_acc.php');
 
 // TODO: Replace by $_SESSION['errors']
 if (! ($case > 0)) {

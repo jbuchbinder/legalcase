@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.48 2005/04/01 07:17:10 mlutfy Exp $
+	$Id: install.php,v 1.49 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 session_start();
@@ -88,13 +88,10 @@ if (@file_exists('inc/config/inc_connect.php')) {
 
 $step = $_REQUEST['step'];
 
-if ($step == 5) {
+function install_step_5() {
 	include_config('inc_connect_install');
 	include_lcm('inc_meta');
 	include_lcm('inc_access');
-
-	$_SESSION['usr'] = array();
-	$_SESSION['errors'] = array();
 
 	// Either leave the form completely empty, or fill in everything
 	if ($_REQUEST['username'] || $_REQUEST['name_first'] || $_REQUEST['name_last'] || $_REQUEST['email']) {
@@ -109,7 +106,7 @@ if ($step == 5) {
 			'name_first' => 'person_input',
 			'name_last'  => 'person_input',
 			'username'   => 'authoredit_input',
-			'email'      => 'input',
+			// 'email'      => 'input', // [ML] too annoying
 			'password'   => 'authorconf_input',
 			'password_confirm' => 'authorconf_input');
 
@@ -121,10 +118,8 @@ if ($step == 5) {
 		if ($_REQUEST['password'] != $_REQUEST['password_confirm'])
 			$_SESSION['errors']['password'] = _T('login_warning_password_dont_match');
 
-		if (count($_SESSION['errors'])) {
-			header("Location: install.php?step=4");
-			exit;
-		}
+		if (count($_SESSION['errors']))
+			return install_step_4();
 
 		$query = "SELECT id_author FROM lcm_author WHERE username='" . $_SESSION['usr']['username'] . "'";
 		$result = lcm_query($query);
@@ -139,6 +134,7 @@ if ($step == 5) {
 					name_middle = '" . $_SESSION['usr']['name_middle'] . "', 
 					name_last = '" . $_SESSION['usr']['name_last'] . "', 
 					username = '" . $_SESSION['usr']['username'] . "', 
+					date_update = NOW(),
 					alea_actuel = '', 
 					alea_futur = FLOOR(32000*RAND()), 
 					status = 'admin'";
@@ -148,6 +144,7 @@ if ($step == 5) {
 			lcm_query_db($query);
 		} else {
 			$query = "INSERT INTO lcm_author " . $query;
+			$query .= ", date_creation = NOW()";
 			lcm_query_db($query);
 			$id_author = lcm_insert_id();
 		}
@@ -209,10 +206,6 @@ if ($step == 5) {
 		write_meta('site_address', $site_address);
 	}
 
-	install_html_start();
-
-	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
-
 	include_lcm('inc_meta_defaults');
 	init_default_config();
 	init_languages();
@@ -222,6 +215,8 @@ if ($step == 5) {
 		copy('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php');
 		@unlink('inc/config/inc_connect_install.php');
 	}
+
+	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
 
 	echo "<div class='box_success'>\n";
 	echo "<p><b>"._T('install_info_do_not_forget') . "</b></p>\n";
@@ -234,16 +229,10 @@ if ($step == 5) {
 		. "</div>\n";
 	echo "</form>\n";
 
-	$_SESSION['errors'] = array();
-	$_SESSION['usr'] = array();
-
 	write_metas();
-	install_html_end();
 }
 
-else if ($step == 4) {
-	install_html_start();
-
+function install_step_4() {
 	echo "<h3><small>" . _T('install_step_four') . "</small> "
 		. _T('install_title_admin_account') . "</h3>\n";
 
@@ -323,20 +312,19 @@ else if ($step == 4) {
 
 	echo "</form>";
 
-	install_html_end();
-
 	$_SESSION['errors'] = array();
 	$_SESSION['usr'] = array();
 }
 
-else if ($step == 3) {
-	install_html_start();
+function install_step_3() {
+	$db_address  = $_REQUEST['db_address'];
+	$db_login    = $_REQUEST['db_login'];
+	$db_password = $_REQUEST['db_password'];
+
+	global $lcm_db_version;
 
 	$install_log = "";
 	$upgrade_log = "";
-
-	echo "<h3><small>" . _T('install_step_three') . "</small> "
-		. _T('install_title_creating_database') . "</h3>\n";
 
 	// Comment out possible errors because the creation of new tables
 	// over an already installed system is not a problem. Besides, we do
@@ -351,12 +339,18 @@ else if ($step == 3) {
 
 	$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db);
 
+	// FIXME
+	if (! $link)
+		lcm_panic("connection denied: " . lcm_sql_error());
+
 	// Test if the software was already installed
 	lcm_query("SELECT COUNT(*) FROM lcm_meta", true);
 	$already_installed = !lcm_sql_errno();
 	$old_lcm_version = 'NONE';
 
 	if ($already_installed) {
+		lcm_log("LCM already installed", 'install');
+
 		// Find the current database version
 		$old_lcm_db_version = 0;
 		$query = "SELECT value FROM lcm_meta WHERE name = 'lcm_db_version'";
@@ -364,29 +358,34 @@ else if ($step == 3) {
 		while ($row = lcm_fetch_array($result))
 			$old_lcm_db_version = $row['value'];
 
+		lcm_log("LCM version installed is $old_lcm_db_version", 'install');
+
 		// Check if upgrade is needed
 		if ($old_lcm_db_version < $lcm_db_version) {
-			// Upgrade the existing database
+			lcm_log("Calling the upgrade procedure (since < $lcm_db_version)", 'install');
 			include_lcm('inc_db_upgrade');
 			$upgrade_log  = upgrade_database($old_lcm_db_version);
+		} else {
+			lcm_log("Upgrade _not_ called, looks OK (= $lcm_db_version)", 'install');
 		}
 	} else {
-		// Create database from scratch
+		lcm_log("Creating the database from scratch", 'install');
+
 		include_lcm('inc_db_create');
 		$install_log .= create_database();
 
-		// Do not remove, or variables won't be declared
-		// Silly PHP.. we should use other mecanism instead
-		global $system_keyword_groups;
-		$system_keyword_groups = array();
-
-		include_lcm('inc_meta');
-		include_lcm('inc_keywords_default');
-		create_groups($system_keyword_groups);
-
-		write_metas();
+		lcm_log("DB creation complete", 'install');
 	}
 
+	// Create default keywords
+	include_lcm('inc_meta');
+	include_lcm('inc_keywords_default');
+
+	$skwg = get_default_keywords();
+	create_groups($skwg);
+	write_metas(); // regenerate inc/data/inc_meta_cache.php
+
+	// Test DB: not used for now..
 	include_lcm('inc_db_test');
 	$structure_ok = lcm_structure_test();
 
@@ -403,6 +402,9 @@ else if ($step == 3) {
 	echo " -->\n"; // end of 'hidden errors'
 
 	if (! empty($install_log)) {
+		echo "<h3><small>" . _T('install_step_three') . "</small> "
+			. _T('install_title_creating_database') . "</h3>\n";
+
 		echo "<div class='box_error'>\n";
 		echo "\t<p>";
 		echo "<b>" . _T('warning_operation_failed') . "</b> " . _T('install_database_install_failed');
@@ -412,6 +414,9 @@ else if ($step == 3) {
 		// Dump error listing
 		echo put_text_in_textbox($install_log);
 	} else if (! empty($upgrade_log)) {
+		echo "<h3><small>" . _T('install_step_three') . "</small> "
+			. _T('install_title_creating_database') . "</h3>\n";
+
 		echo "<div class='box_error'>\n";
 		echo "\t<p>" . _T('install_warning_update_impossible', array('old_version' => $old_lcm_version, 'version' => $lcm_version)) . "</p>\n";
 		echo "</div>\n";
@@ -419,6 +424,9 @@ else if ($step == 3) {
 		// Dump error listing
 		echo put_text_in_textbox($upgrade_log);
 	} else if (! $structure_ok) {
+		echo "<h3><small>" . _T('install_step_three') . "</small> "
+			. _T('install_title_creating_database') . "</h3>\n";
+
 		echo "<div class='box_error'>\n";
 		echo "\t<p> STRUCTURE PROBLEM </p>\n"; // TRAD
 		echo "</div>\n";
@@ -438,25 +446,24 @@ else if ($step == 3) {
 		fputs($myFile, $conn);
 		fclose($myFile);
 
-		echo "<div class='box_success'>\n";
-		echo "\t<p><b>" . _T('install_database_installed_ok') . "</b></p>\n";
-		echo "</div>\n\n";
-
-		echo "<p>" . _T('install_next_step') . "</p>\n\n";
-
-		echo "<form action='install.php' method='post'>\n";
-		echo "\t<input type='hidden' name='step' value='4' />\n";
-		echo "\t<div align='$lcm_lang_right'>"
-			. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
-			. "</div>\n";
-		echo "</form>\n\n";
+		install_step_4();
 	}
-
-	install_html_end();
 }
 
-else if ($step == 2) {
-	install_html_start();
+function install_step_2() {
+	$db_address  = $_SESSION['usr']['db_address']  = $_REQUEST['db_address'];
+	$db_login    = $_SESSION['usr']['db_login']    = $_REQUEST['db_login'];
+	$db_password = $_SESSION['usr']['db_password'] = $_REQUEST['db_password'];
+
+	if (! ($db_login || $db_password)) {
+		if (! $db_login)
+			$_SESSION['errors']['login'] = _Ti('install_connection_login') . _T('warning_field_mandatory');
+
+		if (! $db_password)
+			$_SESSION['errors']['password'] = _Ti('install_connection_password') . _T('warning_field_mandatory');
+
+		return install_step_1();
+	}
 
 	echo "\n<!--\n";
 		$link = lcm_connect_db_test($db_address, $db_login, $db_password);
@@ -464,6 +471,15 @@ else if ($step == 2) {
 	echo "\n-->\n";
 
 	if ($error || ! $link) {
+
+		$_SESSION['errors']['generic'] = _T('warning_sql_connection_failed')
+			// . ' ' . _T('install_info_go_back_verify_data')
+			. ' ' . _T('install_info_sql_connection_failed')
+			. ' (' . lcm_sql_errno() . ': ' . $error . ')';
+
+		return install_step_1();
+
+		/*
 		echo "<h3><small>" . _T('install_step_two') . "</small> "
 			. _T('install_title_connection_attempt') . "</h3>\n";
 
@@ -473,8 +489,8 @@ else if ($step == 2) {
 		echo "<p>"._T('install_info_go_back_verify_data') . ' ' . lcm_help('install_connection') . "</p>\n";
 		echo "<p><small>" . _T('install_info_sql_connection_failed') . "</small></p>\n";
 		echo "</div>\n\n";
+		*/
 
-		exit;
 	}
 
 	echo "<h3><small>" . _T('install_step_two') .  "</small> "
@@ -482,7 +498,7 @@ else if ($step == 2) {
 
 	echo "<form action='install.php' method='post'>\n";
 	echo "\t<input type='hidden' name='step' value='3' />\n";
-	echo "\t<input type='hidden' name='db_address'  value=\"$db_address\" size='40' />\n";
+	echo "\t<input type='hidden' name='db_address' value=\"$db_address\" size='40' />\n";
 	echo "\t<input type='hidden' name='db_login' value=\"$db_login\" />\n";
 	echo "\t<input type='hidden' name='db_password' value=\"$db_password\" />\n\n";
 
@@ -547,21 +563,19 @@ else if ($step == 2) {
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
-
-	install_html_end();
 }
 
-else if ($step == 1) {
-	install_html_start();
-
+function install_step_1() {
 	echo "<h3><small>" . _T('install_step_one') . "</small> "
 		. _T('install_title_sql_connection') . "</h3>\n";
 
+	echo show_all_errors($_SESSION['errors']);
+
 	echo "<p class='simple_text'>" . _T('install_info_sql_connection') . " " . lcm_help("install_database") . "</p>\n";
 
-	$db_address = 'localhost';
-	$db_login = '';
-	$db_password = '';
+	$db_address = (isset($_SESSION['usr']['db_address']) ? $_SESSION['usr']['db_address'] : 'localhost');
+	$db_login = (isset($_SESSION['usr']['db_login']) ?  $_SESSION['usr']['db_login'] : '');
+	$db_password = (isset($_SESSION['usr']['db_password']) ?  $_SESSION['usr']['db_password'] : '');
 
 	// Fetch the previous configuration data to make things easier (if possible)
 	if (@file_exists('inc/config/inc_connect_install.php')) {
@@ -581,22 +595,19 @@ else if ($step == 1) {
 
 	echo "<fieldset class='fs_box'>\n";
 
-	echo "<div><label for='db_address'><strong>" . _T('install_database_address') . "</strong></label></div>\n";
-	// echo "<div>" . _T('install_info_database_address') . "</div>\n";
+	echo "<div><label for='db_address'><strong>" . f_err_star('address') . _T('install_database_address') . "</strong></label></div>\n";
 	echo "<input type='text' id='db_address' name='db_address' value=\"$db_address\" size='40' class='txt_lmnt' />\n";
 
 	echo "<br />\n";
 	echo "<br />\n";
 
-	echo "<div><label for='db_login'><strong>" . _T('install_connection_login') . "</strong></label></div>\n";
-	// echo "<div>(" . _T('install_info_connection_login') . ")</div>\n";
+	echo "<div><label for='db_login'><strong>" . f_err_star('login') . _T('install_connection_login') . "</strong></label></div>\n";
 	echo "<input type='text' id='db_login' name='db_login' value=\"$db_login\" size='40' class='txt_lmnt' />\n";
 
 	echo "<br />\n";
 	echo "<br />\n";
 
-	echo "<div><label for='db_password'><strong>" . _T('install_connection_password') . "</strong></label></div>\n";
-	// echo "<div>(" . _T('install_info_connection_password') . ")</div>\n";
+	echo "<div><label for='db_password'><strong>" . f_err_star('password') . _T('install_connection_password') . "</strong></label></div>\n";
 	echo "<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40' class='txt_lmnt' />\n";
 
 	echo "</fieldset>\n";
@@ -605,18 +616,33 @@ else if ($step == 1) {
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
-
-	install_html_end();
 }
 
-else if ($step == 'dirs') {
+function call_step($step) {
+	// Clear error handling
+	$_SESSION['errors'] = array();
+	$_SESSION['usr'] = array();
+
+	install_html_start('AUTO', '', $step);
+
+	$func = "install_step_" . $step;
+	$func();
+
+	install_html_end($step);
+
+	// Clear error handling
+	$_SESSION['errors'] = array();
+	$_SESSION['usr'] = array();
+}
+
+if (1 <= $step && $step <= 5)
+	call_step($step);
+else if ($step == 'dirs')
 	header("Location: lcm_test_dirs.php");
-}
-
 else if (!$step) {
-	$menu_lang = menu_languages('var_lang_lcm_all');
+	install_html_start('AUTO', '', "intro");
 
-	install_html_start();
+	$menu_lang = menu_languages('var_lang_lcm_all');
 
 	echo "<div align='center'>\n";
 	echo "<table border='0' cellspacing='0' width='490' height='242' style=\"background-image: url('images/lcm/lcm_logo_install.png'); border: 0\">\n";
@@ -649,7 +675,7 @@ else if (!$step) {
 		. "</div>";
 	echo "</form>";
 
-	install_html_end();
+	install_html_end("intro");
 }
 
 ?>

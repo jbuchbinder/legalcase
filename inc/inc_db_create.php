@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.44 2005/05/31 10:09:37 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.45 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -28,6 +28,7 @@ define('_INC_DB_CREATE', '1');
 // [AG] I don't see any reason for it.
 include_lcm('inc_access');
 
+// XXX DEPRECATED
 function log_if_not_duplicate_table($errno) {
 	if ($errno) {
 		$error = lcm_sql_error();
@@ -58,23 +59,6 @@ function create_database() {
 	// Main objects
 	//
 
-	// - DONE lcm_case
-	// - DONE lcm_followup
-	// - DONE lcm_author
-	// - DONE lcm_client
-	// - DONE lcm_org
-	// - DONE lcm_client_org
-	// - DONE lcm_contact
-	// + TODO lcm_courtfinal
-	// + TODO lcm_appelation
-	// - DONE lcm_keyword
-	// - DONE lcm_keyword_group
-	// - DONE lcm_keyword_client
-	// - DONE lcm_keyword_case
-	// - DONE lcm_keyword_org
-	// - DONE lcm_case_client_org
-	// - DONE lcm_case_author
-
 	lcm_log("creating the SQL tables", 'install');
 
 	$query = "CREATE TABLE lcm_case (
@@ -93,7 +77,6 @@ function create_database() {
 		PRIMARY KEY (id_case))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_case_attachment (
 		  id_attachment bigint(21) NOT NULL auto_increment,
@@ -113,7 +96,27 @@ function create_database() {
 		  FULLTEXT KEY description (description))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
+	$query = "CREATE TABLE lcm_stage (
+		id_entry bigint(21) NOT NULL auto_increment,
+		id_case bigint(21) DEFAULT 0 NOT NULL,
+		kw_case_stage varchar(255) NOT NULL DEFAULT '',
+		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		id_fu_creation bigint(21) NOT NULL DEFAULT 0,
+		date_conclusion datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		id_fu_conclusion bigint(21) NOT NULL DEFAULT 0,
+		kw_result varchar(255) NOT NULL DEFAULT '',
+		kw_conclusion varchar(255) NOT NULL DEFAULT '',
+		kw_sentence varchar(255) NOT NULL DEFAULT '',
+		sentence_val text NOT NULL DEFAULT '',
+		date_agreement datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		latest tinyint(1) DEFAULT '0' NOT NULL,
+		PRIMARY KEY (id_entry),
+		KEY id_case (id_case))";
+	$result = lcm_query($query);
+
+	$query = "CREATE UNIQUE INDEX idx_case_stage ON lcm_stage (id_case, kw_case_stage)";
+	$result = lcm_query($query);
+
 
 	$query = "CREATE TABLE lcm_followup (
 		id_followup bigint(21) NOT NULL auto_increment,
@@ -125,12 +128,12 @@ function create_database() {
 		description text NOT NULL,
 		case_stage varchar(255) NOT NULL,
 		sumbilled decimal(19,4) NOT NULL,
+		hidden ENUM('N', 'Y') not null default 'N',
 		PRIMARY KEY (id_followup),
 		KEY id_case (id_case),
 		KEY id_author (id_author))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	// [ML] XXX too many extra fields
 	$query = "CREATE TABLE lcm_author (
@@ -163,7 +166,6 @@ function create_database() {
 		KEY lang (lang))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_client (
 		id_client bigint(21) NOT NULL auto_increment,
@@ -181,7 +183,6 @@ function create_database() {
 		PRIMARY KEY id_client (id_client))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_client_attachment (
 		  id_attachment bigint(21) NOT NULL auto_increment,
@@ -201,7 +202,6 @@ function create_database() {
 		  FULLTEXT KEY description (description))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_org (
 		id_org bigint(21) NOT NULL auto_increment,
@@ -217,7 +217,6 @@ function create_database() {
 
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_org_attachment (
 		  id_attachment bigint(21) NOT NULL auto_increment,
@@ -237,7 +236,6 @@ function create_database() {
 		  FULLTEXT KEY description (description))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_contact (
 		id_contact bigint(21) NOT NULL auto_increment,
@@ -249,7 +247,6 @@ function create_database() {
 
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_keyword (
 		id_keyword bigint(21) NOT NULL auto_increment,
@@ -263,7 +260,6 @@ function create_database() {
 
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_keyword_case (
 			id_entry bigint(21) NOT NULL auto_increment,
@@ -276,7 +272,6 @@ function create_database() {
 			KEY id_case (id_case))";
 	
 	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_keyword_client (
 			id_entry bigint(21) NOT NULL auto_increment,
@@ -287,7 +282,6 @@ function create_database() {
 			KEY id_client (id_client))";
 	
 	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_keyword_org (
 			id_entry bigint(21) NOT NULL auto_increment,
@@ -298,7 +292,6 @@ function create_database() {
 			KEY id_org (id_org))";
 
 	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (id_group, name)";
 	$result = lcm_query($query);
@@ -317,7 +310,6 @@ function create_database() {
 		PRIMARY KEY (id_group))";
 
 	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE UNIQUE INDEX idx_kwg_name ON lcm_keyword_group (name)";
 	$result = lcm_query($query);
@@ -338,7 +330,6 @@ function create_database() {
 		KEY id_author (id_author))";
 
 	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_fields (
 		id_field bigint(21) NOT NULL auto_increment,
@@ -350,50 +341,6 @@ function create_database() {
 		PRIMARY KEY  (id_field))";
 
 	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
-		
-	// Just in case
-	lcm_query("DELETE FROM lcm_fields");
-
-	$query = "INSERT INTO lcm_fields (table_name, field_name, description, enum_type, filter) VALUES
-				('lcm_case',     'id_case',          'id_case',          '', 'number'),
-				('lcm_case',     'title',            'title',            '', 'text'),
-				('lcm_case',     'id_court_archive', 'id_court_archive', '', 'text'),
-				('lcm_case',     'date_creation',    'date_creation',    '', 'date'),
-				('lcm_case',     'date_assignment',  'date_assignment',  '', 'date'),
-				('lcm_case',     'legal_reason',     'legal_reason',     '', 'none'),
-				('lcm_case',     'alledged_crime',   'alleged_crime',    '', 'none'),
-				('lcm_case',     'count(*)',         'count',            '', 'number'),
-				('lcm_author',   'id_author',        'id_author',        '', 'number'),
-				('lcm_author',   'id_office',        'id_office',        '', 'number'),
-				('lcm_author',   'name_first',       'name_first',       '', 'text'),
-				('lcm_author',   'name_middle',      'name_middle',      '', 'text'),
-				('lcm_author',   'name_last',        'name_last',        '', 'text'),
-				('lcm_author',   'date_creation',    'date_creation',    '', 'date'),
-				('lcm_author',   'status',           'status',           '', 'text'),
-				('lcm_author',   'count(*)',         'count',            '', 'number'),
-				('lcm_client',   'id_client',        'id_client',        '', 'number'),
-				('lcm_client',   'name_first',       'name_first',       '', 'text'),
-				('lcm_client',   'name_middle',      'name_middle',      '', 'text'),
-				('lcm_client',   'name_last',        'name_last',        '', 'text'),
-				('lcm_client',   'date_creation',    'date_creation',    '', 'date'),
-				('lcm_client',   'citizen_number',   'citizen_number',   '', 'text'),
-				('lcm_client',   'civil_status',     'civil_status',     'keyword:system_kwg:civilstatus', 'number'),
-				('lcm_client',   'income',           'income',           'keyword:system_kwg:income', 'number'),
-				('lcm_client',   'gender',           'gender',           'list:female,male,unknown', 'text'),
-				('lcm_followup', 'id_followup',      'id_followup',      '', 'number'),
-				('lcm_followup', 'id_case',          'id_case',          '', 'number'),
-				('lcm_followup', 'id_author',        'id_author',        '', 'number'),
-				('lcm_followup', 'type',             'type',             'keyword:system_kwg:followups', 'number'),
-				('lcm_followup', 'description',      'description',      '', 'none'),
-				('lcm_followup', 'sumbilled',        'sumbilled',        '', 'number'),
-				('lcm_followup', 'date_start',       'date_start',       '', 'date'),
-				('lcm_followup', 'date_end',         'date_end',         '', 'date'),
-				('lcm_followup', 'date_end - date_start', 'time_spent',  '', 'number'),
-				('lcm_followup', 'count(*)',         'count',            '', 'none')";
-
-	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_filter (
 		id_filter bigint(21) NOT NULL auto_increment,
@@ -406,7 +353,6 @@ function create_database() {
 		KEY id_author (id_author))";
 
 	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_app (
 		id_app bigint(21) NOT NULL auto_increment,
@@ -428,7 +374,6 @@ function create_database() {
 		FULLTEXT KEY description (description))";
 
 	$result = lcm_query($query);
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	//
 	// Relations
@@ -444,7 +389,6 @@ function create_database() {
 
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 	
 	$query = "CREATE TABLE lcm_app_fu (
 		id_app bigint(21) NOT NULL default '0',
@@ -454,7 +398,6 @@ function create_database() {
 
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_author_app (
 		id_author bigint(21) NOT NULL default '0',
@@ -463,7 +406,6 @@ function create_database() {
 
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_case_client_org (
 		id_case bigint(21) DEFAULT '0' NOT NULL,
@@ -475,7 +417,6 @@ function create_database() {
 		KEY id_org (id_org))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_case_author (
 		id_case bigint(21) DEFAULT '0' NOT NULL,
@@ -489,7 +430,6 @@ function create_database() {
 		KEY id_author (id_author))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_client_org (
 		id_client bigint(21) DEFAULT '0' NOT NULL,
@@ -499,7 +439,6 @@ function create_database() {
 		KEY id_org (id_org))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_rep_col (
 		id_column bigint(21) NOT NULL auto_increment,
@@ -516,7 +455,6 @@ function create_database() {
 		KEY col_order (col_order))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_rep_line (
 		id_line bigint(21) NOT NULL auto_increment,
@@ -531,7 +469,6 @@ function create_database() {
 		KEY col_order (col_order))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_rep_filters (
 		id_report bigint(21) NOT NULL default '0',
@@ -542,7 +479,6 @@ function create_database() {
 		KEY id_filter (id_filter))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_filter_conds (
 		id_filter bigint(21) NOT NULL default '0',
@@ -556,7 +492,6 @@ function create_database() {
 		KEY cond_order (cond_order))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	$query = "CREATE TABLE lcm_rep_filter (
 		id_filter bigint(21) NOT NULL auto_increment,
@@ -569,7 +504,6 @@ function create_database() {
 		PRIMARY KEY  (id_filter))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	//
 	// Management of the application
@@ -582,17 +516,17 @@ function create_database() {
 		PRIMARY KEY (name))";
 	$result = lcm_query($query);
 
-	$log .= log_if_not_duplicate_table(lcm_sql_errno());
 
 	// Set the version of the installed database
 	$query = "INSERT INTO lcm_meta
 				SET name='lcm_db_version',value=$lcm_db_version";
 	$result = lcm_query($query);
 
-	if (!$result) $log .= lcm_sql_error . "\n";
+	lcm_log("Setting-up default LCM configuration", 'install');
+	include_lcm('inc_db_upgrade');
+	upgrade_database_conf();
 
 	lcm_log("LCM database initialisation complete", 'install');
-
 	return $log;
 }
 

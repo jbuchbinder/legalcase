@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep.php,v 1.7 2005/05/31 10:07:55 mlutfy Exp $
+	$Id: upd_rep.php,v 1.8 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,7 @@ $rep_data['id_author'] = intval($rep_data['id_author']);
 
 // Check report data for validity
 if (!$rep_data['title']) 
-	$_SESSION['errors']['title'] = _T('error_no_rep_name');
+	$_SESSION['errors']['title'] = _Ti('rep_input_title') . _T('warning_field_mandatory');
 
 if (count($_SESSION['errors'])) {
     header("Location: " . $GLOBALS['HTTP_REFERER']);

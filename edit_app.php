@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.41 2005/06/14 22:33:44 antzi Exp $
+	$Id: edit_app.php,v 1.42 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -262,7 +262,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 
 			foreach($system_kwg['appointments']['keywords'] as $kw) {
 				$sel = ($kw['name'] == $default_app ? ' selected="selected"' : '');
-				echo "<option value='" . $kw['name'] . "'" . "$sel>" . _T($kw['title']) . "</option>\n";
+				echo "<option value='" . $kw['name'] . "'" . "$sel>" . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 			}
 
 			?>

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.34 2005/05/31 15:50:26 mlutfy Exp $
+	$Id: rep_det.php,v 1.35 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -118,10 +118,11 @@ function show_report_field_edit($type, $rep_info) {
 		echo '<p class="normal_text">' . f_err_star('rep_' . $type) . "Select source table: "; // TRAD
 		echo "<input name='select_" . $type . "_type' value='table' type='hidden' />\n"; // TRAD TRAD TRAD
 		echo "<select name='select_" . $type . "_name' class='sel_frm'>
-			<option value='author'>User</option>
-			<option value='case'>Case</option>
-			<option value='client'>Client</option>
-			<option value='followup'>Follow-up</option>
+			<option value='author'>" . _T('rep_info_table_lcm_author') . "</option>
+			<option value='case'>" . _T('rep_info_table_lcm_case') . "</option>
+			<option value='stage'>" . _T('rep_info_table_lcm_stage') . "</option>
+			<option value='client'>" . _T('rep_info_table_lcm_client') . "</option>
+			<option value='followup'>" . _T('rep_info_table_lcm_followup') . "</option>
 			</select>\n";
 
 		echo "<button class='simple_form_btn' name='validate_" . $type . "_source'>" . _T('button_validate') . "</button>\n";

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.31 2005/05/13 10:07:00 mlutfy Exp $
+	$Id: keywords.php,v 1.32 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -56,17 +56,39 @@ function show_all_keywords_type($type = '') {
 		$kw_all = get_keywords_in_group_id($kwg['id_group'], false);
 
 		if (count($kw_all)) {
+			$cpt_kw = 0;
 			echo "<ul class='wo_blt'>\n";
+			echo '<table border="0" align="center" class="tbl_usr_dtl" width="100%">' . "\n";
 
 			foreach ($kw_all as $key => $kw) {
-				echo "\t<li>";
+				$css = ' class="tbl_cont_' . ($cpt_kw %2 ? "dark" : "light") . '" ';
+				// echo '<li>';
+				echo "<tr>\n";
+
+				// Keyword name
+				echo "<td width='80%' $css>";
 				if ($suggest == $kw['name']) echo "<b>";
 				echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T(remove_number_prefix($kw['title'])) . "</a>";
-				if ($kw['ac_author'] != 'Y') echo ' ' . _T('keywords_info_kw_hidden');
 				if ($suggest == $kw['name']) echo "</b>";
-				echo "</li>\n";
+				echo "</td>";
+
+				// Hidden kw?
+				echo "<td $css>";
+				if ($kw['ac_author'] != 'Y')
+					echo _T('keywords_info_kw_hidden');
+				echo "</td>";
+
+				// TODO: Keyword occurences?
+				// [ML] really messy, because we don't know to what applies
+				// a system keyword (except by making a big switch) and poking
+				// everywhere..
+
+				echo "</tr>\n";
+				// echo "</li>\n";
+				$cpt_kw++;
 			}
 
+			echo "</table>\n";
 			echo "</ul>\n";
 		}
 
@@ -492,15 +514,12 @@ if (isset($_REQUEST['action'])) {
 
 			break;
 		case 'refresh':
-			// Do not remove, or variables won't be declared
-			global $system_keyword_groups;
-			$system_keyword_groups = array();
-		
 			include_lcm('inc_meta');
 			include_lcm('inc_keywords_default');
-			create_groups($system_keyword_groups);
 
-			write_metas();
+			$system_keyword_groups = get_default_keywords();
+			create_groups($system_keyword_groups);
+			write_metas(); // regenerate inc/data/inc_meta_cache.php
 			
 			break;
 		default:

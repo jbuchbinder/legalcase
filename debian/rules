@@ -3,7 +3,7 @@
 # GNU copyright 1997 to 1999 by Joey Hess.
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
 CFLAGS = -Wall -g
 DESTDIR=$(CURDIR)/debian/legalcase
@@ -32,8 +32,8 @@ build: build-stamp
 # debian/po/templates.pot
 	find log -type d -exec chmod 755 {} \;
 	chmod 644 styles/*css
-	chmod 777 inc/data/
-	chmod 777 inc/config/
+	chmod 775 inc/data/   # chgrp www-data later
+	chmod 775 inc/config/ # chgrp www-data later
 
 build-stamp: configure-stamp 
 	dh_testdir -v

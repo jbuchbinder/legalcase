@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.48 2005/04/20 08:47:02 mlutfy Exp $
+	$Id: upd_fu.php,v 1.49 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -37,6 +37,20 @@ if (isset($_REQUEST['id_followup']) && $_REQUEST['id_followup'] > 0)
 foreach($_POST as $key => $value)
     $_SESSION['fu_data'][$key]=$value;
 
+// Get old FU data, if updating
+$old_fu_data = array();
+
+if ($id_followup) {
+	$q = "SELECT *
+			FROM lcm_followup
+			WHERE id_followup = $id_followup";
+
+	$result = lcm_query($q);
+
+	if (! ($old_fu_data = lcm_fetch_array($result)))
+		lcm_panic("Could not find requested follow-up");
+}
+
 ///////////////////////////////////////////////////////////////////////
 //	Followup information error checking
 ///////////////////////////////////////////////////////////////////////
@@ -48,10 +62,8 @@ $_SESSION['fu_data']['date_start'] = get_datetime_from_array($_SESSION['fu_data'
 
 $unix_date_start = strtotime($_SESSION['fu_data']['date_start']);
 
-if ( ($unix_date_start<0) || !checkdate($_SESSION['fu_data']['start_month'],$_SESSION['fu_data']['start_day'],$_SESSION['fu_data']['start_year']) )
-	$_SESSION['errors']['date_start'] = 'Invalid start date!';	// TRAD
-//else
-//	$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s', $unix_date_start);
+if (($unix_date_start < 0) || ! checkdate_sql($_SESSION['fu_data']['date_start']))
+	$_SESSION['errors']['date_start'] = _Ti('time_input_date_start') . 'Invalid start date.'; // TRAD
 
 // date_end
 if ($prefs['time_intervals']=='absolute') {
@@ -67,9 +79,7 @@ if ($prefs['time_intervals']=='absolute') {
 		
 		$unix_date_end = strtotime($_SESSION['fu_data']['date_end']);
 		if ( ($unix_date_end<0) || !checkdate($_SESSION['fu_data']['end_month'],$_SESSION['fu_data']['end_day'],$_SESSION['fu_data']['end_year']) )
-			$_SESSION['errors']['date_end'] = 'Invalid end date!';	// TRAD
-		//else
-		//	$_SESSION['fu_data']['date_end'] = date('Y-m-d H:i:s',$unix_date_end);
+			$_SESSION['errors']['date_end'] = 'Invalid end date.';	// TRAD
 	}
 } else {
 	if ( ! (isset($_SESSION['fu_data']['delta_days']) && (!is_numeric($_SESSION['fu_data']['delta_days']) || $_SESSION['fu_data']['delta_days'] < 0) ||
@@ -81,7 +91,7 @@ if ($prefs['time_intervals']=='absolute') {
 				+ $_SESSION['fu_data']['delta_minutes'] * 60;
 		$_SESSION['fu_data']['date_end'] = date('Y-m-d H:i:s', $unix_date_end);
 	} else {
-		$_SESSION['errors']['date_end'] = 'Invalid time interval!';	// TRAD
+		$_SESSION['errors']['date_end'] = _Ti('time_input_length') . 'Invalid time interval.'; // TRAD
 		$_SESSION['fu_data']['date_end'] = $_SESSION['fu_data']['date_start'];
 	}
 }
@@ -105,10 +115,8 @@ if (isset($_SESSION['fu_data']['add_appointment'])) {
 	$_SESSION['fu_data']['app_start_time'] = get_datetime_from_array($_SESSION['fu_data'], 'app_start', 'start');
 	$unix_app_start_time = strtotime($_SESSION['fu_data']['app_start_time']);
 	
-	if ( ($unix_app_start_time<0) || !checkdate($_SESSION['fu_data']['app_start_month'],$_SESSION['fu_data']['app_start_day'],$_SESSION['fu_data']['app_start_year']) )
+	if (($unix_app_start_time<0) || ! checkdate_sql($_SESSION['fu_data']['app_start_time']))
 		$_SESSION['errors']['app_start_time'] = 'Invalid appointment start time!'; // TRAD
-	//else 
-	//	$_SESSION['fu_data']['app_start_time'] = date('Y-m-d H:i:s', $unix_app_start_time);
 	
 	//
 	// End time
@@ -123,18 +131,11 @@ if (isset($_SESSION['fu_data']['add_appointment'])) {
 			$_SESSION['fu_data']['app_end_time'] = get_datetime_from_array($_SESSION['fu_data'], 'app_end', 'start');
 		} else {
 			// Join fields and check resulting date
-			$_SESSION['fu_data']['app_end_time'] = $_SESSION['fu_data']['app_end_year'] . '-'
-								. $_SESSION['fu_data']['app_end_month'] . '-'
-								. $_SESSION['fu_data']['app_end_day'] . ' '
-								. $_SESSION['fu_data']['app_end_hour'] . ':'
-								. $_SESSION['fu_data']['app_end_minutes'] . ':'
-						. (isset($_SESSION['fu_data']['app_end_seconds']) ? $_SESSION['fu_data']['app_end_seconds'] : '00');
+			$_SESSION['fu_data']['app_end_time'] = get_datetime_from_array($_SESSION['fu_data'], 'app_end', 'start');
 			$unix_app_end_time = strtotime($_SESSION['fu_data']['app_end_time']);
 	
 			if ( ($unix_app_end_time<0) || !checkdate($_SESSION['fu_data']['app_end_month'],$_SESSION['fu_data']['app_end_day'],$_SESSION['fu_data']['app_end_year']) )
 				$_SESSION['errors']['app_end_time'] = 'Invalid appointment end time!';
-	//		else 
-	//			$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s',$unix_app_end_time);
 		}
 	} else {
 		if ( ! (isset($_SESSION['fu_data']['app_delta_days']) && (!is_numeric($_SESSION['fu_data']['app_delta_days']) || $_SESSION['fu_data']['app_delta_days'] < 0) ||
@@ -159,26 +160,14 @@ if (isset($_SESSION['fu_data']['add_appointment'])) {
 			// Report error if some of the fields empty
 		elseif (!$_SESSION['fu_data']['app_reminder_year'] || !$_SESSION['fu_data']['app_reminder_month'] || !$_SESSION['fu_data']['app_reminder_day']) {
 			$_SESSION['errors']['app_reminder'] = 'Partial appointment reminder time!'; // TRAD
-			$_SESSION['fu_data']['app_reminder'] = ($_SESSION['fu_data']['app_reminder_year'] ? $_SESSION['fu_data']['app_reminder_year'] : '0000') . '-'
-								. ($_SESSION['fu_data']['app_reminder_month'] ? $_SESSION['fu_data']['app_reminder_month'] : '00') . '-'
-								. ($_SESSION['fu_data']['app_reminder_day'] ? $_SESSION['fu_data']['app_reminder_day'] : '00') . ' '
-								. ($_SESSION['fu_data']['app_reminder_hour'] ? $_SESSION['fu_data']['app_reminder_hour'] : '00') . ':'
-								. ($_SESSION['fu_data']['app_reminder_minutes'] ? $_SESSION['fu_data']['app_reminder_minutes'] : '00') . ':'
-								. ($_SESSION['fu_data']['app_reminder_seconds'] ? $_SESSION['fu_data']['app_reminder_seconds'] : '00');
+			$_SESSION['fu_data']['app_reminder'] = get_datetime_from_array($_SESSION['fu_data'], 'app_reminder', 'start');
 		} else {
 			// Join fields and check resulting time
-			$_SESSION['fu_data']['app_reminder'] = $_SESSION['fu_data']['app_reminder_year'] . '-'
-							. $_SESSION['fu_data']['app_reminder_month'] . '-'
-							. $_SESSION['fu_data']['app_reminder_day'] . ' '
-							. $_SESSION['fu_data']['app_reminder_hour'] . ':'
-							. $_SESSION['fu_data']['app_reminder_minutes'] . ':'
-						. (isset($_SESSION['fu_data']['app_reminder_seconds']) ? $_SESSION['fu_data']['app_reminder_seconds'] : '00');
+			$_SESSION['fu_data']['app_reminder'] = get_datetime_from_array($_SESSION['fu_data'], 'app_reminder', 'start');
 			$unix_app_reminder_time = strtotime($_SESSION['fu_data']['app_reminder']);
 	
 			if ( ($unix_app_reminder_time<0) || !checkdate($_SESSION['fu_data']['app_reminder_month'],$_SESSION['fu_data']['app_reminder_day'],$_SESSION['fu_data']['app_reminder_year']) )
 				$_SESSION['errors']['app_reminder'] = 'Invalid appointment reminder time!'; // TRAD
-	//		else 
-	//			$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s',$unix_app_reminder_time);
 		}
 	} else {
 		if ( ! (isset($_SESSION['fu_data']['app_rem_offset_days']) && (!is_numeric($_SESSION['fu_data']['app_rem_offset_days']) || $_SESSION['fu_data']['app_rem_offset_days'] < 0) ||
@@ -220,6 +209,7 @@ if (count($_SESSION['errors'])) {
 	if ($_SESSION['fu_data']['type'] == 'stage_change') {
 		$desc = array(
 					'description'  => clean_input($_SESSION['fu_data']['description']),
+					'result'       => clean_input($_SESSION['fu_data']['result']),
 					'conclusion'   => clean_input($_SESSION['fu_data']['conclusion']),
 					'sentence'     => clean_input($_SESSION['fu_data']['sentence']),
 					'sentence_val' => clean_input($_SESSION['fu_data']['sentence_val']),
@@ -229,6 +219,7 @@ if (count($_SESSION['errors'])) {
 	} elseif (is_status_change($_SESSION['fu_data']['type'])) {
 		$desc = array(
 					'description'  => clean_input($_SESSION['fu_data']['description']),
+					'result'       => clean_input($_SESSION['fu_data']['result']),
 					'conclusion'   => clean_input($_SESSION['fu_data']['conclusion']),
 					'sentence'     => clean_input($_SESSION['fu_data']['sentence']),
 					'sentence_val' => clean_input($_SESSION['fu_data']['sentence_val']));
@@ -243,8 +234,45 @@ if (count($_SESSION['errors'])) {
 		if (!allowed($_SESSION['fu_data']['id_case'],'e')) 
 			lcm_panic("You don't have permission to modify this case's information. (" . $_SESSION['fu_data']['id_case'] . ")");
 
+		// TODO: check if hiding this FU is allowed
+		if (allowed($_SESSION['fu_data']['id_case'], 'a')
+			&& (! (is_status_change($_SESSION['fu_data']['type'])
+			|| $_SESSION['fu_data']['type'] == 'assignment'
+			|| $_SESSION['fu_data']['type'] == 'unassignment')))
+		{
+			if (isset($_SESSION['fu_data']['delete']) && $_SESSION['fu_data']['delete'])
+				$fl .= ", hidden = 'Y'";
+			else
+				$fl .= ", hidden = 'N'";
+		} else {
+			$fl .= ", hidden = 'N'";
+		}
+
 		$q="UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
 		$result = lcm_query($q);
+
+		// Get stage of the follow-up entry
+		$q = "SELECT case_stage FROM lcm_followup WHERE id_followup = $id_followup";
+		$result = lcm_query($q);
+		if ($row = lcm_fetch_array($result)) {
+			$case_stage = $row['case_stage'];
+		} else {
+			lcm_panic("There is no such follow-up (" . $id_followup . ")");
+		}
+
+		// Update the related lcm_stage entry
+		$q = "UPDATE lcm_stage SET
+				date_conclusion = '" . clean_input($_SESSION['fu_data']['date_end']) . "',
+				kw_result = '" . clean_input($_SESSION['fu_data']['result']) . "',
+				kw_conclusion = '" . clean_input($_SESSION['fu_data']['conclusion']) . "',
+				kw_sentence = '" . clean_input($_SESSION['fu_data']['sentence']) . "',
+				sentence_val = '" . clean_input($_SESSION['fu_data']['sentence_val']) . "',
+				date_agreement = '" . clean_input($_SESSION['fu_data']['date_end']) . "'
+			WHERE id_case = " . $_SESSION['fu_data']['id_case'] . "
+			  AND kw_case_stage = '" . $case_stage . "'";
+
+		lcm_query($q);
+
 	} else {
 		// New follow-up
 		if (!allowed($_SESSION['fu_data']['id_case'],'w'))
@@ -257,6 +285,25 @@ if (count($_SESSION['errors'])) {
 			$case_stage = $row['stage'];
 		} else {
 			lcm_panic("There is no such case (" . $_SESSION['fu_data']['id_case'] . ")");
+		}
+
+		// Add the new follow-up
+		$q = "INSERT INTO lcm_followup
+			SET	id_followup=0,
+				id_case=" . $_SESSION['fu_data']['id_case'] . ",
+				id_author=" . $GLOBALS['author_session']['id_author'] . ",
+				$fl,
+				case_stage='$case_stage'";
+
+		lcm_query($q);
+		$id_followup = lcm_insert_id();
+		
+		// Set relation to the parent appointment, if any
+		if (! empty($_SESSION['fu_data']['id_app'])) {
+			$q = "INSERT INTO lcm_app_fu 
+					SET id_app=" . $_SESSION['fu_data']['id_app'] . ",
+						id_followup=$id_followup, relation='child'";
+			$result = lcm_query($q);
 		}
 
 		// Update case status
@@ -277,36 +324,60 @@ if (count($_SESSION['errors'])) {
 			case 'merge' :
 				$status = 'merged';
 				break;
+			case 'deletion':
+				$status = 'deleted';
+				break;
 			case 'stage_change' :
-				$stage = $_POST['new_stage'];
+				$stage = clean_input($_POST['new_stage']);
 		}
 		
 		if ($status || $stage) {
 			$q = "UPDATE lcm_case
 					SET " . ($status ? "status='$status'" : '') . ($status && $stage ? ',' : '') . ($stage ? "stage='$stage'" : '') . "
 					WHERE id_case=" . $_SESSION['fu_data']['id_case'];
-			$result = lcm_query($q);
+			lcm_query($q);
+
+			// Close the lcm_stage
+			// XXX for now, date_agreement is not used
+			if ($status == 'open') {
+				// case is being re-opened, so erase previously entered info
+				$q = "UPDATE lcm_stage
+						SET
+							date_conclusion = '0000-00-00 00:00:00',
+							id_fu_conclusion = 0,
+							kw_result = '',
+							kw_conclusion = '',
+							kw_sentence = '',
+							sentence_val = '',
+							date_agreement = '0000-00-00 00:00:0'
+						WHERE id_case = " . $_SESSION['fu_data']['id_case'] . "
+						  AND kw_case_stage = '" . $case_stage . "'";
+			} else {
+				$q = "UPDATE lcm_stage
+						SET
+							date_conclusion = '" . clean_input($_SESSION['fu_data']['date_end']) . "',
+							id_fu_conclusion = $id_followup,
+							kw_result = '" . clean_input($_SESSION['fu_data']['result']) . "',
+							kw_conclusion = '" . clean_input($_SESSION['fu_data']['conclusion']) . "',
+							kw_sentence = '" . clean_input($_SESSION['fu_data']['sentence']) . "',
+							sentence_val = '" . clean_input($_SESSION['fu_data']['sentence_val']) . "',
+							date_agreement = '" . clean_input($_SESSION['fu_data']['date_end']) . "'
+						WHERE id_case = " . $_SESSION['fu_data']['id_case'] . "
+						  AND kw_case_stage = '" . $case_stage . "'";
+			}
+
+			lcm_query($q);
 		}
-		
-		// Add the new follow-up
-		$q = "INSERT INTO lcm_followup
-			SET	id_followup=0,
-				id_case=" . $_SESSION['fu_data']['id_case'] . ",
-				id_author=" . $GLOBALS['author_session']['id_author'] . ",
-				$fl,
-				case_stage='$case_stage'";
 
-		if (!($result = lcm_query($q))) 
-			lcm_panic("$q<br>\nError ".lcm_errno().": ".lcm_error());
+		// If creating a new case stage, make new lcm_stage entry
+		if ($stage) {
+			$q = "INSERT INTO lcm_stage SET
+					id_case = " . $_SESSION['fu_data']['id_case'] . ",
+					kw_case_stage = '" . $stage . "',
+					date_creation = NOW(),
+					id_fu_creation = $id_followup";
 
-		$id_followup = lcm_insert_id();
-
-		// Set relation to the parent appointment, if any
-		if (! empty($_SESSION['fu_data']['id_app'])) {
-			$q = "INSERT INTO lcm_app_fu 
-					SET id_app=" . $_SESSION['fu_data']['id_app'] . ",
-						id_followup=$id_followup, relation='child'";
-			$result = lcm_query($q);
+			lcm_query($q);
 		}
 	}
 
@@ -356,7 +427,7 @@ if (isset($_SESSION['fu_data']['add_appointment'])) {
 }
 
 // Send user back to add/edit page's referer or (default) to followup detail page
-header('Location: ' . ($_SESSION['fu_data']['ref_edit_fu'] ? $_SESSION['fu_data']['ref_edit_fu'] : "fu_det.php?followup=$id_followup"));
+header('Location: fu_det.php?followup=' . $id_followup);
 
 exit;
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_auth.php,v 1.14 2005/05/12 13:39:21 mlutfy Exp $
+	$Id: edit_auth.php,v 1.15 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -64,7 +64,7 @@ show_context_end();
 	<table border="0" class="tbl_usr_dtl" width="99%">
 	<tr>
 		<th align="center" class="heading"><?php echo _Th('case_input_author'); ?></th>
-		<th align="center" class="heading"><?php echo "Role"; ?></th>
+		<th align="center" class="heading"><?php echo _Th('case_ac_input_rights'); ?></th>
 	</tr>
 
 <?php

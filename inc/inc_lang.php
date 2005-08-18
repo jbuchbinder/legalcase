@@ -146,8 +146,9 @@ function translate_string($code, $args) {
 		if (isset($GLOBALS[$var][$code]))
 			$cache_lang[$lcm_lang][$code] = 1;
 
-		if (array_key_exists($code, $GLOBALS[$var]))
-			$text = $GLOBALS[$var][$code];
+		if (isset($GLOBALS[$var]))
+			if (array_key_exists($code, $GLOBALS[$var]))
+				$text = $GLOBALS[$var][$code];
 	}
 
 	// Languages which are not finished or late  (...)
@@ -386,7 +387,7 @@ function changer_typo($lang = '', $source = '') {
 	}
 
 	if (!$lang)
-		$lang = read_meta('langue_site');
+		$lang = read_meta('default_language');
 
 	$lang_typo = lang_typo($lang);
 	$lang_dir = lang_dir($lang);

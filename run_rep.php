@@ -18,11 +18,94 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.26 2005/06/01 21:05:23 mlutfy Exp $
+	$Id: run_rep.php,v 1.27 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_keywords');
+
+class Report {
+	var $query;
+	var $where;
+	var $lines;
+	var $columns;
+	var $headers;
+
+	var $journal;
+	var $debug;
+
+	function Report($my_debug = false) {
+		$this->query = '';
+		$this->where = array();
+		$this->lines = array();
+		$this->columns = array();
+		$this->headers = array();
+		
+		$this->journal = array();
+		$this->debug = $my_debug;
+
+		return;
+	}
+
+	function addSQL($string) {
+		$this->query .= $string;
+
+		if ($this->debug)
+			array_push($this->journal, lcm_getbacktrace());
+	}
+
+	function getSQL() {
+		return $this->query;
+	}
+
+	function addLine($string) {
+		array_push($this->lines, $string);
+
+		if ($this->debug)
+			$this->journal[] = lcm_getbacktrace();
+	}
+
+	function getLines() {
+		return $this->lines;
+	}
+
+	function addColumn($string) {
+		array_push($this->columns, $string);
+
+		if ($this->debug)
+			$this->journal[] = lcm_getbacktrace();
+	}
+
+	function getColumns() {
+		return $this->columns;
+	}
+
+	function addHeader($string) {
+		array_push($this->headers, $string);
+
+		if ($this->debug)
+			$this->journal[] = lcm_getbacktrace();
+	}
+
+	function getHeaders() {
+		return $this->headers;
+	}
+
+	function addWhere($string) {
+		array_push($this->where, $string);
+
+		if ($this->debug)
+			$this->journal[] = lcm_getbacktrace();
+	}
+
+	function getWhere() {
+		return $this->where;
+	}
+
+	function getJournal() {
+		return $this->journal;
+	}
+}
 
 function get_table_suffix($table) {
 	if ($table == 'lcm_author')
@@ -77,7 +160,8 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 		"lcm_author" => "id_author",
 		"lcm_followup" => "id_followup",
 		"lcm_client" => "id_client",
-		"lcm_org" => "id_org" );
+		"lcm_org" => "id_org",
+		"lcm_keyword_case" => "id_keyword");
 
 	if ($table1 == $table2)
 		lcm_panic("Linking with self: not yet supported");
@@ -158,13 +242,23 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0) {
 			break;
 
 		default:
-			// lcm_panic("not coded - $table1");
+			// Try to process as a keyword group
+			$kwg = get_kwg_from_name($table1);
+
+			switch($kwg['type']) {
+				case 'case':
+					$from   = " , lcm_keyword_case as kc ";
+					$from_glue .= " kc.id_case = ca.id_case ";
+					$table1 = 'lcm_keyword_case';
+					// $where .= " cl.id_client = cco.id_client ";
+					break;
+			}
 	}
 
 	if ($id1) {
 		if ($id2)
 			$where .= " AND " . prefix_field($table1, $table_keys[$table1]) . " = $id1 ";
-		else
+		elseif ($table_keys[$table1])
 			$where .= " AND " . $table_keys[$table1] . " = $id1 ";
 	}
 	
@@ -207,20 +301,27 @@ function get_filters_sql($id_report, $obj_type = '', $obj_name = '') {
 		global $headers_sent; // XXX hmm, not clean
 
 		if (! $headers_sent)
-			lcm_page_start("Report: " . remove_number_prefix($rep_info['title']), '', '', 'report_intro'); // TRAD
+			lcm_page_start(_T('title_rep_run') . " " . remove_number_prefix($rep_info['title']), '', '', 'report_intro');
 
-		echo '<p class="normal_text">' . "Please enter the values for the report:" . "</p>\n"; // TRAD
+		show_page_subtitle(_T('rep_subtitle_filters'), 'reports_edit', 'filters');
+		echo '<p class="normal_text">';
+
 		include_lcm('inc_conditions');
 		show_report_filters($rep, true);
+
+		echo "</p>\n";
 		exit;
 	}
 
-	$ret = implode(" AND ", $clauses);
-	return $ret;
+	$ret1 = implode(" AND ", $clauses);
+	return $ret1;
 }
 
 function show_filters_info($id_report) {
 	$my_filters = get_filters($id_report);
+
+	if (count($my_filters))
+		echo '<p class="normal_text">';
 
 	foreach ($my_filters as $f) {
 		if (! $f['value']) {
@@ -243,20 +344,36 @@ function show_filters_info($id_report) {
 				$f['value'] = _T('info_not_available');
 			}
 		}
+
+		// TODO: If field.type == text and field.value is based on keyword or
+		// list, use translation if known.
+		if ($f['enum_type']) {
+			$enum = explode(":", $f['enum_type']);
+
+			if ($enum[0] == 'keyword') {
+				if ($enum[2])
+					$f['value'] = _Tkw($enum[2], $f['value']);
+			} elseif ($enum[0] == 'list') {
+				if ($enum[2])
+					$f['value'] = _T($enum[2] . $f['value']);
+			}
+		}
 	
 		// Example: "Follow-up - Start: in 1 Apr 05, 00h00 - 31 Dec 05, 23h59"
 		// or.....: Table - Field: type_filter value
-		echo '<p class="normal_text">' 
-			. _T('rep_info_table_' . $f['table_name']) . " - " . _Ti($f['description'])
+		echo _T('rep_info_table_' . $f['table_name']) . " - " . _Ti($f['description'])
 			. _T('rep_filter_' . $f['type']) . " " . $f['value']
-			. "</p>\n";
+			. "<br />\n";
 	}
+
+	if (count($my_filters))
+		echo "</p>\n";
 }
 
 function get_filters($id_report, $obj_type = '', $obj_name = '') {
 	$my_filters = array();
 
-	$q_fil = "SELECT v.id_filter, f.table_name, f.field_name, f.description, v.type, v.value 
+	$q_fil = "SELECT v.id_filter, f.table_name, f.field_name, f.description, f.enum_type, v.type, v.value 
 		FROM lcm_rep_filter as v, lcm_fields as f
 		WHERE v.id_field = f.id_field
 		AND v.id_report = " . $id_report;
@@ -277,6 +394,7 @@ function apply_filter($f) {
 	$ret = '';
 
 	$filter_conv = array(
+			"neq" => "!=",
 			"eq" => "=",
 			"lt" => "<",
 			"le" => "<=",
@@ -298,7 +416,7 @@ function apply_filter($f) {
 		}
 
 		$ret .= "(DATE_FORMAT(" . prefix_field($f['table_name'], $f['field_name']) . ", '%Y-%m-%d') "
-			.   " >= DATE_FORMAT('" . $dates[0] . "', '%Y-%m-%d')" 
+			.   " >= DATE_FORMAT('" . $dates[0] . "', '%Y-%m-%d')"
 			. " AND DATE_FORMAT(" . prefix_field($f['table_name'], $f['field_name']) . ", '%Y-%m-%d') "
 			.   " <= DATE_FORMAT('" . $dates[1] . "', '%Y-%m-%d')) ";
 	} else {
@@ -396,6 +514,7 @@ function get_ui_end_line() {
 		return "</tr>\n";
 }
 
+global $author_session;
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
@@ -408,6 +527,11 @@ if ($author_session['status'] != 'admin') {
 $rep = intval($_GET['rep']); // Report ID
 $headers_sent = false;
 $_SESSION['errors'] = array();
+
+$specials = array(); // for special SQL commands, c.f LCM_SQL
+$specials_count = 0;
+
+$report = new Report($_REQUEST['debug']);
 
 //
 // Show title and description of the report
@@ -441,7 +565,10 @@ if ($_REQUEST['export'] == 'csv') {
 		echo '<p class="normal_text">' . $rep_info['description'] . "</p>\n";
 }
 
-$my_line_table = "lcm_" . $rep_info['line_src_name'];
+if ($rep_info['line_src_type'] == 'table')
+	$my_line_table = "lcm_" . $rep_info['line_src_name'];
+else
+	$my_line_table = $rep_info['line_src_name'];
 
 //
 // For report headers (used later)
@@ -532,35 +659,84 @@ while ($row = lcm_fetch_array($result)) {
 				$kws = get_keywords_in_group_name($enum[2]);
 
 				// Get filters that might apply
-				$my_filters = get_filters_sql($rep, 'table', "'" . $row['table_name'] . "'");
-				$sql_filter = ($my_filters ? " AND " . $my_filters : "");
+				$tmp_my_filters = get_filters_sql($rep, 'table', "'" . $row['table_name'] . "'");
+				$sql_filter = ($tmp_my_filters ? " AND " . $tmp_my_filters : "");
 
 				foreach ($kws as $k) {
-					// XXX this is too specific for a given case (sum(time) of activity type per author)
-					$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE type = '" . $k['name'] . "' "
-						. $sql_filter;
+					// This is for the various types of system_kwg.
+					// Not very efficient, but works for now.
+					if ($enum[2] == 'followups') {
+						// Crossing lcm_followup with either lcm_author or lcm_case
+						$sql = "SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE type = '" . $k['name'] . "' AND fu.hidden = 'N' " . $sql_filter;
+					
+						// For report headers
+						$k['filter_special'] = 'time_length'; // XXX
+					} elseif ($enum[2] == 'conclusion' || $enum[2] == '_crimresults' || $enum[2] == 'sentence') {
+						$tmp_kw = ($enum[2] == '_crimresults' ? 'result' : $enum[2]);
+
+						if ($my_line_table == 'lcm_author') {
+							// Crossing lcm_stage with lcm_author (conclusions by author)
+							$sql = "SELECT count(*) "
+								. " FROM lcm_stage as s, lcm_case_author as ca "
+								. " WHERE s.kw_" . $tmp_kw . " = '" . $k['name'] . "' "
+								. "   AND s.id_case = ca.id_case "
+								. $sql_filter;
+						} elseif ($rep_info['line_src_type'] == 'keyword') {
+							$sql = "SELECT count(*) "
+								. " FROM lcm_stage as s, lcm_keyword_case as kc "
+								. " WHERE s.kw_" . $tmp_kw . " = '" . $k['name'] . "' "
+								. "   AND s.id_case = kc.id_case "
+								. $sql_filter;
+						}
+					}
 
 					// For report headers
-					$k['filter_special'] = 'time_length'; // XXX
 					$k['description'] = $k['title'];
-
 					array_push($headers, $k);
-					array_push($my_columns, "1 as \"" . $sql ."\"");
+
+					// Store special SQL command. This was stored as "LCM_SQL: very long SQL",
+					// but it caused problems on some installations (MySQL 4.1.x on W32) and
+					// would cut the SQL string at the 256th character.
+					$specials[$specials_count] = $sql;
+					array_push($my_columns, "1 as \"LCM_SQL:special:$specials_count\"");
+					$specials_count++;
 				}
 
 				// TOTAL for this enum
-				$sql = "LCM_SQL: SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE 1 "
-					. $sql_filter;
+				if ($enum[2] == 'followups') {
+					$sql = "SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) FROM lcm_followup as fu WHERE fu.hidden = 'N' " . $sql_filter;
 
-				$k['filter_special'] = 'time_length'; // XXX
-				$k['description'] = "TOTAL"; // TRAD
+					// For report headers
+					$k['filter_special'] = 'time_length'; // XXX
+				} elseif ($enum[2] == 'conclusion' || $enum[2] == '_crimresults' || $enum[2] == 'sentence') {
+					if ($my_line_table == 'lcm_author') {
+						$sql = "SELECT count(*) "
+							. " FROM lcm_stage as s, lcm_case_author as ca "
+							. " WHERE s.id_case = ca.id_case "
+							. $sql_filter;
+					} elseif ($rep_info['line_src_type'] == 'keyword') {
+						$sql = "SELECT count(*) "
+							. " FROM lcm_stage as s, lcm_keyword_case as kc "
+							. " WHERE  "
+							. "   s.id_case = kc.id_case "
+							. $sql_filter;
+					}
+				}
 
+				// For report headers
+				$k['description'] = _Th('generic_input_total');
 				array_push($headers, $k);
-				array_push($my_columns, "1 as \"" . $sql ."\"");
+
+				// Store special SQL command. This was stored as "LCM_SQL: very long SQL",
+				// but it caused problems on some installations (MySQL 4.1.x on W32) and
+				// would cut the SQL string at the 256th character.
+				$specials[$specials_count] = $sql;
+				array_push($my_columns, "1 as \"LCM_SQL:special:$specials_count\"");
+				$specials_count++;
 
 				$do_grouping = true;
 			} else {
-				echo "\n\n QUERY = " . $q . " \n\n";
+				echo "\n\n QUERY = " . $report->getSQL() . " \n\n";
 				lcm_panic("Not yet implemented -" . $enum[1] . "-");
 			}
 		} elseif ($enum[0] == 'list') {
@@ -568,13 +744,15 @@ while ($row = lcm_fetch_array($result)) {
 
 			foreach($items as $i) {
 				// XXX should add 'where' clauses only (kwg above too..)
-				$q_where_add = "LCM_SQL: cl.gender = '" . $i . "'";
+				$specials[$specials_count] = "cl.gender = '" . $i . "'";
+				array_push($my_columns, "2 as \"LCM_SQL:special:$specials_count\"");
+				$specials_count++;
+
 				$tmp = array('description' => _T($enum[2] . $i), 'filter' => 'number');
-				array_push($my_columns, "2 as \"" . $q_where_add . "\"");
 				array_push($headers, $tmp);
 			}
 		} else {
-			echo "\n\n QUERY = " . $q . " \n\n";
+			echo "\n\n QUERY = " . $report->getSQL() . " \n\n";
 			lcm_panic("Not yet implemented -" . $enum[0] . "-");
 		}
 	} elseif ($my_line_table == 'lcm_author' && $row['table_name'] == 'lcm_case' && $row['field_name'] == 'count(*)') {
@@ -582,11 +760,11 @@ while ($row = lcm_fetch_array($result)) {
 		$kws = get_keywords_in_group_name('stage');
 
 		// Get filters that might apply
-		$my_filters = get_filters_sql($rep, 'table', "'lcm_case'");
-		$sql_filter = ($my_filters ? " AND " . $my_filters : "");
+		$tmp_my_filters = get_filters_sql($rep, 'table', "'lcm_case'");
+		$sql_filter = ($tmp_my_filters ? " AND " . $tmp_my_filters : "");
 
 		foreach ($kws as $k) {
-			$sql = "LCM_SQL: SELECT count(*) FROM lcm_case as c "
+			$sql = "SELECT count(*) FROM lcm_case as c "
 				. " LEFT JOIN lcm_case_author as ca ON (c.id_case = ca.id_case) "
 				. " WHERE c.stage = '" . $k['name'] . "' "
 				. $sql_filter;
@@ -594,21 +772,31 @@ while ($row = lcm_fetch_array($result)) {
 			// For report headers
 			$k['filter'] = 'number';
 			$k['description'] = $k['title'];
-
 			array_push($headers, $k);
-			array_push($my_columns, "1 as \"" . $sql ."\"");
+
+			// Store special SQL command. This was stored as "LCM_SQL: very long SQL",
+			// but it caused problems on some installations (MySQL 4.1.x on W32) and
+			// would cut the SQL string at the 256th character.
+			$specials[$specials_count] = $sql;
+			array_push($my_columns, "1 as \"LCM_SQL:special:$specials_count\"");
+			$specials_count++;
 		}
 
 		// TOTAL for this enum
-		$sql = "LCM_SQL: SELECT count(*) FROM lcm_case as c, lcm_case_author as ca "
+		$sql = "SELECT count(*) FROM lcm_case as c, lcm_case_author as ca "
 			. " WHERE c.id_case = ca.id_case "
 			. $sql_filter;
 
 		$k['filter'] = 'number';
-		$k['description'] = "TOTAL"; // TRAD
-
+		$k['description'] = _Th('generic_input_total');
 		array_push($headers, $k);
-		array_push($my_columns, "1 as \"" . $sql ."\"");
+
+		// Store special SQL command. This was stored as "LCM_SQL: very long SQL",
+		// but it caused problems on some installations (MySQL 4.1.x on W32) and
+		// would cut the SQL string at the 256th character.
+		$specials[$specials_count] = $sql;
+		array_push($my_columns, "1 as \"LCM_SQL:special:$specials_count\"");
+		$specials_count++;
 
 		$do_grouping = true;
 	} else {
@@ -622,8 +810,8 @@ if ($rep_info['col_src_type'] == 'keyword' && ! count($my_columns)) {
 	$kwg = get_kwg_from_name($rep_info['col_src_name']);
 	$kws = get_keywords_in_group_name($rep_info['col_src_name']);
 
-	$my_filters = get_filters_sql($rep, 'table', "'lcm_case'");
-	$sql_filter = ($my_filters ? " AND " . $my_filters : "");
+	$tmp_my_filters = get_filters_sql($rep, 'table', "'lcm_case'");
+	$sql_filter = ($tmp_my_filters ? " AND " . $tmp_my_filters : "");
 	$all_kw_names = array();
 
 	// TODO: For the moment, this is limited to crossing the author table
@@ -634,34 +822,50 @@ if ($rep_info['col_src_type'] == 'keyword' && ! count($my_columns)) {
 		// XXX dirty hack, headers print function refers directly to 'description'
 		$kw['description'] = _T(remove_number_prefix($kw['title']));
 		$kw['filter'] = 'number';
+		array_push($headers, $kw);
 
-		$sql = "LCM_SQL: SELECT count(*) FROM lcm_keyword_" . $kwg['type'] . " as ka, "
-			. " lcm_case_author as ca, lcm_keyword as k " 
+		if ($kwg['type'] == 'system') 
+			lcm_panic("not supported yet");
+
+		$sql = "SELECT count(*) FROM lcm_keyword_" . $kwg['type'] . " as ka, "
+			. " lcm_case_author as ca, lcm_keyword as k, lcm_case as c " 
 			. " WHERE k.id_keyword = ka.id_keyword "
+			. " AND c.id_case = ca.id_case "
 			. " AND ca.id_case = ka.id_case " // XXX
 			. " AND k.name = '" . $kw['name'] . "'"
 			. $sql_filter;
 		
-		array_push($my_columns, "1 as \"" . $sql ."\"");
-		array_push($headers, $kw);
+		// Store special SQL command. This was stored as "LCM_SQL: very long SQL",
+		// but it caused problems on some installations (MySQL 4.1.x on W32) and
+		// would cut the SQL string at the 256th character.
+		$specials[$specials_count] = $sql;
+		array_push($my_columns, "1 as \"LCM_SQL:special:$specials_count\"");
+		$specials_count++;
+
 		$all_kw_names[] = $kw['name'];
 	}
 
 	// TOTAL for this enum
 	// Note: the k.name IN (...) is because other keywords might be associated 
 	// with this case/client/etc
-	$sql = "LCM_SQL: SELECT count(*) FROM lcm_keyword_" . $kwg['type'] . " as ka, "
-		. " lcm_case_author as ca, lcm_keyword as k " 
+	$sql = "SELECT count(*) FROM lcm_keyword_" . $kwg['type'] . " as ka, "
+		. " lcm_case_author as ca, lcm_keyword as k, lcm_case as c " 
 		. " WHERE k.id_keyword = ka.id_keyword "
+		. " AND c.id_case = ca.id_case "
 		. " AND ca.id_case = ka.id_case " // XXX
 		. " AND k.name IN ('" . implode("','", $all_kw_names) . "')"
 		. $sql_filter;
 
 	$k['filter'] = 'number';
-	$k['description'] = "TOTAL"; // TRAD
-
+	$k['description'] = _Th('generic_input_total');
 	array_push($headers, $k);
-	array_push($my_columns, "1 as \"" . $sql ."\"");
+
+	// Store special SQL command. This was stored as "LCM_SQL: very long SQL",
+	// but it caused problems on some installations (MySQL 4.1.x on W32) and
+	// would cut the SQL string at the 256th character.
+	$specials[$specials_count] = $sql;
+	array_push($my_columns, "1 as \"LCM_SQL:special:$specials_count\"");
+	$specials_count++;
 }
 
 //
@@ -696,23 +900,23 @@ $my_col_fields  = implode(", ", $my_columns);
 if ($my_line_fields && $my_line_fields_implicit)
 	$my_line_fields .= ", " . $my_line_fields_implicit;
 
-$q = "SELECT " . $my_line_fields;
-$q_where = array();
+$report->addSQL("SELECT " . $my_line_fields);
 
 // Hide implicit fields, but allow them to be in 'group by' if necessary
 if ($my_line_fields_implicit)
-	$q .= " as 'LCM_HIDE_ID' ";
+	$report->addSQL(" as 'LCM_HIDE_ID' ");
 
 if ($my_col_fields)
-	$q .= ", " . $my_col_fields;
+	$report->addSQL(", " . $my_col_fields);
 
 if ($rep_info['line_src_type'] == 'table') {
-	$q .= " FROM " . $my_line_table . suffix_table($my_line_table);
+	$report->addSQL(" FROM " . $my_line_table . suffix_table($my_line_table));
 } elseif ($rep_info['line_src_type'] == 'keyword') {
-	$q .= " FROM lcm_keyword as k "
-		. " LEFT JOIN lcm_keyword_group as kwg on (k.id_group = kwg.id_group AND kwg.name = '" . $rep_info['line_src_name'] . "')";
-
-	$q_where[] = "kwg.name IS NOT NULL";
+	$report->addSQL(" FROM lcm_keyword as k "
+		. " LEFT JOIN lcm_keyword_group as kwg "
+		. " ON (k.id_group = kwg.id_group AND kwg.name = '" . $rep_info['line_src_name'] . "')");
+		
+	$report->addWhere("kwg.name IS NOT NULL");
 }
 
 // Join condition
@@ -723,12 +927,12 @@ if ($rep_info['line_src_type'] == 'table') {
 		$deps = join_tables($my_line_table, $my_col_table);
 	
 		if ($deps[0])
-			$q .= $deps[0]; // FROM
+			$report->addSQL($deps[0]);
 
 		if ($deps[1])
-			$q_where[] = $deps[1];
+			$report->addWhere($deps[1]);
 
-		$q .= " LEFT JOIN " . $my_col_table . suffix_table($my_col_table) . " ON (" . $deps[2] . " ) ";
+		$report->addSQL(" LEFT JOIN " . $my_col_table . suffix_table($my_col_table) . " ON (" . $deps[2] . " ) ");
 	}
 } elseif ($rep_info['line_src_type'] == 'keyword') {
 	switch($rep_info['line_src_name']) {
@@ -737,15 +941,26 @@ if ($rep_info['line_src_type'] == 'table') {
 				case '':
 					break;
 				case 'lcm_case':
-					$q .= " LEFT JOIN lcm_keyword_case as kc ON (kc.id_keyword = k.id_keyword) ";
+					$report->addSQL(" LEFT JOIN lcm_keyword_case as kc ON (kc.id_keyword = k.id_keyword) ");
 					break;
 				case 'lcm_client':
-					$q .= " LEFT JOIN lcm_keyword_client as kc ON (kc.id_keyword = k.id_keyword) ";
+					$report->addSQL(" LEFT JOIN lcm_keyword_client as kc ON (kc.id_keyword = k.id_keyword) ");
+
 					if ($my_line_table != 'lcm_client')
-						$q .= " LEFT JOIN lcm_client as cl ON (cl.id_client = kc.id_client) ";
+						$report->addSQL(" LEFT JOIN lcm_client as cl ON (cl.id_client = kc.id_client) ");
+					break;
+				case 'lcm_stage':
+					// Program goes here when crossing: case-keyword + lcm_stage
+					/*
+					lcm_panic("If you are trying to count the number of cases
+						depending on their conclusion/result/sentence, try to use
+						only 'case stage' as the report row, with the fields:
+						conclusion (or result/sentence) + count");
+					*/
 					break;
 				default:
-					lcm_panic("not implemented");
+					lcm_panic($report->getSQL() . " <br/> Not implemented: line_src = " . $rep_info['line_src_name'] 
+							. ", col_table = " . $my_col_table);
 			}
 	}
 }
@@ -761,19 +976,19 @@ if ($my_col_table && $do_special_join)
 $my_filters_sql = get_filters_sql($rep, 'table', $tmp_tables);
 
 if ($my_filters_sql)
-	$q .= "\n WHERE " . $my_filters_sql;
+	$report->addSQL("WHERE " . $my_filters_sql);
 
 //
 // Add the last "where" conditions
 //
 
-if (count($q_where)) {
-	if (count($my_filters))
-		$q .= " AND ";
+if (count($report->getWhere())) {
+	if ($my_filters_sql)
+		$report->addSQL(" AND ");
 	else
-		$q .= " WHERE ";
+		$report->addSQL(" WHERE ");
 	
-	$q .= implode(" AND ", $q_where);
+	$report->addSQL(implode(" AND ", $report->getWhere()));
 }
 
 if ($do_grouping) {
@@ -787,17 +1002,20 @@ if ($do_grouping) {
 			$tmp[] = $l;
 
 	$group_fields = implode(',', $tmp);
-	$q .= " GROUP BY " . $group_fields;
+	$report->addSQL(" GROUP BY " . $group_fields);
 }
 
 //
 // Ready!
 //
 
-if ($headers_sent)
-	echo "\n\n<!-- QUERY = " . $q . " -->\n\n";
+if ($headers_sent) {
+	echo "\n\n<!-- QUERY = " . $report->getSQL() . " -->\n\n";
+	for($cpt = 0; $cpt < $specials_count; $cpt++)
+		echo "<!-- \t - $cpt: " . $specials[$cpt] . " -->\n";
+}
 
-$result = lcm_query($q);
+$result = lcm_query($report->getSQL());
 
 //
 // Show filters applied
@@ -845,9 +1063,9 @@ for ($cpt_lines = $cpt_col = 0; $row = lcm_fetch_array($result); $cpt_lines++) {
 			if ($headers[$cpt_col]['field_name'] == 'description')
 				$val = get_fu_description($row);
 
-			if ($val == "1" && preg_match("/^LCM_SQL: (.*)/", $key, $regs)) {
+			if ($val == "1" && preg_match("/^LCM_SQL:special:(.*)/", $key, $regs)) {
 				$deps = join_tables($my_line_table, '', $row['LCM_HIDE_ID'], 0);
-				$q_col = $regs[1];
+				$q_col = $specials[$regs[1]]; // Fetch special rule
 				$q_col .= $deps[2]; // WHERE [...]
 				
 				$result_tmp = lcm_query($q_col);
@@ -857,11 +1075,11 @@ for ($cpt_lines = $cpt_col = 0; $row = lcm_fetch_array($result); $cpt_lines++) {
 				while($row_tmp = lcm_fetch_array($result_tmp)) {
 					$val .= $row_tmp[0];
 				}
-			} elseif ($val == "2" && preg_match("/^LCM_SQL: (.*)/", $key, $regs)) {
-				$tmp = $regs[1];
+			} elseif ($val == "2" && preg_match("/^LCM_SQL:special:(.*)/", $key, $regs)) {
+				$tmp = $specials[$regs[1]]; // Fetch special rule
 
 				$q_col = "SELECT count(*) ";
-				$q_col .= strstr($q, "FROM");
+				$q_col .= strstr($report->getSQL(), "FROM");
 
 				//
 				// Experimental magic
@@ -928,7 +1146,7 @@ foreach ($headers as $h) {
 		&& ($h['filter'] == 'number' || $h['filter'] == 'currency' || $h['filter_special'] == 'time_length'))
 		echo get_ui_print_value($h['total'], $h, $css);
 	elseif ($cpt_tmp == 0)
-		echo get_ui_print_value('TOTAL', $h, $css); // TRAD
+		echo get_ui_print_value(_Th('generic_input_total'), $h, $css);
 	else
 		echo get_ui_print_value('', $h, $css);
 	
@@ -940,7 +1158,18 @@ echo get_ui_end_line();
 if ($headers_sent) {
 	echo "</table>\n";
 
+	// Report footnotes (ex: signed by manager, etc. -- allow HTML)
+	echo $rep_info['notes'];
+
 	echo '<p><a href="rep_det.php?rep=' . $rep . '" class="run_lnk">' . _T('rep_button_goback') . "</a></p>\n";
+
+	if (isset($_REQUEST['debug'])) {
+		$dbg = $report->getJournal();
+
+		foreach($dbg as $line)
+			echo $line;
+	}
+	
 	lcm_page_end();
 }
 

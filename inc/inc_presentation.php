@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.228 2005/06/01 09:54:35 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.229 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 //
@@ -179,34 +179,26 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 	
 	// linking the alternate CSS files with smaller and larger font size
 	
-	//There must be one active font size CSS file
-	switch($prefs['font_size'])
-	{
-		case "small_font":
-		echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_opt_smallfonts.css\" />\n";
-		break;
-		
-		case "large_font":
-		echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_opt_largefonts.css\" />\n";
-		break;
-		
-		case "medium_font":
-		echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_opt_mediumfonts.css\" />\n";
-		break;
-		
-		default:
-		echo "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"styles/lcm_opt_mediumfonts.css\" />\n";
-		break;
-	}
-	
-	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_smallfonts.css\" title=\"small_font\" />\n";
-	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_mediumfonts.css\" title=\"medium_font\" />\n";
-	echo "\t<link rel=\"alternate stylesheet\" type=\"text/css\" href=\"styles/lcm_opt_largefonts.css\" title=\"large_font\" />\n";
+	// There must be one active font size CSS file
+	// [ML] I know this looks silly, but this used to be a big switch.. :-)
+	$sys_font_sizes = array(
+		"small_font" => "smallfonts",
+		"large_font" => "largefonts",
+		"medium_font" => "mediumfonts");
+
+	if (isset($prefs['font_size']) && isset($sys_font_sizes[$prefs['font_size']]))
+		$usr_font = $sys_font_sizes[$prefs['font_size']];
+	else
+		$usr_font = "mediumfonts";
+
+	echo '<link rel="stylesheet" type="text/css" media="screen" href="styles/lcm_opt_' . $usr_font . '.css" />' . "\n";
+
+	echo '<link rel="alternate stylesheet" type="text/css" href="styles/lcm_opt_smallfonts.css" title="small_font" />' . "\n";
+	echo '<link rel="alternate stylesheet" type="text/css" href="styles/lcm_opt_mediumfonts.css" title="medium_font" />' . "\n";
+	echo '<link rel="alternate stylesheet" type="text/css" href="styles/lcm_opt_largefonts.css" title="large_font" />' . "\n";
 	
 	echo "<link rel=\"shortcut icon\" type=\"image/ico\" href=\"images/lcm/favicon.ico\" />\n";
-	
-	echo "\t<script type=\"text/javascript\" language=\"JavaScript\" src=\"inc/ss_switcher.js\"></script>\n";
-				
+	echo "<script type=\"text/javascript\" language=\"JavaScript\" src=\"inc/ss_switcher.js\"></script>\n";
 	echo "</head>\n";
 
 	// right-to-left (Arabic, Hebrew, Farsi, etc. -- even if not supported at the moment)
@@ -266,8 +258,14 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 						<ul class=\"nav_menu_list\">";
 	
 	echo show_navmenu_item("listcases.php", 'main_cases');
-	echo show_navmenu_item("listclients.php", 'main_clients');
-	echo show_navmenu_item("listorgs.php", 'main_orgs');
+
+	// Require to be explicitly off in order to hide the menu item (avoid config errors)
+	if (read_meta('client_hide_all') != 'yes')
+		echo show_navmenu_item("listclients.php", 'main_clients');
+
+	if (read_meta('org_hide_all') != 'yes')
+		echo show_navmenu_item("listorgs.php", 'main_orgs');
+
 	echo show_navmenu_item("listauthors.php", 'main_authors');
 
 	echo "</ul>\n";
@@ -282,7 +280,6 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 		show_navmenu_item("config_site.php", "admin_siteconf");
 		show_navmenu_item("archive.php", "admin_archives");
 		show_navmenu_item("listreps.php", "admin_reports");
-		// [ML] show_navmenu_item("listfilters.php", "admin_filters");
 		show_navmenu_item("keywords.php", "admin_keywords");
 
 		echo "</ul>\n";
@@ -394,7 +391,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 					<h3 class=\"content_head\">";
 	
 	if ($help_code)
-		echo '<div style="float: right">' . lcm_help($help_code) . "</div> ";
+		echo '<div class="help_icon">' . lcm_help($help_code) . "</div> ";
 					
 	echo $title;
 	echo "</h3>
@@ -436,17 +433,17 @@ function lcm_page_end($credits = '') {
 				<!-- End of 'main_column' content -->
 				</div>
 			</div>
-		</div>
+		</div>\n";
 
-<!-- The initial intention was that here can be placed some UI preferences -->
-<!-- but I think it will be much better to put the search boxes -->
-<!-- The right and the left column can be very long, so, we can put here a lot of additional information, some tiny help hints and so -->";
+	// [KM] The right and the left column can be very long, so, we can put here a 
+	// lot of additional information, some tiny help hints and so.
+	echo "<div id=\"prefs_column\">\n";
+	echo "<!-- Start of 'prefs_column' content -->\n";
 
-// Checking for "wide/narrow" user screen
-if($prefs['screen'] == "wide") {
-		echo "<div id=\"prefs_column\">
-<!-- Start of \"prefs_column\" content -->
-			<div class=\"prefs_column_menu_head\"><div class=\"sm_profile\">" . _T('menu_profile') . "</div>
+	// Checking for "wide/narrow" user screen
+	if($prefs['screen'] == "wide") {
+		echo "<div class=\"prefs_column_menu_head\">
+				<div class=\"sm_profile\">" . _T('menu_profile') . "</div>
 			</div>
 			<p class=\"prefs_column_text\">"
 				. '<a href="author_det.php?author=' . $author_session['id_author'] . '" class="prefs_normal_lnk"'
@@ -455,57 +452,28 @@ if($prefs['screen'] == "wide") {
 			<a href=\"config_author.php\" class=\"prefs_myprefs\">" . _T('menu_profile_preferences') . "</a><br /><br />
 			<a href=\"lcm_cookie.php?logout=" . htmlspecialchars($author_session['username']) ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
 			</p><br />
-			<div class=\"prefs_column_menu_head\"><div class=\"sm_search\">" . _T('menu_search') . "</div>
-			</div>
+			<div class=\"prefs_column_menu_head\">
+				<div class=\"sm_search\">" . _T('menu_search') . "</div>
+			</div>\n";
 
-			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
-			<p class=\"prefs_column_text\">
-			" . _T('input_search_case') . "<br />
-			<input type=\"text\" name=\"find_case_string\" size=\"10\" class=\"search_form_txt\"";
-
-	if (isset($find_case_string))
-		echo " value='$find_case_string'";
-
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
-			</p>
-			</form>
-			<form name=\"frm_find_client\" class=\"search_form\" action=\"listclients.php\" method=\"post\">
-			<p class=\"prefs_column_text\">
-			" . _T('input_search_client') . "<br />
-			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\"";
-
-	if (isset($find_client_string)) 
-		echo " value='$find_client_string'";
-
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
-			</p>
-			</form>
-			<form name=\"frm_find_client\" class=\"search_form\" action=\"listorgs.php\" method=\"post\">
-			<p class=\"prefs_column_text\">
-			" . _T('input_search_org') . "<br />
-			<input type=\"text\" name=\"find_org_string\" size=\"10\" class=\"search_form_txt\"";
-
-	if (isset($find_org_string))
-		echo " value='$find_org_string'";
-
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
-			</p>
-			</form><br />
+		//
+		// Search/find boxes
+		//
+		show_find_box('case', $find_case_string, '', 'narrow');
+		show_find_box('client', $find_client_string, '', 'narrow');
+		show_find_box('org', $find_org_string, '', 'narrow');
+	
+		echo "<br />
 			<!-- the font size experiment -->
 			<div class=\"prefs_column_menu_head\"><div class=\"sm_font_size\">" . _T('menu_fontsize') . "</div>
 			</div>
-				<ul class=\"font_size_buttons\">
-					<li><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\">A-</a></li>
-					<li><a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('medium_font')\">A</a></li>
-					<li><a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\">A+</a></li>
-				</ul>
-		<!-- End of \"prefs_column\" content -->
-		</div>";
-//end of user screen IF
-
-} else {
-
-	//data from the refs_column - user name, links [My preferences] & [Logout]
+			<ul class=\"font_size_buttons\">
+				<li><a href=\"javascript:;\" title=\"Small Text\" onclick=\"setActiveStyleSheet('small_font')\">A-</a></li>
+				<li><a href=\"javascript:;\" title=\"Normal Text\" onclick=\"setActiveStyleSheet('medium_font')\">A</a></li>
+				<li><a href=\"javascript:;\" title=\"Large Text\" onclick=\"setActiveStyleSheet('large_font')\">A+</a></li>
+			</ul>\n";
+	} else {
+		// Data from the refs_column - user name, links [My preferences] & [Logout]
 		echo "<div id=\"user_info_box_large_screen\">";
 		echo "<p class=\"prefs_column_text\">"
 				. '<a href="author_det.php?author=' . $author_session['id_author'] . '" class="prefs_normal_lnk"'
@@ -517,50 +485,43 @@ if($prefs['screen'] == "wide") {
 				. "<a href=\"lcm_cookie.php?logout=" . htmlspecialchars($author_session['username']) ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
 			</p>"; // TRAD (Small, Normal, Large text)
 		echo "</div>";
-}
+	}
 
-		//just test...
-		echo "<div class=\"clearing\">&nbsp;</div>
-	</div>";
+	echo "<!-- End of \"prefs_column\" content -->\n";
+	echo "</div>\n";
 
-if($prefs['screen'] == "narrow")
-{
-	echo '<div id="footer_narrow">
-	<div class="prefs_column_menu_head"><div class="sm_search">' .  _T('menu_search') . "</div></div>
-	<table border=\"0\" align=\"center\" width=\"100%\">
-		<tr>
-			<td align=\"left\" valign=\"top\">
+	//just test...
+	echo "<div class=\"clearing\">&nbsp;</div>\n";
+	echo "</div>\n";
 
-			<form name=\"frm_find_case\" class=\"search_form\" action=\"listcases.php\" method=\"post\">
-			" . _T('input_search_case') . '<br />
-			<input type="text" name="find_case_string" size="10" class="search_form_txt"';
-	if (isset($find_case_string)) echo ' value="' . $find_case_string . '"';
-	echo ' />&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . "\" class=\"search_form_btn\" />
-			</form>
+	if($prefs['screen'] == "narrow") {
+		echo '<div id="footer_narrow">
+		<div class="prefs_column_menu_head"><div class="sm_search">' .  _T('menu_search') . "</div></div>
+		<table border=\"0\" align=\"center\" width=\"100%\">
+			<tr>
+				<td align=\"left\" width=\"33%\" valign=\"top\">\n";
+	
+		//
+		// Search/find boxes
+		//
+		show_find_box('case', $find_case_string, '', 'narrow');
+	
+		echo "</td>\n";
+		echo '<td align="left" width="33%" valign="top">';
+		
+		show_find_box('client', $find_client_string, '', 'narrow');
+	
+		echo "</td>\n";
+		echo '<td align="left" width="33%" valign="top">';
+	
+		show_find_box('org', $find_org_string, '', 'narrow');
+	
+		echo "</td>
+			</tr>
+		</table>
+		</div><br />\n";
+	}
 
-			</td>
-			<td align=\"left\" valign=\"top\">
-
-			<form name=\"frm_find_client\" class=\"search_form\" action=\"listclients.php\" method=\"post\">
-			" . _T('input_search_client') . "<br />
-			<input type=\"text\" name=\"find_client_string\" size=\"10\" class=\"search_form_txt\"";
-	if (isset($find_client_string)) echo " value='$find_client_string'";
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
-			</form>
-
-			</td>
-			<td align=\"left\" valign=\"top\">
-			<form name=\"frm_find_client\" class=\"search_form\" action=\"listorgs.php\" method=\"post\">
-			" . _T('input_search_organisation') . "<br />
-			<input type=\"text\" name=\"find_org_string\" size=\"10\" class=\"search_form_txt\"";
-	if (isset($find_org_string)) echo " value='$find_org_string'";
-	echo " />&nbsp;<input type=\"submit\" name=\"submit\" value=\"" . _T('button_search') . "\" class=\"search_form_btn\" />
-			</form>
-			</td>
-		</tr>
-	</table>
-	</div><br />";
-}
 	echo "<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ";
 	echo _T('info_free_software', 
 			array(
@@ -568,18 +529,8 @@ if($prefs['screen'] == "narrow")
 				'license' => lcm_help_string('about_license', _T('info_free_software2'))))
 		. "</div>\n";
 
-	//
-	// Language choice (temporarely put here by [ML])
-	//
-	/* [ML] No longuer necessary
-	if ($GLOBALS['all_langs']) {
-		echo "<br/><div align=\"right\">" . menu_languages('var_lang_lcm') .  "</div>\n";
-	}
-	*/
-
-	echo "
-</body>
-</html>";
+	echo "</body>\n";
+	echo "</html>\n";
 
 	// [ML] Off-topic note, seen while removing code:
 	// http://www.dynamicdrive.com/dynamicindex11/abox.htm
@@ -591,8 +542,11 @@ if($prefs['screen'] == "narrow")
  * Header function for the installation
  * They are used by install.php and lcm_test_dirs.php
  */
-function install_html_start($title = 'AUTO', $css_files = "") {
+function install_html_start($title = 'AUTO', $css_files = '', $dbg = '') {
 	global $lcm_lang_rtl;
+
+	if ($dbg)
+		lcm_log("$dbg: start", 'install');
 
 	if ($title == 'AUTO')
 		$title = _T('install_title_installation_start');
@@ -612,11 +566,13 @@ function install_html_start($title = 'AUTO', $css_files = "") {
  * Footer function for the installation
  * They are used by install.php and lcm_test_dirs.php
  */
-function install_html_end() {
-		echo " </div>
+function install_html_end($dbg = '') {
+	if ($dbg)
+		lcm_log("$dbg: end", 'install');
+
+	echo "</div>
 	</body>
-	</html>
-";
+	</html>\n\n";
 }
 
 //
@@ -953,6 +909,88 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	return $ret;
 }
 
+// [ML] In order to re-use the code from the previous function
+// They should probably be split into many smaller functions.
+// And since we have many such functions, it would not be bad
+// to put them in their own include file..
+function get_time_interval_inputs_from_array($name = 'select', $source, $hours_only = true, $select_hours = true, $table = false)
+{
+	$ret = '';
+
+	$days = $source[$name . '_days'];
+	$hours = $source[$name . '_hours'];
+	$minutes = $source[$name . '_minutes'];
+
+	// If name is empty, disable fields
+	$dis = (($name) ? '' : 'disabled="disabled"');
+
+	if ($table && !$hours_only)
+		$ret .= '<table cellpadding="3" cellspacing="3">' . "\n<tr>\n";
+		
+	// Days
+	if ($hours_only) {
+		$ret .= "<input type=\"hidden\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" value=\"$days\" />\n";
+	} else {
+		if ($table)
+			$ret .= "<td>\n";
+		
+		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
+		$ret .= "&nbsp;" . _T('time_info_short_day') . ", ";
+				
+		if ($table)
+			$ret .= "</td>\n";
+	}
+
+	// Hour
+	if ($hours_only || !$select_hours) {
+		$ret .= "<input $dis size=\"4\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
+		$ret .= _T('time_info_short_hour');
+	} else {
+		if ($table)
+			$ret .= "<td>\n";
+
+		$ret .= "<select $dis name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\">\n";
+	
+		for ($i = 0; $i < 24; $i++) {
+			$default = ($i == $hours ? ' selected="selected"' : '');
+			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">$i</option>\n";
+		}
+	
+		$ret .= "</select>";
+		
+		$ret .= "&nbsp;" . _T('time_info_short_hour') . ", ";
+	
+		if ($table)
+			$ret .= "</td>\n";
+	}
+	
+	// Minutes
+	if ($hours_only) {
+		$ret .= "<input type=\"hidden\" name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" value=\"$minutes\" />\n";
+	} else {
+		if ($table)
+			$ret .= "<td>\n";
+		
+		$ret .= "<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
+	
+		for ($i = 0; $i < 60; $i += 5) {
+			$default = ($i == $minutes ? ' selected="selected"' : '');
+			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
+		}
+	
+		$ret .= "</select>";
+		$ret .= "&nbsp;" . _T('time_info_short_min');
+	
+		if ($table)
+			$ret .= "</td>\n";
+	}
+
+	if ($table && !$hours_only)
+		$ret .= "</tr>\n</table>\n";
+
+	return $ret;
+}
+
 // Returns an array with valid CSS files for themes (lcm_ui_*.css)
 function get_theme_list() {
 	$list = array();
@@ -1113,7 +1151,7 @@ function show_list_start($headers = array()) {
 	echo "<tr>\n";
 
 	foreach($headers as $h) {
-		$width = ($h['width'] ? ' width="' . $h['width'] . '" ' : '');
+		$width = (isset($h['width']) ? ' width="' . $h['width'] . '" ' : '');
 		echo '<th ' . $width . 'class="heading" nowrap="nowrap">';
 
 		if ($h['order'] && $h['order'] != 'no_order') {
@@ -1300,7 +1338,7 @@ function show_listcase_start() {
 }
 
 function show_listcase_item($item, $cpt, $custom = '') {
-	include('inc/inc_acc.php');
+	include_lcm('inc_acc');
 	// [ML] $case_court_archive = read_meta('case_court_archive');
 
 	$ac_read = allowed($item['id_case'], 'r');
@@ -1356,18 +1394,103 @@ function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
 	show_list_end($current_pos, $number_of_rows);
 }
 
-// [ML] function show_find_box($type, $string, $dest = '', $export = '') {
-function show_find_box($type, $string, $dest = '') {
-	// the joy of patching around
+// see listcases.php for example
+function show_listfu_start($screen = 'general') {
+	global $prefs;
+
+	$cpt = 0;
+	$headers = array();
+
+	if ($screen != 'case') {
+		$headers[$cpt]['title'] = "#";
+		$headers[$cpt]['order'] = 'no_order';
+		$cpt++;
+	}
+
+	$headers[$cpt]['title'] = _Th('time_input_date_start');
+	$headers[$cpt]['order'] = 'fu_order';
+	$headers[$cpt]['default'] = 'ASC';
+	$cpt++;
+
+	$headers[$cpt]['title'] = (($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length'));
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+
+	if ($screen != 'author') {
+		$headers[$cpt]['title'] = _Th('case_input_author');
+		$headers[$cpt]['order'] = 'no_order';
+		$cpt++;
+	}
+
+	$headers[$cpt]['title'] = _Th('fu_input_type');
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+	
+	$headers[$cpt]['title'] = _Th('fu_input_description');
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+
+	show_list_start($headers);
+}
+
+function show_listfu_item($item, $cpt, $screen = 'general') {
+	echo "<tr>\n";
+
+	// Id case
+	if ($screen != 'case')
+		echo '<td><abbrev title="' . $item['title'] . '">' . $item['id_case'] . '</abbrev></td>';
+					
+	// Start date
+	echo '<td>' . format_date($item['date_start'], 'short') . '</td>';
+					
+	// Time
+	echo '<td>';
+	$fu_date_end = vider_date($item['date_end']);
+	if ($prefs['time_intervals'] == 'absolute') {
+		if ($fu_date_end) echo format_date($item['date_end'],'short');
+	} else {
+		$fu_time = ($fu_date_end ? strtotime($item['date_end']) - strtotime($item['date_start']) : 0);
+		echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
+	}
+	echo '</td>';
+
+	// Author initials
+	if ($screen != 'author')
+		echo '<td>' . get_person_initials($item) . '</td>';
+
+	// Type
+	echo '<td>' . _Tkw('followups', $item['type']) . '</td>';
+
+	// Description
+	$short_description = get_fu_description($item);
+
+	if ($item['hidden'] == 'Y')
+		$short_description .= ' <img src="images/jimmac/stock_trash-16.png" '
+			. 'height="16" width="16" border="0" '
+			. 'title="' . _T('fu_info_is_deleted') . '" '
+			. 'alt="' . _T('fu_info_is_deleted') . '" />';
+
+	echo '<td>';
+	echo '<a href="fu_det.php?followup=' . $item['id_followup'] . '" class="content_link">' . $short_description . '</a>';
+	echo '</td>';
+
+	echo "</tr>\n";
+}
+
+function show_find_box($type, $string, $dest = '', $layout = 'normal') {
+	if ($type == 'client' && read_meta('client_hide_all') == 'yes')
+		return;
+
+	if ($type == 'org' && read_meta('org_hide_all') == 'yes')
+		return;
+
 	switch ($type) {
 		case 'case':
 		case 'client':
+		case 'org':
 		case 'author':
 		case 'rep':
 			$action = 'list' . $type . 's.php';
-			break;
-		case 'org':
-			$action = 'listorgs.php';
 			break;
 		default:
 			lcm_panic("invalid type: $type");
@@ -1387,17 +1510,12 @@ function show_find_box($type, $string, $dest = '') {
 	}
 
 	echo _T('input_search_' . $type) . "&nbsp;";
-	echo '<input type="text" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' .  $string . '" />';
-	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
 
-	/* [ML] Please put this in seperate function, at bottom of screen 
-	if (!empty($export)) {
-		echo '&nbsp;Export&nbsp;this&nbsp;list&nbsp;in:';	// TRAD
-		echo '&nbsp;<input type="radio" name="exp_format" value="csv" checked="checked">CSV</input>';
-		echo '&nbsp;<input type="radio" name="exp_format" value="xml">XML</input>';
-		echo '&nbsp;format';	// TRAD
-		echo '&nbsp;<input type="submit" name="export" value="' . _T('button_export') . '" class="search_form_btn" />' . "\n";
-	} */
+	if ($layout == 'narrow')
+		echo "<br />\n";
+	
+	echo '<input type="text" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' . clean_output($string) . '" />';
+	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
 
 	echo "</form>\n";
 }
@@ -1424,8 +1542,33 @@ function show_context_case_title($id_case, $link_tab = '') {
 
 	while ($row = lcm_fetch_array($result))  // should be only once
 		echo '<li style="list-style-type: none;">' 
-			. _T('fu_input_for_case')
-			. " <a href='case_det.php?case=$id_case$link_tab' class='content_link'>" . $row['title'] . "</a>"
+			. _Ti('fu_input_for_case')
+			. "<a href='case_det.php?case=$id_case$link_tab' class='content_link'>" . $row['title'] . "</a>"
+			. "</li>\n";
+}
+
+function show_context_case_stage($id_case, $id_followup = 0) {
+	if (! (is_numeric($id_case) && $id_case > 0)) {
+		lcm_log("Warning: show_context_casename, id_case not a number > 0: $id_case");
+		return;
+	}
+
+	if (! (is_numeric($id_followup))) {
+		lcm_log("Warning: show_context_casename, id_followup not a number >= 0: $id_followup");
+		return;
+	}
+
+	if ($id_followup)
+		$query = "SELECT case_stage as stage FROM lcm_followup WHERE id_followup = $id_followup";
+	else
+		$query = "SELECT stage FROM lcm_case WHERE id_case = $id_case";
+
+	$result = lcm_query($query);
+
+	while ($row = lcm_fetch_array($result))  // should be only once
+		echo '<li style="list-style-type: none;">' 
+			. _Ti('case_input_stage')
+			. _Tkw('stage', $row['stage'])
 			. "</li>\n";
 }
 
@@ -1524,7 +1667,7 @@ function show_page_subtitle($subtitle, $help_code = '', $help_target = '') {
 	echo '<div class="prefs_column_menu_head">';
 
 	if ($help_code)
-		echo "<div style='float: right'>" . lcm_help($help_code, $help_target) . "</div>";
+		echo '<div class="help_icon">' . lcm_help($help_code, $help_target) . "</div>";
 	
 	echo $subtitle;
 	echo "</div>\n";
@@ -1627,6 +1770,17 @@ function get_author_link($item) {
 		. 'title="' . _T('case_tooltip_view_author_details', array('author' => get_person_name($item))) . '">'
 		. get_person_name($item)
 		. "</a>";
+}
+
+function get_delete_box($id, $arrname, $text) {
+	$html  = '<label for="' . $id . '">';
+	$html .= '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" '
+			. 'alt="' . $text . '" title="' . $text . '" />';
+	$html .= '</label>&nbsp;';
+	$html .= '<input type="checkbox" onclick="lcm_show(\'btn_delete\')" '
+			. ' id="' . $id . '" name="' . $arrname . '[]" value="' . $id . '" />';
+
+	return $html;
 }
 
 ?>

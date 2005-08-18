@@ -42,30 +42,26 @@ function fichier_session($id_session, $alea) {
 //
 // Add a session for the specified author
 //
-function lcm_add_session($author, $id_session) {
+function lcm_add_session($content, $id_session) {
 	$session_file = get_session_file($id_session, read_meta('alea_ephemere'));
 	$vars = array('id_author', 'name_first', 'name_middle', 'name_last', 'username', 'email', 'status', 'lang', 'ip_change', 'hash_env');
 
-	$texte = "<"."?php\n";
+	$text = "<"."?php\n";
 	reset($vars);
-	while (list(, $var) = each($vars)) {
-		$texte .= "\$GLOBALS['author_session']['$var'] = '". addslashes($author[$var]) . "';\n";
-	}
-	$texte .= "?".">\n";
+
+	foreach ($vars as $v)
+		$text .= "\$GLOBALS['author_session']['$v'] = '". addslashes($content[$v]) . "';\n";
+
+	$text .= "?".">\n";
 
 	if ($f = @fopen($session_file, "wb")) {
-		fputs($f, $texte);
+		fputs($f, $text);
  		fclose($f);
 	} else {
-		lcm_log("CRITICAL: cannot write in $session_file, am I installed?");
+		lcm_log("CRITICAL: cannot write in $session_file, am I installed correctly?");
 		@header("Location: lcm_test_dirs.php");
 		exit;
 	}
-}
-
-function ajouter_session($author, $id_session) {
-	lcm_log("Use of deprecated function ajouter_session(), use lcm_add_session() instead");
-	return lcm_add_session($author, $id_session);
 }
 
 //
@@ -74,6 +70,7 @@ function ajouter_session($author, $id_session) {
 function verifier_session($id_session) {
 	// Test with the current alea
 	$ok = false;
+
 	if ($id_session) {
 		$session_file = get_session_file($id_session, read_meta('alea_ephemere'));
 		if (@file_exists($session_file)) {
@@ -102,8 +99,10 @@ function verifier_session($id_session) {
 	// Clean included data from session file
 	// It used to be done in inc_version, but makes more sense only here
 	// Example where it applies: lcm_author.name_first = Math'ieu, etc.
-	foreach ($GLOBALS['author_session'] as $key => $val)
-		$GLOBALS['author_session'][$key] = stripslashes($val);
+	// Note: Variable not always set, e.g. auth failed
+	if (isset($GLOBALS['author_session']) && count($GLOBALS['author_session']))
+		foreach ($GLOBALS['author_session'] as $key => $val)
+			$GLOBALS['author_session'][$key] = stripslashes($val);
 
 	return $ok;
 }
@@ -130,11 +129,11 @@ function supprimer_session($id_session) {
 //
 // Create a session and return the associated cookie
 //
-function creer_cookie_session($auteur) {
-	if ($id_author = $auteur['id_author']) {
+function creer_cookie_session($author) {
+	if ($id_author = $author['id_author']) {
 		$id_session = $id_author.'_'.md5(create_uniq_id());
-		$auteur['hash_env'] = hash_env();
-		lcm_add_session($auteur, $id_session);
+		$author['hash_env'] = hash_env();
+		lcm_add_session($author, $id_session);
 		return $id_session;
 	}
 }
@@ -175,7 +174,7 @@ function zap_sessions($id_author, $zap) {
 
 	// Do not delete yourself by accident
 	// [ML] This does not seem necessary.
-	if ($s = $GLOBALS['lcm_session'])
+	if ($s = $_COOKIE['lcm_session'])
 		$session_file = get_session_file($s, read_meta('alea_ephemere'));
 
 	$dir = opendir($dirname);

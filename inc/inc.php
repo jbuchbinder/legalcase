@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.53 2005/05/10 09:34:18 mlutfy Exp $
+	$Id: inc.php,v 1.54 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 // Test if LCM is installed
@@ -153,7 +153,7 @@ if ($installed_db_version < $lcm_db_version) {
 		$installed_version = "old version";
 
 	echo "<div class='box_warning'>\n";
-	echo "<p><b>" . _T('title_technical_message') . _T('typo_column') . "</b> "
+	echo '<p class="normal_text"><b>' . _T('title_technical_message') . _T('typo_column') . "</b> "
 		. _T('info_upgrade_database1') . ' '
 		. '<a class="content_link" href="lcm_upgrade.php">' . _T('info_upgrade_database2') . "</a>"
 		. "</p>";

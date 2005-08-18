@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.44 2005/05/20 12:02:58 mlutfy Exp $
+	$Id: config_site.php,v 1.45 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -260,6 +260,7 @@ function show_config_form_policy() {
 	$case_court_archive = read_meta('case_court_archive');
 	$case_assignment_date = read_meta('case_assignment_date');
 	$case_alledged_crime = read_meta('case_alledged_crime');
+	$case_legal_reason = read_meta('case_legal_reason');
 	$case_allow_modif = read_meta('case_allow_modif');
 	$fu_sum_billed = read_meta('fu_sum_billed');
 	$fu_allow_modif = read_meta('fu_allow_modif');
@@ -306,14 +307,19 @@ function show_config_form_policy() {
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_case_fields') . "</small></p>\n";
 
 	echo "<table width=\"99%\" class=\"tbl_usr_dtl\">";
+	/* Was put into a keyword, eventually remove
 	echo "<tr><td width=\"300\">" . _T('siteconf_input_court_archive') ."</td><td>"
 		. get_yes_no('case_court_archive', $case_court_archive)
 		. "</td></tr>\n";
+	*/
 	echo "<tr><td>" . _T('siteconf_input_assignment_date') ."</td><td>"
 		. get_yes_no('case_assignment_date', $case_assignment_date)
 		. "</td></tr>\n";
 	echo "<tr><td> " . _T('siteconf_input_alledged_crime') ."</td><td>"
 		. get_yes_no('case_alledged_crime', $case_alledged_crime)
+		. "</td></tr>\n";
+	echo "<tr><td> " . _T('case_input_legal_reason') ."</td><td>"
+		. get_yes_no('case_legal_reason', $case_legal_reason)
 		. "</td></tr>\n";
 	echo "<tr><td>" . _T('siteconf_input_case_allow_modif') ."</td><td>"
 		. get_yes_no('case_allow_modif', $case_allow_modif)
@@ -484,6 +490,7 @@ function apply_conf_changes_policy() {
 				'case_court_archive'    => 'case_input_court_archive',
 				'case_assignment_date'  => 'siteconf_input_assignment_date',
 				'case_alledged_crime'   => 'siteconf_input_alledged_crime',
+				'case_legal_reason'		=> 'case_input_legal_reason',
 				'case_allow_modif'      => 'siteconf_input_case_allow_modif', 
 				'fu_sum_billed'         => 'siteconf_input_sum_billed',
 				'fu_allow_modif'        => 'siteconf_input_fu_allow_modif');

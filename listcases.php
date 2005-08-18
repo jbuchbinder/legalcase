@@ -18,12 +18,10 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.62 2005/05/13 10:07:00 mlutfy Exp $
+	$Id: listcases.php,v 1.63 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
-include_lcm('inc_acc');
-include_lcm('inc_filters');
 
 global $author_session;
 global $prefs;
@@ -56,10 +54,13 @@ if (isset($_REQUEST['case_owner'])) {
 }
 
 // always include 'my' cases [ML] $q_owner is re-used below
-$q_owner .= " (a.id_author = " . $author_session['id_author'];
+$q_owner = " (a.id_author = " . $author_session['id_author'];
 
 if ($case_owner == 'public')
 	$q_owner .= " OR c.public = 1";
+
+if ($author_session['status'] == 'admin' && $case_owner == 'all')
+	$q_owner .= " OR 1=1 ";
 
 $q_owner .= " ) ";
 
@@ -128,13 +129,35 @@ echo "</form>\n";
 
 // Select cases of which the current user is author
 $q = "SELECT DISTINCT c.id_case, title, status, public, pub_write, date_creation
-		FROM lcm_case as c, lcm_case_author as a
-		WHERE (c.id_case = a.id_case ";
+		FROM lcm_case as c, lcm_case_author as a ";
+
+if (strlen($find_case_string) > 0)
+	$q .= " LEFT JOIN lcm_keyword_case as kc ON kc.id_case = c.id_case ";
+
+$q .= " WHERE (c.id_case = a.id_case ";
 
 if (strlen($find_case_string) > 0) {
-	$q .= " AND ( (c.id_case LIKE '%$find_case_string%')
-				OR (c.title LIKE '%$find_case_string%') )";
-	// [ML]	moving out to kw		OR (id_court_archive LIKE '%$find_case_string%') )";
+	$q .= " AND (";
+
+	if (is_numeric($find_case_string))
+		$q .= " c.id_case = $find_case_string OR ";
+		
+	$q .= " kc.value LIKE '%$find_case_string%' OR "
+	 	. " c.title LIKE '%$find_case_string%' ";
+	
+	// [ML] This is because of a problem in MySQL <= 4.1.xx and unicode support.
+	// Most databases are set in latin1 by default, but we store unicode in it
+	// therefore, we cannot use case-insensitive search of MySQL, nor LOWER()/UPPER()
+	// Any suggestions on how to avoid this would be very welcomed
+	if (function_exists('mb_convert_case')) {
+		// Avoid useless overhead is search is numeric
+		if (! is_numeric($find_case_string))
+			$q .= "OR c.title LIKE '%" . mb_convert_case($find_case_string, MB_CASE_TITLE, "UTF-8") . "%' "
+				. "OR c.title LIKE '%" . mb_convert_case($find_case_string, MB_CASE_LOWER, "UTF-8") . "%' "
+				. "OR c.title LIKE '%" . mb_convert_case($find_case_string, MB_CASE_UPPER, "UTF-8") . "%' ";
+	}
+
+	$q .= " )";
 }
 
 $q .= ")";
@@ -197,26 +220,11 @@ echo '<p><a href="edit_client.php" class="create_new_lnk">' . _T('client_button_
 echo '<a name="fu"></a>' . "\n";
 show_page_subtitle(_T('case_subtitle_recent_followups'));
 
-$headers[0]['title'] = "#";
-$headers[0]['order'] = 'no_order';
-$headers[1]['title'] = _Th('time_input_date_start');
-$headers[1]['order'] = 'fu_order';
-$headers[1]['default'] = 'ASC';
-$headers[2]['title'] = (($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length'));
-$headers[2]['order'] = 'no_order';
-$headers[3]['title'] = _Th('case_input_author');
-$headers[3]['order'] = 'no_order';
-$headers[4]['title'] = _Th('fu_input_type');
-$headers[4]['order'] = 'no_order';
-$headers[5]['title'] = _Th('fu_input_description');
-$headers[5]['order'] = 'no_order';
-
 echo '<p class="normal_text">' . "\n";
-			
-show_list_start($headers);
+show_listfu_start('general');
 
 $q = "SELECT fu.id_case, fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description, fu.case_stage,
-			a.name_first, a.name_middle, a.name_last, c.title 
+			fu.hidden, a.name_first, a.name_middle, a.name_last, c.title
 		FROM lcm_followup as fu, lcm_author as a, lcm_case as c 
 		WHERE fu.id_author = a.id_author 
 		  AND  c.id_case = fu.id_case ";
@@ -289,44 +297,10 @@ if ($fu_list_pos > 0)
 		lcm_panic("Error seeking position $fu_list_pos in the result");
 			
 // Process the output of the query
-for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
-	echo "<tr>\n";
-
-	// Id case
-	echo '<td><abbrev title="' . $row['title'] . '">' . $row['id_case'] . '</abbrev></td>';
-					
-	// Start date
-	echo '<td>' . format_date($row['date_start'], 'short') . '</td>';
-					
-	// Time
-	echo '<td>';
-	$fu_date_end = vider_date($row['date_end']);
-	if ($prefs['time_intervals'] == 'absolute') {
-		if ($fu_date_end) echo format_date($row['date_end'],'short');
-	} else {
-		$fu_time = ($fu_date_end ? strtotime($row['date_end']) - strtotime($row['date_start']) : 0);
-		echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
-	}
-	echo '</td>';
-
-	// Author initials
-	echo '<td>' . get_person_initials($row) . '</td>';
-
-	// Type
-	echo '<td>' . _T('kw_followups_' . $row['type'] . '_title') . '</td>';
-
-	// Description
-	$short_description = get_fu_description($row);
-
-	echo '<td>';
-	echo '<a href="fu_det.php?followup=' . $row['id_followup'] . '" class="content_link">' . $short_description . '</a>';
-	echo '</td>';
-
-	echo "</tr>\n";
-}
+for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++)
+	show_listfu_item($row, $i, 'general');
 
 show_list_end($fu_list_pos, $number_of_rows, false, 'fu');
-
 echo "</p>\n";
 
 lcm_page_end();

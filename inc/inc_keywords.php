@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.26 2005/05/06 13:09:57 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.27 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -392,7 +392,7 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 
 			if ($show_kw_value) {
 				echo "<br />\n";
-				echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt . '" ' . 'value="" />' . "\n";
+				echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt_kw . '" ' . 'value="" />' . "\n";
 			}
 
 			echo "</td>\n";

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.23 2005/06/01 08:07:10 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.24 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 
@@ -44,7 +44,17 @@ function get_contact_type_id($name) {
 		}
 	}
 
-	lcm_panic("get_contact_type_id: keyword $name does not exist");
+	if (! is_file("inc/config/inc_connect.php")) {
+		echo "<div style='color: red;'>";
+		echo "There was an internal error, but don't panic! This has been reported a few times, but we are having difficulties making a clear diagnostic of the cause of the problem. If you are running Fedora Core (version 2 or 3), try to de-activate 'SeLinux'. Otherwise, please try to restart the installation from the beginning. If it still does not work on the second try, please contact the developers using the instructions below.";
+		echo "</div>\n";
+	} else {
+		echo "<div style='color: red;'>";
+		echo "There was an internal error, but don't panic! Go to the <a href=\"keywords.php?tab=maint\">keywords maintenance page</a>, then click on the 'validate' button in order to refresh the keywords. If this does not solve the problem, please send more information to legalcase-devel@lists.sf.net.";
+		echo "</div>\n";
+	}
+
+	lcm_panic("Keyword $name does not exist.");
 }
 
 // type_person should be of the enum in the database (author, client, org, ..)

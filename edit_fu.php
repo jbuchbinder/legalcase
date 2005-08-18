@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.109 2005/05/17 09:01:06 mlutfy Exp $
+	$Id: edit_fu.php,v 1.110 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,12 +30,11 @@ include_lcm('inc_keywords');
 $fu_sum_billed = read_meta('fu_sum_billed');
 $admin = ($GLOBALS['author_session']['status']=='admin');
 
-if (empty($_SESSION['errors'])) {
-    // Clear form data
-	// [ML] FIXME: referer may be null, should default to fu_det.php?fu=...
-	// [AG] Since id_followup of new follow-ups is not known at this point,
-	// default redirection to fu_det.php is done in upd_fu.php
-	$_SESSION['fu_data'] = array('ref_edit_fu' => $GLOBALS['HTTP_REFERER']);
+// [ML] Don't clear form data if comming back from upd_fu with errors!
+if (! isset($_SESSION['fu_data']))
+	$_SESSION['fu_data'] = array();
+
+$_SESSION['fu_data']['ref_edit_fu'] = $GLOBALS['HTTP_REFERER'];
 
 	if (isset($_GET['followup'])) {
 		$_SESSION['followup'] = intval($_GET['followup']);
@@ -47,40 +46,45 @@ if (empty($_SESSION['errors'])) {
 
 		$result = lcm_query($q);
 
-		if ($row = lcm_fetch_array($result)) {
-			foreach($row as $key=>$value) {
-				$_SESSION['fu_data'][$key] = $value;
-			}
-		} else lcm_panic("Edit follow-up: invalid 'follow-up id': " . $_SESSION['followup']);
+		if (! ($row = lcm_fetch_array($result)))
+			lcm_panic("Edit follow-up: invalid 'follow-up id': " . $_SESSION['followup']);
 
 		// Set the case ID, to which this followup belongs
-		$case = $_SESSION['fu_data']['id_case'];
+		$case = $row['id_case'];
 
-		// If editing "stage change"..
-		if ($row['type'] == 'stage_change') 
-			$old_stage = $row['case_stage'];
-
-		// Get new stage from description field
-		$tmp = unserialize((get_magic_quotes_runtime() ? stripslashes($_SESSION['fu_data']['description']) : $_SESSION['fu_data']['description']));
-		if (isset($tmp['new_stage']))
-			$new_stage = $tmp['new_stage'];
-
-		// Case conclusion, if appropriate
-		if ($_SESSION['fu_data']['type'] == 'stage_change' || is_status_change($_SESSION['fu_data']['type'])) {
-			// description might be empty
-			if (isset($tmp['description']))
-				$_SESSION['fu_data']['description'] = $tmp['description'];
-
-			if ($tmp['conclusion'])
-				$_SESSION['fu_data']['conclusion'] = $tmp['conclusion'];
-
-			if ($tmp['sentence'])
-				$_SESSION['fu_data']['sentence'] = $tmp['sentence'];
-
-			if ($tmp['sentence_val'])
-				$_SESSION['fu_data']['sentence_val'] = $tmp['sentence_val'];
+		foreach($row as $key=>$value) {
+			$_SESSION['fu_data'][$key] = $value;
 		}
 
+		if (empty($_SESSION['errors'])) {
+			// If editing "stage change"..
+			if ($row['type'] == 'stage_change') 
+				$old_stage = $row['case_stage'];
+
+			// Get new stage from description field
+			$tmp = lcm_unserialize($_SESSION['fu_data']['description']);
+			if (isset($tmp['new_stage']))
+				$new_stage = $tmp['new_stage'];
+
+			// Case conclusion, if appropriate
+			if ($_SESSION['fu_data']['type'] == 'stage_change' || is_status_change($_SESSION['fu_data']['type'])) {
+				// description might be empty
+				if (isset($tmp['description']))
+					$_SESSION['fu_data']['description'] = $tmp['description'];
+
+				if ($tmp['result'])
+					$_SESSION['fu_data']['result'] = $tmp['result'];
+
+				if ($tmp['conclusion'])
+					$_SESSION['fu_data']['conclusion'] = $tmp['conclusion'];
+
+				if ($tmp['sentence'])
+					$_SESSION['fu_data']['sentence'] = $tmp['sentence'];
+
+				if ($tmp['sentence_val'])
+					$_SESSION['fu_data']['sentence_val'] = $tmp['sentence_val'];
+			}
+		}
 	} else {
 		unset($_SESSION['followup']);
 		$case = intval($_GET['case']);
@@ -94,70 +98,75 @@ if (empty($_SESSION['errors'])) {
 
 		// Setup default values
 		$_SESSION['fu_data']['id_case'] = $case; // Link to the case
-		$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
-		$_SESSION['fu_data']['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 
-		// Set appointment start/end/reminder times to current time
-		$_SESSION['fu_data']['app_start_time'] = date('Y-m-d H:i:s');
-		$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s');
-		$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s');
+		if (empty($_SESSION['errors'])) {
+			$_SESSION['fu_data']['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+			$_SESSION['fu_data']['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 
-		if (isset($_REQUEST['stage']))
-			$new_stage = $_REQUEST['stage'];
+			// Set appointment start/end/reminder times to current time
+			$_SESSION['fu_data']['app_start_time'] = date('Y-m-d H:i:s');
+			$_SESSION['fu_data']['app_end_time'] = date('Y-m-d H:i:s');
+			$_SESSION['fu_data']['app_reminder'] = date('Y-m-d H:i:s');
 
-		if (isset($_REQUEST['type']))
-			$_SESSION['fu_data']['type'] = $_REQUEST['type'];
+			if (isset($_REQUEST['stage']))
+				$new_stage = $_REQUEST['stage'];
 
-		//
-		// Check if the followup is created from appointment
-		//
-		$app = intval($_GET['app']);
-		if (! empty($app)) {
-			$q = "SELECT * FROM lcm_app WHERE id_app=$app";
-			$result = lcm_query($q);
+			if (isset($_REQUEST['type']))
+				$_SESSION['fu_data']['type'] = $_REQUEST['type'];
+		}
 
-			if (! ($row = lcm_fetch_array($result)))
-				lcm_panic("There's no such appointment (app = $app)");
+			//
+			// Check if the followup is created from appointment
+			//
+			$app = intval($_GET['app']);
+			if (! empty($app)) {
+				$q = "SELECT * FROM lcm_app WHERE id_app=$app";
+				$result = lcm_query($q);
 
-			// Get participant author(s)
-			$participants = array();
-			$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
-				FROM lcm_author_app, lcm_author
-				WHERE (id_app=$app AND lcm_author_app.id_author=lcm_author.id_author)";
-			$res_author = lcm_query($q);
-			if (lcm_num_rows($res_author)>0) {
-				while ($author = lcm_fetch_array($res_author)) {
-					$participants[] = get_person_name($author);
+				if (! ($row = lcm_fetch_array($result)))
+					lcm_panic("There's no such appointment (app = $app)");
+
+				// Get participant author(s)
+				$participants = array();
+				$q = "SELECT lcm_author_app.*,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
+					FROM lcm_author_app, lcm_author
+					WHERE (id_app=$app AND lcm_author_app.id_author=lcm_author.id_author)";
+				$res_author = lcm_query($q);
+				if (lcm_num_rows($res_author)>0) {
+					while ($author = lcm_fetch_array($res_author)) {
+						$participants[] = get_person_name($author);
+					}
 				}
+
+				// Get appointment client(s)
+				$q = "SELECT lcm_app_client_org.*,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
+					FROM lcm_app_client_org, lcm_client
+					LEFT JOIN  lcm_org ON lcm_app_client_org.id_org=lcm_org.id_org
+					WHERE (id_app=$app AND lcm_app_client_org.id_client=lcm_client.id_client)";
+
+				$res_client = lcm_query($q);
+
+				if (lcm_num_rows($res_client)>0) {
+					while ($client = lcm_fetch_array($res_client))
+						$participants[] = get_person_name($client)
+							. ( ($client['id_org'] > 0) ? " of " . $client['name'] : ''); // TRAD
+				}
+
+				$_SESSION['fu_data']['id_app'] = $app;
+
+			if (empty($_SESSION['errors'])) {
+				// Propose a description based on the appointment
+				$_SESSION['fu_data']['description'] = _T('fu_info_after_event', array(
+							'title' => _Ti(_Tkw('appointments', $row['type'])) . $row['title'],
+							'date' => format_date($row['start_time']),
+							'participants' => join(', ', $participants)));
+
+				$_SESSION['fu_data']['date_start'] = $row['start_time'];
+				$_SESSION['fu_data']['date_end']   = $row['end_time'];
+				$_SESSION['fu_data']['description'] = str_replace('&nbsp;', ' ', $_SESSION['fu_data']['description']);
 			}
-
-			// Get appointment client(s)
-			$q = "SELECT lcm_app_client_org.*,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
-				FROM lcm_app_client_org, lcm_client
-				LEFT JOIN  lcm_org ON lcm_app_client_org.id_org=lcm_org.id_org
-				WHERE (id_app=$app AND lcm_app_client_org.id_client=lcm_client.id_client)";
-
-			$res_client = lcm_query($q);
-
-			if (lcm_num_rows($res_client)>0) {
-				while ($client = lcm_fetch_array($res_client))
-					$participants[] = get_person_name($client)
-						. ( ($client['id_org'] > 0) ? " of " . $client['name'] : ''); // TRAD
-			}
-
-			// Propose a description based on the appointment
-			$_SESSION['fu_data']['description'] = _T('fu_info_after_event', array(
-						'title' => _Ti(_Tkw('appointments', $row['type'])) . $row['title'],
-						'date' => format_date($row['start_time']),
-						'participants' => join(', ', $participants)));
-
-			$_SESSION['fu_data']['id_app'] = $app;
-			$_SESSION['fu_data']['date_start'] = $row['start_time'];
-			$_SESSION['fu_data']['date_end']   = $row['end_time'];
-			$_SESSION['fu_data']['description'] = str_replace('&nbsp;', ' ', $_SESSION['fu_data']['description']);
 		}
 	}
-}
 
 //
 // Check for access rights
@@ -306,9 +315,13 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 						// user can 'finish' entering data
 						$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
 
-					$interval = ( ($_SESSION['fu_data']['date_end']!='0000-00-00 00:00:00') ?
-							strtotime($_SESSION['fu_data']['date_end']) - strtotime($_SESSION['fu_data']['date_start']) : 0);
-					echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+					if (empty($_SESSION['errors'])) {
+						$interval = ( ($_SESSION['fu_data']['date_end']!='0000-00-00 00:00:00') ?
+								strtotime($_SESSION['fu_data']['date_end']) - strtotime($_SESSION['fu_data']['date_start']) : 0);
+						echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+					} else {
+						echo get_time_interval_inputs_from_array($name, $_SESSION['fu_data'], ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+					}
 				} ?>
 			</td>
 		</tr>
@@ -317,10 +330,29 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 	// Show 'conclusion' options
 	if ($show_conclusion) {
 		$kws_conclusion = get_keywords_in_group_name('conclusion');
+		$kws_result = get_keywords_in_group_name('_crimresults');
 
 		echo "<tr>\n";
 		echo "<td>" . _Ti('fu_input_conclusion') . "</td>\n";
 		echo '<td>';
+
+		// Result
+		if (read_meta('case_result') == 'yes') {
+			echo '<select ' . $dis . ' name="result" size="1" class="sel_frm">' . "\n";
+
+			$default = '';
+			if ($_SESSION['fu_data']['result'])
+				$default = $_SESSION['fu_data']['result'];
+
+			foreach ($kws_result as $kw) {
+				$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
+				echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+			}
+
+			echo "</select><br/>\n";
+		}
+
+		// Conclusion
 		echo '<select ' . $dis . ' name="conclusion" size="1" class="sel_frm">' . "\n";
 
 		$default = '';
@@ -487,6 +519,22 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 		
 		echo "</table>\n\n";
 
+		// XXX FIXME: Should probably be in some function "is_system_fu"
+		// or even "is_deletable"
+		if ($_SESSION['fu_data']['id_followup']
+			&& allowed($_SESSION['fu_data']['id_case'], 'a')
+			&& ! (is_status_change($_SESSION['fu_data']['type'])
+			|| $_SESSION['fu_data']['type'] == 'assignment'
+			|| $_SESSION['fu_data']['type'] == 'unassignment'))
+		{
+			$checked = ($_SESSION['fu_data']['hidden'] == 'Y' ? ' checked="checked" ' : '');
+
+			echo '<p class="normal_text">';
+			echo '<input type="checkbox"' . $checked . ' name="delete" id="box_delete" />';
+			echo '<label for="box_delete">' . _T('fu_info_delete') . '</label>';
+			echo "</p>\n";
+		}
+
 		// Add followup appointment
 		if (!isset($_GET['followup'])) {
 			echo "<!-- Add appointment? -->\n";
@@ -523,6 +571,7 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 			}
 			echo "</td></tr>\n";
 
+			/* [ML] Removing, not useful for now
 			echo "<!-- Reminder -->\n\t\t<tr><td>";
 			echo (($prefs['time_intervals'] == 'absolute') ? _T('app_input_reminder_time') : _T('app_input_reminder_offset'));
 			echo "</td><td>";
@@ -540,6 +589,7 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 				echo f_err_star('app_reminder',$_SESSION['errors']);
 			}
 			echo "</td></tr>\n";
+			*/
 
 			echo "<!-- Appointment title -->\n\t\t<tr><td>";
 			echo f_err_star('app_title') . _T('app_input_title');
@@ -562,7 +612,7 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 
 			$opts = array();
 			foreach($system_kwg['appointments']['keywords'] as $kw)
-				$opts[$kw['name']] = _T($kw['title']);
+				$opts[$kw['name']] = _T(remove_number_prefix($kw['title']));
 			asort($opts);
 
 			foreach($opts as $k => $opt) {

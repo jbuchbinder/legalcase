@@ -1,8 +1,31 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the 
+	Free Software Foundation; either version 2 of the License, or (at your 
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but 
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along 
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: lcm_cookie.php,v 1.25 2005/08/18 22:53:11 mlutfy Exp $
+*/
+
 include("inc/inc_version.php");
 include_lcm("inc_session");
 include_lcm('inc_filters');
+
+global $author_session;
 
 // Determine where we want to fallback after the operation
 if ($_REQUEST['url']) {
@@ -10,19 +33,22 @@ if ($_REQUEST['url']) {
 	if ($_REQUEST['referer']) // see config_author.php
 		$cible->addVar('referer', $_REQUEST['referer']);
 } else {
-	$cible = new Link(); // [ML] XXX uses current page, but this can create strange bugs..
+	if ($_REQUEST['logout'])
+		$cible = new Link("index.php");
+	else
+		$cible = new Link(); // [ML] XXX uses current page, but this can create strange bugs..
 }
 
 // Replay the cookie to renew lcm_session
 if ($change_session == 'yes' || $change_session == 'oui') {
-	if (verifier_session($lcm_session)) {
+	if (verifier_session($_COOKIE['lcm_session'])) {
 		// Warning: only the user with the correct IP has the right to replay
 		// the cookie, therefore a cookie theft cannot disconnect the vitim
 		// but be disconnected by her.
 		if ($author_session['hash_env'] == hash_env()) {
 			$author_session['ip_change'] = false;
 			$cookie = creer_cookie_session($author_session);
-			delete_session($lcm_session);
+			delete_session($_COOKIE['lcm_session']);
 			lcm_setcookie('lcm_session', $cookie);
 		}
 		@header('Content-Type: image/gif');
@@ -36,14 +62,16 @@ if ($change_session == 'yes' || $change_session == 'oui') {
 }
 
 // Attempt to logout
-if ($logout) {
+if (isset($_REQUEST['logout'])) {
 	include_lcm('inc_session');
 	verifier_visiteur();
 
-	if ($author_session['username'] == $logout) {
-		if ($lcm_session) {
+	global $author_session;
+
+	if ($author_session['username'] == $_REQUEST['logout']) {
+		if ($_COOKIE['lcm_session']) {
 			zap_sessions($author_session['id_author'], true);
-			lcm_setcookie('lcm_session', $lcm_session, time() - 3600 * 24);
+			lcm_setcookie('lcm_session', $_COOKIE['lcm_session'], time() - 3600 * 24);
 		}
 		unset ($author_session);
 	}
@@ -71,8 +99,12 @@ if ($cookie_test_failed == 'yes') {
 
 // Attempt to login
 unset ($cookie_session);
-if ($essai_login == 'oui') {
+if ($_REQUEST['essai_login'] == 'oui') {
 	// Get the username stored in a hidden field
+	$session_login_hidden = $_REQUEST['session_login_hidden'];
+	$session_login = $_REQUEST['session_login'];
+	$session_password = $_REQUEST['session_password'];
+
 	if ($session_login_hidden AND !$session_login)
 		$session_login = $session_login_hidden;
 
@@ -97,6 +129,8 @@ if ($essai_login == 'oui') {
 		$auth = new $classe_auth;
 
 		if ($auth->init()) {
+			$session_password_md5 = $_REQUEST['session_password_md5'];
+
 			// Try with the md5 password (made by Javascript in the form)
 			// [ML] TODO: session_password_md5 + next_session_password_md5 
 			// should probably be refered to via _REQUEST... (test after!)
@@ -141,14 +175,15 @@ if ($essai_login == 'oui') {
 	}
 }
 
-
-// Set an administrative cookie?
-// [ML] Not very useful I think
-if ($cookie_admin == 'no') {
+// If cookie_admin == no, delete the lcm_admin cookie
+// This is the "connect with another identifier" on the login page
+if ($_REQUEST['cookie_admin'] == 'no') {
 	lcm_setcookie('lcm_admin', $lcm_admin, time() - 3600 * 24);
 	$cible->delVar('var_login');
 	$cible->addVar('var_login', '-1');
 } else if ($cookie_admin AND $lcm_admin != $cookie_admin) {
+	// Remember the username for the next login
+	// This way, the user can login in only one form, not two
 	lcm_setcookie('lcm_admin', $cookie_admin, time() + 3600 * 24 * 14);
 }
 
@@ -186,7 +221,7 @@ if ($var_lang_lcm) {
 					SET lang = '" . $var_lang_lcm . "' 
 					WHERE id_author = " . $GLOBALS['author_session']['id_author']);
 			$author_session['lang'] = $var_lang_lcm;
-			lcm_add_session($author_session, $lcm_session);
+			lcm_add_session($author_session, $_COOKIE['lcm_session']);
 		}
 
 		$cible->delvar('lang');
@@ -197,14 +232,18 @@ if ($var_lang_lcm) {
 // Redirection
 // Under Apache, cookies with a redirection work
 // Else, we do a HTTP refresh
-if (ereg("^Apache", $SERVER_SOFTWARE)) {
+if (ereg("^Apache", $_SERVER['SERVER_SOFTWARE'])) {
 	@header("Location: " . $cible->getUrlForHeader());
+	exit;
 } else {
 	@header("Refresh: 0; url=" . $cible->getUrl());
 	echo "<html><head>";
 	echo "<meta http-equiv='Refresh' content='0; url=".$cible->getUrl()."'>";
 	echo "</head>\n";
-	echo "<body><a href='".$cible->getUrl()."'>"._T('navigateur_pas_redirige')."</a></body></html>";
+	echo "<body><a href='".$cible->getUrl()."'>"
+		. "Redirecting.." // TRAD
+		. "</a></body></html>";
+	exit;
 }
 
 ?>

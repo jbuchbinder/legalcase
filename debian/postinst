@@ -1,40 +1,76 @@
 #!/bin/sh
-if [  -d /etc/apache ]
+
+# [ML] will not work for now, since everything goes
+# into /usr/share/legalcase ... which is later chown'ed to www-data,
+# which is a REALLY bad idea, /usr is not for data (conf,logs,..) !
+# 
+# chgrp www-data /var/www/legalcase/log
+# chgrp www-data /var/www/legalcase/inc/data/
+# chgrp www-data /var/www/legalcase/inc/config/
+
+if [ -d /etc/apache ]
 then
 	cd /etc/apache
-	ln -s /usr/share/legalcase/apache/legalcase.conf
+
+	if [ ! -L legalcase.conf ]
+	then
+		ln -s /usr/share/legalcase/apache/legalcase.conf
+	fi
+
 	echo "Include /etc/apache/legalcase.conf" >> /etc/apache/httpd.conf
-	apache-modconf apache enable mod_php4
+
+	# [ML] If php4/php5 is installed, then it should already be active, no?
+	# messy!
+	# apache-modconf apache enable mod_php4
 fi
 
 if [  -d /etc/apache2 ]
 then
 	cd /etc/apache2/sites-enabled/
-	ln -s /usr/share/legalcase/apache2/legalcase.conf
-	apache-modconf apache2 enable mod_php4
+
+	if [ ! -L legalcase.conf ]
+	then
+		ln -s /usr/share/legalcase/apache2/legalcase.conf
+	fi
+
+	# [ML] If php4/php5 is installed, then it should already be active, no?
+	# messy!
+	# apache-modconf apache enable mod_php4
 fi
 
 if [  -d /etc/apache-ssl ]
 then
-        cd /etc/apache-ssl
-        ln -s /usr/share/legalcase/apache/legalcase.conf
-        echo "Include /etc/apache-ssl/legalcase.conf" >> /etc/apache-ssl/httpd.conf
-        apache-modconf apache-ssl enable mod_php4
+	cd /etc/apache-ssl
+
+	if [ ! -L legalcase.conf ]
+	then
+		ln -s /usr/share/legalcase/apache/legalcase.conf
+	fi
+
+	echo "Include /etc/apache-ssl/legalcase.conf" >> /etc/apache-ssl/httpd.conf
+
+	# [ML] If php4/php5 is installed, then it should already be active, no?
+	# messy!
+	apache-modconf apache-ssl enable mod_php4
 fi
 				
 chown -R www-data:www-data /usr/share/legalcase/
 
 
-### turn on mysql extension
-if [  -d /etc/php4/apache ]
-then
-	echo "extension=mysql.so" >>/etc/php4/apache/php.ini
-fi
+### Activate on mysql extension, if necessary
+IFS=':'
+PHP4CONF="/etc/php4/apache/php.ini:/etc/php4/apache2/php.ini:/etc/php5/apache2/php.ini"
 
-if [  -d /etc/php4/apache2 ]
-then
-        echo "extension=mysql.so" >>/etc/php4/apache2/php.ini
-fi
+for file in $PHP4CONF; do
+	if [ -f $file ]; then
+		IS_ACTIVE=`grep mysql.so $file | grep extension | grep -v "^;"`
+
+		if [ -z $IS_ACTIVE ]; then
+			echo "extension=mysql.so" >> $file
+			echo "$file: MySQL extension was activated"
+		fi
+	fi
+done
 
 ### restart apache server
 echo " "
@@ -54,5 +90,11 @@ then
 	/etc/init.d/apache-ssl restart
 fi
 
-# dialog --title "LCM is Installed" \
-#	--msgbox "Legal Case Management (LCM) System was installed. Look at \"http://`hostname`/legalcase\"." 7 39
+# The dialog(1) was hiding the console, where possible errors are shown..
+echo -e "\n"
+echo -e "** The Legal Case Management (LCM) installation is complete."
+echo -e "** You can access it using your Web browser at the following location:"
+echo -e "  http://`hostname`/legalcase.\n"
+echo -e "** Since this Debian package is experimental, we would appreciate your feedback regarding the package: legalcase-devel@lists.sf.net"
+echo -e "\n"
+

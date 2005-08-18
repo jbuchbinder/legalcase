@@ -18,14 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_impex.php,v 1.6 2005/04/28 01:04:40 antzi Exp $
+	$Id: inc_impex.php,v 1.7 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 // Execute this file only once
 if (defined('_INC_IMPEX')) return;
 define('_INC_IMPEX', '1');
 
-include('inc/inc_version.php');
 include('inc/inc_db.php');
 
 function export($type, $format, $search = '') {

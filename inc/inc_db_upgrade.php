@@ -18,14 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.55 2005/05/31 10:09:37 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.56 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 // Execute this file only once
 if (defined("_INC_DB_UPGRADE")) return;
 define("_INC_DB_UPGRADE", "1");
 
-include('inc/inc_version.php');
 include_lcm('inc_meta');
 include_lcm('inc_db');
 
@@ -40,12 +39,43 @@ function upgrade_db_version ($version, $test = true) {
 	}
 }
 
+function upgrade_database_conf() {
+	//
+	// Create new keywords (if necessary)
+	// This must be done at the end, in case keyword DB structure changed
+	//
+
+	// Do not remove, or variables won't be declared
+	global $system_keyword_groups;
+	$system_keyword_groups = array();
+
+	include_lcm('inc_meta');
+	include_lcm('inc_keywords_default');
+	create_groups($system_keyword_groups);
+
+	//
+	// Create new meta (if necessary)
+	// This must be done at the end, in case meta DB structure changed
+	//
+
+	include_lcm('inc_meta_defaults');
+	init_default_config();
+	
+	// Rewrite metas in inc/data/inc_meta_cache.php, just to be sure
+	write_metas();
+
+	//
+	// Update lcm_fields
+	//
+	include_lcm('inc_repfields_defaults');
+	$fields = get_default_repfields();
+	create_repfields($fields);
+}
+
 function upgrade_database($old_db_version) {
 	global $lcm_db_version;
 	$log = "";
 
-	// [ML] I think we still need this
-	// $lcm_db_version_current = read_meta('lcm_db_version');
 	$lcm_db_version_current = $old_db_version;
 
 	//
@@ -61,6 +91,8 @@ function upgrade_database($old_db_version) {
 	//
 	// Upgrade the database accordingly to the current version
 	//
+
+	lcm_log("Starting LCM database upgrade; version = $lcm_db_version_current", 'upgrade');
 
 	if ($lcm_db_version_current < 2) {
 		lcm_query("ALTER TABLE lcm_case ADD public tinyint(1) DEFAULT '0' NOT NULL");
@@ -742,30 +774,98 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (36);
 	}
 
-	//
-	// Create new keywords (if necessary)
-	// This must be done at the end, in case keyword DB structure changed
-	//
+	if ($lcm_db_version_current < 37) {
+		// Converts the lcm_case.id_court_archive into 'court archive' keywords 
+		// for the latest 'stage' of the case (if there is a court archive).
+		lcm_query("INSERT INTO lcm_keyword_case (id_keyword, id_case, id_stage, value)
+			SELECT kk.id_keyword as kw_court_archive,
+				c.id_case, k.id_keyword as id_stage, 
+				c.id_court_archive 
+			FROM lcm_case as c, lcm_keyword as k 
+			LEFT JOIN lcm_keyword as kk ON (kk.name = 'courtarchive')
+			WHERE id_court_archive != '' AND k.name = c.stage AND c.stage != '' ");
 
-	// Do not remove, or variables won't be declared
-	global $system_keyword_groups;
-	$system_keyword_groups = array();
+		upgrade_db_version (37);
+	}
 
-	include_lcm('inc_meta');
-	include_lcm('inc_keywords_default');
-	create_groups($system_keyword_groups);
+	if ($lcm_db_version_current < 38) {
+		lcm_query("CREATE TABLE lcm_stage (
+			id_entry bigint(21) NOT NULL auto_increment,
+			id_case bigint(21) DEFAULT 0 NOT NULL,
+			kw_case_stage varchar(255) NOT NULL DEFAULT '',
+			date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+			id_fu_creation bigint(21) NOT NULL DEFAULT 0,
+			date_conclusion datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+			id_fu_conclusion bigint(21) NOT NULL DEFAULT 0,
+			kw_result varchar(255) NOT NULL DEFAULT '',
+			kw_conclusion varchar(255) NOT NULL DEFAULT '',
+			kw_sentence varchar(255) NOT NULL DEFAULT '',
+			sentence_val text NOT NULL DEFAULT '',
+			date_agreement datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+			latest tinyint(1) DEFAULT '0' NOT NULL,
+			PRIMARY KEY (id_entry),
+			KEY id_case (id_case))");
 
-	//
-	// Create new meta (if necessary)
-	// This must be done at the end, in case meta DB structure changed
-	//
+		lcm_query("CREATE UNIQUE INDEX idx_case_stage ON lcm_stage (id_case, kw_case_stage)");
 
-	include_lcm('inc_meta_defaults');
-	init_default_config();
+		// Populate table based on lcm_followup
+		// case stage creation (use one followup per stage)
+		lcm_query("INSERT INTO lcm_stage (id_case, kw_case_stage, date_creation, id_fu_creation, latest)
+				SELECT c.id_case, fu.case_stage, fu.date_start, fu.id_followup, 0
+				FROM lcm_case as c, lcm_followup as fu 
+				WHERE c.id_case = fu.id_case
+				  AND fu.case_stage != '' 
+				GROUP BY c.id_case, fu.case_stage
+				ORDER BY fu.date_start ASC");
+
+		$q = "SELECT *
+				FROM lcm_followup
+				WHERE type = 'conclusion'
+				   OR type = 'case_change'";
+
+		$result = lcm_query($q);
+
+		while ($row = lcm_fetch_array($result)) {
+			$tmp = lcm_unserialize($row['description']);
+
+			$q = "UPDATE lcm_stage SET
+					date_conclusion = '" . $row['date_start'] . "',
+					id_fu_conclusion = " . $row['id_followup'] . ",
+					kw_result = '" . $tmp['result'] . "',
+					kw_conclusion = '" . $tmp['conclusion'] . "',
+					kw_sentence = '" . $tmp['sentence'] . "',
+					sentence_val = '" . $tmp['sentence_val'] . "',
+					date_agreement = '" . $row['date_start'] . "'
+				  WHERE id_case = " . $row['id_case'] . "
+				    AND kw_case_stage = '" . $row['case_stage'] . "'";
+
+			lcm_query($q);
+		}
+
+		upgrade_db_version (38);
+	}
+
+	if ($lcm_db_version_current < 39) {
+		lcm_query("ALTER TABLE lcm_followup
+					ADD hidden ENUM('N', 'Y') not null default 'N' AFTER sumbilled");
+
+		upgrade_db_version (39);
+	}
+
 	
-	// Rewrite metas in inc/data/inc_meta_cache.php, just to be sure
-	write_metas();
+	// if ($lcm_db_version_current < XXX) {
+		// XXX Wait at least 4-5 weeks after 2005-06-13 before doign this, so 
+		// that // we have more time to test whether the upgrade is OK.
+	
+		// lcm_query("ALTER TABLE lcm_case DROP id_court_archive");
+		// upgrade_db_version (38);
+	// }
 
+	// Update the meta, lcm_fields, keywords, etc.
+	lcm_log("Updating LCM default configuration (meta/keywords/repfields/..)", 'upgrade');
+	upgrade_database_conf();
+
+	lcm_log("LCM database upgrade complete", 'upgrade');
 	return $log;
 }
 

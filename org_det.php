@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.30 2005/05/13 09:35:47 mlutfy Exp $
+	$Id: org_det.php,v 1.31 2005/08/18 22:53:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -43,14 +43,13 @@ if (! ($row = lcm_fetch_array($result)))
 
 lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 
-	/* Saved for future use
-	// Check for access rights
-	if (!($row['public'] || allowed($case,'r'))) {
-		die("You don't have permission to view this case!");
-	}
-	$edit = allowed($case,'w');
-	*/
-	$edit = true;
+//
+// Access control
+//
+$ac = get_ac_org($org);
+
+if (! $ac['r'])
+	die("Access denied");
 
 	// Show tabs
 	$groups = array(
@@ -86,7 +85,7 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 			// Show client contacts (if any)
 			show_all_contacts('org', $row['id_org']);
 
-			if ($edit)
+			if ($ac['e'])
 				echo '<p><a href="edit_org.php?org=' . $row['id_org'] . '" class="edit_lnk">'
 					. _T('org_button_edit')
 					. "</a></p>\n";
@@ -162,7 +161,7 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 			echo '<input type="submit" name="submit" id="btn_delete" value="' . _T('button_validate') . '" class="search_form_btn" />';
 			echo "</div>\n";
 		
-			if ($edit)
+			if ($ac['w'])
 				echo "<p><a href=\"sel_cli_org.php?org=$org\" class=\"add_lnk\">" . _T('org_button_add_rep') . "</a></p>";
 
 			echo "</form>\n";
@@ -235,10 +234,11 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 			show_attachments_list('org', $org);
 
 			// Attach new file form
-			if ($edit)
+			if ($ac['w']) {
 				show_attachments_upload('org', $org);
+				echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
+			}
 
-			echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 			echo "</form>\n";
 
 			echo "</p>\n";
@@ -248,12 +248,12 @@ lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
 
 	}
 
-	// Show this in all tabs
-	echo '<p>';
-	echo '<a href="edit_case.php?case=0&amp;attach_org=' . $row['id_org'] . '" class="create_new_lnk">';
-	echo "Open new case involving this organisation"; // TRAD
-	echo "</a>";
-	echo "</p>\n";
+// Show this in all tabs
+echo '<p>';
+echo '<a href="edit_case.php?case=0&amp;attach_org=' . $row['id_org'] . '" class="create_new_lnk">';
+echo _T('case_button_new');
+echo "</a>";
+echo "</p>\n";
 
 $_SESSION['errors'] = array();
 $_SESSION['org_data'] = array();

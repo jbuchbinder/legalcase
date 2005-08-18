@@ -18,26 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.81 2005/06/01 21:14:38 mlutfy Exp $
+	$Id: inc_version.php,v 1.82 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 // Execute this file only once
 if (defined('_INC_VERSION')) return;
 define('_INC_VERSION', '1');
 
-
-// *********** clean the variables **************
-// Magic quotes: we don't want any in the database,
-// and we clean GET/POST/COOKIE in consequence.
-function magic_unquote($table) {
-	if (is_array($GLOBALS[$table])) {
-		reset($GLOBALS[$table]);
-		while (list($key, $val) = each($GLOBALS[$table])) {
-			if (is_string($val))
-				$GLOBALS[$table][$key] = stripslashes($val);
-		}
-	}
-}
 
 //
 // Dirty against the register_globals to 'Off' (PHP 4.1.x)
@@ -53,7 +40,7 @@ function feed_globals($table, $insecure = true, $ignore_variables_contexte = fal
 		'id_breve'=>1, 'id_forum'=>1, 'id_secteur'=>1, 'id_syndic'=>1, 'id_syndic_article'=>1,
 		'id_mot'=>1, 'id_groupe'=>1, 'id_document'=>1, 'date'=>1, 'lang'=>1);
 
-	if (is_array($GLOBALS[$table])) {
+	if (isset($GLOBALS[$table]) && is_array($GLOBALS[$table])) {
         reset($GLOBALS[$table]);
         while (list($key, $val) = each($GLOBALS[$table])) {
 			if ($ignore_variables_contexte AND isset($is_contexte[$key]))
@@ -65,10 +52,16 @@ function feed_globals($table, $insecure = true, $ignore_variables_contexte = fal
 	}
 }
 
-feed_globals('HTTP_COOKIE_VARS', true, true);
-feed_globals('HTTP_GET_VARS');
-feed_globals('HTTP_POST_VARS');
-feed_globals('HTTP_SERVER_VARS', false);
+/* [ML] In theory, this is deprecated.
+   I am testing without, but for 'stable' use, better to leave it
+   in order to avoid surprises.. In some PHP environments, this
+   makes little effect, therefore strange bugs would arise...
+   c.f. DW@TRB
+*/
+feed_globals('HTTP_COOKIE_VARS', true, true); // use $_COOKIE instead
+feed_globals('HTTP_GET_VARS'); // use $_REQUEST instead
+feed_globals('HTTP_POST_VARS'); // use $_REQUEST instead
+feed_globals('HTTP_SERVER_VARS', false); // use $_SERVER instead
 
 
 //  ************************************
@@ -100,7 +93,7 @@ $auto_compress = true;
 $convert_command = 'convert';
 
 // Should we debug in data/lcm.log ?
-$debug = true;
+$debug = false;
 
 // Shoud we highlight translation strings? (helps to find non-translated strings)
 $debug_tr = false;
@@ -142,13 +135,13 @@ if (@file_exists('inc/my_options.php'))
 	include('inc/my_options.php');
 
 // Current version of LCM
-$lcm_version = 0.60;
+$lcm_version = 0.62;
 
 // Current version of LCM shown on screen
-$lcm_version_shown = "0.6.0";
+$lcm_version_shown = "0.6.2";
 
 // Current version of LCM database
-$lcm_db_version = 36;
+$lcm_db_version = 39;
 
 // Error reporting
 // error_reporting(E_ALL); // [ML] recommended for debug
@@ -208,6 +201,7 @@ $flag_gd = $flag_ImageGif || $flag_ImageJpeg || $flag_ImagePng;
 // Apply the cookie prefix
 //
 function lcm_setcookie ($name='', $value='', $expire=0, $path='AUTO', $domain='', $secure='') {
+	lcm_log("setcookie here.. name = $name, value = $value");
 	$name = ereg_replace ('^lcm', $GLOBALS['cookie_prefix'], $name);
 	if ($path == 'AUTO') $path=$GLOBALS['cookie_path'];
 
@@ -274,6 +268,37 @@ if (!$PATH_TRANSLATED) {
 }
 
 
+function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
+	$dt = date("Y-m-d H:i:s (T)");
+
+	$errortype = array (
+			E_ERROR          => "Error",
+			E_WARNING        => "Alert",
+			E_PARSE          => "Parse error", // This won't actually get caught here..
+			E_NOTICE          => "Note",  // This can really get annoying sometimes
+			E_CORE_ERROR      => "Core Error",
+			E_CORE_WARNING    => "Core Warning",
+			E_COMPILE_ERROR  => "Compile Error",
+			E_COMPILE_WARNING => "Compile Warning",
+			E_USER_ERROR      => "Specific Error",
+			E_USER_WARNING    => "Specific Alert",
+			E_USER_NOTICE    => "Specific Note",
+			E_STRICT          => "Runtime Notice"
+		);
+
+	$log_errors = array(E_USER_ERROR, E_USER_WARNING);
+
+	$err = $dt . ": $filename,$linenum " . $errortype[$errno] . " ($errno) $errmsg\n"
+		. lcm_getbacktrace(false); // false = without html
+
+	if (in_array($errno, $log_errors))
+		lcm_log($err);
+	else
+		lcm_debug("[dbg] " . $err);
+}
+
+$old_error_handler = set_error_handler("userErrorHandler");
+
 
 //
 // Management of inclusion and information on directories
@@ -290,16 +315,17 @@ function include_local($file) {
 function include_lcm($file) {
 	$lcmfile = 'inc/' . $file . '.php';
 
-	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
+	// This does not work correctly on PHP5, and who knows for PHP4..
+	if (! isset($GLOBALS['included_files'][$file]))
+		@$GLOBALS['included_files'][$file] = 0;
+	
+	if (@$GLOBALS['included_files'][$file]++)
 		return;
 
-	if (! @file_exists($lcmfile)) {
-		lcm_log("CRITICAL: file for include_lcm does not exist: " . $lcmfile);
-		if ($GLOBALS['debug']) echo lcm_getbacktrace();
-	}
-	
+	if (! @file_exists($lcmfile))
+		lcm_panic("File for include_lcm does not exist: $lcmfile");
+
 	include($lcmfile);
-	$GLOBALS['included_files'][$lcmfile] = 1;
 }
 
 function include_config($file) {
@@ -495,12 +521,13 @@ class Link {
 
 		// If no URL specified, take current one
 		if (!$url) {
-			$url = $GLOBALS['REQUEST_URI'];
+			$url = $_SERVER['REQUEST_URI'];
 			$url = substr($url, strrpos($url, '/') + 1);
 			if (!$url) $url = "./";
-			if (count($GLOBALS['HTTP_POST_VARS']))
-				$vars = $GLOBALS['HTTP_POST_VARS'];
+			if (count($_POST))
+				$vars = $_POST;
 		}
+
 		$v = split('[\?\&]', $url);
 		list(, $this->file) = each($v);
 
@@ -561,8 +588,11 @@ class Link {
 	//
 	// Erase only one variable
 	function delVar($name) {
-		unset($this->vars[$name]);
-		unset($this->arrays[$name]);
+		if(isset($this->vars[$name]))
+			unset($this->vars[$name]);
+
+		if(isset($this->arrays[$name]))
+			unset($this->arrays[$name]);
 	}
 
 	//
@@ -725,6 +755,8 @@ function getTmpVar($name) {
 // Link to the currently requested page and clean it so that it has only id_objects
 $this_link = new Link();
 
+// [ML] XXX WARNING: This should be deprecated, will be removed soon
+// (mostly present in old Spip code)
 $clean_link = $this_link;
 $clean_link->delVar('submit');
 $clean_link->delVar('recalcul');
@@ -732,15 +764,15 @@ if (count($GLOBALS['HTTP_POST_VARS'])) {
 	$clean_link->clearVars();
 	// There are surely missing..
 	// [ML] This may cause bugs!! XXX
-	$vars = array('id_article', 'coll', 'id_breve', 'id_rubrique', 'id_syndic', 'id_mot', 'id_auteur', 'var_login');
+	$vars = array('var_login');
 	while (list(,$var) = each($vars)) {
 		if (isset($$var)) {
 			$clean_link->addVar($var, $$var);
 			break;
 		}
 	}
-}
 
+}
 
 // Read the cached meta information
 $inc_meta_cache = 'inc/data/inc_meta_cache.php';
@@ -834,7 +866,7 @@ function _Tkw($grp, $val, $args = '') {
 }
 
 // Main language of the site
-$langue_site = read_meta('langue_site');
+$langue_site = read_meta('default_language');
 if (!$langue_site) include_lcm('inc_lang');
 $lcm_lang = $langue_site;
 
@@ -948,20 +980,24 @@ function verif_butineur() {
 
 // Based from the comments in:
 // http://www.php.net/manual/fr/function.debug-backtrace.php
-function lcm_getbacktrace()
+function lcm_getbacktrace($html = true)
 {
 	$s = '';
 	$MAXSTRLEN = 64;
 
-	$s = '<pre align="left">';
+	if ($html)
+		$s = '<pre align="left">';
+
 	$traceArr = debug_backtrace();
 	array_shift($traceArr);
 	$tabs = sizeof($traceArr)-1;
 	foreach($traceArr as $arr) {
-		for ($i=0; $i < $tabs; $i++) $s .= ' &nbsp; ';
+		for ($i=0; $i < $tabs; $i++) 
+			$s .= ($html ? ' &nbsp; ' : '  ');
+
 		$tabs -= 1;
-		$s .= '<font face="Courier New,Courier">';
-		if (isset($arr['class'])) $s .= $arr['class'].'.';
+		if ($html) $s .= '<font face="Courier New,Courier">';
+		if (isset($arr['class'])) $s .= $arr['class'] . $arr['type'];
 		$args = array();
 		if(!empty($arr['args'])) foreach($arr['args'] as $v)
 		{
@@ -977,22 +1013,45 @@ function lcm_getbacktrace()
 				$args[] = "\"".$str."\"";
 			}
 		}
-		$s .= $arr['function'].'('.implode(', ',$args).')</font>';
+		$s .= $arr['function'] . '(' . implode(', ', $args). ')' . ($html ? '</font>' : '');
 		$Line = (isset($arr['line'])? $arr['line'] : "unknown");
 		$File = (isset($arr['file'])? $arr['file'] : "unknown");
-		$s .= sprintf("<font color='#993333' size='-1'> # line %4d, file: %s</font>", $Line, $File, $File);
+
+		if ($html)
+			$s .= sprintf("<font color='#993333' size='-1'> # line %4d, file: %s</font>", $Line, $File, $File);
+		else
+			$s .= sprintf(" # line %4d, file: %s", $Line, $File, $File);
+
 		$s .= "\n";
 	}
 
-	$s .= '</pre>';
+	if ($html) $s .= '</pre>';
 	return $s;
+}
+
+function get_var_dump($v = null) {
+	ob_start();
+	var_dump($v);
+	$content = ob_get_contents();
+	ob_end_clean();
+	return $content;
 }
 
 function lcm_panic($message) {
 	global $lcm_version, $lcm_db_version;
 
 	echo "<p>" . _T('warning_panic_is_useful') . "</p>\n";
-	$error = "[INTERNAL] (v" . $lcm_version . "-db" . $lcm_db_version . ") " . $message . "\n";
+	$error = "[INTERNAL] (v" . $lcm_version . "-db" . $lcm_db_version . ", PHP v" . PHP_VERSION . ")\n";
+	$error .= "Server: " . $_SERVER['SERVER_SOFTWARE'] . "\n";
+
+	if (function_exists('lcm_sql_server_info'))
+		$error .= "SQL server: " . lcm_sql_server_info() . "\n";
+	else
+		$error .= "SQL server: not yet connected\n";
+
+	$error .= "Referer: " . $_SERVER['HTTP_REFERER'] . "\n";
+	$error .= "Request: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'] . "\n";
+	$error .= "Error: " . $message . "\n";
 	$error .= lcm_getbacktrace();
 
 	lcm_log($error);
@@ -1006,7 +1065,8 @@ function lcm_debug($message) {
 
 
 // In debug mode, log the calling URI (not very efficient, it's only for debugging!)
-if ($debug)
-	lcm_log("$REQUEST_METHOD: ".$GLOBALS['REQUEST_URI']);
+// [ML] For the moment, software too unstable, putting lcm_log() instead of lcm_debug(),
+// even if debugging has been de-activated from the rest of the software.
+lcm_log($_SERVER['REQUEST_METHOD'] . ": " . $_SERVER['REQUEST_URI']);
 
 ?>

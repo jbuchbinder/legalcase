@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.28 2005/04/12 19:48:12 antzi Exp $
+	$Id: inc_auth.php,v 1.29 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -80,15 +80,15 @@ function auth() {
 	$auth_can_disconnect = false;
 
 	// Fetch identification data from authentication session
-	if ($cookie_session = $HTTP_COOKIE_VARS['lcm_session']) {
-		if (verifier_session($cookie_session)) {
+	if (isset($_COOKIE['lcm_session'])) {
+		if (verifier_session($_COOKIE['lcm_session'])) {
 			if ($author_session['status'] == 'admin' OR $author_session['status'] == 'normal') {
 				$auth_login = $author_session['username'];
 				$auth_pass_ok = true;
 				$auth_can_disconnect = true;
 			}
 		}
-	} else if ($GLOBALS['privet'] == 'yes') {
+	} else if ($_REQUEST['privet'] == 'yes') {
 		// Failed login attempt: cookie failed
 		$link = new Link("lcm_cookie.php?cookie_test_failed=yes");
 		$clean_link->delVar('privet');

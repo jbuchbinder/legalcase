@@ -15,7 +15,7 @@ function get_default_repfields() {
 		array(
 			"table_name" => "lcm_case",
 			"field_name" => "title",
-			"description" => "title",
+			"description" => "case_input_title",
 			"enum_type" => "",
 			"filter" => "text"),
 		array(
@@ -44,10 +44,78 @@ function get_default_repfields() {
 			"filter" => "text"),
 		array(
 			"table_name" => "lcm_case",
+			"field_name" => "status",
+			"description" => "case_input_status",
+			"enum_type" => "list:draft,open,closed,suspended,merged,deleted:case_status_option_",
+			"filter" => "text"),
+		array(
+			"table_name" => "lcm_case",
+			"field_name" => "stage",
+			"description" => "case_input_stage",
+			"enum_type" => "keyword:system_kwg:stage",
+			"filter" => "text"),
+		array(
+			"table_name" => "lcm_case",
 			"field_name" => "count(*)",
-			"description" => "count",
+			"description" => "count", // TRAD
 			"enum_type" => "",
 			"filter" => "number"),
+		/* LCM_STAGE */
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "id_case",
+			"description" => "case_input_id",
+			"enum_type" => "",
+			"filter" => "number"),
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "kw_case_stage",
+			"description" => "case_input_stage",
+			"enum_type" => "keyword:system_kwg:stage",
+			"filter" => "text"),
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "date_creation",
+			"description" => "time_input_date_creation",
+			"enum_type" => "",
+			"filter" => "date"),
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "date_conclusion",
+			"description" => "date conclusion", // TRAD
+			"enum_type" => "",
+			"filter" => "date"),
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "kw_result",
+			"description" => "case result", // TRAD
+			"enum_type" => "keyword:system_kwg:_crimresults",
+			"filter" => "text"),
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "kw_conclusion",
+			"description" => "case conclusion", // TRAD
+			"enum_type" => "keyword:system_kwg:conclusion",
+			"filter" => "text"),
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "kw_sentence",
+			"description" => "case sentence", // TRAD
+			"enum_type" => "keyword:system_kwg:sentence",
+			"filter" => "text"),
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "sentence_val",
+			"description" => "sentence val", // TRAD
+			"enum_type" => "",
+			"filter" => "number"),
+		array(
+			"table_name" => "lcm_stage",
+			"field_name" => "count(*)",
+			"description" => "count", // TRAD
+			"enum_type" => "",
+			"filter" => "number"),
+
 		/* LCM_AUTHOR (user) */
 		array(
 			"table_name" => "lcm_author",
@@ -89,7 +157,7 @@ function get_default_repfields() {
 			"table_name" => "lcm_author",
 			"field_name" => "status",
 			"description" => "authoredit_input_status",
-			"enum_type" => "",
+			"enum_type" => "list:admin,normal,external,trash:authoredit_input_status_",
 			"filter" => "text"),
 		array(
 			"table_name" => "lcm_author",

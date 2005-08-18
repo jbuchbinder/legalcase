@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.76 2005/05/27 05:32:39 mlutfy Exp $
+	$Id: inc_filters.php,v 1.77 2005/08/18 22:53:34 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -150,7 +150,7 @@ function format_time_interval_prefs($time) {
 	return format_time_interval($time, $hours_only);
 }
 
-function format_money($money) {
+function format_money($money, $two_cents = true) {
 	// this is very stupid i18n because windows does not have strfmon,
 	// altough we cannot depend on locales on all servers for all languages
 	// so for our small needs, this should be good enough.
@@ -164,7 +164,11 @@ function format_money($money) {
 	$cents = round(($money - $hundreds) * 100); // only two last digits
 
 	// format as text
-	$str_cents = sprintf('%02u', $cents);
+	if ($two_cents) // i.e. "is money"
+		$str_cents = sprintf('%02u', $cents);
+	else // i.e. "not money" (ex: file size)
+		$str_cents = preg_replace("/0+$/", "", $cents);
+
 	$str_hundreds = $hundreds % 1000;
 
 	while ($hundreds > 999) {
@@ -172,7 +176,10 @@ function format_money($money) {
 		$str_hundreds = ($hundreds % 1000) . $seperator_hundreds . $str_hundreds;
 	}
 
-	return $str_hundreds . $seperator_cents . $str_cents;
+	if ($str_cents)
+		return $str_hundreds . $seperator_cents . $str_cents;
+	else
+		return $str_hundreds;
 }
 
 // Error display function
@@ -189,7 +196,7 @@ function f_err_star($fn, $errors = array()) {
 }
 
 function show_all_errors($all_errors) {
-	$ret = "<ul class=\"err_list\">";
+	$ret = "<div align=\"left\"><ul class=\"err_list\">";
 
 	if (! count($all_errors))
 		return "";
@@ -197,7 +204,7 @@ function show_all_errors($all_errors) {
 	foreach ($all_errors as $error)
 		$ret .= "<li>" . $error . "</li>\n";
 	
-	$ret .= "</ul>\n";
+	$ret .= "</ul></div>\n";
 	return $ret;
 }
 
@@ -212,7 +219,7 @@ function clean_input($string) {
 
 // Cleans text to be send out
 function clean_output($string) {
-	if (get_magic_quotes_runtime()) {
+	if (get_magic_quotes_gpc()) {
 		return htmlspecialchars(stripslashes($string));
 	} else {
 		return htmlspecialchars($string);
@@ -304,8 +311,14 @@ function get_fu_description($item, $make_short = true) {
 		if ($tmp['description'])
 			$short_description .= " / " . $tmp['description'];
 
+		if ($tmp['result'] || $tmp['conclusion'])
+			$short_description .= "\n" . _Ti('fu_input_conclusion');
+
+		if ($tmp['result'])
+			$short_description .= _Tkw('_crimresults', $tmp['result']) . "/";
+
 		if ($tmp['conclusion'])
-			$short_description .= "\n" . _Ti('fu_input_conclusion') . _Tkw('conclusion', $tmp['conclusion']);
+			$short_description .= _Tkw('conclusion', $tmp['conclusion']);
 
 		if ($tmp['sentence'])
 			$short_description .= "\n" . _Ti('fu_input_sentence')
@@ -640,15 +653,30 @@ function corriger_caracteres($texte) {
 
 // "127.4 kb" or "3.1 Mb"
 function size_in_bytes ($mysize) {
-	if ($mysize < 1024) {$mysize = _T('mysize_octets', array('mysize' => $mysize));}
-	else if ($mysize < 1024*1024) {
-		$mysize = _T('mysize_kb', array('mysize' => ((floor($mysize / 102.4))/10)));
+	if (! is_numeric($mysize))
+		return -1; // soft error
+	
+	if ($mysize < 1024) {
+		$sizetxt = format_money($mysize, false); // I know, bad name..
+		$mysize = _T('file_size_info_bytes', array('size' => $sizetxt));
+	} else if ($mysize < 1024 * 1024) {
+		$sizetxt = format_money((floor($mysize / 102.4))/10, false);
+		$mysize = _T('file_size_info_kbytes', array('size' => $sizetxt));
+	} else if ($mysize < 1024 * 1024 * 1024) {
+		$sizetxt = format_money((floor(($mysize / 1024) / 102.4))/10, false);
+		$mysize = _T('file_size_info_mbytes', array('size' => $sizetxt));
 	} else {
-		$mysize = _T('mysize_mb', array('mysize' => ((floor(($mysize / 1024) / 102.4))/10)));
+		$sizetxt = format_money((floor(($mysize / 1024) / 1024 / 102.4))/10, false);
+		$mysize = _T('file_size_info_gbytes', array('size' => $sizetxt));
 	}
+
 	return $mysize;
 }
 
+function filesize_in_bytes($file) {
+	$size = filesize($file);
+	return size_in_bytes($size);
+}
 
 // Transforme n'importe quel champ en une chaine utilisable
 // en PHP ou Javascript en toute securite
