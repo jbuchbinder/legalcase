@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.24 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.25 2005/08/22 21:51:23 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -75,6 +75,11 @@ function lcm_query_db($query, $accept_fail = false) {
 	}
 
 	return $result;
+}
+
+// [ML] This is for PostgreSQL compatibility hacks
+function lcm_query_create_table($query) {
+	return lcm_query($query);
 }
 
 function spip_query_db($query) {
