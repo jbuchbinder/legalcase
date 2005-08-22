@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.45 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.46 2005/08/22 21:50:08 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -26,7 +26,7 @@ define('_INC_DB_CREATE', '1');
 
 // [ML] Is this needed?  XXX
 // [AG] I don't see any reason for it.
-include_lcm('inc_access');
+// include_lcm('inc_access');
 
 // XXX DEPRECATED
 function log_if_not_duplicate_table($errno) {
@@ -75,7 +75,7 @@ function create_database() {
 		public tinyint(1) DEFAULT '0' NOT NULL,
 		pub_write tinyint(1) DEFAULT '0' NOT NULL,
 		PRIMARY KEY (id_case))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_case_attachment (
@@ -87,14 +87,14 @@ function create_database() {
 		  size bigint(21) NOT NULL default '0',
 		  description text,
 		  content longblob,
-		  date_attached datetime NOT NULL default '0000-00-00 00:00:00',
-		  date_removed datetime NOT NULL default '0000-00-00 00:00:00',
+		  date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		  date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		  PRIMARY KEY  (id_attachment),
 		  KEY id_case (id_case),
 		  KEY id_author (id_author),
 		  KEY filename (filename),
 		  FULLTEXT KEY description (description))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_stage (
 		id_entry bigint(21) NOT NULL auto_increment,
@@ -112,10 +112,10 @@ function create_database() {
 		latest tinyint(1) DEFAULT '0' NOT NULL,
 		PRIMARY KEY (id_entry),
 		KEY id_case (id_case))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE UNIQUE INDEX idx_case_stage ON lcm_stage (id_case, kw_case_stage)";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_followup (
@@ -132,7 +132,7 @@ function create_database() {
 		PRIMARY KEY (id_followup),
 		KEY id_case (id_case),
 		KEY id_author (id_author))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	// [ML] XXX too many extra fields
@@ -164,7 +164,7 @@ function create_database() {
 		KEY username (username),
 		KEY status (status),
 		KEY lang (lang))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_client (
@@ -181,7 +181,7 @@ function create_database() {
 		income varchar(255) DEFAULT 'unknown' NOT NULL,
 		notes text DEFAULT '' NOT NULL,
 		PRIMARY KEY id_client (id_client))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_client_attachment (
@@ -193,14 +193,14 @@ function create_database() {
 		  size bigint(21) NOT NULL default '0',
 		  description text,
 		  content longblob,
-		  date_attached datetime NOT NULL default '0000-00-00 00:00:00',
-		  date_removed datetime NOT NULL default '0000-00-00 00:00:00',
+		  date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		  date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		  PRIMARY KEY  (id_attachment),
 		  KEY id_client (id_client),
 		  KEY id_author (id_author),
 		  KEY filename (filename),
 		  FULLTEXT KEY description (description))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_org (
@@ -215,7 +215,7 @@ function create_database() {
 		stat_number text NOT NULL default '',
 		PRIMARY KEY id_org (id_org))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_org_attachment (
@@ -234,7 +234,7 @@ function create_database() {
 		  KEY id_author (id_author),
 		  KEY filename (filename),
 		  FULLTEXT KEY description (description))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_contact (
@@ -245,7 +245,7 @@ function create_database() {
 		type_contact tinyint(2) DEFAULT 0 NOT NULL,
 		PRIMARY KEY id_contact (id_contact))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_keyword (
@@ -258,7 +258,7 @@ function create_database() {
 		ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
 		PRIMARY KEY (id_keyword))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_keyword_case (
@@ -271,7 +271,7 @@ function create_database() {
 			KEY id_keyword (id_keyword),
 			KEY id_case (id_case))";
 	
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_keyword_client (
 			id_entry bigint(21) NOT NULL auto_increment,
@@ -281,7 +281,7 @@ function create_database() {
 			KEY id_keyword (id_keyword),
 			KEY id_client (id_client))";
 	
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_keyword_org (
 			id_entry bigint(21) NOT NULL auto_increment,
@@ -291,10 +291,10 @@ function create_database() {
 			KEY id_keyword (id_keyword),
 			KEY id_org (id_org))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (id_group, name)";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_keyword_group (
 		id_group bigint(21) NOT NULL auto_increment,
@@ -309,10 +309,10 @@ function create_database() {
 		ac_author ENUM('Y', 'N') DEFAULT 'Y',
 		PRIMARY KEY (id_group))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE UNIQUE INDEX idx_kwg_name ON lcm_keyword_group (name)";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_report (
 		id_report bigint(21) NOT NULL auto_increment,
@@ -329,7 +329,7 @@ function create_database() {
 		PRIMARY KEY  (id_report),
 		KEY id_author (id_author))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_fields (
 		id_field bigint(21) NOT NULL auto_increment,
@@ -340,7 +340,7 @@ function create_database() {
 		enum_type text NOT NULL DEFAULT '',
 		PRIMARY KEY  (id_field))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_filter (
 		id_filter bigint(21) NOT NULL auto_increment,
@@ -352,7 +352,7 @@ function create_database() {
 		PRIMARY KEY  (id_filter),
 		KEY id_author (id_author))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_app (
 		id_app bigint(21) NOT NULL auto_increment,
@@ -373,7 +373,7 @@ function create_database() {
 		FULLTEXT KEY title (title),
 		FULLTEXT KEY description (description))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	//
 	// Relations
@@ -387,7 +387,7 @@ function create_database() {
 		id_org bigint(21) NOT NULL default '0',
 		UNIQUE KEY uniq (id_app,id_client,id_org))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 	
 	$query = "CREATE TABLE lcm_app_fu (
@@ -396,7 +396,7 @@ function create_database() {
 		relation enum('parent','child') NOT NULL default 'parent',
 		UNIQUE KEY uniq (id_app,id_followup))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_author_app (
@@ -404,7 +404,7 @@ function create_database() {
 		id_app bigint(21) NOT NULL default '0',
 		UNIQUE KEY uniq (id_author,id_app))";
 
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_case_client_org (
@@ -415,7 +415,7 @@ function create_database() {
 		KEY id_case (id_case),
 		KEY id_client (id_client),
 		KEY id_org (id_org))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_case_author (
@@ -428,7 +428,7 @@ function create_database() {
 		UNIQUE KEY uniq (id_case,id_author),
 		KEY id_case (id_case),
 		KEY id_author (id_author))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_client_org (
@@ -437,7 +437,7 @@ function create_database() {
 		UNIQUE KEY uniq (id_client,id_org),
 		KEY id_client (id_client),
 		KEY id_org (id_org))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_rep_col (
@@ -453,7 +453,7 @@ function create_database() {
 		KEY id_report (id_report),
 		KEY id_field (id_field),
 		KEY col_order (col_order))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_rep_line (
@@ -467,7 +467,7 @@ function create_database() {
 		KEY id_report (id_report),
 		KEY id_field (id_field),
 		KEY col_order (col_order))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_rep_filters (
@@ -477,7 +477,7 @@ function create_database() {
 		UNIQUE KEY uniq (id_report,id_filter),
 		KEY id_report (id_report),
 		KEY id_filter (id_filter))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_filter_conds (
@@ -490,7 +490,7 @@ function create_database() {
 		KEY id_filter (id_filter),
 		KEY id_field (id_field),
 		KEY cond_order (cond_order))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	$query = "CREATE TABLE lcm_rep_filter (
@@ -502,7 +502,7 @@ function create_database() {
 		KEY id_report (id_report),
 		KEY id_field (id_field),
 		PRIMARY KEY  (id_filter))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	//
@@ -514,7 +514,7 @@ function create_database() {
 		value VARCHAR(255) DEFAULT '',
 		upd TIMESTAMP,
 		PRIMARY KEY (name))";
-	$result = lcm_query($query);
+	$result = lcm_query_create_table($query);
 
 
 	// Set the version of the installed database
