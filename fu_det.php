@@ -18,16 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.33 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: fu_det.php,v 1.34 2005/12/06 10:13:25 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
-include_lcm('inc_keywords');
 
 if (isset($_GET['followup'])) {
-	$followup=intval($_GET['followup']);
+	$followup = intval($_GET['followup']);
 
 	// Fetch the details on the specified follow-up
 	$q="SELECT fu.*, a.name_first, a.name_middle, a.name_last,
@@ -49,8 +48,8 @@ if (isset($_GET['followup'])) {
 
 // For 'edit case' button + 'undelete' message
 $case_allow_modif = read_meta('case_allow_modif');
-$edit = allowed($case,'e');
-$admin = allowed($case, 'a');
+$edit  = allowed($fu_data['id_case'], 'e');
+$admin = allowed($fu_data['id_case'], 'a');
 
 lcm_page_start(_T('title_fu_view'), '', '', 'cases_followups');
 
@@ -59,9 +58,9 @@ echo '<fieldset class="info_box">';
 // Show a bit of background on the case
 $case = $fu_data['id_case'];
 show_context_start();
-show_context_case_title($case, 'followups');
-show_context_case_stage($case, $fu_data['id_followup']);
-show_context_case_involving($case);
+show_context_case_title($fu_data['id_case'], 'followups');
+show_context_case_stage($fu_data['id_case'], $fu_data['id_followup']);
+show_context_case_involving($fu_data['id_case']);
 
 // Show parent appointment, if any
 // [ML] todo put in inc_presentation
@@ -95,10 +94,10 @@ if ($app = lcm_fetch_array($res_app)) {
 // Show stage information
 if ($fu_data['case_stage']) {
 	// if editing an existing followup..
-	if ($_SESSION['fu_data']['case_stage'])
-		$stage_info = get_kw_from_name('stage', $_SESSION['fu_data']['case_stage']);
+	if ($fu_data['case_stage'])
+		$stage_info = get_kw_from_name('stage', $fu_data['case_stage']);
 	$id_stage = $stage_info['id_keyword'];
-	show_context_stage($case, $id_stage);
+	show_context_stage($fu_data['id_case'], $id_stage);
 }
 
 show_context_end();
@@ -202,7 +201,7 @@ echo "<br /><br /></fieldset>";
 
 if (! $app) {
 	// Show create appointment from followup
-	echo '<p><a href="edit_app.php?case=' . $case . '&amp;followup=' . $followup . '" class="create_new_lnk">Create new appointment related to this followup' . "</a></p>\n";  // TRAD
+	echo '<p><a href="edit_app.php?case=' . $fu_data['id_case'] . '&amp;followup=' . $followup . '" class="create_new_lnk">Create new appointment related to this followup' . "</a></p>\n";  // TRAD
 }
 
 lcm_page_end();

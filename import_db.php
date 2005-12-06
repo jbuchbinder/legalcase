@@ -18,12 +18,18 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.11 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: import_db.php,v 1.12 2005/12/06 10:13:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
+
+define('DIR_BACKUPS', (isset($_SERVER['LcmDataDir']) ? $_SERVER['LcmDataDir'] : addslashes(getcwd()) . '/inc/data'));
+define('DIR_BACKUPS_PREFIX', DIR_BACKUPS . '/db-');
+
+define('DATA_EXT_NAME', '.csv');
+define('DATA_EXT_LEN', strlen(lcm_utf8_decode(DATA_EXT_NAME)));
 
 if (! isset($_SESSION['errors']))
 	$_SESSION['errors'] = array();
@@ -34,7 +40,7 @@ $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.p
 	);
 
 function show_import_form() {
-	lcm_page_start(_T('title_archives')); // HELP?
+	lcm_page_start(_T('title_archives'), '', '', 'archives_import');
 
 	global $tabs;
 	show_tabs_links($tabs, 2);
@@ -49,7 +55,7 @@ function show_import_form() {
 	echo '<input type="hidden" name="MAX_FILE_SIZE" value="5000000" />' . "\n";
 
 	echo "<fieldset class='info_box'>\n";
-	show_page_subtitle(_T('archives_subtitle_upload')); // HELP
+	show_page_subtitle(_T('archives_subtitle_upload'), 'archives_import', 'newrestore');
 
 	echo '<p class="normal_text">' . _T('archives_info_how_to_upload') . "</p>\n";
 	echo '<p class="normal_text">' . _Ti('file_input_name');
@@ -65,14 +71,14 @@ function show_import_form() {
 	echo '<input type="hidden" name="action" value="import" />' . "\n";
 
 	echo "<fieldset class='info_box'>\n";
-	show_page_subtitle(_T('archives_subtitle_restore')); // HELP
+	show_page_subtitle(_T('archives_subtitle_restore'), 'archives_import', 'delrestore');
 
 	echo "<strong>" . _Ti('archives_input_select_backup') . "</strong><br />";
 	echo "<select name='file' class='sel_frm'>\n";
 
-	$storage = opendir('inc/data');
+	$storage = opendir(DIR_BACKUPS);
 	while (($file = readdir($storage))) {
-		if (is_dir("inc/data/$file") && (strpos($file,'db-')===0))
+		if (is_dir(DIR_BACKUPS . '/' . $file) && (strpos($file,'db-')===0))
 			echo "\t\t<option value='" . substr($file,3) . "'>" . substr($file,3) . "</option>\n";
 	}
 	echo "</select>\n";
@@ -101,16 +107,16 @@ function import_database($input_filename) {
 
 	$input_filename = clean_input($input_filename);
 	$root = addslashes(getcwd());
-	$dir = "$root/inc/data/db-$input_filename";
+	$dir = DIR_BACKUPS_PREFIX . $input_filename;
 
 	if (file_exists($dir)) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
-			lcm_page_start(_T('title_archives')); // HELP?
+			lcm_page_start(_T('title_archives'), '', '', 'archives_import');
 			show_tabs_links($tabs,2,true);
 
 			echo "<fieldset class='info_box'>\n";
-			show_page_subtitle(_T('generic_subtitle_warning')); // HELP?
+			show_page_subtitle(_T('generic_subtitle_warning'), 'archives_import');
 
 			echo "<p class='normal_text'><img src='images/jimmac/icon_warning.gif' alt='' "
 				. "align='right' height='48' width='48' />" 
@@ -154,7 +160,9 @@ function import_database($input_filename) {
 			// Add path to filename
 			$file = "$dir/$file";
 			if (strlen($file) > 10) {
-				if (is_file($file) && (substr($file,-10) === ".structure")) {
+				if (is_file($file) && (substr($file,-10) === ".structure")
+					&& is_file("$dir/$table" . DATA_EXT_NAME)) 
+				{
 					// Clear the table
 					$q = "DROP TABLE IF EXISTS $table";
 					$result = lcm_query($q);
@@ -163,18 +171,27 @@ function import_database($input_filename) {
 					$fh = fopen($file,'r');
 					$q = fread($fh,filesize($file));
 					fclose($fh);
-					$result = lcm_query($q);
+					$result = lcm_query_create_table($q, true);
 				}
 			}
 		}
+
 		closedir($dh);
 
 		// Update lcm_db_version
-		write_meta('lcm_db_version',$backup_db_version);
+		// [ML] This is rather useless because they will be overwritten when the
+		// values are loaded (LOAD FILE), but I leave it just in case there are
+		// obscur bugs (altough this will most likely generate strange bugs..)
+		write_meta('lcm_db_version', $backup_db_version);
+
+		if (! preg_match('/^MySQL (4\.0|3\.)/', lcm_sql_server_info()))
+			write_meta('db_utf8', 'yes');
+
+		write_metas();
 	}	// Old backup version
 	else if ($backup_db_version > read_meta('lcm_db_version')) {
 		// Backup version newer than installed db version
-		lcm_page_start(_T('title_archives')); // FIXME TRAD? HELP?
+		lcm_page_start(_T('title_archives'), '', '', 'archives_import');
 		
 		// Show tabs
 		show_tabs_links($tabs,2,true);
@@ -205,11 +222,11 @@ function import_database($input_filename) {
 
 	while (($file = readdir($dh))) {
 		// Get table name
-		$table = substr($file,0,-5);
+		$table = substr($file,0,- DATA_EXT_LEN);
 		// Add path to filename
 		$file = "$dir/$file";
-		if (strlen($file) > 5) {
-			if (is_file($file) && (substr($file,-5) === ".data")) {
+		if (strlen($file) > 5) { // [ML] why?
+			if (is_file($file) && (substr($file, - DATA_EXT_LEN) === DATA_EXT_NAME)) {
 				// If restore_type='clean', clear the table
 				if ($_POST['restore_type'] == 'clean')
 					lcm_query("TRUNCATE TABLE $table");
@@ -221,6 +238,7 @@ function import_database($input_filename) {
 						OPTIONALLY ENCLOSED BY '\"'
 						ESCAPED BY '\\\\'
 					LINES TERMINATED BY '\r\n'";
+				
 				$result = lcm_query($q);
 			}
 		}
@@ -229,19 +247,22 @@ function import_database($input_filename) {
 	closedir($dh);
 
 	// Change backup dir permissions back
-	chmod($dir,0700);
+	chmod($dir, 0700);
 	
 	// Update lcm_db_version since we have overwritten lcm_meta
-	write_meta('lcm_db_version',$backup_db_version);
-	
-	// Debugging
-	//lcm_query("use lcm");
+	write_meta('lcm_db_version', $backup_db_version);
 
-	lcm_page_start(_T('title_archives')); // FIXME TRAD? HELP?
+	if ($_REQUEST['restore_type'] == 'clean')
+		if (! preg_match('/^MySQL (4\.0|3\.)/', lcm_sql_server_info()))
+			write_meta('db_utf8', 'yes');
+
+	write_metas();
+
+	lcm_page_start(_T('title_archives'), '', '', 'archives_import'); // FIXME?
 	show_tabs_links($tabs,2,true);
 
 	echo '<div class="sys_msg_box">' . "\n";
-	show_page_subtitle("Import finished"); // FIXME TRAD? HELP?
+	show_page_subtitle("Import finished", 'archives_import'); // FIXME TRAD? 
 
 	echo "Backup '$input_filename' was successfully imported into database."; // TRAD
 	echo "</div\n>";
@@ -282,10 +303,10 @@ function upload_backup_file() {
 	}
 
 	$cpt = 0;
-	while (file_exists("inc/data/db-" . $fname . ($cpt ? "-" . $cpt : '') . "." . $fext))
+	while (file_exists(DIR_BACKUPS_PREFIX . $fname . ($cpt ? "-" . $cpt : '') . "." . $fext))
 		$cpt++;
 
-	$fname_full = "inc/data/db-" . $fname . ($cpt ? "-" . $cpt : '') . "." . $fext;
+	$fname_full = DIR_BACKUPS_PREFIX . $fname . ($cpt ? "-" . $cpt : '') . "." . $fext;
 
 	if (! move_uploaded_file($_FILES['filename']['tmp_name'], $fname_full)) {
 		// FIXME: error message
@@ -323,7 +344,7 @@ global $author_session;
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	lcm_page_start(_T('title_archives'), '', '', ''); // FIXME TRAD? HELP?
+	lcm_page_start(_T('title_archives'), '', '', 'archives_import');
 	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
 	lcm_page_end();
 	exit;

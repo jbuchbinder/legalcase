@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.50 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: client_det.php,v 1.51 2005/12/06 10:01:37 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -105,7 +105,6 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row), '', '', 'c
 				if (read_meta('client_income') == 'yes')
 					echo _Ti('person_input_income') . _Tkw('income', $row['income']) . "<br/>\n";
 
-				include_lcm('inc_keywords');
 				show_all_keywords('client', $row['id_client']);
 
 				echo _Ti('case_input_date_creation') . format_date($row['date_creation']) . "<br/>\n";

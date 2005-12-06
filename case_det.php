@@ -18,13 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.161 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: case_det.php,v 1.162 2005/12/06 10:01:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
-include_lcm('inc_keywords');
 
 // Read parameters
 $case = intval($_GET['case']);
@@ -166,7 +165,6 @@ if ($case > 0) {
 					echo _Ti('case_input_alledged_crime') . clean_output($row['alledged_crime']) . "<br />\n";
 
 				// Keywords
-				include_lcm('inc_keywords');
 				show_all_keywords('case', $row['id_case']);
 
 				if ($row['stage']) {
@@ -239,13 +237,13 @@ if ($case > 0) {
 								ORDER BY id_followup DESC 
 								LIMIT 1";
 					$r_tmp = lcm_query($q_tmp);
-					$row = lcm_fetch_array($r_tmp);
+					$row_tmp = lcm_fetch_array($r_tmp);
 
-					if ($row) {
+					if ($row_tmp) {
 						echo '<div style="background: #f0f0f0; padding: 4px; border: 1px solid #aaa;">';
 						echo _Ti('fu_input_conclusion');
-						echo get_fu_description($row);
-						echo ' <a class="content_link" href="fu_det.php?followup=' . $row['id_followup'] . '">...</a>';
+						echo get_fu_description($row_tmp);
+						echo ' <a class="content_link" href="fu_det.php?followup=' . $row_tmp['id_followup'] . '">...</a>';
 						echo "</div>\n";
 						echo "<br />\n";
 					}

@@ -18,14 +18,18 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.12 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: export_db.php,v 1.13 2005/12/06 10:11:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
 
-define('DIR_BACKUPS_PREFIX', 'inc/data/db-');
+define('DIR_BACKUPS', (isset($_SERVER['LcmDataDir']) ? $_SERVER['LcmDataDir'] : addslashes(getcwd()) . '/inc/data'));
+define('DIR_BACKUPS_PREFIX', DIR_BACKUPS . '/db-');
+
+define('DATA_EXT_NAME', '.csv');
+define('DATA_EXT_LEN', strlen(lcm_utf8_decode(DATA_EXT_NAME)));
 
 $tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
 		array('name' => _T('archives_tab_export'), 'url' => 'export_db.php'),
@@ -37,7 +41,7 @@ function show_export_form_partial() {
 	// New backup
 	//
 	echo "<fieldset class='info_box'>\n";
-	show_page_subtitle(_T('archives_subtitle_new')); // HELP
+	show_page_subtitle(_T('archives_subtitle_new'), 'archives_export', 'newbackup');
 	
 	echo "<form action='export_db.php' method='post'>\n";
 	echo '<p class="normal_text">' . _T('archives_info_what_is_backup') . "</p>\n";
@@ -50,13 +54,13 @@ function show_export_form_partial() {
 	//
 	echo "<fieldset class='info_box'>\n";
 	echo "<a name='listbk'></a>\n";
-	show_page_subtitle(_T('archives_subtitle_previously_made')); // HELP
+	show_page_subtitle(_T('archives_subtitle_previously_made'), 'archives_export', 'delbackup');
 	
-	$storage = opendir('inc/data');
+	$storage = opendir(DIR_BACKUPS);
 	$html = "";
 
 	while (($file = readdir($storage)))
-		if (is_dir("inc/data/$file") && (strpos($file, 'db-') === 0)) {
+		if (is_dir(DIR_BACKUPS . "/$file") && (strpos($file, 'db-') === 0)) {
 			$file = substr($file, 3);
 			$css = 'tbl_cont_' . ($cpt++ % 2 ? "dark" : "light");
 
@@ -64,14 +68,14 @@ function show_export_form_partial() {
 			$html .= '<td class="' . $css . '">' . $file . "</td>\n";
 			$html .= '<td nowrap="nowrap" width="1%" class="' . $css . '">' . get_delete_box($file, "rem_file", "test") . "</td>\n";
 			$html .= "</tr>\n";
-		} elseif (is_file("inc/data/$file") && (strpos($file, 'db-') === 0)) {
+		} elseif (is_file(DIR_BACKUPS . "/$file") && (strpos($file, 'db-') === 0)) {
 			$file = substr($file, 3);
 			$css = 'tbl_cont_' . ($cpt++ % 2 ? "dark" : "light");
 
 			$html .= "<tr>\n";
 			$html .= '<td class="' . $css . '">';
 			$html .= '<a class="content_link" href="export_db.php?action=download&file=' . $file . '">' . $file . '</a>';
-			$html .= ' (' . filesize_in_bytes("inc/data/db-" . $file) . ')';
+			$html .= ' (' . filesize_in_bytes(DIR_BACKUPS_PREFIX . $file) . ')';
 			$html .= "</td>\n";
 			$html .= '<td nowrap="nowrap" width="1%" class="' . $css . '">' . get_delete_box($file, "rem_file", "test") . "</td>\n";
 			$html .= "</tr>\n";
@@ -104,7 +108,7 @@ function show_export_form_partial() {
 function show_export_form() {
 	global $tabs;
 
-	lcm_page_start(_T('title_archives')); // HELP?
+	lcm_page_start(_T('title_archives'), '', '', 'archives_export');
 	show_tabs_links($tabs,1);
 	lcm_bubble('archive_create');
 	show_export_form_partial();
@@ -134,10 +138,9 @@ function export_database($output_filename = '', $ignore_old = false) {
 	//
 	// Check if file exists. If exists, add a revision number to name (ex: foo-2)
 	//
-	$root = addslashes(getcwd());
 	$cpt = 0;
 
-	while (file_exists("$root/inc/data/db-$output_filename" . ($cpt ? "-" . $cpt : '')))
+	while (file_exists(DIR_BACKUPS_PREFIX . $output_filename . ($cpt ? "-" . $cpt : '')))
 		$cpt++;
 
 	if ($cpt)
@@ -146,11 +149,11 @@ function export_database($output_filename = '', $ignore_old = false) {
 	//
 	// Export database
 	//
-	if (! mkdir("$root/inc/data/db-$output_filename",0777))
-		lcm_panic("Could not create $root/inc/data/db-$output_filename");
+	if (! mkdir(DIR_BACKUPS_PREFIX . $output_filename,0777))
+		lcm_panic("Could not create " . DIR_BACKUPS_PREFIX . $output_filename);
 
 	// Record database version
-	$file = fopen("$root/inc/data/db-$output_filename/db-version",'w');
+	$file = fopen(DIR_BACKUPS_PREFIX . $output_filename . '/db-version','w');
 	fwrite($file,read_meta('lcm_db_version'));
 	fclose($file);
 
@@ -162,13 +165,13 @@ function export_database($output_filename = '', $ignore_old = false) {
 		$q = "SHOW CREATE TABLE " . $row[0];
 		$res = lcm_query($q);
 		$sql = lcm_fetch_row($res);
-		$file = fopen("$root/inc/data/db-$output_filename/" . $row[0] . ".structure",'w');
+		$file = fopen(DIR_BACKUPS_PREFIX . $output_filename . '/' . $row[0] . ".structure",'w');
 		fwrite($file,$sql[1]);
 		fclose($file);
 
 		// Backup data
 		$q = "SELECT * FROM " . $row[0] . "
-				INTO OUTFILE '$root/inc/data/db-$output_filename/" . $row[0] . ".data'
+				INTO OUTFILE '" . DIR_BACKUPS_PREFIX . $output_filename . '/' . $row[0] . DATA_EXT_NAME . "'
 				FIELDS TERMINATED BY ','
 					OPTIONALLY ENCLOSED BY '\"'
 					ESCAPED BY '\\\\'
@@ -178,21 +181,21 @@ function export_database($output_filename = '', $ignore_old = false) {
 
 	// By default, in most installations, directory will have 0777 mode
 	// and will be owned by the Apache process' user.
-	chmod("$root/inc/data/db-$output_filename", 0700);
+	chmod(DIR_BACKUPS_PREFIX . $output_filename, 0700);
 
 	@include("Archive/Tar.php");
 	$tar_worked = false;
 
 	if (class_exists("Archive_Tar")) {
 		$tar_worked = true;
-		$tar_object = new Archive_Tar("inc/data/db-$output_filename.tar");
+		$tar_object = new Archive_Tar(DIR_BACKUPS_PREFIX . $output_filename . '.tar');
 
 		$files = array();
-		$file_dir = opendir("inc/data/db-$output_filename");
+		$file_dir = opendir(DIR_BACKUPS_PREFIX . $output_filename);
 
 		while (($file = readdir($file_dir)))
-			if (is_file("inc/data/db-$output_filename/" . $file))
-				$files[] = "inc/data/db-$output_filename/" . $file;
+			if (is_file(DIR_BACKUPS_PREFIX . $output_filename . '/' . $file))
+				$files[] = DIR_BACKUPS_PREFIX . $output_filename . '/' . $file;
 
 		if (count($files)) {
 			$tar_object->setErrorHandling(PEAR_ERROR_PRINT);
@@ -204,7 +207,7 @@ function export_database($output_filename = '', $ignore_old = false) {
 	//
 	// Finished
 	//
-	lcm_page_start(_T('title_archives')); // HELP?
+	lcm_page_start(_T('title_archives'), '', '', 'archives_export');
 	show_tabs_links($tabs, 1);
 	echo '<div class="sys_msg_box">' . "\n";
 
@@ -212,7 +215,7 @@ function export_database($output_filename = '', $ignore_old = false) {
 		$name = '<a class="content_link" href="export_db.php?action=download&file=' . $output_filename . '.tar">'
 			. $output_filename . '.tar'
 			. '</a> ('
-			. filesize_in_bytes("inc/data/db-" . $output_filename . ".tar")
+			. filesize_in_bytes(DIR_BACKUPS_PREFIX . $output_filename . '.tar')
 			. ')';
 
 		echo _T('archives_info_new_success', array('name' => $name));
@@ -268,7 +271,7 @@ global $author_session;
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
-	lcm_page_start(_T('title_archives'), '', '', ''); // HELP?
+	lcm_page_start(_T('title_archives'), '', '', 'archives_export');
 	echo '<p class="normal_text">' . _T('warning_forbidden_not_admin') . "</p>\n";
 	lcm_page_end();
 	exit;

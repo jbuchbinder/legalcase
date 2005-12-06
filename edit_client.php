@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.46 2005/04/16 06:52:21 mlutfy Exp $
+	$Id: edit_client.php,v 1.47 2005/12/06 10:06:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -62,9 +62,9 @@ if (empty($_SESSION['errors'])) {
 }
 
 if ($client > 0) {
-	lcm_page_start(_T('title_client_edit') . ' ' . get_person_name($client_data));
+	lcm_page_start(_T('title_client_edit') . ' ' . get_person_name($client_data), '', '', 'clients_newclient');
 } else {
-	lcm_page_start(_T('title_client_new'));
+	lcm_page_start(_T('title_client_new'), '', '', 'clients_newclient');
 }
 
 if (isset($_SESSION['errors']))
@@ -188,7 +188,6 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	//
 	// Keywords, if any
 	//
-	include_lcm('inc_keywords');
 	show_edit_keywords_form('client', $client_data['id_client']);
 
 	// Notes

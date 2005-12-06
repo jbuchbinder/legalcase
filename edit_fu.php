@@ -18,13 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.110 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: edit_fu.php,v 1.111 2005/12/06 10:08:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
-include_lcm('inc_keywords');
 
 // Read the policy settings
 $fu_sum_billed = read_meta('fu_sum_billed');
@@ -34,7 +33,7 @@ $admin = ($GLOBALS['author_session']['status']=='admin');
 if (! isset($_SESSION['fu_data']))
 	$_SESSION['fu_data'] = array();
 
-$_SESSION['fu_data']['ref_edit_fu'] = $GLOBALS['HTTP_REFERER'];
+$_SESSION['fu_data']['ref_edit_fu'] = $_SERVER['HTTP_REFERER'];
 
 	if (isset($_GET['followup'])) {
 		$_SESSION['followup'] = intval($_GET['followup']);
@@ -186,6 +185,11 @@ if (isset($_SESSION['followup']) && (! $edit))
 
 $statuses = get_possible_case_statuses();
 
+// yes, stupid patch because of annoying PHP warnings
+// the whole code needs a rewrite anyway.. too much spagetti!
+if (! isset($_REQUEST['submit']))
+	$_REQUEST['submit'] = '';
+
 if ($_REQUEST['submit'] == 'set_status') {
 	// Get case status
 	$result = lcm_query("SELECT status FROM lcm_case WHERE id_case = " . $case);
@@ -193,9 +197,7 @@ if ($_REQUEST['submit'] == 'set_status') {
 
 	if ($statuses[$_REQUEST['type']] == $row['status'])
 		header('Location: ' . $GLOBALS['HTTP_REFERER']);
-}
-
-if ($_REQUEST['submit'] == 'set_stage') {
+} elseif ($_REQUEST['submit'] == 'set_stage') {
 	// Get case stage
 	$result = lcm_query("SELECT stage FROM lcm_case WHERE id_case = " . $case);
 	$row = lcm_fetch_array($result);
@@ -657,7 +659,7 @@ $dis = (($admin || $edit) ? '' : 'disabled="disabled"');
 
 	<input type="hidden" name="id_followup" value="<?php echo $_SESSION['fu_data']['id_followup']; ?>">
 	<input type="hidden" name="id_case" value="<?php echo $_SESSION['fu_data']['id_case']; ?>">
-	<input type="hidden" name="id_app" value="<?php echo $_SESSION['fu_data']['id_app']; ?>">
+	<input type="hidden" name="id_app" value="<?php echo (isset($_SESSION['fu_data']['id_app']) ? $_SESSION['fu_data']['id_app'] : 0); ?>">
 	<input type="hidden" name="ref_edit_fu" value="<?php echo $_SESSION['fu_data']['ref_edit_fu']; ?>">
 </form>
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.58 2005/04/12 19:53:25 antzi Exp $
+	$Id: config_author.php,v 1.59 2005/12/06 10:02:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,7 @@ function show_author_form($tab) {
 	if (isset($_GET['ref']))
 		$http_ref = urldecode(clean_input($_GET['ref']));
 	else 
-		$http_ref = (isset($GLOBALS['HTTP_REFERER']) ? $GLOBALS['HTTP_REFERER'] : '');
+		$http_ref = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
 
 	$http_ref_link = new Link($http_ref);
 
@@ -115,7 +115,7 @@ function show_author_form($tab) {
 			<td align="right" valign="top"><?php echo _T('authorconf_input_font_size'); ?></td>
 			<td align="left" valign="top">
 
-				<input type="hidden" name="old_font_size" id="old_font_size" value="<?php echo $prefs['old_font_size'] ?>" />
+				<input type="hidden" name="old_font_size" id="old_font_size" value="<?php echo $prefs['font_size'] ?>" />
 				<!-- <input name="inc_fnt" type="button" class="search_form_btn" id="inc_fnt" value="A -" />
                 &nbsp; <input name="dec_fnt" type="button" class="search_form_btn" id="dec_fnt" value="A +" / >
 				(not working yet) -->

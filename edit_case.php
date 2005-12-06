@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.78 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: edit_case.php,v 1.79 2005/12/06 10:06:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -224,7 +224,6 @@ if ($_SESSION['case_data']['id_case']) {
 	}
 
 	// Keywords (if any)
-	include_lcm('inc_keywords');
 	show_edit_keywords_form('case', $_SESSION['case_data']['id_case']);
 
 	$id_stage = 0; // new case, stage not yet known
@@ -261,13 +260,14 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "</tr>\n";
 
 	// Case stage
-	global $system_kwg;
 	if (! $_SESSION['case_data']['stage'])
-		$_SESSION['case_data']['stage'] = $system_kwg['stage']['suggest'];
+		$_SESSION['case_data']['stage'] = get_suggest_in_group_name('stage');
+
+	$kws = get_keywords_in_group_name('stage');
 
 	echo '<tr><td><label for="input_stage">' . _T('case_input_stage') . "</label></td>\n";
 	echo '<td><select name="stage" id="input_stage" class="sel_frm">' . "\n";
-	foreach($system_kwg['stage']['keywords'] as $kw) {
+	foreach($kws as $kw) {
 		$sel = ($kw['name'] == $_SESSION['case_data']['stage'] ? ' selected="selected"' : '');
 		echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 	}

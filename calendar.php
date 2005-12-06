@@ -16,7 +16,7 @@ include_lcm('inc_calendar');
 lcm_page_start(_T('title_calendar_view'));
 
 $afficher_bandeau_calendrier = true;
-echo http_calendrier_init('', $type);
+echo http_calendrier_init('', $_REQUEST['type']);
 
 lcm_page_end();
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.23 2005/03/31 15:22:28 mlutfy Exp $
+	$Id: edit_org.php,v 1.24 2005/12/06 10:09:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -56,9 +56,9 @@ if (empty($_SESSION['errors'])) {
 }
 
 if ($org) 
-	lcm_page_start(_T('title_org_edit'));
+	lcm_page_start(_T('title_org_edit'), '', '', 'clients_neworg');
 else
-	lcm_page_start(_T('title_org_new'));
+	lcm_page_start(_T('title_org_new'), '', '', 'clients_neworg');
 
 // Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
