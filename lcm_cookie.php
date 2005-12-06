@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_cookie.php,v 1.25 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: lcm_cookie.php,v 1.26 2005/12/06 09:42:00 mlutfy Exp $
 */
 
 include("inc/inc_version.php");
@@ -40,7 +40,7 @@ if ($_REQUEST['url']) {
 }
 
 // Replay the cookie to renew lcm_session
-if ($change_session == 'yes' || $change_session == 'oui') {
+if ($_REQUEST['change_session'] == 'yes' || $_REQUEST['change_session'] == 'oui') {
 	if (verifier_session($_COOKIE['lcm_session'])) {
 		// Warning: only the user with the correct IP has the right to replay
 		// the cookie, therefore a cookie theft cannot disconnect the vitim
@@ -87,7 +87,7 @@ if (isset($_REQUEST['logout'])) {
 // If the user logins with privet=yes (privet: greetings), we try to
 // put a cookie and then go to lcm_login.php which will try to make 
 // a diagnostic if necessary.
-if ($cookie_test_failed == 'yes') {
+if ($_REQUEST['cookie_test_failed'] == 'yes') {
 	lcm_setcookie('lcm_session', 'cookie_test_failed');
 	$link = new Link("lcm_login.php?var_cookie_failed=yes");
 	// [ML] This caused strange endless redirections. Since it does not happen often,
@@ -203,29 +203,38 @@ if ($cookie_session) {
 }
 
 // Change the language of the private area (or login)
-if ($var_lang_lcm) {
-	include_lcm('inc_lang');
-	include_lcm('inc_session');
+// [ML] I once wanted to put this in a function, and it did a hell
+// of a mess because of the session handling stuff.. 
+if (isset($_REQUEST['var_lang_lcm'])) {
+	// ex: bg, fr, en, en_uk, etc. nothing else is accepted
+	if (preg_match("/^[_A-Za-z]+$/", $_REQUEST['var_lang_lcm'])) {
+		include_lcm('inc_lang');
+		include_lcm('inc_session');
 
-	$var_lang_lcm = clean_input($var_lang_lcm);
-	$valid_author = verifier_visiteur();
+		$new_lang = clean_input($_REQUEST['var_lang_lcm']);
+		$valid_author = verifier_visiteur();
 
-	if (lcm_set_language($var_lang_lcm)) {
-		lcm_setcookie('lcm_lang', $var_lang_lcm, time() + 365 * 24 * 3600);
+		if (lcm_set_language($new_lang)) {
+			lcm_setcookie('lcm_lang', $new_lang, time() + 365 * 24 * 3600);
 
-		// Save language preference only if we are installed and if author connected
-		if ($valid_author && @file_exists('inc/config/inc_connect.php')) {
-			include_lcm('inc_admin');
+			// Save language preference only if we are installed and if author connected
+			if ($valid_author && include_config_exists('inc_connect')) {
+				include_lcm('inc_admin');
 
-			lcm_query("UPDATE lcm_author 
-					SET lang = '" . $var_lang_lcm . "' 
-					WHERE id_author = " . $GLOBALS['author_session']['id_author']);
-			$author_session['lang'] = $var_lang_lcm;
-			lcm_add_session($author_session, $_COOKIE['lcm_session']);
+				lcm_query("UPDATE lcm_author 
+						SET lang = '" . $new_lang . "' 
+						WHERE id_author = " . $GLOBALS['author_session']['id_author']);
+				$author_session['lang'] = $new_lang;
+				lcm_add_session($author_session, $_COOKIE['lcm_session']);
+			} else {
+				lcm_log("Not valid_author ($valid_author) or not yet installed");
+			}
+
+			$cible->delvar('lang');
+			$cible->addvar('lang', $new_lang);
+		} else {
+			lcm_log("lcm_set_language() is not happy, wrong lang code?");
 		}
-
-		$cible->delvar('lang');
-		$cible->addvar('lang', $var_lang_lcm);
 	}
 }
 
