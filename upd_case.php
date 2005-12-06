@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.50 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: upd_case.php,v 1.51 2005/12/06 09:28:58 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -86,6 +86,11 @@ if (count($_SESSION['errors'])) {
 		// write user selection
 		$public_access_rights .= ", pub_write=" . (int)($_SESSION['case_data']['pub_write'] == 'yes');
 	}
+
+	if (isset($_REQUEST['id_case']))
+		$id_case = intval($_REQUEST['id_case']);
+	else
+		$id_case = 0;
 
 	if ($id_case > 0) {
 		// This is modification of existing case
@@ -164,7 +169,6 @@ if (count($_SESSION['errors'])) {
 	}
 
 	// Keywords
-	include_lcm('inc_keywords');
 	update_keywords_request('case', $id_case);
 
 	$stage = get_kw_from_name('stage', $_SESSION['case_data']['stage']);

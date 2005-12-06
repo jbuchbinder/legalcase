@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.10 2005/05/31 15:49:34 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.11 2005/12/06 09:29:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -153,7 +153,19 @@ if (isset($_REQUEST['update'])) {
 				array_push($fields, "value = IF(TO_DAYS('$date') > 0, '" . $date . "', '')");
 				break;
 			case 'date_in':
+				$date_start = get_datetime_from_array($_REQUEST, 'date_start', 'start', '0000-00-00 00:00:00');
+				$date_end   = get_datetime_from_array($_REQUEST, 'date_end', 'end', '0000-00-00 00:00:00');
 
+				if (isset_datetime_from_array($_REQUEST, 'date_start', 'year_only')
+					|| isset_datetime_from_array($_REQUEST, 'date_end', 'year_only'))
+				{
+					array_push($fields, "value = CONCAT("
+							. "IF(TO_DAYS('$date_start') > 0, '$date_start', ''),"
+							. "';',"
+							. "IF(TO_DAYS('$date_end') > 0, '$date_end', '')"
+							. ")");
+				}
+				
 				break;
 			default:
 				$value = clean_input($_REQUEST['filter_value']);
@@ -220,6 +232,6 @@ if (isset($_REQUEST['unselect_line'])) {
 	$ref_tag = "#line";
 }
 
-header("Location: " . $GLOBALS['HTTP_REFERER'] . $ref_tag);
+header("Location: " . $_SERVER['HTTP_REFERER'] . $ref_tag);
 
 ?>

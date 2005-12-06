@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep.php,v 1.8 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: upd_rep.php,v 1.9 2005/12/06 09:26:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -45,7 +45,7 @@ if (!$rep_data['title'])
 	$_SESSION['errors']['title'] = _Ti('rep_input_title') . _T('warning_field_mandatory');
 
 if (count($_SESSION['errors'])) {
-    header("Location: " . $GLOBALS['HTTP_REFERER']);
+    header("Location: " . $_SERVER['HTTP_REFERER']);
     exit;
 }
 
@@ -72,21 +72,21 @@ $fl = "title = '" . clean_input($rep_data['title']) . "', "
 //		$public_access_rights .= ", pub_write=0";
 
 
-if ($id_report > 0) {
+if ($rep_data['id_report'] > 0) {
 	// Check access rights
 	// if (!allowed($id_report,'e')) die("You don't have permission to change this case's information!");
 	// If admin access is allowed, set all fields
 
 	if (true)
-		$q = "UPDATE lcm_report SET $fl WHERE id_report = $id_report";
+		$q = "UPDATE lcm_report SET $fl WHERE id_report = " . $rep_data['id_report'];
 	else 
-		$q = "UPDATE lcm_report SET $fl WHERE id_report = $id_report";
+		$q = "UPDATE lcm_report SET $fl WHERE id_report = " . $rep_data['id_report'];
 	
 	lcm_query($q);
 } else {
 	$q = "INSERT INTO lcm_report SET id_report=0,date_creation=NOW(),$fl";
 	$result = lcm_query($q);
-	$id_report = lcm_insert_id();
+	$rep_data['id_report'] = lcm_insert_id();
 
 	// Insert new case_author relation
 	//$q = "INSERT INTO lcm_case_author SET
@@ -103,7 +103,7 @@ if ($id_report > 0) {
 // $result = lcm_query($q);
 
 //header("Location: rep_det.php?rep=$id_report");
-$ref_edit_rep = ($rep_data['ref_edit_rep'] ? $rep_data['ref_edit_rep'] : "rep_det.php?rep=$id_report");
+$ref_edit_rep = ($rep_data['ref_edit_rep'] ? $rep_data['ref_edit_rep'] : "rep_det.php?rep=" . $rep_data['id_report']);
 
 // Proceed according to the button type
 switch ($submit) {
@@ -111,11 +111,11 @@ switch ($submit) {
 		header("Location: edit_rep.php?rep=0&ref=$ref_edit_rep");
 		break;
 	case 'adddet':
-		header("Location: rep_det.php?rep=$id_report");
+		header("Location: rep_det.php?rep=" . $rep_data['id_report']);
 		break;
 	default:
 		// [ML] header("Location: $ref_edit_rep");
-		header("Location: rep_det.php?rep=$id_report");
+		header("Location: rep_det.php?rep=" . $rep_data['id_report']);
 }
 
 ?>

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.63 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: listcases.php,v 1.64 2005/12/06 09:28:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -69,7 +69,7 @@ $q_owner .= " ) ";
 //
 $case_period = $prefs['case_period'];
 if (isset($_REQUEST['case_period'])) {
-	if ($case_period != $_REQUEST['case_owner']) {
+	if ($case_period != $_REQUEST['case_period']) {
 		$case_period = $_REQUEST['case_period'];
 		$prefs['case_period'] = $_REQUEST['case_period'];
 		$prefs_change = true;
@@ -187,10 +187,11 @@ $result = lcm_query($q);
 
 // Check for correct start position of the list
 $number_of_rows = lcm_num_rows($result);
-$list_pos = 0;
 
 if (isset($_REQUEST['list_pos']))
 	$list_pos = $_REQUEST['list_pos'];
+else
+	$list_pos = 0;
 
 if ($list_pos >= $number_of_rows)
 	$list_pos = 0;
