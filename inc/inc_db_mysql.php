@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.25 2005/08/22 21:51:23 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.26 2005/12/06 10:17:33 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -37,12 +37,45 @@ function lcm_sql_server_info() {
 	return "MySQL " . @mysql_get_server_info();
 }
 
+function lcm_mysql_set_utf8() {
+	mysql_query('SET NAMES utf8');
+	mysql_query("SET CHARACTER SET UTF8");
+	mysql_query("SET SESSION CHARACTER_SET_SERVER = UTF8");
+
+	// And yet more overkill, because I am having problems with MySQL 4.1.9
+	mysql_query("SET CHARACTER_SET_RESULTS = UTF8");
+	mysql_query("SET CHARACTER_SET_CONNECTION = UTF8");
+	mysql_query("SET SESSION CHARACTER_SET_DATABASE = UTF8");
+	mysql_query("SET SESSION collation_connection = utf8_general_ci");
+	mysql_query("SET SESSION collation_database = utf8_general_ci");
+	mysql_query("SET SESSION collation_server = utf8_general_ci");
+}
+
 function lcm_query_db($query, $accept_fail = false) {
 	global $lcm_mysql_link;
 	static $tt = 0;
 
 	$my_debug   = $GLOBALS['sql_debug'];
 	$my_profile = $GLOBALS['sql_profile'];
+
+	/* [ML] I have no idea whether this is overkill, but without it,
+	   we get strange problems with Cyrillic and other non-latin charsets.
+	   We need to check whether tables were installed correctly, or else
+	   it will not show non-latin utf8 characters correctly. (i.e. for
+	   people who upgraded LCM, but didn't import/export their data to 
+	   fix the tables.)
+	*/
+	if (read_meta('db_utf8') == 'yes') {
+		lcm_mysql_set_utf8();
+	} elseif ((! read_meta('db_utf8') == 'no') && (! read_meta('lcm_db_version'))) {
+		// We are not yet installed, so check MySQL version on every request
+		// Note: checking is is_file('inc/data/inc_meta_cache.php') is not
+		// enough, because the keywords cache may have been generated, but not
+		// the meta.
+		if (! preg_match("/^(4\.0|3\.)/", mysql_get_server_info())) {
+			lcm_mysql_set_utf8();
+		}
+	}
 
 	$query = process_query($query);
 
@@ -77,8 +110,43 @@ function lcm_query_db($query, $accept_fail = false) {
 	return $result;
 }
 
-// [ML] This is for PostgreSQL compatibility hacks
-function lcm_query_create_table($query) {
+function lcm_query_create_table($query, $restore = false) {
+	$ver = @mysql_get_server_info();
+
+	if (preg_match("/^CREATE TABLE/", $query)) {
+		if ($restore) {
+			// [ML] Switching LCM to InnoDB by default not for today.. needs testing.
+
+			// Remove "FULLTEXT KEY" stuff which InnoDB doesn't like 
+			// (and whose utility is not very clear..)
+			// $query = preg_replace("/FULLTEXT KEY `?[a-zA-Z]+`? \(`?[a-zA-Z]+`?\),?/", "", $query);
+			// $query = preg_replace("/,\s*\\)/", ")", $query);
+			
+			// Remove possible ENGINE=MyISAM, CHARSET=latin1, etc. at end of query
+			$query = preg_replace("/\) (ENGINE=|TYPE=)[^\)]*/", ")", $query);
+
+			// InnoDB needs tweaking with MySQL 3.23, so avoid for now since I cannot test
+			// if (! preg_match("/^3\.2/", $ver))
+			//	$query .= " TYPE=InnoDB ";
+		}
+
+		// Activate UTF-8 only if using MySQL >= 4.1
+		// (regexp excludes MySQL <= 4.0, easier for forward compatibility)
+		if (! preg_match("/^(4\.0|3\.)/", $ver)) {
+			$query .= " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ";
+
+			// [ML] SHOULD BE DONE IN inc_db_upgrade.php since lcm_meta might not exist yet!
+			// For those wondering why.. LCM <= 0.6.3 didn't correctly create
+			// tables using "character set utf8". We still need to be somehow
+			// backwards compatible, so we use the lcm_meta hack to activate
+			// whether lcm_query() should "set session character_set_server = utf8"
+			// if ($restore) {
+			//	write_meta('db_utf8', 'yes');
+			//	write_metas();
+			// }
+		}
+	}
+
 	return lcm_query($query);
 }
 

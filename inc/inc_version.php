@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.82 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_version.php,v 1.83 2005/12/06 10:20:31 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -135,13 +135,13 @@ if (@file_exists('inc/my_options.php'))
 	include('inc/my_options.php');
 
 // Current version of LCM
-$lcm_version = 0.62;
+$lcm_version = 0.63;
 
 // Current version of LCM shown on screen
-$lcm_version_shown = "0.6.2";
+$lcm_version_shown = "0.6.3";
 
 // Current version of LCM database
-$lcm_db_version = 39;
+$lcm_db_version = 40;
 
 // Error reporting
 // error_reporting(E_ALL); // [ML] recommended for debug
@@ -328,8 +328,24 @@ function include_lcm($file) {
 	include($lcmfile);
 }
 
+function include_config_exists($file) {
+	$lcmfile = $file . '.php';
+
+	if (isset($_SERVER['LcmConfigDir']))
+		$lcmfile = $_SERVER['LcmConfigDir'] . '/' . $lcmfile;
+	else
+		$lcmfile = 'inc/config/' . $lcmfile;
+
+	return @file_exists($lcmfile);
+}
+
 function include_config($file) {
-	$lcmfile = 'inc/config/' . $file . '.php';
+	$lcmfile = $file . '.php';
+
+	if (isset($_SERVER['LcmConfigDir']))
+		$lcmfile = $_SERVER['LcmConfigDir'] . '/' . $lcmfile;
+	else
+		$lcmfile = 'inc/config/' . $lcmfile;
 
 	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
 		return;
@@ -343,8 +359,24 @@ function include_config($file) {
 	$GLOBALS['included_files'][$lcmfile] = 1;
 }
 
+function include_data_exists($file) {
+	$lcmfile = $file . '.php';
+
+	if (isset($_SERVER['LcmDataDir']))
+		$lcmfile = $_SERVER['LcmDataDir'] . '/' . $lcmfile;
+	else
+		$lcmfile = 'inc/data/' . $lcmfile;
+
+	return @file_exists($lcmfile);
+}
+
 function include_data($file) {
-	$lcmfile = 'inc/data/' . $file . '.php';
+	$lcmfile = $file . '.php';
+
+	if (isset($_SERVER['LcmDataDir']))
+		$lcmfile = $_SERVER['LcmDataDir'] . '/' . $lcmfile;
+	else
+		$lcmfile = 'inc/data/' . $lcmfile;
 
 	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
 		return;
@@ -358,7 +390,7 @@ function include_data($file) {
 	$GLOBALS['included_files'][$lcmfile] = 1;
 }
 
-$flag_connect = @file_exists('inc/config/inc_connect.php');
+$flag_connect = include_config_exists('inc_connect');
 
 function lcm_query($query, $accept_fail = false) {
 	include_lcm('inc_db');
@@ -446,11 +478,11 @@ if ($auto_compress && $flag_obgz) {
 	*/
 
 	// special bug Netscape Win 4.0x
-	else if (eregi("Mozilla/4\.0[^ ].*Win", $HTTP_USER_AGENT))
+	else if (eregi("Mozilla/4\.0[^ ].*Win", $_SERVER['HTTP_USER_AGENT']))
 		$use_gz = false;
 
 	// special bug Apache2x
-	else if (eregi("Apache(-[^ ]+)?/2", $SERVER_SOFTWARE))
+	else if (eregi("Apache(-[^ ]+)?/2", $_SERVER['SERVER_SOFTWARE']))
 		$use_gz = false;
 	else if ($flag_sapi_name && ereg("^apache2", @php_sapi_name()))
 		$use_gz = false;
@@ -607,7 +639,10 @@ class Link {
 	}
 
 	function getVar($name) {
-		return $this->vars[$name];
+		if (isset($this->vars[$name]))
+			return $this->vars[$name];
+		else
+			return ""; // XXX
 	}
 
 	//
@@ -760,7 +795,7 @@ $this_link = new Link();
 $clean_link = $this_link;
 $clean_link->delVar('submit');
 $clean_link->delVar('recalcul');
-if (count($GLOBALS['HTTP_POST_VARS'])) {
+if (isset($GLOBALS['HTTP_POST_VARS']) && count($GLOBALS['HTTP_POST_VARS'])) {
 	$clean_link->clearVars();
 	// There are surely missing..
 	// [ML] This may cause bugs!! XXX
@@ -775,8 +810,7 @@ if (count($GLOBALS['HTTP_POST_VARS'])) {
 }
 
 // Read the cached meta information
-$inc_meta_cache = 'inc/data/inc_meta_cache.php';
-if (@file_exists($inc_meta_cache) AND !defined('_INC_META_CACHE')  AND !defined('_INC_META')) {
+if (include_data_exists('inc_meta_cache') AND !defined('_INC_META_CACHE')  AND !defined('_INC_META')) {
 	include_data('inc_meta_cache');
 }
 
@@ -858,10 +892,41 @@ function _Tkw($grp, $val, $args = '') {
 	if (count($kwg)) {
 		if ($kwg[$val])
 			return _T(remove_number_prefix($kwg[$val]['title']), $args);
-		else
-			lcm_panic("kw not found");
+		else {
+			// This is a weird case where the upgrade didn't refresh the
+			// group correctly, so we will try to fix the situation.
+			// First, we check in the database to see if the keyword exists,
+			// and if it does, then we refresh the keywords.
+			// Note: that get_keywords_in_group_id() consults only the DB
+			// [ML] Note: this should not happen from 0.6.3, but i'm fed up of
+			// thinking that this time we fixed it, so the code stays..
+			$tmp_group = get_kwg_from_name($grp);
+			$kws1 = get_keywords_in_group_id($tmp_group['id_group'], false);
+
+			foreach ($kws1 as $kw) {
+				if ($kw['name'] == $val) {
+					include_lcm('inc_keywords_default');
+
+					$system_keyword_groups = get_default_keywords();
+					create_groups($system_keyword_groups);
+					write_metas(); // regenerate inc/data/inc_meta_cache.php
+
+					return _T(remove_number_prefix($kw['title']), $args);
+				}
+			}
+
+			lcm_panic("*** The keyword does not exist. It is possible that a
+				minor error occured while the last upgrade of the software. Please
+				ask your administrator to do the following: Go to the 'Keywords'
+				menu, then click on the 'Maintenance' tab, then click on the
+				'Validate' button. This will refresh the available keywords.");
+		}
 	} else {
-		lcm_panic("kwg not found");
+		lcm_panic("*** The keyword group does not exist. It is possible that a
+			minor error occured while the last upgrade of the software. Please
+			ask your administrator to do the following: Go to the 'Keywords'
+			menu, then click on the 'Maintenance' tab, then click on the
+			'Validate' button. This will refresh the available keywords.");
 	}
 }
 
@@ -874,15 +939,22 @@ $lcm_lang = $langue_site;
 // Journal of events
 function lcm_log($message, $type = 'lcm') {
 	$pid = '(pid '.@getmypid().')';
-	if (!$ip = $GLOBALS['REMOTE_ADDR']) $ip = '-';
+	if (!$ip = $_SERVER['REMOTE_ADDR']) $ip = '-';
 	$message = date("M d H:i:s") . " $ip $pid " . ereg_replace("\n*$", "\n", $message);
-	$logfile = "log/" . $type . ".log";
 	$rotate = false;
+
+	// Admins can put "SetEnv LcmLogDir /var/log/..." in their apache.conf or vhost
+	$logfile = $type . ".log";
+
+	if (isset($_SERVER['LcmLogDir']))
+		$logfile = $_SERVER['LcmLogDir'] . "/" . $logfile;
+	else
+		$logfile = "log/" . $logfile;
 
 	// Keep about 20Kb of data per file, on 4 files (.1, .2, .3)
 	// generates about 80Kb in total per log type.
 	$kb_size = ($GLOBALS['debug'] ? 100 : 20);
-	if (@filesize($logfile) > $kb_size * 1024) {
+	if (is_file($logfile) && @filesize($logfile) > $kb_size * 1024) {
 		$rotate = true;
 		$message .= "[-- rotate --]\n";
 	}
@@ -891,6 +963,11 @@ function lcm_log($message, $type = 'lcm') {
 	if ($f) {
 		fputs($f, $message);
 		fclose($f);
+	} else {
+		global $debug;
+
+		if ($debug)
+			echo "fail to open log file " . $logfile;
 	}
 	
 	if ($rotate) {
@@ -912,7 +989,8 @@ function timeout($lock=false, $action=true, $connect_mysql=true) {
 	global $db_ok;
 
 	// Has the hosting provided put a lock? (maximum age, 10 minutes)
-	$timeoutfile = 'inc/data/lock';
+	$timeoutfile = (isset($_SERVER['LcmDataDir']) ? $_SERVER['LcmDataDir'] : 'inc/data') . '/lock';
+
 	if (@file_exists($timeoutfile)
 	AND ((time() - @filemtime($timeoutfile)) < 600)) {
 		lcm_debug ("lock hebergeur $timeoutfile");
@@ -983,7 +1061,7 @@ function verif_butineur() {
 function lcm_getbacktrace($html = true)
 {
 	$s = '';
-	$MAXSTRLEN = 64;
+	$MAXSTRLEN = 1024;
 
 	if ($html)
 		$s = '<pre align="left">';
@@ -1052,10 +1130,10 @@ function lcm_panic($message) {
 	$error .= "Referer: " . $_SERVER['HTTP_REFERER'] . "\n";
 	$error .= "Request: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'] . "\n";
 	$error .= "Error: " . $message . "\n";
-	$error .= lcm_getbacktrace();
 
-	lcm_log($error);
-	die("<pre>$error</pre>");
+	// Make different lcm_getbacktrace() calls to avoid html in logs
+	lcm_log($error . lcm_getbacktrace(false));
+	die("<pre>" . $error . " " . lcm_getbacktrace() . "</pre>");
 }
 
 function lcm_debug($message) {
