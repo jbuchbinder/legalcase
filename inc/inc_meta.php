@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta.php,v 1.22 2005/04/18 09:41:17 mlutfy Exp $
+	$Id: inc_meta.php,v 1.23 2005/12/16 11:07:21 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -155,7 +155,11 @@ function read_meta_upd($name) {
 
 	$s .= '?'.'>';
 
-	$file_meta_cache = 'inc/data/inc_meta_cache.php';
+	if (isset($_SERVER['LcmDataDir']))
+		$file_meta_cache = $_SERVER['LcmDataDir'] . '/inc_meta_cache.php';
+	else
+		$file_meta_cache = 'inc/data/inc_meta_cache.php';
+
 	@unlink($file_meta_cache);
 	$file_meta_cache_w = $file_meta_cache.'-'.@getmypid();
 	$f = @fopen($file_meta_cache_w, "wb");
