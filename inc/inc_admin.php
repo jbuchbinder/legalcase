@@ -1,58 +1,13 @@
 <?php
 
+// This was taken from Spip (www.spip.net)
+// [ML] verifier_action_auteur() is used by LCM, perhaps we should
+// clean this out one day...
+
 //
 // Execute this file only once
 if (defined('_INC_ADMIN')) return;
 define('_INC_ADMIN', '1');
-
-
-function fichier_admin($action) {
-	global $connect_login;
-	return "admin_".substr(md5($action.(time() & ~2047).$connect_login), 0, 10);
-}
-
-function debut_admin($action, $commentaire='') {
-	global $this_link;
-	global $connect_status;
-
-	if ((!$action) || ($connect_status != "admin")) {
-		include_ecrire ("inc_presentation.php3");
-		install_debut_html(_T('info_acces_refuse'));
-		install_fin_html();
-		exit;
-	}
-	$fichier = fichier_admin($action);
-	if (@file_exists("inc/data/$fichier")) {
-		spip_log ("Action admin: $action");
-		return true;
-	}
-
-	include_ecrire ("inc_presentation.php3");
-	install_debut_html(_T('info_action', array('action' => $action)));
-
-	if ($commentaire) {
-		echo "<p>".propre($commentaire)."</p>";
-	}
-
-	echo $this_link->getForm('POST');
-	echo "<P><B>"._T('info_authentification_ftp')."</B>";
-	echo aide("ftp_auth");
-	echo "<P>"._T('info_creer_repertoire');
-	echo "<P align='center'><INPUT TYPE='text' NAME='fichier' CLASS='fondl' VALUE=\"$fichier\" SIZE='30'>";
-	echo "<P> "._T('info_creer_repertoire_2');
-	echo "<P align='right'><INPUT TYPE='submit' NAME='Valider' VALUE='"._T('bouton_recharger_page')."' CLASS='fondo'>";
-	echo "</FORM>";
-
-	install_fin_html();
-	exit;
-}
-
-function fin_admin($action) {
-	$fichier = fichier_admin($action);
-	@unlink("inc/data/$fichier");
-	@rmdir("inc/data/$fichier");
-}
-
 
 function _action_auteur($action, $id_auteur, $nom_alea) {
 	if (!$id_auteur) {
