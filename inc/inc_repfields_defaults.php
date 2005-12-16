@@ -32,6 +32,12 @@ function get_default_repfields() {
 			"filter" => "date"),
 		array(
 			"table_name" => "lcm_case",
+			"field_name" => "date_update",
+			"description" => "case_input_date_updated",
+			"enum_type" => "",
+			"filter" => "date"),
+		array(
+			"table_name" => "lcm_case",
 			"field_name" => "legal_reason",
 			"description" => "case_input_legal_reason",
 			"enum_type" => "",
@@ -57,7 +63,7 @@ function get_default_repfields() {
 		array(
 			"table_name" => "lcm_case",
 			"field_name" => "count(*)",
-			"description" => "count", // TRAD
+			"description" => "rep_input_field_count",
 			"enum_type" => "",
 			"filter" => "number"),
 		/* LCM_STAGE */
@@ -82,7 +88,7 @@ function get_default_repfields() {
 		array(
 			"table_name" => "lcm_stage",
 			"field_name" => "date_conclusion",
-			"description" => "date conclusion", // TRAD
+			"description" => "case_input_date_conclusion",
 			"enum_type" => "",
 			"filter" => "date"),
 		array(
@@ -94,13 +100,13 @@ function get_default_repfields() {
 		array(
 			"table_name" => "lcm_stage",
 			"field_name" => "kw_conclusion",
-			"description" => "case conclusion", // TRAD
+			"description" => "fu_input_conclusion",
 			"enum_type" => "keyword:system_kwg:conclusion",
 			"filter" => "text"),
 		array(
 			"table_name" => "lcm_stage",
 			"field_name" => "kw_sentence",
-			"description" => "case sentence", // TRAD
+			"description" => "fu_input_sentence",
 			"enum_type" => "keyword:system_kwg:sentence",
 			"filter" => "text"),
 		array(
@@ -112,7 +118,7 @@ function get_default_repfields() {
 		array(
 			"table_name" => "lcm_stage",
 			"field_name" => "count(*)",
-			"description" => "count", // TRAD
+			"description" => "rep_input_field_count",
 			"enum_type" => "",
 			"filter" => "number"),
 

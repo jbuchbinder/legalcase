@@ -1,4 +1,29 @@
 <?php
+
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2005 Free Software Foundation, Inc.
+
+	Note: This file was initially based on SPIP's ecrire/inc_meta.php3
+	(http://www.spip.net).
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the 
+	Free Software Foundation; either version 2 of the License, or (at your 
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but 
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along 
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: inc_session.php,v 1.19 2005/12/16 11:24:04 mlutfy Exp $
+*/
+
 //
 // Execute this file only once
 if (defined('_INC_SESSION')) return;
@@ -29,7 +54,11 @@ function get_session_file($id_session, $alea) {
 		$id_author = $regs[1];
 
 	$session_file = 'session_'.$id_author.md5($id_session.' '.$alea).'.php';
-	$session_file = 'inc/data/'.$session_file;
+
+	if (isset($_SERVER['LcmDataDir']))
+		$session_file = $_SERVER['LcmDataDir'] . '/' . $session_file;
+	else
+		$session_file = 'inc/data/' . $session_file;
 
 	return $session_file;
 }
@@ -170,7 +199,7 @@ function creer_uniqid() {
 // We also take the opportunity to delete sessions older than 48 hours.
 //
 function zap_sessions($id_author, $zap) {
-	$dirname = 'inc/data/';
+	$dirname = (isset($_SERVER['LcmDataDir']) ? $_SERVER['LcmDataDir'] . '/' : 'inc/data/');
 
 	// Do not delete yourself by accident
 	// [ML] This does not seem necessary.
@@ -199,47 +228,11 @@ function zap_sessions($id_author, $zap) {
 	return $zap_num;
 }
 
-// Recognize a user authentified with php_auth
-// [ML] I think we can scrap this
-function verifier_php_auth() {
-	lcm_log("inc_session.php/verifier_php_auth: should be deprecated");
-	global $PHP_AUTH_USER, $PHP_AUTH_PW, $ignore_auth_http;
-	if ($PHP_AUTH_USER && $PHP_AUTH_PW && !$ignore_auth_http) {
-		$login = addslashes($PHP_AUTH_USER);
-		$result = lcm_query("SELECT * FROM lcm_author WHERE username='$login'");
-		$row = lcm_fetch_array($result);
-		$auth_mdpass = md5($row['alea_actuel'] . $PHP_AUTH_PW);
-		if ($auth_mdpass != $row['pass']) {
-			$PHP_AUTH_USER='';
-			return false;
-		} else {
-			// [ML] FIXME update fields
-			$GLOBALS['author_session']['id_author'] = $row['id_author'];
-			$GLOBALS['author_session']['nom'] = $row['nom'];
-			$GLOBALS['author_session']['login'] = $row['login'];
-			$GLOBALS['author_session']['email'] = $row['email'];
-			$GLOBALS['author_session']['statut'] = $row['statut'];
-			$GLOBALS['author_session']['lang'] = $row['lang'];
-			$GLOBALS['author_session']['hash_env'] = hash_env();
-			return true;
-		}
-	}
-}
-
-// php_auth header
-// [ML] I think we can scrap this
-function ask_php_auth($text_failure) {
-	@Header("WWW-Authenticate: Basic realm=\"espace prive\"");
-	@Header("HTTP/1.0 401 Unauthorized");
-	echo $text_failure;
-	exit;
-}
-
 // Verify if we have a correct session cookie and load
 // the values in $GLOBALS['author_session'] (author)
 function verifier_visiteur() {
-	if (isset($GLOBALS['HTTP_COOKIE_VARS']['lcm_session']))
-		if (verifier_session($GLOBALS['HTTP_COOKIE_VARS']['lcm_session']))
+	if (isset($_COOKIE['lcm_session']))
+		if (verifier_session($_COOKIE['lcm_session']))
 			return true;
 
 	return false;

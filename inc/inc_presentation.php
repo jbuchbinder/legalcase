@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.229 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.230 2005/12/16 11:25:03 mlutfy Exp $
 */
 
 //
@@ -405,7 +405,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 function lcm_html_end() {
 	// Create a new session cookie if the IP changed
 	// An image is sent, which then calls lcm_cookie.php with Javascript
-	if ($GLOBALS['lcm_session'] && $GLOBALS['author_session']['ip_change']) {
+	if ($_COOKIE['lcm_session'] && $GLOBALS['author_session']['ip_change']) {
 		echo "<img name='img_session' src='images/lcm/nothing.gif' width='0' height='0' />\n";
 		echo "<script type='text/javascript'><!-- \n";
 		echo "document.img_session.src='lcm_cookie.php?change_session=oui';\n";
@@ -485,8 +485,48 @@ function lcm_page_end($credits = '') {
 				. "<a href=\"lcm_cookie.php?logout=" . htmlspecialchars($author_session['username']) ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
 			</p>"; // TRAD (Small, Normal, Large text)
 		echo "</div>";
+<<<<<<< inc_presentation.php
 	}
 
+	echo "<!-- End of \"prefs_column\" content -->\n";
+	echo "</div>\n";
+=======
+	}
+>>>>>>> 1.228.2.20
+
+<<<<<<< inc_presentation.php
+	//just test...
+	echo "<div class=\"clearing\">&nbsp;</div>\n";
+	echo "</div>\n";
+
+	if($prefs['screen'] == "narrow") {
+		echo '<div id="footer_narrow">
+		<div class="prefs_column_menu_head"><div class="sm_search">' .  _T('menu_search') . "</div></div>
+		<table border=\"0\" align=\"center\" width=\"100%\">
+			<tr>
+				<td align=\"left\" width=\"33%\" valign=\"top\">\n";
+	
+		//
+		// Search/find boxes
+		//
+		show_find_box('case', $find_case_string, '', 'narrow');
+	
+		echo "</td>\n";
+		echo '<td align="left" width="33%" valign="top">';
+		
+		show_find_box('client', $find_client_string, '', 'narrow');
+	
+		echo "</td>\n";
+		echo '<td align="left" width="33%" valign="top">';
+	
+		show_find_box('org', $find_org_string, '', 'narrow');
+	
+		echo "</td>
+			</tr>
+		</table>
+		</div><br />\n";
+	}
+=======
 	echo "<!-- End of \"prefs_column\" content -->\n";
 	echo "</div>\n";
 
@@ -521,6 +561,7 @@ function lcm_page_end($credits = '') {
 		</table>
 		</div><br />\n";
 	}
+>>>>>>> 1.228.2.20
 
 	echo "<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ";
 	echo _T('info_free_software', 
@@ -614,23 +655,28 @@ function lcm_help_string($code, $string, $anchor = '') {
 // Help pages HTML header & footer
 //
 
-function help_page_start($page_title) {
+function get_help_page_toc() {
+	$toc = array(
+		'installation' => array('install_permissions', 'install_database', 'install_personal'),
+		'cases' => array('cases_intro', 'cases_participants', 'cases_followups', 'cases_statusstage'),
+		'clients' => array('clients_intro', 'clients_newclient', 'clients_neworg'),
+		'authors' => array('authors_intro', 'authors_edit', 'authors_admin'),
+		'tools' => array('tools_agenda', 'tools_documents'),
+		'siteconfig' => array('siteconfig_general', 'siteconfig_collab', 'siteconfig_policy', 'siteconfig_regional'),
+		'archives' => array('archives_intro', 'archives_export', 'archives_import'),
+		'reports' => array('reports_intro', 'reports_edit'), 
+		'keywords' => array('keywords_intro', 'keywords_new_group', 'keywords_new', 'keywords_remove'),
+		'about' => array('about_contrib', 'about_license')); 
+
+	return $toc;
+}
+
+function help_page_start($page_title, $code = '') {
 
 	if (!$charset = read_meta('charset'))
 		$charset = 'utf-8';
 
-	$toc = array(
-		'installation' => array('install_permissions', 'install_database', 'install_personal'),
-		'cases' => array('cases_intro', 'cases_participants', 'cases_followups'),
-		'clients' => array('clients_intro', 'clients_org'),
-		'authors' => array('authors_intro', 'authors_admin'),
-		'tools' => array('tools_agenda', 'tools_documents'),
-		'siteconfig' => array('siteconfig_general', 'siteconfig_collab', 'siteconfig_policy', 'siteconfig_regional'),
-		// [ML] temporarely removing, because help not ready for 0.6.0
-		// 'archives' => array('archives_intro', 'archives_export', 'archives_import'),
-		'reports' => array('reports_intro', 'reports_edit'), 
-		'keywords' => array('keywords_intro', 'keywords_new_group', 'keywords_new', 'keywords_remove'),
-		'about' => array('about_contrib', 'about_license')); 
+	$toc = get_help_page_toc();
 
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -643,33 +689,50 @@ function help_page_start($page_title) {
 
 	echo "<body>\n";
 	echo '<h1>' . _T('help_title_help') . "</h1>\n";
-	echo '<div id="hlp_big_box">
-	<div id="hlp_menu">
-		<ul id="nav">';
+	echo '<div id="hlp_big_box">' . "\n";
+	echo '<div id="hlp_menu">' . "\n";
+	echo '<ul id="nav">' . "\n";
 
 	foreach ($toc as $topic => $subtopics) {
-		echo "\n\t\t\t". '<li><a href="lcm_help.php?code=' . $topic .'">' . _T('help_title_' . $topic) . '</a>' . "\n";
-		echo "\t\t\t\t". '<ul class="subnav">' ."\n";
-		foreach ($subtopics as $st) {
-			echo "\t\t\t\t\t". '<li><a href="lcm_help.php?code=' . $st .'">' . _T('help_title_' . $st) . '</a></li>' . "\n";
-		}
-		echo "\t\t\t\t</ul>\n\t\t\t</li>";
+		echo '<li><a href="lcm_help.php?code=' . $topic .'">' . _T('help_title_' . $topic) . '</a>' . "\n";
+		echo '<ul class="subnav">';
+
+		foreach ($subtopics as $st)
+			echo '<li><a href="lcm_help.php?code=' . $st .'">' . _T('help_title_' . $st) . '</a></li>' . "\n";
+
+		echo "</ul>\n";
+		echo "</li>\n";
 	}
 	
-	echo "\n\t\t". '</ul>
-	</div>
-	<div id="hlp_cont"><h2>' . $page_title . "</h2>
-		<div class=\"hlp_data\">";
+	echo "</ul>\n"; // closes id="nav"
+	echo "</div>\n"; // closes id="hlp_menu"
 
+	echo '<div id="hlp_cont">' . "\n";
+	echo '<div class="hlp_data">' . "\n";
+
+	foreach ($toc as $topic => $subtopics) {
+		foreach ($subtopics as $key => $val) {
+			if ($val == $code) {
+				echo '<div id="breadcrumb">' 
+					. '<a href="lcm_help.php?code=' . $topic . '">' . _T('help_title_' . $topic) .  '</a>'
+					. "</div>\n";
+			}
+		}
+	}
+
+	echo '<h2>' . $page_title . "</h2>\n";
 }
 
 function help_page_end() {
-	echo "</div>
-	</div>
-</div>
-</body>
-</html>";
+	echo '<p class="normal_text">&nbsp;</p>' . "\n";
 
+	// TODO: add next/previous sections?
+
+	echo "</div>\n"; // closes class="hlp_data"
+	echo "</div>\n"; // closes id="hlp_cont"
+	echo "</div>\n"; // closes id="hlp_big_box"
+	echo "</body>\n";
+	echo "</html>\n\n";
 }
 
 
@@ -1156,7 +1219,7 @@ function show_list_start($headers = array()) {
 
 		if ($h['order'] && $h['order'] != 'no_order') {
 			$ovar = $h['order']; // on which variable to order
-			$cur_sort_order = $h['default'];
+			$cur_sort_order = (isset($h['default']) ? $h['default'] : "");
 			$new_sort_order = '';
 
 			if (isset($_REQUEST[$ovar]) && ($_REQUEST[$ovar] == 'ASC' || $_REQUEST[$ovar] == 'DESC'))
@@ -1341,6 +1404,10 @@ function show_listcase_item($item, $cpt, $custom = '') {
 	include_lcm('inc_acc');
 	// [ML] $case_court_archive = read_meta('case_court_archive');
 
+	$find_case_string = "";
+	if (isset($_REQUEST['find_case_string']) && $_REQUEST['find_case_string'])
+		$find_case_string = $_REQUEST['find_case_string'];
+
 	$ac_read = allowed($item['id_case'], 'r');
 	$ac_edit = allowed($item['id_case'], 'e');
 	$css = ($cpt %2 ? "dark" : "light");
@@ -1394,6 +1461,7 @@ function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
 	show_list_end($current_pos, $number_of_rows);
 }
 
+<<<<<<< inc_presentation.php
 // see listcases.php for example
 function show_listfu_start($screen = 'general') {
 	global $prefs;
@@ -1484,6 +1552,102 @@ function show_find_box($type, $string, $dest = '', $layout = 'normal') {
 	if ($type == 'org' && read_meta('org_hide_all') == 'yes')
 		return;
 
+=======
+// see listcases.php for example
+function show_listfu_start($screen = 'general') {
+	global $prefs;
+
+	$cpt = 0;
+	$headers = array();
+
+	if ($screen != 'case') {
+		$headers[$cpt]['title'] = "#";
+		$headers[$cpt]['order'] = 'no_order';
+		$cpt++;
+	}
+
+	$headers[$cpt]['title'] = _Th('time_input_date_start');
+	$headers[$cpt]['order'] = 'fu_order';
+	$headers[$cpt]['default'] = 'ASC';
+	$cpt++;
+
+	$headers[$cpt]['title'] = (($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length'));
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+
+	if ($screen != 'author') {
+		$headers[$cpt]['title'] = _Th('case_input_author');
+		$headers[$cpt]['order'] = 'no_order';
+		$cpt++;
+	}
+
+	$headers[$cpt]['title'] = _Th('fu_input_type');
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+	
+	$headers[$cpt]['title'] = _Th('fu_input_description');
+	$headers[$cpt]['order'] = 'no_order';
+	$cpt++;
+
+	show_list_start($headers);
+}
+
+function show_listfu_item($item, $cpt, $screen = 'general') {
+	global $prefs;
+
+	echo "<tr>\n";
+
+	// Id case
+	if ($screen != 'case')
+		echo '<td><abbrev title="' . $item['title'] . '">' . $item['id_case'] . '</abbrev></td>';
+					
+	// Start date
+	echo '<td>' . format_date($item['date_start'], 'short') . '</td>';
+					
+	// Time
+	echo '<td>';
+	$fu_date_end = vider_date($item['date_end']);
+	if ($prefs['time_intervals'] == 'absolute') {
+		if ($fu_date_end) echo format_date($item['date_end'],'short');
+	} else {
+		$fu_time = ($fu_date_end ? strtotime($item['date_end']) - strtotime($item['date_start']) : 0);
+		echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
+	}
+	echo '</td>';
+
+	// Author initials
+	if ($screen != 'author')
+		echo '<td>' . get_person_initials($item) . '</td>';
+
+	// Type
+	echo '<td>' . _Tkw('followups', $item['type']) . '</td>';
+
+	// Description
+	$short_description = get_fu_description($item);
+
+	if ($item['hidden'] == 'Y')
+		$short_description .= ' <img src="images/jimmac/stock_trash-16.png" '
+			. 'height="16" width="16" border="0" '
+			. 'title="' . _T('fu_info_is_deleted') . '" '
+			. 'alt="' . _T('fu_info_is_deleted') . '" />';
+
+	echo '<td>';
+	echo '<a href="fu_det.php?followup=' . $item['id_followup'] . '" class="content_link">' . $short_description . '</a>';
+	echo '</td>';
+
+	echo "</tr>\n";
+}
+
+function show_find_box($type, $string, $dest = '', $layout = 'normal') {
+	static $find_box_counter = 0; // there may be more than one search box for a given type, in same page
+
+	if ($type == 'client' && read_meta('client_hide_all') == 'yes')
+		return;
+
+	if ($type == 'org' && read_meta('org_hide_all') == 'yes')
+		return;
+
+>>>>>>> 1.228.2.20
 	switch ($type) {
 		case 'case':
 		case 'client':
@@ -1509,15 +1673,31 @@ function show_find_box($type, $string, $dest = '', $layout = 'normal') {
 		echo '<form name="frm_find_' . $type . '" class="search_form" action="' . $action . '" method="get">' . "\n";
 	}
 
+	echo '<label for="find_box' . $find_box_counter . '">';
 	echo _T('input_search_' . $type) . "&nbsp;";
+<<<<<<< inc_presentation.php
 
 	if ($layout == 'narrow')
 		echo "<br />\n";
 	
 	echo '<input type="text" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' . clean_output($string) . '" />';
+=======
+	echo "</label>\n";
+
+	if ($layout == 'narrow')
+		echo "<br />\n";
+	
+	echo '<input type="text" id="find_box' . $find_box_counter . '" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' . clean_output($string) . '" />';
+>>>>>>> 1.228.2.20
 	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
 
+<<<<<<< inc_presentation.php
 	echo "</form>\n";
+=======
+	echo "</form>\n";
+
+	$find_box_counter++;
+>>>>>>> 1.228.2.20
 }
 
 function show_context_start() {
@@ -1530,7 +1710,7 @@ function show_context_item($string) {
 
 function show_context_case_title($id_case, $link_tab = '') {
 	if (! (is_numeric($id_case) && $id_case > 0)) {
-		lcm_log("Warning: show_context_casename, id_case not a number > 0: $id_case");
+		lcm_log("Warning: show_context_case_title: id_case not a number > 0: $id_case");
 		return;
 	}
 
@@ -1542,6 +1722,7 @@ function show_context_case_title($id_case, $link_tab = '') {
 
 	while ($row = lcm_fetch_array($result))  // should be only once
 		echo '<li style="list-style-type: none;">' 
+<<<<<<< inc_presentation.php
 			. _Ti('fu_input_for_case')
 			. "<a href='case_det.php?case=$id_case$link_tab' class='content_link'>" . $row['title'] . "</a>"
 			. "</li>\n";
@@ -1569,12 +1750,41 @@ function show_context_case_stage($id_case, $id_followup = 0) {
 		echo '<li style="list-style-type: none;">' 
 			. _Ti('case_input_stage')
 			. _Tkw('stage', $row['stage'])
+=======
+			. _Ti('fu_input_for_case')
+			. "<a href='case_det.php?case=$id_case$link_tab' class='content_link'>" . $row['title'] . "</a>"
+			. "</li>\n";
+}
+
+function show_context_case_stage($id_case, $id_followup = 0) {
+	if (! (is_numeric($id_case) && $id_case > 0)) {
+		lcm_log("Warning: show_context_case_stage, id_case not a number > 0: $id_case");
+		return;
+	}
+
+	if (! (is_numeric($id_followup))) {
+		lcm_log("Warning: show_context_case_stage, id_followup not a number >= 0: $id_followup");
+		return;
+	}
+
+	if ($id_followup)
+		$query = "SELECT case_stage as stage FROM lcm_followup WHERE id_followup = $id_followup";
+	else
+		$query = "SELECT stage FROM lcm_case WHERE id_case = $id_case";
+
+	$result = lcm_query($query);
+
+	while ($row = lcm_fetch_array($result))  // should be only once
+		echo '<li style="list-style-type: none;">' 
+			. _Ti('case_input_stage')
+			. _Tkw('stage', $row['stage'])
+>>>>>>> 1.228.2.20
 			. "</li>\n";
 }
 
 function show_context_case_involving($id_case) {
 	if (! (is_numeric($id_case) && $id_case > 0)) {
-		lcm_log("Warning: show_context_casename, id_case not a number > 0: $id_case");
+		lcm_log("Warning: show_context_case_involving, id_case not a number > 0: $id_case");
 		return;
 	}
 
@@ -1633,12 +1843,12 @@ function show_context_case_involving($id_case) {
 
 function show_context_stage($id_case, $id_stage) {
 	if (! (is_numeric($id_case) && $id_case > 0)) {
-		lcm_log("Warning: show_context_casename, id_case not a number > 0: $id_case");
+		lcm_log("Warning: show_context_stage, id_case not a number > 0: $id_case");
 		return;
 	}
 
 	if (! (is_numeric($id_stage) && $id_stage > 0)) {
-		lcm_log("Warning: show_context_casename, id_stage not a number > 0: $id_stage");
+		lcm_log("Warning: show_context_stage, id_stage not a number > 0: $id_stage");
 		return;
 	}
 

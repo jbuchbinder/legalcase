@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.30 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_login.php,v 1.31 2005/12/16 11:29:43 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -45,7 +45,7 @@ function close_login() {
 	return $text;
 }
 
-function login($cible, $prive = 'prive', $message_login='') {
+function show_login($cible, $prive = 'prive', $message_login='') {
 	$pass_popup = 'href="lcm_pass.php?register=yes" target="lcm_pass" '
 		. ' onclick="' . "javascript:window.open('lcm_pass.php?register=yes', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
 
@@ -83,6 +83,7 @@ function login($cible, $prive = 'prive', $message_login='') {
 	$clean_link->delVar('var_cookie_failed');
 	$url = $cible->getUrl();
 
+	// This populates the $author_session variable
 	include_lcm('inc_session');
 	verifier_visiteur();
 
@@ -141,9 +142,13 @@ function login($cible, $prive = 'prive', $message_login='') {
 
 		// Unknown login (except LDAP) or refused
 		if ($status_login == -1 OR ($status_login == 0 AND !$flag_autres_sources)) {
-			$error = _T('login_identifier_unknown', array('login' => htmlspecialchars($login)));
+			$error = _T('login_identifier_unknown', array('login' => htmlspecialchars(clean_output($login))));
 			$login = '';
-			@lcm_setcookie('lcm_admin', '', time() - 3600);
+
+			// [ML] Not sure why this was here, but headers are already sent
+			// therefore it causes an error message (which is not shown, but
+			// might make a mess, knowing how PHP runs differently everywhere..)
+			// @lcm_setcookie('lcm_admin', '', time() - 3600);
 		}
 	}
 	
