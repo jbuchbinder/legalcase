@@ -65,6 +65,7 @@ function overload_lang($f) {
 
 //
 // Change the current language
+// [ML] XXX this needs to be cleaned.. (mess with global vars)
 //
 function lcm_set_language($lang) {
 	global $all_langs, $lcm_lang_rtl, $lcm_lang_right, $lcm_lang_left, $lcm_lang_dir, $spip_dir_lang;
@@ -82,17 +83,20 @@ function lcm_set_language($lang) {
 
 		return true;
 	}
-	else
-		return false;
+
+	return false;
 }
 
 //
 // Set the current language based on the information sent by the browser
 //
 function lcm_set_language_from_browser() {
-	global $HTTP_SERVER_VARS, $HTTP_COOKIE_VARS;
+	$accept_langs = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
-	$accept_langs = explode(',', $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE']);
+	if (isset($_COOKIE['lcm_lang']))
+		if (lcm_set_language($_COOKIE['lcm_lang']))
+			return $_COOKIE['lcm_lang'];
+
 	if (is_array($accept_langs)) {
 		while(list(, $s) = each($accept_langs)) {
 			if (eregi('^([a-z]{2,3})(-[a-z]{2,3})?(;q=[0-9.]+)?$', trim($s), $r)) {
@@ -101,6 +105,7 @@ function lcm_set_language_from_browser() {
 			}
 		}
 	}
+
 	return false;
 }
 
@@ -110,13 +115,21 @@ function translate_string($code, $args) {
 	global $debug_tr;
 
 	$highlight = false;
+	$key_only = false;
 
-	if (isset($debug_tr))
-		$highlight = $debug_tr;
+	if (isset($debug_tr)) {
+		$highlight = ($debug_tr == 1);
+		$key_only = ($debug_tr == 2);
+	}
 	
-	if (isset($_REQUEST['debug_tr']))
-		$highlight = $_REQUEST['debug_tr'];
+	if (isset($_REQUEST['debug_tr'])) {
+		$highlight = ($_REQUEST['debug_tr'] == 1);
+		$key_only = ($_REQUEST['debug_tr'] == 2);
+	}
 
+	if ($key_only)
+		return $code;
+	
 	// list of modules to process (ex: "module:my_string")
 	$modules = array('lcm');
 	if (strpos($code, ':')) {
@@ -136,13 +149,6 @@ function translate_string($code, $args) {
 		if (! isset($GLOBALS[$var]))
 			load_language_file($lcm_lang, $module);
 
-		/* [ML] This does not really seem necessary, and makes useless (minor) overhead
-		if (!isset($GLOBALS[$var][$code])) {
-			lcm_debug("code = " . $code);
-			load_language_file($lcm_lang, $module, $code);
-			$load = true;
-		} */
-
 		if (isset($GLOBALS[$var][$code]))
 			$cache_lang[$lcm_lang][$code] = 1;
 
@@ -151,10 +157,16 @@ function translate_string($code, $args) {
 				$text = $GLOBALS[$var][$code];
 	}
 
+	//
 	// Languages which are not finished or late  (...)
+	//
+	// The preg_match check for code starting with [a-z] is to weed out
+	// text which should not be translated anyway.
 	if ($lcm_lang <> 'en') {
 		$text = ereg_replace("^<(NEW|MODIF)>", "", $text);
-		if (!$text) {
+		if ((! $text) && (preg_match("/^[a-z]/", $code))) {
+			lcm_debug($code . ": not found, falling back on english");
+
 			$lcm_lang_temp = $lcm_lang;
 			$lcm_lang = 'en';
 			$text = translate_string($code, $args);
@@ -162,8 +174,10 @@ function translate_string($code, $args) {
 		}
 	}
 
-	if (empty($text) || $text == '') {
-		lcm_debug("Warning: translation string -" . $code . "- has no text");
+	if ((empty($text) || $text == '')) {
+		if (preg_match("/[a-z]/", $code)) 
+			lcm_debug("Warning: translation string -" . $code . "- has no text");
+
 		$text = $code;
 	}
 
@@ -226,9 +240,12 @@ function init_codes_langues() {
 	'dz' => "Bhutani",
 	'el' => "&#949;&#955;&#955;&#951;&#957;&#953;&#954;&#940;",
 	'en' => "English",
+	'en_uk' => "English (UK)",
+	'en_us' => "English (USA)",
 	'eo' => "Esperanto",
 	'es' => "Espa&#241;ol",
 	'es_co' => "Colombiano",
+	'es_mx' => "Espa&#241;ol (México)",
 	'et' => "eesti",
 	'eu' => "euskara",
 	'fa' => "&#1601;&#1575;&#1585;&#1587;&#1609;",
@@ -497,16 +514,14 @@ function use_language_of_site() {
 }
 
 function use_language_of_visitor() {
-	global $HTTP_COOKIE_VARS, $flag_ecrire;
-
-	if (!lcm_set_language_from_browser())
+	if (! lcm_set_language_from_browser())
 		use_language_of_site();
 
 	if (isset($GLOBALS['author_session']['lang']))
 		lcm_set_language($GLOBALS['author_session']['lang']);
 
-	if (isset($HTTP_COOKIE_VARS['lcm_lang']))
-		lcm_set_language($HTTP_COOKIE_VARS['lcm_lang']);
+	if (isset($_COOKIE['lcm_lang']))
+		lcm_set_language($_COOKIE['lcm_lang']);
 }
 
 //

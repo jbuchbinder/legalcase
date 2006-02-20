@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.230 2005/12/16 11:25:03 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.231 2006/02/20 03:41:49 mlutfy Exp $
 */
 
 //
@@ -301,8 +301,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 	echo http_calendrier_agenda(mois($now), annee($now), jour($now), mois($now), annee($now), false, 'calendar.php');
 	echo "</td></tr></table>\n";
 
-	echo "
-					</div>\n";
+	echo "</div>\n";
 	
 	// Start agenda box
 	echo '<div class="nav_menu_box">' . "\n";
@@ -391,7 +390,7 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 					<h3 class=\"content_head\">";
 	
 	if ($help_code)
-		echo '<div class="help_icon">' . lcm_help($help_code) . "</div> ";
+		echo '<span class="help_icon">' . lcm_help($help_code) . "</span> ";
 					
 	echo $title;
 	echo "</h3>
@@ -485,48 +484,8 @@ function lcm_page_end($credits = '') {
 				. "<a href=\"lcm_cookie.php?logout=" . htmlspecialchars($author_session['username']) ."\" class=\"prefs_logout\" title=\"" . _T('menu_profile_logout_tooltip') . "\">" . _T('menu_profile_logout') . "</a>
 			</p>"; // TRAD (Small, Normal, Large text)
 		echo "</div>";
-<<<<<<< inc_presentation.php
 	}
 
-	echo "<!-- End of \"prefs_column\" content -->\n";
-	echo "</div>\n";
-=======
-	}
->>>>>>> 1.228.2.20
-
-<<<<<<< inc_presentation.php
-	//just test...
-	echo "<div class=\"clearing\">&nbsp;</div>\n";
-	echo "</div>\n";
-
-	if($prefs['screen'] == "narrow") {
-		echo '<div id="footer_narrow">
-		<div class="prefs_column_menu_head"><div class="sm_search">' .  _T('menu_search') . "</div></div>
-		<table border=\"0\" align=\"center\" width=\"100%\">
-			<tr>
-				<td align=\"left\" width=\"33%\" valign=\"top\">\n";
-	
-		//
-		// Search/find boxes
-		//
-		show_find_box('case', $find_case_string, '', 'narrow');
-	
-		echo "</td>\n";
-		echo '<td align="left" width="33%" valign="top">';
-		
-		show_find_box('client', $find_client_string, '', 'narrow');
-	
-		echo "</td>\n";
-		echo '<td align="left" width="33%" valign="top">';
-	
-		show_find_box('org', $find_org_string, '', 'narrow');
-	
-		echo "</td>
-			</tr>
-		</table>
-		</div><br />\n";
-	}
-=======
 	echo "<!-- End of \"prefs_column\" content -->\n";
 	echo "</div>\n";
 
@@ -561,7 +520,6 @@ function lcm_page_end($credits = '') {
 		</table>
 		</div><br />\n";
 	}
->>>>>>> 1.228.2.20
 
 	echo "<div id=\"footer\">". _T('title_software') ." (". $lcm_version_shown .")<br/> ";
 	echo _T('info_free_software', 
@@ -1247,6 +1205,28 @@ function show_list_start($headers = array()) {
 		} else {
 			echo $h['title'];
 		}
+
+		if (isset($h['more']) && $h['more']) {
+			$more_name = 'more_' . $h['more'];
+
+			if (isset($_REQUEST[$more_name]) && $_REQUEST[$more_name]) {
+				$more_link = new Link();
+				$more_link->addVar($more_name, 0);
+
+				echo '&nbsp;<span class="noprint">';
+				echo '<a title="' . _T('fu_button_desc_less') . '" href="' . $more_link->getUrl() . '" class="content_link">';
+				echo '<img src="images/spip/moins.gif" alt="" border="0" />';
+				echo '</a></span>';
+			} else {
+				$more_link = new Link();
+				$more_link->addVar($more_name, 1);
+
+				echo '&nbsp;<span class="noprint">';
+				echo '<a title="' . _T('fu_button_desc_more') . '" href="' . $more_link->getUrl() . '" class="content_link">';
+				echo '<img src="images/spip/plus.gif" alt="" border="0" />';
+				echo '</a></span>';
+			}
+		}
 		
 		echo "</th>";
 	}
@@ -1400,13 +1380,8 @@ function show_listcase_start() {
 	show_list_start($headers);
 }
 
-function show_listcase_item($item, $cpt, $custom = '') {
+function show_listcase_item($item, $cpt, $custom = '', $find_case_string = '') {
 	include_lcm('inc_acc');
-	// [ML] $case_court_archive = read_meta('case_court_archive');
-
-	$find_case_string = "";
-	if (isset($_REQUEST['find_case_string']) && $_REQUEST['find_case_string'])
-		$find_case_string = $_REQUEST['find_case_string'];
 
 	$ac_read = allowed($item['id_case'], 'r');
 	$ac_edit = allowed($item['id_case'], 'e');
@@ -1435,14 +1410,6 @@ function show_listcase_item($item, $cpt, $custom = '') {
 	if (allowed($item['id_case'],'r')) echo '</a>';
 	echo "</td>\n";
 	
-	// Court archive ID
-	/* [ML]
-	if ($case_court_archive == 'yes') {
-		echo "<td class='tbl_cont_" . $css . "'>";
-		echo highlight_matches(clean_output($item['id_court_archive']),$find_case_string);
-		echo "</td>\n";
-	} */
-	
 	// Status
 	echo "<td class='tbl_cont_" . $css . "'>";
 	if ($item['status'])
@@ -1461,7 +1428,6 @@ function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
 	show_list_end($current_pos, $number_of_rows);
 }
 
-<<<<<<< inc_presentation.php
 // see listcases.php for example
 function show_listfu_start($screen = 'general') {
 	global $prefs;
@@ -1496,97 +1462,7 @@ function show_listfu_start($screen = 'general') {
 	
 	$headers[$cpt]['title'] = _Th('fu_input_description');
 	$headers[$cpt]['order'] = 'no_order';
-	$cpt++;
-
-	show_list_start($headers);
-}
-
-function show_listfu_item($item, $cpt, $screen = 'general') {
-	echo "<tr>\n";
-
-	// Id case
-	if ($screen != 'case')
-		echo '<td><abbrev title="' . $item['title'] . '">' . $item['id_case'] . '</abbrev></td>';
-					
-	// Start date
-	echo '<td>' . format_date($item['date_start'], 'short') . '</td>';
-					
-	// Time
-	echo '<td>';
-	$fu_date_end = vider_date($item['date_end']);
-	if ($prefs['time_intervals'] == 'absolute') {
-		if ($fu_date_end) echo format_date($item['date_end'],'short');
-	} else {
-		$fu_time = ($fu_date_end ? strtotime($item['date_end']) - strtotime($item['date_start']) : 0);
-		echo format_time_interval($fu_time,($prefs['time_intervals_notation'] == 'hours_only'));
-	}
-	echo '</td>';
-
-	// Author initials
-	if ($screen != 'author')
-		echo '<td>' . get_person_initials($item) . '</td>';
-
-	// Type
-	echo '<td>' . _Tkw('followups', $item['type']) . '</td>';
-
-	// Description
-	$short_description = get_fu_description($item);
-
-	if ($item['hidden'] == 'Y')
-		$short_description .= ' <img src="images/jimmac/stock_trash-16.png" '
-			. 'height="16" width="16" border="0" '
-			. 'title="' . _T('fu_info_is_deleted') . '" '
-			. 'alt="' . _T('fu_info_is_deleted') . '" />';
-
-	echo '<td>';
-	echo '<a href="fu_det.php?followup=' . $item['id_followup'] . '" class="content_link">' . $short_description . '</a>';
-	echo '</td>';
-
-	echo "</tr>\n";
-}
-
-function show_find_box($type, $string, $dest = '', $layout = 'normal') {
-	if ($type == 'client' && read_meta('client_hide_all') == 'yes')
-		return;
-
-	if ($type == 'org' && read_meta('org_hide_all') == 'yes')
-		return;
-
-=======
-// see listcases.php for example
-function show_listfu_start($screen = 'general') {
-	global $prefs;
-
-	$cpt = 0;
-	$headers = array();
-
-	if ($screen != 'case') {
-		$headers[$cpt]['title'] = "#";
-		$headers[$cpt]['order'] = 'no_order';
-		$cpt++;
-	}
-
-	$headers[$cpt]['title'] = _Th('time_input_date_start');
-	$headers[$cpt]['order'] = 'fu_order';
-	$headers[$cpt]['default'] = 'ASC';
-	$cpt++;
-
-	$headers[$cpt]['title'] = (($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length'));
-	$headers[$cpt]['order'] = 'no_order';
-	$cpt++;
-
-	if ($screen != 'author') {
-		$headers[$cpt]['title'] = _Th('case_input_author');
-		$headers[$cpt]['order'] = 'no_order';
-		$cpt++;
-	}
-
-	$headers[$cpt]['title'] = _Th('fu_input_type');
-	$headers[$cpt]['order'] = 'no_order';
-	$cpt++;
-	
-	$headers[$cpt]['title'] = _Th('fu_input_description');
-	$headers[$cpt]['order'] = 'no_order';
+	$headers[$cpt]['more'] = 'fu_desc'; // will create var ?more_fu_desc=1
 	$cpt++;
 
 	show_list_start($headers);
@@ -1599,13 +1475,13 @@ function show_listfu_item($item, $cpt, $screen = 'general') {
 
 	// Id case
 	if ($screen != 'case')
-		echo '<td><abbrev title="' . $item['title'] . '">' . $item['id_case'] . '</abbrev></td>';
+		echo '<td valign="top"><abbr title="' . $item['title'] . '">' . $item['id_case'] . '</abbr></td>';
 					
 	// Start date
-	echo '<td>' . format_date($item['date_start'], 'short') . '</td>';
+	echo '<td valign="top">' . format_date($item['date_start'], 'short') . '</td>';
 					
 	// Time
-	echo '<td>';
+	echo '<td valign="top">';
 	$fu_date_end = vider_date($item['date_end']);
 	if ($prefs['time_intervals'] == 'absolute') {
 		if ($fu_date_end) echo format_date($item['date_end'],'short');
@@ -1617,13 +1493,14 @@ function show_listfu_item($item, $cpt, $screen = 'general') {
 
 	// Author initials
 	if ($screen != 'author')
-		echo '<td>' . get_person_initials($item) . '</td>';
+		echo '<td valign="top">' . get_person_initials($item) . '</td>';
 
 	// Type
-	echo '<td>' . _Tkw('followups', $item['type']) . '</td>';
+	echo '<td valign="top">' . _Tkw('followups', $item['type']) . '</td>';
 
 	// Description
-	$short_description = get_fu_description($item);
+	$cut_fu = (isset($_REQUEST['more_fu_desc']) && $_REQUEST['more_fu_desc'] ? false : true);
+	$short_description = get_fu_description($item, $cut_fu);
 
 	if ($item['hidden'] == 'Y')
 		$short_description .= ' <img src="images/jimmac/stock_trash-16.png" '
@@ -1631,7 +1508,7 @@ function show_listfu_item($item, $cpt, $screen = 'general') {
 			. 'title="' . _T('fu_info_is_deleted') . '" '
 			. 'alt="' . _T('fu_info_is_deleted') . '" />';
 
-	echo '<td>';
+	echo '<td valign="top">';
 	echo '<a href="fu_det.php?followup=' . $item['id_followup'] . '" class="content_link">' . $short_description . '</a>';
 	echo '</td>';
 
@@ -1647,7 +1524,6 @@ function show_find_box($type, $string, $dest = '', $layout = 'normal') {
 	if ($type == 'org' && read_meta('org_hide_all') == 'yes')
 		return;
 
->>>>>>> 1.228.2.20
 	switch ($type) {
 		case 'case':
 		case 'client':
@@ -1675,29 +1551,17 @@ function show_find_box($type, $string, $dest = '', $layout = 'normal') {
 
 	echo '<label for="find_box' . $find_box_counter . '">';
 	echo _T('input_search_' . $type) . "&nbsp;";
-<<<<<<< inc_presentation.php
-
-	if ($layout == 'narrow')
-		echo "<br />\n";
-	
-	echo '<input type="text" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' . clean_output($string) . '" />';
-=======
 	echo "</label>\n";
 
 	if ($layout == 'narrow')
 		echo "<br />\n";
 	
 	echo '<input type="text" id="find_box' . $find_box_counter . '" name="find_' . $type . '_string" size="10" class="search_form_txt" value="' . clean_output($string) . '" />';
->>>>>>> 1.228.2.20
 	echo '&nbsp;<input type="submit" name="submit" value="' . _T('button_search') . '" class="search_form_btn" />' . "\n";
 
-<<<<<<< inc_presentation.php
-	echo "</form>\n";
-=======
 	echo "</form>\n";
 
 	$find_box_counter++;
->>>>>>> 1.228.2.20
 }
 
 function show_context_start() {
@@ -1722,35 +1586,6 @@ function show_context_case_title($id_case, $link_tab = '') {
 
 	while ($row = lcm_fetch_array($result))  // should be only once
 		echo '<li style="list-style-type: none;">' 
-<<<<<<< inc_presentation.php
-			. _Ti('fu_input_for_case')
-			. "<a href='case_det.php?case=$id_case$link_tab' class='content_link'>" . $row['title'] . "</a>"
-			. "</li>\n";
-}
-
-function show_context_case_stage($id_case, $id_followup = 0) {
-	if (! (is_numeric($id_case) && $id_case > 0)) {
-		lcm_log("Warning: show_context_casename, id_case not a number > 0: $id_case");
-		return;
-	}
-
-	if (! (is_numeric($id_followup))) {
-		lcm_log("Warning: show_context_casename, id_followup not a number >= 0: $id_followup");
-		return;
-	}
-
-	if ($id_followup)
-		$query = "SELECT case_stage as stage FROM lcm_followup WHERE id_followup = $id_followup";
-	else
-		$query = "SELECT stage FROM lcm_case WHERE id_case = $id_case";
-
-	$result = lcm_query($query);
-
-	while ($row = lcm_fetch_array($result))  // should be only once
-		echo '<li style="list-style-type: none;">' 
-			. _Ti('case_input_stage')
-			. _Tkw('stage', $row['stage'])
-=======
 			. _Ti('fu_input_for_case')
 			. "<a href='case_det.php?case=$id_case$link_tab' class='content_link'>" . $row['title'] . "</a>"
 			. "</li>\n";
@@ -1778,7 +1613,6 @@ function show_context_case_stage($id_case, $id_followup = 0) {
 		echo '<li style="list-style-type: none;">' 
 			. _Ti('case_input_stage')
 			. _Tkw('stage', $row['stage'])
->>>>>>> 1.228.2.20
 			. "</li>\n";
 }
 

@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.24 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.25 2006/02/20 03:44:09 mlutfy Exp $
 */
 
 
@@ -33,25 +33,28 @@ define('DEFAULT_D_SCALE', 120); # 1 pixel = 2 minutes
 
 // Write cookies
 
-if ($GLOBALS['set_echelle'] > 0) {
-	lcm_setcookie('spip_calendrier_echelle', floor($GLOBALS['set_echelle']), time() + 365 * 24 * 3600);
-	$GLOBALS['echelle'] = floor($GLOBALS['set_echelle']);
-} else 
-	$GLOBALS['echelle'] = $GLOBALS['HTTP_COOKIE_VARS']['spip_calendrier_echelle'];
+if (isset($_REQUEST['set_echelle']) && ($_REQUEST['set_echelle'] > 0)) {
+	lcm_setcookie('spip_calendrier_echelle', floor($_REQUEST['set_echelle']), time() + 365 * 24 * 3600);
+	$GLOBALS['echelle'] = floor($_REQUEST['set_echelle']);
+} elseif (isset($_COOKIE['spip_calendrier_echelle'])) {
+	$GLOBALS['echelle'] = $_COOKIE['spip_calendrier_echelle'];
+}
 
-if ($GLOBALS['set_partie_cal']) {
-	lcm_setcookie('spip_partie_cal', $GLOBALS['set_partie_cal'], time() + 365 * 24 * 3600);
-	$GLOBALS['partie_cal'] = $GLOBALS['set_partie_cal'];
-} else 
-	$GLOBALS['partie_cal'] = $GLOBALS['HTTP_COOKIE_VARS']['spip_partie_cal'];
+if (isset($_REQUEST['set_partie_cal']) && $_REQUEST['set_partie_cal']) {
+	lcm_setcookie('spip_partie_cal', $_REQUEST['set_partie_cal'], time() + 365 * 24 * 3600);
+	$GLOBALS['partie_cal'] = $_REQUEST['set_partie_cal'];
+} elseif (isset($_COOKIE['spip_partie_cal'])) {
+	$GLOBALS['partie_cal'] = $_COOKIE['spip_partie_cal'];
+}
 
 
 // General typography of the 3 types of calendars: day/month/year
+global $lcm_lang_rtl;
 global $bleu, $vert, $jaune; // blue, green, yellow
 $style = "style='width: 14px; height: 7px; border: 0px'";
-$bleu = http_img_pack("m_envoi_bleu$spip_lang_rtl.gif", 'B', $style);
-$vert = http_img_pack("m_envoi$spip_lang_rtl.gif", 'V', $style);
-$jaune= http_img_pack("m_envoi_jaune$spip_lang_rtl.gif", 'J', $style);
+$bleu = http_img_pack("m_envoi_bleu$lcm_lang_rtl.gif", 'B', $style);
+$vert = http_img_pack("m_envoi$lcm_lang_rtl.gif", 'V', $style);
+$jaune= http_img_pack("m_envoi_jaune$lcm_lang_rtl.gif", 'J', $style);
 
 function http_calendrier_init($date='', $ltype='', $lechelle='', $lpartie_cal='', $script='')
 {
@@ -883,7 +886,7 @@ function http_calendrier_suite_heures($jour_today,$mois_today,$annee_today,
 function http_calendrier_agenda ($month, $year, $day_ved, $month_ved, $annee_ved, $week = false,  $script='', $target='') {
 
 	if (!$script) 
-		$script =  $GLOBALS['PHP_SELF'] ;
+		$script =  $_ENV['PHP_SELF'];
 
 	if (!strpos($script, '?')) 
 		$script .= '?';
@@ -1394,7 +1397,7 @@ function http_calendrier_init_semaine($date, $echelle, $partie_cal, $script)
 
 function http_calendrier_jour($jour,$mois,$annee,$large = "wide", $partie_cal, $echelle, $le_message = 0, $script =  'calendar.php')
 {
-	global $spip_lang_rtl, $bleu, $vert,$jaune;
+	global $lcm_lang_rtl, $bleu, $vert,$jaune;
 	global $calendrier_message_fermeture;
 	
 
@@ -1575,7 +1578,7 @@ function http_calendrier_ical($id) {
 }
 
 function http_calendrier_rv($messages, $type) {
-	global $spip_lang_rtl;
+	global $lcm_lang_rtl;
 
 	$total = '';
 	if (!$messages) return $total;
@@ -1978,20 +1981,18 @@ function sql_calendrier_agenda ($mois, $annee) {
 	$mois = mois($date);
 	$annee = annee($date);
 
-	// rendez-vous personnels dans le mois
-/*	$result_messages=spip_query("SELECT messages.date_heure FROM spip_messages AS messages, spip_auteurs_messages AS lien WHERE ((lien.id_auteur='$connect_id_auteur' AND lien.id_message=messages.id_message) OR messages.type='affich') AND messages.rv='oui' AND messages.date_heure >='$annee-$mois-1' AND date_heure < DATE_ADD('$annee-$mois-1', INTERVAL 1 MONTH) AND messages.statut='publie'");
-	while($row=spip_fetch_array($result_messages)){
-		$rv[journum($row['date_heure'])] = 1;
-	} */
+	// The future events involving the author in this month
 	$result_messages=lcm_query("SELECT lcm_app.start_time
 					FROM lcm_app, lcm_author_app
 					WHERE lcm_author_app.id_author='" . $GLOBALS['author_session']['id_author'] . "'
 					AND lcm_app.id_app=lcm_author_app.id_app
 					AND start_time >= '$annee-$mois-1'
 					AND start_time < DATE_ADD('$annee-$mois-1', INTERVAL 1 MONTH)");
+
 	while($row=lcm_fetch_array($result_messages)){
 		$rv[journum($row['start_time'])] = 1;
 	}
+
 	return $rv;
 }
 

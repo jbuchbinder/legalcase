@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.83 2005/12/06 10:20:31 mlutfy Exp $
+	$Id: inc_version.php,v 1.84 2006/02/20 03:43:11 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -63,12 +63,125 @@ feed_globals('HTTP_GET_VARS'); // use $_REQUEST instead
 feed_globals('HTTP_POST_VARS'); // use $_REQUEST instead
 feed_globals('HTTP_SERVER_VARS', false); // use $_SERVER instead
 
+//
+// Management of inclusion and information on directories
+//
+
+$included_files = array();
+
+function include_local($file) {
+	if ($GLOBALS['included_files'][$file]) return;
+	include($file);
+	$GLOBALS['included_files'][$file] = 1;
+}
+
+function include_lcm($file) {
+	$lcmfile = 'inc/' . $file . '.php';
+
+	// This does not work correctly on PHP5, and who knows for PHP4..
+	if (! isset($GLOBALS['included_files'][$file]))
+		@$GLOBALS['included_files'][$file] = 0;
+	
+	if (@$GLOBALS['included_files'][$file]++)
+		return;
+
+	if (! @file_exists($lcmfile))
+		lcm_panic("File for include_lcm does not exist: $lcmfile");
+
+	lcm_debug("include_lcm: (start) $lcmfile");
+	include($lcmfile);
+	lcm_debug("include_lcm: (ready) $lcmfile");
+}
+
+function include_config_exists($file) {
+	$lcmfile = $file . '.php';
+
+	if (isset($_SERVER['LcmConfigDir']))
+		$lcmfile = $_SERVER['LcmConfigDir'] . '/' . $lcmfile;
+	else
+		$lcmfile = 'inc/config/' . $lcmfile;
+
+	return @file_exists($lcmfile);
+}
+
+function include_config($file) {
+	$lcmfile = $file . '.php';
+
+	if (isset($_SERVER['LcmConfigDir']))
+		$lcmfile = $_SERVER['LcmConfigDir'] . '/' . $lcmfile;
+	else
+		$lcmfile = 'inc/config/' . $lcmfile;
+
+	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
+		return;
+
+	if (! @file_exists($lcmfile)) {
+		lcm_log("CRITICAL: file for include_config does not exist: " . $lcmfile);
+		if ($GLOBALS['debug']) echo lcm_getbacktrace();
+	}
+	
+	lcm_debug("include_config: (start) $lcmfile");
+	include($lcmfile);
+	$GLOBALS['included_files'][$lcmfile] = 1;
+	lcm_debug("include_config: (ready) $lcmfile");
+}
+
+function include_data_exists($file) {
+	$lcmfile = $file . '.php';
+
+	if (isset($_SERVER['LcmDataDir']))
+		$lcmfile = $_SERVER['LcmDataDir'] . '/' . $lcmfile;
+	else
+		$lcmfile = 'inc/data/' . $lcmfile;
+
+	return @file_exists($lcmfile);
+}
+
+function include_data($file) {
+	$lcmfile = $file . '.php';
+
+	if (isset($_SERVER['LcmDataDir']))
+		$lcmfile = $_SERVER['LcmDataDir'] . '/' . $lcmfile;
+	else
+		$lcmfile = 'inc/data/' . $lcmfile;
+
+	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
+		return;
+
+	if (! @file_exists($lcmfile)) {
+		lcm_log("CRITICAL: file for include_data does not exist: " . $lcmfile);
+		if ($GLOBALS['debug']) echo lcm_getbacktrace();
+	}
+	
+	lcm_debug("include_data: (start) $lcmfile");
+	include($lcmfile);
+	$GLOBALS['included_files'][$lcmfile] = 1;
+	lcm_debug("include_data: (ready) $lcmfile");
+}
+
 
 //  ************************************
 // 	*** Default configuration of LCM ***
 //
 // The following parameters can be overriden via inc/my_options.php.
 //
+
+// Default timezone for PHP >= 5.1
+// c.f. http://www.php.net/manual/en/ref.datetime.php#ini.date.timezone
+if (function_exists("date_default_timezone_get")) {
+	if (! ($tz = date_default_timezone_get())) {
+		lcm_log("PHP variable date.timezone not set. Falling back on UCT");
+		lcm_log("For more info, see http://www.php.net/manual/en/ref.datetime.php#ini.date.timezone");
+
+		date_default_timezone_set("UCT");
+	} else {
+		if (! date_default_timezone_set($tz)) {
+			lcm_log("Problem setting tz = $tz, falling back on UCT");
+			lcm_log("For more info, see http://www.php.net/manual/en/ref.datetime.php#ini.date.timezone");
+			date_default_timezone_set("UCT");
+		}
+	}
+}
 
 // Prefix of tables in the database
 // (to modify in order to have many LCM running in the same database)
@@ -79,9 +192,7 @@ $table_prefix = 'lcm';
 $cookie_prefix = 'lcm';
 $cookie_path = '';
 
-// Template path (for report generation)
-$dossier_squelettes = 'tpl';
-
+// [ML] This is probably not used
 // Should we authorize LCM to compress the pages on the fly when
 // the navigator accepts it (Apache 1.3 only) ?
 $auto_compress = true;
@@ -112,36 +223,29 @@ $mysql_recall_link = false;
 // Shoud non-translated strings be shown in red?
 $test_i18n = false;
 
-// Activate management of "extras"? (see inc/inc_extra.php for more information)
-// [ML] This is not used for now
-$champs_extra = false;
-$champs_extra_proposes = false;
-
-// Should we ignore authentication by auth http/remove user?
-// This allows to have a LCM under .htaccess (ignore_remote_user),
-// but also to work on crazy disfonctional servers who block
-// PHP_AUTH_USER=root (ignore_auth_http) -- [ML] Not sure what this
-// is for.
-$ignore_auth_http = false;
-$ignore_remote_user = false;
-
 
 //
 // *** End of configuration ***
 //
 
 // This allows users to override the defaults
-if (@file_exists('inc/my_options.php'))
+if(include_config_exists('my_options'))
+	include_config('my_options');
+
+// Backwards compatibility for LCM <= 0.6.4
+if (@file_exists('inc/my_options.php')) {
+	lcm_log("File inc/my_options.php deprecated, please move to inc/config/my_options.php");
 	include('inc/my_options.php');
+}
 
 // Current version of LCM
-$lcm_version = 0.63;
+$lcm_version = 0.641;
 
 // Current version of LCM shown on screen
-$lcm_version_shown = "0.6.3";
+$lcm_version_shown = "0.6.4a";
 
 // Current version of LCM database
-$lcm_db_version = 40;
+$lcm_db_version = 42;
 
 // Error reporting
 // error_reporting(E_ALL); // [ML] recommended for debug
@@ -194,7 +298,6 @@ $flag_iconv = function_exists("iconv");
 $flag_strtotime = function_exists("strtotime");
 
 $flag_gd = $flag_ImageGif || $flag_ImageJpeg || $flag_ImagePng;
-
 
 
 //
@@ -299,96 +402,6 @@ function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 
 $old_error_handler = set_error_handler("userErrorHandler");
 
-
-//
-// Management of inclusion and information on directories
-//
-
-$included_files = array();
-
-function include_local($file) {
-	if ($GLOBALS['included_files'][$file]) return;
-	include($file);
-	$GLOBALS['included_files'][$file] = 1;
-}
-
-function include_lcm($file) {
-	$lcmfile = 'inc/' . $file . '.php';
-
-	// This does not work correctly on PHP5, and who knows for PHP4..
-	if (! isset($GLOBALS['included_files'][$file]))
-		@$GLOBALS['included_files'][$file] = 0;
-	
-	if (@$GLOBALS['included_files'][$file]++)
-		return;
-
-	if (! @file_exists($lcmfile))
-		lcm_panic("File for include_lcm does not exist: $lcmfile");
-
-	include($lcmfile);
-}
-
-function include_config_exists($file) {
-	$lcmfile = $file . '.php';
-
-	if (isset($_SERVER['LcmConfigDir']))
-		$lcmfile = $_SERVER['LcmConfigDir'] . '/' . $lcmfile;
-	else
-		$lcmfile = 'inc/config/' . $lcmfile;
-
-	return @file_exists($lcmfile);
-}
-
-function include_config($file) {
-	$lcmfile = $file . '.php';
-
-	if (isset($_SERVER['LcmConfigDir']))
-		$lcmfile = $_SERVER['LcmConfigDir'] . '/' . $lcmfile;
-	else
-		$lcmfile = 'inc/config/' . $lcmfile;
-
-	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
-		return;
-
-	if (! @file_exists($lcmfile)) {
-		lcm_log("CRITICAL: file for include_config does not exist: " . $lcmfile);
-		if ($GLOBALS['debug']) echo lcm_getbacktrace();
-	}
-	
-	include($lcmfile);
-	$GLOBALS['included_files'][$lcmfile] = 1;
-}
-
-function include_data_exists($file) {
-	$lcmfile = $file . '.php';
-
-	if (isset($_SERVER['LcmDataDir']))
-		$lcmfile = $_SERVER['LcmDataDir'] . '/' . $lcmfile;
-	else
-		$lcmfile = 'inc/data/' . $lcmfile;
-
-	return @file_exists($lcmfile);
-}
-
-function include_data($file) {
-	$lcmfile = $file . '.php';
-
-	if (isset($_SERVER['LcmDataDir']))
-		$lcmfile = $_SERVER['LcmDataDir'] . '/' . $lcmfile;
-	else
-		$lcmfile = 'inc/data/' . $lcmfile;
-
-	if (array_key_exists($lcmfile, $GLOBALS['included_files']))
-		return;
-
-	if (! @file_exists($lcmfile)) {
-		lcm_log("CRITICAL: file for include_data does not exist: " . $lcmfile);
-		if ($GLOBALS['debug']) echo lcm_getbacktrace();
-	}
-	
-	include($lcmfile);
-	$GLOBALS['included_files'][$lcmfile] = 1;
-}
 
 $flag_connect = include_config_exists('inc_connect');
 
@@ -967,7 +980,7 @@ function lcm_log($message, $type = 'lcm') {
 		global $debug;
 
 		if ($debug)
-			echo "fail to open log file " . $logfile;
+			echo "<p>$logfile: Failed to open log file </p>\n";
 	}
 	
 	if ($rotate) {
@@ -1134,6 +1147,16 @@ function lcm_panic($message) {
 	// Make different lcm_getbacktrace() calls to avoid html in logs
 	lcm_log($error . lcm_getbacktrace(false));
 	die("<pre>" . $error . " " . lcm_getbacktrace() . "</pre>");
+}
+
+function lcm_assert_value($value, $allow_zero = false) {
+	if (is_numeric($value) && $value == 0 && (! $allow_zero))
+		lcm_panic("Value is 0, but allow_zero is false");
+
+	if ((! isset($value)) || (! $value))
+		lcm_panic("Missing value (unset or non-true)");
+	
+	return $value;
 }
 
 function lcm_debug($message) {

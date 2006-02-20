@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_impex.php,v 1.7 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_impex.php,v 1.8 2006/02/20 03:44:09 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -31,7 +31,7 @@ function export($type, $format, $search = '') {
 	switch ($type) {
 		case 'case' :
 			// List cases in the system + search criterion if any
-			$q = "SELECT id_case,title,id_court_archive,legal_reason,alledged_crime,notes,status,stage
+			$q = "SELECT id_case,title,legal_reason,alledged_crime,notes,status,stage
 					FROM lcm_case";
 
 			if (strlen($search)>1) {

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.77 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_filters.php,v 1.78 2006/02/20 03:44:09 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -27,6 +27,7 @@ define('_INC_FILTERS', '1');
 
 
 // Makes $match substring of $source in bold
+// FIXME: does not work with non-latin!
 function highlight_matches($source, $match) {
 	// Initialize variables
 	$model = strtolower($source);
@@ -84,6 +85,10 @@ function format_date($timestamp = '', $format = 'full') {
 	// [ML] Important for backwards compatiblity in code
 	if ($format == 'short' || $format == 'full')
 		$format = 'datetime_' . $format;
+	
+	// If no time, do not show it.
+	if ($format == 'datetime_full' && $tt[0] == '00' && $tt[1] == '00')
+		$format = 'date_full';
 
 	$my_date = _T('format_' . $format, array(
 				'day_name' => _T('date_wday_' . ($day_of_w + 0)),
@@ -259,6 +264,8 @@ function get_person_initials($item, $with_abbver = true) {
 		return '';
 	}
 
+	$ret = "";
+
 	if (function_exists("mb_substr")) {
 		$ret .= mb_substr($item['name_first'], 0, 1, "utf-8");
 		$ret .= mb_substr($item['name_middle'], 0, 1, "utf-8");
@@ -271,7 +278,7 @@ function get_person_initials($item, $with_abbver = true) {
 	}
 
 	if ($with_abbver)
-		$ret = '<abbrev title="' . get_person_name($item) . '">' . $ret . '</abbrev>';
+		$ret = '<abbr title="' . get_person_name($item) . '">' . $ret . '</abbr>';
 
 	return $ret;
 }
@@ -288,10 +295,12 @@ function get_fu_description($item, $make_short = true) {
 	}
 
 	global $prefs;
+	global $fu_desc_len; // configure via my_options.php with $GLOBALS['fu_desc_len'] = NNN;
+
 	$short_description = '';
 
-	// Set the length of short followup title
-	$title_length = (($prefs['screen'] == "wide") ? 48 : 115);
+	// Set the length of short followup title (was: wide = 48, narrow = 115)
+	$title_length = ((isset($fu_desc_len) && $fu_desc_len > 0) ? $fu_desc_len : 256);
 
 	if ($item['type'] == 'assignment' && is_numeric($item['description'])) {
 		$res1 = lcm_query("SELECT * FROM lcm_author WHERE id_author = " . $item['description']);
@@ -328,7 +337,7 @@ function get_fu_description($item, $make_short = true) {
 			$short_description .= ": " . $tmp['sentence_val'];
 	} else {
 		if ($item['description']) {
-			if ($make_short && strlen(lcm_utf8_decode($item['description'])) < $title_length) 
+			if ((! $make_short) || strlen(lcm_utf8_decode($item['description'])) < $title_length) 
 				$short_description = $item['description'];
 			else
 				$short_description = substr($item['description'], 0, $title_length) . '...';
@@ -364,7 +373,7 @@ function remove_number_prefix($string) {
 }
 
 function recup_date($numdate) {
-	if (! $numdate) return '';
+	if (! $numdate) return array('', '', '');
 
 	if (ereg('([0-9]{1,2})/([0-9]{1,2})/([0-9]{1,2})', $numdate, $regs)) {
 		$day = $regs[1];
@@ -409,21 +418,21 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 	if ($prefix)
 		$prefix = $prefix . '_';
 
-	if (is_numeric($source[$prefix . 'year'])) {
+	if (isset($source[$prefix . 'year']) && is_numeric($source[$prefix . 'year'])) {
 		$ret .= sprintf("%04d", $source[$prefix . 'year']) . '-';
 		$has_date = true;
 	} else {
 		$ret .= '0000-';
 	}
 
-	if (is_numeric($source[$prefix . 'month'])) {
+	if (isset($source[$prefix . 'month']) && is_numeric($source[$prefix . 'month'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'month']) . '-';
 		$has_date = true;
 	} else {
 		$ret .= ($type == 'start' ? '01-' : '12-');
 	}
 	
-	if (is_numeric($source[$prefix . 'day'])) {
+	if (isset($source[$prefix . 'day']) && is_numeric($source[$prefix . 'day'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'day']);
 		$has_date = true;
 	} else {
@@ -432,21 +441,21 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 
 	$ret .= " ";
 
-	if (is_numeric($source[$prefix . 'hour'])) {
+	if (isset($source[$prefix . 'hour']) && is_numeric($source[$prefix . 'hour'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'hour']) . ':';
 		$has_date = true;
 	} else {
 		$ret .= ($type == 'start' ? '00:' : '23:');
 	}
 
-	if (is_numeric($source[$prefix . 'minutes'])) {
+	if (isset($source[$prefix . 'minutes']) && is_numeric($source[$prefix . 'minutes'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'minutes']) . ':';
 		$has_date = true;
 	} else {
 		$ret .= ($type == 'start' ? '00:' : '59:');
 	}
 	
-	if (is_numeric($source[$prefix . 'seconds'])) {
+	if (isset($source[$prefix . 'seconds']) && is_numeric($source[$prefix . 'seconds'])) {
 		$ret .= sprintf("%02d", $source[$prefix . 'seconds']);
 		$has_date = true;
 	} else {
