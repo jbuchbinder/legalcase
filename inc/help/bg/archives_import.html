@@ -6,3 +6,67 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 
 
 
+  <!--Table of Child-Links-->
+
+  <ul class="ChildLinks">
+    <li><a name="tex2html767" href="#SECTION04231000000000000000" id="tex2html767">Import an archive</a></li>
+
+    <li><a name="tex2html768" href="#SECTION04232000000000000000" id="tex2html768">Delete the uploaded archive</a></li>
+  </ul><!--End of Table of Child-Links-->
+  <hr />
+
+
+  <div>
+    <a name="newrestore" id="newrestore"></a>
+  </div>
+
+  <h3><a name="SECTION04231000000000000000" id="SECTION04231000000000000000"></a>Import an archive</h3>
+
+  <p>The procedure to restore a backup is seperated into two parts, similar to the generation of a backup: the backup must first be uploaded to the server before the restore operation is made.</p>
+
+  <p>If it is more convenient, the backup can be uploaded using SSH or FTP, depending on your host. For very large backups, this might be mandatory. If you chose this option, make sure to upload into the &#8220;inc/data&#8221; directory. You can then ignore some of the steps described below.</p>
+
+  <p><b>To upload an existing backup onto the system</b>, follow the steps:</p>
+
+  <ol>
+    <li>Click on the button &#8220;Archives&#8221; from the main navigation menu and then on the &#8220;Restore&#8221; tab located at the top of the screen.</li>
+
+    <li>When the &#8220;Backup&#8221; form opens, locate the box titled &#8220;Upload a backup&#8221;.</li>
+
+    <li>Click on the &#8220;Browse&#8221; button. It will open a dialog box to help you locate the backup file to upload from your local computer. When you have selected the file, click on &#8220;Ok&#8221; to close the dialog box.</li>
+
+    <li>Click on the &#8220;Validate&#8221; button to upload the file onto the server.</li>
+  </ol>
+
+  <p><b>To restore an existing backup</b>, follow the steps:</p>
+
+  <ol>
+    <li>Locate the &#8220;Restore a backup&#8221; box, located under the &#8220;Upload a backup&#8221; box.</li>
+
+    <li>Select the backup to restore from the dropdown menu.</li>
+
+    <li>Select the operation to make:
+
+      <dl>
+        <dt><strong>Restore</strong></dt>
+
+        <dd>Deletes the existing database in the system and will restore the system to the exact state of the backup. This is the normal operation to do if you have re-installed LCM on a new computer and you wish to restore the database from your previous installation. Never risk restoring the
+        database &#8220;just for testing&#8221;, the restore operation may fail and leave the system in an unstable state.</dd>
+
+        <dt><strong>Synchronise</strong></dt>
+
+        <dd>May be used to synchronise a system with a parent one (or a centralised system). This is very experimental, and we do not recommend using it unless you have tested the operation, and know very well what you are doing. Note: LCM does not support the synchronisation of two system, it only
+        supports sending information to a centralised server - information from the central server should never be sent to the local host.</dd>
+      </dl>
+    </li>
+
+    <li>Click on the &#8220;Validate&#8221; button to proceed with the opration.</li>
+  </ol>
+
+  <div>
+    <a name="delrestore" id="delrestore"></a>
+  </div>
+
+  <h3><a name="SECTION04232000000000000000" id="SECTION04232000000000000000"></a>Delete the uploaded archive</h3>
+
+  <p>Once the system is successfully restored, you can delete the uploaded archive from the &#8220;Backup&#8221; tab. For more information, refer to the previous section.</p>
