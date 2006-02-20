@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.79 2005/12/06 10:06:06 mlutfy Exp $
+	$Id: edit_case.php,v 1.80 2006/02/20 03:14:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,7 +26,6 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 // Read site configuration preferences
-$case_court_archive   = read_meta('case_court_archive');
 $case_assignment_date = read_meta('case_assignment_date');
 $case_alledged_crime  = read_meta('case_alledged_crime');
 $case_legal_reason    = read_meta('case_legal_reason');
@@ -35,11 +34,11 @@ $case_allow_modif     = read_meta('case_allow_modif');
 if (empty($_SESSION['errors'])) {
 
 	// Clear form data
-	$_SESSION['case_data'] = array();
+	$_SESSION['form_data'] = array();
 
 	// Set the returning page
-	if (isset($ref)) $_SESSION['case_data']['ref_edit_case'] = $ref;
-	else $_SESSION['case_data']['ref_edit_case'] = $GLOBALS['HTTP_REFERER'];
+	if (isset($ref)) $_SESSION['form_data']['ref_edit_case'] = $ref;
+	else $_SESSION['form_data']['ref_edit_case'] = $GLOBALS['HTTP_REFERER'];
 
 	// Register case ID as session variable
 	if (!session_is_registered("case"))
@@ -66,20 +65,20 @@ if (empty($_SESSION['errors'])) {
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach ($row as $key => $value) {
-				$_SESSION['case_data'][$key] = $value;
+				$_SESSION['form_data'][$key] = $value;
 			}
 		}
 
-		$_SESSION['case_data']['admin'] = allowed($case,'a');
+		$_SESSION['form_data']['admin'] = allowed($case,'a');
 
 	} else {
 		// Set default values for the new case
-		$_SESSION['case_data']['date_assignment'] = date('Y-m-d H:i:s');
-		$_SESSION['case_data']['public'] = (int) (read_meta('case_default_read') == 'yes');
-		$_SESSION['case_data']['pub_write'] = (int) (read_meta('case_default_write') == 'yes');
-		$_SESSION['case_data']['status'] = 'draft';
+		$_SESSION['form_data']['date_assignment'] = date('Y-m-d H:i:s');
+		$_SESSION['form_data']['public'] = (int) (read_meta('case_default_read') == 'yes');
+		$_SESSION['form_data']['pub_write'] = (int) (read_meta('case_default_write') == 'yes');
+		$_SESSION['form_data']['status'] = 'draft';
 
-		$_SESSION['case_data']['admin'] = true;
+		$_SESSION['form_data']['admin'] = true;
 
 	}
 }
@@ -97,7 +96,7 @@ if (!$existing && isset($_REQUEST['attach_client'])) {
 
 		$result = lcm_query($query);
 		if ($info = lcm_fetch_array($result)) {
-			$_SESSION['case_data']['title'] = get_person_name($info);
+			$_SESSION['form_data']['title'] = get_person_name($info);
 		} else {
 			lcm_panic("No such client #" . $attach_client);
 		}
@@ -117,7 +116,7 @@ if (!$existing && isset($_REQUEST['attach_org'])) {
 
 		$result = lcm_query($query);
 		if ($info = lcm_fetch_array($result)) {
-			$_SESSION['case_data']['title'] = $info['name'];
+			$_SESSION['form_data']['title'] = $info['name'];
 		} else {
 			lcm_panic("No such organisation #" . $attach_org);
 		}
@@ -169,16 +168,16 @@ if ($attach_client)
 if ($attach_org)
 	echo '<input type="hidden" name="attach_org" value="' . $attach_org . '" />' . "\n";
 
-if ($_SESSION['case_data']['id_case']) {
-	echo "\t<tr><td>" . _T('case_input_id') . "</td><td>" . $_SESSION['case_data']['id_case']
-		. "<input type=\"hidden\" name=\"id_case\" value=\"" . $_SESSION['case_data']['id_case'] . "\" /></td></tr>\n";
+if ($_SESSION['form_data']['id_case']) {
+	echo "\t<tr><td>" . _T('case_input_id') . "</td><td>" . $_SESSION['form_data']['id_case']
+		. "<input type=\"hidden\" name=\"id_case\" value=\"" . $_SESSION['form_data']['id_case'] . "\" /></td></tr>\n";
 }
 
 	echo '<tr><td><label for="input_title">'
 		. f_err_star('title', $_SESSION['errors']) . _T('case_input_title')
 		. "</label></td>\n";
 	echo '<td><input size="35" name="title" id="input_title" value="'
-		. clean_output($_SESSION['case_data']['title'])
+		. clean_output($_SESSION['form_data']['title'])
 		. '" class="search_form_txt" />';
 	echo "</td></tr>\n";
 
@@ -187,26 +186,17 @@ if ($_SESSION['case_data']['id_case']) {
 		echo "<tr>\n";
 		echo "<td>" . f_err_star('date_assignment') . _Ti('case_input_date_assigned') . "</td>\n";
 		echo "<td>" 
-			. get_date_inputs('assignment', $_SESSION['case_data']['date_assignment'], false)
+			. get_date_inputs('assignment', $_SESSION['form_data']['date_assignment'], false)
 			. "</td>\n";
 		echo "</tr>\n";
 	}
 	
-	// Court archive ID
-	/* [ML] will be in keyword
-	if ($case_court_archive == 'yes') {
-		echo '<tr><td><label for="input_id_court_archive">' . _T('case_input_court_archive') . "</label></td>\n";
-		echo '<td><input size="35" name="id_court_archive" id="input_id_court_archive" value="'
-			. clean_output($_SESSION['case_data']['id_court_archive']) 
-			. '" class="search_form_txt" /></td></tr>' . "\n";
-	} */
-
 	// Legal reason
 	if ($case_legal_reason == 'yes') {
 		echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
 		echo '<td>';
 		echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
-		echo clean_output($_SESSION['case_data']['legal_reason']);
+		echo clean_output($_SESSION['form_data']['legal_reason']);
 		echo "</textarea>";
 		echo "</td>\n";
 		echo "</tr>\n";
@@ -217,40 +207,40 @@ if ($_SESSION['case_data']['id_case']) {
 		echo '<tr><td><label for="input_alledged_crime">' . _T('case_input_alledged_crime') . "</label></td>\n";
 		echo '<td>';
 		echo '<textarea name="alledged_crime" id="input_alledged_crime" class="frm_tarea" rows="2" cols="60">';
-		echo clean_output($_SESSION['case_data']['alledged_crime']);
+		echo clean_output($_SESSION['form_data']['alledged_crime']);
 		echo '</textarea>';
 		echo "</td>\n";
 		echo "</tr>\n";
 	}
 
 	// Keywords (if any)
-	show_edit_keywords_form('case', $_SESSION['case_data']['id_case']);
+	show_edit_keywords_form('case', $_SESSION['form_data']['id_case']);
 
 	$id_stage = 0; // new case, stage not yet known
-	if ($_SESSION['case_data']['stage']) {
-		$stage = get_kw_from_name('stage', $_SESSION['case_data']['stage']);
+	if ($_SESSION['form_data']['stage']) {
+		$stage = get_kw_from_name('stage', $_SESSION['form_data']['stage']);
 		$id_stage = $stage['id_keyword'];
 	}
 
-	show_edit_keywords_form('stage', $_SESSION['case_data']['id_case'], $id_stage);
+	show_edit_keywords_form('stage', $_SESSION['form_data']['id_case'], $id_stage);
 
 	// Notes
 	echo "<tr>\n";
-	echo "<td>" . f_err_star('notes') . _Ti('case_input_notes') . "</td>\n";
+	echo "<td><label for='input_notes'>" . f_err_star('notes') . _Ti('case_input_notes') . "</label></td>\n";
 	echo '<td><textarea name="notes" id="input_notes" class="frm_tarea" rows="3" cols="60">'
-		. clean_output($_SESSION['case_data']['notes'])
+		. clean_output($_SESSION['form_data']['notes'])
 		. "</textarea>\n"
 		. "</td>\n";
 	echo "</tr>\n";
 
 	// Case status
-	echo '<tr><td><label for="input_status">' . _T('case_input_status') . "</label></td>\n";
+	echo '<tr><td><label for="input_status">' . f_err_star('status') . _Ti('case_input_status') . "</label></td>\n";
 	echo '<td>';
 	echo '<select name="status" id="input_status" class="sel_frm">' . "\n";
 	$statuses = ($existing ? array('draft','open','suspended','closed','merged') : array('draft','open') );
 
 	foreach ($statuses as $s) {
-		$sel = ($s == $_SESSION['case_data']['status'] ? ' selected="selected"' : '');
+		$sel = ($s == $_SESSION['form_data']['status'] ? ' selected="selected"' : '');
 		echo '<option value="' . $s . '"' . $sel . ">" 
 			. _T('case_status_option_' . $s)
 			. "</option>\n";
@@ -260,22 +250,22 @@ if ($_SESSION['case_data']['id_case']) {
 	echo "</tr>\n";
 
 	// Case stage
-	if (! $_SESSION['case_data']['stage'])
-		$_SESSION['case_data']['stage'] = get_suggest_in_group_name('stage');
+	if (! $_SESSION['form_data']['stage'])
+		$_SESSION['form_data']['stage'] = get_suggest_in_group_name('stage');
 
 	$kws = get_keywords_in_group_name('stage');
 
-	echo '<tr><td><label for="input_stage">' . _T('case_input_stage') . "</label></td>\n";
+	echo '<tr><td><label for="input_stage">' . f_err_star('stage') . _T('case_input_stage') . "</label></td>\n";
 	echo '<td><select name="stage" id="input_stage" class="sel_frm">' . "\n";
 	foreach($kws as $kw) {
-		$sel = ($kw['name'] == $_SESSION['case_data']['stage'] ? ' selected="selected"' : '');
+		$sel = ($kw['name'] == $_SESSION['form_data']['stage'] ? ' selected="selected"' : '');
 		echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 	}
 	echo "</select></td>\n";
 	echo "</tr>\n";
 
 	// Public access rights
-	if ( $_SESSION['case_data']['admin'] || (read_meta('case_read_always') != 'yes') || (read_meta('case_write_always') != 'yes') ) {
+	if ( $_SESSION['form_data']['admin'] || (read_meta('case_read_always') != 'yes') || (read_meta('case_write_always') != 'yes') ) {
 		$dis = ( allowed($case,'a') ? '' : ' disabled="disabled"');
 		echo '<tr><td colspan="2">' . _T('case_input_collaboration') .  ' <br />
 				<ul>';
@@ -284,18 +274,18 @@ if ($_SESSION['case_data']['id_case']) {
 			echo '<li style="list-style-type: none;">';
 			echo '<input type="checkbox" name="public" id="case_public_read" value="yes"';
 
-			if ($_SESSION['case_data']['public'])
+			if ($_SESSION['form_data']['public'])
 				echo ' checked="checked"';
 
 			echo "$dis />";
 			echo '<label for="case_public_read">' . _T('case_input_collaboration_read') . "</label></li>\n";
 		}
 
-		if ( (read_meta('case_write_always') != 'yes') || $_SESSION['case_data']['admin']) {
+		if ( (read_meta('case_write_always') != 'yes') || $_SESSION['form_data']['admin']) {
 			echo '<li style="list-style-type: none;">';
 			echo '<input type="checkbox" name="pub_write" id="case_public_write" value="yes"';
 
-			if ($_SESSION['case_data']['pub_write'])
+			if ($_SESSION['form_data']['pub_write'])
 				echo ' checked="checked"';
 
 			echo "$dis />";
@@ -328,13 +318,14 @@ if ($_SESSION['case_data']['id_case']) {
 		}
 	}
 
-	echo '<input type="hidden" name="admin" value="' . $_SESSION['case_data']['admin'] . "\" />\n";
-	echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['case_data']['ref_edit_case'] . "\" />\n";
+	echo '<input type="hidden" name="admin" value="' . $_SESSION['form_data']['admin'] . "\" />\n";
+	echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['form_data']['ref_edit_case'] . "\" />\n";
 	echo "</form>\n\n";
 
 	// Reset error messages and form data
 	$_SESSION['errors'] = array();
-	$_SESSION['case_data'] = array();
+	$_SESSION['case_data'] = array(); // DEPRECATED
+	$_SESSION['form_data'] = array();
 
 	lcm_page_end();
 ?>

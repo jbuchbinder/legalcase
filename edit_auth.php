@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_auth.php,v 1.15 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: edit_auth.php,v 1.16 2006/02/20 03:14:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -106,7 +106,7 @@ show_context_end();
 	<input type="hidden" name="case" value="<?php echo $case; ?>" />
 
 <?
-	$link = new Link($GLOBALS['HTTP_REFERER']);
+	$link = new Link($_SERVER['HTTP_REFERER']);
 	echo '<input type="hidden" name="ref_edit_auth" value="' . $link->getUrl() . '"/>' . "\n";
 	echo "</form>\n";
 

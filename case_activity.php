@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_activity.php,v 1.3 2005/03/21 16:29:47 mlutfy Exp $
+	$Id: case_activity.php,v 1.4 2006/02/20 03:10:28 mlutfy Exp $
 */
 
 include("inc/inc.php");
@@ -32,7 +32,7 @@ echo "<div align='left'>\n";
 $case = intval($_GET['case']);
 
 if ($case > 0) {
-	$q="SELECT id_case, title, id_court_archive, date_creation, date_assignment,
+	$q="SELECT id_case, title, date_creation, date_assignment,
 			legal_reason, alledged_crime, status, stage, public, pub_write
 		FROM lcm_case
 		WHERE id_case=$case";

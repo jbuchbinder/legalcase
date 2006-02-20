@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.46 2005/12/06 10:03:02 mlutfy Exp $
+	$Id: config_site.php,v 1.47 2006/02/20 03:11:35 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -257,7 +257,6 @@ function show_config_form_policy() {
 	$client_citizen_number = read_meta('client_citizen_number');
 	$client_civil_status = read_meta('client_civil_status');
 	$client_income = read_meta('client_income');
-	$case_court_archive = read_meta('case_court_archive');
 	$case_assignment_date = read_meta('case_assignment_date');
 	$case_alledged_crime = read_meta('case_alledged_crime');
 	$case_legal_reason = read_meta('case_legal_reason');
@@ -307,11 +306,6 @@ function show_config_form_policy() {
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_case_fields') . "</small></p>\n";
 
 	echo "<table width=\"99%\" class=\"tbl_usr_dtl\">";
-	/* Was put into a keyword, eventually remove
-	echo "<tr><td width=\"300\">" . _T('siteconf_input_court_archive') ."</td><td>"
-		. get_yes_no('case_court_archive', $case_court_archive)
-		. "</td></tr>\n";
-	*/
 	echo "<tr><td>" . _T('siteconf_input_assignment_date') ."</td><td>"
 		. get_yes_no('case_assignment_date', $case_assignment_date)
 		. "</td></tr>\n";
@@ -487,7 +481,6 @@ function apply_conf_changes_policy() {
 				'client_civil_status'   => 'person_input_civil_status',
 				'client_income'         => 'person_input_income',
 				'hide_emails'           => 'siteconf_info_hide_emails',
-				'case_court_archive'    => 'case_input_court_archive',
 				'case_assignment_date'  => 'siteconf_input_assignment_date',
 				'case_alledged_crime'   => 'siteconf_input_alledged_crime',
 				'case_legal_reason'		=> 'case_input_legal_reason',

@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.49 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: install.php,v 1.50 2006/02/20 03:16:35 mlutfy Exp $
 */
 
 session_start();
@@ -69,7 +69,7 @@ function get_number_admins() {
 use_language_of_visitor();
 
 // Test if the software is already installed
-if (@file_exists('inc/config/inc_connect.php')) {
+if (include_config_exists('inc_connect')) {
 	install_html_start();
 
 	// forbidden area
@@ -198,22 +198,30 @@ function install_step_5() {
 		global $HTTP_SERVER_VARS, $HTTP_HOST;
 
 		// Replace www.site.net/foo/name.php -> www.site.net/foo/
-		$site_address = $HTTP_SERVER_VARS['REQUEST_URI'];
+		$site_address = $_SERVER['REQUEST_URI'];
 		if (!$site_address) $site_address = $_ENV['PHP_SELF']; // [ML] unsure
 		$site_address = preg_replace("/\/[^\/]+\.php$/", "/", $site_address);
-		$site_address = 'http://' . $HTTP_HOST /* $GLOBALS['SERVER_NAME'] */ . $site_address;
+		$site_address = 'http://' . $_SERVER['HTTP_HOST'] /* $GLOBALS['SERVER_NAME'] */ . $site_address;
 
 		write_meta('site_address', $site_address);
 	}
 
-	include_lcm('inc_meta_defaults');
-	init_default_config();
-	init_languages();
+	// Force regeneration of metas, just in case..
+	$lcm_meta_cache = 'inc_meta_cache.php';
+	if (isset($_SERVER['LcmDataDir']))
+		$lcm_meta_cache = $_SERVER['LcmDataDir'] . '/' . $lcm_meta_cache;
+	else
+		$lcm_meta_cache = 'inc/data/' . $lcm_meta_cache;
 
-	@unlink('inc/data/inc_meta_cache.php');
-	if (!@rename('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php')) {
-		copy('inc/config/inc_connect_install.php', 'inc/config/inc_connect.php');
-		@unlink('inc/config/inc_connect_install.php');
+	@unlink($lcm_meta_cache);
+	write_metas();
+
+	// Finalise installation
+	$lcm_config_prefix = (isset($_SERVER['LcmConfigDir']) ?  $_SERVER['LcmConfigDir'] : 'inc/config');
+
+	if (!@rename($lcm_config_prefix . '/inc_connect_install.php', $lcm_config_prefix . '/inc_connect.php')) {
+		copy($lcm_config_prefix . '/inc_connect_install.php', $lcm_config_prefix . '/inc_connect.php');
+		@unlink($lcm_config_prefix . '/inc_connect_install.php');
 	}
 
 	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
@@ -228,8 +236,6 @@ function install_step_5() {
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
-
-	write_metas();
 }
 
 function install_step_4() {
@@ -377,9 +383,13 @@ function install_step_3() {
 		lcm_log("DB creation complete", 'install');
 	}
 
-	// Create default keywords
+	// Create default meta + keywords
 	include_lcm('inc_meta');
 	include_lcm('inc_keywords_default');
+	include_lcm('inc_meta_defaults');
+
+	init_default_config();
+	init_languages();
 
 	$skwg = get_default_keywords();
 	create_groups($skwg);
@@ -442,7 +452,8 @@ function install_step_3() {
 		$conn .= "\$GLOBALS['db_ok'] = !!@lcm_num_rows(@lcm_query_db('SELECT COUNT(*) FROM lcm_meta'));\n";
 		$conn .= '?'.'>';
 
-		$myFile = fopen('inc/config/inc_connect_install.php', 'wb');
+		$lcm_config_prefix = (isset($_SERVER['LcmConfigDir']) ?  $_SERVER['LcmConfigDir'] : 'inc/config');
+		$myFile = fopen($lcm_config_prefix . '/inc_connect_install.php', 'wb');
 		fputs($myFile, $conn);
 		fclose($myFile);
 
@@ -578,8 +589,9 @@ function install_step_1() {
 	$db_password = (isset($_SESSION['usr']['db_password']) ?  $_SESSION['usr']['db_password'] : '');
 
 	// Fetch the previous configuration data to make things easier (if possible)
-	if (@file_exists('inc/config/inc_connect_install.php')) {
-		$s = @join('', @file('inc/config/inc_connect_install.php'));
+	$lcm_config_prefix = (isset($_SERVER['LcmConfigDir']) ?  $_SERVER['LcmConfigDir'] : 'inc/config');
+	if (@file_exists($lcm_config_prefix . '/inc_connect_install.php')) {
+		$s = @join('', @file($lcm_config_prefix . '/inc_connect_install.php'));
 		if (ereg("mysql_connect\([\"'](.*)[\"'],[\"'](.*)[\"'],[\"'](.*)[\"']\)", $s, $regs)) {
 			$db_address = $regs[1];
 			$db_login = $regs[2];

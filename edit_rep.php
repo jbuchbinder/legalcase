@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.16 2005/05/31 10:12:27 mlutfy Exp $
+	$Id: edit_rep.php,v 1.17 2006/02/20 03:14:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -32,15 +32,26 @@ if (empty($_SESSION['errors'])) {
 
 	// Set the returning page
 	if (isset($ref)) $_SESSION['rep_data']['ref_edit_rep'] = $ref;
-	else $_SESSION['rep_data']['ref_edit_rep'] = $GLOBALS['HTTP_REFERER'];
+	else $_SESSION['rep_data']['ref_edit_rep'] = $_SERVER['HTTP_REFERER'];
 
 	// Read input values
 	$rep = intval($_GET['rep']);
+
+	// If adding new custom report
+	if (isset($_REQUEST['custom'])) {
+		$_SESSION['rep_data']['custom'] = $_REQUEST['custom'];
+
+	} else {
+		$_SESSION['rep_data']['custom'] = '';
+	}
 
 	// Find out if this is existing or new case
 	$_SESSION['existing'] = ($rep > 0);
 
 	if ($_SESSION['existing']) {
+		// [ML] NOTE: This is wrong. If count(errors) then this check is skipped?
+		// + make sure that this test is also done in 'upd_rep.php'
+		
 		// Check access rights
 		//if (!allowed($case,'e')) die(_T('error_no_edit_permission'));
 
@@ -70,6 +81,19 @@ if (empty($_SESSION['errors'])) {
 	}
 }
 
+// Input validation
+if ($_SESSION['rep_data']['custom']) {
+	if (! preg_match("/^[-_A-Za-z0-9]+\.php$/", $_SESSION['rep_data']['custom']))
+		$_SESSION['errors']['custom'] = htmlspecialchars($_SESSION['rep_data']['custom'])
+										. ": " . "Report file name has illegal characters"; // TRAD
+	elseif (! is_file("custom/reports/" . $_SESSION['rep_data']['custom']))
+		$_SESSION['errors']['custom'] = htmlspecialchars($_SESSION['rep_data']['custom'])
+										. ": " . "Report file does not exist"; // TRAD
+
+	if ($_SESSION['errors']['custom'])
+		$_SESSION['rep_data']['custom'] = '';
+}
+
 // Start the page with the proper title
 if ($_SESSION['existing']) 
 	lcm_page_start(_T('title_rep_edit') . " " . $_SESSION['rep_data']['title'], '', '', 'reports_intro');
@@ -78,6 +102,9 @@ else
 
 if (! empty($_SESSION['errors']))
 	echo show_all_errors($_SESSION['errors']);
+
+if ($_SESSION['rep_data']['custom'])
+	echo "<p>" . "Adding custom report: " . $_SESSION['rep_data']['custom'] . "</p>\n"; // TRAD
 
 echo "<fieldset class=\"info_box\">\n";
 echo "<form action='upd_rep.php' method='post'>\n";

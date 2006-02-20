@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.162 2005/12/06 10:01:06 mlutfy Exp $
+	$Id: case_det.php,v 1.163 2006/02/20 03:09:56 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -30,7 +30,6 @@ $case = intval($_GET['case']);
 $fu_order = "DESC";
 
 // Read site configuration settings
-$case_court_archive   = read_meta('case_court_archive');
 $case_assignment_date = read_meta('case_assignment_date');
 $case_alledged_crime  = read_meta('case_alledged_crime');
 $case_legal_reason    = read_meta('case_legal_reason');
@@ -67,7 +66,7 @@ if ($case > 0) {
 		$admin = allowed($case,'a');
 
 		// Show case details
-		lcm_page_start(_T('title_case_details') . " " . $row['title'], '', '', 'cases_intro');
+		lcm_page_start(_T('title_case_details') . " #" . $row['id_case'] . ' ' . $row['title'], '', '', 'cases_intro');
 
 		// [ML] This will probably never be implemented
 		// echo "<div id=\"breadcrumb\"><a href=\"". getenv("HTTP_REFERER") ."\">List of cases</a> &gt; ". $row['title'] ."</div>";
@@ -92,7 +91,20 @@ if ($case > 0) {
 				echo "<fieldset class='info_box'>";
 				show_page_subtitle(_T('generic_subtitle_general'), 'cases_intro');
 
-				echo "<p class='normal_text'>";
+				// echo "<p class='normal_text'>";
+				echo '<ul class="info">';
+
+				// Case ID
+				echo '<li>'
+					. '<span class="label1">' . _Ti('case_input_id') . '</span>'
+					. '<span class="value1">' . $row['id_case'] . '</span>'
+					. "</li>\n";
+
+				// Case title
+				echo '<li>'
+					. '<span class="label1">' . _Ti('case_input_title') . '</span>'
+					. '<span class="value1">' . $row['title'] . '</span>'
+					. "</li>\n";
 		
 				// Show users assigned to the case
 				$q = "SELECT id_case,lcm_author.id_author,name_first,name_middle,name_last
@@ -104,9 +116,15 @@ if ($case > 0) {
 				$cpt = 0;
 
 				if (lcm_num_rows($authors_result) > 1)
-					echo _Ti('case_input_authors');
+					echo '<li>' 
+						. '<span class="label2">'
+						. _Ti('case_input_authors')
+						. '</span>';
 				else
-					echo _Ti('case_input_author');
+					echo '<li>'
+						. '<span class="label2">'
+						. _Ti('case_input_author')
+						. '</span>';
 
 				while ($author = lcm_fetch_array($authors_result)) {
 					if ($cpt)
@@ -114,36 +132,49 @@ if ($case > 0) {
 
 					$name = htmlspecialchars(get_person_name($author));
 
-					echo '<a href="author_det.php?author=' . $author['id_author'] . '" class="content_link"'
+					echo '<span class="value2">'
+						. '<a href="author_det.php?author=' . $author['id_author'] . '" class="content_link"'
 						. ' title="' . _T('case_tooltip_view_author_details', array('author' => $name)) . '">'
 						. $name
-						. "</a>";
+						. "</a>"
+						. '</span>';
 
 					if ($admin) {
+						echo '<span class="noprint">';
 						echo '&nbsp;<a href="edit_auth.php?case=' . $case . '&amp;author=' . $author['id_author'] . '"'
 							. ' title="' .
 							_T('case_tooltip_view_access_rights', array('author' => $name)) . '">'
 							. '<img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" />'
 							. '</a>';
+						echo "</span>\n";
 					}
 
 					$cpt++;
 				}
 		
-				echo "<br />";
+				echo "</li>\n";
 				
-				// Case ID
-				echo "\n" . _Ti('case_input_id') . $row['id_case'] . "<br />\n";
-		
-				if ($case_court_archive == 'yes')
-					echo _Ti('case_input_court_archive') . clean_output($row['id_court_archive']) . "<br />\n";
-				echo _Ti('case_input_date_creation') . format_date($row['date_creation']) . "<br />\n";
+				echo '<li>'
+					. '<span class="label2">'
+					. _Ti('case_input_date_creation')
+					. '</span>'
+					. '<span class="value2">'
+					. format_date($row['date_creation'])
+					. '</span>'
+					. "</li>\n";
 		
 				if ($case_assignment_date == 'yes') {
 					// [ML] Case is assigned/unassigned when authors are added/remove
 					// + case is auto-assigned when created.
 					if ($row['date_assignment'])
-						echo _Ti('case_input_date_assigned') . format_date($row['date_assignment']) . "<br />\n";
+						echo '<li>' 
+							. '<span class="label2">'
+							. _Ti('case_input_date_assigned')
+							. '</span>'
+							. '<span class="value2">'
+							. format_date($row['date_assignment'])
+							. '</span>'
+							. "</li>\n";
 				}
 
 				// Total time spent on case (redundant with "reports/times")
@@ -156,13 +187,34 @@ if ($case > 0) {
 				$result = lcm_query($query);
 				$row_tmp = lcm_fetch_array($result);
 
-				echo _Ti('case_input_total_time') . format_time_interval_prefs($row_tmp['time']) . "<br />\n";
+				echo '<li>'
+					. '<span class="label2">'
+					. _Ti('case_input_total_time') 
+					. '</span>'
+					. '<span class="value2">'
+					. format_time_interval_prefs($row_tmp['time']) . '&nbsp;' . _T('time_info_short_hour')
+					. '</span>'
+					. "</li>\n";
 		
 				if ($case_legal_reason == 'yes')
-					echo _Ti('case_input_legal_reason') . clean_output($row['legal_reason']) . "<br />\n";
+					echo '<li>'
+						. '<span class="label2">'
+						. _Ti('case_input_legal_reason') 
+						. '</span>'
+						. '<span class="value2">'
+						. clean_output($row['legal_reason'])
+						. '</span>'
+						. "</li>\n";
 
 				if ($case_alledged_crime == 'yes')
-					echo _Ti('case_input_alledged_crime') . clean_output($row['alledged_crime']) . "<br />\n";
+					echo '<li>'
+						. '<span class="label2">'
+						. _Ti('case_input_alledged_crime')
+						. '</span>'
+						. '<span class="value2">'
+						. clean_output($row['alledged_crime'])
+						. '</span>'
+						. "</li>\n";
 
 				// Keywords
 				show_all_keywords('case', $row['id_case']);
@@ -176,8 +228,18 @@ if ($case > 0) {
 				}
 
 				// Notes
-				echo _Ti('case_input_notes') . "<br />\n";
-				echo nl2br($row['notes']);
+				echo '<li class="large">'
+					. '<span class="label2">'
+					. _Ti('case_input_notes')
+					. '</span>'
+					. '<span class="value2">'
+					. nl2br($row['notes'])
+					. '</span>'
+					. "</li>\n";
+
+				echo "</ul>\n";
+
+				echo "<p class='normal_text'>";
 
 				// Show case status (if closed, only site admin can re-open)
 				if (allowed($case, 'a')) {
@@ -242,7 +304,7 @@ if ($case > 0) {
 					if ($row_tmp) {
 						echo '<div style="background: #f0f0f0; padding: 4px; border: 1px solid #aaa;">';
 						echo _Ti('fu_input_conclusion');
-						echo get_fu_description($row_tmp);
+						echo get_fu_description($row_tmp, false);
 						echo ' <a class="content_link" href="fu_det.php?followup=' . $row_tmp['id_followup'] . '">...</a>';
 						echo "</div>\n";
 						echo "<br />\n";
@@ -303,13 +365,13 @@ if ($case > 0) {
 						// delete icon (if admin rights)
 						if ($admin) {
 							echo '<td width="1%" nowrap="nowrap">';
-							echo '<label for="id_del_client' . $row['id_client'] . '">';
+							echo '<span class="noprint"><label for="id_del_client' . $row['id_client'] . '">';
 							echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" '
 								. 'alt="' . _T('case_info_delete_client') . '" title="' .  _T('case_info_delete_client') . '" />';
 							echo '</label>&nbsp;';
 							echo '<input type="checkbox" onclick="lcm_show(\'btn_delete\')" '
 								. 'id="id_del_client' . $row['id_client'] . '" name="id_del_client[]" '
-								. 'value="' . $row['id_client'] . '" />';
+								. 'value="' . $row['id_client'] . '" /></span>';
 							echo "</td>\n";
 						}
 
@@ -546,26 +608,11 @@ if ($case > 0) {
 			// Time spent on case by authors
 			//
 			case 'times' :
-				// Get the information from database
-/*
-				// List followup authors, which are on the case
-				$q = "SELECT	name_first,
-						name_middle,
-						name_last,
-						sum(UNIX_TIMESTAMP(lcm_followup.date_end)-UNIX_TIMESTAMP(lcm_followup.date_start)) as time
-					FROM	lcm_case_author,
-						lcm_author,
-						lcm_followup
-					WHERE	lcm_case_author.id_author=lcm_author.id_author
-						AND lcm_case_author.id_case=$case
-						AND lcm_case_author.id_case=lcm_followup.id_case
-						AND lcm_case_author.id_author=lcm_followup.id_author
-						AND UNIX_TIMESTAMP(lcm_followup.date_end) > 0
-					GROUP BY lcm_case_author.id_author";
-*/
-				// List all followup authors
+				// List authors on the case
+				$show_more_times = (isset($_REQUEST['more_times']) && $_REQUEST['more_times'] ? true : false);
+
 				$q = "SELECT
-						name_first, name_middle, name_last,
+						a.id_author, name_first, name_middle, name_last,
 						sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0,
 							UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time,
 						sum(sumbilled) as sumbilled
@@ -581,11 +628,19 @@ if ($case > 0) {
 				show_page_subtitle(_T('case_subtitle_times'), 'reports_intro');
 
 				echo "<p class=\"normal_text\">\n";
+
+				$link_details = new Link();
+				$link_details->addVar('more_times', intval((! $show_more_times)));
 			
 				echo "<table border='0' class='tbl_usr_dtl' width='99%'>\n";
 				echo "<tr>\n";
-				echo "<th class='heading'>" . _Th('case_input_author') . "</th>\n";
-				echo "<th class='heading' width='1%' nowrap='nowrap'>" . 'Time spent' . ' (' . 'hrs' . ")</th>\n"; // TRAD
+				echo "<th class='heading'>" // TODO add title on href
+					. _Th('case_input_author') . '&nbsp;'
+					. '<a title="' . _T('fu_button_stats_' . ($show_more_times ? 'less' : 'more')) . '" href="' . $link_details->getUrl() . '">'
+					. '<img src="images/spip/' . ($show_more_times ? 'moins' : 'plus') . '.gif" alt="" border="0" />'
+					. '</a>'
+					. "</th>\n";
+				echo "<th class='heading' width='1%' nowrap='nowrap'>" .  _Th('time_input_length') . ' (' . _T('time_info_short_hour') . ")</th>\n";
 
 				$total_time = 0;
 				$total_sum_billed = 0.0;
@@ -600,21 +655,69 @@ if ($case > 0) {
 
 				// Show table contents & calculate total
 				while ($row = lcm_fetch_array($result)) {
-					echo "<!-- Total = " . $total_sum_billed . " - row = " . $row['sumbilled'] . " -->\n";
-
 					$total_time += $row['time'];
 					$total_sum_billed += $row['sumbilled'];
 
 					echo "<tr><td>";
 					echo get_person_name($row);
-					echo '</td><td align="right">';
+					echo '</td><td align="right" valign="top">';
 					echo format_time_interval_prefs($row['time']);
 					echo "</td>\n";
 
 					if ($meta_sum_billed == 'yes') {
-						echo '<td align="right">';
+						echo '<td align="right" valign="top">';
 						echo format_money($row['sumbilled']);
 						echo "</td>\n";
+					}
+
+					if ($show_more_times) {
+						$fu_types = get_keywords_in_group_name('followups', false);
+						$html = "";
+						
+						foreach ($fu_types as $f) {
+							$q2 = "SELECT type,
+									sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0,
+										UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time,
+									sum(sumbilled) as sumbilled
+								FROM  lcm_followup as fu
+								WHERE fu.id_case = $case
+								  AND fu.id_author = " . $row['id_author'] . "
+								  AND fu.hidden = 'N'
+								  AND fu.type = '" . $f['name'] . "'
+								GROUP BY fu.type";
+
+							$r2 = lcm_query($q2);
+
+							// FIXME: css for "ul/li" is a bit weird, but without specifying the height,
+							// the text is displayed under the line...
+							// But we should probably scrap the whole table anyway
+							while (($row2 = lcm_fetch_array($r2))) {
+								$html .= "<li style='clear: both; height: 1.4em;'>"
+										. '<div style="width: 69%; float: left; text-align: left;">' 
+										. _Tkw('followups', $row2['type']) . ": "
+										. '</div>'
+										. '<div style="width: 29%; float: right; text-align: right;">' 
+										. format_time_interval_prefs($row2['time']) 
+										. '</div>'
+										. "</li>\n";
+							}
+						}
+
+						if ($html) {
+							echo "</tr>\n";
+							echo "<tr>";
+
+							if ($meta_sum_billed == 'yes')
+								echo "<td colspan='3'>";
+							else
+								echo "<td colspan='2'>";
+
+							echo '<ul class="info" style="padding-left: 1.5em">'
+								. $html
+								. "</ul>\n";
+
+							echo "</td>";
+						}
 					}
 					
 					echo "</tr>\n";
@@ -676,7 +779,8 @@ if ($case > 0) {
 	}
 
 	$_SESSION['errors'] = array();
-	$_SESSION['case_data'] = array();
+	$_SESSION['case_data'] = array(); // DEPRECATED
+	$_SESSION['form_data'] = array();
 	$_SESSION['fu_data'] = array();
 
 	lcm_page_end();

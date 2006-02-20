@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.111 2005/12/06 10:08:54 mlutfy Exp $
+	$Id: edit_fu.php,v 1.112 2006/02/20 03:14:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -89,11 +89,11 @@ $_SESSION['fu_data']['ref_edit_fu'] = $_SERVER['HTTP_REFERER'];
 		$case = intval($_GET['case']);
 
 		if (! ($case > 0))
-			lcm_panic("Edit follow-up: invalid 'case id': " . $_GET['case']);
+			lcm_panic("Edit follow-up: invalid 'case id': " . $_GET['case']); // TRAD?
 
 		// Check for access rights
 		if (!allowed($case,'w'))
-			lcm_panic("You don't have permission to add information to this case");
+			lcm_panic("You don't have permission to add information to this case"); // TRAD
 
 		// Setup default values
 		$_SESSION['fu_data']['id_case'] = $case; // Link to the case
@@ -196,7 +196,7 @@ if ($_REQUEST['submit'] == 'set_status') {
 	$row = lcm_fetch_array($result);
 
 	if ($statuses[$_REQUEST['type']] == $row['status'])
-		header('Location: ' . $GLOBALS['HTTP_REFERER']);
+		header('Location: ' . $_SERVER['HTTP_REFERER']);
 } elseif ($_REQUEST['submit'] == 'set_stage') {
 	// Get case stage
 	$result = lcm_query("SELECT stage FROM lcm_case WHERE id_case = " . $case);
@@ -204,7 +204,7 @@ if ($_REQUEST['submit'] == 'set_status') {
 	$old_stage = $row['stage'];
 
 	if ($statuses[$_REQUEST['stage']] == $row['stage'])
-		header('Location: ' . $GLOBALS['HTTP_REFERER']);
+		header('Location: ' . $_SERVER['HTTP_REFERER']);
 }
 
 //

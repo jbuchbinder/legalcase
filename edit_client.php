@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.47 2005/12/06 10:06:06 mlutfy Exp $
+	$Id: edit_client.php,v 1.48 2006/02/20 03:14:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,7 +35,7 @@ $client_civil_status = read_meta('client_civil_status');
 $client_income = read_meta('client_income');
 
 if (empty($_SESSION['errors'])) {
-	$client_data = array('id_client' => 0,'referer' => $HTTP_REFERER);
+	$form_data = array('id_client' => 0,'referer' => $_SERVER['HTTP_REFERER']);
 
 	if ($client > 0) {
 		$q = 'SELECT * 
@@ -46,23 +46,23 @@ if (empty($_SESSION['errors'])) {
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach($row as $key=>$value) {
-				$client_data[$key] = $value;
+				$form_data[$key] = $value;
 			}
 		}
 	}
 } else {
 	// Fetch previously submitted values, if any
-	if (! $_SESSION['client_data']['id_client'])
-		$_SESSION['client_data']['id_client'] = 0;
+	if (! $_SESSION['form_data']['id_client'])
+		$_SESSION['form_data']['id_client'] = 0;
 
-	if (isset($_SESSION['client_data']))
-		foreach($_SESSION['client_data'] as $key => $value)
-			$client_data[$key] = $value;
+	if (isset($_SESSION['form_data']))
+		foreach($_SESSION['form_data'] as $key => $value)
+			$form_data[$key] = $value;
 
 }
 
 if ($client > 0) {
-	lcm_page_start(_T('title_client_edit') . ' ' . get_person_name($client_data), '', '', 'clients_newclient');
+	lcm_page_start(_T('title_client_edit') . ' ' . get_person_name($form_data), '', '', 'clients_newclient');
 } else {
 	lcm_page_start(_T('title_client_new'), '', '', 'clients_newclient');
 }
@@ -80,32 +80,32 @@ if (isset($_REQUEST['attach_case'])) {
 
 echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 
-if($client_data['id_client']) {
+if($form_data['id_client']) {
 	echo "<tr><td>" . _T('client_input_id') . "</td>\n";
-	echo "<td>" . $client_data['id_client']
-		. '<input type="hidden" name="id_client" value="' . $client_data['id_client'] . '" /></td></tr>' . "\n";
+	echo "<td>" . $form_data['id_client']
+		. '<input type="hidden" name="id_client" value="' . $form_data['id_client'] . '" /></td></tr>' . "\n";
 }
 
 echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
-echo '<td><input name="name_first" value="' . clean_output($client_data['name_first']) . '" class="search_form_txt" /></td></tr>' . "\n";
+echo '<td><input name="name_first" value="' . clean_output($form_data['name_first']) . '" class="search_form_txt" /></td></tr>' . "\n";
 
 // [ML] always show middle name, if any, no matter the configuration
-if ($client_data['name_middle'] || $client_name_middle == 'yes') {
+if ($form_data['name_middle'] || $client_name_middle == 'yes') {
 	echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
-	echo '<td><input name="name_middle" value="' . clean_output($client_data['name_middle']) . '" class="search_form_txt" /></td></tr>' . "\n";
+	echo '<td><input name="name_middle" value="' . clean_output($form_data['name_middle']) . '" class="search_form_txt" /></td></tr>' . "\n";
 }
 	
 echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
-echo '<td><input name="name_last" value="' . clean_output($client_data['name_last']) . '" class="search_form_txt" /></td></tr>' . "\n";
+echo '<td><input name="name_last" value="' . clean_output($form_data['name_last']) . '" class="search_form_txt" /></td></tr>' . "\n";
 
 echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
 echo '<td><select name="gender" class="sel_frm">' . "\n";
 
 $opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
 
-if ($client_data['gender'] == 'male')
+if ($form_data['gender'] == 'male')
 	$opt_sel_male = 'selected="selected" ';
-else if ($client_data['gender'] == 'female')
+else if ($form_data['gender'] == 'female')
 	$opt_sel_female = 'selected="selected" ';
 else
 	$opt_sel_unknown = 'selected="selected" ';
@@ -120,17 +120,17 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 
 <?php
 
-	if ($client_data['id_client']) {
+	if ($form_data['id_client']) {
 		echo "<tr>\n";
 		echo '<td>' . _Ti('time_input_date_creation') . '</td>';
-		echo '<td>' . format_date($client_data['date_creation'], 'full') . '</td>';
+		echo '<td>' . format_date($form_data['date_creation'], 'full') . '</td>';
 		echo "</tr>\n";
 	}
 
 	if ($client_citizen_number == 'yes') {
 		echo "<tr>\n";
 		echo '<td>' . _T('person_input_citizen_number') . '</td>';
-		echo '<td><input name="citizen_number" value="' . clean_output($client_data['citizen_number']) . '" class="search_form_txt"></td>';
+		echo '<td><input name="citizen_number" value="' . clean_output($form_data['citizen_number']) . '" class="search_form_txt"></td>';
 		echo "</tr>\n";
 	}
 
@@ -142,17 +142,17 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 		echo '<td>';
 		echo '<select name="civil_status">';
 
-		if (! $client_data['civil_status']) {
-			if ($client_data['id_client']) {
-				$client_data['civil_status'] = $system_kwg['civilstatus']['keywords']['unknown']['name'];
+		if (! $form_data['civil_status']) {
+			if ($form_data['id_client']) {
+				$form_data['civil_status'] = $system_kwg['civilstatus']['keywords']['unknown']['name'];
 			} else {
-				$client_data['civil_status'] = $system_kwg['civilstatus']['suggest'];
+				$form_data['civil_status'] = $system_kwg['civilstatus']['suggest'];
 			}
 
 		}
 
 		foreach($system_kwg['civilstatus']['keywords'] as $kw) {
-			$sel = ($client_data['civil_status'] == $kw['name'] ? ' selected="selected"' : '');
+			$sel = ($form_data['civil_status'] == $kw['name'] ? ' selected="selected"' : '');
 			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
 		}
 
@@ -167,16 +167,16 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 		echo '<td>';
 		echo '<select name="income">';
 		
-		if (! $client_data['income']) {
-			if ($client_data['id_client']) {
-				$client_data['income'] = $system_kwg['income']['keywords']['unknown']['name'];
+		if (! $form_data['income']) {
+			if ($form_data['id_client']) {
+				$form_data['income'] = $system_kwg['income']['keywords']['unknown']['name'];
 			} else {
-				$client_data['income'] = $system_kwg['income']['suggest'];
+				$form_data['income'] = $system_kwg['income']['suggest'];
 			}
 		}
 
 		foreach($system_kwg['income']['keywords'] as $kw) {
-			$sel = ($client_data['income'] == $kw['name'] ? ' selected="selected"' : '');
+			$sel = ($form_data['income'] == $kw['name'] ? ' selected="selected"' : '');
 			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
 		}
 		
@@ -188,13 +188,13 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	//
 	// Keywords, if any
 	//
-	show_edit_keywords_form('client', $client_data['id_client']);
+	show_edit_keywords_form('client', $form_data['id_client']);
 
 	// Notes
 	echo "<tr>\n";
 	echo "<td>" . f_err_star('notes') . _Ti('client_input_notes') . "</td>\n";
 	echo '<td><textarea name="notes" id="input_notes" class="frm_tarea" rows="3" cols="60">'
-		. clean_output($client_data['notes'])
+		. clean_output($form_data['notes'])
 		. "</textarea>\n"
 		. "</td>\n";
 	echo "</tr>\n";
@@ -209,7 +209,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	echo '</td>';
 	echo "</tr>\n";
 
-	show_edit_contacts_form('client', $client_data['id_client']);
+	show_edit_contacts_form('client', $form_data['id_client']);
 
 	//
 	// Organisations this client represents
@@ -220,7 +220,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	echo '<h4>' . _T('client_subtitle_organisations') . '</h4>';
 	echo '</td>';
 	echo "</tr>\n";
-	$q = "SELECT name FROM lcm_client_org, lcm_org WHERE id_client=" . $client_data['id_client'] . " AND lcm_client_org.id_org=lcm_org.id_org";
+	$q = "SELECT name FROM lcm_client_org, lcm_org WHERE id_client=" . $form_data['id_client'] . " AND lcm_client_org.id_org=lcm_org.id_org";
 	$result = lcm_query($q);
 	$orgs = array();
 	while ($row = lcm_fetch_array($result)) {
@@ -230,7 +230,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	$q = "SELECT lcm_org.id_org,name,id_client
 		FROM lcm_org
 		LEFT JOIN lcm_client_org
-		ON (id_client=" . $client_data['id_client'] . "
+		ON (id_client=" . $form_data['id_client'] . "
 		AND lcm_org.id_org=lcm_client_org.id_org)
 		WHERE id_client IS NULL";
 	$result = lcm_query($q);
@@ -251,7 +251,7 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 	</table>
 
 	<p><button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate') ?></button></p>
-	<input type="hidden" name="ref_edit_client" value="<?php echo $HTTP_REFERER ?>" />
+	<input type="hidden" name="ref_edit_client" value="<?php echo $_SERVER['HTTP_REFERER'] ?>" />
 </form>
 
 <?php
@@ -259,5 +259,6 @@ echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_
 
 	// Reset error messages
 	$_SESSION['errors'] = array();
-	$_SESSION['client'] = array();
+	$_SESSION['form_data'] = array();
+	$_SESSION['client'] = array(); // DEPRECATED ?
 ?>

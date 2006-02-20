@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.51 2005/12/06 10:01:37 mlutfy Exp $
+	$Id: client_det.php,v 1.52 2006/02/20 03:11:35 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -91,29 +91,63 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row), '', '', 'c
 				echo '<fieldset class="info_box">';
 				show_page_subtitle(_T('generic_subtitle_general'), 'clients_intro');
 		
-				echo '<p class="normal_text">';
-				echo _Ti('client_input_id') . $row['id_client'] . "<br/>\n";
-				echo _Ti('person_input_name') . get_person_name($row) . "<br />\n";
-				echo _Ti('person_input_gender') . $gender . "<br/>\n";
+				echo '<ul class="info">';
+				echo '<li>' 
+					. '<span class="label1">' . _Ti('client_input_id') . '</span>'
+					. '<span class="value1">' . $row['id_client'] . '</span>'
+					. "</li>\n";
+
+				echo '<li>'
+					. '<span class="label1">' . _Ti('person_input_name') . '</span>'
+					. '<span class="value1">' . get_person_name($row) . '</span>'
+					. "</li>\n";
+
+				echo '<li>'
+					. '<span class="label1">' . _Ti('person_input_gender') . '</span>'
+					. '<span class="value1">' . $gender . '</span>'
+					. "</li>\n";
 		
 				if (read_meta('client_citizen_number') == 'yes')
-					echo _Ti('person_input_citizen_number') . $row['citizen_number'] . "<br/>\n";
+					echo '<li>'
+						. '<span class="label2">' . _Ti('person_input_citizen_number') . '</span>'
+						. '<span class="value2">' . $row['citizen_number'] . '</span>'
+						. "</li>\n";
 		
-				if (read_meta('client_civil_status') == 'yes')
-					echo _Ti('person_input_civil_status') . _Tkw('civilstatus', $row['civil_status']) . "<br/>\n";
+				if (read_meta('client_civil_status') == 'yes') {
+					// [ML] Patch for bug #1372138 (LCM < 0.6.4)
+					if (! $row['civil_status'])
+						$row['civil_status'] = 'unknown';
 
-				if (read_meta('client_income') == 'yes')
-					echo _Ti('person_input_income') . _Tkw('income', $row['income']) . "<br/>\n";
+					echo '<li>'
+						. '<span class="label2">' . _Ti('person_input_civil_status') . '</span>'
+						. '<span class="value2">' . _Tkw('civilstatus', $row['civil_status']) . '</span>'
+						. "</li>\n";
+				}
+
+				if (read_meta('client_income') == 'yes') {
+					// [ML] Patch for bug #1372138 (LCM < 0.6.4)
+					if (! $row['income'])
+						$row['income'] = 'unknown';
+
+					echo '<li>' 
+						. '<span class="label2">' . _Ti('person_input_income') . '</span>'
+						. '<span class="value2">' . _Tkw('income', $row['income']) . '</span>'
+						. "</li>\n";
+				}
 
 				show_all_keywords('client', $row['id_client']);
 
-				echo _Ti('case_input_date_creation') . format_date($row['date_creation']) . "<br/>\n";
+				echo '<li>'
+					. '<span class="label2">' . _Ti('case_input_date_creation') . '</span>'
+					. '<span class="value2">' . format_date($row['date_creation']) . '</span>'
+					. "</li>\n";
 				// [ML] echo 'Last update date: ' . $row['date_update'] . "<br/>\n";
 
-				echo _Ti('client_input_notes') . "<br />\n";
-				echo nl2br($row['notes']);
-
-				echo "</p>\n";
+				echo '<li class="large">'
+					. '<span class="label2">' . _Ti('client_input_notes') . '</span>' 
+					. '<span class="value2">'. nl2br($row['notes']) . '</span>'
+					. "</li>\n";
+				echo "</ul>\n";
 		
 				// Show client contacts (if any)
 				show_all_contacts('client', $row['id_client']);
@@ -205,7 +239,7 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row), '', '', 'c
 				// Show recent cases
 				//
 
-				$q = "SELECT clo.id_case, c.title, c.date_creation, c.id_court_archive, c.status
+				$q = "SELECT clo.id_case, c.title, c.date_creation, c.status
 						FROM lcm_case_client_org as clo, lcm_case as c
 						WHERE id_client = " . $client . "
 						AND clo.id_case = c.id_case ";
@@ -283,7 +317,8 @@ echo "</a>";
 echo "</p>\n";
 				
 // Clear session info
-$_SESSION['client_data'] = array();
+$_SESSION['client_data'] = array(); // DEPRECATED since 0.6.4
+$_SESSION['form_data'] = array();
 $_SESSION['errors'] = array();
 
 lcm_page_end();
