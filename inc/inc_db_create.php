@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.46 2005/08/22 21:50:08 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.47 2006/02/20 03:37:05 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -64,9 +64,9 @@ function create_database() {
 	$query = "CREATE TABLE lcm_case (
 		id_case bigint(21) NOT NULL auto_increment,
 		title text NOT NULL,
-		id_court_archive text NOT NULL,
 		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		date_assignment datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		legal_reason text NOT NULL,
 		alledged_crime text NOT NULL,
 		notes text NOT NULL DEFAULT '',
@@ -92,8 +92,8 @@ function create_database() {
 		  PRIMARY KEY  (id_attachment),
 		  KEY id_case (id_case),
 		  KEY id_author (id_author),
-		  KEY filename (filename),
-		  FULLTEXT KEY description (description))";
+		  KEY filename (filename))"; 
+		//  FULLTEXT KEY description (description))";
 	$result = lcm_query_create_table($query);
 
 	$query = "CREATE TABLE lcm_stage (
@@ -176,7 +176,7 @@ function create_database() {
 		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		citizen_number text NOT NULL,
 		address text NOT NULL,
-		gender ENUM('female','male') DEFAULT 'male' NOT NULL,
+		gender ENUM('female','male', 'unknown') DEFAULT 'unknown' NOT NULL,
 		civil_status varchar(255) DEFAULT 'unknown' NOT NULL,
 		income varchar(255) DEFAULT 'unknown' NOT NULL,
 		notes text DEFAULT '' NOT NULL,
@@ -198,8 +198,8 @@ function create_database() {
 		  PRIMARY KEY  (id_attachment),
 		  KEY id_client (id_client),
 		  KEY id_author (id_author),
-		  KEY filename (filename),
-		  FULLTEXT KEY description (description))";
+		  KEY filename (filename))"; 
+		 //  FULLTEXT KEY description (description))";
 	$result = lcm_query_create_table($query);
 
 
@@ -232,8 +232,8 @@ function create_database() {
 		  PRIMARY KEY  (id_attachment),
 		  KEY id_org (id_org),
 		  KEY id_author (id_author),
-		  KEY filename (filename),
-		  FULLTEXT KEY description (description))";
+		  KEY filename (filename))";
+		 // FULLTEXT KEY description (description))";
 	$result = lcm_query_create_table($query);
 
 
@@ -369,9 +369,9 @@ function create_database() {
 		PRIMARY KEY  (id_app),
 		KEY id_case (id_case),
 		KEY id_author (id_author),
-		KEY type (type),
-		FULLTEXT KEY title (title),
-		FULLTEXT KEY description (description))";
+		KEY type (type))";
+		// FULLTEXT KEY title (title),
+		// FULLTEXT KEY description (description))";
 
 	$result = lcm_query_create_table($query);
 

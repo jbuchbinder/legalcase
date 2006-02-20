@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.56 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.57 2006/02/20 03:37:05 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -245,7 +245,6 @@ function upgrade_database($old_db_version) {
 			description varchar(255) NOT NULL default '',
 			PRIMARY KEY  (id_field))");
 		lcm_query("REPLACE INTO lcm_fields VALUES (1, 'lcm_case', 'title', 'Case: Title'),
-											(2, 'lcm_case', 'id_court_archive', 'Case: Court archive ID'),
 											(3, 'lcm_case', 'date_creation', 'Case: Creation date'),
 											(4, 'lcm_case', 'date_assignment', 'Case: Assignment date'),
 											(5, 'lcm_case', 'legal_reason', 'Case: Legal reason'),
@@ -415,7 +414,6 @@ function upgrade_database($old_db_version) {
 		lcm_query("INSERT INTO lcm_fields (table_name, field_name, description, enum_type, filter) VALUES
 				('lcm_case',     'id_case',          'id_case',          '', 'number'),
 				('lcm_case',     'title',            'title',            '', 'text'),
-				('lcm_case',     'id_court_archive', 'id_court_archive', '', 'text'),
 				('lcm_case',     'date_creation',    'date_creation',    '', 'date'),
 				('lcm_case',     'date_assignment',  'date_assignment',  '', 'date'),
 				('lcm_case',     'legal_reason',     'legal_reason',     '', 'none'),
@@ -852,14 +850,88 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version (39);
 	}
 
-	
-	// if ($lcm_db_version_current < XXX) {
-		// XXX Wait at least 4-5 weeks after 2005-06-13 before doign this, so 
-		// that // we have more time to test whether the upgrade is OK.
-	
-		// lcm_query("ALTER TABLE lcm_case DROP id_court_archive");
-		// upgrade_db_version (38);
-	// }
+	// [ML] Yes, quite awful, I know, but LCM 0.6.4 had problems..
+	function lcm_db_40_refresh_case_update () {
+		$server_info = lcm_sql_server_info();
+
+		// [ML] This won't work on MySQL 3.23 .. nor 4.0 (?!)
+		if (preg_match('/^MySQL/', $server_info)
+			&& (! preg_match('/^MySQL 3\./', $server_info))
+			&& (! preg_match('/^MySQL 4\.0/', $server_info))) 
+		{
+			lcm_query("UPDATE lcm_case 
+						SET date_update = (SELECT max(fu.date_start) 
+										FROM lcm_followup as fu 
+										WHERE lcm_case.id_case = fu.id_case
+										GROUP BY fu.id_case)", true);
+		} else {
+			// [ML] Probably not the best idea.. but brain-dead mysql
+			// incompatibilities are driving me crazy..
+			//
+			// Note: using the join to exclude non-empty dates allows to 
+			// continue/re-run the upgrade if it makes a time-out.
+			$result = lcm_query("SELECT c.id_case, MAX(fu.date_start) as date
+								FROM lcm_followup as fu, lcm_case as c
+								WHERE fu.id_case = c.id_case
+								  AND c.date_update != '0000-00-00 00:00:00'
+								GROUP BY fu.id_case
+								ORDER BY fu.id_case ASC");
+
+			while (($row = lcm_fetch_array($result))) {
+				lcm_query("UPDATE lcm_case
+							SET date_update = '" . $row['date'] . "'
+							WHERE id_case = " . $row['id_case']);
+			}
+		}
+	}
+
+	if ($lcm_db_version_current < 40) {
+		lcm_query("ALTER TABLE lcm_case
+					ADD date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL AFTER date_assignment", true);
+
+		lcm_query("UPDATE lcm_case
+					SET date_update = date_assignment", true);
+
+		lcm_db_40_refresh_case_update();
+
+		upgrade_db_version (40);
+	}
+
+	if ($lcm_db_version_current < 41) {
+		// Clients would get a "" (empty) field if revenue and civil_status field 
+		// were left blank. LCM would then lcm_panic() when the fields are activated.
+		lcm_query("UPDATE lcm_client
+					SET civil_status = 'unknown'
+					WHERE civil_status = ''");
+
+		lcm_query("UPDATE lcm_client
+					SET income = 'unknown'
+					WHERE income = ''");
+
+		// Altough "gender enum('female', 'male', 'unknown') DEFAULT 'unknown'" 
+		// was added in lcm_db_version = 12, it was left "DEFAULT 'male'" in the
+		// inc_db_create.php until now. The result is that installations that
+		// do not activate their "gender" field get clients that are all male.
+		lcm_query("ALTER TABLE lcm_client 
+					CHANGE gender gender enum('female', 'male', 'unknown') 
+					DEFAULT 'unknown' NOT NULL");
+
+		// Therefore, the following "UPDATE" will not fix much, users will have
+		// to manually fix their client data, but just in case..
+		lcm_query("UPDATE lcm_client
+					SET gender = 'unknown'
+					WHERE gender = ''");
+
+		upgrade_db_version (41);
+	}
+
+	if ($lcm_db_version_current < 42) {
+		// This has been deprecated for some time
+		lcm_query("DELETE FROM lcm_fields WHERE table_name = 'lcm_case' AND field_name = 'id_court_archive'");
+		lcm_db_40_refresh_case_update(); // for 0.6.4a release
+
+		upgrade_db_version (42);
+	}
 
 	// Update the meta, lcm_fields, keywords, etc.
 	lcm_log("Updating LCM default configuration (meta/keywords/repfields/..)", 'upgrade');

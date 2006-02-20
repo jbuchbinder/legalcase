@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.28 2005/12/06 10:18:20 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.29 2006/02/20 03:38:54 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -75,7 +75,7 @@ function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 
 	if ($id_obj) {
 		if ($type_obj == 'stage') {
-			$query = "SELECT DISTINCT kwg.id_group, kwg.quantity
+			$query = "SELECT DISTINCT kwg.id_group, kwg.title, kwg.quantity, kwg.policy
 					FROM lcm_keyword_case as ko, lcm_keyword as k, lcm_keyword_group as kwg
 					WHERE k.id_keyword = ko.id_keyword
 					  AND k.id_group = kwg.id_group
@@ -83,7 +83,7 @@ function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 					  AND ko.id_stage = " . $id_obj_sec . "
 					  AND kwg.quantity = 'one'";
 		} else {
-			$query = "SELECT DISTINCT kwg.id_group, kwg.quantity
+			$query = "SELECT DISTINCT kwg.id_group, kwg.title, kwg.quantity, kwg.policy
 					FROM lcm_keyword_" . $type_obj . " as ko, lcm_keyword as k, lcm_keyword_group as kwg
 					WHERE k.id_keyword = ko.id_keyword
 					  AND k.id_group = kwg.id_group
@@ -316,17 +316,19 @@ function get_keywords_applied_to($type, $id, $id_sec = 0) {
 	return $ret;
 }
 
-// show keywords in (ex) 'case_det.php', therefore, it is in a <p> ... </p>
+// show keywords in (ex) 'case_det.php', therefore, it is in a <ul> ... </ul>
 function show_all_keywords($type_obj, $id_obj, $id_obj_sec = 0) {
 	$all_kw = get_keywords_applied_to($type_obj, $id_obj, $id_obj_sec);
 
 	foreach ($all_kw as $kw) {
-		echo _Ti($kw['kwg_title']) . _T(remove_number_prefix($kw['title']));
+		echo '<li>'
+			. '<span class="label1">' . _Ti($kw['kwg_title']) . '</span>'
+			. '<span class="value1">' . _T(remove_number_prefix($kw['title'])) . '</span>';
 
 		if ($kw['value'])
-			echo ": " . $kw['value']; // TRAD ?
+			echo ": " . '<span class="value1">' . $kw['value'] . '</span>';
 
-		echo "<br/>\n";
+		echo "</li>\n";
 	}
 }
 
@@ -346,13 +348,17 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 			$show_kw_value = false;
 		
 			echo "<tr>\n";
-			echo "<td>" . f_err_star('FIXME') . _Ti($kwg['title'])
-				. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
+			echo "<td>"
+				. "<label for=\"kw_value_$type_obj$cpt\">"
+				. f_err_star('kwg' . $kwg['id_group']) . _Ti($kwg['title']) 
+				. "</label>"
+				. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")"
+				. "</td>\n";
 
 			echo "<td>";
 			echo '<input type="hidden" name="kwg_id_' . $type_obj . '[]" value="' . $kwg['id_group'] . '" />' . "\n";
 			echo '<input type="hidden" name="kw_entry_' . $type_obj . '[]" value="' . $kw['id_entry'] . '" />' . "\n";
-			echo '<select name="kw_value_' . $type_obj . '[]">';
+			echo '<select id="kw_value_' . $type_obj . $cpt . '" name="kw_value_' . $type_obj . '[]">';
 			echo '<option value="">' . '' . "</option>\n";
 
 			$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
@@ -360,19 +366,40 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 				if ($kw1['hasvalue'] == 'Y')
 					$show_kw_value = true;
 
-				$sel = ($kw1['id_keyword'] == $kw['id_keyword'] ? ' selected="selected"' : '');
+				if (isset($_SESSION['form_data']['kw_value_' . $type_obj][$cpt])
+					&& $_SESSION['form_data']['kw_value_' . $type_obj][$cpt] == $kw1['id_keyword'])
+				{
+					$sel = ' selected="selected" ';
+				} elseif ($kw1['id_keyword'] == $kw['id_keyword']) {
+					$sel = ' selected="selected" ';
+				} else {
+					$sel = '';
+				}
+					
+				// $sel = ($kw1['id_keyword'] == $kw['id_keyword'] ? ' selected="selected"' : '');
 				echo '<option value="' . $kw1['id_keyword'] . '"' . $sel . '>' . _T(remove_number_prefix($kw1['title'])) . "</option>\n";
 			}
 
 			echo "</select>\n";
 
-			echo '<label for="id_del_keyword_' . $type_obj . $cpt . '">'
-				. '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" />' // TRAD
-				. '</label>&nbsp;<input type="checkbox" id="id_del_keyword' . $type_obj . $cpt . '" name="kw_del_' . $type_obj . $cpt . '"/>';
+			// Check if keyword policy = mandatory, and quantity = one
+			$kwg = get_kwg_from_id($kw['id_group']);
+
+			if (! ($kwg['policy'] == 'mandatory' && $kwg['quantity'] == 'one')) {
+				echo '<label for="kw_del_' . $type_obj . $cpt . '">'
+					. '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Delete?" title="Delete?" />' // TRAD
+					. '</label>&nbsp;<input type="checkbox" id="kw_del_' . $type_obj . $cpt . '" name="kw_del_' . $type_obj . $cpt . '"/>';
+			}
 
 			if ($show_kw_value) {
+				// Use value if submitted with the form, else use previous one
+				if (isset($_SESSION['form_data']['kw_entryval_' . $type_obj .  $cpt]))
+					$tmp_value = $_SESSION['form_data']['kw_entryval_' . $type_obj . $cpt];
+				else
+					$tmp_value = $kw['value'];
+				
 				echo "<br />\n";
-				echo '<input type="text" name="kw_entryval_' . $type_obj . $cpt . '" ' . 'value="' . $kw["value"] . '" />' . "\n";
+				echo '<input type="text" name="kw_entryval_' . $type_obj . $cpt . '" ' . 'value="' . $tmp_value . '" />' . "\n";
 			}
 			
 			echo "</td>\n";
@@ -389,14 +416,17 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 
 	foreach ($kwg_for_case as $kwg) {
 		echo "<tr>\n";
-		echo '<td>' . f_err_star('keyword_' . $type_obj . $cpt_kw) . _Ti($kwg['title']) 
+		echo '<td><label for="new_keyword_' . $type_obj . $cpt_kw . '">'
+			. f_err_star('keyword_' . $type_obj . $cpt_kw) // probably not used (DEPRECATED)
+			. f_err_star('kwg' . $kwg['id_group'])
+			. _Ti($kwg['title']) . '</label>'
 			. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
 
 		$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
 		if (count($kw_for_kwg)) {
 			echo "<td>";
 			echo '<input type="hidden" name="new_kwg_' . $type_obj . '_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
-			echo '<select name="new_keyword_' . $type_obj . '_value[]">';
+			echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" name="new_keyword_' . $type_obj . '_value[]">';
 			echo '<option value="">' . '' . "</option>\n";
 
 			$show_kw_value = false;
@@ -405,7 +435,18 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 				if ($kw['hasvalue'] == 'Y')
 					$show_kw_value = true;
 
-				$sel = ($kwg['suggest'] == $kw['name'] ? ' selected="selected" ' : '');
+				// For default value, use the form_data (if present), else use suggested keyword
+				if (isset($_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw])
+					&& $_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw] == $kw['id_keyword']) 
+				{
+					$sel = ' selected="selected" ';
+				} elseif ($kwg['suggest'] == $kw['name']) {
+					$sel = ' selected="selected" ';
+				} else {
+					$sel = '';
+				}
+
+				// $sel = ($kwg['suggest'] == $kw['name'] ? ' selected="selected" ' : '');
 				echo '<option ' . $sel . ' value="' . $kw['id_keyword'] . '">' 
 					. _T(remove_number_prefix($kw['title']))
 					. "</option>\n";
@@ -414,8 +455,12 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 			echo "</select>\n";
 
 			if ($show_kw_value) {
+				$tmp_value = '';
+				if (isset($_SESSION['form_data']['new_kw_entryval_' . $type_obj . $cpt_kw]))
+					$tmp_value = $_SESSION['form_data']['new_kw_entryval_' . $type_obj . $cpt_kw];
+
 				echo "<br />\n";
-				echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt_kw . '" ' . 'value="" />' . "\n";
+				echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt_kw . '" ' . 'value="' . $tmp_value . '" />' . "\n";
 			}
 
 			echo "</td>\n";
@@ -425,6 +470,58 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 		
 		echo "</tr>\n";
 		$cpt_kw++;
+	}
+}
+
+function validate_update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
+
+	// - Check if, for all mandatory keywords, there is
+	//   -* a new keyword to be attached
+	//   -* not for deletion
+
+	$kw_entries = $_REQUEST['kw_entry_' . $type_obj];
+	$kw_values  = $_REQUEST['kw_value_' . $type_obj];
+	$kwg_ids    = $_REQUEST['kwg_id_' . $type_obj];
+
+	$new_keywords = $_REQUEST['new_keyword_' . $type_obj . '_value'];
+	$new_kwg_id = $_REQUEST['new_kwg_' . $type_obj . '_id'];
+
+	$kwg_count = array();
+	$kwg_applicable = get_kwg_applicable_for($type_obj);
+
+	foreach ($kwg_applicable as $kwg) {
+		if ($kwg['policy'] == 'mandatory') {
+			// check in already applied keywords
+			for ($cpt = 0; isset($kw_entries[$cpt]); $cpt++) {
+				if ($_REQUEST['kw_del_' . $type_obj . $cpt]) {
+					// for deletion
+					if (isset($kwg_count[$kwg_ids[$cpt]]))
+						$kwg_count[$kwg_ids[$cpt]]--;
+					else
+						$kwg_count[$kwg_ids[$cpt]] = 0;
+				} else if ((isset($kw_values[$cpt]) && $kw_values[$cpt])) {
+					// for update
+					if (isset($kwg_count[$kwg_ids[$cpt]]))
+						$kwg_count[$kwg_ids[$cpt]]++;
+					else
+						$kwg_count[$kwg_ids[$cpt]] = 1;
+				}
+			}
+
+			// check in new keywords
+			for ($cpt = 0; isset($new_keywords[$cpt]); $cpt++) {
+				if ($new_keywords[$cpt]) {
+					if (isset($kwg_count[$new_kwg_id[$cpt]]))
+						$kwg_count[$new_kwg_id[$cpt]]++;
+					else
+						$kwg_count[$new_kwg_id[$cpt]] = 1;
+				}
+			}
+
+			if (! (isset($kwg_count[$kwg['id_group']]) && $kwg_count[$kwg['id_group']] > 0)) {
+				$_SESSION['errors']['kwg' . $kwg['id_group']] = _Ti($kwg['title']) . _T('warning_field_mandatory');
+			}
+		}
 	}
 }
 
@@ -446,11 +543,19 @@ function update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 		for ($cpt = 0; isset($kw_entries[$cpt]); $cpt++) {
 			if ($_REQUEST['kw_del_' . $type_obj . $cpt] || empty($kw_values[$cpt])) {
 				if ($type_obj == 'stage') {
+					// The id_case and id_stage are specified explicitely
+					// even if redundant for security (not to delete on other 
+					// cases) and for integrety checks.
 					$query = "DELETE FROM lcm_keyword_case
-								WHERE id_entry = " . $kw_entries[$cpt];
+								WHERE id_case = $id_obj
+								  AND id_stage = $id_obj_sec
+								  AND id_entry = " . $kw_entries[$cpt];
 				} else {
+					// The id_$type_obj (ex: case, client, org) is specified
+					// explicitely even if redundant for security and integrity.
 					$query = "DELETE FROM lcm_keyword_" . $type_obj . "
-								WHERE id_entry = " . $kw_entries[$cpt];
+								WHERE id_$type_obj = $id_obj
+								  AND id_entry = " . $kw_entries[$cpt];
 				}
 			} else if ($kw_values[$cpt]) {
 				if ($type_obj == 'stage') {
@@ -501,10 +606,15 @@ function update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 								id_" . $type_obj . " = " . $id_obj;
 				}
 
-				if ($_REQUEST['new_kw_entryval_' . $type_obj . $cpt])
-					$query .= ", value = '" . $_REQUEST['new_kw_entryval_' . $type_obj . $cpt] . "'";
+				if (isset($_REQUEST['new_kw_entryval_' . $type_obj . $cpt])) {
+					if ($_REQUEST['new_kw_entryval_' . $type_obj . $cpt])
+						$query .= ", value = '" . $_REQUEST['new_kw_entryval_' . $type_obj . $cpt] . "'";
+					else
+						$query = "";
+				} 
 
-				lcm_query($query);
+				if ($query)
+					lcm_query($query);
 			}
 
 			$cpt++;

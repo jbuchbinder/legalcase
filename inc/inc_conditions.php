@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_conditions.php,v 1.8 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_conditions.php,v 1.9 2006/02/20 03:34:29 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -99,7 +99,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 			echo "<td>";
 
 			$all_filters = array(
-					'number' => array('none', 'num_eq', 'num_lt', 'num_le', 'num_gt', 'num_ge'),
+					'number' => array('none', 'num_eq', 'num_neq', 'num_lt', 'num_le', 'num_gt', 'num_ge'),
 					'date' => array('none', 'date_eq', 'date_in', 'date_lt', 'date_le', 'date_gt', 'date_ge'),
 					'text' => array('none', 'text_eq', 'text_neq')
 					);
@@ -130,6 +130,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 
 			switch ($filter['type']) {
 				case 'num_eq':
+				case 'num_neq':
 					if ($filter['field_name'] == 'id_author') {
 						$name = ($is_runtime ? "filter_val" . $filter['id_filter'] : 'filter_value');
 						
@@ -138,7 +139,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 						$result_author = lcm_query($q);
 
 						echo "<select name='$name'>\n";
-						echo "<option value=''>-- select from list--</option>\n"; // TRAD
+						echo "<option value=''> ... </option>\n"; // TRAD
 
 						while ($author = lcm_fetch_array($result_author)) {
 							// Check for already submitted value
@@ -165,10 +166,13 @@ function show_report_filters($id_report, $is_runtime = false) {
 					echo get_date_inputs($name, $filter['value']); // FIXME
 					break;
 				case 'date_in':
+					// date_in has two values, stored ex: 2005-01-01 00:00:00;2006-02-02 00:00:00
 					$name = ($is_runtime ? "filter_val" . $filter['id_filter'] : 'date');
-					echo get_date_inputs($name . '_start', $filter['value']);
+					$values = split(";", $filter['value']);
+					
+					echo get_date_inputs($name . '_start', $values[0]);
 					echo "<br />\n";
-					echo get_date_inputs($name . '_end', $filter['value']);
+					echo get_date_inputs($name . '_end', $values[1]);
 					break;
 				case 'text_eq':
 				case 'text_neq':
@@ -288,6 +292,15 @@ function show_report_filters($id_report, $is_runtime = false) {
 		}
 	}
 
+	// If lcm_case in there, also add lcm_stage
+	$tmp = '';
+	foreach ($sources as $s)
+		if ($s == "'lcm_case'")
+			$tmp = "lcm_stage";
+	
+	if ($tmp)
+		array_push($sources, "'lcm_stage'");
+
 	// List only filters if table were selected as sources (line/col)
 	if (count($sources)) {
 		$query .= " table_name IN ( " . implode(" , ", $sources) . " ) AND ";
@@ -316,7 +329,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 			echo "</form>\n";
 		}
 	} else {
-		echo "<p>To apply filters, first select the source tables for report line and columns.</p>"; // TRAD
+		echo '<p class="normal_text">' . _T('rep_info_select_source_first') . "</p>\n";
 	}
 }
 

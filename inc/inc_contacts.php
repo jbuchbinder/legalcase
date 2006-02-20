@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.24 2005/08/18 22:53:34 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.25 2006/02/20 03:34:29 mlutfy Exp $
 */
 
 
@@ -44,13 +44,13 @@ function get_contact_type_id($name) {
 		}
 	}
 
-	if (! is_file("inc/config/inc_connect.php")) {
+	if (include_config_exists('inc_connect')) {
 		echo "<div style='color: red;'>";
-		echo "There was an internal error, but don't panic! This has been reported a few times, but we are having difficulties making a clear diagnostic of the cause of the problem. If you are running Fedora Core (version 2 or 3), try to de-activate 'SeLinux'. Otherwise, please try to restart the installation from the beginning. If it still does not work on the second try, please contact the developers using the instructions below.";
+		echo "There was an internal error, but don't panic! Go to the <a href=\"keywords.php?tab=maint\">keywords maintenance page</a>, then click on the 'validate' button in order to refresh the keywords. If this does not solve the problem, please send more information to legalcase-devel@lists.sf.net.";
 		echo "</div>\n";
 	} else {
 		echo "<div style='color: red;'>";
-		echo "There was an internal error, but don't panic! Go to the <a href=\"keywords.php?tab=maint\">keywords maintenance page</a>, then click on the 'validate' button in order to refresh the keywords. If this does not solve the problem, please send more information to legalcase-devel@lists.sf.net.";
+		echo "There was an internal error, but don't panic! This has been reported a few times, but we are having difficulties making a clear diagnostic of the cause of the problem. If you are running Fedora Core (version 2 or 3), try to de-activate 'SeLinux'. Otherwise, please try to restart the installation from the beginning. If it still does not work on the second try, please contact the developers using the instructions below.";
 		echo "</div>\n";
 	}
 
@@ -230,7 +230,10 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 }
 
 function show_existing_contact($c, $num) {
-	// XXX CSS
+	// FIXME: This has a minor bug: if there was an error in (ex:) the title
+	// of the user/client/org, and the value of a contact was changed, then
+	// the modification will be lost, because we didn't use the $_SESSION value.
+	
 	echo '<tr><td align="left" valign="top">' . _Ti($c['title']) . "</td>\n";
 	echo '<td align="left" valign="top">';
 
@@ -281,12 +284,12 @@ function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_na
 	$type = '';
 
 	if ($type_person == 'client' || $type_person == 'org') {
-		if ($_SESSION[$type_person . '_data']['new_contact_type_name'][$num_new])
-			$type = $_SESSION[$type_person . '_data']['new_contact_type_name'][$num_new];
+		if ($_SESSION['form_data']['new_contact_type_name'][$num_new])
+			$type = $_SESSION['form_data']['new_contact_type_name'][$num_new];
 
-		if ($_SESSION[$type_person . '_data']['new_contact_value'][$num_new])
-			$value = $_SESSION[$type_person . '_data']['new_contact_value'][$num_new];
-	} else if ($type_person == 'author') {
+		if ($_SESSION['form_data']['new_contact_value'][$num_new])
+			$value = $_SESSION['form_data']['new_contact_value'][$num_new];
+	} else if ($type_person == 'author') { // TODO, change usr to 'form_data' in edit_user.php et al
 		if ($_SESSION['usr']['new_contact_type_name'][$num_new])
 			$type = $_SESSION['usr']['new_contact_type_name'][$num_new];
 
