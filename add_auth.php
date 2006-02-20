@@ -18,13 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: add_auth.php,v 1.14 2005/05/12 15:39:26 mlutfy Exp $
+	$Id: add_auth.php,v 1.15 2006/02/20 03:01:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 include_lcm('inc_lang');
+
+// Clear all previous errors
+$_SESSION['errors'] = array();
 
 // Clean input variables
 $case = intval($_POST['case']);
@@ -40,8 +43,31 @@ if (! ($case > 0)) {
 	exit;
 }
 
-	if ($authors) {
-		if (allowed($case,'a')) {
+if (! $authors) {
+	header("Location: $ref_sel_auth");
+	exit;
+}
+
+// Check for admin rights on case
+if (! allowed($case, 'a')) {
+	$_SESSION['errors']['generic'] = _T('error_add_auth_no_rights');
+	header("Location: $ref_sel_auth");
+	exit;
+}
+
+// Get the current case stage for the FU entry
+$case_stage = '';
+$q = "SELECT stage FROM lcm_case where id_case = " . $case;
+$result = lcm_query($q);
+
+if (($row = lcm_fetch_array($result))) {
+	$case_stage = $row['stage'];
+} else {
+	$_SESSION['errors']['generic'] = _T('error_add_auth_no_rights');
+	header("Location: $ref_sel_auth");
+	exit;
+}
+
 			foreach($authors as $author) {
 				$q="INSERT INTO lcm_case_author
 					SET id_case=$case,id_author=$author";
@@ -61,11 +87,8 @@ if (! ($case > 0)) {
 							id_followup = 0, id_case = $case, 
 							id_author = " . $GLOBALS['author_session']['id_author'] . ",
 							type = 'assignment', 
-							description = '" . $author_data['id_author'] . "'";
-
-				// [ML] In order to use the translation system
-				// $q .= njoin(array($author_data['name_first'], $author_data['name_middle'], $author_data['name_last']));
-				// $q .= " assigned to the case',date_start=NOW()"; // TRAD
+							description = '" . $author_data['id_author'] . "',
+							case_stage = '$case_stage'";
 
 				$result = lcm_query($q);
 
@@ -75,8 +98,6 @@ if (! ($case > 0)) {
 						WHERE id_case = $case";
 				$result = lcm_query($q);
 			}
-		} else die(_T('error_add_auth_no_rights')); // XXX
-	}
 
 header("Location: $ref_sel_auth");
 

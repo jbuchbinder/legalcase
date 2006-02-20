@@ -18,18 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.25 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: author_det.php,v 1.26 2006/02/20 03:01:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_contacts');
 include_lcm('inc_acc');
-include_lcm('inc_keywords');
 
 function get_date_range_fields() {
 	$ret = array();
 
-	// By default, show from "now() - 1 month" to NOW().
 	$link = new Link();
 	$link->delVar('date_start_day');
 	$link->delVar('date_start_month');
@@ -39,8 +37,12 @@ function get_date_range_fields() {
 	$link->delVar('date_end_year');
 	$ret['html'] =  $link->getForm();
 
+	// By default, show from "now() - 1 month" to NOW().
+	// Unlike in case_details, we cannot show all, since it would return
+	// too many results.
 	$ret['html'] .= "<p class=\"normal_text\">\n";
 	$ret['date_end'] = get_datetime_from_array($_REQUEST, 'date_end', 'end', "-1");
+
 	$ret['date_start'] = get_datetime_from_array($_REQUEST, 'date_start', 'start',
 					date('Y-m-d H:i:s', strtotime("-1 month" . ($ret['date_end'] != "-1" ? $ret['date_end'] : date('Y-m-d H:i:s')))));
 
@@ -121,13 +123,13 @@ $result = lcm_query($q);
 				//
 				show_page_subtitle(_T('generic_subtitle_general'), 'authors_intro');
 
-				echo '<p class="normal_text">';
-				echo _Ti('authoredit_input_id') . $author_data['id_author'] . "<br />\n";
-				echo _Ti('person_input_name') . get_person_name($author_data) . "<br />\n";
-				echo _Ti('authoredit_input_status') . _T('authoredit_input_status_' . $author_data['status']) . "<br />\n";
-				echo _Ti('time_input_date_creation') . format_date($author_data['date_creation']) . "<br />\n";
+				echo '<ul class="info">';
+				echo '<li>' . _Ti('authoredit_input_id') . '<strong>' . $author_data['id_author'] . "</strong></li>\n";
+				echo '<li>' . _Ti('person_input_name') . '<strong>' . get_person_name($author_data) . "</strong></li>\n";
+				echo '<li>' . _Ti('authoredit_input_status') . '<strong>' . _T('authoredit_input_status_' . $author_data['status']) . "</strong></li>\n";
+				echo '<li>' . _Ti('time_input_date_creation') . format_date($author_data['date_creation']) . "</li>\n";
 
-				echo "</p>\n";
+				echo "</ul>\n";
 				
 				// Show author contacts (if any)
 				show_all_contacts('author', $author_data['id_author']);
@@ -152,7 +154,7 @@ $result = lcm_query($q);
 				$foo = get_date_range_fields();
 				echo $foo['html'];
 				
-				$q = "SELECT c.id_case, title, date_creation, id_court_archive, status
+				$q = "SELECT c.id_case, title, date_creation, status
 						FROM lcm_case_author as a, lcm_case as c
 						WHERE id_author = " . $author . "
 							AND a.id_case = c.id_case 
@@ -373,6 +375,7 @@ $result = lcm_query($q);
 						
 						if ($type == "case") {
 							echo '<a class="content_link" href="case_det.php?case=' . $row['id_case'] . '">'
+								. $row['id_case'] . ': '
 								.  $row['title'] 
 								. '</a>';
 						} elseif ($type == "fu") {

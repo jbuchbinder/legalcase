@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.21 2005/06/01 12:24:02 mlutfy Exp $
+	$Id: app_det.php,v 1.22 2006/02/20 03:01:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -32,10 +32,10 @@ if (! $ac['r'])
 
 // Get the authors participating in the appointment
 $q = "SELECT p.*, a.name_first, a.name_middle, a.name_last, c.title AS case_title
-	FROM lcm_app as p, lcm_author as a
+	FROM lcm_app as p
 	LEFT JOIN lcm_case as c ON (c.id_case = p.id_case)
-	WHERE p.id_app = $app
-		AND p.id_author = a.id_author";
+	LEFT JOIN lcm_author as a ON (a.id_author = p.id_author)
+	WHERE p.id_app = $app";
 
 $result = lcm_query($q);
 
@@ -48,7 +48,7 @@ echo '<fieldset class="info_box">' . "\n";
 echo '<p class="normal_text">' . "\n";
 	
 	echo _Ti('app_input_title') . $row['title'] . "<br />\n";
-	echo _Ti('app_input_type') . $row['type'] . "<br />\n";
+	echo _Ti('app_input_type') . _Tkw('appointments', $row['type']) . "<br />\n";
 	echo _Ti('app_input_description') . nl2br($row['description']) . "<br />\n";
 
 	echo "<br />\n";
@@ -57,7 +57,7 @@ echo '<p class="normal_text">' . "\n";
 		. "&mois=" . mois($row['start_time'])  // month
 		. "&jour=" . journum($row['start_time']); // day
 
-	echo ' ' . http_href_img("calendar.php?type=jour" . $year_for_cal, 'cal-today', '', _T('app_info_see_cal_for_day_tooltip'));
+	echo ' ' . http_href_img("calendar.php?type=jour" . $year_for_cal, 'cal-today.gif', '', _T('app_info_see_cal_for_day_tooltip'));
 	echo "<br />\n";
 
 
@@ -109,11 +109,12 @@ echo '<p class="normal_text">' . "\n";
 	}
 	
 	// Show appointment clients
-	$q = "SELECT lcm_app_client_org.*,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name
-		FROM lcm_app_client_org, lcm_client
-		LEFT JOIN  lcm_org ON lcm_app_client_org.id_org=lcm_org.id_org
-		WHERE (id_app=" . $row['id_app'] . "
-			AND lcm_app_client_org.id_client=lcm_client.id_client)";
+	$q = "SELECT aco.*, c.name_first, c.name_middle, c.name_last, o.name
+		FROM lcm_app_client_org as aco
+		LEFT JOIN lcm_org as o ON (aco.id_org = o.id_org)
+		LEFT JOIN lcm_client as c ON (aco.id_client = c.id_client)
+		WHERE id_app = " . $row['id_app'];
+
 	$res_client = lcm_query($q);
 
 	if (lcm_num_rows($res_client)>0) {
