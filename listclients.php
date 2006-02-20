@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.34 2005/05/13 10:06:59 mlutfy Exp $
+	$Id: listclients.php,v 1.35 2006/02/20 02:55:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -74,10 +74,10 @@ $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
-$list_pos = 0;
-
 if (isset($_REQUEST['list_pos']))
 	$list_pos = $_REQUEST['list_pos'];
+else
+	$list_pos = 0;
 
 if ($list_pos >= $number_of_rows)
 	$list_pos = 0;

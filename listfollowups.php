@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listfollowups.php,v 1.5 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: listfollowups.php,v 1.6 2006/02/20 02:55:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -114,14 +114,13 @@ echo "</form>\n";
 //
 /*
 // Select cases of which the current user is author
-$q = "SELECT c.id_case, title, id_court_archive, status, public, pub_write, date_creation
+$q = "SELECT c.id_case, title, status, public, pub_write, date_creation
 		FROM lcm_case as c, lcm_case_author as a
 		WHERE (c.id_case = a.id_case ";
 
 if (strlen($find_case_string) > 0) {
 	$q .= " AND ( (c.id_case LIKE '%$find_case_string%')
-				OR (c.title LIKE '%$find_case_string%') 
-				OR (id_court_archive LIKE '%$find_case_string%') )";
+				OR (c.title LIKE '%$find_case_string%') )";
 }
 
 $q .= ")";

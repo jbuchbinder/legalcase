@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.14 2005/05/31 15:50:26 mlutfy Exp $
+	$Id: listreps.php,v 1.15 2006/02/20 02:55:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -102,6 +102,48 @@ for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; 
 show_list_end($list_pos, $number_of_rows);
 
 echo '<p><a href="edit_rep.php?rep=0" class="create_new_lnk">' . _T('rep_button_new') . "</a></p>\n";
+
+//
+// Custom reports (plugins)
+//
+
+$custom_reports = array();
+$handle = opendir("custom/reports");
+
+while (($f = readdir($handle)) != '') {
+	if (is_file("custom/reports/" . $f)) {
+		// matches: custom/reports/alpha-num_name.php
+		if (preg_match("/^([_a-zA-Z0-9]+)\.php/", $f, $regs)) {
+			$custom_reports[] = $f;
+		}
+	}
+}
+
+if (count($custom_reports)) {
+	show_page_subtitle("Custom reports", 'reports_custom'); // TRAD
+
+	echo '<p class="normal_text">';
+
+	$headers = array();
+	$headers[0]['title'] = _Th('rep_input_title');
+	// $headers[0]['order'] = 'order_ctitle';
+	// $headers[0]['default'] = 'ASC';
+
+	show_list_start($headers);
+
+	for ($i = 0 ; (($i < $prefs['page_rows']) && $custom_reports[$i]) ; $i++) {
+		echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+		// TODO: how to extract name of report?
+		// an 'include(report) + $report->get_name() would be overkill..
+		echo '<a class="content_link" href="edit_rep.php?custom=' .  $custom_reports[$i] . '">' . $custom_reports[$i] . '</a>';
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
+
+	show_list_end($list_pos2, $number_of_rows2, 'custom');
+	echo "</p>\n";
+}
+
 lcm_page_end();
 
 ?>

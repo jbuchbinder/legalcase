@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.64 2005/12/06 09:28:11 mlutfy Exp $
+	$Id: listcases.php,v 1.65 2006/02/20 02:53:24 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -36,6 +36,11 @@ $find_case_string = '';
 
 if (isset($_REQUEST['find_case_string'])) {
 	$find_case_string = $_REQUEST['find_case_string'];
+
+	// remove useless spaces
+	$find_case_string = trim($find_case_string);
+	$find_case_string = preg_replace('/ +/', ' ', $find_case_string);
+
 	show_find_box('case', $find_case_string);
 }
 
@@ -149,6 +154,8 @@ if (strlen($find_case_string) > 0) {
 	// Most databases are set in latin1 by default, but we store unicode in it
 	// therefore, we cannot use case-insensitive search of MySQL, nor LOWER()/UPPER()
 	// Any suggestions on how to avoid this would be very welcomed
+	// [ML] 2005-12-23: MySQL <= 4.1 no longer supported
+	/*
 	if (function_exists('mb_convert_case')) {
 		// Avoid useless overhead is search is numeric
 		if (! is_numeric($find_case_string))
@@ -156,6 +163,7 @@ if (strlen($find_case_string) > 0) {
 				. "OR c.title LIKE '%" . mb_convert_case($find_case_string, MB_CASE_LOWER, "UTF-8") . "%' "
 				. "OR c.title LIKE '%" . mb_convert_case($find_case_string, MB_CASE_UPPER, "UTF-8") . "%' ";
 	}
+	*/
 
 	$q .= " )";
 }
@@ -206,7 +214,7 @@ echo '<p class="normal_text">' . "\n";
 show_listcase_start();
 
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++)
-	show_listcase_item($row, $i);
+	show_listcase_item($row, $i, '', $find_case_string);
 
 show_listcase_end($list_pos, $number_of_rows);
 echo "</p>\n";
