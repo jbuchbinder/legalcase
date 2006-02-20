@@ -24,7 +24,8 @@ h1 {
 }
 
 h2 {
-	margin: 5px 0px 0px 15px;
+	margin-top: 5px;
+	/* [ML] margin: 5px 0px 0px 15px; */
 	padding: 0;
 }
 

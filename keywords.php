@@ -18,11 +18,10 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.32 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: keywords.php,v 1.33 2006/02/20 03:26:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
-include_lcm('inc_keywords');
 
 //
 // Show all kwg for a given type (system, user, case, followup,
@@ -352,7 +351,7 @@ function update_keyword_group($id_group) {
 		$_SESSION['errors']['title'] = _Ti('keywords_input_title') . _T('warning_field_mandatory');
 
 	if (count($_SESSION['errors'])) {
-		header("Location: " . $GLOBALS['HTTP_REFERER']);
+		header("Location: " . $_SERVER['HTTP_REFERER']);
 		exit;
 	}
 
@@ -442,7 +441,7 @@ function update_keyword($id_keyword) {
 		$_SESSION['errors']['title'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
 
 	if (count($_SESSION['errors'])) {
-		header("Location: " . $GLOBALS['HTTP_REFERER']);
+		header("Location: " . $_SERVER['HTTP_REFERER']);
 		exit;
 	}
 

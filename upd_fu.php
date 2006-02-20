@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.49 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: upd_fu.php,v 1.50 2006/02/20 03:24:08 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -201,12 +201,18 @@ if (count($_SESSION['errors'])) {
 //	Followup information update
 ///////////////////////////////////////////////////////////////////////
 
-	$fl=" date_start = '" . clean_input($_SESSION['fu_data']['date_start']) . "',
-		date_end     = '" . clean_input($_SESSION['fu_data']['date_end']) . "',
-		type         = '" . clean_input($_SESSION['fu_data']['type']) . "',
-		sumbilled    = '" . clean_input($_SESSION['fu_data']['sumbilled']) . "'";
+	$fl = " date_start = '" . clean_input($_SESSION['fu_data']['date_start']) . "',
+			date_end   = '" . clean_input($_SESSION['fu_data']['date_end']) . "',
+			type       = '" . clean_input($_SESSION['fu_data']['type']) . "'"; 
+		
+	if (isset($_SESSION['fu_data']['sumbilled']))
+		$fl .= ", sumbilled    = '" . clean_input($_SESSION['fu_data']['sumbilled']) . "'";
 
 	if ($_SESSION['fu_data']['type'] == 'stage_change') {
+		// [ML] To be honest, we should "assert" most of the
+		// following values, but "new_stage" is the most important.
+		lcm_assert_value($_SESSION['fu_data']['new_stage']);
+
 		$desc = array(
 					'description'  => clean_input($_SESSION['fu_data']['description']),
 					'result'       => clean_input($_SESSION['fu_data']['result']),
@@ -248,14 +254,15 @@ if (count($_SESSION['errors'])) {
 			$fl .= ", hidden = 'N'";
 		}
 
-		$q="UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
+		$q = "UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
 		$result = lcm_query($q);
 
 		// Get stage of the follow-up entry
 		$q = "SELECT case_stage FROM lcm_followup WHERE id_followup = $id_followup";
 		$result = lcm_query($q);
+
 		if ($row = lcm_fetch_array($result)) {
-			$case_stage = $row['case_stage'];
+			$case_stage = lcm_assert_value($row['case_stage']);
 		} else {
 			lcm_panic("There is no such follow-up (" . $id_followup . ")");
 		}
@@ -280,9 +287,11 @@ if (count($_SESSION['errors'])) {
 
 		// Get the current case stage
 		$q = "SELECT stage FROM lcm_case WHERE id_case=" . $_SESSION['fu_data']['id_case'];
+
 		$result = lcm_query($q);
+
 		if ($row = lcm_fetch_array($result)) {
-			$case_stage = $row['stage'];
+			$case_stage = lcm_assert_value($row['stage']);
 		} else {
 			lcm_panic("There is no such case (" . $_SESSION['fu_data']['id_case'] . ")");
 		}
@@ -297,7 +306,7 @@ if (count($_SESSION['errors'])) {
 
 		lcm_query($q);
 		$id_followup = lcm_insert_id();
-		
+
 		// Set relation to the parent appointment, if any
 		if (! empty($_SESSION['fu_data']['id_app'])) {
 			$q = "INSERT INTO lcm_app_fu 
@@ -328,7 +337,8 @@ if (count($_SESSION['errors'])) {
 				$status = 'deleted';
 				break;
 			case 'stage_change' :
-				$stage = clean_input($_POST['new_stage']);
+				$stage = lcm_assert_value(clean_input($_POST['new_stage']));
+				break;
 		}
 		
 		if ($status || $stage) {
@@ -372,8 +382,8 @@ if (count($_SESSION['errors'])) {
 		// If creating a new case stage, make new lcm_stage entry
 		if ($stage) {
 			$q = "INSERT INTO lcm_stage SET
-					id_case = " . $_SESSION['fu_data']['id_case'] . ",
-					kw_case_stage = '" . $stage . "',
+					id_case = " . lcm_assert_value($_SESSION['fu_data']['id_case']) . ",
+					kw_case_stage = '" . lcm_assert_value($stage) . "',
 					date_creation = NOW(),
 					id_fu_creation = $id_followup";
 
@@ -384,13 +394,31 @@ if (count($_SESSION['errors'])) {
 //
 // Update stage keywords
 //
-if ($_REQUEST['new_stage']) {
-	include_lcm('inc_keywords');
+if (isset($_REQUEST['new_stage']) && $_REQUEST['new_stage']) {
 	$stage_info = get_kw_from_name('stage', $_REQUEST['new_stage']);
 	$id_stage = $stage_info['id_keyword'];
-	update_keywords_request('stage', $id_case, $id_stage);
+	update_keywords_request('stage', $_SESSION['fu_data']['id_case'], $id_stage);
 }
 
+//
+// Update lcm_case.date_update (if fu.date_start > c.date_update)
+//
+
+$q = "SELECT date_update FROM lcm_case WHERE id_case = " . $_SESSION['fu_data']['id_case'];
+$result = lcm_query($q);
+
+if (($row = lcm_fetch_array($result))) {
+	if ($_SESSION['fu_data']['date_start'] > $row['date_update']) {
+		$q = "UPDATE lcm_case
+				SET date_update = '" . $_SESSION['fu_data']['date_start'] . "'
+				WHERE id_case = " . $_SESSION['fu_data']['id_case'];
+
+		lcm_query($q);
+	}
+} else {
+	lcm_panic("Query returned no results.");
+}
+		
 ///////////////////////////////////////////////////////////////////////
 //	Consequent appointment information update
 ///////////////////////////////////////////////////////////////////////

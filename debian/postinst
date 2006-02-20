@@ -1,61 +1,60 @@
 #!/bin/sh
 
-# [ML] will not work for now, since everything goes
-# into /usr/share/legalcase ... which is later chown'ed to www-data,
-# which is a REALLY bad idea, /usr is not for data (conf,logs,..) !
+chown www-data.mysql /var/lib/legalcase/data/
+chmod 0770 /var/lib/legalcase/data/
+
+chown www-data.www-data /var/lib/legalcase/config/
+chmod 0700 /var/lib/legalcase/config/
+
+chown www-data.www-data /var/log/legalcase/
+chmod 0700 /var/lib/legalcase/config/
+
+# if [ -d /etc/apache ]
+# then
+# 	cd /etc/apache
 # 
-# chgrp www-data /var/www/legalcase/log
-# chgrp www-data /var/www/legalcase/inc/data/
-# chgrp www-data /var/www/legalcase/inc/config/
-
-if [ -d /etc/apache ]
-then
-	cd /etc/apache
-
-	if [ ! -L legalcase.conf ]
-	then
-		ln -s /usr/share/legalcase/apache/legalcase.conf
-	fi
-
-	echo "Include /etc/apache/legalcase.conf" >> /etc/apache/httpd.conf
-
-	# [ML] If php4/php5 is installed, then it should already be active, no?
-	# messy!
-	# apache-modconf apache enable mod_php4
-fi
-
-if [  -d /etc/apache2 ]
-then
-	cd /etc/apache2/sites-enabled/
-
-	if [ ! -L legalcase.conf ]
-	then
-		ln -s /usr/share/legalcase/apache2/legalcase.conf
-	fi
-
-	# [ML] If php4/php5 is installed, then it should already be active, no?
-	# messy!
-	# apache-modconf apache enable mod_php4
-fi
-
-if [  -d /etc/apache-ssl ]
-then
-	cd /etc/apache-ssl
-
-	if [ ! -L legalcase.conf ]
-	then
-		ln -s /usr/share/legalcase/apache/legalcase.conf
-	fi
-
-	echo "Include /etc/apache-ssl/legalcase.conf" >> /etc/apache-ssl/httpd.conf
-
-	# [ML] If php4/php5 is installed, then it should already be active, no?
-	# messy!
-	apache-modconf apache-ssl enable mod_php4
-fi
-				
-chown -R www-data:www-data /usr/share/legalcase/
-
+# 	if [ ! -L legalcase.conf ]
+# 	then
+# 		ln -s /usr/share/legalcase/apache/legalcase.conf
+# 	fi
+# 
+# 	echo "Include /etc/apache/legalcase.conf" >> /etc/apache/httpd.conf
+# 
+# 	# [ML] If php4/php5 is installed, then it should already be active, no?
+# 	# messy!
+# 	# apache-modconf apache enable mod_php4
+# fi
+# 
+# if [  -d /etc/apache2 ]
+# then
+# 	cd /etc/apache2/sites-enabled/
+# 
+# 	if [ ! -L legalcase.conf ]
+# 	then
+# 		ln -s /usr/share/legalcase/apache2/legalcase.conf
+# 	fi
+# 
+# 	# [ML] If php4/php5 is installed, then it should already be active, no?
+# 	# messy!
+# 	# apache-modconf apache enable mod_php4
+# fi
+# 
+# if [  -d /etc/apache-ssl ]
+# then
+# 	cd /etc/apache-ssl
+# 
+# 	if [ ! -L legalcase.conf ]
+# 	then
+# 		ln -s /usr/share/legalcase/apache/legalcase.conf
+# 	fi
+# 
+# 	echo "Include /etc/apache-ssl/legalcase.conf" >> /etc/apache-ssl/httpd.conf
+# 
+# 	# [ML] If php4/php5 is installed, then it should already be active, no?
+# 	# messy!
+# 	apache-modconf apache-ssl enable mod_php4
+# fi
+	
 
 ### Activate on mysql extension, if necessary
 IFS=':'
@@ -92,9 +91,8 @@ fi
 
 # The dialog(1) was hiding the console, where possible errors are shown..
 echo -e "\n"
-echo -e "** The Legal Case Management (LCM) installation is complete."
-echo -e "** You can access it using your Web browser at the following location:"
-echo -e "  http://`hostname`/legalcase.\n"
-echo -e "** Since this Debian package is experimental, we would appreciate your feedback regarding the package: legalcase-devel@lists.sf.net"
+echo -e "** The Legal Case Management (LCM) installation is almost complete."
+echo -e "** To finish the installation, please read "
+echo -e "**          /usr/share/doc/legalcase/README.Debian"
 echo -e "\n"
 

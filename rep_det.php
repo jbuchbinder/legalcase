@@ -18,13 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.35 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: rep_det.php,v 1.36 2006/02/20 03:26:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
-include_lcm('inc_keywords');
 
 // type = { line, col }
 // rep_info = $row from the lcm_report
@@ -39,11 +38,12 @@ function show_report_field_edit($type, $rep_info) {
 	if ($src_type && $src_name) {
 		if ($src_type == 'keyword') {
 			$kwg = get_kwg_from_name($src_name);
-			echo '<p class="normal_text">' . "Source: " . $src_type // TRAD
-				. " (" . $kwg['type'] . ") -> " . _T(remove_number_prefix($kwg['title'])); // TRAD
+			echo '<p class="normal_text">' . _Ti('rep_info_source_' . $src_type)
+				. " (" . _T('rep_info_table_lcm_' . $kwg['type']) . ") " . _T(remove_number_prefix($kwg['title']));
 		} else {
-			echo "<p class='normal_text'>" . "Source: " . $src_type 
-				. " -> " . _T('rep_info_table_' . $src_name); // TRAD
+			echo "<p class='normal_text'>" 
+				. _Ti('rep_info_source_' . $src_type)
+				. _T('rep_info_table_' . $src_name);
 		}
 
 		// Show list of fields for line/col, if any
@@ -115,8 +115,8 @@ function show_report_field_edit($type, $rep_info) {
 	} else {
 		echo "<form action='upd_rep_field.php' name='frm_" . $type . "_source' method='post'>\n";
 		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-		echo '<p class="normal_text">' . f_err_star('rep_' . $type) . "Select source table: "; // TRAD
-		echo "<input name='select_" . $type . "_type' value='table' type='hidden' />\n"; // TRAD TRAD TRAD
+		echo '<p class="normal_text">' . f_err_star('rep_' . $type) . _Ti('rep_info_source_table');
+		echo "<input name='select_" . $type . "_type' value='table' type='hidden' />\n";
 		echo "<select name='select_" . $type . "_name' class='sel_frm'>
 			<option value='author'>" . _T('rep_info_table_lcm_author') . "</option>
 			<option value='case'>" . _T('rep_info_table_lcm_case') . "</option>
@@ -129,9 +129,11 @@ function show_report_field_edit($type, $rep_info) {
 		echo "</p>\n";
 		echo "</form>\n";
 
+		echo '<p class="normal_text">' . _T('info_or') . "</p>\n";
+
 		echo "<form action='upd_rep_field.php' name='frm_" . $type . "_source' method='post'>\n";
 		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-		echo "<p class='normal_text'>or keyword: "; // TRAD
+		echo "<p class='normal_text'>" . _Ti('rep_info_source_keyword');
 		echo "<input name='select_" . $type . "_type' value='keyword' type='hidden' />\n";
 
 		$all_kwgs = get_kwg_all('', true);
@@ -139,7 +141,9 @@ function show_report_field_edit($type, $rep_info) {
 		echo "<select name='select_" . $type . "_name' class='sel_frm'>\n";
 
 		foreach ($all_kwgs as $kwg)
-			echo "<option value='" . $kwg['name'] . "'>" . $kwg['type'] . " - " . _T(remove_number_prefix($kwg['title'])) . "</option>\n";
+			echo "<option value='" . $kwg['name'] . "'>" 
+				. _T('rep_info_table_lcm_' . $kwg['type']) . " - " . _T(remove_number_prefix($kwg['title']))
+				. "</option>\n";
 
 		echo "</select>\n";
 

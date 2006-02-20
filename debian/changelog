@@ -1,3 +1,22 @@
+legalcase (0.6.4-2) unstable; urgency=low
+
+  * New upstream release (0.6.4a).
+
+ -- Mathieu Lutfy (bgm) <mathieu@bidon.ca>  Fri, 17 Feb 2006 14:42:32 -0400
+
+legalcase (0.6.4-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Mathieu Lutfy (bgm) <mathieu@bidon.ca>  Tue, 14 Feb 2006 09:58:04 -0400
+
+legalcase (0.6.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * Perhaps the first release of this package which works.
+
+ -- Mathieu Lutfy (bgm) <mathieu@bidon.ca>  Fri, 14 Oct 2005 15:32:48 -0400
+
 legalcase (0.6.2-3) unstable; urgency=low
 
   * Fixed compat problem for building package.

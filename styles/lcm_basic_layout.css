@@ -509,6 +509,21 @@ a.back_lnk {
 	-moz-border-radius: 5px;
 }
 
+/* List of info, used in places such as "case details", "client details", etc. */
+ul.info {
+	padding-left: 0;
+}
+
+ul.info li {
+	list-style-type: none;
+	border-bottom: 1px solid #ccc;
+}
+
+ul.info li.large {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
 /* --- [ Errors list ] --- */
 
 ul.err_list li {
@@ -522,6 +537,11 @@ ul.err_list li {
 
 .page_numbers td {
 	
+}
+
+/* Help icon shown in the page titles and subtitles */
+.help_icon {
+	float: right;
 }
 
 /* Info boxes(bubbles) */

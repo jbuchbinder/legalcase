@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_org.php,v 1.11 2005/04/11 15:36:50 mlutfy Exp $
+	$Id: upd_org.php,v 1.12 2006/02/20 03:24:27 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -29,16 +29,16 @@ $_SESSION['errors'] = array();
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-	$_SESSION['org_data'][$key] = $value;
+	$_SESSION['form_data'][$key] = $value;
 
-$_SESSION['org_data']['id_org'] = intval($_SESSION['org_data']['id_org']);
+$_SESSION['form_data']['id_org'] = intval($_SESSION['form_data']['id_org']);
 
-$ref_upd_org = 'edit_org.php?org=' . $_SESSION['org_data']['id_org'];
+$ref_upd_org = 'edit_org.php?org=' . $_SESSION['form_data']['id_org'];
 if ($GLOBALS['HTTP_REFERER'])
-	$ref_upd_org = $GLOBALS['HTTP_REFERER'];
+	$ref_upd_org = $_SERVER['HTTP_REFERER'];
 
 // Check submitted information
-if (! $_SESSION['org_data']['name'])
+if (! $_SESSION['form_data']['name'])
 	$_SESSION['errors']['name'] = _Ti('org_input_name') . _T('warning_field_mandatory'); 
 
 if (count($_SESSION['errors'])) {
@@ -48,23 +48,23 @@ if (count($_SESSION['errors'])) {
 }
 
 	// Record data in database
-	$ol="name='" . clean_input($_SESSION['org_data']['name']) . "', "
-		. "court_reg='" . clean_input($_SESSION['org_data']['court_reg']) .  "', "
-		. "tax_number='" . clean_input($_SESSION['org_data']['tax_number']) .  "', "
-		. "stat_number='" . clean_input($_SESSION['org_data']['stat_number']) . "', "
-		. "notes='" . clean_input($_SESSION['org_data']['notes']) . "'";
+	$ol="name='" . clean_input($_SESSION['form_data']['name']) . "', "
+		. "court_reg='" . clean_input($_SESSION['form_data']['court_reg']) .  "', "
+		. "tax_number='" . clean_input($_SESSION['form_data']['tax_number']) .  "', "
+		. "stat_number='" . clean_input($_SESSION['form_data']['stat_number']) . "', "
+		. "notes='" . clean_input($_SESSION['form_data']['notes']) . "'";
 
-	if ($_SESSION['org_data']['id_org'] > 0) {
-		$q = "UPDATE lcm_org SET date_update=NOW(),$ol WHERE id_org = " . $_SESSION['org_data']['id_org'];
+	if ($_SESSION['form_data']['id_org'] > 0) {
+		$q = "UPDATE lcm_org SET date_update=NOW(),$ol WHERE id_org = " . $_SESSION['form_data']['id_org'];
 		$result = lcm_query($q);
 	} else {
 		$q = "INSERT INTO lcm_org SET id_org=0,date_update=NOW(),$ol";
 		$result = lcm_query($q);
-		$_SESSION['org_data']['id_org'] = lcm_insert_id($result);
+		$_SESSION['form_data']['id_org'] = lcm_insert_id($result);
 
 		// If there is an error (ex: in contacts), we should send back to 'org_det.php?org=XX'
 		// not to 'org_det.php?org=0'.
-		$ref_upd_org = 'edit_org.php?org=' . $_SESSION['org_data']['id_org'];
+		$ref_upd_org = 'edit_org.php?org=' . $_SESSION['form_data']['id_org'];
 	}
 
 
@@ -73,7 +73,7 @@ if (count($_SESSION['errors'])) {
 //
 
 include_lcm('inc_contacts');
-update_contacts_request('org', $_SESSION['org_data']['id_org']);
+update_contacts_request('org', $_SESSION['form_data']['id_org']);
 
 if (count($_SESSION['errors'])) {
 	header('Location: ' . $ref_upd_org);
@@ -81,6 +81,6 @@ if (count($_SESSION['errors'])) {
 }
 
 // Go to the 'view details' page of the organisation
-header('Location: org_det.php?org=' . $_SESSION['org_data']['id_org']);
+header('Location: org_det.php?org=' . $_SESSION['form_data']['id_org']);
 
 ?>

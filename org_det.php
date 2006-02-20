@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.31 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: org_det.php,v 1.32 2006/02/20 03:26:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -41,7 +41,7 @@ $result = lcm_query($q);
 if (! ($row = lcm_fetch_array($result))) 
 	die("There's no such organisation!");
 
-lcm_page_start(_T('title_org_view') . ' ' . $row['name']);
+lcm_page_start(_T('title_org_view') . ' ' . $row['name'], '', '', 'clients_intro');
 
 //
 // Access control
@@ -67,20 +67,48 @@ if (! $ac['r'])
 		//
 		case 'general':
 			echo '<fieldset class="info_box">';
-			show_page_subtitle(_T('generic_subtitle_general')); // XXX help?
-			echo '<p class="normal_text">';
+			show_page_subtitle(_T('generic_subtitle_general'), 'clients_intro');
+
+			// TODO: show org keywords!
 		
-			echo _Ti('org_input_id') . $row['id_org'] . "<br />\n";
-			echo _Ti('org_input_name') . $row['name'] . "<br />\n";
-			echo _Ti('org_input_court_reg') . $row['court_reg'] . "<br />\n";
-			echo _Ti('org_input_tax_number') . $row['tax_number'] . "<br />\n";
-			echo _Ti('org_input_stat_number') . $row['stat_number'] . "<br />\n";
-			echo _Ti('time_input_date_creation') . format_date($row['date_creation'], 'full') . "<br />\n";
+			echo '<ul class="info">';
 
-			echo _Ti('org_input_notes') . "<br />\n";
-			echo nl2br($row['notes']);
+			echo '<li>'
+				. '<span class="label1">' . _Ti('org_input_id') . '</span>'
+				. '<span class="value1">' . $row['id_org'] . '</span>'
+				. "</li>\n";
 
-			echo "</p>\n";
+			echo '<li>' 
+				. '<span class="label1">' . _Ti('org_input_name') . '</span>'
+				. '<span class="value1">' . $row['name'] . '</span>'
+				. "</li>\n";
+
+			echo '<li>'
+				. '<span class="label2">' . _Ti('org_input_court_reg') . '</span>'
+				. '<span class="value2">' . $row['court_reg'] . '</span>'
+				. "</li>\n";
+
+			echo '<li>'
+				. '<span class="label2">' . _Ti('org_input_tax_number') . '</span>'
+				. '<span class="value2">' . $row['tax_number'] . '</span>'
+				. "</li>\n";
+
+			echo '<li>'
+				. '<span class="label2">' . _Ti('org_input_stat_number') . '</span>'
+				. '<span class="value2">' . $row['stat_number'] . '</span>'
+				. "</li>\n";
+
+			echo '<li>'
+				. '<span class="label2">' . _Ti('time_input_date_creation') . '</span>' 
+				. '<span class="value2">' . format_date($row['date_creation'], 'full') . '</span>'
+				. "</li>\n";
+
+			echo '<li class="large">'
+				. '<span class="label2">' . _Ti('org_input_notes') . '</span>'
+				. '<span class="value2">' . nl2br($row['notes']) . '</span>'
+				. "</li>\n";
+
+			echo "</ul>\n";
 
 			// Show client contacts (if any)
 			show_all_contacts('org', $row['id_org']);
@@ -174,7 +202,7 @@ if (! $ac['r'])
 		//
 		case 'cases':
 
-			$q = "SELECT clo.id_case, c.title, c.date_creation, c.id_court_archive, c.status
+			$q = "SELECT clo.id_case, c.title, c.date_creation, c.status
 					FROM lcm_case_client_org as clo, lcm_case as c
 					WHERE id_org = $org
 					AND clo.id_case = c.id_case ";
@@ -256,7 +284,8 @@ echo "</a>";
 echo "</p>\n";
 
 $_SESSION['errors'] = array();
-$_SESSION['org_data'] = array();
+$_SESSION['form_data'] = array();
+$_SESSION['org_data'] = array(); // DEPRECATED since 0.6.4
 
 lcm_page_end();
 

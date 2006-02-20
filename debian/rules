@@ -58,18 +58,20 @@ install: build
 	dh_clean -k 
 	dh_installdirs 
 
-	# [ML] not sure..
 	mkdir -p $(DESTDIR)/usr/share/legalcase/
+	mkdir -p $(DESTDIR)/usr/share/doc/legalcase/
+	mkdir -p $(DESTDIR)/var/lib/legalcase/data/
+	mkdir -p $(DESTDIR)/var/lib/legalcase/config/
+	mkdir -p $(DESTDIR)/var/log/legalcase/
 
-	# Add here commands to install the package into debian/legalcase.
-	cp INSTALL* $(DESTDIR)/usr/share/legalcase
-	cp AUTHORS $(DESTDIR)/usr/share/legalcase
-	cp THANKS $(DESTDIR)/usr/share/legalcase
+	cp INSTALL* $(DESTDIR)/usr/share/doc/legalcase
+	cp AUTHORS $(DESTDIR)/usr/share/doc/legalcase
+	cp THANKS $(DESTDIR)/usr/share/doc/legalcase
+	cp LICENSE $(DESTDIR)/usr/share/doc/legalcase
 	
 	cp -Rp *.php $(DESTDIR)/usr/share/legalcase
 	cp -Rp images $(DESTDIR)/usr/share/legalcase
 	cp -Rp inc $(DESTDIR)/usr/share/legalcase
-	cp -Rp log $(DESTDIR)/usr/share/legalcase
 	cp -Rp styles $(DESTDIR)/usr/share/legalcase
 
 	#dh_movefiles -i --sourcedir=debian/legalcase

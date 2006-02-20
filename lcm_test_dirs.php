@@ -83,31 +83,39 @@ function test_write($my_dir) {
 // Test rights on directories
 //
 
-$install = !@file_exists("inc/config/inc_connect.php");
+$install = ! include_config_exists('inc_connect');
 
-if ($test_dir)
-	$test_dirs[] = $test_dir;
-else {
-	$test_dirs = array("log", "inc/config", "inc/data");
-}
+// Files to test
+$test_dirs[] = (isset($_SERVER['LcmLogDir']) ? $_SERVER['LcmLogDir'] : 'log');
+$test_dirs[] = (isset($_SERVER['LcmDataDir']) ? $_SERVER['LcmDataDir'] : 'inc/data');
+
+// To be honest, we should always test for "if file can be read"
+// but i'm lazy right now
+if (! include_config_exists('inc_connect'))
+	$test_dirs[] = (isset($_SERVER['LcmConfigDir']) ? $_SERVER['LcmConfigDir'] : 'inc/config');
 
 $bad_dirs = array();
 $absent_dirs = array();
 
 foreach ($test_dirs as $my_dir) {
-	if (!test_write($my_dir)) {
+	if (@file_exists($my_dir)) {
 		@umask(0);
-		if (@file_exists($my_dir)) {
+
+		// If Apache is the owner of the file
+		if (! test_write($my_dir))
+			@chmod($my_dir, 0700);
+
+		// I doubt this will work, if above failed, but try anyway
+		if (! test_write($my_dir))
+			@chmod($my_dir, 0770);
+
+		if (! test_write($my_dir))
 			@chmod($my_dir, 0777);
-			// ???
-			if (!test_write($my_dir))
-				@chmod($my_dir, 0775);
-			if (!test_write($my_dir))
-				@chmod($my_dir, 0755);
-			if (!test_write($my_dir))
-				array_push($bad_dirs, "<li>". $my_dir ."</li>\n");
-		} else
-			array_push($absent_dirs, "<li>". $my_dir ."</li>\n");
+
+		if (! test_write($my_dir))
+			array_push($bad_dirs, "<li>". $my_dir ."</li>\n");
+	} else {
+		array_push($absent_dirs, "<li>". $my_dir ."</li>\n");
 	}
 }
 

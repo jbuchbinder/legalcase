@@ -1,0 +1,68 @@
+
+Once the "legalcase" Debian package is installed, you must manually
+configure a virtual host for your installation. (Yes, it will be
+automatic one day.. patches are welcomed!)
+
+The easiest way, using Apache2, is the following:
+
+0. Symlink the code to its publicly accessible directory of Apache
+
+  # cd /var/www/
+  # ln -s /usr/share/legalcase
+
+  This will allow the software to be accessible from
+    http://localhost/legalcase/
+
+  .. but not so fast! you must finish the following steps!
+
+1. edit /etc/apache2/sites-enabled/000-default
+
+  # vi /etc/apache2/sites-enabled/000-default
+
+2. locate the "Directory" statement for "/var/www/", similar to
+   <Directory /var/www/>
+        # ... existing configurations ...
+   </Directory>
+
+3. add the configuration for the location of the log and data files
+
+   <Directory /var/www/>
+        # ... existing configurations ...
+
+        SetEnv LcmLogDir /var/log/legalcase/
+        SetEnv LcmDataDir /var/lib/legalcase/data/
+        SetEnv LcmConfigDir /var/lib/legalcase/config/
+   </Directory>
+
+   The above directories were already created by this package.
+   They are also given the correct user/group ownership and rights.
+
+That's all.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Multiple instances of legalcase on the same server
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+If you need to install many instances of "legalcase" sites on the same 
+server, simply create virtual hosts with different variables.
+
+For example,
+
+	vhost1:
+        SetEnv LcmLogDir /var/log/legalcase/site1/
+		SetEnv LcmDataDir /var/lib/legalcase/data/site1/
+        SetEnv LcmConfigDir /var/lib/legalcase/config/site1/
+	vhost2:
+        SetEnv LcmLogDir /var/log/legalcase/site2/
+		SetEnv LcmDataDir /var/lib/legalcase/data/site2/
+        SetEnv LcmConfigDir /var/lib/legalcase/config/site2/
+	etc
+
+Make sure that each directory exists, and has the correct rights.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Help
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+Contact: legalcase-devel@lists.sf.net
+

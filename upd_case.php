@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.51 2005/12/06 09:28:58 mlutfy Exp $
+	$Id: upd_case.php,v 1.52 2006/02/20 03:21:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -32,35 +32,65 @@ $_SESSION['errors'] = array();
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-    $_SESSION['case_data'][$key]=$value;
+    $_SESSION['form_data'][$key]=$value;
 
+
+//
+// Clean (most of the) input
+//
+
+if (isset($_REQUEST['id_case']))
+	$id_case = intval($_REQUEST['id_case']);
+else
+	$id_case = 0;
+
+$_SESSION['form_data']['title'] = clean_input($_SESSION['form_data']['title']);
+$_SESSION['form_data']['legal_reason'] = clean_input($_SESSION['form_data']['legal_reason']);
+$_SESSION['form_data']['alledged_crime'] = clean_input($_SESSION['form_data']['alledged_crime']);
+$_SESSION['form_data']['notes'] = clean_input($_SESSION['form_data']['notes']);
+$_SESSION['form_data']['status'] = clean_input($_SESSION['form_data']['status']);
+$_SESSION['form_data']['stage'] = clean_input($_SESSION['form_data']['stage']);
+
+//
 // Check case data for validity
-if (!$_SESSION['case_data']['title'])
+//
+
+// * Title must be non-empty
+if (!$_SESSION['form_data']['title'])
 	$_SESSION['errors']['title'] = _Ti('case_input_title') . _T('warning_field_mandatory');
 
-// Date assignment (check only if a date is provided)
-$_SESSION['case_data']['date_assignment'] = get_datetime_from_array($_SESSION['case_data'], 'assignment', 'start', date('Y-m-d H:i:s'));
+// * Date assignment must be a vaid date
+$_SESSION['form_data']['date_assignment'] = get_datetime_from_array($_SESSION['form_data'], 'assignment', 'start', date('Y-m-d H:i:s'));
 
-if (! checkdate_sql($_SESSION['case_data']['date_assignment']))
+if (! checkdate_sql($_SESSION['form_data']['date_assignment']))
 	$_SESSION['errors']['date_assignment'] = _Ti('case_input_date_assigned') . 'Invalid date.'; // TRAD
 
+// * TODO: Status must be a valid option (where do we have official list?)
+if (! $_SESSION['form_data']['status'])
+	$_SESSION['errors']['status'] = _Ti('case_input_status') . _T('warning_field_mandatory');
+
+// * TODO: Stage must be a valid keyword
+if (! $_SESSION['form_data']['stage'])
+	$_SESSION['errors']['stage'] = _Ti('case_input_stage') . _T('warning_field_mandatory');
+
+validate_update_keywords_request('case', $id_case);
+
 if (count($_SESSION['errors'])) {
-    header("Location: $HTTP_REFERER");
+	header("Location: ". $_SERVER['HTTP_REFERER']);
     exit;
 }
 
-	$fl = "title='" . clean_input($_SESSION['case_data']['title']) . "',
-			id_court_archive='" . clean_input($_SESSION['case_data']['id_court_archive']) . "',
-			date_assignment = '" . $_SESSION['case_data']['date_assignment'] . "',
-			legal_reason='" . clean_input($_SESSION['case_data']['legal_reason']) . "',
-			alledged_crime='" . clean_input($_SESSION['case_data']['alledged_crime']) . "',
-			notes = '" . clean_input($_SESSION['case_data']['notes']) . "'";
+//
+// Create the case in the database
+//
 
-	// Add status to the list of fields
-	$fl .= ",status='" . $_SESSION['case_data']['status'] . "'";
-
-	// Add stage to the list of fields
-	$fl .= ",stage='" . $_SESSION['case_data']['stage'] . "'";
+$fl = "title='"              . $_SESSION['form_data']['title']            . "',
+		date_assignment = '" . $_SESSION['form_data']['date_assignment']  . "',
+		legal_reason='"      . $_SESSION['form_data']['legal_reason']     . "',
+		alledged_crime='"    . $_SESSION['form_data']['alledged_crime']   . "',
+		notes = '"           . $_SESSION['form_data']['notes']            . "',
+	    status='"            . $_SESSION['form_data']['status']           . "',
+	    stage='"             . $_SESSION['form_data']['stage']            . "'";
 
 	// Put public access rights settings in a separate string
 	$public_access_rights = '';
@@ -76,7 +106,7 @@ if (count($_SESSION['errors'])) {
 		$public_access_rights .= "public=" . (int)(read_meta('case_default_read') == 'yes');
 	} else {
 		// write user selection
-		$public_access_rights .= "public=" . (int)($_SESSION['case_data']['public'] == 'yes');
+		$public_access_rights .= "public=" . (int)($_SESSION['form_data']['public'] == 'yes');
 	}
 
 	if ((read_meta('case_write_always') == 'yes') && $author_session['status'] != 'admin') {
@@ -84,7 +114,7 @@ if (count($_SESSION['errors'])) {
 		$public_access_rights .= ", pub_write=" . (int)(read_meta('case_default_write') == 'yes');
 	} else {
 		// write user selection
-		$public_access_rights .= ", pub_write=" . (int)($_SESSION['case_data']['pub_write'] == 'yes');
+		$public_access_rights .= ", pub_write=" . (int)($_SESSION['form_data']['pub_write'] == 'yes');
 	}
 
 	if (isset($_REQUEST['id_case']))
@@ -114,7 +144,7 @@ if (count($_SESSION['errors'])) {
 	
 		if (($tmp_row = lcm_fetch_array($tmp_result))) {
 			$q = "UPDATE lcm_stage
-					SET date_creation = '" . $_SESSION['case_data']['date_assignment'] . "'
+					SET date_creation = '" . $_SESSION['form_data']['date_assignment'] . "'
 					WHERE id_entry = " . $tmp_row['id_entry'];
 
 			lcm_query($q);
@@ -150,7 +180,7 @@ if (count($_SESSION['errors'])) {
 					id_case = $id_case, 
 					id_author = $id_author,
 					type = 'assignment',
-					case_stage = '" . clean_input($_SESSION['case_data']['stage']) . "',
+					case_stage = '" . $_SESSION['form_data']['stage'] . "',
 					date_start = NOW(),
 					date_end = NOW(),
 					description='" . $id_author . "'";
@@ -161,8 +191,8 @@ if (count($_SESSION['errors'])) {
 		// Add lcm_stage entry
 		$q = "INSERT INTO lcm_stage SET
 				id_case = $id_case,
-				kw_case_stage = '" . clean_input($_SESSION['case_data']['stage']) . "',
-				date_creation = '" . $_SESSION['case_data']['date_assignment'] . "',
+				kw_case_stage = '" . $_SESSION['form_data']['stage'] . "',
+				date_creation = '" . $_SESSION['form_data']['date_assignment'] . "',
 				id_fu_creation = $id_followup";
 
 		lcm_query($q);
@@ -171,7 +201,7 @@ if (count($_SESSION['errors'])) {
 	// Keywords
 	update_keywords_request('case', $id_case);
 
-	$stage = get_kw_from_name('stage', $_SESSION['case_data']['stage']);
+	$stage = get_kw_from_name('stage', $_SESSION['form_data']['stage']);
 	$id_stage = $stage['id_keyword'];
 	update_keywords_request('stage', $id_case, $id_stage);
 
@@ -181,7 +211,7 @@ if (count($_SESSION['errors'])) {
 	// [AG] In each case the return page will be different.
 
 	//header("Location: case_det.php?case=$id_case");
-	$ref_edit_case = ($_SESSION['case_data']['ref_edit_case'] ? $_SESSION['case_data']['ref_edit_case'] : "case_det.php?case=$id_case");
+	$ref_edit_case = ($_SESSION['form_data']['ref_edit_case'] ? $_SESSION['form_data']['ref_edit_case'] : "case_det.php?case=$id_case");
 	$send_to = '';
 
 	// Proceed accoring to the button type
@@ -200,17 +230,17 @@ if (count($_SESSION['errors'])) {
 	}
 
 	// Send to add_client if any client to attach
-	if ($_SESSION['case_data']['attach_client']) {
+	if ($_SESSION['form_data']['attach_client']) {
 		header("Location: add_client.php?case=$id_case"
-			. "&clients[]=" .  $_SESSION['case_data']['attach_client'] 
+			. "&clients[]=" .  $_SESSION['form_data']['attach_client'] 
 			. "&ref_sel_client=" . rawurlencode($send_to));
 		exit;
 	}
 
 	// Send to add_org if any org to attach
-	if ($_SESSION['case_data']['attach_org']) {
+	if ($_SESSION['form_data']['attach_org']) {
 		header("Location: add_org.php?case=$id_case"
-			. "&orgs[]=" .  $_SESSION['case_data']['attach_org'] 
+			. "&orgs[]=" .  $_SESSION['form_data']['attach_org'] 
 			. "&ref_sel_client=" . rawurlencode($send_to));
 		exit;
 	}

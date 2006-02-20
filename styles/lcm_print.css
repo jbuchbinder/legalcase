@@ -83,6 +83,10 @@ body {
 	font-size: 11px;
 }
 
+#footer_narrow {
+	display: none;
+}
+
 #user_info_box_large_screen {
 	position: absolute;
 	top: 0px;
@@ -379,6 +383,7 @@ a.edit_lnk {
 }
 
 a.run_lnk {
+	display: none;
 	/* padding: 4px 4px 4px 22px;
 	margin-left: 5px;
 	background: url("../images/jimmac/stock_jump-to-16.png") no-repeat 2px 4px; */
@@ -824,6 +829,11 @@ h3.content_head {
 
 h4 {
 	/* font-size: 100%; */
+}
+
+/* Help icon shown in the page titles and subtitles */
+.help_icon {
+	display: none;
 }
 
 table.tbl_data td {
