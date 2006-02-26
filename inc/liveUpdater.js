@@ -343,32 +343,32 @@ function autocomplete(id, popupId, uri, popupData)
     
     function handleClick(e)
     {
-     // inputField.value = eventElement(e).innerHTML;
-
 	  	var foo = eventElement(e).innerHTML.split(': ');
-		inputField.value = foo[1];
 
         popup.style.visibility = 'hidden';
         inputField.focus();
 
-		document.getElementById('autocomplete-alt').style.display = 'none'; // [ML] hrm!
+		if (foo[0] > 0) {
+			inputField.value = foo[1];
+			document.getElementById('autocomplete-alt').style.display = 'none'; // [ML] hrm!
 
-		// [ML] experiments
-		function updateClient()
-		{
-			if (xmlHttp1.readyState == 4) {
-				var response = xmlHttp1.responseText;
-				dataField.innerHTML = response;
+			// [ML] experiments
+			function updateClient()
+			{
+				if (xmlHttp1.readyState == 4) {
+					var response = xmlHttp1.responseText;
+					dataField.innerHTML = response;
+				}
 			}
-		}
-    
-		xmlHttp1 = new XMLHttpRequest();
-		xmlHttp1.open('GET', 'test.php?id_client=' + foo[0], true);
-		xmlHttp1.onreadystatechange = updateClient;
-		xmlHttp1.send(null);
 
-      popup.style.visibility = 'hidden';
-      inputField.focus();
+			xmlHttp1 = new XMLHttpRequest();
+			xmlHttp1.open('GET', 'test.php?id_client=' + foo[0], true);
+			xmlHttp1.onreadystatechange = updateClient;
+			xmlHttp1.send(null);
+		}
+
+		popup.style.visibility = 'hidden';
+		inputField.focus();
     }
     
     function handleOver(e)
@@ -472,23 +472,25 @@ function autocomplete(id, popupId, uri, popupData)
 
 		// [ML] This is redundant with lines ~ 350
         popup.style.visibility = 'hidden';
-        inputField.value = foo[1];
 
-		document.getElementById('autocomplete-alt').style.display = 'none'; // [ML] hrm!
+		if (foo[0] > 0) {
+			inputField.value = foo[1];
+			document.getElementById('autocomplete-alt').style.display = 'none'; // [ML] hrm!
 
-		// [ML] experiments
-		function updateClient2()
-		{
-			if (xmlHttp1.readyState == 4) {
-				var response = xmlHttp1.responseText;
-				dataField.innerHTML = response;
+			// [ML] experiments
+			function updateClient2()
+			{
+				if (xmlHttp1.readyState == 4) {
+					var response = xmlHttp1.responseText;
+					dataField.innerHTML = response;
+				}
 			}
+
+			xmlHttp1 = new XMLHttpRequest();
+			xmlHttp1.open('GET', 'test.php?id_client=' + foo[0], true);
+			xmlHttp1.onreadystatechange = updateClient2;
+			xmlHttp1.send(null);
 		}
-    
-		xmlHttp1 = new XMLHttpRequest();
-		xmlHttp1.open('GET', 'test.php?id_client=' + foo[0], true);
-		xmlHttp1.onreadystatechange = updateClient2;
-		xmlHttp1.send(null);
 		
         if(isIE)
         {
