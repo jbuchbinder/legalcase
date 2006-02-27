@@ -110,12 +110,17 @@ body {
 
 /* ------------------- [Tabs list] ------------------- */
 
+/* [ML] 2005-12-20 Testing: tabs should not be shown when printing (useless) */
 .tabs {
+	/*
 	margin-top: 10px;
 	margin-bottom: 10px;
 	height: 26px;
+	*/
+	display: none;
 }
 
+/* [ML] see above
 ul.tabs_list {
 	padding: 0;
 	margin: 0;
@@ -143,7 +148,9 @@ ul.tabs_list li a {
 	padding: 0px 3px 0px 3px;
 	text-decoration: none;
 	display: block;
+	display: none;
 }
+*/
 
 .clearing {
 	height: 0;
@@ -355,41 +362,25 @@ ul.wo_blt li {
 	list-style-type: none;
 }
 
+/* [ML] 2005-12-20: testing: the buttons should not be shown at print (useless) */
 a.add_lnk {
-	/* padding: 4px 4px 4px 22px;
-	margin-left: 5px;
-	background: url("../images/jimmac/stock_attach-16.png") no-repeat 2px 4px; */
-	font-weight: bold;
-	/* text-decoration: none;
-	-moz-border-radius: 5px; */
+	display: none;
 }
 
 a.create_new_lnk {
-	/* padding: 4px 4px 4px 22px;
-	margin-left: 5px;
-	background: url("../images/jimmac/stock_new-16.png") no-repeat 2px 4px; */
-	font-weight: bold;
-	/* text-decoration: none;
-	-moz-border-radius: 5px; */
+	display: none;
 }
 
 a.edit_lnk {
-	/* padding: 4px 4px 4px 22px;
-	margin-left: 5px;
-	background: url("../images/jimmac/stock_edit-16.png") no-repeat 2px 4px; */
-	font-weight: bold;
-	/* text-decoration: none;
-	-moz-border-radius: 5px; */
+	display: none;
+}
+
+a.exp_lnk {
+	display: none;
 }
 
 a.run_lnk {
 	display: none;
-	/* padding: 4px 4px 4px 22px;
-	margin-left: 5px;
-	background: url("../images/jimmac/stock_jump-to-16.png") no-repeat 2px 4px; */
-	font-weight: bold;
-	/* text-decoration: none;
-	-moz-border-radius: 5px; */
 }
 
 a.prefs_myprefs {
@@ -408,6 +399,21 @@ a.prefs_logout {
 	font-size: 11px;
 	font-weight: bold;
 	text-decoration: none;
+}
+
+/* List of info, used in places such as "case details", "client details", etc. */
+ul.info {
+	padding-left: 0;
+}
+
+ul.info li {
+	list-style-type: none;
+	border-bottom: 1px solid #ccc;
+}
+
+ul.info li.large {
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 /* Go to page bar */
@@ -561,6 +567,10 @@ h1.lcm_main_head, a.head_ttl_link {
 hr.hair_line {
 	color: #ccc;
 	background-color: #333;
+}
+
+span.noprint {
+	display: none;
 }
 
 /* ----------------------------------------------- */
