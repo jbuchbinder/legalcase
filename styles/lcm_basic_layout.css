@@ -325,6 +325,18 @@ a.prefs_normal_lnk {
 
 /* Form elements */
 
+.autocomplete ul {
+	padding: 0;
+	margin: 0;
+	margin-left: 0.5em;
+	background-color: #ffc;
+	list-style: none;
+}
+
+.autocomplete ul li.selected {
+	background-color: #ff5;
+}
+
 form.search_form {
 	margin: 4px 4px 10px 4px;
 }
@@ -522,6 +534,21 @@ ul.info li {
 ul.info li.large {
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+
+/* Important data, ex: "Case ID: 1234", will put the 1234 in bold. */
+ul.info li .label1 {
+}
+
+ul.info li .value1 {
+	font-weight: bold;
+}
+
+/* Less important data, we do not highlight it. You can change this here. */
+ul.info li .label2 {
+}
+
+ul.info li .value2 {
 }
 
 /* --- [ Errors list ] --- */
