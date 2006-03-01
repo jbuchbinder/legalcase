@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.1 2006/02/28 17:11:29 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.2 2006/03/01 19:01:37 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -32,12 +32,13 @@ class LcmCase {
 	// Note: Since PHP5 we should use "private", and generates a warning,
 	// but we must support PHP >= 4.0.
 	var $data; 
-	var $cases;
-	var $cases_start_from;
+	var $followups;
+	var $fu_start_from;
 
 	function LcmCase($id_case = 0) {
 		$id_case = intval($id_case);
 		$this->data = array();
+		$this->fu_start_from = 0;
 
 		if (! ($id_case > 0))
 			return;
@@ -48,6 +49,97 @@ class LcmCase {
 		if (($row = lcm_fetch_array($result))) 
 			foreach ($row as $key => $val) 
 				$this->data[$key] = $val;
+	}
+
+	/* private */
+	function loadFollowups($list_pos = 0) {
+		global $prefs;
+
+		$q = "SELECT fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description, fu.case_stage,
+					fu.hidden, a.name_first, a.name_middle, a.name_last
+				FROM lcm_followup as fu, lcm_author as a
+				WHERE id_case = " . $this->data['id_case'] . "
+				  AND fu.id_author = a.id_author ";
+
+		// TODO
+		// Add date_start filter!
+
+		// Sort follow-ups by creation date
+		$fu_order = 'DESC';
+		if (_request('fu_order') == 'ASC' || _request('fu_order') == 'DESC')
+				$fu_order = _request('fu_order');
+		
+		$q .= " ORDER BY fu.date_start " . $fu_order;
+
+		$result = lcm_query($q);
+		$number_of_rows = lcm_num_rows($result);
+			
+		if ($list_pos >= $number_of_rows)
+			return;
+				
+		// Position to the page info start
+		if ($list_pos > 0)
+			if (!lcm_data_seek($result,$list_pos))
+				lcm_panic("Error seeking position $list_pos in the result");
+
+		if (lcm_num_rows($result)) {
+			for ($cpt = 0; (($cpt < $prefs['page_rows']) && ($row = lcm_fetch_array($result))); $cpt++)
+				array_push($this->followups, $row);
+		}
+	}
+
+	function getFollowupStart() {
+		$start_from = _request('list_pos', 0);
+
+		// just in case
+		if (! ($start_from >= 0)) $start_from = 0;
+		if (! $prefs['page_rows']) $prefs['page_rows'] = 10; 
+
+		$this->followups = array();
+		$this->fu_start_from = $start_from;
+		$this->loadFollowups($start_from);
+	}
+
+	function getFollowupDone() {
+		return ! (bool) (count($this->followups));
+	}
+
+	function getFollowupIterator() {
+		global $prefs;
+
+		if ($this->getFollowupDone)
+			lcm_panic("LcmClient::getFollowupIterator called but getFollowupDone() returned true");
+
+		$ret = array_shift($this->followups);
+
+		if ($this->getFollowupDone())
+			$this->loadFollowups($start_from + $prefs['page_rows']);
+
+		return $ret;
+	}
+
+	function getFollowupTotal() {
+		static $cpt_total_cache = null;
+
+		if (is_null($cpt_total_cache)) {
+			$query = "SELECT count(*) as cpt
+						FROM lcm_followup as fu, lcm_author as a
+						WHERE id_case = " . $this->data['id_case'] . "
+						  AND fu.id_author = a.id_author ";
+
+			$result = lcm_query($query);
+
+			if (($row = lcm_fetch_array($result)))
+				$cpt_total_cache = $row['cpt'];
+			else
+				$cpt_total_cache = 0;
+		}
+
+		return $cpt_total_cache;
+	}
+
+	function getName() {
+		return get_person_name($this->data);
 	}
 
 }
@@ -283,11 +375,12 @@ class LcmCaseInfoUI extends LcmCase {
 			}
 		}
 
-		echo '<li>' . _Ti('case_input_collaboration') . '</li>';
+		echo '<li>' . _Ti('case_input_collaboration');
 		echo "<ul style='padding-top: 1px; margin-top: 1px;'>";
 		echo "<li>" . _Ti('case_input_collaboration_read') . _T('info_' . ($this->data['public'] ? 'yes' : 'no')) . "</li>\n";
 		echo "<li>" . _Ti('case_input_collaboration_write') . _T('info_' . ($this->data['pub_write'] ? 'yes' : 'no')) . "</li>\n";
 		echo "</ul>\n";
+		echo "</li>\n";
 		echo "</ul>\n";
 	}
 
@@ -424,6 +517,29 @@ class LcmCaseInfoUI extends LcmCase {
 		show_edit_contacts_form('client', $form_data['id_client']);
 		
 		echo "</table>\n";
+	}
+
+	function printFollowups() {
+		$cpt = 0;
+		$my_list_pos = intval(_request('list_pos', 0));
+
+		show_page_subtitle(_T('case_subtitle_followups'), 'cases_followups');
+
+		echo "<p class=\"normal_text\">\n";
+		show_listfu_start('general', false);
+
+		for ($cpt = 0, $this->getFollowupStart(); (! $this->getFollowupDone()); $cpt++) {
+			$item = $this->getFollowupIterator();
+			show_listfu_item($item, $cpt);
+		}
+
+		if (! $cpt)
+			echo "No followups";
+
+		show_list_end($my_list_pos, $this->getFollowupTotal(), true);
+		echo "</p>\n";
+		echo "</fieldset>\n";
+
 	}
 }
 
