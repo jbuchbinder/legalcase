@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.2 2006/03/01 19:01:37 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.3 2006/03/01 21:57:12 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -386,136 +386,143 @@ class LcmCaseInfoUI extends LcmCase {
 
 	// XXX error checking! ($_SESSION['errors'])
 	function printEdit() {
-		echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
+		echo '<table class="tbl_usr_dtl">' . "\n";
 		
-		if($form_data['id_client']) {
-			echo "<tr><td>" . _T('client_input_id') . "</td>\n";
-			echo "<td>" . $form_data['id_client']
-				. '<input type="hidden" name="id_client" value="' . $form_data['id_client'] . '" /></td></tr>' . "\n";
+		// Case ID (if editing existing case)
+		if ($this->data['id_case']) {
+			echo "<tr>"
+				. "<td>" . _T('case_input_id') . "</td>"
+				. "<td>" . $this->data['id_case']
+				. '<input type="hidden" name="id_case" value="' . $this->data['id_case'] . '\" />'
+				. "</td></tr>\n";
 		}
 		
-		echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
-		echo '<td><input name="name_first" value="' . clean_output($form_data['name_first']) . '" class="search_form_txt" /></td></tr>' . "\n";
-		
-		// [ML] always show middle name, if any, no matter the configuration
-		if ($form_data['name_middle'] || $client_name_middle == 'yes') {
-			echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
-			echo '<td><input name="name_middle" value="' . clean_output($form_data['name_middle']) . '" class="search_form_txt" /></td></tr>' . "\n";
-		}
-			
-		echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
-		echo '<td><input name="name_last" value="' . clean_output($form_data['name_last']) . '" class="search_form_txt" /></td></tr>' . "\n";
-		
-		echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
-		echo '<td><select name="gender" class="sel_frm">' . "\n";
-		
-		$opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
-		
-		if ($form_data['gender'] == 'male')
-			$opt_sel_male = 'selected="selected" ';
-		else if ($form_data['gender'] == 'female')
-			$opt_sel_female = 'selected="selected" ';
-		else
-			$opt_sel_unknown = 'selected="selected" ';
-		
-		echo '<option ' . $opt_sel_unknown . 'value="unknown">' . _T('info_not_available') . "</option>\n";
-		echo '<option ' . $opt_sel_male . 'value="male">' . _T('person_input_gender_male') . "</option>\n";
-		echo '<option ' . $opt_sel_female . 'value="female">' . _T('person_input_gender_female') . "</option>\n";
-		
-		echo "</select>\n";
+		echo '<tr><td><label for="input_title">'
+			. f_err_star('title', $_SESSION['errors']) . _T('case_input_title')
+			. "</label></td>\n";
+		echo '<td><input size="35" name="title" id="input_case_title" value="'
+			. clean_output($this->data['title'])
+			. '" class="search_form_txt" />';
 		echo "</td></tr>\n";
 		
-		if ($form_data['id_client']) {
+		// Date of earlier assignment
+		if ($case_assignment_date == 'yes') {
 			echo "<tr>\n";
-			echo '<td>' . _Ti('time_input_date_creation') . '</td>';
-			echo '<td>' . format_date($form_data['date_creation'], 'full') . '</td>';
+			echo "<td>" . f_err_star('date_assignment') . _Ti('case_input_date_assigned') . "</td>\n";
+			echo "<td>" 
+				. get_date_inputs('assignment', $this->data['date_assignment'], false)
+				. "</td>\n";
 			echo "</tr>\n";
 		}
-		
-		if ($client_citizen_number == 'yes') {
-			echo "<tr>\n";
-			echo '<td>' . _T('person_input_citizen_number') . '</td>';
-			echo '<td><input name="citizen_number" value="' . clean_output($form_data['citizen_number']) . '" class="search_form_txt"></td>';
-			echo "</tr>\n";
-		}
-		
-		global $system_kwg;
-		
-		if ($client_civil_status == 'yes') {
-			echo "<tr>\n";
-			echo '<td>' . _Ti('person_input_civil_status') . '</td>';
-			echo '<td>';
-			echo '<select name="civil_status">';
-	
-			if (! $form_data['civil_status']) {
-				if ($form_data['id_client']) {
-					$form_data['civil_status'] = $system_kwg['civilstatus']['keywords']['unknown']['name'];
-				} else {
-					$form_data['civil_status'] = $system_kwg['civilstatus']['suggest'];
-				}
-	
-			}
-	
-			foreach($system_kwg['civilstatus']['keywords'] as $kw) {
-				$sel = ($form_data['civil_status'] == $kw['name'] ? ' selected="selected"' : '');
-				echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
-			}
-	
-			echo '</select>';
-			echo '</td>';
-			echo "</tr>\n";
-		}
-		
-		if ($client_income == 'yes') {
-			echo "<tr>\n";
-			echo '<td>' . _Ti('person_input_income') . '</td>';
-			echo '<td>';
-			echo '<select name="income">';
 			
-			if (! $form_data['income']) {
-				if ($form_data['id_client']) {
-					$form_data['income'] = $system_kwg['income']['keywords']['unknown']['name'];
-				} else {
-					$form_data['income'] = $system_kwg['income']['suggest'];
-				}
-			}
+		// Legal reason
+		if ($case_legal_reason == 'yes') {
+			echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
+			echo '<td>';
+			echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
+			echo clean_output($this->data['legal_reason']);
+			echo "</textarea>";
+			echo "</td>\n";
+			echo "</tr>\n";
+		}
+		
+		// Alledged crime
+		if ($case_alledged_crime == 'yes') {
+			echo '<tr><td><label for="input_alledged_crime">' . _T('case_input_alledged_crime') . "</label></td>\n";
+			echo '<td>';
+			echo '<textarea name="alledged_crime" id="input_alledged_crime" class="frm_tarea" rows="2" cols="60">';
+			echo clean_output($this->data['alledged_crime']);
+			echo '</textarea>';
+			echo "</td>\n";
+			echo "</tr>\n";
+		}
+		
+		// Keywords (if any)
+		show_edit_keywords_form('case', $this->data['id_case']);
+		
+		$id_stage = 0; // new case, stage not yet known
+		if ($this->data['stage']) {
+			$stage = get_kw_from_name('stage', $this->data['stage']);
+			$id_stage = $stage['id_keyword'];
+		}
 
-			foreach($system_kwg['income']['keywords'] as $kw) {
-				$sel = ($form_data['income'] == $kw['name'] ? ' selected="selected"' : '');
-				echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
-			}
-			
-			echo '</select>';
-			echo '</td>';
-			echo "</tr>\n";
-		}
-	
-		//
-		// Keywords, if any
-		//
-		show_edit_keywords_form('client', $form_data['id_client']);
-	
+		show_edit_keywords_form('stage', $this->data['id_case'], $id_stage);
+		
 		// Notes
 		echo "<tr>\n";
-		echo "<td>" . f_err_star('notes') . _Ti('client_input_notes') . "</td>\n";
+		echo "<td><label for='input_notes'>" . f_err_star('notes') . _Ti('case_input_notes') . "</label></td>\n";
 		echo '<td><textarea name="notes" id="input_notes" class="frm_tarea" rows="3" cols="60">'
-			. clean_output($form_data['notes'])
+			. clean_output($this->data['notes'])
 			. "</textarea>\n"
 			. "</td>\n";
 		echo "</tr>\n";
-	
-		//
-		// Contacts (e-mail, phones, etc.)
-		//
 		
-		echo "<tr>\n";
-		echo '<td colspan="2" align="center" valign="middle" class="heading">';
-		echo '<h4>' . _T('client_subtitle_contacts') . '</h4>';
-		echo '</td>';
+		// Case status
+		echo '<tr><td><label for="input_status">' . f_err_star('status') . _Ti('case_input_status') . "</label></td>\n";
+		echo '<td>';
+		echo '<select name="status" id="input_status" class="sel_frm">' . "\n";
+		$statuses = ($existing ? array('draft','open','suspended','closed','merged') : array('draft','open') );
+		
+		foreach ($statuses as $s) {
+			$sel = ($s == $this->data['status'] ? ' selected="selected"' : '');
+			echo '<option value="' . $s . '"' . $sel . ">" 
+				. _T('case_status_option_' . $s)
+				. "</option>\n";
+		}
+
+		echo "</select></td>\n";
 		echo "</tr>\n";
-	
-		show_edit_contacts_form('client', $form_data['id_client']);
 		
+		// Case stage
+		if (! $this->data['stage'])
+			$this->data['stage'] = get_suggest_in_group_name('stage');
+		
+		$kws = get_keywords_in_group_name('stage');
+		
+		echo '<tr><td><label for="input_stage">' . f_err_star('stage') . _T('case_input_stage') . "</label></td>\n";
+		echo '<td><select name="stage" id="input_stage" class="sel_frm">' . "\n";
+		foreach($kws as $kw) {
+			$sel = ($kw['name'] == $this->data['stage'] ? ' selected="selected"' : '');
+			echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+		}
+		echo "</select></td>\n";
+		echo "</tr>\n";
+		
+		// Public access rights
+		// FIXME FIXME FIXME
+		if ( $this->data['admin'] || (read_meta('case_read_always') != 'yes') || (read_meta('case_write_always') != 'yes') ) {
+			$dis = ( allowed($this->data['id_case'], 'a') ? '' : ' disabled="disabled"');
+			echo '<tr><td colspan="2">' . _T('case_input_collaboration')
+				.  ' <br /><ul>';
+
+			if ( (read_meta('case_read_always') != 'yes') || $GLOBALS['author_session']['status'] == 'admin') {
+				echo '<li style="list-style-type: none;">';
+				echo '<input type="checkbox" name="public" id="case_public_read" value="yes"';
+
+				if ($_SESSION['form_data']['public'])
+					echo ' checked="checked"';
+
+				echo "$dis />";
+				echo '<label for="case_public_read">' . _T('case_input_collaboration_read') . "</label></li>\n";
+			}
+
+			if ( (read_meta('case_write_always') != 'yes') || $_SESSION['form_data']['admin']) {
+				echo '<li style="list-style-type: none;">';
+				echo '<input type="checkbox" name="pub_write" id="case_public_write" value="yes"';
+
+				if ($_SESSION['form_data']['pub_write'])
+					echo ' checked="checked"';
+
+				echo "$dis />";
+				echo '<label for="case_public_write">' . _T('case_input_collaboration_write') . "</label></li>\n";
+			}
+
+			echo "</ul>\n";
+
+			echo "</td>\n";
+			echo "</tr>\n";
+		}
+
 		echo "</table>\n";
 	}
 
@@ -538,8 +545,6 @@ class LcmCaseInfoUI extends LcmCase {
 
 		show_list_end($my_list_pos, $this->getFollowupTotal(), true);
 		echo "</p>\n";
-		echo "</fieldset>\n";
-
 	}
 }
 
