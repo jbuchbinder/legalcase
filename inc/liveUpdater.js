@@ -117,57 +117,49 @@ function createLiveUpdaterFunction(uriFunc, postFunc, preFunc)
         return true;
     }
 
-    function processRequestChange()
-    {
-      if(request.readyState == 4)
-      {
-	      var xmlDoc = request.responseXML
+	function processRequestChange()
+	{
+		if(request.readyState == 4) {
+			var xmlDoc = request.responseXML;
+			var body = xmlDoc.getElementsByTagName("body");
 
-        var body = xmlDoc.getElementsByTagName("body");
+			if(body.length > 0) {
+				var nodes = body[0].childNodes;
 
-        if(body.length>0)
-        {
-          var nodes = body[0].childNodes
-          for(var i=0;i<nodes.length;i++)
-          {
-            if(nodes[i].nodeType==1 && nodes[i].getAttribute("id")!=null)
-            {
-              var id = nodes[i].getAttribute("id")
-              if(isIE && nodes[i].nodeName == 'tr')
-              {
-                recreateTR(document.getElementById(id), nodes[i]);
-              }
-              else if(isIE && nodes[i].nodeName == 'tbody')
-              {
-                recreateTBODY(document.getElementById(id), nodes[i]);
-              }
-              else
-              {
-                document.getElementById(id).innerHTML = flattenChildren(nodes[i].childNodes)
-              }
-            }
-          }
-        }
+				for(var i=0; i < nodes.length; i++) {
+					if(nodes[i].nodeType == 1 && nodes[i].getAttribute("id") != null) {
+						var id = nodes[i].getAttribute("id");
 
-				//evalScripts(xmlDoc);
-        var scripts = xmlDoc.getElementsByTagName("script");
-        for(var i=0;i<scripts.length;i++)
-        {
-          if(scripts[i].firstChild!=null)
-          {
-            var script = scripts[i].firstChild.nodeValue
-            if(script != null)
-            {
-              eval(script)
-            }
-          }
-        }
+						if(isIE && nodes[i].nodeName == 'tr') {
+							recreateTR(document.getElementById(id), nodes[i]);
+						} else if(isIE && nodes[i].nodeName == 'tbody') {
+							recreateTBODY(document.getElementById(id), nodes[i]); 
+						} else {
+							document.getElementById(id).innerHTML = flattenChildren(nodes[i].childNodes)
+						}
+					}
+				}
+			} else {
+				// document.getElementById(id).innerHTML = request.responseText;
+				alert('text = ' + request.responseText);
+			}
+
+			//evalScripts(xmlDoc);
+			var scripts = xmlDoc.getElementsByTagName("script");
+			for(var i = 0; i < scripts.length; i++) {
+				if(scripts[i].firstChild!=null) {
+					var script = scripts[i].firstChild.nodeValue
+						if(script != null) {
+							eval(script)
+						}
+				}
+			}
         
-        postFunc();
-      }
-    }
+			postFunc();
+		}
+	}
 
-    return update;
+	return update;
 }
 
 function evalScripts(node) {
@@ -360,7 +352,6 @@ function autocomplete(id, popupId, uri, popupData, hideAlt)
 
 		if (foo[0] > 0) {
 			inputField.value = foo[1];
-			// document.getElementById('autocomplete-client-alt').style.display = 'none'; // [ML] hrm!
 			altField.style.display = 'none'; // [ML] 
 
 			// [ML] experiments
@@ -631,8 +622,8 @@ function copyAttributes(source, destination)
 /* [ML] Functions for other more boring stuff */
 function getCaseInfo(id_case, destination) 
 {
-    function constructUri()
-    {
+    function constructUri() 
+	{
         return 'ajax.php?id_case=' + id_case;
     }
 
