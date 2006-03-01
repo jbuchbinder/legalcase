@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.78 2006/02/20 03:44:09 mlutfy Exp $
+	$Id: inc_filters.php,v 1.79 2006/03/01 21:54:29 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -62,7 +62,7 @@ function format_date($timestamp = '', $format = 'full') {
 	// format 0000-00-00 HH:MM:DD
 
 	if (! $timestamp)
-		$timestamp = strftime("%Y-%m-%d %H:%M:%S", mktime());
+		$timestamp = strftime("%Y-%m-%d %H:%M:%S", time());
 	
 	if (is_numeric($timestamp))
 		$timestamp = strftime("%Y-%m-%d %H:%M:%S", $timestamp);
