@@ -10,7 +10,7 @@ include('inc/inc.php');
 header('Content-Type: text/xml');
 echo '<?xml version="1.0"?>';
 
-echo "<body>\n";
+echo "<body>";
 
 if (isset($_REQUEST['find_name_client']) && $_REQUEST['find_name_client']) {
 	include_lcm('inc_obj_client');
@@ -79,8 +79,17 @@ if (isset($_REQUEST['find_name_client']) && $_REQUEST['find_name_client']) {
 	include_lcm('inc_obj_case');
 	echo '<div id="case_data">';
 
+	// Must remove &nbsp; otherwise requestXML cannot parse (?!)
+	ob_start();
+
 	$case = new LcmCaseInfoUI(intval($_REQUEST['id_case']));
 	$case->printGeneral(false, false);
+	$case->printFollowups();
+
+	$foo = ob_get_contents();
+	ob_end_clean();
+
+	echo preg_replace("/\&nbsp;/", " ", $foo);
 
 	echo "</div>\n";
 } else {
