@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.231 2006/02/20 03:41:49 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.232 2006/03/01 21:56:44 mlutfy Exp $
 */
 
 //
@@ -199,6 +199,7 @@ function lcm_html_start($title = "AUTO", $css_files = "", $meta = '') {
 	
 	echo "<link rel=\"shortcut icon\" type=\"image/ico\" href=\"images/lcm/favicon.ico\" />\n";
 	echo "<script type=\"text/javascript\" language=\"JavaScript\" src=\"inc/ss_switcher.js\"></script>\n";
+	echo "<script type=\"text/javascript\" language=\"JavaScript\" src=\"inc/liveUpdater.js\"></script>\n";
 	echo "</head>\n";
 
 	// right-to-left (Arabic, Hebrew, Farsi, etc. -- even if not supported at the moment)
@@ -1380,32 +1381,31 @@ function show_listcase_start() {
 	show_list_start($headers);
 }
 
-function show_listcase_item($item, $cpt, $custom = '', $find_case_string = '') {
+function show_listcase_item($item, $cpt, $find_case_string = '', $url = '__DEFAULT__', $url_extra = '') {
 	include_lcm('inc_acc');
 
 	$ac_read = allowed($item['id_case'], 'r');
 	$ac_edit = allowed($item['id_case'], 'e');
 	$css = ($cpt %2 ? "dark" : "light");
 
+	if ($url == '__DEFAULT__')
+		$url = 'case_det.php?case=' . $item['id_case'];
+
 	echo "<tr>\n";
 
 	// Case ID
 	echo "<td class='tbl_cont_" . $css . "'>";
-	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
 	echo highlight_matches($item['id_case'],$find_case_string);
-	if ($ac_read) echo '</a>';
 	echo "</td>\n";
 
 	// Date creation
 	echo "<td class='tbl_cont_" . $css . "'>";
-	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
 	echo format_date($item['date_creation'], 'date_short');
-	if ($ac_read) echo '</a>';
 	echo "</td>\n";
 
 	// Title
 	echo "<td class='tbl_cont_" . $css . "'>";
-	if ($ac_read) echo '<a href="case_det.php?case=' . $item['id_case'] . '" class="content_link">';
+	if ($ac_read) echo '<a href="' . $url . '" class="content_link" ' . $url_extra . '>';
 	echo highlight_matches(clean_output($item['title']),$find_case_string);
 	if (allowed($item['id_case'],'r')) echo '</a>';
 	echo "</td>\n";
@@ -1414,11 +1414,6 @@ function show_listcase_item($item, $cpt, $custom = '', $find_case_string = '') {
 	echo "<td class='tbl_cont_" . $css . "'>";
 	if ($item['status'])
 		echo _T('case_status_option_' . $item['status']);
-	echo "</td>\n";
-	
-	// Actions / custom html
-	echo "<td class='tbl_cont_" . $css . "'>";
-	echo $custom;
 	echo "</td>\n";
 
 	echo "</tr>\n";
@@ -1429,7 +1424,7 @@ function show_listcase_end($current_pos = 0, $number_of_rows = 0) {
 }
 
 // see listcases.php for example
-function show_listfu_start($screen = 'general') {
+function show_listfu_start($screen = 'general', $show_more_desc = true) {
 	global $prefs;
 
 	$cpt = 0;
@@ -1462,7 +1457,10 @@ function show_listfu_start($screen = 'general') {
 	
 	$headers[$cpt]['title'] = _Th('fu_input_description');
 	$headers[$cpt]['order'] = 'no_order';
-	$headers[$cpt]['more'] = 'fu_desc'; // will create var ?more_fu_desc=1
+
+	if ($show_more_desc)
+		$headers[$cpt]['more'] = 'fu_desc'; // will create var ?more_fu_desc=1
+
 	$cpt++;
 
 	show_list_start($headers);
