@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.2 2006/02/28 18:33:43 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.3 2006/03/01 16:48:01 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -31,13 +31,37 @@ class LcmFollowup {
 	// Note: Since PHP5 we should use "private", and generates a warning,
 	// but we must support PHP >= 4.0.
 	var $data; 
+	var $new_stage;
 
-	function LcmFollowup($id_fu = 0) {
+	function LcmFollowup($id_fu = 0, $id_case = 0) {
 		$id_fu = intval($id_fu);
 		$this->data = array();
 
-		if (! ($id_fu > 0))
+		if (! ($id_fu > 0)) {
+			// Set id_case
+			$id_case = intval($id_case);
+			if (! ($id_case >= 0))
+				lcm_panic("id_case is not numeric: " . htmlspecialchars($id_case));
+
+			$this->data['id_case'] = $id_case;
+
+			// Dates
+			$this->data['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+			$this->data['date_end']   = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
+
+			// Set appointment start/end/reminder times to current time
+			$this->data['app_start_time'] = date('Y-m-d H:i:s');
+			$this->data['app_end_time'] = date('Y-m-d H:i:s');
+			$this->data['app_reminder'] = date('Y-m-d H:i:s');
+
+			if (isset($_REQUEST['stage']))
+				$this->new_stage = $_REQUEST['stage'];
+
+			if (isset($_REQUEST['type']))
+				$this->data['type'] = $_REQUEST['type'];
+		
 			return;
+		}
 
 		$query = "SELECT fu.*, a.name_first, a.name_middle, a.name_last,
 					IF(UNIX_TIMESTAMP(fu.date_end) > 0, UNIX_TIMESTAMP(fu.date_end) - UNIX_TIMESTAMP(fu.date_start), 0) as length
@@ -141,6 +165,12 @@ class LcmFollowupInfoUI extends LcmFollowup {
 
 	// XXX error checking! ($_SESSION['errors'])
 	function printEdit() {
+		global $prefs; 
+
+		$admin = allowed($this->data['id_case'], 'a'); // FIXME
+		$edit  = allowed($this->data['id_case'], 'e'); // FIXME
+		$write = allowed($this->data['id_case'], 'w'); // FIXME (put in constructor)
+	
 		echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
 		echo '<tr><td>';
 		echo f_err_star('date_start') . _T('fu_input_date_start'); 
@@ -148,9 +178,9 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		echo "<td>";
 
 		$name = (($admin || $edit) ? 'start' : '');
-		echo get_date_inputs($name, $_SESSION['fu_data']['date_start'], false);
+		echo get_date_inputs($name, $this->data['date_start'], false);
 		echo ' ' . _T('time_input_time_at') . ' ';
-		echo get_time_inputs($name, $_SESSION['fu_data']['date_start']);
+		echo get_time_inputs($name, $this->data['date_start']);
 
 		echo "</td>\n";
 		echo "</tr>\n";
@@ -162,36 +192,36 @@ class LcmFollowupInfoUI extends LcmFollowup {
 
 		if ($prefs['time_intervals'] == 'absolute') {
 			// Buggy code, so isolated most important cases
-			if ($_SESSION['fu_data']['id_followup'] == 0)
+			if ($this->data['id_followup'] == 0)
 				$name = 'end';
 			elseif ($edit)
 				$name = 'end';
 			else
 				// user can 'finish' entering data
-				$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
+				$name = (($admin || ($edit && ($this->data['date_end']=='0000-00-00 00:00:00'))) ? 'end' : '');
 
-			echo get_date_inputs($name, $_SESSION['fu_data']['date_end']);
+			echo get_date_inputs($name, $this->data['date_end']);
 			echo ' ';
 			echo _T('time_input_time_at') . ' ';
-			echo get_time_inputs($name, $_SESSION['fu_data']['date_end']);
+			echo get_time_inputs($name, $this->data['date_end']);
 		} else {
 			$name = '';
 
 			// Buggy code, so isolated most important cases
-			if ($_SESSION['fu_data']['id_followup'] == 0)
+			if ($this->data['id_followup'] == 0)
 				$name = 'delta';
 			elseif ($edit)
 				$name = 'delta';
 			else
 				// user can 'finish' entering data
-				$name = (($admin || ($edit && ($_SESSION['fu_data']['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
+				$name = (($admin || ($edit && ($this->data['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
 
 			if (empty($_SESSION['errors'])) {
-				$interval = ( ($_SESSION['fu_data']['date_end']!='0000-00-00 00:00:00') ?
-						strtotime($_SESSION['fu_data']['date_end']) - strtotime($_SESSION['fu_data']['date_start']) : 0);
+				$interval = ( ($this->data['date_end']!='0000-00-00 00:00:00') ?
+						strtotime($this->data['date_end']) - strtotime($this->data['date_start']) : 0);
 				echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 			} else {
-				echo get_time_interval_inputs_from_array($name, $_SESSION['fu_data'], ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+				echo get_time_interval_inputs_from_array($name, $this->data, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 			}
 		}
 
@@ -212,8 +242,8 @@ class LcmFollowupInfoUI extends LcmFollowup {
 				echo '<select ' . $dis . ' name="result" size="1" class="sel_frm">' . "\n";
 	
 				$default = '';
-				if ($_SESSION['fu_data']['result'])
-					$default = $_SESSION['fu_data']['result'];
+				if ($this->data['result'])
+					$default = $this->data['result'];
 	
 				foreach ($kws_result as $kw) {
 					$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
@@ -227,8 +257,8 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo '<select ' . $dis . ' name="conclusion" size="1" class="sel_frm">' . "\n";
 	
 			$default = '';
-			if ($_SESSION['fu_data']['conclusion'])
-				$default = $_SESSION['fu_data']['conclusion'];
+			if ($this->data['conclusion'])
+				$default = $this->data['conclusion'];
 	
 			foreach ($kws_conclusion as $kw) {
 				$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
@@ -248,8 +278,8 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo '<select ' . $dis . ' name="sentence" size="1" class="sel_frm">' . "\n"; 
 	
 			$default = '';
-			if ($_SESSION['fu_data']['sentence'])
-				$default = $_SESSION['fu_data']['sentence'];
+			if ($this->data['sentence'])
+				$default = $this->data['sentence'];
 	
 			echo "<!-- " . $default . " -->\n";
 	
@@ -263,30 +293,30 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo "</select>\n";
 	
 			// If sentence, for how much?
-			echo '<input type="text" name="sentence_val" size="10" value="' . $_SESSION['fu_data']['sentence_val'] . '" />';
+			echo '<input type="text" name="sentence_val" size="10" value="' . $this->data['sentence_val'] . '" />';
 			echo "</td>\n";
 			echo "</tr>\n";
 		}
 	
 	
-		if ($_REQUEST['submit'] == 'set_status' || is_status_change($_SESSION['fu_data']['type'])) {
+		if ($_REQUEST['submit'] == 'set_status' || is_status_change($this->data['type'])) {
 			// Change status
 			echo "<tr>\n";
 			echo "<td>" . _T('case_input_status') . "</td>\n";
 			echo "<td>";
 
-			echo '<input type="hidden" name="type" value="' . $_SESSION['fu_data']['type'] . '" />' . "\n";
-			echo _T('kw_followups_' . $_SESSION['fu_data']['type'] . '_title');
+			echo '<input type="hidden" name="type" value="' . $this->data['type'] . '" />' . "\n";
+			echo _T('kw_followups_' . $this->data['type'] . '_title');
 
 			echo "</td>\n";
 			echo "</tr>\n";
-		} elseif ($_REQUEST['submit'] == 'set_stage' || $_SESSION['fu_data']['type'] == 'stage_change') {
+		} elseif ($_REQUEST['submit'] == 'set_stage' || $this->data['type'] == 'stage_change') {
 			// Change stage
 			echo "<tr>\n";
 			echo "<td>" . _T('fu_input_next_stage') . "</td>\n";
 			echo "<td>";
 
-			echo '<input type="hidden" name="type" value="' . $_SESSION['fu_data']['type'] . '" />' . "\n";
+			echo '<input type="hidden" name="type" value="' . $this->data['type'] . '" />' . "\n";
 
 			// This is to compensate an old bug, when 'case stage' was not stored in fu.description
 			// and therefore editing a follow-up would not give correct information.
@@ -303,18 +333,18 @@ class LcmFollowupInfoUI extends LcmFollowup {
 
 			if (isset($new_stage)) {
 				// Update stage keywords (if any)
-				$stage = get_kw_from_name('stage', $new_stage); // $_SESSION['fu_data']['case_stage']);
+				$stage = get_kw_from_name('stage', $new_stage); // $this->data['case_stage']);
 				$id_stage = $stage['id_keyword'];
-				show_edit_keywords_form('stage', $_SESSION['fu_data']['id_case'], $id_stage);
+				show_edit_keywords_form('stage', $this->data['id_case'], $id_stage);
 			}
-		} elseif ($_SESSION['fu_data']['type'] == 'assignment' || $_SESSION['fu_data']['type'] == 'unassignment') {
+		} elseif ($this->data['type'] == 'assignment' || $this->data['type'] == 'unassignment') {
 			// Do not allow assignment/un-assignment follow-ups to be changed
 			echo "<tr>\n";
 			echo "<td>" . _T('fu_input_next_stage') . "</td>\n";
 			echo "<td>";
 
-			echo '<input type="hidden" name="type" value="' . $_SESSION['fu_data']['type'] . '" />' . "\n";
-			echo _Tkw('followups', $_SESSION['fu_data']['type']);
+			echo '<input type="hidden" name="type" value="' . $this->data['type'] . '" />' . "\n";
+			echo _Tkw('followups', $this->data['type']);
 
 			echo "</td>\n";
 			echo "</tr>\n";
@@ -325,11 +355,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo "<td>";
 			echo '<select ' . $dis . ' name="type" size="1" class="sel_frm">' . "\n";
 
-			if ($_SESSION['fu_data']['type'])
-				$default_fu = $_SESSION['fu_data']['type'];
-			else
-				$default_fu = $system_kwg['followups']['suggest'];
-
+			$default_fu = get_suggest_in_group_name('followups');
 			$futype_kws = get_keywords_in_group_name('followups');
 			$kw_found = false;
 
@@ -354,13 +380,13 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		echo '<td valign="top">' . f_err_star('description') . _T('fu_input_description') . "</td>\n";
 		echo '<td>';
 
-		if ($_SESSION['fu_data']['type'] == 'assignment' || $_SESSION['fu_data']['type'] == 'unassignment') {
+		if ($this->data['type'] == 'assignment' || $this->data['type'] == 'unassignment') {
 			// Do not allow edit of assignment
-			echo '<input type="hidden" name="description" value="' . $_SESSION['fu_data']['description'] . '" />' . "\n";
-			echo get_fu_description($_SESSION['fu_data']);
+			echo '<input type="hidden" name="description" value="' . $this->data['description'] . '" />' . "\n";
+			echo get_fu_description($this->data);
 		} else {
 			echo '<textarea ' . $dis . ' name="description" rows="15" cols="60" class="frm_tarea">';
-			echo clean_output($_SESSION['fu_data']['description']);
+			echo clean_output($this->data['description']);
 			echo "</textarea>";
 		}
 
@@ -373,8 +399,8 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo '<td>' . _T('fu_input_sum_billed') . "</td>\n";
 			echo '<td>';
 			echo '<input ' . $dis . ' name="sumbilled" '
-				. 'value="' . clean_output($_SESSION['fu_data']['sumbilled']) . '" '
-				. 'class="search_form_txt" size='10' />';
+				. 'value="' . clean_output($this->data['sumbilled']) . '" '
+				. 'class="search_form_txt" size="10" />';
 
 			// [ML] If we do this we may as well make a function
 			// out of it, but not sure where to place it :-)
@@ -395,13 +421,13 @@ class LcmFollowupInfoUI extends LcmFollowup {
 	
 		// XXX FIXME: Should probably be in some function "is_system_fu"
 		// or even "is_deletable"
-		if ($_SESSION['fu_data']['id_followup']
-				&& allowed($_SESSION['fu_data']['id_case'], 'a')
-				&& ! (is_status_change($_SESSION['fu_data']['type'])
-					|| $_SESSION['fu_data']['type'] == 'assignment'
-					|| $_SESSION['fu_data']['type'] == 'unassignment'))
+		if ($this->data['id_followup']
+				&& allowed($this->data['id_case'], 'a')
+				&& ! (is_status_change($this->data['type'])
+					|| $this->data['type'] == 'assignment'
+					|| $this->data['type'] == 'unassignment'))
 		{
-			$checked = ($_SESSION['fu_data']['hidden'] == 'Y' ? ' checked="checked" ' : '');
+			$checked = ($this->data['hidden'] == 'Y' ? ' checked="checked" ' : '');
 
 			echo '<p class="normal_text">';
 			echo '<input type="checkbox"' . $checked . ' name="delete" id="box_delete" />';
@@ -422,9 +448,9 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo "<!-- Start time -->\n\t\t<tr><td>";
 			echo _T('app_input_date_start');
 			echo "</td><td>";
-			echo get_date_inputs('app_start', $_SESSION['fu_data']['app_start_time'], false);
+			echo get_date_inputs('app_start', $this->data['app_start_time'], false);
 			echo ' ' . _T('time_input_time_at') . ' ';
-			echo get_time_inputs('app_start', $_SESSION['fu_data']['app_start_time']);
+			echo get_time_inputs('app_start', $this->data['app_start_time']);
 			echo f_err_star('app_start_time',$_SESSION['errors']);
 			echo "</td></tr>\n";
 
@@ -432,13 +458,13 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo (($prefs['time_intervals'] == 'absolute') ? _T('app_input_date_end') : _T('app_input_time_length'));
 			echo "</td><td>";
 			if ($prefs['time_intervals'] == 'absolute') {
-				echo get_date_inputs('app_end', $_SESSION['fu_data']['app_end_time']);
+				echo get_date_inputs('app_end', $this->data['app_end_time']);
 				echo ' ' . _T('time_input_time_at') . ' ';
-				echo get_time_inputs('app_end', $_SESSION['fu_data']['app_end_time']);
+				echo get_time_inputs('app_end', $this->data['app_end_time']);
 				echo f_err_star('app_end_time',$_SESSION['errors']);
 			} else {
-				$interval = ( ($_SESSION['fu_data']['app_end_time']!='0000-00-00 00:00:00') ?
-						strtotime($_SESSION['fu_data']['app_end_time']) - strtotime($_SESSION['fu_data']['app_start_time']) : 0);
+				$interval = ( ($this->data['app_end_time']!='0000-00-00 00:00:00') ?
+						strtotime($this->data['app_end_time']) - strtotime($this->data['app_start_time']) : 0);
 				//	echo _T('calendar_info_time') . ' ';
 				echo get_time_interval_inputs('app_delta', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 				echo f_err_star('app_end_time',$_SESSION['errors']);
@@ -450,13 +476,13 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			   echo (($prefs['time_intervals'] == 'absolute') ? _T('app_input_reminder_time') : _T('app_input_reminder_offset'));
 			   echo "</td><td>";
 			   if ($prefs['time_intervals'] == 'absolute') {
-			   echo get_date_inputs('app_reminder', $_SESSION['fu_data']['app_reminder']);
+			   echo get_date_inputs('app_reminder', $this->data['app_reminder']);
 			   echo ' ' . _T('time_input_time_at') . ' ';
-			   echo get_time_inputs('app_reminder', $_SESSION['fu_data']['app_reminder']);
+			   echo get_time_inputs('app_reminder', $this->data['app_reminder']);
 			   echo f_err_star('app_reminder',$_SESSION['errors']);
 			   } else {
-			   $interval = ( ($_SESSION['fu_data']['app_end_time']!='0000-00-00 00:00:00') ?
-			   strtotime($_SESSION['fu_data']['app_start_time']) - strtotime($_SESSION['fu_data']['app_reminder']) : 0);
+			   $interval = ( ($this->data['app_end_time']!='0000-00-00 00:00:00') ?
+			   strtotime($this->data['app_start_time']) - strtotime($this->data['app_reminder']) : 0);
 			//	echo _T('calendar_info_time') . ' ';
 			echo get_time_interval_inputs('app_rem_offset', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 			echo " " . _T('time_info_before_start');
@@ -469,7 +495,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo f_err_star('app_title') . _T('app_input_title');
 			echo "</td><td>";
 			echo '<input type="text" ' . $title_onfocus . $dis . ' name="app_title" size="50" value="';
-			echo clean_output($_SESSION['fu_data']['app_title']) . '" class="search_form_txt" />';
+			echo clean_output($this->data['app_title']) . '" class="search_form_txt" />';
 			echo "</td></tr>\n";
 
 			echo "<!-- Appointment type -->\n\t\t<tr><td>";
@@ -502,16 +528,11 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo _T('app_input_description');
 			echo "</td><td>";
 			echo '<textarea ' . $dis . ' name="app_description" rows="5" cols="60" class="frm_tarea">';
-			echo clean_output($_SESSION['fu_data']['app_description']);
+			echo clean_output($this->data['app_description']);
 			echo '</textarea>';
 			echo "</td></tr>\n";
 			echo "</table>\n";
 			echo "</div>\n";
-		}
-
-		if (isset($_SESSION['followup'])) {
-			// Allow case admin to hide the follow-up
-			// TODO
 		}
 	}
 }
