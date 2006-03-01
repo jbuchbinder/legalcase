@@ -306,11 +306,12 @@ function liveForm(id, uri) {
 	  }
 }
 
-function autocomplete(id, popupId, uri, popupData)
+function autocomplete(id, popupId, uri, popupData, hideAlt)
 {
     var inputField = document.getElementById(id);
-	var dataField = document.getElementById(popupData); // [ML]
-    var popup = document.getElementById(popupId);
+    var popup      = document.getElementById(popupId);
+	var dataField  = document.getElementById(popupData); // [ML]
+	var altField   = document.getElementById(hideAlt); // [ML]
     var options = new Array(); 
     var current = 0;
     var originalPopupTop = popup.offsetTop; 
@@ -318,9 +319,17 @@ function autocomplete(id, popupId, uri, popupData)
     function constructUri()
     {
         var separator = "?";
+		var action = "find_name_client";
+
         if(uri.indexOf("?") >= 0)
             separator = "&";
-        return uri + separator + "s=" + (inputField.value); /* [ML] removed escape() for cyrillic ?? */
+
+		if (id == "clientsearchkey")
+			action = "find_name_client";
+		else if (id == "casesearchkey")
+			action = "find_name_case";
+			
+        return uri + separator + action + "=" + (inputField.value); /* [ML] removed escape() for cyrillic ?? */
     }
    
     function hidePopup()
@@ -344,13 +353,15 @@ function autocomplete(id, popupId, uri, popupData)
     function handleClick(e)
     {
 	  	var foo = eventElement(e).innerHTML.split(': ');
+		var action = "id_client";
 
         popup.style.visibility = 'hidden';
         inputField.focus();
 
 		if (foo[0] > 0) {
 			inputField.value = foo[1];
-			document.getElementById('autocomplete-alt').style.display = 'none'; // [ML] hrm!
+			// document.getElementById('autocomplete-client-alt').style.display = 'none'; // [ML] hrm!
+			altField.style.display = 'none'; // [ML] 
 
 			// [ML] experiments
 			function updateClient()
@@ -358,11 +369,17 @@ function autocomplete(id, popupId, uri, popupData)
 				if (xmlHttp1.readyState == 4) {
 					var response = xmlHttp1.responseText;
 					dataField.innerHTML = response;
+					document.getElementById('input_case_title').value = inputField.value;
 				}
 			}
 
+			if (id == 'clientsearchkey')
+				action = 'id_client';
+			else if (id == 'casesearchkey')
+				action = 'id_case';
+
 			xmlHttp1 = new XMLHttpRequest();
-			xmlHttp1.open('GET', 'test.php?id_client=' + foo[0], true);
+			xmlHttp1.open('GET', 'ajax.php?' + action + '=' + foo[0], true);
 			xmlHttp1.onreadystatechange = updateClient;
 			xmlHttp1.send(null);
 		}
@@ -475,7 +492,7 @@ function autocomplete(id, popupId, uri, popupData)
 
 		if (foo[0] > 0) {
 			inputField.value = foo[1];
-			document.getElementById('autocomplete-alt').style.display = 'none'; // [ML] hrm!
+			altField.style.display = 'none'; // [ML]
 
 			// [ML] experiments
 			function updateClient2()
@@ -483,11 +500,12 @@ function autocomplete(id, popupId, uri, popupData)
 				if (xmlHttp1.readyState == 4) {
 					var response = xmlHttp1.responseText;
 					dataField.innerHTML = response;
+					document.getElementById('input_case_title').value = inputField.value;
 				}
 			}
 
 			xmlHttp1 = new XMLHttpRequest();
-			xmlHttp1.open('GET', 'test.php?id_client=' + foo[0], true);
+			xmlHttp1.open('GET', 'ajax.php?id_client=' + foo[0], true);
 			xmlHttp1.onreadystatechange = updateClient2;
 			xmlHttp1.send(null);
 		}
@@ -608,4 +626,18 @@ function copyAttributes(source, destination)
 	  }
   }
   destination.className = source.getAttribute('class');
+}
+
+/* [ML] Functions for other more boring stuff */
+function getCaseInfo(id_case, destination) 
+{
+    function constructUri()
+    {
+        return 'ajax.php?id_case=' + id_case;
+    }
+
+    var updater = liveUpdater(constructUri);
+    var timeout = false;
+
+	updater();
 }
