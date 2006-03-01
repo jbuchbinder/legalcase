@@ -18,12 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.80 2006/02/20 03:14:30 mlutfy Exp $
+	$Id: edit_case.php,v 1.81 2006/03/01 21:51:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
+
+include_lcm('inc_obj_client');
+include_lcm('inc_obj_case');
+include_lcm('inc_obj_fu');
 
 // Read site configuration preferences
 $case_assignment_date = read_meta('case_assignment_date');
@@ -38,7 +42,7 @@ if (empty($_SESSION['errors'])) {
 
 	// Set the returning page
 	if (isset($ref)) $_SESSION['form_data']['ref_edit_case'] = $ref;
-	else $_SESSION['form_data']['ref_edit_case'] = $GLOBALS['HTTP_REFERER'];
+	else $_SESSION['form_data']['ref_edit_case'] = $_SERVER['HTTP_REFERER'];
 
 	// Register case ID as session variable
 	if (!session_is_registered("case"))
@@ -89,17 +93,8 @@ if (!$existing && isset($_REQUEST['attach_client'])) {
 	$attach_client = intval($_REQUEST['attach_client']);
 
 	if ($attach_client) {
-		// Fetch name of the client
-		$query = "SELECT name_first, name_middle, name_last
-					FROM lcm_client
-					WHERE id_client = " . $attach_client;
-
-		$result = lcm_query($query);
-		if ($info = lcm_fetch_array($result)) {
-			$_SESSION['form_data']['title'] = get_person_name($info);
-		} else {
-			lcm_panic("No such client #" . $attach_client);
-		}
+		$client = new LcmClient($attach_client);
+		$_SESSION['form_data']['title'] = $client->getName();
 	}
 }
 
@@ -159,173 +154,141 @@ if ($attach_client || $attach_org)
 	show_context_end();
 
 // Start edit case form
-echo "<form action=\"upd_case.php\" method=\"post\">
-<table class=\"tbl_usr_dtl\">\n";
+echo '<form action="upd_case.php" method="post">' . "\n";
 
-if ($attach_client)
-	echo '<input type="hidden" name="attach_client" value="' . $attach_client . '" />' . "\n";
+if (! $case) {
+	if ($attach_client) {
+		show_page_subtitle("Client information", 'clients_intro'); // TRAD
 
-if ($attach_org)
-	echo '<input type="hidden" name="attach_org" value="' . $attach_org . '" />' . "\n";
+		$client = new LcmClientInfoUI($attach_client);
+		$client->printGeneral(false);
+		$client->printCases();
+		$client->printAttach();
+	} elseif ($attach_org) {
+		// TODO: $org = new OrgInfoUI($attach_org);
+		// $org->printGeneral(false);
+		// $org->printCases();
+		echo '<input type="hidden" name="attach_org" value="' . $attach_org . '" />' . "\n";
+	} else {
+		//
+		// For to find or create new client for case
+		//
+		show_page_subtitle("Client information", 'clients_intro'); // TRAD
 
-if ($_SESSION['form_data']['id_case']) {
-	echo "\t<tr><td>" . _T('case_input_id') . "</td><td>" . $_SESSION['form_data']['id_case']
-		. "<input type=\"hidden\" name=\"id_case\" value=\"" . $_SESSION['form_data']['id_case'] . "\" /></td></tr>\n";
+		echo '<p class="normal_text">';
+		echo '<input type="checkbox" name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
+		echo '<label for="box_new_client">' . "Add a client to this case" . '</label>'; // TRAD
+		echo "</p>\n";
+
+		echo '<div id="new_client" style="display: none;">';
+
+		echo "<div style='overflow: hidden; width: 100%;'>";
+		echo '<div style="float: left; text-align: right; width: 29%;">';
+		echo '<p class="normal_text" style="margin: 0; padding: 4px;">' .  _Ti('input_search_client') . '</p>';
+		echo "</div>\n";
+
+		echo '<div style="float: right; width: 69%;">';
+		echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" autocomplete="off" name="clientsearchkey" id="clientsearchkey" size="25" />' . "</p>\n";
+		echo '<span id="autocomplete-client-popup" class="autocomplete" style="position: absolute; visibility: hidden;"><span></span></span>';
+		echo '</div>';
+
+		echo '<div style="clear: right;"></div>';
+
+		echo '<div id="autocomplete-client-data"></div>' . "\n";
+		echo "</div>\n";
+
+		echo '<div id="autocomplete-client-alt">';
+		$client = new LcmClientInfoUI();
+		$client->printEdit();
+		echo '</div>';
+
+		echo "<script type=\"text/javascript\">
+			autocomplete('clientsearchkey', 'autocomplete-client-popup', 'ajax.php', 'autocomplete-client-data', 'autocomplete-client-alt')
+			</script>\n";
+
+		echo "</div>\n"; // box that hides this function by default
+	}
 }
 
-	echo '<tr><td><label for="input_title">'
-		. f_err_star('title', $_SESSION['errors']) . _T('case_input_title')
-		. "</label></td>\n";
-	echo '<td><input size="35" name="title" id="input_title" value="'
-		. clean_output($_SESSION['form_data']['title'])
-		. '" class="search_form_txt" />';
-	echo "</td></tr>\n";
+if (! $case) {
+	//
+	// Find case (show only if new case)
+	//
+	show_page_subtitle("Case information", 'cases_intro'); // TRAD
 
-	// Date of earlier assignment
-	if ($case_assignment_date == 'yes') {
-		echo "<tr>\n";
-		echo "<td>" . f_err_star('date_assignment') . _Ti('case_input_date_assigned') . "</td>\n";
-		echo "<td>" 
-			. get_date_inputs('assignment', $_SESSION['form_data']['date_assignment'], false)
-			. "</td>\n";
-		echo "</tr>\n";
-	}
+	echo "<div style='overflow: hidden; width: 100%;'>";
+	echo '<div style="float: left; text-align: right; width: 29%;">';
+	echo '<p class="normal_text" style="margin: 0; padding: 4px;">' . _Ti('input_search_case') . '</p>';
+	echo "</div>\n";
 	
-	// Legal reason
-	if ($case_legal_reason == 'yes') {
-		echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
-		echo '<td>';
-		echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
-		echo clean_output($_SESSION['form_data']['legal_reason']);
-		echo "</textarea>";
-		echo "</td>\n";
-		echo "</tr>\n";
-	}
+	echo '<div style="float: right; width: 69%;">';
+	echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" autocomplete="off" name="casesearchkey" id="casesearchkey" size="25" />' . "</p>\n";
+	echo '<span id="autocomplete-case-popup" class="autocomplete" style="position: absolute; visibility: hidden;"><span></span></span>';
+	echo '</div>';
+	
+	echo '<div style="clear: right;"></div>';
+	
+	echo '<div id="autocomplete-case-data"></div>' . "\n";
+	echo "</div>\n";
+}
 
-	// Alledged crime
-	if ($case_alledged_crime == 'yes') {
-		echo '<tr><td><label for="input_alledged_crime">' . _T('case_input_alledged_crime') . "</label></td>\n";
-		echo '<td>';
-		echo '<textarea name="alledged_crime" id="input_alledged_crime" class="frm_tarea" rows="2" cols="60">';
-		echo clean_output($_SESSION['form_data']['alledged_crime']);
-		echo '</textarea>';
-		echo "</td>\n";
-		echo "</tr>\n";
-	}
+echo '<div id="case_data">';
+	
+$obj_case = new LcmCaseInfoUI($case);
+$obj_case->printEdit();
 
-	// Keywords (if any)
-	show_edit_keywords_form('case', $_SESSION['form_data']['id_case']);
+echo "</div>\n"; /* div case_data */
 
-	$id_stage = 0; // new case, stage not yet known
-	if ($_SESSION['form_data']['stage']) {
-		$stage = get_kw_from_name('stage', $_SESSION['form_data']['stage']);
-		$id_stage = $stage['id_keyword'];
-	}
+echo "<script type=\"text/javascript\">
+		autocomplete('casesearchkey', 'autocomplete-case-popup', 'ajax.php', 'autocomplete-case-data', 'case_data')
+	</script>\n";
 
-	show_edit_keywords_form('stage', $_SESSION['form_data']['id_case'], $id_stage);
+//
+// Follow-up data (only for new case, not edit case)
+//
+if (! $case) {
+	echo '<p class="normal_text">';
+	echo '<input type="checkbox" name="add_client" id="box_new_followup" onclick="display_block(\'new_followup\', \'flip\')"; />';
+	echo '<label for="box_new_followup">' . "Add an activity to case" . '</label>'; // TRAD
+	echo "</p>\n";
 
-	// Notes
-	echo "<tr>\n";
-	echo "<td><label for='input_notes'>" . f_err_star('notes') . _Ti('case_input_notes') . "</label></td>\n";
-	echo '<td><textarea name="notes" id="input_notes" class="frm_tarea" rows="3" cols="60">'
-		. clean_output($_SESSION['form_data']['notes'])
-		. "</textarea>\n"
-		. "</td>\n";
-	echo "</tr>\n";
+	echo '<div id="new_followup" style="display: none;">';
 
-	// Case status
-	echo '<tr><td><label for="input_status">' . f_err_star('status') . _Ti('case_input_status') . "</label></td>\n";
-	echo '<td>';
-	echo '<select name="status" id="input_status" class="sel_frm">' . "\n";
-	$statuses = ($existing ? array('draft','open','suspended','closed','merged') : array('draft','open') );
+	show_page_subtitle("Follow-up information", 'followups_intro'); // TRAD
 
-	foreach ($statuses as $s) {
-		$sel = ($s == $_SESSION['form_data']['status'] ? ' selected="selected"' : '');
-		echo '<option value="' . $s . '"' . $sel . ">" 
-			. _T('case_status_option_' . $s)
-			. "</option>\n";
-	}
+	echo '<div id="autocomplete-fu-alt">';
+	$fu = new LcmFollowupInfoUI();
+	$fu->printEdit();
+	echo "</div>\n";
 
-	echo "</select></td>\n";
-	echo "</tr>\n";
+	echo "</div>\n";
+}
 
-	// Case stage
-	if (! $_SESSION['form_data']['stage'])
-		$_SESSION['form_data']['stage'] = get_suggest_in_group_name('stage');
-
-	$kws = get_keywords_in_group_name('stage');
-
-	echo '<tr><td><label for="input_stage">' . f_err_star('stage') . _T('case_input_stage') . "</label></td>\n";
-	echo '<td><select name="stage" id="input_stage" class="sel_frm">' . "\n";
-	foreach($kws as $kw) {
-		$sel = ($kw['name'] == $_SESSION['form_data']['stage'] ? ' selected="selected"' : '');
-		echo "\t\t\t\t<option value='" . $kw['name'] . "'" . "$sel>" . _T(remove_number_prefix($kw['title'])) . "</option>\n";
-	}
-	echo "</select></td>\n";
-	echo "</tr>\n";
-
-	// Public access rights
-	if ( $_SESSION['form_data']['admin'] || (read_meta('case_read_always') != 'yes') || (read_meta('case_write_always') != 'yes') ) {
-		$dis = ( allowed($case,'a') ? '' : ' disabled="disabled"');
-		echo '<tr><td colspan="2">' . _T('case_input_collaboration') .  ' <br />
-				<ul>';
-
-		if ( (read_meta('case_read_always') != 'yes') || $GLOBALS['author_session']['status'] == 'admin') {
-			echo '<li style="list-style-type: none;">';
-			echo '<input type="checkbox" name="public" id="case_public_read" value="yes"';
-
-			if ($_SESSION['form_data']['public'])
-				echo ' checked="checked"';
-
-			echo "$dis />";
-			echo '<label for="case_public_read">' . _T('case_input_collaboration_read') . "</label></li>\n";
-		}
-
-		if ( (read_meta('case_write_always') != 'yes') || $_SESSION['form_data']['admin']) {
-			echo '<li style="list-style-type: none;">';
-			echo '<input type="checkbox" name="pub_write" id="case_public_write" value="yes"';
-
-			if ($_SESSION['form_data']['pub_write'])
-				echo ' checked="checked"';
-
-			echo "$dis />";
-			echo '<label for="case_public_write">' . _T('case_input_collaboration_write') . "</label></li>\n";
-		}
-
-		echo "</ul>\n";
-?>
-
-			</td>
-		</tr>
-
-<?php
-	}
-
-	echo "</table>\n";
-
-	// Different buttons for edit existing and for new case
-	if ($existing) {
-		echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
+// Different buttons for edit existing and for new case
+if ($existing) {
+	echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
+} else {
+	// More buttons for 'extended' mode
+	if ($prefs['mode'] == 'extended') {
+		echo '<p>';
+		echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . '</button>';
+		echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
+		echo "</p>\n";
 	} else {
-		// More buttons for 'extended' mode
-		if ($prefs['mode'] == 'extended') {
-			echo '<p><button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-			echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
-			echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') .  "</button></p>\n";
-		} else {
-			// Less buttons in simple mode
-			echo '<p><button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
-		}
+		// Less buttons in simple mode
+		echo '<p><button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
 	}
+}
 
-	echo '<input type="hidden" name="admin" value="' . $_SESSION['form_data']['admin'] . "\" />\n";
-	echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['form_data']['ref_edit_case'] . "\" />\n";
-	echo "</form>\n\n";
+echo '<input type="hidden" name="admin" value="' . $_SESSION['form_data']['admin'] . "\" />\n";
+echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['form_data']['ref_edit_case'] . "\" />\n";
+echo "</form>\n\n";
 
-	// Reset error messages and form data
-	$_SESSION['errors'] = array();
-	$_SESSION['case_data'] = array(); // DEPRECATED
-	$_SESSION['form_data'] = array();
+// Reset error messages and form data
+$_SESSION['errors'] = array();
+$_SESSION['case_data'] = array(); // DEPRECATED
+$_SESSION['form_data'] = array();
 
-	lcm_page_end();
+lcm_page_end();
+
 ?>
