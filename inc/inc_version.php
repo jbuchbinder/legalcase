@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.84 2006/02/20 03:43:11 mlutfy Exp $
+	$Id: inc_version.php,v 1.85 2006/03/01 21:59:06 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -239,10 +239,10 @@ if (@file_exists('inc/my_options.php')) {
 }
 
 // Current version of LCM
-$lcm_version = 0.641;
+$lcm_version = 0.700;
 
 // Current version of LCM shown on screen
-$lcm_version_shown = "0.6.4a";
+$lcm_version_shown = "0.7.0 CVS";
 
 // Current version of LCM database
 $lcm_db_version = 42;
@@ -941,6 +941,14 @@ function _Tkw($grp, $val, $args = '') {
 			menu, then click on the 'Maintenance' tab, then click on the
 			'Validate' button. This will refresh the available keywords.");
 	}
+}
+
+include_lcm('inc_filters');
+function _request ($name, $default = '') {
+	if (isset($_REQUEST[$name]))
+		return clean_input($_REQUEST[$name]);
+	else
+		return $default;
 }
 
 // Main language of the site
