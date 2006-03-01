@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.1 2006/02/26 00:54:59 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.2 2006/03/01 21:57:43 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -28,33 +28,32 @@ define('_INC_OBJ_CLIENT', '1');
 include_lcm('inc_db');
 include_lcm('inc_contacts');
 
-class Client {
+class LcmClient {
 	// Note: Since PHP5 we should use "private", and generates a warning,
 	// but we must support PHP >= 4.0.
 	var $data; 
 	var $cases;
-	var $cases_start_from;
+	var $case_start_from;
 
-	function Client($id_client = 0) {
+	function LcmClient($id_client = 0) {
 		$id_client = intval($id_client);
 		$this->data = array();
 		$this->cases = null;
 		$this->case_start_from = 0;
 
 		if (! ($id_client > 0))
-			return $data;
+			return;
 
-		if ($id_client) {
-			$query = "SELECT * FROM lcm_client WHERE id_client = $id_client";
-			$result = lcm_query($query);
+		$query = "SELECT * FROM lcm_client WHERE id_client = $id_client";
+		$result = lcm_query($query);
 
-			if (($row = lcm_fetch_array($result))) 
-				foreach ($row as $key => $val) 
-					$this->data[$key] = $val;
-		}
+		if (($row = lcm_fetch_array($result))) 
+			foreach ($row as $key => $val) 
+				$this->data[$key] = $val;
 	}
 
-	private function loadCases($list_pos = 0) {
+	/* private */
+	function loadCases($list_pos = 0) {
 		global $prefs;
 
 		$q = "SELECT clo.id_case, c.*
@@ -84,8 +83,6 @@ class Client {
 			for ($cpt = 0; (($cpt < $prefs['page_rows']) && ($row = lcm_fetch_array($result))); $cpt++)
 				array_push($this->cases, $row);
 		}
-
-		lcm_debug("loadCases: loaded " . count($this->cases) . " cases");
 	}
 
 	function getCaseStart() {
@@ -101,19 +98,14 @@ class Client {
 	}
 
 	function getCaseDone() {
-		lcm_debug("getCaseDone: " . count($this->cases));
-		// return ! (bool) (count($this->cases));
-		if (count($this->cases))
-			return false;
-		else
-			return true;
+		return ! (bool) (count($this->cases));
 	}
 
 	function getCaseIterator() {
 		global $prefs;
 
 		if ($this->getCaseDone)
-			lcm_panic("Client::getCaseIterator called but getCaseDone() returned true");
+			lcm_panic("LcmClient::getCaseIterator called but getCaseDone() returned true");
 
 		$ret = array_shift($this->cases);
 
@@ -124,27 +116,38 @@ class Client {
 	}
 
 	function getCaseTotal() {
-		$query = "SELECT count(*) as cpt
-				FROM lcm_case_client_org as clo, lcm_case as c
-				WHERE clo.id_client = " . $this->data['id_client'] . "
-				AND clo.id_case = c.id_case ";
+		static $cpt_total_cache = null;
 
-		$result = lcm_query($query);
+		if (is_null($cpt_total_cache)) {
+			$query = "SELECT count(*) as cpt
+					FROM lcm_case_client_org as clo, lcm_case as c
+					WHERE clo.id_client = " . $this->data['id_client'] . "
+					  AND clo.id_case = c.id_case ";
 
-		if (($row = lcm_fetch_array($result)))
-			return $row['cpt'];
-		else
-			return 0;
+			$result = lcm_query($query);
+
+			if (($row = lcm_fetch_array($result)))
+				$cpt_total_cache = $row['cpt'];
+			else
+				$cpt_total_cache = 0;
+		}
+
+		return $cpt_total_cache;
+	}
+
+	function getName() {
+		return get_person_name($this->data);
 	}
 }
 
-class ClientInfoUI extends Client {
-	function ClientHtml($id_client = 0) {
-		$this->Client($id_client);
+class LcmClientInfoUI extends LcmClient {
+	function LcmClientInfoUI($id_client = 0) {
+		$this->LcmClient($id_client);
 	}
 
-	function printGeneral() {
-		show_page_subtitle(_T('generic_subtitle_general'), 'clients_intro');
+	function printGeneral($show_subtitle = true) {
+		if ($show_subtitle)
+			show_page_subtitle(_T('generic_subtitle_general'), 'clients_intro');
 
 		echo '<ul class="info">';
 		echo '<li>' 
@@ -154,7 +157,7 @@ class ClientInfoUI extends Client {
 
 		echo '<li>'
 			. '<span class="label1">' . _Ti('person_input_name') . '</span>'
-			. '<span class="value1">' . get_person_name($this->data) . '</span>'
+			. '<span class="value1">' . $this->getName() . '</span>'
 			. "</li>\n";
 
 		if ($this->data['gender'] == 'male' || $this->data['gender'] == 'female')
@@ -216,7 +219,11 @@ class ClientInfoUI extends Client {
 		show_all_contacts('client', $this->data['id_client']);
 	}
 
-	function printCases() {
+	function printAttach() {
+		echo '<input type="hidden" name="attach_client" value="' . $this->data['id_client'] . '" />' . "\n";
+	}
+
+	function printCases($find_case_string = '') {
 		$cpt = 0;
 		$my_list_pos = intval(_request('list_pos', 0));
 
@@ -225,8 +232,10 @@ class ClientInfoUI extends Client {
 		echo "<p class=\"normal_text\">\n";
 		show_listcase_start();
 
-		for ($cpt = 0, $this->getCaseStart(); (! $this->getCaseDone()); $cpt++)
-			show_listcase_item($this->getCaseIterator(), $cpt);
+		for ($cpt = 0, $this->getCaseStart(); (! $this->getCaseDone()); $cpt++) {
+			$item = $this->getCaseIterator();
+			show_listcase_item($item, $cpt, $find_case_string, 'javascript:;', 'onclick="getCaseInfo(' . $item['id_case'] . ')"');
+		}
 
 		if (! $cpt)
 			echo "No cases";
@@ -361,8 +370,8 @@ class ClientInfoUI extends Client {
 		//
 		
 		echo "<tr>\n";
-		echo '<td colspan="2" align="center" valign="middle" class="heading">';
-		echo '<h4>' . _T('client_subtitle_contacts') . '</h4>';
+		echo '<td colspan="2" align="center" valign="middle">';
+		show_page_subtitle(_T('client_subtitle_contacts'));
 		echo '</td>';
 		echo "</tr>\n";
 	
