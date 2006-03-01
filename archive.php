@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.17 2006/02/20 03:01:36 mlutfy Exp $
+	$Id: archive.php,v 1.18 2006/03/01 21:53:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -93,7 +93,7 @@ if ($list_pos > 0)
 show_listcase_start();
 
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	show_listcase_item($row, $i, '', $find_case_string);
+	show_listcase_item($row, $i, $find_case_string);
 }
 
 show_listcase_end($list_pos, $number_of_rows);

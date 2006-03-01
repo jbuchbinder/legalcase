@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.65 2006/02/20 02:53:24 mlutfy Exp $
+	$Id: listcases.php,v 1.66 2006/03/01 21:53:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -214,7 +214,7 @@ echo '<p class="normal_text">' . "\n";
 show_listcase_start();
 
 for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++)
-	show_listcase_item($row, $i, '', $find_case_string);
+	show_listcase_item($row, $i, $find_case_string);
 
 show_listcase_end($list_pos, $number_of_rows);
 echo "</p>\n";
