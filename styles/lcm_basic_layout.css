@@ -331,6 +331,8 @@ a.prefs_normal_lnk {
 	margin-left: 0.5em;
 	background-color: #ffc;
 	list-style: none;
+	border: thin outset black;
+	z-index: 10;
 }
 
 .autocomplete ul li.selected {
@@ -523,7 +525,8 @@ a.back_lnk {
 
 /* List of info, used in places such as "case details", "client details", etc. */
 ul.info {
-	padding-left: 0;
+	margin: 0;
+	padding: 0;
 }
 
 ul.info li {
