@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.52 2006/02/20 03:21:10 mlutfy Exp $
+	$Id: upd_case.php,v 1.53 2006/03/02 22:00:35 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -32,24 +32,38 @@ $_SESSION['errors'] = array();
 
 // Get form data from POST fields
 foreach($_POST as $key => $value)
-    $_SESSION['form_data'][$key]=$value;
+    $_SESSION['form_data'][$key] = $value;
 
 
 //
 // Clean (most of the) input
 //
 
-if (isset($_REQUEST['id_case']))
-	$id_case = intval($_REQUEST['id_case']);
-else
-	$id_case = 0;
+$id_case = _request('id_case', 0);
 
-$_SESSION['form_data']['title'] = clean_input($_SESSION['form_data']['title']);
-$_SESSION['form_data']['legal_reason'] = clean_input($_SESSION['form_data']['legal_reason']);
-$_SESSION['form_data']['alledged_crime'] = clean_input($_SESSION['form_data']['alledged_crime']);
-$_SESSION['form_data']['notes'] = clean_input($_SESSION['form_data']['notes']);
-$_SESSION['form_data']['status'] = clean_input($_SESSION['form_data']['status']);
-$_SESSION['form_data']['stage'] = clean_input($_SESSION['form_data']['stage']);
+//
+// Create client, if requested
+//
+
+if ($_REQUEST['add_client']) {
+	include_lcm('inc_obj_client');
+
+	$client = new LcmClient();
+	$errs = $client->save();
+
+	if (count($errs)) {
+		$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
+	} else {
+		$_SESSION['form_data']['attach_client'] = $client->getDataInt('id_client', '__ASSERT__');
+	}
+}
+
+$_SESSION['form_data']['title'] = clean_input(_session('title'));
+$_SESSION['form_data']['legal_reason'] = clean_input(_session('legal_reason'));
+$_SESSION['form_data']['alledged_crime'] = clean_input(_session('alledged_crime'));
+$_SESSION['form_data']['notes'] = clean_input(_session('notes'));
+$_SESSION['form_data']['status'] = clean_input(_session('status'));
+$_SESSION['form_data']['stage'] = clean_input(_session('stage'));
 
 //
 // Check case data for validity
