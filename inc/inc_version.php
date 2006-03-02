@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.85 2006/03/01 21:59:06 mlutfy Exp $
+	$Id: inc_version.php,v 1.86 2006/03/02 22:01:22 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -947,6 +947,13 @@ include_lcm('inc_filters');
 function _request ($name, $default = '') {
 	if (isset($_REQUEST[$name]))
 		return clean_input($_REQUEST[$name]);
+	else
+		return $default;
+}
+
+function _session ($name, $default = '') {
+	if (isset($_SESSION['form_data'][$name]))
+		return clean_input($_SESSION['form_data'][$name]);
 	else
 		return $default;
 }
