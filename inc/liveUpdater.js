@@ -448,76 +448,78 @@ function autocomplete(id, popupId, uri, popupData, hideAlt)
     var updater = liveUpdater(constructUri, post);
     var timeout = false;
    
-    function start(e) {
-      if (timeout)
-        window.clearTimeout(timeout);
-      //up arrow
-      if(e.keyCode == 38)
-      {
-        if(current > 0)
-        {
-          options[current].className = '';
-          current--;
-          options[current].className = 'selected';
-          options[current].scrollIntoView(false);
-        }
-      }
-      //down arrow
-      else if(e.keyCode == 40)
-      {
-        if(current < options.length - 1)
-        {
-          options[current].className = '';
-          current++;
-          options[current].className = 'selected';
-          options[current].scrollIntoView(false);
-        }
-      }
-      //enter or tab
-      else if((e.keyCode == 13 || e.keyCode == 9) && popup.style.visibility == 'visible')
-      {
-	  	var foo = options[current].innerHTML.split(': ');
-
-		// [ML] This is redundant with lines ~ 350
-        popup.style.visibility = 'hidden';
-
-		if (foo[0] > 0) {
-			inputField.value = foo[1];
-			altField.style.display = 'none'; // [ML]
-
-			// [ML] experiments
-			function updateClient2()
+	function start(e) {
+		if (timeout)
+			window.clearTimeout(timeout);
+		//up arrow
+		if(e.keyCode == 38)
+		{
+			if(current > 0)
 			{
-				if (xmlHttp1.readyState == 4) {
-					var response = xmlHttp1.responseText;
-					dataField.innerHTML = response;
-					document.getElementById('input_case_title').value = inputField.value;
+				options[current].className = '';
+				current--;
+				options[current].className = 'selected';
+				options[current].scrollIntoView(false);
+			}
+		}
+		//down arrow
+		else if(e.keyCode == 40)
+		{
+			if(current < options.length - 1)
+			{
+				options[current].className = '';
+				current++;
+				options[current].className = 'selected';
+				options[current].scrollIntoView(false);
+			}
+		}
+		//enter or tab
+		else if((e.keyCode == 13 || e.keyCode == 9) && popup.style.visibility == 'visible')
+		{
+			var foo = options[current].innerHTML.split(': ');
+			var action = "id_client";
+
+			// [ML] This is redundant with lines ~ 350
+			popup.style.visibility = 'hidden';
+
+			if (foo[0] > 0) {
+				inputField.value = foo[1];
+				altField.style.display = 'none'; // [ML]
+
+				// [ML] experiments
+				function updateClient2()
+				{
+					if (xmlHttp1.readyState == 4) {
+						var response = xmlHttp1.responseText;
+						dataField.innerHTML = response;
+						document.getElementById('input_case_title').value = inputField.value;
+					}
 				}
+
+				if (id == 'clientsearchkey')
+					action = 'id_client';
+				else if (id == 'casesearchkey')
+					action = 'id_case';
+
+				xmlHttp1 = new XMLHttpRequest();
+				xmlHttp1.open('GET', 'ajax.php?' + action + '=' + foo[0], true);
+				xmlHttp1.onreadystatechange = updateClient2;
+				xmlHttp1.send(null);
 			}
 
-			xmlHttp1 = new XMLHttpRequest();
-			xmlHttp1.open('GET', 'ajax.php?id_client=' + foo[0], true);
-			xmlHttp1.onreadystatechange = updateClient2;
-			xmlHttp1.send(null);
+			if(isIE) {
+				event.returnValue = false;
+			} else {
+				e.preventDefault();
+			}
+		} else {
+			timeout = window.setTimeout(updater, 300);
 		}
-		
-        if(isIE)
-        {
-          event.returnValue = false;
-        }
-        else
-        {
-          e.preventDefault();
-        }
-      }
-      else
-      {
-        timeout = window.setTimeout(updater, 300);
-      }
-    }
-  addKeyListener(inputField, start);
-  addListener(popup, 'mouseover', handlePopupOver);
-  addListener(popup, 'mouseout', handlePopupOut);
+	}
+
+	addKeyListener(inputField, start);
+	addListener(popup, 'mouseover', handlePopupOver);
+	addListener(popup, 'mouseout', handlePopupOut);
 }
 
 /* Functions to handle browser incompatibilites */
