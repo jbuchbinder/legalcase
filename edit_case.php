@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.82 2006/03/02 21:39:10 mlutfy Exp $
+	$Id: edit_case.php,v 1.83 2006/03/02 22:32:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -103,7 +103,8 @@ if (! $case) {
 if ($attach_client) {
 	$client = new LcmClient($attach_client);
 
-	if (! $_SESSION['form_data']['title'])
+	// Leave empty if user did the error of leaving it blank
+	if (! isset($_SESSION['form_data']['title']))
 		$_SESSION['form_data']['title'] = $client->getName();
 }
 
@@ -114,7 +115,8 @@ if ($attach_org) {
 
 	$result = lcm_query($query);
 	if ($info = lcm_fetch_array($result)) {
-		if (! $_SESSION['form_data']['title'])
+		// Leave empty if user did the error of leaving it blank
+		if (! isset($_SESSION['form_data']['title']))
 			$_SESSION['form_data']['title'] = $info['name'];
 	} else {
 		lcm_panic("No such organisation #" . $attach_org);

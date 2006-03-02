@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.3 2006/03/02 22:02:49 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.4 2006/03/02 22:33:47 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -56,19 +56,21 @@ class LcmClient extends LcmObject {
 			$nkey = $key;
 
 			if (substr($key, 0, 7) == 'client_')
-				$nkey = substr($key, 8);
+				$nkey = substr($key, 7);
 
 			$this->data[$nkey] = _request($key);
 		}
 
 		// If any, populate with session variables (for error reporting)
-		foreach($_SESSION['form_data'] as $key => $value) {
-			$nkey = $key;
+		if (isset($_SESSION['form_data'])) {
+			foreach($_SESSION['form_data'] as $key => $value) {
+				$nkey = $key;
 
-			if (substr($key, 0, 7) == 'client_')
-				$nkey = substr($key, 8);
+				if (substr($key, 0, 7) == 'client_')
+					$nkey = substr($key, 7);
 
-			$this->data[$nkey] = _session($key);
+				$this->data[$nkey] = _session($key);
+			}
 		}
 	}
 

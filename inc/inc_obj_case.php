@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.4 2006/03/02 22:02:49 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.5 2006/03/02 22:33:47 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -41,34 +41,39 @@ class LcmCase extends LcmObject {
 
 		$this->LcmObject();
 
-		if (! ($id_case > 0))
-			return;
+		if ($id_case > 0) {
+			$query = "SELECT * FROM lcm_case WHERE id_case = $id_case";
+			$result = lcm_query($query);
 
-		$query = "SELECT * FROM lcm_case WHERE id_case = $id_case";
-		$result = lcm_query($query);
-
-		if (($row = lcm_fetch_array($result))) 
-			foreach ($row as $key => $val) 
-				$this->data[$key] = $val;
+			if (($row = lcm_fetch_array($result))) 
+				foreach ($row as $key => $val) 
+					$this->data[$key] = $val;
+		}
 
 		// If any, populate form values submitted
 		foreach($_REQUEST as $key => $value) {
 			$nkey = $key;
 
 			if (substr($key, 0, 5) == 'case_')
-				$nkey = substr($key, 6);
+				$nkey = substr($key, 5);
 
 			$this->data[$nkey] = _request($key);
+
+			lcm_log("::: REQUEST ::: $nkey ($key) = " .  $_REQUEST[$key]);
 		}
 
 		// If any, populate with session variables (for error reporting)
-		foreach($_SESSION['form_data'] as $key => $value) {
-			$nkey = $key;
+		if (isset($_SESSION['form_data'])) {
+			foreach($_SESSION['form_data'] as $key => $value) {
+				$nkey = $key;
 
-			if (substr($key, 0, 5) == 'case_')
-				$nkey = substr($key, 6);
+				if (substr($key, 0, 5) == 'case_')
+					$nkey = substr($key, 5);
 
-			$this->data[$nkey] = _session($key);
+				$this->data[$nkey] = _session($key);
+
+				lcm_log("::: SESSION ::: $nkey ($key) = " .  $_SESSION['form_data'][$key]);
+			}
 		}
 	}
 
@@ -433,7 +438,7 @@ class LcmCaseInfoUI extends LcmCase {
 				. "</td></tr>\n";
 		}
 		
-		echo '<tr><td><label for="input_title">'
+		echo '<tr><td><label for="input_title">' 
 			. f_err_star('title', $_SESSION['errors']) . _T('case_input_title')
 			. "</label></td>\n";
 		echo '<td><input size="35" name="title" id="input_case_title" value="'
@@ -486,7 +491,7 @@ class LcmCaseInfoUI extends LcmCase {
 		
 		// Notes
 		echo "<tr>\n";
-		echo "<td><label for='input_notes'>" . f_err_star('notes') . _Ti('case_input_notes') . "</label></td>\n";
+		echo "<td><label for='input_notes'>" . f_err_star('case_notes') . _Ti('case_input_notes') . "</label></td>\n";
 		echo '<td><textarea name="case_notes" id="input_case_notes" class="frm_tarea" rows="3" cols="60">'
 			. clean_output($this->getDataString('notes'))
 			. "</textarea>\n"
@@ -497,10 +502,10 @@ class LcmCaseInfoUI extends LcmCase {
 		echo '<tr><td><label for="input_status">' . f_err_star('status') . _Ti('case_input_status') . "</label></td>\n";
 		echo '<td>';
 		echo '<select name="status" id="input_status" class="sel_frm">' . "\n";
-		$statuses = ($existing ? array('draft','open','suspended','closed','merged') : array('draft','open') );
+		$statuses = ($this->getDataInt('id_case') ? array('draft','open','suspended','closed','merged') : array('draft','open') );
 		
 		foreach ($statuses as $s) {
-			$sel = ($s == $this->data['status'] ? ' selected="selected"' : '');
+			$sel = ($s == $this->getDataString('status') ? ' selected="selected"' : '');
 			echo '<option value="' . $s . '"' . $sel . ">" 
 				. _T('case_status_option_' . $s)
 				. "</option>\n";
@@ -510,7 +515,7 @@ class LcmCaseInfoUI extends LcmCase {
 		echo "</tr>\n";
 		
 		// Case stage
-		if (! $this->data['stage'])
+		if (! $this->getDataString('stage'))
 			$this->data['stage'] = get_suggest_in_group_name('stage');
 		
 		$kws = get_keywords_in_group_name('stage');
