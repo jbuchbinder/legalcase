@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.81 2006/03/01 21:51:54 mlutfy Exp $
+	$Id: edit_case.php,v 1.82 2006/03/02 21:39:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -34,6 +34,8 @@ $case_assignment_date = read_meta('case_assignment_date');
 $case_alledged_crime  = read_meta('case_alledged_crime');
 $case_legal_reason    = read_meta('case_legal_reason');
 $case_allow_modif     = read_meta('case_allow_modif');
+
+$case = 0;
 
 if (empty($_SESSION['errors'])) {
 
@@ -88,33 +90,34 @@ if (empty($_SESSION['errors'])) {
 }
 
 $attach_client = 0;
-
-if (!$existing && isset($_REQUEST['attach_client'])) {
-	$attach_client = intval($_REQUEST['attach_client']);
-
-	if ($attach_client) {
-		$client = new LcmClient($attach_client);
-		$_SESSION['form_data']['title'] = $client->getName();
-	}
-}
-
 $attach_org = 0;
 
-if (!$existing && isset($_REQUEST['attach_org'])) {
-	$attach_org = intval($_REQUEST['attach_org']);
+if (! $case) {
+	$attach_client = intval(_request('attach_client', 0));
+	$attach_org    = intval(_request('attach_org', 0));
 
-	if ($attach_org) {
-		// Fetch name of the organisation
-		$query = "SELECT name
-					FROM lcm_org
-					WHERE id_org = " . $attach_org;
+	$attach_client = intval(_session('attach_client', $attach_client));
+	$attach_org    = intval(_session('attach_org', $attach_org));
+}
 
-		$result = lcm_query($query);
-		if ($info = lcm_fetch_array($result)) {
+if ($attach_client) {
+	$client = new LcmClient($attach_client);
+
+	if (! $_SESSION['form_data']['title'])
+		$_SESSION['form_data']['title'] = $client->getName();
+}
+
+if ($attach_org) {
+	$query = "SELECT name
+				FROM lcm_org
+				WHERE id_org = " . $attach_org;
+
+	$result = lcm_query($query);
+	if ($info = lcm_fetch_array($result)) {
+		if (! $_SESSION['form_data']['title'])
 			$_SESSION['form_data']['title'] = $info['name'];
-		} else {
-			lcm_panic("No such organisation #" . $attach_org);
-		}
+	} else {
+		lcm_panic("No such organisation #" . $attach_org);
 	}
 }
 
@@ -175,12 +178,21 @@ if (! $case) {
 		//
 		show_page_subtitle("Client information", 'clients_intro'); // TRAD
 
-		echo '<p class="normal_text">';
-		echo '<input type="checkbox" name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
-		echo '<label for="box_new_client">' . "Add a client to this case" . '</label>'; // TRAD
-		echo "</p>\n";
+		if (_session('add_client')) {
+			echo '<p class="normal_text">';
+			echo '<input type="checkbox" checked="checked" name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
+			echo '<label for="box_new_client">' . "Add a client to this case" . '</label>'; // TRAD
+			echo "</p>\n";
 
-		echo '<div id="new_client" style="display: none;">';
+			echo '<div id="new_client">';
+		} else {
+			echo '<p class="normal_text">';
+			echo '<input type="checkbox" name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
+			echo '<label for="box_new_client">' . "Add a client to this case" . '</label>'; // TRAD
+			echo "</p>\n";
+
+			echo '<div id="new_client" style="display: none;">';
+		}
 
 		echo "<div style='overflow: hidden; width: 100%;'>";
 		echo '<div style="float: left; text-align: right; width: 29%;">';
