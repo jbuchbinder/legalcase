@@ -18,38 +18,58 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.2 2006/03/01 21:57:43 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.3 2006/03/02 22:02:49 mlutfy Exp $
 */
 
 // Execute this file only once
 if (defined('_INC_OBJ_CLIENT')) return;
 define('_INC_OBJ_CLIENT', '1');
 
+include_lcm('inc_obj_generic');
 include_lcm('inc_db');
 include_lcm('inc_contacts');
 
-class LcmClient {
+class LcmClient extends LcmObject {
 	// Note: Since PHP5 we should use "private", and generates a warning,
 	// but we must support PHP >= 4.0.
-	var $data; 
 	var $cases;
 	var $case_start_from;
 
 	function LcmClient($id_client = 0) {
 		$id_client = intval($id_client);
-		$this->data = array();
 		$this->cases = null;
 		$this->case_start_from = 0;
 
-		if (! ($id_client > 0))
-			return;
+		$this->LcmObject();
 
-		$query = "SELECT * FROM lcm_client WHERE id_client = $id_client";
-		$result = lcm_query($query);
+		if ($id_client > 0) {
+			$query = "SELECT * FROM lcm_client WHERE id_client = $id_client";
+			$result = lcm_query($query);
 
-		if (($row = lcm_fetch_array($result))) 
-			foreach ($row as $key => $val) 
-				$this->data[$key] = $val;
+			if (($row = lcm_fetch_array($result))) 
+				foreach ($row as $key => $val) 
+					$this->data[$key] = $val;
+		}
+
+		// If any, populate form values submitted
+		foreach($_REQUEST as $key => $value) {
+			$nkey = $key;
+
+			if (substr($key, 0, 7) == 'client_')
+				$nkey = substr($key, 8);
+
+			$this->data[$nkey] = _request($key);
+		}
+
+		// If any, populate with session variables (for error reporting)
+		foreach($_SESSION['form_data'] as $key => $value) {
+			$nkey = $key;
+
+			if (substr($key, 0, 7) == 'client_')
+				$nkey = substr($key, 8);
+
+			$this->data[$nkey] = _session($key);
+		}
 	}
 
 	/* private */
@@ -58,7 +78,7 @@ class LcmClient {
 
 		$q = "SELECT clo.id_case, c.*
 				FROM lcm_case_client_org as clo, lcm_case as c
-				WHERE clo.id_client = " . $this->data['id_client'] . "
+				WHERE clo.id_client = " . $this->getDataInt('id_client', '__ASSERT__') . "
 				AND clo.id_case = c.id_case ";
 
 		// Sort cases by creation date
@@ -121,7 +141,7 @@ class LcmClient {
 		if (is_null($cpt_total_cache)) {
 			$query = "SELECT count(*) as cpt
 					FROM lcm_case_client_org as clo, lcm_case as c
-					WHERE clo.id_client = " . $this->data['id_client'] . "
+					WHERE clo.id_client = " . $this->getDataInt('id_client', '__ASSERT__') . "
 					  AND clo.id_case = c.id_case ";
 
 			$result = lcm_query($query);
@@ -138,6 +158,66 @@ class LcmClient {
 	function getName() {
 		return get_person_name($this->data);
 	}
+
+	//
+	// Save client record in DB (create/update)
+	// Returns array of errors, if any
+	//
+	function save() {
+		$errors = array();
+
+		if (! $this->getDataString('name_first'))
+			$errors['name_first'] = _Ti('person_input_name_first') . _T('warning_field_mandatory');
+
+		if (! $this->getDataString('name_last'))
+			$errors['name_last'] = _Ti('person_input_name_last') . _T('warning_field_mandatory');
+
+		$genders = array('unknown' => 1, 'female' => 1, 'male' => 1);
+
+		if (! array_key_exists($this->getDataString('gender'), $genders))
+			$errors['gender'] = _Ti('person_input_gender') . 'Incorrect format.'; // TRAD FIXME
+
+		if (count($errors))
+			return $errors;
+
+		//
+		// Update record in database
+		//
+		$cl = "name_first = '"  . clean_input($this->getDataString('name_first')) . "',
+			   name_middle = '" . clean_input($this->getDataString('name_middle')) . "',
+			   name_last = '"   . clean_input($this->getDataString('name_last')) . "',
+			   gender = '"      . clean_input($this->getDataString('gender')) . "',
+			   notes = '"       . clean_input($this->getDataString('notes')) . "'"; // , 
+	
+		if (clean_input($this->getDataString('citizen_number')))
+			$cl .= ", citizen_number = '" . clean_input($this->getDataString('citizen_number')) . "'";
+		
+		if (clean_input($this->getDataString('civil_status')))
+			$cl .= ", civil_status = '" . clean_input($this->getDataString('civil_status')) . "'";
+	
+		if (clean_input($this->getDataString('income')))
+			$cl .= ", income = '" . clean_input($this->getDataString('income')) . "'";
+	
+		if ($this->getDataInt('id_client') > 0) {
+			$q = "UPDATE lcm_client
+				SET date_update = NOW(), 
+					$cl 
+				WHERE id_client = " . $this->getDataInt('id_client', '__ASSERT__');
+		
+			lcm_query($q);
+		} else {
+			$q = "INSERT INTO lcm_client
+					SET id_client = 0,
+						date_creation = NOW(),
+						date_update = NOW(),
+						$cl";
+	
+			$result = lcm_query($q);
+			$this->data['id_client'] = lcm_insert_id($result);
+		}
+
+		return $errors;
+	}
 }
 
 class LcmClientInfoUI extends LcmClient {
@@ -152,7 +232,7 @@ class LcmClientInfoUI extends LcmClient {
 		echo '<ul class="info">';
 		echo '<li>' 
 			. '<span class="label1">' . _Ti('client_input_id') . '</span>'
-			. '<span class="value1">' . $this->data['id_client'] . '</span>'
+			. '<span class="value1">' . $this->getDataInt('id_client') . '</span>'
 			. "</li>\n";
 
 		echo '<li>'
@@ -160,8 +240,8 @@ class LcmClientInfoUI extends LcmClient {
 			. '<span class="value1">' . $this->getName() . '</span>'
 			. "</li>\n";
 
-		if ($this->data['gender'] == 'male' || $this->data['gender'] == 'female')
-			$gender = _T('person_input_gender_' . $this->data['gender']);
+		if ($this->data['gender'] == 'male' || $this->getDataString('gender') == 'female')
+			$gender = _T('person_input_gender_' . $this->getDataString('gender'));
 		else
 			$gender = _T('info_not_available');
 
@@ -173,15 +253,12 @@ class LcmClientInfoUI extends LcmClient {
 		if (read_meta('client_citizen_number') == 'yes')
 			echo '<li>'
 				. '<span class="label2">' . _Ti('person_input_citizen_number') . '</span>'
-				. '<span class="value2">' . $this->data['citizen_number'] . '</span>'
+				. '<span class="value2">' . clean_output($this->getDataString('citizen_number')) . '</span>'
 				. "</li>\n";
 
 		if (read_meta('client_civil_status') == 'yes') {
 			// [ML] Patch for bug #1372138 (LCM < 0.6.4)
-			if (isset($this->data['civil_status']) && $this->data['civil_status'])
-				$civil_status = $this->data['civil_status'];
-			else
-				$civil_status = 'unknown';
+			$civil_status = $this->getDataString('civil_status', 'unknown');
 
 			echo '<li>'
 				. '<span class="label2">' . _Ti('person_input_civil_status') . '</span>'
@@ -191,10 +268,7 @@ class LcmClientInfoUI extends LcmClient {
 
 		if (read_meta('client_income') == 'yes') {
 			// [ML] Patch for bug #1372138 (LCM < 0.6.4)
-			if (isset($this->data['income']) && $this->data['income'])
-				$income = $this->data['income'];
-			else
-				$income = 'unknown';
+			$income = $this->getDataString('income', 'unknown');
 
 			echo '<li>' 
 				. '<span class="label2">' . _Ti('person_input_income') . '</span>'
@@ -202,25 +276,25 @@ class LcmClientInfoUI extends LcmClient {
 				. "</li>\n";
 		}
 
-		show_all_keywords('client', $this->data['id_client']);
+		show_all_keywords('client', $this->getDataInt('id_client'));
 
 		echo '<li>'
 			. '<span class="label2">' . _Ti('case_input_date_creation') . '</span>'
-			. '<span class="value2">' . format_date($this->data['date_creation']) . '</span>'
+			. '<span class="value2">' . format_date($this->getDataString('date_creation')) . '</span>'
 			. "</li>\n";
 
 		echo '<li class="large">'
 			. '<span class="label2">' . _Ti('client_input_notes') . '</span>' 
-			. '<span class="value2">'. nl2br($this->data['notes']) . '</span>'
+			. '<span class="value2">'. nl2br(clean_output($this->getDataString('notes'))) . '</span>'
 			. "</li>\n";
 		echo "</ul>\n";
 
 		// Show client contacts (if any)
-		show_all_contacts('client', $this->data['id_client']);
+		show_all_contacts('client', $this->getDataInt('id_client'));
 	}
 
 	function printAttach() {
-		echo '<input type="hidden" name="attach_client" value="' . $this->data['id_client'] . '" />' . "\n";
+		echo '<input type="hidden" name="attach_client" value="' . $this->getDataInt('id_client', '__ASSERT__') . '" />' . "\n";
 	}
 
 	function printCases($find_case_string = '') {
@@ -247,34 +321,40 @@ class LcmClientInfoUI extends LcmClient {
 
 	// XXX error checking! ($_SESSION['errors'])
 	function printEdit() {
+		// Get site preferences
+		$client_name_middle = read_meta('client_name_middle');
+		$client_citizen_number = read_meta('client_citizen_number');
+		$client_civil_status = read_meta('client_civil_status');
+		$client_income = read_meta('client_income');
+
 		echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 		
-		if($form_data['id_client']) {
+		if($this->getDataInt('id_client')) {
 			echo "<tr><td>" . _T('client_input_id') . "</td>\n";
-			echo "<td>" . $form_data['id_client']
-				. '<input type="hidden" name="id_client" value="' . $form_data['id_client'] . '" /></td></tr>' . "\n";
+			echo "<td>" . $this->getDataInt('id_client')
+				. '<input type="hidden" name="id_client" value="' . $this->getDataInt('id_client') . '" /></td></tr>' . "\n";
 		}
 		
 		echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
-		echo '<td><input name="name_first" value="' . clean_output($form_data['name_first']) . '" class="search_form_txt" /></td></tr>' . "\n";
+		echo '<td><input name="name_first" value="' . clean_output($this->getDataString('name_first')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		
 		// [ML] always show middle name, if any, no matter the configuration
-		if ($form_data['name_middle'] || $client_name_middle == 'yes') {
+		if ($this->getDataString('name_middle') || $client_name_middle == 'yes') {
 			echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
-			echo '<td><input name="name_middle" value="' . clean_output($form_data['name_middle']) . '" class="search_form_txt" /></td></tr>' . "\n";
+			echo '<td><input name="name_middle" value="' . clean_output($this->getDataString('name_middle')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		}
 			
 		echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
-		echo '<td><input name="name_last" value="' . clean_output($form_data['name_last']) . '" class="search_form_txt" /></td></tr>' . "\n";
+		echo '<td><input name="name_last" value="' . clean_output($this->getDataString('name_last')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		
 		echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
 		echo '<td><select name="gender" class="sel_frm">' . "\n";
 		
 		$opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
 		
-		if ($form_data['gender'] == 'male')
+		if ($this->getDataString('gender') == 'male')
 			$opt_sel_male = 'selected="selected" ';
-		else if ($form_data['gender'] == 'female')
+		else if ($this->getDataString('gender') == 'female')
 			$opt_sel_female = 'selected="selected" ';
 		else
 			$opt_sel_unknown = 'selected="selected" ';
@@ -286,21 +366,21 @@ class LcmClientInfoUI extends LcmClient {
 		echo "</select>\n";
 		echo "</td></tr>\n";
 		
-		if ($form_data['id_client']) {
+		if ($this->getDataString('id_client')) {
 			echo "<tr>\n";
 			echo '<td>' . _Ti('time_input_date_creation') . '</td>';
-			echo '<td>' . format_date($form_data['date_creation'], 'full') . '</td>';
+			echo '<td>' . format_date($this->getDataString('date_creation'), 'full') . '</td>';
 			echo "</tr>\n";
 		}
 		
 		if ($client_citizen_number == 'yes') {
 			echo "<tr>\n";
 			echo '<td>' . _T('person_input_citizen_number') . '</td>';
-			echo '<td><input name="citizen_number" value="' . clean_output($form_data['citizen_number']) . '" class="search_form_txt"></td>';
+			echo '<td><input name="citizen_number" value="' . clean_output($this->getDataString('citizen_number')) . '" class="search_form_txt"></td>';
 			echo "</tr>\n";
 		}
 		
-		global $system_kwg;
+		global $system_kwg; // FIXME use keyword functions
 		
 		if ($client_civil_status == 'yes') {
 			echo "<tr>\n";
@@ -308,17 +388,16 @@ class LcmClientInfoUI extends LcmClient {
 			echo '<td>';
 			echo '<select name="civil_status">';
 	
-			if (! $form_data['civil_status']) {
-				if ($form_data['id_client']) {
-					$form_data['civil_status'] = $system_kwg['civilstatus']['keywords']['unknown']['name'];
+			if (! $this->getDataString('civil_status')) {
+				if ($this->getDataInt('id_client')) {
+					$this->data['civil_status'] = $system_kwg['civilstatus']['keywords']['unknown']['name'];
 				} else {
-					$form_data['civil_status'] = $system_kwg['civilstatus']['suggest'];
+					$this->data['civil_status'] = $system_kwg['civilstatus']['suggest'];
 				}
-	
 			}
 	
 			foreach($system_kwg['civilstatus']['keywords'] as $kw) {
-				$sel = ($form_data['civil_status'] == $kw['name'] ? ' selected="selected"' : '');
+				$sel = ($this->getDataString('civil_status') == $kw['name'] ? ' selected="selected"' : '');
 				echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
 			}
 	
@@ -333,16 +412,16 @@ class LcmClientInfoUI extends LcmClient {
 			echo '<td>';
 			echo '<select name="income">';
 			
-			if (! $form_data['income']) {
-				if ($form_data['id_client']) {
-					$form_data['income'] = $system_kwg['income']['keywords']['unknown']['name'];
+			if (! $this->getDataString('income')) {
+				if ($this->getDataInt('id_client')) {
+					$this->data['income'] = $system_kwg['income']['keywords']['unknown']['name'];
 				} else {
-					$form_data['income'] = $system_kwg['income']['suggest'];
+					$this->data['income'] = $system_kwg['income']['suggest'];
 				}
 			}
 
 			foreach($system_kwg['income']['keywords'] as $kw) {
-				$sel = ($form_data['income'] == $kw['name'] ? ' selected="selected"' : '');
+				$sel = ($this->getDataString('income') == $kw['name'] ? ' selected="selected"' : '');
 				echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
 			}
 			
@@ -354,13 +433,13 @@ class LcmClientInfoUI extends LcmClient {
 		//
 		// Keywords, if any
 		//
-		show_edit_keywords_form('client', $form_data['id_client']);
+		show_edit_keywords_form('client', $this->getDataInt('id_client'));
 	
 		// Notes
 		echo "<tr>\n";
-		echo "<td>" . f_err_star('notes') . _Ti('client_input_notes') . "</td>\n";
-		echo '<td><textarea name="notes" id="input_notes" class="frm_tarea" rows="3" cols="60">'
-			. clean_output($form_data['notes'])
+		echo "<td>" . f_err_star('client_notes') . _Ti('client_input_notes') . "</td>\n";
+		echo '<td><textarea name="client_notes" id="input_client_notes" class="frm_tarea" rows="3" cols="60">'
+			. clean_output($this->getDataString('notes'))
 			. "</textarea>\n"
 			. "</td>\n";
 		echo "</tr>\n";
@@ -375,7 +454,7 @@ class LcmClientInfoUI extends LcmClient {
 		echo '</td>';
 		echo "</tr>\n";
 	
-		show_edit_contacts_form('client', $form_data['id_client']);
+		show_edit_contacts_form('client', $this->getDataInt('id_client'));
 		
 		echo "</table>\n";
 	}

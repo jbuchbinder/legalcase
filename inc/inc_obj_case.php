@@ -18,27 +18,28 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.3 2006/03/01 21:57:12 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.4 2006/03/02 22:02:49 mlutfy Exp $
 */
 
 // Execute this file only once
 if (defined('_INC_OBJ_CASE')) return;
 define('_INC_OBJ_CASE', '1');
 
+include_lcm('inc_obj_generic');
 include_lcm('inc_db');
 include_lcm('inc_contacts');
 
-class LcmCase {
+class LcmCase extends LcmObject {
 	// Note: Since PHP5 we should use "private", and generates a warning,
 	// but we must support PHP >= 4.0.
-	var $data; 
 	var $followups;
 	var $fu_start_from;
 
 	function LcmCase($id_case = 0) {
 		$id_case = intval($id_case);
-		$this->data = array();
 		$this->fu_start_from = 0;
+
+		$this->LcmObject();
 
 		if (! ($id_case > 0))
 			return;
@@ -49,6 +50,26 @@ class LcmCase {
 		if (($row = lcm_fetch_array($result))) 
 			foreach ($row as $key => $val) 
 				$this->data[$key] = $val;
+
+		// If any, populate form values submitted
+		foreach($_REQUEST as $key => $value) {
+			$nkey = $key;
+
+			if (substr($key, 0, 5) == 'case_')
+				$nkey = substr($key, 6);
+
+			$this->data[$nkey] = _request($key);
+		}
+
+		// If any, populate with session variables (for error reporting)
+		foreach($_SESSION['form_data'] as $key => $value) {
+			$nkey = $key;
+
+			if (substr($key, 0, 5) == 'case_')
+				$nkey = substr($key, 6);
+
+			$this->data[$nkey] = _session($key);
+		}
 	}
 
 	/* private */
@@ -138,8 +159,23 @@ class LcmCase {
 		return $cpt_total_cache;
 	}
 
-	function getName() {
-		return get_person_name($this->data);
+	function addClient($id_client) {
+		// TODO: Permissions?
+		// TODO: Check if client already on case?
+
+		$query = "INSERT INTO lcm_case_client_org
+					SET id_case = " . $this->data['id_case'] . ",
+						id_client = $id_client";
+
+		lcm_query($query);
+	}
+
+	function removeClient($id_client) {
+		$query = "DELETE FROM lcm_case_client_org
+					WHERE id_case = " . $this->data['id_case'] . "
+					  AND id_client = $id_client";
+
+		lcm_query($query);
 	}
 
 }
@@ -162,19 +198,19 @@ class LcmCaseInfoUI extends LcmCase {
 		// Case ID
 		echo '<li>'
 			. '<span class="label1">' . _Ti('case_input_id') . '</span>'
-			. '<span class="value1">' . $this->data['id_case'] . '</span>'
+			. '<span class="value1">' . $this->getDataInt('id_case') . '</span>'
 			. "</li>\n";
 
 		// Case title
 		echo '<li>'
 			. '<span class="label1">' . _Ti('case_input_title') . '</span>'
-			. '<span class="value1">' . $this->data['title'] . '</span>'
+			. '<span class="value1">' . $this->getDataString('title') . '</span>'
 			. "</li>\n";
 
 		// Show users assigned to the case
 		$q = "SELECT id_case,lcm_author.id_author,name_first,name_middle,name_last
 				FROM lcm_case_author,lcm_author
-				WHERE (id_case=" . $this->data['id_case'] . "
+				WHERE (id_case=" . $this->getDataInt('id_case') . "
 				  AND lcm_case_author.id_author=lcm_author.id_author)";
 		
 		$authors_result = lcm_query($q);
@@ -224,7 +260,7 @@ class LcmCaseInfoUI extends LcmCase {
 			. _Ti('case_input_date_creation')
 			. '</span>'
 			. '<span class="value2">'
-			. format_date($this->data['date_creation'])
+			. format_date($this->getDataString('date_creation'))
 			. '</span>'
 			. "</li>\n";
 		
@@ -237,7 +273,7 @@ class LcmCaseInfoUI extends LcmCase {
 					. _Ti('case_input_date_assigned')
 					. '</span>'
 					. '<span class="value2">'
-					. format_date($this->data['date_assignment'])
+					. format_date($this->getDataString('date_assignment'))
 					. '</span>'
 					. "</li>\n";
 		}
@@ -246,7 +282,7 @@ class LcmCaseInfoUI extends LcmCase {
 		$query = "SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0, 
 						UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time 
 					FROM lcm_followup as fu 
-					WHERE fu.id_case = " . $this->data['id_case'] . "
+					WHERE fu.id_case = " . $this->getDataInt('id_case', '__ASSERT__') . "
 					  AND fu.hidden = 'N'";
 				
 		$result = lcm_query($query);
@@ -267,7 +303,7 @@ class LcmCaseInfoUI extends LcmCase {
 				. _Ti('case_input_legal_reason') 
 				. '</span>'
 				. '<span class="value2">'
-				. clean_output($this->data['legal_reason'])
+				. clean_output($this->getDataString('legal_reason'))
 				. '</span>'
 				. "</li>\n";
 
@@ -277,19 +313,19 @@ class LcmCaseInfoUI extends LcmCase {
 				. _Ti('case_input_alledged_crime')
 				. '</span>'
 				. '<span class="value2">'
-				. clean_output($this->data['alledged_crime'])
+				. clean_output($this->getDataString('alledged_crime'))
 				. '</span>'
 				. "</li>\n";
 
 		// Keywords
-		show_all_keywords('case', $this->data['id_case']);
+		show_all_keywords('case', $this->getDataInt('id_case'));
 
 		if ($this->data['stage']) {
 			// There should always be a stage, but in early versions, < 0.6.0,
 			// it might have been missing, causing a lcm_panic().
-			$stage = get_kw_from_name('stage', $this->data['stage']);
+			$stage = get_kw_from_name('stage', $this->getDataString('stage', '__ASSERT__'));
 			$id_stage = $stage['id_keyword'];
-			show_all_keywords('stage', $this->data['id_case'], $id_stage);
+			show_all_keywords('stage', $this->getDataInt('id_case'), $id_stage);
 		}
 
 		// Notes
@@ -298,7 +334,7 @@ class LcmCaseInfoUI extends LcmCase {
 			. _Ti('case_input_notes')
 			. '</span>'
 			. '<span class="value2">'
-			. nl2br($this->data['notes'])
+			. nl2br($this->getDataString('notes'))
 			. '</span>'
 			. "</li>\n";
 
@@ -306,19 +342,19 @@ class LcmCaseInfoUI extends LcmCase {
 	//	echo "<p class='normal_text'>";
 
 		// Show case status (if closed, only site admin can re-open)
-		if ($allow_edit && allowed($this->data['id_case'], 'a')) {
+		if ($allow_edit && allowed($this->getDataInt('id_case'), 'a')) {
 			// Change status form
 			echo "<form action='edit_fu.php' method='get'>\n";
-			echo "<input type='hidden' name='case' value='" . $this->data['case'] . "' />\n";
+			echo "<input type='hidden' name='case' value='" . $this->getDataInt('id_case') . "' />\n";
 
 			echo _Ti('case_input_status');
 			echo "<select name='type' class='sel_frm' onchange='lcm_show(\"submit_status\")'>\n";
 
 			// in inc/inc_acc.php
-			$statuses = get_possible_case_statuses($this->data['status']);
+			$statuses = get_possible_case_statuses($this->getDataString('status'));
 
 			foreach ($statuses as $s => $futype) {
-				$sel = ($s == $this->data['status'] ? ' selected="selected"' : '');
+				$sel = ($s == $this->getDataString('status') ? ' selected="selected"' : '');
 				echo '<option value="' . $futype . '"' . $sel . '>' . _T('case_status_option_' . $s) . "</option>\n";
 			}
 
@@ -326,14 +362,14 @@ class LcmCaseInfoUI extends LcmCase {
 			echo "<button type='submit' name='submit' id='submit_status' value='set_status' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 			echo "</form>\n";
 		} else {
-			echo '<li>' . _Ti('case_input_status') . _T('case_status_option_' . $this->data['status']) . "</li>\n";
+			echo '<li>' . _Ti('case_input_status') . _T('case_status_option_' . $this->getDataString('status')) . "</li>\n";
 		}
 
 		// Show case stage
 		if ($allow_edit && $admin) {
 			// Change stage form
 			echo "<form action='edit_fu.php' method='get'>\n";
-			echo "<input type='hidden' name='case' value='" . $this->data['case'] . "' />\n";
+			echo "<input type='hidden' name='case' value='" . $this->getDataInt('id_case') . "' />\n";
 			echo "<input type='hidden' name='type' value='stage_change' />\n";
 
 			echo _Ti('case_input_stage');
@@ -357,7 +393,7 @@ class LcmCaseInfoUI extends LcmCase {
 			// get the last relevant conclusion
 			$q_tmp = "SELECT * 
 				FROM lcm_followup
-				WHERE id_case = $case
+				WHERE id_case = " . $this->getDataInt('id_case') . "
 				AND (type = 'conclusion'
 						OR type = 'stage_change')
 				ORDER BY id_followup DESC 
@@ -377,8 +413,8 @@ class LcmCaseInfoUI extends LcmCase {
 
 		echo '<li>' . _Ti('case_input_collaboration');
 		echo "<ul style='padding-top: 1px; margin-top: 1px;'>";
-		echo "<li>" . _Ti('case_input_collaboration_read') . _T('info_' . ($this->data['public'] ? 'yes' : 'no')) . "</li>\n";
-		echo "<li>" . _Ti('case_input_collaboration_write') . _T('info_' . ($this->data['pub_write'] ? 'yes' : 'no')) . "</li>\n";
+		echo "<li>" . _Ti('case_input_collaboration_read') . _T('info_' . ($this->getDataInt('public') ? 'yes' : 'no')) . "</li>\n";
+		echo "<li>" . _Ti('case_input_collaboration_write') . _T('info_' . ($this->getDataInt('pub_write') ? 'yes' : 'no')) . "</li>\n";
 		echo "</ul>\n";
 		echo "</li>\n";
 		echo "</ul>\n";
@@ -389,11 +425,11 @@ class LcmCaseInfoUI extends LcmCase {
 		echo '<table class="tbl_usr_dtl">' . "\n";
 		
 		// Case ID (if editing existing case)
-		if ($this->data['id_case']) {
+		if ($this->getDataInt('id_case')) {
 			echo "<tr>"
 				. "<td>" . _T('case_input_id') . "</td>"
-				. "<td>" . $this->data['id_case']
-				. '<input type="hidden" name="id_case" value="' . $this->data['id_case'] . '\" />'
+				. "<td>" . $this->getDataInt('id_case')
+				. '<input type="hidden" name="id_case" value="' . $this->getDataInt('id_case') . '\" />'
 				. "</td></tr>\n";
 		}
 		
@@ -401,7 +437,7 @@ class LcmCaseInfoUI extends LcmCase {
 			. f_err_star('title', $_SESSION['errors']) . _T('case_input_title')
 			. "</label></td>\n";
 		echo '<td><input size="35" name="title" id="input_case_title" value="'
-			. clean_output($this->data['title'])
+			. clean_output($this->getDataString('title'))
 			. '" class="search_form_txt" />';
 		echo "</td></tr>\n";
 		
@@ -410,7 +446,7 @@ class LcmCaseInfoUI extends LcmCase {
 			echo "<tr>\n";
 			echo "<td>" . f_err_star('date_assignment') . _Ti('case_input_date_assigned') . "</td>\n";
 			echo "<td>" 
-				. get_date_inputs('assignment', $this->data['date_assignment'], false)
+				. get_date_inputs('assignment', $this->getDataString('date_assignment'), false)
 				. "</td>\n";
 			echo "</tr>\n";
 		}
@@ -420,7 +456,7 @@ class LcmCaseInfoUI extends LcmCase {
 			echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
 			echo '<td>';
 			echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
-			echo clean_output($this->data['legal_reason']);
+			echo clean_output($this->getDataString('legal_reason'));
 			echo "</textarea>";
 			echo "</td>\n";
 			echo "</tr>\n";
@@ -431,28 +467,28 @@ class LcmCaseInfoUI extends LcmCase {
 			echo '<tr><td><label for="input_alledged_crime">' . _T('case_input_alledged_crime') . "</label></td>\n";
 			echo '<td>';
 			echo '<textarea name="alledged_crime" id="input_alledged_crime" class="frm_tarea" rows="2" cols="60">';
-			echo clean_output($this->data['alledged_crime']);
+			echo clean_output($this->getDataString('alledged_crime'));
 			echo '</textarea>';
 			echo "</td>\n";
 			echo "</tr>\n";
 		}
 		
 		// Keywords (if any)
-		show_edit_keywords_form('case', $this->data['id_case']);
+		show_edit_keywords_form('case', $this->getDataInt('id_case'));
 		
 		$id_stage = 0; // new case, stage not yet known
 		if ($this->data['stage']) {
-			$stage = get_kw_from_name('stage', $this->data['stage']);
+			$stage = get_kw_from_name('stage', $this->getDataString('stage', '__ASSERT__'));
 			$id_stage = $stage['id_keyword'];
 		}
 
-		show_edit_keywords_form('stage', $this->data['id_case'], $id_stage);
+		show_edit_keywords_form('stage', $this->getDataInt('id_case'), $id_stage);
 		
 		// Notes
 		echo "<tr>\n";
 		echo "<td><label for='input_notes'>" . f_err_star('notes') . _Ti('case_input_notes') . "</label></td>\n";
-		echo '<td><textarea name="notes" id="input_notes" class="frm_tarea" rows="3" cols="60">'
-			. clean_output($this->data['notes'])
+		echo '<td><textarea name="case_notes" id="input_case_notes" class="frm_tarea" rows="3" cols="60">'
+			. clean_output($this->getDataString('notes'))
 			. "</textarea>\n"
 			. "</td>\n";
 		echo "</tr>\n";
