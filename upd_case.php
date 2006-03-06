@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.55 2006/03/06 21:22:44 mlutfy Exp $
+	$Id: upd_case.php,v 1.56 2006/03/06 23:31:37 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -79,7 +79,14 @@ if (count($errs)) {
 if (_request('add_fu')) {
 	include_lcm('inc_obj_fu');
 
-	// TODO
+	$fu = new LcmFollowup(0, $case->getDataInt('id_case'));
+	$errs = $fu->save();
+
+	if (count($errs)) {
+		$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
+		header("Location: ". $_SERVER['HTTP_REFERER']);
+		exit;
+	}
 }
 
 	// [ML] I don't understand why: header("Location: $ref_edit_case");
