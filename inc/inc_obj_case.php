@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.6 2006/03/06 21:25:40 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.7 2006/03/06 23:29:31 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -60,9 +60,6 @@ class LcmCase extends LcmObject {
 			$this->data[$nkey] = clean_input(_request($key));
 		}
 
-		if ((! $id_case) || get_datetime_from_array($_REQUEST, 'assignment', 'start', -1) != -1)
-			$this->data['date_assignment'] = get_datetime_from_array($_REQUEST, 'assignment', 'start', date('Y-m-d H:i:s'));
-
 		// If any, populate with session variables (for error reporting)
 		if (isset($_SESSION['form_data'])) {
 			foreach($_SESSION['form_data'] as $key => $value) {
@@ -74,6 +71,9 @@ class LcmCase extends LcmObject {
 				$this->data[$nkey] = clean_input(_session($key));
 			}
 		}
+
+		if ((! $id_case) || get_datetime_from_array($_SESSION['form_data'], 'assignment', 'start', -1) != -1)
+			$this->data['date_assignment'] = get_datetime_from_array($_SESSION['form_data'], 'assignment', 'start', date('Y-m-d H:i:s'));
 	}
 
 	/* private */
@@ -279,6 +279,8 @@ class LcmCase extends LcmObject {
 			$result = lcm_query($q);
 			$id_case = lcm_insert_id($result);
 			$id_author = $author_session['id_author'];
+
+			$this->data['id_case'] = $id_case;
 
 			// Insert new case_author relation
 			$q = "INSERT INTO lcm_case_author SET
