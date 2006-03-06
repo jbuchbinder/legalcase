@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.3 2006/03/01 16:48:01 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.4 2006/03/06 23:29:04 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -27,7 +27,7 @@ define('_INC_OBJ_FU', '1');
 
 include_lcm('inc_db');
 
-class LcmFollowup {
+class LcmFollowup extends LcmObject {
 	// Note: Since PHP5 we should use "private", and generates a warning,
 	// but we must support PHP >= 4.0.
 	var $data; 
@@ -35,12 +35,24 @@ class LcmFollowup {
 
 	function LcmFollowup($id_fu = 0, $id_case = 0) {
 		$id_fu = intval($id_fu);
+		$id_case = intval($id_case);
+
 		$this->data = array();
 
-		if (! ($id_fu > 0)) {
-			// Set id_case
-			$id_case = intval($id_case);
-			if (! ($id_case >= 0))
+		if ($id_fu > 0) { 
+			$query = "SELECT fu.*, a.name_first, a.name_middle, a.name_last,
+						IF(UNIX_TIMESTAMP(fu.date_end) > 0, UNIX_TIMESTAMP(fu.date_end) - UNIX_TIMESTAMP(fu.date_start), 0) as length
+					FROM lcm_followup as fu, lcm_author as a
+					WHERE id_followup = $id_fu
+					  AND fu.id_author = a.id_author";
+	
+			$result = lcm_query($query);
+	
+			if (($row = lcm_fetch_array($result))) 
+				foreach ($row as $key => $val) 
+					$this->data[$key] = $val;
+		} else {
+			if (! ($id_case > 0))
 				lcm_panic("id_case is not numeric: " . htmlspecialchars($id_case));
 
 			$this->data['id_case'] = $id_case;
@@ -59,23 +71,291 @@ class LcmFollowup {
 
 			if (isset($_REQUEST['type']))
 				$this->data['type'] = $_REQUEST['type'];
-		
-			return;
 		}
 
-		$query = "SELECT fu.*, a.name_first, a.name_middle, a.name_last,
-					IF(UNIX_TIMESTAMP(fu.date_end) > 0, UNIX_TIMESTAMP(fu.date_end) - UNIX_TIMESTAMP(fu.date_start), 0) as length
-				FROM lcm_followup as fu, lcm_author as a
-				WHERE id_followup = $id_fu
-				  AND fu.id_author = a.id_author";
+		// If any, populate form values submitted
+		foreach($_REQUEST as $key => $value) {
+			$nkey = $key;
 
-		$result = lcm_query($query);
+			if (substr($key, 0, 3) == 'fu_')
+				$nkey = substr($key, 3);
 
-		if (($row = lcm_fetch_array($result))) 
-			foreach ($row as $key => $val) 
-				$this->data[$key] = $val;
+			$this->data[$nkey] = clean_input(_request($key));
+		}
+
+		// If any, populate with session variables (for error reporting)
+		if (isset($_SESSION['form_data'])) {
+			foreach($_SESSION['form_data'] as $key => $value) {
+				$nkey = $key;
+
+				if (substr($key, 0, 3) == 'fu_')
+					$nkey = substr($key, 3);
+
+				$this->data[$nkey] = clean_input(_session($key));
+			}
+		}
+
+		// date_start
+		if ((! $id_fu) || $get_datetime_from_array($_SESSION['form_data'], 'start', 'start', -1) != -1)
+			$this->data['date_start'] = get_datetime_from_array($_SESSION['form_data'], 'start', 'start');
 	}
 
+	function save() {
+		$errors = array();
+
+		//
+		//  Validation
+		//
+
+		// * Check start date
+		$unix_date_start = strtotime($this->getDataString('date_start'));
+
+		if (($unix_date_start < 0) || ! checkdate_sql($this->getDataString('date_start')))
+			$errors['date_start'] = _Ti('time_input_date_start') . 'Invalid start date.'; // TRAD
+
+		// * Check end date
+		// [ML] This is probably very buggy, because I re-wrote parts of it
+		// to make it LCM 0.7.0 compliant, but it's a hell of a mess!
+		// And parts of this code should be in the constructor.
+		global $prefs;
+		if ($prefs['time_intervals'] == 'absolute') {
+			if (!($_SESSION['form_data']['end_year'] || $_SESSION['form_data']['end_month'] || $_SESSION['form_data']['end_day'])) {
+				// Set to default empty date if all fields empty
+				$this->data['date_end'] = '0000-00-00 00:00:00';
+			} elseif (!$_SESSION['form_data']['end_year'] || !$_SESSION['form_data']['end_month'] || !$_SESSION['form_data']['end_day']) {
+				// Report error if some of the fields empty
+				$this->data['date_end'] = get_datetime_from_array($_SESSION['form_data'], 'end', 'start');
+				$errors['date_end'] = 'Partial end date!'; // TRAD
+			} else {
+				$this->data['date_end'] = get_datetime_from_array($_SESSION['form_data'], 'end', 'start');
+				$unix_date_end = strtotime($this->getDataString('date_end'));
+
+				if ( ($unix_date_end<0) || !checkdate_sql($this->getDataString('date_end')))
+					$errors['date_end'] = 'Invalid end date.'; // TRAD
+			}
+		} else {
+			if ( ! (isset($_SESSION['form_data']['delta_days']) && (!is_numeric($_SESSION['form_data']['delta_days']) || $_SESSION['form_data']['delta_days'] < 0) ||
+						isset($_SESSION['form_data']['delta_hours']) && (!is_numeric($_SESSION['form_data']['delta_hours']) || $_SESSION['form_data']['delta_hours'] < 0) ||
+						isset($_SESSION['form_data']['delta_minutes']) && (!is_numeric($_SESSION['form_data']['delta_minutes']) || $_SESSION['form_data']['delta_minutes'] < 0) ) ) 
+			{
+				$unix_date_end = $unix_date_start
+					+ $_SESSION['form_data']['delta_days'] * 86400
+					+ $_SESSION['form_data']['delta_hours'] * 3600
+					+ $_SESSION['form_data']['delta_minutes'] * 60;
+
+				$this->data['date_end'] = date('Y-m-d H:i:s', $unix_date_end);
+			} else {
+				$errors['date_end'] = _Ti('time_input_length') . 'Invalid time interval.'; // TRAD
+				$this->data['date_end'] = $_SESSION['form_data']['date_start'];
+			}
+		}
+
+		// Description
+		/* [ML] This was requested to be optional (MG, PDO)
+		   if ( !(strlen($this->data['description']) > 0) )
+		   $errors['description'] = _Ti('fu_input_description') . _T('warning_field_mandatory');
+		 */
+
+		if (count($errors))
+			return $errors;
+
+		//
+		// Update
+		//
+		$fl = " date_start = '" . $this->getDataString('date_start') . "',
+				date_end   = '" . $this->getDataString('date_end') . "',
+				type       = '" . $this->getDataString('type') . "'"; 
+		
+		if ($this->getDataString('sumbilled', 0))
+			$fl .= ", sumbilled    = '" . $this->getDataString('sumbilled') . "'";
+
+		if ($this->getDataString('type') == 'stage_change') {
+			// [ML] To be honest, we should "assert" most of the
+			// following values, but "new_stage" is the most important.
+			lcm_assert_value($this->getDataString('new_stage', '__ASSERT__'));
+
+			$desc = array(
+					'description'  => $this->getDataString('description'),
+					'result'       => $this->getDataString('result'),
+					'conclusion'   => $this->getDataString('conclusion'),
+					'sentence'     => $this->getDataString('sentence'),
+					'sentence_val' => $this->getDataString('sentence_val'),
+					'new_stage'    => $this->getDataString('new_stage'));
+
+			$fl .= ", description = '" . serialize($desc) . "'";
+		} elseif (is_status_change($this->getDataString('string'))) {
+			$desc = array(
+					'description'  => $this->getDataString('description'),
+					'result'       => $this->getDataString('result'),
+					'conclusion'   => $this->getDataString('conclusion'),
+					'sentence'     => $this->getDataString('sentence'),
+					'sentence_val' => $this->getDataString('sentence_val'));
+
+		$fl .= ", description = '" . serialize($desc) . "'";
+	} else {
+		$fl .= ", description  = '" . $this->getDataString('description') . "'";
+	}
+
+	if ($this->getDataInt('id_followup') > 0) {
+		// Edit of existing follow-up
+		$id_followup = $this->getDataInt('id_followup');
+		
+		if (!allowed($this->getDataInt('id_case'), 'e')) 
+			lcm_panic("You don't have permission to modify this case's information. (" . $this->getDataInt('id_case') . ")");
+
+		// TODO: check if hiding this FU is allowed
+		if (allowed($this->getDataInt('id_case'), 'a')
+			&& (! (is_status_change($this->getDataString('type'))
+			|| $this->getDataString('type') == 'assignment'
+			|| $this->getDataString('type') == 'unassignment')))
+		{
+			if ($this->getDataString('delete'))
+				$fl .= ", hidden = 'Y'";
+			else
+				$fl .= ", hidden = 'N'";
+		} else {
+			$fl .= ", hidden = 'N'";
+		}
+
+		$q = "UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
+		$result = lcm_query($q);
+
+		// Get stage of the follow-up entry
+		$q = "SELECT case_stage FROM lcm_followup WHERE id_followup = $id_followup";
+		$result = lcm_query($q);
+
+		if ($row = lcm_fetch_array($result)) {
+			$case_stage = lcm_assert_value($row['case_stage']);
+		} else {
+			lcm_panic("There is no such follow-up (" . $id_followup . ")");
+		}
+
+		// Update the related lcm_stage entry
+		$q = "UPDATE lcm_stage SET
+				date_conclusion = '" . $this->getDataString('date_end') . "',
+				kw_result = '" . $this->getDataString('result') . "',
+				kw_conclusion = '" . $this->getDataString('conclusion') . "',
+				kw_sentence = '" . $this->getDataString('sentence') . "',
+				sentence_val = '" . $this->getDataString('sentence_val') . "',
+				date_agreement = '" . $this->getDataString('date_end') . "'
+			WHERE id_case = " . $this->getDataInt('id_case') . "
+			  AND kw_case_stage = '" . $case_stage . "'";
+
+		lcm_query($q);
+	} else {
+		// New follow-up
+		if (!allowed($this->getDataInt('id_case'), 'w'))
+			lcm_panic("You don't have permission to add information to this case. (" . $this->getDataInt('id_case') . ")");
+
+		// Get the current case stage
+		$q = "SELECT stage FROM lcm_case WHERE id_case=" . $this->getDataInt('id_case', '__ASSERT__');
+		$result = lcm_query($q);
+
+		if ($row = lcm_fetch_array($result)) {
+			$case_stage = lcm_assert_value($row['stage']);
+		} else {
+			lcm_panic("There is no such case (" . $this->getDataInt('id_case') . ")");
+		}
+
+		// Add the new follow-up
+		$q = "INSERT INTO lcm_followup
+			SET	id_followup=0,
+				id_case=" . $this->getDataInt('id_case') . ",
+				id_author=" . $GLOBALS['author_session']['id_author'] . ",
+				$fl,
+				case_stage='$case_stage'";
+
+		lcm_query($q);
+		$this->data['id_followup'] = lcm_insert_id();
+
+		// Set relation to the parent appointment, if any
+		if ($this->getDataInt('id_app')) {
+			$q = "INSERT INTO lcm_app_fu 
+					SET id_app=" . $this->getDataInt('id_app') . ",
+						id_followup=" . $this->getDataInt('id_followup', '__ASSERT__') . ",
+						relation='child'";
+			$result = lcm_query($q);
+		}
+
+		// Update case status
+		$status = '';
+		$stage = '';
+		switch ($this->getDataString('type')) {
+			case 'conclusion' :
+				$status = 'closed';
+				break;
+			case 'suspension' :
+				$status = 'suspended';
+				break;
+			case 'opening' :
+			case 'resumption' :
+			case 'reopening' :
+				$status = 'open';
+				break;
+			case 'merge' :
+				$status = 'merged';
+				break;
+			case 'deletion':
+				$status = 'deleted';
+				break;
+			case 'stage_change' :
+				$stage = lcm_assert_value($this->getDataString('new_stage'));
+				break;
+		}
+		
+		if ($status || $stage) {
+			$q = "UPDATE lcm_case
+					SET " . ($status ? "status='$status'" : '') . ($status && $stage ? ',' : '') . ($stage ? "stage='$stage'" : '') . "
+					WHERE id_case=" . $this->getDataInt('id_case');
+			lcm_query($q);
+
+			// Close the lcm_stage
+			// XXX for now, date_agreement is not used
+			if ($status == 'open') {
+				// case is being re-opened, so erase previously entered info
+				$q = "UPDATE lcm_stage
+						SET
+							date_conclusion = '0000-00-00 00:00:00',
+							id_fu_conclusion = 0,
+							kw_result = '',
+							kw_conclusion = '',
+							kw_sentence = '',
+							sentence_val = '',
+							date_agreement = '0000-00-00 00:00:0'
+						WHERE id_case = " . $this->getDataInt('id_case') . "
+						  AND kw_case_stage = '" . $case_stage . "'";
+			} else {
+				$q = "UPDATE lcm_stage
+						SET
+							date_conclusion = '" . $this->getDataString('date_end') . "',
+							id_fu_conclusion = " . $this->getDataInt('id_followup') . ",
+							kw_result = '" . $this->getDataString('result') . "',
+							kw_conclusion = '" . $this->getDataString('conclusion') . "',
+							kw_sentence = '" . $this->getDataString('sentence') . "',
+							sentence_val = '" . $this->getDataString('sentence_val') . "',
+							date_agreement = '" . $this->getDataString('date_end') . "'
+						WHERE id_case = " . $this->getDataInt('id_case', '__ASSERT__') . "
+						  AND kw_case_stage = '" . $case_stage . "'";
+			}
+
+			lcm_query($q);
+		}
+
+		// If creating a new case stage, make new lcm_stage entry
+		if ($stage) {
+			$q = "INSERT INTO lcm_stage SET
+					id_case = " . $this->getDataInt('id_case', '__ASSERT__') . ",
+					kw_case_stage = '" . lcm_assert_value($stage) . "',
+					date_creation = NOW(),
+					id_fu_creation = " . $this->getDataInt('id_followup');
+
+			lcm_query($q);
+		}
+	}
+
+
+		return $errors;
+	}
 }
 
 class LcmFollowupInfoUI extends LcmFollowup {
