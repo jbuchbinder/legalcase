@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.83 2006/03/02 22:32:57 mlutfy Exp $
+	$Id: edit_case.php,v 1.84 2006/03/06 23:30:23 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -28,12 +28,6 @@ include_lcm('inc_filters');
 include_lcm('inc_obj_client');
 include_lcm('inc_obj_case');
 include_lcm('inc_obj_fu');
-
-// Read site configuration preferences
-$case_assignment_date = read_meta('case_assignment_date');
-$case_alledged_crime  = read_meta('case_alledged_crime');
-$case_legal_reason    = read_meta('case_legal_reason');
-$case_allow_modif     = read_meta('case_allow_modif');
 
 $case = 0;
 
@@ -180,21 +174,12 @@ if (! $case) {
 		//
 		show_page_subtitle("Client information", 'clients_intro'); // TRAD
 
-		if (_session('add_client')) {
-			echo '<p class="normal_text">';
-			echo '<input type="checkbox" checked="checked" name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
-			echo '<label for="box_new_client">' . "Add a client to this case" . '</label>'; // TRAD
-			echo "</p>\n";
+		echo '<p class="normal_text">';
+		echo '<input type="checkbox"' . isChecked(_session('add_client')) . 'name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
+		echo '<label for="box_new_client">' . "Add a client to this case" . '</label>'; // TRAD
+		echo "</p>\n";
 
-			echo '<div id="new_client">';
-		} else {
-			echo '<p class="normal_text">';
-			echo '<input type="checkbox" name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
-			echo '<label for="box_new_client">' . "Add a client to this case" . '</label>'; // TRAD
-			echo "</p>\n";
-
-			echo '<div id="new_client" style="display: none;">';
-		}
+		echo '<div id="new_client" ' . (_session('add_client') ? '' : ' style="display: none;"') . '>';
 
 		echo "<div style='overflow: hidden; width: 100%;'>";
 		echo '<div style="float: left; text-align: right; width: 29%;">';
@@ -262,11 +247,11 @@ echo "<script type=\"text/javascript\">
 //
 if (! $case) {
 	echo '<p class="normal_text">';
-	echo '<input type="checkbox" name="add_client" id="box_new_followup" onclick="display_block(\'new_followup\', \'flip\')"; />';
-	echo '<label for="box_new_followup">' . "Add an activity to case" . '</label>'; // TRAD
+	echo '<input type="checkbox"' . isChecked(_session('add_fu')) . 'name="add_fu" id="box_new_followup" onclick="display_block(\'new_followup\', \'flip\')"; />';
+	echo '<label for="box_new_followup">' . "Add a follow-up to the case" . '</label>'; // TRAD
 	echo "</p>\n";
 
-	echo '<div id="new_followup" style="display: none;">';
+	echo '<div id="new_followup" ' . (_session('add_fu') ? '' : ' style="display: none;"') . '>';
 
 	show_page_subtitle("Follow-up information", 'followups_intro'); // TRAD
 
