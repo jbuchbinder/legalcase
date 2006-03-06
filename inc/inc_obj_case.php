@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.5 2006/03/02 22:33:47 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.6 2006/03/06 21:25:40 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -57,10 +57,11 @@ class LcmCase extends LcmObject {
 			if (substr($key, 0, 5) == 'case_')
 				$nkey = substr($key, 5);
 
-			$this->data[$nkey] = _request($key);
-
-			lcm_log("::: REQUEST ::: $nkey ($key) = " .  $_REQUEST[$key]);
+			$this->data[$nkey] = clean_input(_request($key));
 		}
+
+		if ((! $id_case) || get_datetime_from_array($_REQUEST, 'assignment', 'start', -1) != -1)
+			$this->data['date_assignment'] = get_datetime_from_array($_REQUEST, 'assignment', 'start', date('Y-m-d H:i:s'));
 
 		// If any, populate with session variables (for error reporting)
 		if (isset($_SESSION['form_data'])) {
@@ -70,9 +71,7 @@ class LcmCase extends LcmObject {
 				if (substr($key, 0, 5) == 'case_')
 					$nkey = substr($key, 5);
 
-				$this->data[$nkey] = _session($key);
-
-				lcm_log("::: SESSION ::: $nkey ($key) = " .  $_SESSION['form_data'][$key]);
+				$this->data[$nkey] = clean_input(_session($key));
 			}
 		}
 	}
@@ -183,6 +182,156 @@ class LcmCase extends LcmObject {
 		lcm_query($query);
 	}
 
+
+	function save() {
+		$errors = array();
+
+		// * Title must be non-empty
+		if (! $this->getDataString('title')) 
+			$errors['title'] = _Ti('case_input_title') . _T('warning_field_mandatory');
+
+		// * Date assignment must be a vaid date
+		if (! checkdate_sql($this->getDataString('date_assignment')))
+			$errors['date_assignment'] = _Ti('case_input_date_assigned') . 'Invalid date.'; // TRAD
+
+		// * TODO: Status must be a valid option (where do we have official list?)
+		if (! $this->getDataString('status'))
+			$errors['status'] = _Ti('case_input_status') . _T('warning_field_mandatory');
+
+		// * TODO: Stage must be a valid keyword
+		if (! $this->getDataString('stage'))
+			$errors['stage'] = _Ti('case_input_stage') . _T('warning_field_mandatory');
+
+		validate_update_keywords_request('case', $this->getDataInt('id_case'));
+
+		if (count($errors))
+			return $errors;
+
+		//
+		// Create the case in the database
+		//
+
+		$fl = "title='"              . $this->getDataString('title')            . "',
+				date_assignment = '" . $this->getDataString('date_assignment')  . "',
+				legal_reason='"      . $this->getDataString('legal_reason')     . "',
+				alledged_crime='"    . $this->getDataString('alledged_crime')   . "',
+				notes = '"           . $this->getDataString('case_notes')       . "',
+			    status='"            . $this->getDataString('status')           . "',
+			    stage='"             . $this->getDataString('stage')            . "'";
+
+		// Put public access rights settings in a separate string
+		$public_access_rights = '';
+
+		/* 
+		 * [ML] Important note: the meta 'case_*_always' defines whether the user
+		 * has the choice of whether read/write should be allowed or not. If not,
+		 * we take the system default value in 'case_default_*'.
+		 */
+		global $author_session;
+
+		if ((read_meta('case_read_always') == 'yes') && $author_session['status'] != 'admin') {
+			// impose system setting
+			$public_access_rights .= "public=" . (int)(read_meta('case_default_read') == 'yes');
+		} else {
+			// write user selection
+			$public_access_rights .= "public=" . (int)($this->getDataString('public') == 'yes');
+		}
+
+		if ((read_meta('case_write_always') == 'yes') && $author_session['status'] != 'admin') {
+			// impose system setting
+			$public_access_rights .= ", pub_write=" . (int)(read_meta('case_default_write') == 'yes');
+		} else {
+			// write user selection
+			$public_access_rights .= ", pub_write=" . (int)($this->getDataString('pub_write') == 'yes');
+		}
+
+		if ($this->getDataInt('id_case') > 0) {
+			// This is modification of existing case
+			$id_case = $this->getDataInt('id_case');
+
+			// Check access rights
+			if (!allowed($id_case,'e'))
+				lcm_panic("You don't have permission to change this case's information!");
+
+			// If admin access is allowed, set all fields
+			if (allowed($id_case,'a'))
+				$q = "UPDATE lcm_case SET $fl,$public_access_rights WHERE id_case=$id_case";
+			else
+				$q = "UPDATE lcm_case SET $fl WHERE id_case=$id_case";
+
+			lcm_query($q);
+
+			// Update lcm_stage entry for case creation (of first stage!)
+			// [ML] This doesn't make so much sense, but better than nothing imho..
+			$q = "SELECT min(id_entry) as id_entry FROM lcm_stage WHERE id_case = $id_case";
+			$tmp_result = lcm_query($q);
+
+			if (($tmp_row = lcm_fetch_array($tmp_result))) {
+				$q = "UPDATE lcm_stage
+					SET date_creation = '" . $this->getDataString('date_assignment') . "'
+					WHERE id_entry = " . $tmp_row['id_entry'];
+
+				lcm_query($q);
+			}
+		} else {
+			// This is new case
+			$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,$public_access_rights";
+			$result = lcm_query($q);
+			$id_case = lcm_insert_id($result);
+			$id_author = $author_session['id_author'];
+
+			// Insert new case_author relation
+			$q = "INSERT INTO lcm_case_author SET
+				id_case=$id_case,
+				id_author=$id_author,
+				ac_read=1,
+				ac_write=1,
+				ac_edit=" . (int)(read_meta('case_allow_modif') == 'yes') . ",
+				ac_admin=1";
+			// [AG] The user creating case should always have 'admin' access right, otherwise only admin could add new user(s) to the case
+			$result = lcm_query($q);
+
+			// Get author information
+			$q = "SELECT *
+				FROM lcm_author
+				WHERE id_author=$id_author";
+			$result = lcm_query($q);
+			$author_data = lcm_fetch_array($result);
+
+			// Add 'assignment' followup to the case
+			$q = "INSERT INTO lcm_followup
+				SET id_followup = 0,
+					id_case = $id_case, 
+					id_author = $id_author,
+					type = 'assignment',
+					case_stage = '" . $this->getDataString('stage') . "',
+					date_start = NOW(),
+					date_end = NOW(),
+					description='" . $id_author . "'";
+
+			lcm_query($q);
+			$id_followup = lcm_insert_id();
+
+			// Add lcm_stage entry
+			$q = "INSERT INTO lcm_stage SET
+				id_case = $id_case,
+						kw_case_stage = '" . $this->getDataString('stage') . "',
+						date_creation = '" . $this->getDataString('date_assignment') . "',
+						id_fu_creation = $id_followup";
+
+			lcm_query($q);
+		}
+
+		// Keywords
+		update_keywords_request('case', $this->getDataInt('id_case'));
+
+		$stage = get_kw_from_name('stage', $this->getDataString('stage'));
+		$id_stage = $stage['id_keyword'];
+		update_keywords_request('stage', $id_case, $id_stage);
+
+
+		return $errors;
+	}
 }
 
 class LcmCaseInfoUI extends LcmCase {
@@ -427,6 +576,12 @@ class LcmCaseInfoUI extends LcmCase {
 
 	// XXX error checking! ($_SESSION['errors'])
 	function printEdit() {
+		// Read site configuration preferences
+		$case_assignment_date = read_meta('case_assignment_date');
+		$case_alledged_crime  = read_meta('case_alledged_crime');
+		$case_legal_reason    = read_meta('case_legal_reason');
+		$case_allow_modif     = read_meta('case_allow_modif');
+
 		echo '<table class="tbl_usr_dtl">' . "\n";
 		
 		// Case ID (if editing existing case)
