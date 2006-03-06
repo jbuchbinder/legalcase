@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.232 2006/03/01 21:56:44 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.233 2006/03/06 23:01:44 mlutfy Exp $
 */
 
 //
@@ -1823,6 +1823,20 @@ function get_delete_box($id, $arrname, $text) {
 			. ' id="' . $id . '" name="' . $arrname . '[]" value="' . $id . '" />';
 
 	return $html;
+}
+
+function isChecked($expr) {
+	if ($expr)
+		return ' checked="checked" ';
+	else
+		return ' ';
+}
+
+function isSelected($expr) {
+	if ($expr)
+		return ' selected="selected" ';
+	else
+		return ' ';
 }
 
 ?>
