@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.84 2006/03/06 23:30:23 mlutfy Exp $
+	$Id: edit_case.php,v 1.85 2006/03/07 14:12:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -36,9 +36,9 @@ if (empty($_SESSION['errors'])) {
 	// Clear form data
 	$_SESSION['form_data'] = array();
 
-	// Set the returning page
-	if (isset($ref)) $_SESSION['form_data']['ref_edit_case'] = $ref;
-	else $_SESSION['form_data']['ref_edit_case'] = $_SERVER['HTTP_REFERER'];
+	// Set the returning page, usually, there should not be, therefore
+	// it will send back to "case_det.php?case=NNN" after update.
+	$_SESSION['form_data']['ref_edit_case'] = _request('ref');
 
 	// Register case ID as session variable
 	if (!session_is_registered("case"))
@@ -281,6 +281,7 @@ if ($existing) {
 
 echo '<input type="hidden" name="admin" value="' . $_SESSION['form_data']['admin'] . "\" />\n";
 echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['form_data']['ref_edit_case'] . "\" />\n";
+
 echo "</form>\n\n";
 
 // Reset error messages and form data
