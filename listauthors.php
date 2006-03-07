@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.31 2006/02/20 02:55:17 mlutfy Exp $
+	$Id: listauthors.php,v 1.32 2006/03/07 19:05:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -59,13 +59,19 @@ if (isset($_REQUEST['order_status']))
 // Sort authors by name_first
 // [ML] I know, problably more logical by last name, but we do not split the columns
 // later we can sort by any column if we need to
+// [ML] 2006-03-07: Sorts using last name if siteconfig has name_order to Last, First Middle
+$person_name_format = read_meta('person_name_format');
 $order_name_first = 'ASC';
 if (isset($_REQUEST['order_name_first']))
 	if ($_REQUEST['order_name_first'] == 'ASC' || $_REQUEST['order_name_first'] == 'DESC')
 		$order_name_first = $_REQUEST['order_name_first'];
 
 $q .= ($order_set ? " , " : " ORDER BY ");
-$q .= " name_first " . $order_name_first;
+
+if ($person_name_format == '10')
+	$q .= " name_last " . $order_name_first;
+else
+	$q .= " name_first " . $order_name_first;
 
 $result = lcm_query($q);
 $number_of_rows = lcm_num_rows($result);
