@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.4 2006/03/06 23:29:04 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.5 2006/03/07 15:46:17 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -52,10 +52,9 @@ class LcmFollowup extends LcmObject {
 				foreach ($row as $key => $val) 
 					$this->data[$key] = $val;
 		} else {
-			if (! ($id_case > 0))
-				lcm_panic("id_case is not numeric: " . htmlspecialchars($id_case));
-
-			$this->data['id_case'] = $id_case;
+			if ($id_case > 0) {
+				$this->data['id_case'] = $id_case;
+			}
 
 			// Dates
 			$this->data['date_start'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
@@ -67,10 +66,10 @@ class LcmFollowup extends LcmObject {
 			$this->data['app_reminder'] = date('Y-m-d H:i:s');
 
 			if (isset($_REQUEST['stage']))
-				$this->new_stage = $_REQUEST['stage'];
+				$this->data['new_stage'] = _request('stage');
 
 			if (isset($_REQUEST['type']))
-				$this->data['type'] = $_REQUEST['type'];
+				$this->data['type'] = _request('type');
 		}
 
 		// If any, populate form values submitted
@@ -96,7 +95,7 @@ class LcmFollowup extends LcmObject {
 		}
 
 		// date_start
-		if ((! $id_fu) || $get_datetime_from_array($_SESSION['form_data'], 'start', 'start', -1) != -1)
+		if (get_datetime_from_array($_SESSION['form_data'], 'start', 'start', -1) != -1)
 			$this->data['date_start'] = get_datetime_from_array($_SESSION['form_data'], 'start', 'start');
 	}
 
@@ -106,6 +105,10 @@ class LcmFollowup extends LcmObject {
 		//
 		//  Validation
 		//
+
+		// * Check for id_case
+		if (! ($this->getDataInt('id_case') > 0))
+			$errors['id_case'] = "Internal error: No id_case found";
 
 		// * Check start date
 		$unix_date_start = strtotime($this->getDataString('date_start'));
@@ -361,6 +364,15 @@ class LcmFollowup extends LcmObject {
 class LcmFollowupInfoUI extends LcmFollowup {
 	function LcmFollowupInfoUI($id_fu = 0) {
 		$this->LcmFollowup($id_fu);
+
+		// In printEdit(), whether to show "conclusion" fields
+		$this->show_conclusion = false;
+
+		if (_request('submit') == 'set_status' || _request('submit') == 'set_stage') {
+			$this->show_conclusion = true;
+		} elseif (_session('type') == 'stage_change' || is_status_change(_session('type'))) {
+			$this->show_conclusion = true;
+		}
 	}
 
 	function printGeneral($show_subtitle = true, $allow_edit = true) {
@@ -488,17 +500,17 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			$name = '';
 
 			// Buggy code, so isolated most important cases
-			if ($this->data['id_followup'] == 0)
+			if ($this->getDataInt('id_followup') == 0)
 				$name = 'delta';
 			elseif ($edit)
 				$name = 'delta';
 			else
 				// user can 'finish' entering data
-				$name = (($admin || ($edit && ($this->data['date_end']=='0000-00-00 00:00:00'))) ? 'delta' : '');
+				$name = (($admin || ($edit && ($this->getDataString('date_end') =='0000-00-00 00:00:00'))) ? 'delta' : '');
 
 			if (empty($_SESSION['errors'])) {
-				$interval = ( ($this->data['date_end']!='0000-00-00 00:00:00') ?
-						strtotime($this->data['date_end']) - strtotime($this->data['date_start']) : 0);
+				$interval = (($this->getDataString('date_end') != '0000-00-00 00:00:00') ?
+						strtotime($this->getDataString('date_end')) - strtotime($this->getDataString('date_start')) : 0);
 				echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 			} else {
 				echo get_time_interval_inputs_from_array($name, $this->data, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
@@ -509,7 +521,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		echo "</tr>\n";
 	
 		// Show 'conclusion' options
-		if ($show_conclusion) {
+		if ($this->show_conclusion) {
 			$kws_conclusion = get_keywords_in_group_name('conclusion');
 			$kws_result = get_keywords_in_group_name('_crimresults');
 	
@@ -579,24 +591,24 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		}
 	
 	
-		if ($_REQUEST['submit'] == 'set_status' || is_status_change($this->data['type'])) {
+		if (_request('submit') == 'set_status' || is_status_change($this->getDataString('type'))) {
 			// Change status
 			echo "<tr>\n";
 			echo "<td>" . _T('case_input_status') . "</td>\n";
 			echo "<td>";
 
-			echo '<input type="hidden" name="type" value="' . $this->data['type'] . '" />' . "\n";
+			echo '<input type="hidden" name="type" value="' . $this->getDataString('type') . '" />' . "\n";
 			echo _T('kw_followups_' . $this->data['type'] . '_title');
 
 			echo "</td>\n";
 			echo "</tr>\n";
-		} elseif ($_REQUEST['submit'] == 'set_stage' || $this->data['type'] == 'stage_change') {
+		} elseif (_request('submit') == 'set_stage' || $this->getDataString('type') == 'stage_change') {
 			// Change stage
 			echo "<tr>\n";
 			echo "<td>" . _T('fu_input_next_stage') . "</td>\n";
 			echo "<td>";
 
-			echo '<input type="hidden" name="type" value="' . $this->data['type'] . '" />' . "\n";
+			echo '<input type="hidden" name="type" value="' . $this->getDataString('type') . '" />' . "\n";
 
 			// This is to compensate an old bug, when 'case stage' was not stored in fu.description
 			// and therefore editing a follow-up would not give correct information.
@@ -617,14 +629,14 @@ class LcmFollowupInfoUI extends LcmFollowup {
 				$id_stage = $stage['id_keyword'];
 				show_edit_keywords_form('stage', $this->data['id_case'], $id_stage);
 			}
-		} elseif ($this->data['type'] == 'assignment' || $this->data['type'] == 'unassignment') {
+		} elseif ($this->getDataString('type') == 'assignment' || $this->getDataString('type') == 'unassignment') {
 			// Do not allow assignment/un-assignment follow-ups to be changed
 			echo "<tr>\n";
 			echo "<td>" . _T('fu_input_next_stage') . "</td>\n";
 			echo "<td>";
 
-			echo '<input type="hidden" name="type" value="' . $this->data['type'] . '" />' . "\n";
-			echo _Tkw('followups', $this->data['type']);
+			echo '<input type="hidden" name="type" value="' . $this->getDataString('type') . '" />' . "\n";
+			echo _Tkw('followups', $this->getDataString('type'));
 
 			echo "</td>\n";
 			echo "</tr>\n";
@@ -660,9 +672,9 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		echo '<td valign="top">' . f_err_star('description') . _T('fu_input_description') . "</td>\n";
 		echo '<td>';
 
-		if ($this->data['type'] == 'assignment' || $this->data['type'] == 'unassignment') {
+		if ($this->getDataString('type') == 'assignment' || $this->getDataString('type') == 'unassignment') {
 			// Do not allow edit of assignment
-			echo '<input type="hidden" name="description" value="' . $this->data['description'] . '" />' . "\n";
+			echo '<input type="hidden" name="description" value="' . $this->getDataString('description') . '" />' . "\n";
 			echo get_fu_description($this->data);
 		} else {
 			echo '<textarea ' . $dis . ' name="description" rows="15" cols="60" class="frm_tarea">';
@@ -679,7 +691,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo '<td>' . _T('fu_input_sum_billed') . "</td>\n";
 			echo '<td>';
 			echo '<input ' . $dis . ' name="sumbilled" '
-				. 'value="' . clean_output($this->data['sumbilled']) . '" '
+				. 'value="' . clean_output($this->getDataString('sumbilled')) . '" '
 				. 'class="search_form_txt" size="10" />';
 
 			// [ML] If we do this we may as well make a function
@@ -701,13 +713,13 @@ class LcmFollowupInfoUI extends LcmFollowup {
 	
 		// XXX FIXME: Should probably be in some function "is_system_fu"
 		// or even "is_deletable"
-		if ($this->data['id_followup']
+		if ($this->getDataInt('id_followup')
 				&& allowed($this->data['id_case'], 'a')
 				&& ! (is_status_change($this->data['type'])
 					|| $this->data['type'] == 'assignment'
 					|| $this->data['type'] == 'unassignment'))
 		{
-			$checked = ($this->data['hidden'] == 'Y' ? ' checked="checked" ' : '');
+			$checked = ($this->getDataString('hidden') == 'Y' ? ' checked="checked" ' : '');
 
 			echo '<p class="normal_text">';
 			echo '<input type="checkbox"' . $checked . ' name="delete" id="box_delete" />';
@@ -716,7 +728,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		}
 	
 		// Add followup appointment
-		if (!isset($_GET['followup'])) {
+		if (! _request('followup')) {
 			echo "<!-- Add appointment? -->\n";
 			echo '<p class="normal_text">';
 			echo '<input type="checkbox" name="add_appointment" id="box_new_app" onclick="display_block(\'new_app\', \'flip\')"; />';
