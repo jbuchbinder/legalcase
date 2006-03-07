@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta_defaults.php,v 1.14 2005/12/16 11:17:00 mlutfy Exp $
+	$Id: inc_meta_defaults.php,v 1.15 2006/03/07 18:39:43 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -86,6 +86,7 @@ function init_default_config() {
 		'client_hide_all' => 'no',
 		'client_share_read' => 'yes', // depends on hide_all
 		'client_share_write' => 'yes', // depends on read = yes
+		'person_name_format' => '1', // First Middle Last (ex: Ivan Petrov Ivanov)
 		'org_hide_all' => 'no',
 		'org_share_read' => 'yes', // depends on hide_all
 		'org_share_write' => 'yes', // depends on read = yes
