@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.56 2006/03/06 23:31:37 mlutfy Exp $
+	$Id: upd_case.php,v 1.57 2006/03/07 14:09:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -67,7 +67,7 @@ $errs = $case->save();
 
 if (count($errs)) {
 	$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
-	header("Location: ". $_SERVER['HTTP_REFERER']);
+	lcm_header("Location: ". $_SERVER['HTTP_REFERER']);
     exit;
 }
 
@@ -84,18 +84,17 @@ if (_request('add_fu')) {
 
 	if (count($errs)) {
 		$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
-		header("Location: ". $_SERVER['HTTP_REFERER']);
+		lcm_header("Location: ". $_SERVER['HTTP_REFERER']);
 		exit;
 	}
 }
 
-	// [ML] I don't understand why: header("Location: $ref_edit_case");
-	// [AG] Because "edit_case" could be invoked from diferent places i.e. edit existing case or add new or other.
+	// [AG] "edit_case" could be invoked from diferent places i.e. edit existing case or add new or other.
 	// [AG] User could come to edit from listcases.php or case_det.php. Also, other references could be added later.
-	// [AG] In each case the return page will be different.
-
-	//header("Location: case_det.php?case=$id_case");
-	$ref_edit_case = ($_SESSION['form_data']['ref_edit_case'] ? $_SESSION['form_data']['ref_edit_case'] : "case_det.php?case=$id_case");
+	// [ML] 2006-03-07: Removed 'ref_edit_case' from 'edit_case.php', so that
+	//      it returns to 'case_det.php' by default. Other places, if any, can use the
+	//      ref_edit_case variable.
+	$ref_edit_case = _request('ref_edit_case', "case_det.php?case=" . $case->getDataInt('id_case'));
 	$send_to = '';
 
 	// Proceed accoring to the button type
@@ -105,7 +104,7 @@ if (_request('add_fu')) {
 			// header("Location: edit_case.php?case=0&ref=$ref_edit_case");
 			break;
 		case 'adddet':
-			$send_to = "case_det.php?case=$id_case";
+			$send_to = "case_det.php?case=" . $case->getDataInt('id_case');
 			// header("Location: case_det.php?case=$id_case");
 			break;
 		default :
@@ -115,7 +114,7 @@ if (_request('add_fu')) {
 
 	// Send to add_client if any client to attach
 	if ($_SESSION['form_data']['attach_client']) {
-		header("Location: add_client.php?case=$id_case"
+		lcm_header("Location: add_client.php?case=" . $case->getDataInt('id_case')
 			. "&clients[]=" .  $_SESSION['form_data']['attach_client'] 
 			. "&ref_sel_client=" . rawurlencode($send_to));
 		exit;
@@ -123,12 +122,12 @@ if (_request('add_fu')) {
 
 	// Send to add_org if any org to attach
 	if ($_SESSION['form_data']['attach_org']) {
-		header("Location: add_org.php?case=$id_case"
+		lcm_header("Location: add_org.php?case=" . $case->getDataInt('id_case')
 			. "&orgs[]=" .  $_SESSION['form_data']['attach_org'] 
 			. "&ref_sel_client=" . rawurlencode($send_to));
 		exit;
 	}
 
-	header("Location: " . $send_to);
+	lcm_header("Location: " . $send_to);
 
 ?>
