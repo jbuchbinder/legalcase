@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.79 2006/03/01 21:54:29 mlutfy Exp $
+	$Id: inc_filters.php,v 1.80 2006/03/07 18:37:52 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -255,7 +255,19 @@ function get_person_name($item) {
 		return '';
 	}
 
-	return njoin(array($item['name_first'], $item['name_middle'], $item['name_last']));
+	$format = read_meta('person_name_format');
+
+	if (! $format)
+		$format = '1';
+
+	switch ($format) {
+		case '10':
+			return njoin(array($item['name_last'] . ',', $item['name_first'], $item['name_middle']));
+			break;
+		case '1':
+		default:
+			return njoin(array($item['name_first'], $item['name_middle'], $item['name_last']));
+	}
 }
 
 function get_person_initials($item, $with_abbver = true) {
