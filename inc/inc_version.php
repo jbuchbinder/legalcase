@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.86 2006/03/02 22:01:22 mlutfy Exp $
+	$Id: inc_version.php,v 1.87 2006/03/07 14:11:01 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -945,14 +945,14 @@ function _Tkw($grp, $val, $args = '') {
 
 include_lcm('inc_filters');
 function _request ($name, $default = '') {
-	if (isset($_REQUEST[$name]))
+	if (isset($_REQUEST[$name]) && $_REQUEST[$name])
 		return clean_input($_REQUEST[$name]);
 	else
 		return $default;
 }
 
 function _session ($name, $default = '') {
-	if (isset($_SESSION['form_data'][$name]))
+	if (isset($_SESSION['form_data'][$name]) && $_SESSION['form_data'][$name])
 		return clean_input($_SESSION['form_data'][$name]);
 	else
 		return $default;
@@ -1086,8 +1086,9 @@ function verif_butineur() {
 
 // Based from the comments in:
 // http://www.php.net/manual/fr/function.debug-backtrace.php
-function lcm_getbacktrace($html = true)
+function lcm_getbacktrace($html = true, $level = 0)
 {
+	$cpt_level = 0;
 	$s = '';
 	$MAXSTRLEN = 1024;
 
@@ -1097,7 +1098,8 @@ function lcm_getbacktrace($html = true)
 	$traceArr = debug_backtrace();
 	array_shift($traceArr);
 	$tabs = sizeof($traceArr)-1;
-	foreach($traceArr as $arr) {
+	// foreach($traceArr as $arr) {
+	while (($arr = array_shift($traceArr)) && ((! $level) || $cpt_level++ < $level)) {
 		for ($i=0; $i < $tabs; $i++) 
 			$s .= ($html ? ' &nbsp; ' : '  ');
 
@@ -1179,10 +1181,15 @@ function lcm_debug($message) {
 		lcm_log($message);
 }
 
+function lcm_header($h) {
+	if ($GLOBALS['debug']) {
+		lcm_log(lcm_getbacktrace(false, 2));
+	}
 
-// In debug mode, log the calling URI (not very efficient, it's only for debugging!)
-// [ML] For the moment, software too unstable, putting lcm_log() instead of lcm_debug(),
-// even if debugging has been de-activated from the rest of the software.
-lcm_log($_SERVER['REQUEST_METHOD'] . ": " . $_SERVER['REQUEST_URI']);
+	header($h);
+}
+
+// In debug mode, log the calling URI
+lcm_debug($_SERVER['REQUEST_METHOD'] . ": " . $_SERVER['REQUEST_URI']);
 
 ?>
