@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.7 2006/03/06 23:29:31 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.8 2006/03/07 15:53:28 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -48,6 +48,10 @@ class LcmCase extends LcmObject {
 			if (($row = lcm_fetch_array($result))) 
 				foreach ($row as $key => $val) 
 					$this->data[$key] = $val;
+
+			// Case stage
+			$stage = get_kw_from_name('stage', $this->getDataString('stage'));
+			$this->data['id_stage'] = $stage['id_keyword'];
 		}
 
 		// If any, populate form values submitted
@@ -182,8 +186,7 @@ class LcmCase extends LcmObject {
 		lcm_query($query);
 	}
 
-
-	function save() {
+	function validate() {
 		$errors = array();
 
 		// * Title must be non-empty
@@ -203,6 +206,18 @@ class LcmCase extends LcmObject {
 			$errors['stage'] = _Ti('case_input_stage') . _T('warning_field_mandatory');
 
 		validate_update_keywords_request('case', $this->getDataInt('id_case'));
+		validate_update_keywords_request('stage', $this->getDataInt('id_case'), $this->getDataInt('id_stage'));
+
+		if ($_SESSION['errors'])
+			$errors = array_merge($errors, $_SESSION['errors']);
+
+		return $errors;
+	}
+
+	function save() {
+		global $author_session;
+
+		$errors = $this->validate();
 
 		if (count($errors))
 			return $errors;
@@ -227,7 +242,6 @@ class LcmCase extends LcmObject {
 		 * has the choice of whether read/write should be allowed or not. If not,
 		 * we take the system default value in 'case_default_*'.
 		 */
-		global $author_session;
 
 		if ((read_meta('case_read_always') == 'yes') && $author_session['status'] != 'admin') {
 			// impose system setting
@@ -591,7 +605,7 @@ class LcmCaseInfoUI extends LcmCase {
 			echo "<tr>"
 				. "<td>" . _T('case_input_id') . "</td>"
 				. "<td>" . $this->getDataInt('id_case')
-				. '<input type="hidden" name="id_case" value="' . $this->getDataInt('id_case') . '\" />'
+				. '<input type="hidden" name="id_case" value="' . $this->getDataInt('id_case') . '" />'
 				. "</td></tr>\n";
 		}
 		
@@ -704,11 +718,11 @@ class LcmCaseInfoUI extends LcmCase {
 				echo '<label for="case_public_read">' . _T('case_input_collaboration_read') . "</label></li>\n";
 			}
 
-			if ( (read_meta('case_write_always') != 'yes') || $_SESSION['form_data']['admin']) {
+			if ( (read_meta('case_write_always') != 'yes') || _session('admin')) {
 				echo '<li style="list-style-type: none;">';
 				echo '<input type="checkbox" name="pub_write" id="case_public_write" value="yes"';
 
-				if ($_SESSION['form_data']['pub_write'])
+				if (_session('pub_write'))
 					echo ' checked="checked"';
 
 				echo "$dis />";
