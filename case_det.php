@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.163 2006/02/20 03:09:56 mlutfy Exp $
+	$Id: case_det.php,v 1.164 2006/03/07 14:11:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,7 +26,7 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 // Read parameters
-$case = intval($_GET['case']);
+$case = intval(_request('case'));
 $fu_order = "DESC";
 
 // Read site configuration settings
@@ -91,7 +91,6 @@ if ($case > 0) {
 				echo "<fieldset class='info_box'>";
 				show_page_subtitle(_T('generic_subtitle_general'), 'cases_intro');
 
-				// echo "<p class='normal_text'>";
 				echo '<ul class="info">';
 
 				// Case ID
