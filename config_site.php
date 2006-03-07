@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.47 2006/02/20 03:11:35 mlutfy Exp $
+	$Id: config_site.php,v 1.48 2006/03/07 18:50:47 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -254,6 +254,7 @@ function show_config_form_policy() {
 	global $lcm_lang_right;
 
 	$client_name_middle = read_meta('client_name_middle');
+	$person_name_format = read_meta('person_name_format');
 	$client_citizen_number = read_meta('client_citizen_number');
 	$client_civil_status = read_meta('client_civil_status');
 	$client_income = read_meta('client_income');
@@ -294,6 +295,17 @@ function show_config_form_policy() {
 	echo "<tr><td>" . _T('siteconf_info_hide_emails') . "</td>\n"
 		. "<td>" . get_yes_no('hide_emails', $hide_emails) . "</td>"
 		. "</tr>\n";
+
+	echo '<tr><td>' . _T('siteconf_input_name_format') ."</td>\n"
+		. "<td>" 
+		. '<select name="person_name_format" class="sel_frm">'
+		. (! $person_name_format ? '<option value=""></option>' : '')
+		. '<option value="1"' . isSelected($person_name_format == '1') . '>' . _T('siteconf_info_name_format_1') . '</option>'
+		. '<option value="10"' . isSelected($person_name_format == '10') . '>' . _T('siteconf_info_name_format_10') . '</option>'
+		. "</select>\n"
+		. "</td>\n"
+		. "</tr>\n";
+
 	echo "</table>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate6' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
@@ -489,17 +501,26 @@ function apply_conf_changes_policy() {
 				'fu_allow_modif'        => 'siteconf_input_fu_allow_modif');
 
 	foreach ($items as $it => $trad) {
-		if (isset($_REQUEST[$it])
-			AND ($_REQUEST[$it] == 'yes' OR $_REQUEST[$it] == 'no'))
-		{
+		if (_request($it) == 'yes' OR _request($it) == 'no') {
 			$old_value = read_meta($it);
-			if ($_REQUEST[$it] != $old_value) {
-				write_meta($it, $_REQUEST[$it]);
-				array_push($log, _Ti($trad) . now_and_before( _T('info_' . $_REQUEST[$it]), _T('info_' . $old_value) ));
+			if (_request($it) != $old_value) {
+				write_meta($it, _request($it));
+				array_push($log, _Ti($trad) . now_and_before( _T('info_' . _request($it)), _T('info_' . $old_value) ));
 			}
 		}
 	}
 
+	// Exception
+	// Person name format (FML = 1; L,FM = 10)
+	$val_pnf = intval(_request('person_name_format'));
+	$old_val_pnf = read_meta('person_name_format');
+
+	if ($val_pnf != $old_val_pnf) {
+		write_meta('person_name_format', $val_pnf);
+		array_push($log, _Ti('siteconf_input_name_format') 
+			. now_and_before(_T('siteconf_info_name_format_' . $val_pnf), _T('siteconf_info_name_format_' . $old_val_pnf)));
+	}
+	
 	if (! empty($log))
 		write_metas();
 
