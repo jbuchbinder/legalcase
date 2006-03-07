@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.164 2006/03/07 14:11:30 mlutfy Exp $
+	$Id: case_det.php,v 1.165 2006/03/07 21:00:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -320,8 +320,10 @@ if ($case > 0) {
 				if ($edit && $modify)
 					echo '<p><a href="edit_case.php?case=' . $row['id_case'] . '" class="edit_lnk">' . _T('edit_case_information') . '</a></p>';
 
-				if ($GLOBALS['author_session']['status'] == 'admin')
-					echo '<p><a href="export.php?item=case&amp;id=' . $row['id_case'] . '" class="exp_lnk">' . _T('export_button_case') . '</a></p>';
+	// [ML] This is not useful at the moment.. there is no import
+	// and the XML spec of the export needs improvement.
+	//			if ($GLOBALS['author_session']['status'] == 'admin')
+	//				echo '<p><a href="export.php?item=case&amp;id=' . $row['id_case'] . '" class="exp_lnk">' . _T('export_button_case') . '</a></p>';
 
 				if ($admin)
 					echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
@@ -608,7 +610,7 @@ if ($case > 0) {
 			//
 			case 'times' :
 				// List authors on the case
-				$show_more_times = (isset($_REQUEST['more_times']) && $_REQUEST['more_times'] ? true : false);
+				$show_more_times = (_request('more_times') ? true : false);
 
 				$q = "SELECT
 						a.id_author, name_first, name_middle, name_last,
