@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.5 2006/03/07 15:46:17 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.6 2006/03/07 17:53:05 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -26,12 +26,12 @@ if (defined('_INC_OBJ_FU')) return;
 define('_INC_OBJ_FU', '1');
 
 include_lcm('inc_db');
+include_lcm('inc_obj_generic');
 
 class LcmFollowup extends LcmObject {
 	// Note: Since PHP5 we should use "private", and generates a warning,
 	// but we must support PHP >= 4.0.
 	var $data; 
-	var $new_stage;
 
 	function LcmFollowup($id_fu = 0, $id_case = 0) {
 		$id_fu = intval($id_fu);
@@ -99,12 +99,8 @@ class LcmFollowup extends LcmObject {
 			$this->data['date_start'] = get_datetime_from_array($_SESSION['form_data'], 'start', 'start');
 	}
 
-	function save() {
+	function validate() {
 		$errors = array();
-
-		//
-		//  Validation
-		//
 
 		// * Check for id_case
 		if (! ($this->getDataInt('id_case') > 0))
@@ -159,6 +155,12 @@ class LcmFollowup extends LcmObject {
 		   $errors['description'] = _Ti('fu_input_description') . _T('warning_field_mandatory');
 		 */
 
+		return $errors;
+	}
+
+	function save() {
+		$errors = $this->validate();
+
 		if (count($errors))
 			return $errors;
 
@@ -186,7 +188,7 @@ class LcmFollowup extends LcmObject {
 					'new_stage'    => $this->getDataString('new_stage'));
 
 			$fl .= ", description = '" . serialize($desc) . "'";
-		} elseif (is_status_change($this->getDataString('string'))) {
+		} elseif (is_status_change($this->getDataString('type'))) {
 			$desc = array(
 					'description'  => $this->getDataString('description'),
 					'result'       => $this->getDataString('result'),
@@ -194,167 +196,168 @@ class LcmFollowup extends LcmObject {
 					'sentence'     => $this->getDataString('sentence'),
 					'sentence_val' => $this->getDataString('sentence_val'));
 
-		$fl .= ", description = '" . serialize($desc) . "'";
-	} else {
-		$fl .= ", description  = '" . $this->getDataString('description') . "'";
-	}
+			$fl .= ", description = '" . serialize($desc) . "'";
+		} else {
+			$fl .= ", description  = '" . $this->getDataString('description') . "'";
+		}
 
-	if ($this->getDataInt('id_followup') > 0) {
-		// Edit of existing follow-up
-		$id_followup = $this->getDataInt('id_followup');
+		if ($this->getDataInt('id_followup') > 0) {
+			// Edit of existing follow-up
+			$id_followup = $this->getDataInt('id_followup');
 		
-		if (!allowed($this->getDataInt('id_case'), 'e')) 
-			lcm_panic("You don't have permission to modify this case's information. (" . $this->getDataInt('id_case') . ")");
+			if (!allowed($this->getDataInt('id_case'), 'e')) 
+				lcm_panic("You don't have permission to modify this case's information. (" . $this->getDataInt('id_case') . ")");
 
-		// TODO: check if hiding this FU is allowed
-		if (allowed($this->getDataInt('id_case'), 'a')
-			&& (! (is_status_change($this->getDataString('type'))
-			|| $this->getDataString('type') == 'assignment'
-			|| $this->getDataString('type') == 'unassignment')))
-		{
-			if ($this->getDataString('delete'))
-				$fl .= ", hidden = 'Y'";
-			else
-				$fl .= ", hidden = 'N'";
-		} else {
-			$fl .= ", hidden = 'N'";
-		}
-
-		$q = "UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
-		$result = lcm_query($q);
-
-		// Get stage of the follow-up entry
-		$q = "SELECT case_stage FROM lcm_followup WHERE id_followup = $id_followup";
-		$result = lcm_query($q);
-
-		if ($row = lcm_fetch_array($result)) {
-			$case_stage = lcm_assert_value($row['case_stage']);
-		} else {
-			lcm_panic("There is no such follow-up (" . $id_followup . ")");
-		}
-
-		// Update the related lcm_stage entry
-		$q = "UPDATE lcm_stage SET
-				date_conclusion = '" . $this->getDataString('date_end') . "',
-				kw_result = '" . $this->getDataString('result') . "',
-				kw_conclusion = '" . $this->getDataString('conclusion') . "',
-				kw_sentence = '" . $this->getDataString('sentence') . "',
-				sentence_val = '" . $this->getDataString('sentence_val') . "',
-				date_agreement = '" . $this->getDataString('date_end') . "'
-			WHERE id_case = " . $this->getDataInt('id_case') . "
-			  AND kw_case_stage = '" . $case_stage . "'";
-
-		lcm_query($q);
-	} else {
-		// New follow-up
-		if (!allowed($this->getDataInt('id_case'), 'w'))
-			lcm_panic("You don't have permission to add information to this case. (" . $this->getDataInt('id_case') . ")");
-
-		// Get the current case stage
-		$q = "SELECT stage FROM lcm_case WHERE id_case=" . $this->getDataInt('id_case', '__ASSERT__');
-		$result = lcm_query($q);
-
-		if ($row = lcm_fetch_array($result)) {
-			$case_stage = lcm_assert_value($row['stage']);
-		} else {
-			lcm_panic("There is no such case (" . $this->getDataInt('id_case') . ")");
-		}
-
-		// Add the new follow-up
-		$q = "INSERT INTO lcm_followup
-			SET	id_followup=0,
-				id_case=" . $this->getDataInt('id_case') . ",
-				id_author=" . $GLOBALS['author_session']['id_author'] . ",
-				$fl,
-				case_stage='$case_stage'";
-
-		lcm_query($q);
-		$this->data['id_followup'] = lcm_insert_id();
-
-		// Set relation to the parent appointment, if any
-		if ($this->getDataInt('id_app')) {
-			$q = "INSERT INTO lcm_app_fu 
-					SET id_app=" . $this->getDataInt('id_app') . ",
-						id_followup=" . $this->getDataInt('id_followup', '__ASSERT__') . ",
-						relation='child'";
-			$result = lcm_query($q);
-		}
-
-		// Update case status
-		$status = '';
-		$stage = '';
-		switch ($this->getDataString('type')) {
-			case 'conclusion' :
-				$status = 'closed';
-				break;
-			case 'suspension' :
-				$status = 'suspended';
-				break;
-			case 'opening' :
-			case 'resumption' :
-			case 'reopening' :
-				$status = 'open';
-				break;
-			case 'merge' :
-				$status = 'merged';
-				break;
-			case 'deletion':
-				$status = 'deleted';
-				break;
-			case 'stage_change' :
-				$stage = lcm_assert_value($this->getDataString('new_stage'));
-				break;
-		}
-		
-		if ($status || $stage) {
-			$q = "UPDATE lcm_case
-					SET " . ($status ? "status='$status'" : '') . ($status && $stage ? ',' : '') . ($stage ? "stage='$stage'" : '') . "
-					WHERE id_case=" . $this->getDataInt('id_case');
-			lcm_query($q);
-
-			// Close the lcm_stage
-			// XXX for now, date_agreement is not used
-			if ($status == 'open') {
-				// case is being re-opened, so erase previously entered info
-				$q = "UPDATE lcm_stage
-						SET
-							date_conclusion = '0000-00-00 00:00:00',
-							id_fu_conclusion = 0,
-							kw_result = '',
-							kw_conclusion = '',
-							kw_sentence = '',
-							sentence_val = '',
-							date_agreement = '0000-00-00 00:00:0'
-						WHERE id_case = " . $this->getDataInt('id_case') . "
-						  AND kw_case_stage = '" . $case_stage . "'";
+			// TODO: check if hiding this FU is allowed
+			if (allowed($this->getDataInt('id_case'), 'a')
+					&& (! (is_status_change($this->getDataString('type'))
+							|| $this->getDataString('type') == 'assignment'
+							|| $this->getDataString('type') == 'unassignment')))
+			{
+				if ($this->getDataString('delete'))
+					$fl .= ", hidden = 'Y'";
+				else
+					$fl .= ", hidden = 'N'";
 			} else {
-				$q = "UPDATE lcm_stage
-						SET
-							date_conclusion = '" . $this->getDataString('date_end') . "',
-							id_fu_conclusion = " . $this->getDataInt('id_followup') . ",
-							kw_result = '" . $this->getDataString('result') . "',
-							kw_conclusion = '" . $this->getDataString('conclusion') . "',
-							kw_sentence = '" . $this->getDataString('sentence') . "',
-							sentence_val = '" . $this->getDataString('sentence_val') . "',
-							date_agreement = '" . $this->getDataString('date_end') . "'
-						WHERE id_case = " . $this->getDataInt('id_case', '__ASSERT__') . "
-						  AND kw_case_stage = '" . $case_stage . "'";
+				$fl .= ", hidden = 'N'";
 			}
 
-			lcm_query($q);
-		}
+			$q = "UPDATE lcm_followup SET $fl WHERE id_followup = $id_followup";
+			$result = lcm_query($q);
 
-		// If creating a new case stage, make new lcm_stage entry
-		if ($stage) {
-			$q = "INSERT INTO lcm_stage SET
-					id_case = " . $this->getDataInt('id_case', '__ASSERT__') . ",
-					kw_case_stage = '" . lcm_assert_value($stage) . "',
-					date_creation = NOW(),
-					id_fu_creation = " . $this->getDataInt('id_followup');
+			// Get stage of the follow-up entry
+			$q = "SELECT case_stage FROM lcm_followup WHERE id_followup = $id_followup";
+			$result = lcm_query($q);
+
+			if ($row = lcm_fetch_array($result)) {
+				$case_stage = lcm_assert_value($row['case_stage']);
+			} else {
+				lcm_panic("There is no such follow-up (" . $id_followup . ")");
+			}
+
+			// Update the related lcm_stage entry
+			$q = "UPDATE lcm_stage SET
+					date_conclusion = '" . $this->getDataString('date_end') . "',
+					kw_result = '" . $this->getDataString('result') . "',
+					kw_conclusion = '" . $this->getDataString('conclusion') . "',
+					kw_sentence = '" . $this->getDataString('sentence') . "',
+					sentence_val = '" . $this->getDataString('sentence_val') . "',
+					date_agreement = '" . $this->getDataString('date_end') . "'
+				WHERE id_case = " . $this->getDataInt('id_case') . "
+				  AND kw_case_stage = '" . $case_stage . "'";
 
 			lcm_query($q);
+		} else {
+			// New follow-up
+			if (!allowed($this->getDataInt('id_case'), 'w'))
+				lcm_panic("You don't have permission to add information to this case. (" . $this->getDataInt('id_case') . ")");
+
+			// Get the current case stage
+			$q = "SELECT stage FROM lcm_case WHERE id_case=" . $this->getDataInt('id_case', '__ASSERT__');
+			$result = lcm_query($q);
+
+			if ($row = lcm_fetch_array($result)) {
+				$case_stage = lcm_assert_value($row['stage']);
+			} else {
+				lcm_panic("There is no such case (" . $this->getDataInt('id_case') . ")");
+			}
+
+			// Add the new follow-up
+			$q = "INSERT INTO lcm_followup
+				SET	id_followup=0,
+					id_case=" . $this->getDataInt('id_case') . ",
+					id_author=" . $GLOBALS['author_session']['id_author'] . ",
+					$fl,
+					case_stage='$case_stage'";
+	
+			lcm_query($q);
+			$this->data['id_followup'] = lcm_insert_id();
+	
+			// Set relation to the parent appointment, if any
+			if ($this->getDataInt('id_app')) {
+				$q = "INSERT INTO lcm_app_fu 
+						SET id_app=" . $this->getDataInt('id_app') . ",
+							id_followup=" . $this->getDataInt('id_followup', '__ASSERT__') . ",
+							relation='child'";
+				$result = lcm_query($q);
+			}
+
+			// Update case status
+			$status = '';
+			$stage = '';
+			switch ($this->getDataString('type')) {
+				case 'conclusion' :
+					$status = 'closed';
+					break;
+				case 'suspension' :
+					$status = 'suspended';
+					break;
+				case 'opening' :
+				case 'resumption' :
+				case 'reopening' :
+					$status = 'open';
+					break;
+				case 'merge' :
+					$status = 'merged';
+					break;
+				case 'deletion':
+					$status = 'deleted';
+					break;
+				case 'stage_change' :
+					$stage = lcm_assert_value($this->getDataString('new_stage'));
+					break;
+			}
+		
+			if ($status || $stage) {
+				$q = "UPDATE lcm_case
+						SET " . ($status ? "status='$status'" : '') . ($status && $stage ? ',' : '') . ($stage ? "stage='$stage'" : '') . "
+						WHERE id_case=" . $this->getDataInt('id_case');
+
+				lcm_query($q);
+
+				// Close the lcm_stage
+				// XXX for now, date_agreement is not used
+				if ($status == 'open') {
+					// case is being re-opened, so erase previously entered info
+					$q = "UPDATE lcm_stage
+							SET
+								date_conclusion = '0000-00-00 00:00:00',
+								id_fu_conclusion = 0,
+								kw_result = '',
+								kw_conclusion = '',
+								kw_sentence = '',
+								sentence_val = '',
+								date_agreement = '0000-00-00 00:00:0'
+							WHERE id_case = " . $this->getDataInt('id_case') . "
+							  AND kw_case_stage = '" . $case_stage . "'";
+				} else {
+					$q = "UPDATE lcm_stage
+							SET
+								date_conclusion = '" . $this->getDataString('date_end') . "',
+								id_fu_conclusion = " . $this->getDataInt('id_followup') . ",
+								kw_result = '" . $this->getDataString('result') . "',
+								kw_conclusion = '" . $this->getDataString('conclusion') . "',
+								kw_sentence = '" . $this->getDataString('sentence') . "',
+								sentence_val = '" . $this->getDataString('sentence_val') . "',
+								date_agreement = '" . $this->getDataString('date_end') . "'
+							WHERE id_case = " . $this->getDataInt('id_case', '__ASSERT__') . "
+							  AND kw_case_stage = '" . $case_stage . "'";
+				}
+	
+				lcm_query($q);
+			}
+
+			// If creating a new case stage, make new lcm_stage entry
+			if ($stage) {
+				$q = "INSERT INTO lcm_stage SET
+							id_case = " . $this->getDataInt('id_case', '__ASSERT__') . ",
+							kw_case_stage = '" . lcm_assert_value($stage) . "',
+							date_creation = NOW(),
+							id_fu_creation = " . $this->getDataInt('id_followup');
+
+				lcm_query($q);
+			}
 		}
-	}
 
 
 		return $errors;
@@ -362,6 +365,9 @@ class LcmFollowup extends LcmObject {
 }
 
 class LcmFollowupInfoUI extends LcmFollowup {
+	var $show_conclusion;
+	var $show_sum_billed;
+
 	function LcmFollowupInfoUI($id_fu = 0) {
 		$this->LcmFollowup($id_fu);
 
@@ -373,6 +379,9 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		} elseif (_session('type') == 'stage_change' || is_status_change(_session('type'))) {
 			$this->show_conclusion = true;
 		}
+
+		// In printEdit(), whether to check for sumbilled
+		$this->show_sum_billed = read_meta('fu_sum_billed');
 	}
 
 	function printGeneral($show_subtitle = true, $allow_edit = true) {
@@ -441,9 +450,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		echo "</tr>\n";
 		
 		// Sum billed (if activated from policy)
-		$fu_sum_billed = read_meta('fu_sum_billed');
-		
-		if ($fu_sum_billed == 'yes') {
+		if ($this->show_sum_billed == 'yes') {
 			echo "<tr><td>" . _T('fu_input_sum_billed') . "</td>\n";
 			echo "<td>";
 			echo format_money(clean_output($this->data['sumbilled']));
@@ -613,9 +620,9 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			// This is to compensate an old bug, when 'case stage' was not stored in fu.description
 			// and therefore editing a follow-up would not give correct information.
 			// Bug was in CVS of 0.4.3 between 19-20 April 2005. Should not affect many people.
-			if (isset($new_stage)) {
-				echo '<input type="hidden" name="new_stage" value="' .  $new_stage . '" />' . "\n";
-				echo _Tkw('stage', $new_stage);
+			if (($s = $this->getDataString('new_stage'))) {
+				echo '<input type="hidden" name="new_stage" value="' .  $s . '" />' . "\n";
+				echo _Tkw('stage', $s);
 			} else {
 				echo "New stage information not available";
 			}
@@ -623,9 +630,9 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo "</td>\n";
 			echo "</tr>\n";
 
-			if (isset($new_stage)) {
+			if (($s = $this->getDataString('new_stage'))) {
 				// Update stage keywords (if any)
-				$stage = get_kw_from_name('stage', $new_stage); // $this->data['case_stage']);
+				$stage = get_kw_from_name('stage', $s);
 				$id_stage = $stage['id_keyword'];
 				show_edit_keywords_form('stage', $this->data['id_case'], $id_stage);
 			}
@@ -686,7 +693,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 	
 
 		// Sum billed field
-		if ($fu_sum_billed == "yes") {
+		if ($this->show_sum_billed == "yes") {
 			echo '<tr>';
 			echo '<td>' . _T('fu_input_sum_billed') . "</td>\n";
 			echo '<td>';
