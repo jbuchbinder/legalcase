@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.4 2006/03/02 22:33:47 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.5 2006/03/09 23:41:11 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -217,6 +217,19 @@ class LcmClient extends LcmObject {
 			$result = lcm_query($q);
 			$this->data['id_client'] = lcm_insert_id($result);
 		}
+
+		// Keywords
+		update_keywords_request('client', $this->getDataInt('id_client'));
+
+		if ($_SESSION['errors'])
+			$errors = array_merge($_SESSION['errors'], $errors);
+
+		// Insert/update client contacts
+		include_lcm('inc_contacts');
+		update_contacts_request('client', $this->getDataInt('id_client'));
+
+		if ($_SESSION['errors'])
+			$errors = array_merge($_SESSION['errors'], $errors);
 
 		return $errors;
 	}
