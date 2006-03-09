@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth_db.php,v 1.21 2005/04/16 06:47:54 mlutfy Exp $
+	$Id: inc_auth_db.php,v 1.22 2006/03/09 23:00:20 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -51,7 +51,6 @@ class Auth_db {
 		$result = lcm_query($query);
 
 		if ($row = lcm_fetch_array($result)) {
-			$this->nom = $row['nom'];
 			$this->username = $row['username'];
 			$this->status = $row['status'];
 			$this->md5pass = $current_mdpass;
