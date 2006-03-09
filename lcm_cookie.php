@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_cookie.php,v 1.26 2005/12/06 09:42:00 mlutfy Exp $
+	$Id: lcm_cookie.php,v 1.27 2006/03/09 22:50:15 mlutfy Exp $
 */
 
 include("inc/inc_version.php");
@@ -28,19 +28,19 @@ include_lcm('inc_filters');
 global $author_session;
 
 // Determine where we want to fallback after the operation
-if ($_REQUEST['url']) {
-	$cible = new Link($_REQUEST['url']);
-	if ($_REQUEST['referer']) // see config_author.php
-		$cible->addVar('referer', $_REQUEST['referer']);
+if (_request('url')) {
+	$cible = new Link(_request('url'));
+	if (_request('referer')) // see config_author.php
+		$cible->addVar('referer', _request('referer'));
 } else {
-	if ($_REQUEST['logout'])
+	if (_request('logout'))
 		$cible = new Link("index.php");
 	else
 		$cible = new Link(); // [ML] XXX uses current page, but this can create strange bugs..
 }
 
 // Replay the cookie to renew lcm_session
-if ($_REQUEST['change_session'] == 'yes' || $_REQUEST['change_session'] == 'oui') {
+if (_request('change_session') == 'yes' || _request('change_session') == 'oui') {
 	if (verifier_session($_COOKIE['lcm_session'])) {
 		// Warning: only the user with the correct IP has the right to replay
 		// the cookie, therefore a cookie theft cannot disconnect the vitim
@@ -62,7 +62,7 @@ if ($_REQUEST['change_session'] == 'yes' || $_REQUEST['change_session'] == 'oui'
 }
 
 // Attempt to logout
-if (isset($_REQUEST['logout'])) {
+if (_request('logout')) {
 	include_lcm('inc_session');
 	verifier_visiteur();
 
@@ -87,7 +87,7 @@ if (isset($_REQUEST['logout'])) {
 // If the user logins with privet=yes (privet: greetings), we try to
 // put a cookie and then go to lcm_login.php which will try to make 
 // a diagnostic if necessary.
-if ($_REQUEST['cookie_test_failed'] == 'yes') {
+if (_request('cookie_test_failed') == 'yes') {
 	lcm_setcookie('lcm_session', 'cookie_test_failed');
 	$link = new Link("lcm_login.php?var_cookie_failed=yes");
 	// [ML] This caused strange endless redirections. Since it does not happen often,
@@ -99,7 +99,7 @@ if ($_REQUEST['cookie_test_failed'] == 'yes') {
 
 // Attempt to login
 unset ($cookie_session);
-if ($_REQUEST['essai_login'] == 'oui') {
+if (_request('essai_login') == 'oui') {
 	// Get the username stored in a hidden field
 	$session_login_hidden = $_REQUEST['session_login_hidden'];
 	$session_login = $_REQUEST['session_login'];
