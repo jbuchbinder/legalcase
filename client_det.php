@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.52 2006/02/20 03:11:35 mlutfy Exp $
+	$Id: client_det.php,v 1.53 2006/03/10 15:12:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -156,8 +156,9 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row), '', '', 'c
 					echo '<a href="edit_client.php?client=' .
 					$row['id_client'] . '" class="edit_lnk">' .  _T('client_button_edit') . '</a>' . "\n";
 
-				if ($GLOBALS['author_session']['status'] == 'admin')
-					echo '<a href="export.php?item=client&amp;id=' . $row['id_client'] . '" class="exp_lnk">' . _T('export_button_client') . "</a>\n";
+				// [ML] Not useful
+				// if ($GLOBALS['author_session']['status'] == 'admin')
+				//	echo '<a href="export.php?item=client&amp;id=' . $row['id_client'] . '" class="exp_lnk">' . _T('export_button_client') . "</a>\n";
 
 				echo '<br /><br />';
 				echo "</fieldset>\n";

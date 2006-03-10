@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.32 2006/02/20 03:26:18 mlutfy Exp $
+	$Id: org_det.php,v 1.33 2006/03/10 15:12:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -118,8 +118,9 @@ if (! $ac['r'])
 					. _T('org_button_edit')
 					. "</a></p>\n";
 
-			if ($GLOBALS['author_session']['status'] == 'admin')
-				echo '<p><a href="export.php?item=org&amp;id=' . $row['id_org'] . '" class="exp_lnk">' . _T('export_button_org') . "</a></p>\n";
+			// [ML] Not useful
+			// if ($GLOBALS['author_session']['status'] == 'admin')
+			//	echo '<p><a href="export.php?item=org&amp;id=' . $row['id_org'] . '" class="exp_lnk">' . _T('export_button_org') . "</a></p>\n";
 
 			echo "</fieldset>\n";
 

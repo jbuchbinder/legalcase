@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.34 2005/12/06 10:13:25 mlutfy Exp $
+	$Id: fu_det.php,v 1.35 2006/03/10 15:12:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -194,8 +194,9 @@ if ($case_allow_modif == 'yes' && $edit) {
 		. '</a>';
 }
 
-if ($GLOBALS['author_session']['status'] == 'admin')
-	echo '<a href="export.php?item=followup&amp;id=' . $fu_data['id_followup'] . '" class="exp_lnk">' . _T('export_button_followup') . "</a>\n";
+// [ML] Not useful
+//if ($GLOBALS['author_session']['status'] == 'admin')
+//	echo '<a href="export.php?item=followup&amp;id=' . $fu_data['id_followup'] . '" class="exp_lnk">' . _T('export_button_followup') . "</a>\n";
 
 echo "<br /><br /></fieldset>";
 
