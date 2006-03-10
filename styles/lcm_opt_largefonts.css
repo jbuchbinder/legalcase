@@ -124,6 +124,10 @@ fieldset.conf_info_box, fieldset.info_box {
 	font-size: 14px;
 }
 
+ul.info {
+	font-size: 14px;
+}
+
 small.sm_11 {
 	font-size: 12px;
 }
