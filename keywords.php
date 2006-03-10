@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.33 2006/02/20 03:26:18 mlutfy Exp $
+	$Id: keywords.php,v 1.34 2006/03/10 15:42:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -221,7 +221,7 @@ function show_keyword_group_id($id_group) {
 	}
 	
 	echo '<td colspan="2">';
-	echo '<p>' . _T('keywords_info_quantity', array(quantity => $html_quantity)) . "</p>\n";
+	echo '<p>' . _T('keywords_info_quantity', array('quantity' => $html_quantity)) . "</p>\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 
