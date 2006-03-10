@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.31 2005/12/16 11:29:43 mlutfy Exp $
+	$Id: inc_login.php,v 1.32 2006/03/10 18:55:56 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -28,6 +28,21 @@ include_lcm('inc_meta');
 include_lcm('inc_session');
 include_lcm('inc_filters');
 include_lcm('inc_text');
+
+function get_optional_html_login() {
+	$html_file = "custom/html/login.html";
+	$text = "";
+
+	if (is_readable($html_file))
+		if (($f = fopen($html_file, 'r'))) {
+			$text = "<div style='float: right;'>" 
+				. fread($f, filesize($html_file))
+				. "</div>\n";
+			fclose($f);
+		}
+
+	return $text;
+}
 
 function open_login($title='') {
 	$text = "<div>\n";
@@ -91,7 +106,7 @@ function show_login($cible, $prive = 'prive', $message_login='') {
 		AND ($author_session['status']=='admin' OR $author_session['status']=='normal'))
 	{
 		if ($url != $GLOBALS['clean_link']->getUrl())
-			@Header("Location: " . $cible->getUrlForHeader());
+			lcm_header("Location: " . $cible->getUrlForHeader());
 
 		// [ML] This is making problems for no reason, we use login only 
 		// for one mecanism (entering the system).

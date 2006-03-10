@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_login.php,v 1.16 2006/02/20 03:26:18 mlutfy Exp $
+	$Id: lcm_login.php,v 1.17 2006/03/10 18:55:48 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -32,9 +32,11 @@ if (! include_config_exists('inc_connect')) {
 include_lcm('inc_presentation');
 include_lcm('inc_login');
 
+global $lcm_lang_right;
+
 lcm_html_start(_T('login_title_login'), 'login');
 
-global $lcm_lang_right;
+echo get_optional_html_login();
 
 // Site name: mandatory
 $site_name = _T(read_meta('site_name'));
