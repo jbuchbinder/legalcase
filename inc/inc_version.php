@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.87 2006/03/07 14:11:01 mlutfy Exp $
+	$Id: inc_version.php,v 1.88 2006/03/10 15:44:22 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -394,10 +394,16 @@ function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 	$err = $dt . ": $filename,$linenum " . $errortype[$errno] . " ($errno) $errmsg\n"
 		. lcm_getbacktrace(false); // false = without html
 
+
 	if (in_array($errno, $log_errors))
 		lcm_log($err);
-	else
+	else {
+		// [ML] Annoying errors. We are not limiting LCM to PHP5 syntax for now.
+		if (preg_match('/^var: Deprecated. Please use the public\/private\/protected modifiers/', $errmsg))
+			return;
+
 		lcm_debug("[dbg] " . $err);
+	}
 }
 
 $old_error_handler = set_error_handler("userErrorHandler");
