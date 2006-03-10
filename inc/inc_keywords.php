@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.29 2006/02/20 03:38:54 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.30 2006/03/10 15:44:53 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -199,7 +199,7 @@ function get_keywords_in_group_name($kwg_name, $visible_only = true) {
 
 	$ret = array();
 
-	if ($system_kwg[$kwg_name]) {
+	if (isset($system_kwg[$kwg_name]) && $system_kwg[$kwg_name]) {
 		foreach($system_kwg[$kwg_name]['keywords'] as $kw)
 			if ($kw['ac_author'] == 'Y')
 				$ret[_T($kw['title'])] = $kw;
@@ -229,7 +229,7 @@ function get_suggest_in_group_name($kwg_name) {
 	$ret = "";
 
 	// Check cache first
-	if ($system_kwg[$kwg_name])
+	if (isset($system_kwg[$kwg_name]) && $system_kwg[$kwg_name])
 		if (isset($system_kwg[$kwg_name]['suggest']))
 			return $system_kwg[$kwg_name]['suggest'];
 
@@ -479,21 +479,21 @@ function validate_update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 	//   -* a new keyword to be attached
 	//   -* not for deletion
 
-	$kw_entries = $_REQUEST['kw_entry_' . $type_obj];
-	$kw_values  = $_REQUEST['kw_value_' . $type_obj];
-	$kwg_ids    = $_REQUEST['kwg_id_' . $type_obj];
+	$kw_entries = _request('kw_entry_' . $type_obj);
+	$kw_values  = _request('kw_value_' . $type_obj);
+	$kwg_ids    = _request('kwg_id_' . $type_obj);
 
-	$new_keywords = $_REQUEST['new_keyword_' . $type_obj . '_value'];
-	$new_kwg_id = $_REQUEST['new_kwg_' . $type_obj . '_id'];
+	$new_keywords = _request('new_keyword_' . $type_obj . '_value');
+	$new_kwg_id = _request('new_kwg_' . $type_obj . '_id');
 
 	$kwg_count = array();
-	$kwg_applicable = get_kwg_applicable_for($type_obj);
+	$kwg_applicable = get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec);
 
 	foreach ($kwg_applicable as $kwg) {
 		if ($kwg['policy'] == 'mandatory') {
 			// check in already applied keywords
 			for ($cpt = 0; isset($kw_entries[$cpt]); $cpt++) {
-				if ($_REQUEST['kw_del_' . $type_obj . $cpt]) {
+				if (_request('kw_del_' . $type_obj . $cpt)) {
 					// for deletion
 					if (isset($kwg_count[$kwg_ids[$cpt]]))
 						$kwg_count[$kwg_ids[$cpt]]--;
