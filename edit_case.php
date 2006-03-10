@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.85 2006/03/07 14:12:11 mlutfy Exp $
+	$Id: edit_case.php,v 1.86 2006/03/10 15:41:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -29,37 +29,26 @@ include_lcm('inc_obj_client');
 include_lcm('inc_obj_case');
 include_lcm('inc_obj_fu');
 
-$case = 0;
+$id_case = 0;
 
-if (empty($_SESSION['errors'])) {
-
-	// Clear form data
+// Don't clear form data if comming back from upd_case with errors
+if (! isset($_SESSION['form_data']))
 	$_SESSION['form_data'] = array();
 
+if (empty($_SESSION['errors'])) {
 	// Set the returning page, usually, there should not be, therefore
 	// it will send back to "case_det.php?case=NNN" after update.
 	$_SESSION['form_data']['ref_edit_case'] = _request('ref');
 
-	// Register case ID as session variable
-	if (!session_is_registered("case"))
-		session_register("case");
+	$id_case = intval(_request('case'));
 
-	$case = intval($_GET['case']);
-
-	// Register case type variable for the session
-	if (!session_is_registered("existing"))
-		session_register("existing");
-
-	// Find out if this is existing or new case
-	$existing = ($case > 0);
-
-	if ($existing) {
+	if ($id_case) {
 		// Check access rights
-		if (!allowed($case,'e')) die(_T('error_no_edit_permission'));
+		if (!allowed($id_case,'e')) die(_T('error_no_edit_permission'));
 
 		$q = "SELECT *
 			FROM lcm_case
-			WHERE id_case = $case";
+			WHERE id_case = $id_case";
 
 		$result = lcm_query($q);
 
@@ -69,7 +58,7 @@ if (empty($_SESSION['errors'])) {
 			}
 		}
 
-		$_SESSION['form_data']['admin'] = allowed($case,'a');
+		$_SESSION['form_data']['admin'] = allowed($id_case,'a');
 
 	} else {
 		// Set default values for the new case
@@ -86,7 +75,7 @@ if (empty($_SESSION['errors'])) {
 $attach_client = 0;
 $attach_org = 0;
 
-if (! $case) {
+if (! $id_case) {
 	$attach_client = intval(_request('attach_client', 0));
 	$attach_org    = intval(_request('attach_org', 0));
 
@@ -119,7 +108,7 @@ if ($attach_org) {
 
 
 // Start page and title
-if ($existing)
+if ($id_case)
 	lcm_page_start(_T('title_case_edit'), '', '', 'cases_intro#edit');
 else
 	lcm_page_start(_T('title_case_new'), '', '', 'cases_intro#new');
@@ -155,7 +144,7 @@ if ($attach_client || $attach_org)
 // Start edit case form
 echo '<form action="upd_case.php" method="post">' . "\n";
 
-if (! $case) {
+if (! $id_case) {
 	if ($attach_client) {
 		show_page_subtitle("Client information", 'clients_intro'); // TRAD
 
@@ -209,7 +198,7 @@ if (! $case) {
 	}
 }
 
-if (! $case) {
+if (! $id_case) {
 	//
 	// Find case (show only if new case)
 	//
@@ -233,7 +222,7 @@ if (! $case) {
 
 echo '<div id="case_data">';
 	
-$obj_case = new LcmCaseInfoUI($case);
+$obj_case = new LcmCaseInfoUI($id_case);
 $obj_case->printEdit();
 
 echo "</div>\n"; /* div case_data */
@@ -245,7 +234,7 @@ echo "<script type=\"text/javascript\">
 //
 // Follow-up data (only for new case, not edit case)
 //
-if (! $case) {
+if (! $id_case) {
 	echo '<p class="normal_text">';
 	echo '<input type="checkbox"' . isChecked(_session('add_fu')) . 'name="add_fu" id="box_new_followup" onclick="display_block(\'new_followup\', \'flip\')"; />';
 	echo '<label for="box_new_followup">' . "Add a follow-up to the case" . '</label>'; // TRAD
@@ -264,7 +253,7 @@ if (! $case) {
 }
 
 // Different buttons for edit existing and for new case
-if ($existing) {
+if ($id_case) {
 	echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
 } else {
 	// More buttons for 'extended' mode

@@ -18,15 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.57 2006/03/07 14:09:19 mlutfy Exp $
+	$Id: upd_case.php,v 1.58 2006/03/10 15:41:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 include_lcm('inc_obj_case');
-
-global $author_session;
 
 // Clear all previous errors
 $_SESSION['errors'] = array();
@@ -98,32 +96,29 @@ if (_request('add_fu')) {
 	$send_to = '';
 
 	// Proceed accoring to the button type
-	switch ($submit) {
+	switch (_request('submit')) {
 		case 'addnew':
 			$send_to = "edit_case.php?case=0&ref=$ref_edit_case";
-			// header("Location: edit_case.php?case=0&ref=$ref_edit_case");
 			break;
 		case 'adddet':
 			$send_to = "case_det.php?case=" . $case->getDataInt('id_case');
-			// header("Location: case_det.php?case=$id_case");
 			break;
 		default :
 			$send_to = $ref_edit_case;
-			// header("Location: $ref_edit_case");
 	}
 
 	// Send to add_client if any client to attach
-	if ($_SESSION['form_data']['attach_client']) {
+	if (_session('attach_client')) {
 		lcm_header("Location: add_client.php?case=" . $case->getDataInt('id_case')
-			. "&clients[]=" .  $_SESSION['form_data']['attach_client'] 
+			. "&clients[]=" . _session('attach_client') 
 			. "&ref_sel_client=" . rawurlencode($send_to));
 		exit;
 	}
 
 	// Send to add_org if any org to attach
-	if ($_SESSION['form_data']['attach_org']) {
+	if (_session('attach_org')) {
 		lcm_header("Location: add_org.php?case=" . $case->getDataInt('id_case')
-			. "&orgs[]=" .  $_SESSION['form_data']['attach_org'] 
+			. "&orgs[]=" . _session('attach_org')
 			. "&ref_sel_client=" . rawurlencode($send_to));
 		exit;
 	}
