@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.66 2006/03/01 21:53:31 mlutfy Exp $
+	$Id: listcases.php,v 1.67 2006/03/14 02:40:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -34,8 +34,8 @@ lcm_bubble('case_list');
 //
 $find_case_string = '';
 
-if (isset($_REQUEST['find_case_string'])) {
-	$find_case_string = $_REQUEST['find_case_string'];
+if (_request('find_case_string')) {
+	$find_case_string = _request('find_case_string');
 
 	// remove useless spaces
 	$find_case_string = trim($find_case_string);
@@ -49,11 +49,15 @@ if (isset($_REQUEST['find_case_string'])) {
 //
 $prefs_change = false;
 
-$case_owner = $prefs['case_owner'];
-if (isset($_REQUEST['case_owner'])) {
-	if ($case_owner != $_REQUEST['case_owner']) {
-		$case_owner = $_REQUEST['case_owner'];
-		$prefs['case_owner'] = $_REQUEST['case_owner'];
+$types_owner = array('my', 'public');
+$types_period = array('m1' => 30, 'm3' => 91, 'm6' => 182, 'y1' => 365); // 30 days, 3 months, 6 months, 1 year
+
+if (($v = _request('case_owner'))) {
+	if ($prefs['case_owner'] != $v) {
+		if (! array_key_exists($v, $types_owner))
+			lcm_panic("Value for case owner not permitted: " . htmlspecialchars($v));
+		
+		$prefs['case_owner'] = _request('case_owner');
 		$prefs_change = true;
 	}
 }
@@ -61,10 +65,10 @@ if (isset($_REQUEST['case_owner'])) {
 // always include 'my' cases [ML] $q_owner is re-used below
 $q_owner = " (a.id_author = " . $author_session['id_author'];
 
-if ($case_owner == 'public')
+if ($prefs['case_owner'] == 'public')
 	$q_owner .= " OR c.public = 1";
 
-if ($author_session['status'] == 'admin' && $case_owner == 'all')
+if ($author_session['status'] == 'admin' && $prefs['case_owner'] == 'all')
 	$q_owner .= " OR 1=1 ";
 
 $q_owner .= " ) ";
@@ -72,11 +76,12 @@ $q_owner .= " ) ";
 //
 // For "Filter case date_creation"
 //
-$case_period = $prefs['case_period'];
-if (isset($_REQUEST['case_period'])) {
-	if ($case_period != $_REQUEST['case_period']) {
-		$case_period = $_REQUEST['case_period'];
-		$prefs['case_period'] = $_REQUEST['case_period'];
+if (($v = _request('case_period'))) {
+	if ($prefs['case_period'] != $v) {
+		if (! array_key_exists($v, $types_period))
+			lcm_panic("Value for case period not permitted: " . htmlspecialchars($v));
+
+		$prefs['case_period'] = $v;
 		$prefs_change = true;
 	}
 }
@@ -90,21 +95,18 @@ if ($prefs_change) {
 //
 // Show filters form
 //
-$types_owner = array('my', 'public');
-$types_period = array('m1' => 30, 'm3' => 91, 'm6' => 182, 'y1' => 365); // 30 days, 3 months, 6 months, 1 year
-
 echo '<form action="listcases.php" method="get">' . "\n";
 echo "<p class=\"normal_text\">\n";
 echo _T('input_filter_case_owner');
 echo '<select name="case_owner">';
 
 foreach ($types_owner as $t) {
-	$sel = ($case_owner == $t ? ' selected="selected" ' : '');
+	$sel = ($prefs['case_owner'] == $t ? ' selected="selected" ' : '');
 	echo '<option value="' . $t . '"' . $sel . '>' . _T('case_filter_owner_option_' . $t) . "</option>\n";
 }
 
 if ($author_session['status'] == 'admin') {
-	$sel = ($case_owner == 'all' ? ' selected="selected" ' : '');
+	$sel = ($prefs['case_owner'] == 'all' ? ' selected="selected" ' : '');
 	echo '<option value="all"' . $sel . '>' . _T('case_filter_owner_option_all') . "</option>\n";
 }
 
@@ -113,7 +115,7 @@ echo "</select>\n";
 echo '<select name="case_period">';
 
 foreach ($types_period as $key => $val) {
-	$sel = ($case_period == $val ? ' selected="selected" ' : '');
+	$sel = ($prefs['case_period'] == $val ? ' selected="selected" ' : '');
 	echo '<option value="' . $val . '"' . $sel . '>' . _T('case_filter_period_option_' . $key) . "</option>\n";
 }
 
@@ -178,10 +180,10 @@ $q .= ")";
 $q .= " AND " . $q_owner;
 
 // Period (date_creation) to show
-if ($case_period < 1900) // since X days
-	$q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_creation) < " . $case_period;
+if ($prefs['case_period'] < 1900) // since X days
+	$q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_creation) < " . $prefs['case_period'];
 else // for year X
-	$q .= " AND YEAR(date_creation) = " . $case_period;
+	$q .= " AND YEAR(date_creation) = " . $prefs['case_period'];
 
 // Sort cases by creation date
 $case_order = 'DESC';
@@ -246,10 +248,10 @@ $q = "SELECT fu.id_case, fu.id_followup, fu.date_start, fu.date_end, fu.type, fu
 				WHERE ca.id_case = c.id_case
 				  AND ca.id_author = " . $author_session['id_author'];
 
-	if ($case_period < 1900) // since X days
-		$q_temp .= " AND TO_DAYS(NOW()) - TO_DAYS(c.date_creation) < " . $case_period;
+	if ($prefs['case_period'] < 1900) // since X days
+		$q_temp .= " AND TO_DAYS(NOW()) - TO_DAYS(c.date_creation) < " . $prefs['case_period'];
 	else // for year X
-		$q_temp .= " AND YEAR(date_creation) = " . $case_period;
+		$q_temp .= " AND YEAR(date_creation) = " . $prefs['case_period'];
 			 
 	$r_temp = lcm_query($q_temp);
 	$list_cases = array();
@@ -258,10 +260,10 @@ $q = "SELECT fu.id_case, fu.id_followup, fu.date_start, fu.date_end, fu.type, fu
 		$list_cases[] = $row['id_case'];
 	// END - Get list of cases on which author is assigned
 
-if (! ($case_owner == 'all' && $author_session['status'] == 'admin')) {
+if (! ($prefs['case_owner'] == 'all' && $author_session['status'] == 'admin')) {
 	$q .= " AND ( ";
 
-	if ($case_owner == 'public')
+	if ($prefs['case_owner'] == 'public')
 		$q .= " c.public = 1 OR ";
 
 	// [ML] XXX FIXME TEMPORARY PATCH
@@ -274,10 +276,10 @@ if (! ($case_owner == 'all' && $author_session['status'] == 'admin')) {
 }
 
 // Period (date_creation) to show
-if ($case_period < 1900) // since X days
-	$q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_start) < " . $case_period;
+if ($prefs['case_period'] < 1900) // since X days
+	$q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_start) < " . $prefs['case_period'];
 else // for year X
-	$q .= " AND YEAR(date_start) = " . $case_period;
+	$q .= " AND YEAR(date_start) = " . $prefs['case_period'];
 
 
 // Add ordering
