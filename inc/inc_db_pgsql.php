@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_pgsql.php,v 1.1 2005/08/22 21:48:29 mlutfy Exp $
+	$Id: inc_db_pgsql.php,v 1.2 2006/03/15 23:25:58 mlutfy Exp $
 */
 
 if (defined('_INC_DB_PGSQL')) return;
@@ -87,31 +87,60 @@ function lcm_query_db($query, $accept_fail = false) {
 }
 
 // Adapts queries to make them pgsql compat
-function lcm_query_create_table($query) {
-	$query = preg_replace("/bigint\(21\) NOT NULL auto_increment/",
-			 "serial ", $query);
+function lcm_query_create_table($table, $fields, $keys = array()) {
+	$new_fields = array();
 
-	// $query = preg_replace("/PRIMARY KEY\s*\\([_A-Za-z]+\\)/", "", $query);
-	$query = preg_replace("/,\s*\\)/", ")", $query);
+	foreach ($fields as $f) {
+		$tmp = $f;
 
-	$query = preg_replace("/DEFAULT '0'/", "DEFAULT 0", $query);
+		$tmp = preg_replace('/bigint\(21\) NOT NULL auto_increment/', "serial ", $tmp);
+		$tmp = preg_replace("/DEFAULT '0'/", "DEFAULT 0", $tmp);
 
-	$query = preg_replace("/tinyint\\(1\\)/", "smallint", $query);
-	$query = preg_replace("/bigint\\(\d+\\)/", "bigint", $query);
+		$tmp = preg_replace('/tinyint\(\d+\)/', "smallint", $tmp);
+		$tmp = preg_replace('/bigint\(\d+\)/', "bigint", $tmp);
+		$tmp = preg_replace('/longblob/', "bytea", $tmp);
+		$tmp = preg_replace('/blob/', "bytea", $tmp);
+		$tmp = preg_replace('/tinytext/', "text", $tmp);
 
-	$query = preg_replace("/datetime DEFAULT '0000-00-00 00:00:00' NOT NULL/", "timestamp", $query);
+		if (preg_match('/^(\w+) ENUM\((.+)\) NOT NULL/', $tmp, $regs)) {
+			$old_tmp = $tmp;
+			$field_name = $regs[1];
+			$choices = explode(',', $regs[2]);
+			$max_len = 0;
 
-	return lcm_query($query);
+			foreach ($choices as $c) {
+				$len = strlen(trim($c)) - 2; // ex: 'Foo', so -2 for quotes
+				if ($len > $max_len)
+					$max_len = $len;
+			}
+
+			$tmp = "$field_name varchar($max_len) CHECK ($field_name IN ("
+				. implode(', ', $choices) . ')) NOT NULL ';
+
+			if (preg_match('/DEFAULT (.+)$/', $old_tmp, $regs))
+				$tmp .= "DEFAULT " . $regs[1];
+		}
+
+		$tmp = preg_replace("/datetime DEFAULT '0000-00-00 00:00:00' NOT NULL/", "timestamp", $tmp);
+
+		$new_fields[] = $tmp;
+	}
+
+	$query = "CREATE TABLE $table ("
+		. implode(", ", $new_fields)
+		. ")";
+
+	lcm_query($query);
+			
+	if (count($keys)) {
+		foreach ($keys as $name => $field) {
+			lcm_query("CREATE INDEX idx_" . $table . '_' . $name . " ON $table ($field)");
+		}
+	}
 }
 
-function spip_query_db($query) {
-	lcm_log("use of deprecated function: spip_query_db, use lcm_query_db instead");
-	return lcm_query_db($query);
-}
-
-function lcm_create_table($table, $query) {
-	lcm_log("use of deprecated function: lcm_create_table, use lcm_query instead");
-	return lcm_query_db('CREATE TABLE '.$GLOBALS['table_prefix'].'_'.$table.'('.$query.')');
+function lcm_query_create_unique_index($table, $idx_name, $field) {
+	lcm_query("ALTER TABLE $table ADD CONSTRAINT " . $table . '_' . $idx_name . " UNIQUE ($field)");
 }
 
 
@@ -166,7 +195,7 @@ function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 	$str  = ($host ? "host=$host " : '');
 	$str .= ($login ? "user=$login " : '');
 	$str .= ($pass  ? "password=$pass " : '');
-	$str .= "dbname=lcm_matt";
+	$str .= ($db ? "dbname=$db" : '');
 
 	// if ($port > 0) $host = "$host:$port";
 	$lcm_pgsql_link = @pg_connect($str);
@@ -182,7 +211,7 @@ function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 	return $lcm_pgsql_link;
 }
 
-function lcm_connect_db_test($host, $login, $pass, $port = 0) {
+function lcm_connect_db_test($host, $login, $pass, $db, $port = 0) {
 	global $link;
 	global $lcm_pgsql_error;
 
@@ -190,17 +219,17 @@ function lcm_connect_db_test($host, $login, $pass, $port = 0) {
 
 	// Non-silent connect, should be shown in <!-- --> anyway
 	if ($port > 0) $host = "$host:$port";
-	// $link = pg_connect($host, $login, $pass, $port);
 
 	$str  = ($host ? "host=$host " : '');
 	$str .= ($login ? "user=$login " : '');
 	$str .= ($pass  ? "password=$pass " : '');
-	$str .= "dbname=lcm_matt";
+	$str .= ($db ? "dbname=$db" : '');
 
 	// Capture output and store it into $lcm_pgsql_error
 	ob_start();
 	$link = pg_connect($str);
-	$lcm_pgsql_error = ob_get_contents();
+	// $lcm_pgsql_error = "XX" . ob_get_contents();
+	$lcm_pgsql_error = pg_last_notice();
 	ob_end_clean();
 
 	if ($link) {
@@ -219,6 +248,8 @@ function lcm_list_databases($host, $login, $pass, $port = 0) {
 	$str .= ($login ? "user=$login " : '');
 	$str .= ($pass  ? "password=$pass " : '');
 	$str .= "dbname=lcm_matt";
+
+	lcm_panic("Not implemented.");
 
 	// if ($port > 0) $host = "$host:$port";
 	$link = @pg_connect($str);
@@ -328,8 +359,12 @@ function spip_free_result($r) {
 	return lcm_free_result($r);
 }
 
-function lcm_insert_id() {
-	return mysql_insert_id();
+function lcm_insert_id($table, $field) {
+	// return mysql_insert_id();
+
+	$result = lcm_query("SELECT last_value FROM ${table}_${field}_seq");
+	$seq_array = pg_fetch_row($result, 0);
+	return $seq_array[0]; 
 }
 
 function spip_insert_id() {
