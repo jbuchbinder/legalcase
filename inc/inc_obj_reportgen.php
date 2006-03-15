@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_reportgen.php,v 1.1 2006/03/15 14:51:12 mlutfy Exp $
+	$Id: inc_obj_reportgen.php,v 1.2 2006/03/15 15:11:41 mlutfy Exp $
 */
 
 include_lcm('inc_obj_generic');
@@ -211,80 +211,37 @@ class LcmReportGen extends LcmObject {
 }
 
 class LcmReportGenUI extends LcmReportGen {
-	var $export;
+	var $exporter;
+	var $ui;
 
 	function LcmReportGenUI($my_id_report, $my_export = '', $my_debug = false) {
-		$export = $my_export;
+		$this->ui = $my_export;
+
+		if ($my_export == 'csv') {
+			include_lcm('inc_obj_export_csv');
+			$this->exporter = new LcmExportCSV();
+		} else {
+			include_lcm('inc_obj_export_html');
+			$this->exporter = new LcmExportHtml();
+		}
 
 		$this->LcmReportGen($my_id_report, $my_debug);
 	}
 
 	function printValue($val, $h, $css) {
-		$exp = $this->export;
-		$align = '';
-
-		$ret = "";
-		lcm_log($val . ": filter = " . $h['filter'] . " special = " . $h['filter_special'] . " desc = " . $h['description']);
-
-		// Maybe formalise 'time_length' filter, but check SQL pre-filter also
-		if ($h['filter_special'] == 'time_length') {
-			// $val = format_time_interval_prefs($val);
-			$val = format_time_interval($val, true, '%.2f');
-			if (! $val)
-				$val = 0;
-		} elseif ($h['description'] == 'time_input_length') {
-			$val = format_time_interval($val, true, '%.2f');
-			if (! $val)
-				$val = 0;
-		}
-
-		switch ($h['filter']) {
-			case 'date':
-				if ($val && $exp != 'csv')
-					$val = format_date($val, 'short');
-				break;
-			case 'currency':
-				if ($val)
-					$val = format_money($val);
-				else
-					$val = 0;
-				break;
-			case 'number':
-				$align = 'align="right"';
-				if (! $val)
-					$val = 0;
-				break;
-		}
-
-		if ($exp == 'csv') {
-			if (is_numeric($val)) {
-				$ret = $val . ", ";
-			} else {
-				$val = str_replace('"', '""', $val); // escape " character (csv)
-				$ret = '"' . $val . '" , ';
-			}
-		} else {
-			$ret = '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
-		}
-
-		echo $ret;
+		// TODO: Some preprocessing on the headers should be done 
+		// here instead of in $exporter->printValue()
+		
+		$this->exporter->printValue($val, $h, $css);
 	}
 
 	function printStartLine() {
-		if ($this->export == 'csv')
-			echo "";
-		else
-			echo "<tr>\n";
+		$this->exporter->printStartLine();
 	}
 
 	function printEndLine() {
-		if ($this->export == 'csv')
-			echo "\n";
-		else
-			echo "</tr>\n";
+		$this->exporter->printEndLine();
 	}
-
-
 }
 
 ?>
