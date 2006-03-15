@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.47 2006/02/20 03:37:05 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.48 2006/03/15 23:29:12 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -52,7 +52,6 @@ function log_if_not_duplicate_table($errno) {
 // upgrade_database() in inc_db_upgrade
 
 function create_database() {
-	global $lcm_db_version;
 	$log = "";
 
 	//
@@ -61,319 +60,369 @@ function create_database() {
 
 	lcm_log("creating the SQL tables", 'install');
 
-	$query = "CREATE TABLE lcm_case (
-		id_case bigint(21) NOT NULL auto_increment,
-		title text NOT NULL,
-		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		date_assignment datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		legal_reason text NOT NULL,
-		alledged_crime text NOT NULL,
-		notes text NOT NULL DEFAULT '',
-		status text NOT NULL,
-		stage varchar(255) NOT NULL,
-		public tinyint(1) DEFAULT '0' NOT NULL,
-		pub_write tinyint(1) DEFAULT '0' NOT NULL,
-		PRIMARY KEY (id_case))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_case bigint(21) NOT NULL auto_increment",
+		"title text NOT NULL",
+		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_assignment datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"legal_reason text NOT NULL",
+		"alledged_crime text NOT NULL",
+		"notes text NOT NULL DEFAULT ''",
+		"status text NOT NULL",
+		"stage varchar(255) NOT NULL",
+		"public tinyint(1) DEFAULT 0 NOT NULL",
+		"pub_write tinyint(1) DEFAULT '0' NOT NULL",
+		"PRIMARY KEY (id_case)"
+	);
+
+	lcm_query_create_table('lcm_case', $fields);
 
 
-	$query = "CREATE TABLE lcm_case_attachment (
-		  id_attachment bigint(21) NOT NULL auto_increment,
-		  id_case bigint(21) NOT NULL default '0',
-		  id_author bigint(21) NOT NULL default '0',
-		  filename varchar(255) NOT NULL default '',
-		  type varchar(255) default NULL,
-		  size bigint(21) NOT NULL default '0',
-		  description text,
-		  content longblob,
-		  date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		  date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		  PRIMARY KEY  (id_attachment),
-		  KEY id_case (id_case),
-		  KEY id_author (id_author),
-		  KEY filename (filename))"; 
-		//  FULLTEXT KEY description (description))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_attachment bigint(21) NOT NULL auto_increment", 
+		"id_case bigint(21) NOT NULL default 0", 
+		"id_author bigint(21) NOT NULL default 0", 
+		"filename varchar(255) NOT NULL default ''", 
+		"type varchar(255) default NULL", 
+		"size bigint(21) NOT NULL default 0", 
+		"description text", 
+		"content longblob",
+		"date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL", 
+		"date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL", 
+		"PRIMARY KEY  (id_attachment)"
+	);
 
-	$query = "CREATE TABLE lcm_stage (
-		id_entry bigint(21) NOT NULL auto_increment,
-		id_case bigint(21) DEFAULT 0 NOT NULL,
-		kw_case_stage varchar(255) NOT NULL DEFAULT '',
-		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		id_fu_creation bigint(21) NOT NULL DEFAULT 0,
-		date_conclusion datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		id_fu_conclusion bigint(21) NOT NULL DEFAULT 0,
-		kw_result varchar(255) NOT NULL DEFAULT '',
-		kw_conclusion varchar(255) NOT NULL DEFAULT '',
-		kw_sentence varchar(255) NOT NULL DEFAULT '',
-		sentence_val text NOT NULL DEFAULT '',
-		date_agreement datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		latest tinyint(1) DEFAULT '0' NOT NULL,
-		PRIMARY KEY (id_entry),
-		KEY id_case (id_case))";
-	$result = lcm_query_create_table($query);
+	$keys = array (
+		"id_case" => "id_case",
+		"id_case" => "id_case",
+		"id_author" => "id_author",
+		"filename" => "filename"
+	);
 
-	$query = "CREATE UNIQUE INDEX idx_case_stage ON lcm_stage (id_case, kw_case_stage)";
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_case_attachment', $fields, $keys);
 
 
-	$query = "CREATE TABLE lcm_followup (
-		id_followup bigint(21) NOT NULL auto_increment,
-		id_case bigint(21) DEFAULT '0' NOT NULL,
-		id_author bigint(21) DEFAULT '0' NOT NULL,
-		date_start datetime NOT NULL,
-		date_end datetime NOT NULL,
-		type varchar(255) NOT NULL DEFAULT 'other',
-		description text NOT NULL,
-		case_stage varchar(255) NOT NULL,
-		sumbilled decimal(19,4) NOT NULL,
-		hidden ENUM('N', 'Y') not null default 'N',
-		PRIMARY KEY (id_followup),
-		KEY id_case (id_case),
-		KEY id_author (id_author))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_entry bigint(21) NOT NULL auto_increment",
+		"id_case bigint(21) DEFAULT 0 NOT NULL",
+		"kw_case_stage varchar(255) NOT NULL DEFAULT ''",
+		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"id_fu_creation bigint(21) NOT NULL DEFAULT 0",
+		"date_conclusion datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"id_fu_conclusion bigint(21) NOT NULL DEFAULT 0",
+		"kw_result varchar(255) NOT NULL DEFAULT ''",
+		"kw_conclusion varchar(255) NOT NULL DEFAULT ''",
+		"kw_sentence varchar(255) NOT NULL DEFAULT ''",
+		"sentence_val text NOT NULL DEFAULT ''",
+		"date_agreement datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"latest tinyint(1) DEFAULT '0' NOT NULL",
+		"PRIMARY KEY (id_entry)"
+	);
+
+	$keys = array (
+		"id_case" => "id_case"
+	);
+
+	lcm_query_create_table('lcm_stage', $fields, $keys);
+	lcm_query_create_unique_index('lcm_stage', 'idx_case_stage', 'id_case, kw_case_stage');
+
+
+	$fields = array (
+		"id_followup bigint(21) NOT NULL auto_increment",
+		"id_case bigint(21) DEFAULT '0' NOT NULL",
+		"id_author bigint(21) DEFAULT '0' NOT NULL",
+		"date_start datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_end datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"type varchar(255) NOT NULL DEFAULT 'other'",
+		"description text NOT NULL",
+		"case_stage varchar(255) NOT NULL",
+		"sumbilled decimal(19,4) NOT NULL",
+		"hidden ENUM('N', 'Y') NOT NULL DEFAULT 'N'",
+		"PRIMARY KEY (id_followup)"
+	);
+
+	$keys = array (
+		'id_case' => 'id_case',
+		'id_author' => 'id_author'
+	);
+
+	lcm_query_create_table('lcm_followup', $fields, $keys);
 
 
 	// [ML] XXX too many extra fields
-	$query = "CREATE TABLE lcm_author (
-		id_author bigint(21) NOT NULL auto_increment,
-		id_office bigint(21) DEFAULT 0 NOT NULL,
-		name_first text NOT NULL,
-		name_middle text NOT NULL,
-		name_last text NOT NULL,
-		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		username VARCHAR(255) BINARY NOT NULL,
-		password tinytext NOT NULL,
-		lang VARCHAR(10) DEFAULT '' NOT NULL,
-		prefs text NOT NULL,
-		status ENUM('admin', 'normal', 'external', 'trash', 'waiting', 'suspended') DEFAULT 'normal' NOT NULL,
-		cookie_recall tinytext NOT NULL,
+	$fields = array (
+		"id_author bigint(21) NOT NULL auto_increment",
+		"id_office bigint(21) DEFAULT 0 NOT NULL",
+		"name_first text NOT NULL",
+		"name_middle text NOT NULL",
+		"name_last text NOT NULL",
+		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"username VARCHAR(255) NOT NULL", /* [ML] 0.7.0 removed 'BINARY', I see no use for it */
+		"password tinytext NOT NULL",
+		"lang VARCHAR(10) DEFAULT '' NOT NULL",
+		"prefs text NOT NULL DEFAULT ''",
+		"status ENUM('admin', 'normal', 'external', 'trash', 'waiting', 'suspended') NOT NULL DEFAULT 'normal'",
+		"cookie_recall tinytext NOT NULL DEFAULT ''",
 
-		maj TIMESTAMP,
-		pgp BLOB NOT NULL,
-		htpass tinyblob NOT NULL,
-		imessage VARCHAR(3) NOT NULL,
-		messagerie VARCHAR(3) NOT NULL,
-		alea_actuel tinytext NOT NULL,
-		alea_futur tinytext NOT NULL,
-		extra longblob NULL,
+		"maj TIMESTAMP",
+		"pgp blob NOT NULL DEFAULT ''",
+		"imessage VARCHAR(3) NOT NULL DEFAULT ''",
+		"messagerie VARCHAR(3) NOT NULL DEFAULT ''",
+		"alea_actuel tinytext NOT NULL DEFAULT ''",
+		"alea_futur tinytext NOT NULL DEFAULT ''",
 
-		PRIMARY KEY (id_author),
-		KEY username (username),
-		KEY status (status),
-		KEY lang (lang))";
-	$result = lcm_query_create_table($query);
+		"PRIMARY KEY (id_author)"
+	);
 
+	$keys = array(
+		'username' => 'username',
+		'status' => 'status',
+		'lang' => 'lang'
+	);
 
-	$query = "CREATE TABLE lcm_client (
-		id_client bigint(21) NOT NULL auto_increment,
-		name_first text NOT NULL,
-		name_middle text NOT NULL,
-		name_last text NOT NULL,
-		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		citizen_number text NOT NULL,
-		address text NOT NULL,
-		gender ENUM('female','male', 'unknown') DEFAULT 'unknown' NOT NULL,
-		civil_status varchar(255) DEFAULT 'unknown' NOT NULL,
-		income varchar(255) DEFAULT 'unknown' NOT NULL,
-		notes text DEFAULT '' NOT NULL,
-		PRIMARY KEY id_client (id_client))";
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_author', $fields, $keys);
 
 
-	$query = "CREATE TABLE lcm_client_attachment (
-		  id_attachment bigint(21) NOT NULL auto_increment,
-		  id_client bigint(21) NOT NULL default '0',
-		  id_author bigint(21) NOT NULL default '0',
-		  filename varchar(255) NOT NULL default '',
-		  type varchar(255) default NULL,
-		  size bigint(21) NOT NULL default '0',
-		  description text,
-		  content longblob,
-		  date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		  date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		  PRIMARY KEY  (id_attachment),
-		  KEY id_client (id_client),
-		  KEY id_author (id_author),
-		  KEY filename (filename))"; 
-		 //  FULLTEXT KEY description (description))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_client bigint(21) NOT NULL auto_increment",
+		"name_first text NOT NULL",
+		"name_middle text NOT NULL DEFAULT ''",
+		"name_last text NOT NULL",
+		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"citizen_number text NOT NULL DEFAULT ''",
+		"address text NOT NULL DEFAULT ''",
+		"gender ENUM('female','male', 'unknown') NOT NULL DEFAULT 'unknown'",
+		"civil_status varchar(255) DEFAULT 'unknown' NOT NULL",
+		"income varchar(255) DEFAULT 'unknown' NOT NULL",
+		"notes text DEFAULT '' NOT NULL",
+		"PRIMARY KEY (id_client)"
+	);
+
+	lcm_query_create_table('lcm_client', $fields);
 
 
-	$query = "CREATE TABLE lcm_org (
-		id_org bigint(21) NOT NULL auto_increment,
-		name text NOT NULL,
-		date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		address text NOT NULL,
-		notes text NOT NULL DEFAULT '',
-		court_reg text NOT NULL default '',
-		tax_number text NOT NULL default '',
-		stat_number text NOT NULL default '',
-		PRIMARY KEY id_org (id_org))";
+	$fields = array (
+		"id_attachment bigint(21) NOT NULL auto_increment",
+		"id_client bigint(21) NOT NULL default 0",
+		"id_author bigint(21) NOT NULL default 0",
+		"filename varchar(255) NOT NULL default ''",
+		"type varchar(255) default NULL", // XXX hum!
+		"size bigint(21) NOT NULL default 0",
+		"description text",
+		"content longblob",
+		"date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"PRIMARY KEY  (id_attachment)"
+	);
 
-	$result = lcm_query_create_table($query);
+	$keys = array (
+		'id_client' => 'id_client',
+		'id_author' => 'id_author',
+		'filename' => 'filename'
+	); 
 
-
-	$query = "CREATE TABLE lcm_org_attachment (
-		  id_attachment bigint(21) NOT NULL auto_increment,
-		  id_org bigint(21) NOT NULL default '0',
-		  id_author bigint(21) NOT NULL default '0',
-		  filename varchar(255) NOT NULL default '',
-		  type varchar(255) default NULL,
-		  size bigint(21) NOT NULL default '0',
-		  description text,
-		  content longblob,
-		  date_attached datetime NOT NULL default '0000-00-00 00:00:00',
-		  date_removed datetime NOT NULL default '0000-00-00 00:00:00',
-		  PRIMARY KEY  (id_attachment),
-		  KEY id_org (id_org),
-		  KEY id_author (id_author),
-		  KEY filename (filename))";
-		 // FULLTEXT KEY description (description))";
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_client_attachment', $fields, $keys);
 
 
-	$query = "CREATE TABLE lcm_contact (
-		id_contact bigint(21) NOT NULL auto_increment,
-		type_person ENUM('author', 'client', 'org') DEFAULT 'author' NOT NULL,
-		id_of_person bigint(21) DEFAULT 0 NOT NULL,
-		value text NOT NULL,
-		type_contact tinyint(2) DEFAULT 0 NOT NULL,
-		PRIMARY KEY id_contact (id_contact))";
+	$fields = array (
+		"id_org bigint(21) NOT NULL auto_increment",
+		"name text NOT NULL",
+		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"address text NOT NULL",
+		"notes text NOT NULL DEFAULT ''",
+		"court_reg text NOT NULL default ''",
+		"tax_number text NOT NULL default ''",
+		"stat_number text NOT NULL default ''",
+		"PRIMARY KEY (id_org)"
+	);
 
-	$result = lcm_query_create_table($query);
-
-
-	$query = "CREATE TABLE lcm_keyword (
-		id_keyword bigint(21) NOT NULL auto_increment,
-		id_group bigint(21) NOT NULL DEFAULT 0,
-		name VARCHAR(255) NOT NULL,
-		title text NOT NULL DEFAULT '',
-		description text NOT NULL DEFAULT '',
-		hasvalue ENUM('Y', 'N') NOT NULL DEFAULT 'N',
-		ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
-		PRIMARY KEY (id_keyword))";
-
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_org', $fields);
 
 
-	$query = "CREATE TABLE lcm_keyword_case (
-			id_entry bigint(21) NOT NULL auto_increment,
-			id_keyword bigint(21) NOT NULL default '0',
-			id_case bigint(21) NOT NULL default '0',
-			id_stage bigint(21) NOT NULL default '0',
-			value text NOT NULL default '',
-			PRIMARY KEY (id_entry),
-			KEY id_keyword (id_keyword),
-			KEY id_case (id_case))";
+	$fields = array (
+		"id_attachment bigint(21) NOT NULL auto_increment",
+		"id_org bigint(21) NOT NULL default '0'",
+		"id_author bigint(21) NOT NULL default '0'",
+		"filename varchar(255) NOT NULL default ''",
+		"type varchar(255) default NULL",
+		"size bigint(21) NOT NULL default '0'",
+		"description text",
+		"content longblob",
+		"date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"PRIMARY KEY  (id_attachment)"
+	);
+
+	$keys = array (
+		'id_org' => 'id_org',
+		'id_author' => 'id_author',
+		'filename' => 'filename'
+	);
+
+	lcm_query_create_table('lcm_org_attachment', $fields, $keys);
+
+
+	$fields = array (
+		"id_contact bigint(21) NOT NULL auto_increment",
+		"type_person ENUM('author', 'client', 'org') NOT NULL DEFAULT 'author'",
+		"id_of_person bigint(21) DEFAULT 0 NOT NULL",
+		"value text NOT NULL",
+		"type_contact tinyint(2) DEFAULT 0 NOT NULL",
+		"PRIMARY KEY (id_contact)"
+	);
+
+	lcm_query_create_table('lcm_contact', $fields);
+
+
+	$fields = array (
+		"id_keyword bigint(21) NOT NULL auto_increment",
+		"id_group bigint(21) NOT NULL DEFAULT 0",
+		"name VARCHAR(255) NOT NULL",
+		"title text NOT NULL DEFAULT ''",
+		"description text NOT NULL DEFAULT ''",
+		"hasvalue ENUM('Y', 'N') NOT NULL DEFAULT 'N'",
+		"ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y'",
+		"PRIMARY KEY (id_keyword)"
+	);
+
+	lcm_query_create_table('lcm_keyword', $fields);
+
+
+	$fields = array (
+		"id_entry bigint(21) NOT NULL auto_increment",
+		"id_keyword bigint(21) NOT NULL default 0",
+		"id_case bigint(21) NOT NULL default 0",
+		"id_stage bigint(21) NOT NULL default 0",
+		"value text NOT NULL default ''",
+		"PRIMARY KEY (id_entry)"
+	);
+
+	$keys = array (
+			'id_keyword' => 'id_keyword',
+			'id_case' => 'id_case'
+	);
 	
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_keyword_case', $fields, $keys);
 
-	$query = "CREATE TABLE lcm_keyword_client (
-			id_entry bigint(21) NOT NULL auto_increment,
-			id_keyword bigint(21) NOT NULL default '0',
-			id_client bigint(21) NOT NULL default '0',
-			PRIMARY KEY (id_entry),
-			KEY id_keyword (id_keyword),
-			KEY id_client (id_client))";
+	$fields = array (
+		"id_entry bigint(21) NOT NULL auto_increment",
+		"id_keyword bigint(21) NOT NULL default '0'",
+		"id_client bigint(21) NOT NULL default '0'",
+		"PRIMARY KEY (id_entry)"
+	);
+
+	$keys = array (
+		'id_keyword' => 'id_keyword',
+		'id_client' => 'id_client'
+	);
 	
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_keyword_client', $fields, $keys);
 
-	$query = "CREATE TABLE lcm_keyword_org (
-			id_entry bigint(21) NOT NULL auto_increment,
-			id_keyword bigint(21) NOT NULL default '0',
-			id_org bigint(21) NOT NULL default '0',
-			PRIMARY KEY (id_entry),
-			KEY id_keyword (id_keyword),
-			KEY id_org (id_org))";
 
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_entry bigint(21) NOT NULL auto_increment",
+		"id_keyword bigint(21) NOT NULL default '0'",
+		"id_org bigint(21) NOT NULL default '0'",
+		"PRIMARY KEY (id_entry)"
+	);
 
-	$query = "CREATE UNIQUE INDEX idx_kw_name ON lcm_keyword (id_group, name)";
-	$result = lcm_query_create_table($query);
+	$keys = array (
+		'id_keyword' => 'id_keyword',
+		'id_org' => 'id_org'
+	);
 
-	$query = "CREATE TABLE lcm_keyword_group (
-		id_group bigint(21) NOT NULL auto_increment,
-		name VARCHAR(255) NOT NULL,
-		title text NOT NULL DEFAULT '',
-		description text NOT NULL DEFAULT '',
-		type ENUM('system', 'case', 'stage', 'followup', 'client', 'org', 'client_org', 'author'),
-		policy ENUM('optional', 'recommended', 'mandatory') DEFAULT 'optional',
-		quantity ENUM('one', 'many') DEFAULT 'one',
-		suggest text NOT NULL DEFAULT '',
-		ac_admin ENUM('Y', 'N') DEFAULT 'Y',
-		ac_author ENUM('Y', 'N') DEFAULT 'Y',
-		PRIMARY KEY (id_group))";
+	lcm_query_create_table('lcm_keyword_org', $fields, $keys);
+	lcm_query_create_unique_index('lcm_keyword', 'idx_kw_name', 'id_group, name');
 
-	$result = lcm_query_create_table($query);
 
-	$query = "CREATE UNIQUE INDEX idx_kwg_name ON lcm_keyword_group (name)";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_group bigint(21) NOT NULL auto_increment",
+		"name VARCHAR(255) NOT NULL",
+		"title text NOT NULL DEFAULT ''",
+		"description text NOT NULL DEFAULT ''",
+		"type ENUM('system', 'case', 'stage', 'followup', 'client', 'org', 'client_org', 'author') NOT NULL",
+		"policy ENUM('optional', 'recommended', 'mandatory') NOT NULL DEFAULT 'optional'",
+		"quantity ENUM('one', 'many') NOT NULL DEFAULT 'one'",
+		"suggest text NOT NULL DEFAULT ''",
+		"ac_admin ENUM('Y', 'N') NOT NULL DEFAULT 'Y'",
+		"ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y'",
+		"PRIMARY KEY (id_group)"
+	);
 
-	$query = "CREATE TABLE lcm_report (
-		id_report bigint(21) NOT NULL auto_increment,
-		title varchar(255) NOT NULL default '',
-		description text NOT NULL default '',
-		notes text NOT NULL default '',
-		id_author bigint(21) NOT NULL default '0',
-		date_creation datetime NOT NULL default '0000-00-00 00:00:00',
-		date_update datetime NOT NULL default '0000-00-00 00:00:00',
-		line_src_type text NOT NULL DEFAULT '',
-		line_src_name text NOT NULL DEFAULT '',
-		col_src_type text NOT NULL DEFAULT '',
-		col_src_name text NOT NULL DEFAULT '',
-		PRIMARY KEY  (id_report),
-		KEY id_author (id_author))";
+	lcm_query_create_table('lcm_keyword_group', $fields);
+	lcm_query_create_unique_index('lcm_keyword_group', 'idx_kwg_name', 'name');
 
-	$result = lcm_query_create_table($query);
 
-	$query = "CREATE TABLE lcm_fields (
-		id_field bigint(21) NOT NULL auto_increment,
-		table_name varchar(255) NOT NULL default '',
-		field_name varchar(255) NOT NULL default '',
-		description varchar(255) NOT NULL default '',
-		filter enum('none','date','number','text') NOT NULL default 'none',
-		enum_type text NOT NULL DEFAULT '',
-		PRIMARY KEY  (id_field))";
+	$fields = array (
+		"id_report bigint(21) NOT NULL auto_increment",
+		"title varchar(255) NOT NULL default ''",
+		"description text NOT NULL default ''",
+		"notes text NOT NULL default ''",
+		"id_author bigint(21) NOT NULL default '0'",
+		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"line_src_type text NOT NULL DEFAULT ''",
+		"line_src_name text NOT NULL DEFAULT ''",
+		"col_src_type text NOT NULL DEFAULT ''",
+		"col_src_name text NOT NULL DEFAULT ''",
+		"PRIMARY KEY  (id_report)"
+	);
 
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_report', $fields);
 
-	$query = "CREATE TABLE lcm_filter (
-		id_filter bigint(21) NOT NULL auto_increment,
-		title varchar(255) NOT NULL default '',
-		type enum('AND','OR') NOT NULL default 'AND',
-		id_author bigint(21) NOT NULL default '0',
-		date_creation datetime NOT NULL default '0000-00-00 00:00:00',
-		date_update datetime NOT NULL default '0000-00-00 00:00:00',
-		PRIMARY KEY  (id_filter),
-		KEY id_author (id_author))";
 
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_field bigint(21) NOT NULL auto_increment",
+		"table_name varchar(255) NOT NULL default ''",
+		"field_name varchar(255) NOT NULL default ''",
+		"description varchar(255) NOT NULL default ''",
+		"filter ENUM('none','date','number','text','currency') NOT NULL DEFAULT 'none'",
+		"enum_type text NOT NULL DEFAULT ''",
+		"PRIMARY KEY  (id_field)"
+	);
 
-	$query = "CREATE TABLE lcm_app (
-		id_app bigint(21) NOT NULL auto_increment,
-		id_case bigint(21) NOT NULL default '0',
-		id_author bigint(21) NOT NULL default '0',
-		type varchar(255) NOT NULL default '',
-		title varchar(255) NOT NULL default '',
-		description text NOT NULL,
-		start_time datetime NOT NULL default '0000-00-00 00:00:00',
-		end_time datetime NOT NULL default '0000-00-00 00:00:00',
-		reminder datetime NOT NULL default '0000-00-00 00:00:00',
-		date_creation datetime NOT NULL default '0000-00-00 00:00:00',
-		date_update datetime NOT NULL default '0000-00-00 00:00:00',
-		PRIMARY KEY  (id_app),
-		KEY id_case (id_case),
-		KEY id_author (id_author),
-		KEY type (type))";
-		// FULLTEXT KEY title (title),
-		// FULLTEXT KEY description (description))";
+	lcm_query_create_table('lcm_fields', $fields);
 
-	$result = lcm_query_create_table($query);
+
+	$fields = array (
+		"id_filter bigint(21) NOT NULL auto_increment",
+		"title varchar(255) NOT NULL default ''",
+		"type ENUM('AND','OR') NOT NULL DEFAULT 'AND'",
+		"id_author bigint(21) NOT NULL default '0'",
+		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"PRIMARY KEY  (id_filter)"
+	);
+
+	lcm_query_create_table('lcm_filter', $fields);
+
+
+	$fields = array (
+		"id_app bigint(21) NOT NULL auto_increment",
+		"id_case bigint(21) NOT NULL default '0'",
+		"id_author bigint(21) NOT NULL default '0'",
+		"type varchar(255) NOT NULL default ''",
+		"title varchar(255) NOT NULL default ''",
+		"description text NOT NULL",
+		"start_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"end_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"reminder datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"PRIMARY KEY  (id_app)"
+	);
+
+	$keys = array (
+		'id_case' => 'id_case',
+		'id_author' => 'id_author',
+		'type' => 'type'
+	);
+
+	lcm_query_create_table('lcm_app', $fields, $keys);
 
 	//
 	// Relations
@@ -381,146 +430,179 @@ function create_database() {
 
 	lcm_log("creating the tables used for relations between objects", 'install');
 
-	$query = "CREATE TABLE lcm_app_client_org (
-		id_app bigint(21) NOT NULL default '0',
-		id_client bigint(21) NOT NULL default '0',
-		id_org bigint(21) NOT NULL default '0',
-		UNIQUE KEY uniq (id_app,id_client,id_org))";
+	$fields = array (
+		"id_app bigint(21) NOT NULL default '0'",
+		"id_client bigint(21) NOT NULL default '0'",
+		"id_org bigint(21) NOT NULL default '0'"
+	);
 
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_app_client_org', $fields);
+	lcm_query_create_unique_index('lcm_app_client_org', 'idx_uniq', 'id_app,id_client,id_org');
 
 	
-	$query = "CREATE TABLE lcm_app_fu (
-		id_app bigint(21) NOT NULL default '0',
-		id_followup bigint(21) NOT NULL default '0',
-		relation enum('parent','child') NOT NULL default 'parent',
-		UNIQUE KEY uniq (id_app,id_followup))";
+	$fields = array (
+		"id_app bigint(21) NOT NULL default '0'",
+		"id_followup bigint(21) NOT NULL default '0'",
+		"relation ENUM('parent','child') NOT NULL DEFAULT 'parent'"
+	);
 
-	$result = lcm_query_create_table($query);
-
-
-	$query = "CREATE TABLE lcm_author_app (
-		id_author bigint(21) NOT NULL default '0',
-		id_app bigint(21) NOT NULL default '0',
-		UNIQUE KEY uniq (id_author,id_app))";
-
-	$result = lcm_query_create_table($query);
+	lcm_query_create_table('lcm_app_fu', $fields);
+	lcm_query_create_unique_index('lcm_app_fu', 'idx_uniq', 'id_app,id_followup');
 
 
-	$query = "CREATE TABLE lcm_case_client_org (
-		id_case bigint(21) DEFAULT '0' NOT NULL,
-		id_client bigint(21) DEFAULT '0' NOT NULL,
-		id_org bigint(21) DEFAULT '0' NOT NULL,
-		UNIQUE KEY uniq (id_case,id_client,id_org),
-		KEY id_case (id_case),
-		KEY id_client (id_client),
-		KEY id_org (id_org))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_author bigint(21) NOT NULL default '0'",
+		"id_app bigint(21) NOT NULL default '0'"
+	);
+
+	lcm_query_create_table('lcm_author_app', $fields);
+	lcm_query_create_unique_index('lcm_author_app', 'idx_uniq', 'id_author,id_app');
 
 
-	$query = "CREATE TABLE lcm_case_author (
-		id_case bigint(21) DEFAULT '0' NOT NULL,
-		id_author bigint(21) DEFAULT '0' NOT NULL,
-		ac_read tinyint(1) DEFAULT '1' NOT NULL,
-		ac_write tinyint(1) DEFAULT '0' NOT NULL,
-		ac_edit tinyint(1) DEFAULT '0' NOT NULL,
-		ac_admin tinyint(1) DEFAULT '0' NOT NULL,
-		UNIQUE KEY uniq (id_case,id_author),
-		KEY id_case (id_case),
-		KEY id_author (id_author))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_case bigint(21) DEFAULT '0' NOT NULL",
+		"id_client bigint(21) DEFAULT '0' NOT NULL",
+		"id_org bigint(21) DEFAULT '0' NOT NULL"
+	);
+
+	$keys = array (
+		'id_case' => 'id_case',
+		'id_client' => 'id_client',
+		'id_org' => 'id_org'
+	);
+
+	lcm_query_create_table('lcm_case_client_org', $fields, $keys);
+	lcm_query_create_unique_index('lcm_case_client_org', 'idx_uniq', 'id_case,id_client,id_org');
 
 
-	$query = "CREATE TABLE lcm_client_org (
-		id_client bigint(21) DEFAULT '0' NOT NULL,
-		id_org bigint(21) DEFAULT '0' NOT NULL,
-		UNIQUE KEY uniq (id_client,id_org),
-		KEY id_client (id_client),
-		KEY id_org (id_org))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_case bigint(21) DEFAULT 0 NOT NULL",
+		"id_author bigint(21) DEFAULT 0 NOT NULL",
+		"ac_read tinyint(1) DEFAULT 1 NOT NULL",
+		"ac_write tinyint(1) DEFAULT 0 NOT NULL",
+		"ac_edit tinyint(1) DEFAULT 0 NOT NULL",
+		"ac_admin tinyint(1) DEFAULT 0 NOT NULL"
+	);
+
+	$keys = array (
+		'id_case' => 'id_case',
+		'id_author' => 'id_author'
+	);
+
+	lcm_query_create_table('lcm_case_author', $fields, $keys);
+	lcm_query_create_unique_index('lcm_case_author', 'idx_uniq', 'id_case,id_author');
 
 
-	$query = "CREATE TABLE lcm_rep_col (
-		id_column bigint(21) NOT NULL auto_increment,
-		id_report bigint(21) NOT NULL default '0',
-		id_field bigint(21) NOT NULL default '0',
-		col_order bigint(21) NOT NULL default '0',
-		header varchar(255) NOT NULL default '',
-		sort enum('asc','desc') default NULL,
-		total tinyint(1) NOT NULL default '0',
-		col_group enum('COUNT','SUM') default NULL,
-		PRIMARY KEY  (id_column),
-		KEY id_report (id_report),
-		KEY id_field (id_field),
-		KEY col_order (col_order))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_client bigint(21) DEFAULT '0' NOT NULL",
+		"id_org bigint(21) DEFAULT '0' NOT NULL"
+	);
+
+	$keys = array (
+		'id_client' => 'id_client',
+		'id_org' => 'id_org'
+	);
+
+	lcm_query_create_table('lcm_client_org', $fields, $keys);
+	lcm_query_create_unique_index('lcm_client_org', 'idx_uniq', 'id_client,id_org');
 
 
-	$query = "CREATE TABLE lcm_rep_line (
-		id_line bigint(21) NOT NULL auto_increment,
-		id_report bigint(21) NOT NULL DEFAULT 0,
-		id_field bigint(21) NOT NULL DEFAULT 0,
-		sort_type ENUM('asc', 'desc') DEFAULT NULL,
-		col_order bigint(21) NOT NULL DEFAULT 0,
-		total tinyint(1) NOT NULL DEFAULT 0,
-		PRIMARY KEY (id_line),
-		KEY id_report (id_report),
-		KEY id_field (id_field),
-		KEY col_order (col_order))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_column bigint(21) NOT NULL auto_increment",
+		"id_report bigint(21) NOT NULL default 0",
+		"id_field bigint(21) NOT NULL default 0",
+		"col_order bigint(21) NOT NULL default 0",
+		"header varchar(255) NOT NULL default ''",
+		"sort ENUM('asc','desc') NOT NULL DEFAULT 'asc'",
+		"total tinyint(1) NOT NULL default 0",
+		"col_group ENUM('COUNT','SUM') NOT NULL",
+		"PRIMARY KEY  (id_column)"
+	);
+
+	$keys = array (
+		'id_report' => 'id_report',
+		'id_field' => 'id_field',
+		'col_order' => 'col_order'
+	);
+
+	lcm_query_create_table('lcm_rep_col', $fields, $keys);
 
 
-	$query = "CREATE TABLE lcm_rep_filters (
-		id_report bigint(21) NOT NULL default '0',
-		id_filter bigint(21) NOT NULL default '0',
-		type enum('AND','OR') NOT NULL default 'AND',
-		UNIQUE KEY uniq (id_report,id_filter),
-		KEY id_report (id_report),
-		KEY id_filter (id_filter))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_line bigint(21) NOT NULL auto_increment",
+		"id_report bigint(21) NOT NULL DEFAULT 0",
+		"id_field bigint(21) NOT NULL DEFAULT 0",
+		"sort_type ENUM('asc', 'desc') NOT NULL DEFAULT 'asc'",
+		"col_order bigint(21) NOT NULL DEFAULT 0",
+		"total tinyint(1) NOT NULL DEFAULT 0",
+		"PRIMARY KEY (id_line)"
+	);
+
+	$keys = array (
+		'id_report' => 'id_report',
+		'id_field' => 'id_field',
+		'col_order' => 'col_order'
+	);
+		
+	lcm_query_create_table('lcm_rep_line', $fields, $keys);
 
 
-	$query = "CREATE TABLE lcm_filter_conds (
-		id_filter bigint(21) NOT NULL default '0',
-		id_field bigint(21) NOT NULL default '0',
-		cond_order bigint(21) NOT NULL default '0',
-		type tinyint(2) NOT NULL default '0',
-		value varchar(255) default NULL,
-		UNIQUE KEY uniq (id_filter,id_field,cond_order),
-		KEY id_filter (id_filter),
-		KEY id_field (id_field),
-		KEY cond_order (cond_order))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_report bigint(21) NOT NULL default 0",
+		"id_filter bigint(21) NOT NULL default 0",
+		"type ENUM('AND','OR') NOT NULL DEFAULT 'AND'",
+	);
+
+	lcm_query_create_table('lcm_rep_filters', $fields);
+	lcm_query_create_unique_index('lcm_rep_filters', 'idx_uniq', 'id_report,id_filter');
 
 
-	$query = "CREATE TABLE lcm_rep_filter (
-		id_filter bigint(21) NOT NULL auto_increment,
-		id_report bigint(21) NOT NULL default 0,
-		id_field bigint(21) NOT NULL default 0,
-		type varchar(255) NOT NULL default '',
-		value varchar(255) NOT NULL default '',
-		KEY id_report (id_report),
-		KEY id_field (id_field),
-		PRIMARY KEY  (id_filter))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"id_filter bigint(21) NOT NULL default 0",
+		"id_field bigint(21) NOT NULL default 0",
+		"cond_order bigint(21) NOT NULL default 0",
+		"type tinyint(2) NOT NULL default 0",
+		"value varchar(255) default NULL"
+	);
+
+	lcm_query_create_table('lcm_filter_conds', $fields);
+	lcm_query_create_unique_index('lcm_filter_conds', 'idx_uniq', 'id_filter,id_field,cond_order');
+
+
+	$fields = array (
+		"id_filter bigint(21) NOT NULL auto_increment",
+		"id_report bigint(21) NOT NULL default 0",
+		"id_field bigint(21) NOT NULL default 0",
+		"type varchar(255) NOT NULL default ''",
+		"value varchar(255) NOT NULL default ''",
+		"PRIMARY KEY  (id_filter)"
+	);
+
+	lcm_query_create_table('lcm_rep_filter', $fields);
 
 
 	//
 	// Management of the application
 	//
 
-	$query = "CREATE TABLE lcm_meta (
-		name VARCHAR(255) NOT NULL,
-		value VARCHAR(255) DEFAULT '',
-		upd TIMESTAMP,
-		PRIMARY KEY (name))";
-	$result = lcm_query_create_table($query);
+	$fields = array (
+		"name VARCHAR(255) NOT NULL",
+		"value VARCHAR(255) DEFAULT ''",
+		"upd TIMESTAMP",
+		"PRIMARY KEY (name)"
+	);
+
+	lcm_query_create_table('lcm_meta', $fields);
 
 
 	// Set the version of the installed database
-	$query = "INSERT INTO lcm_meta
-				SET name='lcm_db_version',value=$lcm_db_version";
-	$result = lcm_query($query);
+	global $lcm_db_version;
+
+	lcm_assert_value($lcm_db_version);
+
+	$query = "INSERT INTO lcm_meta (name, value, upd)
+				VALUES ('lcm_db_version', '$lcm_db_version', NOW())";
+	lcm_query($query);
 
 	lcm_log("Setting-up default LCM configuration", 'install');
 	include_lcm('inc_db_upgrade');
