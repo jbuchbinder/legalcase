@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.28 2005/12/06 09:39:06 mlutfy Exp $
+	$Id: run_rep.php,v 1.29 2006/03/15 14:23:37 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -38,6 +38,7 @@ class Report {
 	var $options;
 	var $journal;
 	var $debug;
+	var $line_count;
 
 	function Report($my_id_report, $my_debug = false) {
 		$this->id_report = $my_id_report;
@@ -56,6 +57,7 @@ class Report {
 		$this->options = array();
 		$this->journal = array();
 		$this->debug = $my_debug;
+		$this->line_count = 0;
 
 		return;
 	}
@@ -199,6 +201,14 @@ class Report {
 
 	function getJournal() {
 		return $this->journal;
+	}
+
+	function incrementLine() {
+		$this->line_count++;
+	}
+
+	function getLineCount() {
+		return $this->line_count;
 	}
 }
 
@@ -1496,6 +1506,7 @@ for ($cpt_lines = $cpt_col = 0; $row = lcm_fetch_array($result); $cpt_lines++) {
 	}
 
 	echo get_ui_end_line();
+	$report->incrementLine();
 }
 
 // 
@@ -1524,6 +1535,8 @@ echo get_ui_end_line();
 
 if ($report->getOption('headers_sent') == 'yes') {
 	echo "</table>\n";
+
+	echo "<p>Number of lines: " . $report->getLineCount() . "</p>\n"; // TRAD
 
 	// Report footnotes (ex: signed by manager, etc. -- allow HTML)
 	echo $rep_info['notes'];
