@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.12 2005/12/06 10:13:57 mlutfy Exp $
+	$Id: import_db.php,v 1.13 2006/03/15 23:30:27 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -171,7 +171,7 @@ function import_database($input_filename) {
 					$fh = fopen($file,'r');
 					$q = fread($fh,filesize($file));
 					fclose($fh);
-					$result = lcm_query_create_table($q, true);
+					$result = lcm_query_restore_table($q);
 				}
 			}
 		}
