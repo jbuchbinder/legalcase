@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.50 2006/02/20 03:16:35 mlutfy Exp $
+	$Id: install.php,v 1.51 2006/03/15 23:31:57 mlutfy Exp $
 */
 
 session_start();
@@ -95,11 +95,11 @@ function install_step_5() {
 
 	// Either leave the form completely empty, or fill in everything
 	if ($_REQUEST['username'] || $_REQUEST['name_first'] || $_REQUEST['name_last'] || $_REQUEST['email']) {
-		$_SESSION['usr']['name_first']  = addslashes($_REQUEST['name_first']);
-		$_SESSION['usr']['name_middle'] = addslashes($_REQUEST['name_middle']);
-		$_SESSION['usr']['name_last']   = addslashes($_REQUEST['name_last']);
-		$_SESSION['usr']['username']    = addslashes($_REQUEST['username']);
-		$_SESSION['usr']['email']       = addslashes($_REQUEST['email']);
+		$_SESSION['form_data']['name_first']  = addslashes($_REQUEST['name_first']);
+		$_SESSION['form_data']['name_middle'] = addslashes($_REQUEST['name_middle']);
+		$_SESSION['form_data']['name_last']   = addslashes($_REQUEST['name_last']);
+		$_SESSION['form_data']['username']    = addslashes($_REQUEST['username']);
+		$_SESSION['form_data']['email']       = addslashes($_REQUEST['email']);
 
 		// Test mandatory fields, sorry for the ugly code
 		$mandatory = array(
@@ -121,7 +121,7 @@ function install_step_5() {
 		if (count($_SESSION['errors']))
 			return install_step_4();
 
-		$query = "SELECT id_author FROM lcm_author WHERE username='" . $_SESSION['usr']['username'] . "'";
+		$query = "SELECT id_author FROM lcm_author WHERE username='" . $_SESSION['form_data']['username'] . "'";
 		$result = lcm_query($query);
 
 		unset($id_author);
@@ -130,23 +130,38 @@ function install_step_5() {
 
 		// If user exists, allow to reset a forgotten password, which is possible
 		// by deleting inc_connect.php and re-installing (it does not affect the DB).
-		$query = "SET name_first = '" . $_SESSION['usr']['name_first'] . "', 
-					name_middle = '" . $_SESSION['usr']['name_middle'] . "', 
-					name_last = '" . $_SESSION['usr']['name_last'] . "', 
-					username = '" . $_SESSION['usr']['username'] . "', 
+
+		if ($id_author) {
+			$query = "UPDATE lcm_author "
+				. "SET name_first = '" . _session('name_first') . "', 
+					name_middle = '" . _session('name_middle') . "', 
+					name_last = '" . _session('name_last') . "', 
+					username = '" . _session('username') . "', 
 					date_update = NOW(),
 					alea_actuel = '', 
 					alea_futur = FLOOR(32000*RAND()), 
-					status = 'admin'";
-
-		if ($id_author) {
-			$query = "UPDATE lcm_author " . $query . " WHERE id_author = " . $id_author;
+					status = 'admin'
+				  WHERE id_author = " . $id_author;
 			lcm_query_db($query);
 		} else {
-			$query = "INSERT INTO lcm_author " . $query;
-			$query .= ", date_creation = NOW()";
+			$query = "INSERT INTO lcm_author "
+				. "(name_first, name_middle, name_last, username, date_update, "
+				.  "password, alea_actuel, alea_futur, status, date_creation)"
+				. "VALUES ("
+				. "'" . _session('name_first') . "',"
+				. "'" . _session('name_middle') . "',"
+				. "'" . _session('name_last') . "',"
+				. "'" . _session('username') . "',"
+				. "NOW(),"
+				. "'temp',"
+				. "'',"
+				. "FLOOR(32000*RANDOM())," // FIXME RAND() on mySQL, RANDOM() on PgSQL?
+				. "'admin',"
+				. "NOW()"
+				. ")";
+
 			lcm_query_db($query);
-			$id_author = lcm_insert_id();
+			$id_author = lcm_insert_id('lcm_author', 'id_author');
 		}
 
 		//
@@ -162,7 +177,7 @@ function install_step_5() {
 			return;
 		}
 
-		if (! $auth->newpass($id_author, $_SESSION['usr']['username'], $_REQUEST['password']))
+		if (! $auth->newpass($id_author, $_SESSION['form_data']['username'], $_REQUEST['password']))
 			$_SESSION['errors']['password'] = $auth->error;
 
 		if (count($_SESSION['errors'])) {
@@ -173,14 +188,14 @@ function install_step_5() {
 		//
 		// Set e-mail for author
 		//
-		if ($_SESSION['usr']['email']) {
+		if ($_SESSION['form_data']['email']) {
 			include_lcm('inc_contacts');
 
-			if (! is_existing_contact('author', $id_author, 'email_main', $_SESSION['usr']['email']))
-				add_contact('author', $id_author, 'email_main', $_SESSION['usr']['email']);
+			if (! is_existing_contact('author', $id_author, 'email_main', $_SESSION['form_data']['email']))
+				add_contact('author', $id_author, 'email_main', $_SESSION['form_data']['email']);
 
 			// Insert email as main system administrator
-			write_meta('email_sysadmin', $_SESSION['usr']['email']);
+			write_meta('email_sysadmin', $_SESSION['form_data']['email']);
 		}
 	} else {
 		// Test if an administrator already exists
@@ -261,14 +276,14 @@ function install_step_4() {
 
 	// [ML] Altough not most problematic, could be better. But if someone
 	// fixes here, please fix lcm_pass.php also (function print_registration_form())
-	$name_first = (isset($_SESSION['usr']['name_first']) ?  $_SESSION['usr']['name_first'] : '');
+	$name_first = _session('name_first');
 	echo "<table border='0' cellpadding='0' cellspacing='5' width='80%'><tr>\n";
 	echo "<td>
 			<strong><label for='name_first'>" . f_err_star('name_first') . _T('person_input_name_first') . "</label></strong><br />
 			<input type='text' style='width: 100%;' id='name_first' name='name_first' value='$name_first' size='15' class='txt_lmnt' />
 		</td>\n";
 
-	$name_last = (isset($_SESSION['usr']['name_last']) ?  $_SESSION['usr']['name_last'] : '');
+	$name_last = _session('name_last');
 	echo "<td>
 			<strong><label for='name_last'>" . f_err_star('name_last') . _T('person_input_name_last') . "</label></strong><br />
 			<input style='width: 100%;' type='text' id='name_last' name='name_last' value='$name_last' size='15' class='txt_lmnt' />
@@ -277,7 +292,7 @@ function install_step_4() {
 	echo "<tr>\n";
 	echo "<td colspan='2'>";
 
-	$email = (isset($_SESSION['usr']['email']) ?  $_SESSION['usr']['email'] : '');
+	$email = _session('email');
 	echo "<p><b><label for='email'>" . f_err_star('email') . _T('input_email') . "</label></b><br />\n";
 	echo "<input style='width: 100%;' type='text' id='email' name='email' value=\"$email\" size='40' class='txt_lmnt' /></p>\n";
 
@@ -288,7 +303,7 @@ function install_step_4() {
 	// Identifiers
 	echo "<p><b>" . _T('input_connection_identifiers') . "</b></p>\n";
 
-	$username = (isset($_SESSION['usr']['username']) ?  $_SESSION['usr']['username'] : '');
+	$username = _session('username');
 	echo "<table border='0' cellpadding='0' cellspacing='5' width='80%'>\n";
 	echo "<tr>\n";
 	echo "<td>";
@@ -319,13 +334,13 @@ function install_step_4() {
 	echo "</form>";
 
 	$_SESSION['errors'] = array();
-	$_SESSION['usr'] = array();
+	$_SESSION['form_data'] = array();
 }
 
 function install_step_3() {
-	$db_address  = $_REQUEST['db_address'];
-	$db_login    = $_REQUEST['db_login'];
-	$db_password = $_REQUEST['db_password'];
+	$db_address  = _request('db_address');
+	$db_login    = _request('db_login');
+	$db_password = _request('db_password');
 
 	global $lcm_db_version;
 
@@ -337,10 +352,10 @@ function install_step_3() {
 	// additional error reporting.
 	echo "<!-- \n";
 
-	if ($_REQUEST['db_choice'] == "__manual__") {
-		$sel_db = $_REQUEST['manual_db'];
+	if (_request('db_choice') == "__manual__") {
+		$sel_db = _request('manual_db');
 	} else {
-		$sel_db = $_REQUEST['db_choice'];
+		$sel_db = _request('db_choice');
 	}
 
 	$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db);
@@ -349,9 +364,45 @@ function install_step_3() {
 	if (! $link)
 		lcm_panic("connection denied: " . lcm_sql_error());
 
+	//
+	// TEMPORARY (used by testing the installer)
+	/*
+	lcm_query("DROP TABLE lcm_case", true);
+	lcm_query("DROP TABLE lcm_case_attachment", true);
+	lcm_query("DROP TABLE lcm_stage", true);
+	lcm_query("DROP TABLE lcm_followup", true);
+	lcm_query("DROP TABLE lcm_author", true);
+	lcm_query("DROP TABLE lcm_client", true);
+	lcm_query("DROP TABLE lcm_client_attachment", true);
+	lcm_query("DROP TABLE lcm_org", true);
+	lcm_query("DROP TABLE lcm_org_attachment", true);
+	lcm_query("DROP TABLE lcm_contact", true);
+	lcm_query("DROP TABLE lcm_keyword", true);
+	lcm_query("DROP TABLE lcm_keyword_case", true);
+	lcm_query("DROP TABLE lcm_keyword_client", true);
+	lcm_query("DROP TABLE lcm_keyword_org", true);
+	lcm_query("DROP TABLE lcm_keyword_group", true);
+	lcm_query("DROP TABLE lcm_report", true);
+	lcm_query("DROP TABLE lcm_fields", true);
+	lcm_query("DROP TABLE lcm_filter", true);
+	lcm_query("DROP TABLE lcm_app", true);
+	lcm_query("DROP TABLE lcm_app_client_org", true);
+	lcm_query("DROP TABLE lcm_app_fu", true);
+	lcm_query("DROP TABLE lcm_author_app", true);
+	lcm_query("DROP TABLE lcm_case_client_org", true);
+	lcm_query("DROP TABLE lcm_case_author", true);
+	lcm_query("DROP TABLE lcm_client_org", true);
+	lcm_query("DROP TABLE lcm_rep_col", true);
+	lcm_query("DROP TABLE lcm_rep_line", true);
+	lcm_query("DROP TABLE lcm_rep_filters", true);
+	lcm_query("DROP TABLE lcm_filter_conds", true);
+	lcm_query("DROP TABLE lcm_rep_filter", true);
+	lcm_query("DROP TABLE lcm_meta", true);
+	*/
+
 	// Test if the software was already installed
-	lcm_query("SELECT COUNT(*) FROM lcm_meta", true);
-	$already_installed = !lcm_sql_errno();
+	$result = lcm_query("SELECT * FROM lcm_meta", true);
+	$already_installed = (!lcm_sql_errno() && lcm_num_rows($result));
 	$old_lcm_version = 'NONE';
 
 	if ($already_installed) {
@@ -462,47 +513,45 @@ function install_step_3() {
 }
 
 function install_step_2() {
-	$db_address  = $_SESSION['usr']['db_address']  = $_REQUEST['db_address'];
-	$db_login    = $_SESSION['usr']['db_login']    = $_REQUEST['db_login'];
-	$db_password = $_SESSION['usr']['db_password'] = $_REQUEST['db_password'];
+	$using_pgsql = false;
 
-	if (! ($db_login || $db_password)) {
-		if (! $db_login)
-			$_SESSION['errors']['login'] = _Ti('install_connection_login') . _T('warning_field_mandatory');
+	if (preg_match("/^PostgreSQL/", lcm_sql_server_info()))
+		$using_pgsql = true;
 
-		if (! $db_password)
-			$_SESSION['errors']['password'] = _Ti('install_connection_password') . _T('warning_field_mandatory');
+	$db_address  = $_SESSION['form_data']['db_address']  = $_REQUEST['db_address'];
+	$db_login    = $_SESSION['form_data']['db_login']    = $_REQUEST['db_login'];
+	$db_password = $_SESSION['form_data']['db_password'] = $_REQUEST['db_password'];
+	$db_choice   = $_SESSION['form_data']['db_choice']   = _request('db_choice');
 
+	if (! $db_login)
+		$_SESSION['errors']['login'] = _Ti('install_connection_login') . _T('warning_field_mandatory');
+
+	if (! $db_password)
+		$_SESSION['errors']['password'] = _Ti('install_connection_password') . _T('warning_field_mandatory');
+
+	if ($using_pgsql && (! $db_choice))
+		$_SESSION['errors']['dbname'] = "Database name: " . _T('warning_field_mandatory'); // TRAD
+
+	if (count($_SESSION['errors']))
 		return install_step_1();
-	}
 
 	echo "\n<!--\n";
-		$link = lcm_connect_db_test($db_address, $db_login, $db_password);
+		$link = lcm_connect_db_test($db_address, $db_login, $db_password, $db_choice);
 		$error = (lcm_sql_errno() ? lcm_sql_error() : '');
 	echo "\n-->\n";
 
 	if ($error || ! $link) {
-
 		$_SESSION['errors']['generic'] = _T('warning_sql_connection_failed')
 			// . ' ' . _T('install_info_go_back_verify_data')
 			. ' ' . _T('install_info_sql_connection_failed')
 			. ' (' . lcm_sql_errno() . ': ' . $error . ')';
 
 		return install_step_1();
-
-		/*
-		echo "<h3><small>" . _T('install_step_two') . "</small> "
-			. _T('install_title_connection_attempt') . "</h3>\n";
-
-		echo "<div class='box_error'>\n";
-		echo "<strong>" . _T('warning_sql_connection_failed') . "</strong>\n";
-		echo "<p><code>" . $error . "</code></p>\n";
-		echo "<p>"._T('install_info_go_back_verify_data') . ' ' . lcm_help('install_connection') . "</p>\n";
-		echo "<p><small>" . _T('install_info_sql_connection_failed') . "</small></p>\n";
-		echo "</div>\n\n";
-		*/
-
 	}
+
+	// If PgSQL, go to next step, db already chosen
+	if ($using_pgsql)
+		return install_step_3();
 
 	echo "<h3><small>" . _T('install_step_two') .  "</small> "
 		. _T('install_title_select_database') . "</h3>\n";
@@ -584,9 +633,10 @@ function install_step_1() {
 
 	echo "<p class='simple_text'>" . _T('install_info_sql_connection') . " " . lcm_help("install_database") . "</p>\n";
 
-	$db_address = (isset($_SESSION['usr']['db_address']) ? $_SESSION['usr']['db_address'] : 'localhost');
-	$db_login = (isset($_SESSION['usr']['db_login']) ?  $_SESSION['usr']['db_login'] : '');
-	$db_password = (isset($_SESSION['usr']['db_password']) ?  $_SESSION['usr']['db_password'] : '');
+	$db_address  = _session('db_address', 'localhost');
+	$db_login    = _session('db_login');
+	$db_password = _session('db_password');
+	$db_choice   = _session('db_choice');
 
 	// Fetch the previous configuration data to make things easier (if possible)
 	$lcm_config_prefix = (isset($_SERVER['LcmConfigDir']) ?  $_SERVER['LcmConfigDir'] : 'inc/config');
@@ -622,6 +672,16 @@ function install_step_1() {
 	echo "<div><label for='db_password'><strong>" . f_err_star('password') . _T('install_connection_password') . "</strong></label></div>\n";
 	echo "<input type='password' id='db_password' name='db_password' value=\"$db_password\" size='40' class='txt_lmnt' />\n";
 
+	// Afaik, there is no way to get a list of databases in PgSQL
+	// without logging in first, and to login, you must provide DBname
+	if (preg_match("/^PostgreSQL/", lcm_sql_server_info())) {
+		echo "<br />\n";
+		echo "<br />\n";
+
+		echo "<div><label for='db_choice'><strong>" . f_err_star('dbname') . "Database name" . "</strong></label></div>\n"; // TRAD
+		echo "<input type='text' id='db_choice' name='db_choice' value=\"$db_choice\" size='40' class='txt_lmnt' />\n";
+	}
+
 	echo "</fieldset>\n";
 
 	echo "<div align='$lcm_lang_right'>"
@@ -633,7 +693,7 @@ function install_step_1() {
 function call_step($step) {
 	// Clear error handling
 	$_SESSION['errors'] = array();
-	$_SESSION['usr'] = array();
+	$_SESSION['form_data'] = array();
 
 	install_html_start('AUTO', '', $step);
 
@@ -644,7 +704,7 @@ function call_step($step) {
 
 	// Clear error handling
 	$_SESSION['errors'] = array();
-	$_SESSION['usr'] = array();
+	$_SESSION['form_data'] = array();
 }
 
 if (1 <= $step && $step <= 5)
