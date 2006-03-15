@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.26 2005/12/06 10:17:33 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.27 2006/03/15 23:27:10 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -110,25 +110,12 @@ function lcm_query_db($query, $accept_fail = false) {
 	return $result;
 }
 
-function lcm_query_create_table($query, $restore = false) {
+function lcm_query_restore_table($query) {
 	$ver = @mysql_get_server_info();
 
 	if (preg_match("/^CREATE TABLE/", $query)) {
-		if ($restore) {
-			// [ML] Switching LCM to InnoDB by default not for today.. needs testing.
-
-			// Remove "FULLTEXT KEY" stuff which InnoDB doesn't like 
-			// (and whose utility is not very clear..)
-			// $query = preg_replace("/FULLTEXT KEY `?[a-zA-Z]+`? \(`?[a-zA-Z]+`?\),?/", "", $query);
-			// $query = preg_replace("/,\s*\\)/", ")", $query);
-			
-			// Remove possible ENGINE=MyISAM, CHARSET=latin1, etc. at end of query
-			$query = preg_replace("/\) (ENGINE=|TYPE=)[^\)]*/", ")", $query);
-
-			// InnoDB needs tweaking with MySQL 3.23, so avoid for now since I cannot test
-			// if (! preg_match("/^3\.2/", $ver))
-			//	$query .= " TYPE=InnoDB ";
-		}
+		// Remove possible ENGINE=MyISAM, CHARSET=latin1, etc. at end of query
+		$query = preg_replace("/\) (ENGINE=|TYPE=)[^\)]*/", ")", $query);
 
 		// Activate UTF-8 only if using MySQL >= 4.1
 		// (regexp excludes MySQL <= 4.0, easier for forward compatibility)
@@ -150,14 +137,34 @@ function lcm_query_create_table($query, $restore = false) {
 	return lcm_query($query);
 }
 
-function spip_query_db($query) {
-	lcm_log("use of deprecated function: spip_query_db, use lcm_query_db instead");
-	return lcm_query_db($query);
+function lcm_query_create_table($table, $fields, $keys = array()) {
+	$ver = @mysql_get_server_info();
+
+
+	$query = "CREATE TABLE $table (" . implode(", ", $fields);
+
+	if (count($keys)) {
+		$query .= ', ';
+		$new_keys = array();
+
+		foreach ($keys as $name => $field)
+			$new_keys[] = "KEY $name ($field)";
+		
+		$query .= implode(', ', $new_keys);
+	}
+
+	$query .= ")";
+
+	// Activate UTF-8 only if using MySQL >= 4.1
+	// (regexp excludes MySQL <= 4.0, easier for forward compatibility)
+	if (! preg_match("/^(4\.0|3\.)/", $ver)) 
+		$query .= " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ";
+
+	return lcm_query($query);
 }
 
-function lcm_create_table($table, $query) {
-	lcm_log("use of deprecated function: lcm_create_table, use lcm_query instead");
-	return lcm_query_db('CREATE TABLE '.$GLOBALS['table_prefix'].'_'.$table.'('.$query.')');
+lcm_query_create_unique_index($table, $idx_name, $field) {
+	lcm_query("CREATE UNIQUE INDEX $idx_name ON $table ($field)";
 }
 
 
@@ -219,7 +226,8 @@ function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 	}
 }
 
-function lcm_connect_db_test($host, $login, $pass, $port = 0) {
+// Note: the $db is not use (used for pgsql)
+function lcm_connect_db_test($host, $login, $pass, $db = '', $port = 0) {
 	unset($link);
 
 	// Non-silent connect, should be shown in <!-- --> anyway
@@ -331,7 +339,8 @@ function spip_free_result($r) {
 	return lcm_free_result($r);
 }
 
-function lcm_insert_id() {
+function lcm_insert_id($name, $field) {
+	// note: name and field are used only by pgsql
 	return mysql_insert_id();
 }
 
