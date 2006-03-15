@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta.php,v 1.23 2005/12/16 11:07:21 mlutfy Exp $
+	$Id: inc_meta.php,v 1.24 2006/03/15 23:28:16 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -55,9 +55,19 @@ function read_metas() {
 function write_meta($name, $value) {
 	// Escape $value
 	$value = addslashes($value);
-	// Write it into lcm_meta table
-	lcm_query("REPLACE lcm_meta (name, value) VALUES ('$name', '$value')");
-	// Write all meta variables into cache
+
+	// PostgreSQL does not support "REPLACE foo" syntax
+	$query = "SELECT name, value FROM lcm_meta WHERE name = '$name'";
+	$result = lcm_query($query);
+
+	if (($row = lcm_fetch_array($result)))
+		lcm_query("UPDATE lcm_meta 
+				SET value = '$value'
+				WHERE name = '$name'");
+	else
+		lcm_query("INSERT INTO lcm_meta (name, value) VALUES  ('$name', '$value')");
+
+	// Refresh cache (inc_meta_cache.php)
 	write_metas();
 }
 

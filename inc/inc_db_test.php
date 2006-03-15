@@ -7,7 +7,7 @@ define('_INC_DB_TEST', '1');
 function lcm_test_alter_table() {
 	$log = "";
 
-	lcm_query("DROP TABLE IF EXISTS lcm_test");
+	lcm_query("DROP TABLE lcm_test", true);
 	lcm_query("CREATE TABLE lcm_test (a INT)");
 	lcm_query("ALTER TABLE lcm_test ADD b INT");
 	lcm_query("INSERT INTO lcm_test (b) VALUES (1)");
@@ -22,7 +22,7 @@ function lcm_test_alter_table() {
 			$log .= "<p>" . "No error message available." . "</p>";
 	}
 
-	lcm_query("DROP TABLE IF EXISTS lcm_test");
+	lcm_query("DROP TABLE lcm_test", true);
 
 	return $log;
 }
