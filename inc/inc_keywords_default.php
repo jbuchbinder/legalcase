@@ -489,7 +489,7 @@ function get_default_keywords() {
 function create_groups($keyword_groups) {
 	foreach ($keyword_groups as $skwg) {
 		// Insert keyword group data into database table
-		$q = "INSERT IGNORE INTO lcm_keyword_group 
+		$q = "INSERT INTO lcm_keyword_group 
 				(name, title, description, type, policy, quantity, suggest, ac_admin, ac_author) 
 			VALUES (" 
 				. "'" . addslashes($skwg['name']) . "', "
@@ -502,7 +502,7 @@ function create_groups($keyword_groups) {
 				. "'" . addslashes($skwg['ac_admin']) . "', "
 				. "'" . addslashes($skwg['ac_author']) . "')";
 
-		$result = lcm_query($q);
+		$result = lcm_query($q, true); // Ignore if keyword exists (has unique key)
 		
 		// Findout under what ID is this group stored
 		// Note: Do this instead of lcm_insert_id() because the keyword might not have been 
@@ -525,7 +525,7 @@ function create_groups($keyword_groups) {
 			if (! isset($k['hasvalue']))
 				$k['hasvalue'] = 'N';
 
-			$q = "INSERT IGNORE INTO lcm_keyword
+			$q = "INSERT INTO lcm_keyword
 					(id_group, name, title, description, hasvalue, ac_author)
 				VALUES ("
 					. $kwg_id . ", "
@@ -535,7 +535,7 @@ function create_groups($keyword_groups) {
 					. "'" . addslashes($k['hasvalue']) . "', "
 					. "'" . addslashes($k['ac_author']) . "')";
 
-			$result = lcm_query($q);
+			$result = lcm_query($q, true); // Ignore if keyword exists (has unique key)
 		}
 	}
 }

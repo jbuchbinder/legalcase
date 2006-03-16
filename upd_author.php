@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.23 2005/04/05 13:30:33 mlutfy Exp $
+	$Id: upd_author.php,v 1.24 2006/03/16 23:07:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -196,7 +196,7 @@ if ($_SESSION['usr']['id_author'] > 0) {
 
 	$q = "INSERT INTO lcm_author SET date_creation = NOW(), $fl";
 	$result = lcm_query($q);
-	$_SESSION['usr']['id_author'] = lcm_insert_id();
+	$_SESSION['usr']['id_author'] = lcm_insert_id('lcm_author', 'id_author');
 	$_SESSION['usr']['id_author'] = $_SESSION['usr']['id_author'];
 }
 

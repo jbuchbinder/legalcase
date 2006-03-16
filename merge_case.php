@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: merge_case.php,v 1.7 2005/02/07 21:56:07 antzi Exp $
+	$Id: merge_case.php,v 1.8 2006/03/16 23:07:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -48,7 +48,7 @@ if ($destination==0) {
 			date_creation=NOW(),
 			status='open'";
 	$result = lcm_query($q);
-	$destination = lcm_insert_id($result);
+	$destination = lcm_insert_id('lcm_case', 'id_case');
 
 	// Insert new case_author relation
 	$q = "INSERT INTO lcm_case_author SET

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.34 2006/03/10 15:42:21 mlutfy Exp $
+	$Id: keywords.php,v 1.35 2006/03/16 23:07:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -375,7 +375,7 @@ function update_keyword_group($id_group) {
 						ac_admin = 'Y'";
 
 		lcm_query($query);
-		$id_group = lcm_insert_id();
+		$id_group = lcm_insert_id('lcm_keyword_group', 'id_group');
 		$kwg_info = get_kwg_from_id($id_group);
 	} else {
 		// Get current kwg information (kwg_type & name cannot be changed)
@@ -458,7 +458,7 @@ function update_keyword($id_keyword) {
 					ac_author = '" . clean_input($kw_ac_author) . "'";
 
 		lcm_query($query);
-		$id_keyword = lcm_insert_id();
+		$id_keyword = lcm_insert_id('lcm_keyword', 'id_keyword');
 		$kw_info = get_kw_from_id($id_keyword); // for redirection later
 	} else {
 		// Get current info about keyword (don't trust the user)

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_filter.php,v 1.5 2005/01/19 09:14:40 mlutfy Exp $
+	$Id: upd_filter.php,v 1.6 2006/03/16 23:07:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -78,7 +78,7 @@ if (count($errors)) {
 	} else {
 		$q = "INSERT INTO lcm_filter SET id_filter=0,date_creation=NOW(),$fl";
 		$result = lcm_query($q);
-		$id_filter = lcm_insert_id();
+		$id_filter = lcm_insert_id('lcm_filter', 'id_filter');
 	}
 
     // Clear the session

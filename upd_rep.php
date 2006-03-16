@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep.php,v 1.9 2005/12/06 09:26:52 mlutfy Exp $
+	$Id: upd_rep.php,v 1.10 2006/03/16 23:07:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -86,7 +86,7 @@ if ($rep_data['id_report'] > 0) {
 } else {
 	$q = "INSERT INTO lcm_report SET id_report=0,date_creation=NOW(),$fl";
 	$result = lcm_query($q);
-	$rep_data['id_report'] = lcm_insert_id();
+	$rep_data['id_report'] = lcm_insert_id('lcm_report', 'id_report');
 
 	// Insert new case_author relation
 	//$q = "INSERT INTO lcm_case_author SET

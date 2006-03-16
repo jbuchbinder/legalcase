@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.6 2006/03/16 16:22:56 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.7 2006/03/16 23:08:45 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -215,7 +215,7 @@ class LcmClient extends LcmObject {
 						$cl";
 	
 			$result = lcm_query($q);
-			$this->data['id_client'] = lcm_insert_id($result);
+			$this->data['id_client'] = lcm_insert_id('lcm_client', 'id_client');
 		}
 
 		// Keywords

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.18 2005/04/28 06:30:03 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.19 2006/03/16 23:07:21 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -247,7 +247,7 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 	lcm_query("INSERT INTO lcm_author (name_first, name_last, username, password, status) "
 			. "VALUES ('".clean_input($name_first)."', '".clean_input($name_last)."', '$username', '$mdpass', 'normal')");
 
-	$id_author = lcm_insert_id();
+	$id_author = lcm_insert_id('lcm_author', 'id_author');
 
 	// Add e-mail to lcm_contact
 	lcm_query("INSERT INTO lcm_contact (type_person, type_contact, id_of_person, value)

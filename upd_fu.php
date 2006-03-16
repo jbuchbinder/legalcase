@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.53 2006/03/10 15:40:48 mlutfy Exp $
+	$Id: upd_fu.php,v 1.54 2006/03/16 23:07:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -213,7 +213,7 @@ if (isset($_SESSION['form_data']['add_appointment'])) {
 	$result = lcm_query($q);
 
 	// Get new appointment's ID
-	$id_app = lcm_insert_id();
+	$id_app = lcm_insert_id('lcm_app', 'id_app');
 	$_SESSION['form_data']['id_app'] = $id_app;
 
 	// Add relationship with the creator

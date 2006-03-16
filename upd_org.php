@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_org.php,v 1.12 2006/02/20 03:24:27 mlutfy Exp $
+	$Id: upd_org.php,v 1.13 2006/03/16 23:07:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -60,7 +60,7 @@ if (count($_SESSION['errors'])) {
 	} else {
 		$q = "INSERT INTO lcm_org SET id_org=0,date_update=NOW(),$ol";
 		$result = lcm_query($q);
-		$_SESSION['form_data']['id_org'] = lcm_insert_id($result);
+		$_SESSION['form_data']['id_org'] = lcm_insert_id('lcm_org', 'id_org');
 
 		// If there is an error (ex: in contacts), we should send back to 'org_det.php?org=XX'
 		// not to 'org_det.php?org=0'.

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.8 2006/03/07 15:53:28 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.9 2006/03/16 23:08:45 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -289,9 +289,9 @@ class LcmCase extends LcmObject {
 			}
 		} else {
 			// This is new case
-			$q = "INSERT INTO lcm_case SET id_case=0,date_creation=NOW(),$fl,$public_access_rights";
+			$q = "INSERT INTO lcm_case SET date_creation=NOW(),$fl,$public_access_rights";
 			$result = lcm_query($q);
-			$id_case = lcm_insert_id($result);
+			$id_case = lcm_insert_id('lcm_case', 'id_case');
 			$id_author = $author_session['id_author'];
 
 			$this->data['id_case'] = $id_case;
@@ -316,17 +316,17 @@ class LcmCase extends LcmObject {
 
 			// Add 'assignment' followup to the case
 			$q = "INSERT INTO lcm_followup
-				SET id_followup = 0,
-					id_case = $id_case, 
+				SET id_case = $id_case, 
 					id_author = $id_author,
 					type = 'assignment',
 					case_stage = '" . $this->getDataString('stage') . "',
 					date_start = NOW(),
 					date_end = NOW(),
+					sumbilled = 0,
 					description='" . $id_author . "'";
 
 			lcm_query($q);
-			$id_followup = lcm_insert_id();
+			$id_followup = lcm_insert_id('lcm_followup', 'id_followup');
 
 			// Add lcm_stage entry
 			$q = "INSERT INTO lcm_stage SET

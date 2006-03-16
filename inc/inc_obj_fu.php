@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.6 2006/03/07 17:53:05 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.7 2006/03/16 23:08:45 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -264,14 +264,13 @@ class LcmFollowup extends LcmObject {
 
 			// Add the new follow-up
 			$q = "INSERT INTO lcm_followup
-				SET	id_followup=0,
-					id_case=" . $this->getDataInt('id_case') . ",
+				SET	id_case=" . $this->getDataInt('id_case') . ",
 					id_author=" . $GLOBALS['author_session']['id_author'] . ",
 					$fl,
 					case_stage='$case_stage'";
 	
 			lcm_query($q);
-			$this->data['id_followup'] = lcm_insert_id();
+			$this->data['id_followup'] = lcm_insert_id('lcm_followup', 'id_followup');
 	
 			// Set relation to the parent appointment, if any
 			if ($this->getDataInt('id_app')) {
