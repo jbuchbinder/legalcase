@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.86 2006/03/10 15:41:21 mlutfy Exp $
+	$Id: edit_case.php,v 1.87 2006/03/16 16:21:42 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -114,7 +114,7 @@ else
 	lcm_page_start(_T('title_case_new'), '', '', 'cases_intro#new');
 
 // Show the errors (if any)
-echo show_all_errors($_SESSION['errors']);
+echo show_all_errors();
 
 if ($attach_client || $attach_org)
 	show_context_start();
