@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.67 2006/03/14 02:40:41 mlutfy Exp $
+	$Id: listcases.php,v 1.68 2006/03/16 15:56:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -119,7 +119,7 @@ foreach ($types_period as $key => $val) {
 	echo '<option value="' . $val . '"' . $sel . '>' . _T('case_filter_period_option_' . $key) . "</option>\n";
 }
 
-$q_dates = "SELECT DISTINCT YEAR(date_creation) as year
+$q_dates = "SELECT DISTINCT " . lcm_query_trunc_field('date_creation', 'year') . " as year
 			FROM lcm_case as c, lcm_case_author as a
 			WHERE c.id_case = a.id_case AND " . $q_owner;
 
@@ -181,9 +181,11 @@ $q .= " AND " . $q_owner;
 
 // Period (date_creation) to show
 if ($prefs['case_period'] < 1900) // since X days
-	$q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_creation) < " . $prefs['case_period'];
+	// $q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_creation) < " . $prefs['case_period'];
+	$q .= " AND " . lcm_query_trunc_field('NOW()', 'day') . ' - '
+				  . lcm_query_trunc_field('date_creation', 'day') . ' < ' . $prefs['case_period'];
 else // for year X
-	$q .= " AND YEAR(date_creation) = " . $prefs['case_period'];
+	$q .= " AND " . lcm_query_trunc_field('date_creation', 'year') . ' = ' . $prefs['case_period'];
 
 // Sort cases by creation date
 $case_order = 'DESC';
@@ -249,9 +251,12 @@ $q = "SELECT fu.id_case, fu.id_followup, fu.date_start, fu.date_end, fu.type, fu
 				  AND ca.id_author = " . $author_session['id_author'];
 
 	if ($prefs['case_period'] < 1900) // since X days
-		$q_temp .= " AND TO_DAYS(NOW()) - TO_DAYS(c.date_creation) < " . $prefs['case_period'];
+		// $q_temp .= " AND TO_DAYS(NOW()) - TO_DAYS(c.date_creation) < " . $prefs['case_period'];
+		$q_temp .= " AND " . lcm_query_trunc_field('NOW()', 'day') . ' - '
+							. lcm_query_trunc_field('c.date_creation', 'day') . ' < ' . $prefs['case_period'];
 	else // for year X
-		$q_temp .= " AND YEAR(date_creation) = " . $prefs['case_period'];
+		// $q_temp .= " AND YEAR(date_creation) = " . $prefs['case_period'];
+		$q_temp .= " AND " . lcm_query_trunc_field('c.date_creation', 'year') . ' = ' . $prefs['case_period'];
 			 
 	$r_temp = lcm_query($q_temp);
 	$list_cases = array();
@@ -277,9 +282,12 @@ if (! ($prefs['case_owner'] == 'all' && $author_session['status'] == 'admin')) {
 
 // Period (date_creation) to show
 if ($prefs['case_period'] < 1900) // since X days
-	$q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_start) < " . $prefs['case_period'];
+	// $q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_start) < " . $prefs['case_period'];
+	$q .= " AND " . lcm_query_trunc_field('NOW()', 'day') . ' - '
+				  . lcm_query_trunc_field('date_start', 'day') . ' < ' . $prefs['case_period'];
 else // for year X
-	$q .= " AND YEAR(date_start) = " . $prefs['case_period'];
+	// $q .= " AND YEAR(date_start) = " . $prefs['case_period'];
+	$q .= " AND " . lcm_query_trunc_field('date_start', 'year') . ' = ' . $prefs['case_period'];
 
 
 // Add ordering
