@@ -2,10 +2,11 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
-	Note: This file was initially based on SPIP's ecrire/inc_calendrier.php3
-	(http://www.spip.net).
+	This file is a derivative of the SPIP 1.8 ecrire/inc_calendrier.php3
+	(http://www.spip.net). Licensed under the GNU GPL (C) 2001-2005 
+	Arnaud Martin, Antoine Pitrou, Philippe Riviere, Emmanuel Saint-James
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -21,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.25 2006/02/20 03:44:09 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.26 2006/03/16 14:45:57 mlutfy Exp $
 */
 
 
@@ -1982,12 +1983,12 @@ function sql_calendrier_agenda ($mois, $annee) {
 	$annee = annee($date);
 
 	// The future events involving the author in this month
-	$result_messages=lcm_query("SELECT lcm_app.start_time
-					FROM lcm_app, lcm_author_app
-					WHERE lcm_author_app.id_author='" . $GLOBALS['author_session']['id_author'] . "'
-					AND lcm_app.id_app=lcm_author_app.id_app
-					AND start_time >= '$annee-$mois-1'
-					AND start_time < DATE_ADD('$annee-$mois-1', INTERVAL 1 MONTH)");
+	$result_messages=lcm_query("SELECT app.start_time
+					FROM lcm_app as app, lcm_author_app as aut
+					WHERE aut.id_author = " . $GLOBALS['author_session']['id_author'] . "
+					AND app.id_app = aut.id_app
+					AND app.start_time >= '$annee-$mois-01'
+					AND app.start_time < " . lcm_query_date_add_interval("$annee-$mois-01", '+', 'month', 1));
 
 	while($row=lcm_fetch_array($result_messages)){
 		$rv[journum($row['start_time'])] = 1;
