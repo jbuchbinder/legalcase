@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.5 2006/03/09 23:41:11 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.6 2006/03/16 16:22:56 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -350,19 +350,19 @@ class LcmClientInfoUI extends LcmClient {
 				. '<input type="hidden" name="id_client" value="' . $this->getDataInt('id_client') . '" /></td></tr>' . "\n";
 		}
 		
-		echo '<tr><td>' . f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first') . '</td>' . "\n";
+		echo '<tr><td>' . f_err_star('name_first') . _T('person_input_name_first') . '</td>' . "\n";
 		echo '<td><input name="name_first" value="' . clean_output($this->getDataString('name_first')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		
 		// [ML] always show middle name, if any, no matter the configuration
 		if ($this->getDataString('name_middle') || $client_name_middle == 'yes') {
-			echo '<tr><td>' . f_err_star('name_middle', $_SESSION['errors']) . _T('person_input_name_middle') . '</td>' . "\n";
+			echo '<tr><td>' . f_err_star('name_middle') . _T('person_input_name_middle') . '</td>' . "\n";
 			echo '<td><input name="name_middle" value="' . clean_output($this->getDataString('name_middle')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		}
 			
-		echo '<tr><td>' . f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last') . '</td>' . "\n";
+		echo '<tr><td>' . f_err_star('name_last') . _T('person_input_name_last') . '</td>' . "\n";
 		echo '<td><input name="name_last" value="' . clean_output($this->getDataString('name_last')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		
-		echo '<tr><td>' . f_err_star('gender', $_SESSION['errors']) . _T('person_input_gender') . '</td>' . "\n";
+		echo '<tr><td>' . f_err_star('gender') . _T('person_input_gender') . '</td>' . "\n";
 		echo '<td><select name="gender" class="sel_frm">' . "\n";
 		
 		$opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
