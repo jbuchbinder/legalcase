@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_pgsql.php,v 1.2 2006/03/15 23:25:58 mlutfy Exp $
+	$Id: inc_db_pgsql.php,v 1.3 2006/03/16 16:24:54 mlutfy Exp $
 */
 
 if (defined('_INC_DB_PGSQL')) return;
@@ -336,12 +336,7 @@ function lcm_sql_errno() {
 
 function lcm_num_rows($r) {
 	if ($r)
-		return mysql_num_rows($r);
-}
-
-function spip_num_rows($r) {
-	lcm_log("use of deprecated function: spip_num_rows, use lcm_num_rows instead");
-	return lcm_num_rows($r);
+		return pg_num_rows($r);
 }
 
 function lcm_data_seek($r,$n) {
@@ -354,11 +349,6 @@ function lcm_free_result($r) {
 		return mysql_free_result($r);
 }
 
-function spip_free_result($r) {
-	lcm_log("use of deprecated function: spip_free_result, use lcm_free_result instead");
-	return lcm_free_result($r);
-}
-
 function lcm_insert_id($table, $field) {
 	// return mysql_insert_id();
 
@@ -367,9 +357,40 @@ function lcm_insert_id($table, $field) {
 	return $seq_array[0]; 
 }
 
-function spip_insert_id() {
-	lcm_log("use of deprecated function: spip_insert_id, use lcm_insert_id instead");
-	return lcm_insert_id();
+function lcm_query_date_add_interval($date, $op, $type, $units) {
+	$ret = "";
+
+	$type = strtolower($type);
+
+	switch ($op) {
+		case '+':
+		case '-':
+			// ex: TIMESTAMP '2000-01-01' + INTERVAL 1 month
+			$ret = "TIMESTAMP '$date' $op INTERVAL '$units $type'";
+			break;
+		default:
+			lcm_panic("Operand unknown");
+	}
+
+	return $ret;
+}
+
+// Make sure to put $date in quotes, ex: '2000-01-01 00:00:00'
+// we don't put by default, because it is made to also accept fields
+// ex: date_trunc('day', t.date_start)
+function lcm_query_trunc_field($date, $type) {
+	$ret = "";
+
+	switch ($type) {
+		case 'day':
+		case 'year':
+			$ret = "date_trunc('$type', $date)";
+			break;
+		default:
+			lcm_panic("Not supported");
+	}
+
+	return $ret;
 }
 
 // Put a local lock on a given LCM installation

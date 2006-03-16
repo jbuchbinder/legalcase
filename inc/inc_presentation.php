@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.233 2006/03/06 23:01:44 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.234 2006/03/16 16:24:54 mlutfy Exp $
 */
 
 //
@@ -312,12 +312,13 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 	$events = false;
 
 	// Show appointments for today
-	$q = "SELECT lcm_app.id_app,start_time,type,title
-			FROM lcm_app, lcm_author_app as a
-			WHERE (a.id_author=" . $GLOBALS['author_session']['id_author'] . "
-				AND lcm_app.id_app=a.id_app
-				AND DATE_FORMAT(start_time,'%Y-%m-%d') = CURDATE() )
-			ORDER BY reminder ASC";
+	$q = "SELECT app.id_app, start_time, type, title
+			FROM lcm_app as app, lcm_author_app as aut
+			WHERE aut.id_author=" . $GLOBALS['author_session']['id_author'] . "
+				AND app.id_app = aut.id_app
+				AND " . lcm_query_trunc_field('app.start_time', 'day') . "
+					= " . lcm_query_trunc_field('NOW()', 'day') . "
+			ORDER BY app.reminder ASC";
 
 	$result = lcm_query($q);
 

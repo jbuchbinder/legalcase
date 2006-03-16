@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.27 2006/03/15 23:27:10 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.28 2006/03/16 16:24:54 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -344,9 +344,45 @@ function lcm_insert_id($name, $field) {
 	return mysql_insert_id();
 }
 
-function spip_insert_id() {
-	lcm_log("use of deprecated function: spip_insert_id, use lcm_insert_id instead");
-	return lcm_insert_id();
+function lcm_query_date_add_interval($date, $op, $type, $units) {
+	$ret = "";
+
+	$type = strtoupper($type);
+
+	switch ($op) {
+		case '+':
+			// ex: DATE_ADD('2000-01-01', INTERVAL 1 MONTH)
+			$ret = "DATE_ADD('$date', INTERVAL $units $type)";
+			break;
+		case '-':
+			// ex: DATE_SUB('2000-01-01', INTERVAL 1 MONTH)
+			$ret = "DATE_SUB('$date', INTERVAL $units $type)";
+			break;
+		default:
+			lcm_panic("Operand unknown");
+	}
+
+	return $ret;
+}
+
+// Make sure to put $date in quotes, ex: '2000-01-01 00:00:00'
+// we don't put by default, because it is made to also accept fields
+// ex: DATE_FORMAT(t.date_start, '...')
+function lcm_query_trunc_field($date, $type) {
+	$ret = "";
+
+	switch ($type) {
+		case 'day':
+			$ret = "DATE_FORMAT($date, '%Y-%m-%d')";
+			break;
+		case 'year':
+			$ret = "YEAR($date)";
+			break;
+		default:
+			lcm_panic("Not supported");
+	}
+
+	return $ret;
 }
 
 // Put a local lock on a given LCM installation
