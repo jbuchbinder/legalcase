@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.35 2006/03/16 23:07:21 mlutfy Exp $
+	$Id: keywords.php,v 1.36 2006/03/17 15:47:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -188,13 +188,13 @@ function show_keyword_group_id($id_group) {
 	$disabled = ($id_group ? ' disabled="disabled" ' : '');
 	echo "<td colspan='2'>";
 	echo "<p class='normal_text'>";
-	echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
+	echo "<strong>" . f_err_star('name') . _T('keywords_input_name') . "</strong> " 
 		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
 	echo '<input ' . $disabled . ' type="text" style="width:99%;" id="kwg_name" name="kwg_name" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
 	echo "</p>\n";
 
 	echo "<p class='normal_text'>";
-	echo "<strong>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "</strong><br />\n";
+	echo "<strong>" . f_err_star('title') . _T('keywords_input_title') . "</strong><br />\n";
 	echo "<input type='text' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
 	echo "</p>\n";
 
@@ -207,6 +207,8 @@ function show_keyword_group_id($id_group) {
 
 	echo "</td>\n";
 	echo "</tr><tr>\n";
+	echo '<td colspan="2">';
+	echo '<ul class="info">';
 
 	// Quantity: relevevant only for user keywords (ex: 'thematics' for cases)
 	if ($kwg['type'] != 'system') {
@@ -220,24 +222,20 @@ function show_keyword_group_id($id_group) {
 			. '<input type="hidden" name="kwg_quantity" value="' . $kwg['quantity'] . '" />';
 	}
 	
-	echo '<td colspan="2">';
-	echo '<p>' . _T('keywords_info_quantity', array('quantity' => $html_quantity)) . "</p>\n";
-	echo "</td>\n";
-	echo "</tr>\n";
+	echo '<li>' . _T('keywords_info_quantity', array('quantity' => $html_quantity)) . "</li>\n";
 
 	if ($kwg['type'] != 'system') {
 		if (! $id_group)
 			$kwg['ac_author'] = 'Y';
 	
-		echo "<tr>\n";
-		echo '<td colspan="2">';
-		echo '<p class="normal_text">'
+		echo '<li>'
 			. _T('keywords_info_kwg_ac_author') . " " . get_yes_no('kwg_ac_author', $kwg['ac_author'])
-			. "</p>\n";
-		echo "</td>\n";
-		echo "</tr>\n";
+			. "</li>\n";
 	}
 
+	echo "</ul>\n";
+	echo "</td>\n";
+	echo "</tr>\n";
 	echo "</table>\n\n";
 
 	echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
@@ -262,8 +260,11 @@ function show_keyword_id($id_keyword = 0) {
 		$kwg = get_kwg_from_id($_REQUEST['id_group']);
 
 		$kw['name'] = '';
+		$kw['title'] = '';
+		$kw['description'] = '';
 		$kw['id_group'] = $kwg['id_group'];
 		$kw['ac_author'] = 'Y';
+		$kw['hasvalue'] = 'N';
 		$kw['type'] = $kwg['type'];
 		lcm_page_start(_T('title_keyword_new'));
 	} else {
@@ -306,9 +307,16 @@ function show_keyword_id($id_keyword = 0) {
 	echo "</textarea>\n";
 	
 	// Ac_author
-	echo '<p class="normal_text">'
-		. _T('keywords_info_kw_ac_author') . ' ' . get_yes_no('kw_ac_author', $kw['ac_author'])
-		. "</p>\n";
+	echo '<ul class="info">';
+	echo '<li>'
+		. _T('keywords_info_kw_ac_author') . ' ' 
+		. get_yes_no('kw_ac_author', $kw['ac_author'])
+		. "</li>\n";
+	
+	echo '<li>'
+		. "Does the keyword have a specific value?" . ' '  // TRAD
+		. get_yes_no('kw_hasvalue', $kw['hasvalue'])
+		. "</li>\n";
 
 	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 	echo "</form>\n";
@@ -326,28 +334,29 @@ function show_keyword_id($id_keyword = 0) {
 // Update the information on a keyword group
 //
 function update_keyword_group($id_group) {
-	$kwg_suggest = $_REQUEST['kwg_suggest']; // sys + user
-	$kwg_name    = $_REQUEST['kwg_name'];    // user only
-	$kwg_title   = $_REQUEST['kwg_title'];   // sys + user
-	$kwg_desc    = $_REQUEST['kwg_desc'];    // sys + user
-	$kwg_type    = $_REQUEST['kwg_type'];    // user only
-	$kwg_policy  = $_REQUEST['kwg_policy'];  // user only
-	$kwg_quantity = $_REQUEST['kwg_quantity']; // user only
-	$kwg_ac_author = $_REQUEST['kwg_ac_author']; // user only
+	$kwg_suggest = _request('kwg_suggest'); // sys + user
+	$kwg_name    = _request('kwg_name');    // user only
+	$kwg_title   = _request('kwg_title');   // sys + user
+	$kwg_desc    = _request('kwg_desc');    // sys + user
+	$kwg_type    = _request('kwg_type');    // user only
+	$kwg_policy  = _request('kwg_policy');  // user only
+	$kwg_quantity = _request('kwg_quantity'); // user only
+	$kwg_hasvalue = _request('kwg_hasvalue'); // user only
+	$kwg_ac_author = _request('kwg_ac_author'); // user only
 
 	//
 	// Check for errors
 	//
 
 	if (! $id_group) {
-		if (! clean_input($kwg_name))
+		if (! $kwg_name)
 			$_SESSION['errors']['name'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
 
 		if (! check_if_kwg_name_unique($kwg_name))
 			$_SESSION['errors']['name'] = _T('keywords_warning_kwg_code_exists');
 	}
 
-	if (! clean_input($kwg_title))
+	if (! $kwg_title)
 		$_SESSION['errors']['title'] = _Ti('keywords_input_title') . _T('warning_field_mandatory');
 
 	if (count($_SESSION['errors'])) {
@@ -364,14 +373,14 @@ function update_keyword_group($id_group) {
 			lcm_panic("Operation not allowed (type = $kwg_type)");
 	
 		$query = "INSERT INTO lcm_keyword_group
-					SET type = '" . clean_input($kwg_type) . "',
-						name = '" . clean_input($kwg_name) . "',
-						title = '" . clean_input($kwg_title) . "',
-						description = '" . clean_input($kwg_desc) . "',
+					SET type = '" . $kwg_type . "',
+						name = '" . $kwg_name . "',
+						title = '" . $kwg_title . "',
+						description = '" . $kwg_desc . "',
 						suggest = '',
-						policy = '" . clean_input($kwg_policy) . "',
-						quantity = '" . clean_input($kwg_quantity) . "',
-						ac_author = '" . clean_input($kwg_ac_author) . "',
+						policy = '" . $kwg_policy . "',
+						quantity = '" . $kwg_quantity . "',
+						ac_author = '" . $kwg_ac_author . "',
 						ac_admin = 'Y'";
 
 		lcm_query($query);
@@ -381,29 +390,28 @@ function update_keyword_group($id_group) {
 		// Get current kwg information (kwg_type & name cannot be changed)
 		$kwg_info = get_kwg_from_id($id_group);
 
-		$fl = " suggest = '" . clean_input($kwg_suggest) . "', "
-			. "title = '" . clean_input($kwg_title) . "' ";
+		$fl = " suggest = '$kwg_suggest', "
+			. "title = '$kwg_title', "
+			. "description = '$kwg_desc' ";
 	
 		if ($kwg_info['type'] != 'system') {
-			$fl .= ", quantity = '" . clean_input($kwg_quantity) . "' ";
-			$fl .= ", policy = '" . clean_input($kwg_policy) . "' ";
+			$fl .= ", quantity = '$kwg_quantity' ";
+			$fl .= ", policy = '$kwg_policy' ";
 
 			if ($kwg_ac_author == 'Y' || $kwg_ac_author == 'N')
-				$fl .= ", ac_author = '" . clean_input($kwg_ac_author) . "' ";
+				$fl .= ", ac_author = '$kwg_ac_author' ";
 		}
 		
-		$fl .= ", description = '" . clean_input($kwg_desc) . "' ";
-	
 		$query = "UPDATE lcm_keyword_group
 					SET $fl
-					WHERE id_group = " . $id_group;
+					WHERE id_group = $id_group";
 		
 		lcm_query($query);
 	}
 	
 	write_metas(); // update inc_meta_cache.php
 
-	$tab = ($kw_info['type'] == 'system' ? 'system' : 'user');
+	$tab = ($kwg_info['type'] == 'system' ? 'system' : 'user');
 	header("Location: keywords.php?tab=" . $tab . "#" . $kwg_info['name']);
 	exit;
 }
@@ -412,11 +420,12 @@ function update_keyword_group($id_group) {
 // Update the information on a keyword
 //
 function update_keyword($id_keyword) {
-	$kw_title     = $_REQUEST['kw_title'];
-	$kw_name      = $_REQUEST['kw_name']; // only for new keyword
-	$kw_desc      = $_REQUEST['kw_desc'];
-	$kw_ac_author = $_REQUEST['kw_ac_author']; // show/hide keyword
-	$kw_idgroup   = intval($_REQUEST['id_group']);
+	$kw_title     = _request('kw_title');
+	$kw_name      = _request('kw_name'); // only for new keyword
+	$kw_desc      = _request('kw_desc');
+	$kw_ac_author = _request('kw_ac_author'); // show/hide keyword
+	$kw_hasvalue  = _request('kw_hasvalue');  // show field to enter text value
+	$kw_idgroup   = intval(_request('id_group'));
 
 	//
 	// Check for errors
@@ -430,14 +439,14 @@ function update_keyword($id_keyword) {
 
 		$kwg_info = get_kwg_from_id($kw_idgroup);
 
-		if (! clean_input($kw_name))
+		if (! $kw_name)
 			$_SESSION['errors']['name'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
 
 		if (isset($system_kwg[$kwg_info['name']]['keywords'][$kw_name])) // XXX [ML] what about user keywords?
 			$_SESSION['errors']['name'] = _Ti('keywords_input_name') . _T('keywords_warning_kw_code_exists');
 	}
 
-	if (! clean_input($kw_title))
+	if (! $kw_title)
 		$_SESSION['errors']['title'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
 
 	if (count($_SESSION['errors'])) {
@@ -451,11 +460,12 @@ function update_keyword($id_keyword) {
 
 	if (! $id_keyword) { // new
 		$query = "INSERT INTO lcm_keyword
-				SET id_group = " . $kw_idgroup . ", 
-					name = '" . clean_input($kw_name) . "',
-					title = '" . clean_input($kw_title) . "',
-					description = '" . clean_input($kw_desc) . "',
-					ac_author = '" . clean_input($kw_ac_author) . "'";
+				SET id_group = $kw_idgroup, 
+					name = '$kw_name',
+					title = '$kw_title',
+					description = '$kw_desc',
+					ac_author = '$kw_ac_author',
+					hasvalue = '$kw_hasvalue'";
 
 		lcm_query($query);
 		$id_keyword = lcm_insert_id('lcm_keyword', 'id_keyword');
@@ -464,11 +474,12 @@ function update_keyword($id_keyword) {
 		// Get current info about keyword (don't trust the user)
 		$kw_info = get_kw_from_id($id_keyword);
 	
-		$fl = "description = '" . clean_input($kw_desc) . "', "
-			. "title = '" . clean_input($kw_title) . "' ";
+		$fl = "description = '$kw_desc',
+				title = '$kw_title',
+			 	hasvalue = '$kw_hasvalue'";
 		
 		if ($kw_ac_author == 'Y' || $kw_ac_author == 'N')
-			$fl .= ", ac_author = '" . $kw_ac_author . "'";
+			$fl .= ", ac_author = '$kw_ac_author'";
 	
 		$query = "UPDATE lcm_keyword
 					SET $fl
