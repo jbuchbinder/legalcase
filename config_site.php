@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.48 2006/03/07 18:50:47 mlutfy Exp $
+	$Id: config_site.php,v 1.49 2006/03/17 20:46:09 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -277,19 +277,19 @@ function show_config_form_policy() {
 
 	echo '<table width="99%" class="tbl_usr_dtl">' . "\n";
 	echo '<tr><td width="300">' . _T('siteconf_input_name_middle') ."</td>\n"
-		. "<td>" . get_yes_no('client_name_middle', $client_name_middle) .  "</td>\n"
+		. "<td>" . get_yes_no_mand('client_name_middle', $client_name_middle) .  "</td>\n"
 		. "</tr>\n";
 
 	echo "<tr><td>" . _T('siteconf_input_citizen_number') ."</td>"
-		. "<td>" . get_yes_no('client_citizen_number', $client_citizen_number) . "</td>"
+		. "<td>" . get_yes_no_mand('client_citizen_number', $client_citizen_number) . "</td>"
 		. "</tr>\n";
 
 	echo "<tr><td>" . _T('siteconf_input_civil_status') ."</td>"
-		. "<td>" . get_yes_no('client_civil_status', $client_civil_status) . "</td>"
+		. "<td>" . get_yes_no_mand('client_civil_status', $client_civil_status) . "</td>"
 		. "</tr>\n";
 
 	echo "<tr><td>" . _T('siteconf_input_client_income') ."</td>"
-		. "<td>" . get_yes_no('client_income', $client_income) . "</td>"
+		. "<td>" . get_yes_no_mand('client_income', $client_income) . "</td>"
 		. "</tr>\n";
 
 	echo "<tr><td>" . _T('siteconf_info_hide_emails') . "</td>\n"
@@ -322,10 +322,10 @@ function show_config_form_policy() {
 		. get_yes_no('case_assignment_date', $case_assignment_date)
 		. "</td></tr>\n";
 	echo "<tr><td> " . _T('siteconf_input_alledged_crime') ."</td><td>"
-		. get_yes_no('case_alledged_crime', $case_alledged_crime)
+		. get_yes_no_mand('case_alledged_crime', $case_alledged_crime)
 		. "</td></tr>\n";
 	echo "<tr><td> " . _T('case_input_legal_reason') ."</td><td>"
-		. get_yes_no('case_legal_reason', $case_legal_reason)
+		. get_yes_no_mand('case_legal_reason', $case_legal_reason)
 		. "</td></tr>\n";
 	echo "<tr><td>" . _T('siteconf_input_case_allow_modif') ."</td><td>"
 		. get_yes_no('case_allow_modif', $case_allow_modif)
@@ -500,8 +500,10 @@ function apply_conf_changes_policy() {
 				'fu_sum_billed'         => 'siteconf_input_sum_billed',
 				'fu_allow_modif'        => 'siteconf_input_fu_allow_modif');
 
+	$allowed_values = array('yes' => 1, 'yes_mandatory' => 1, 'yes_optional' => 1, 'no' => 1);
+
 	foreach ($items as $it => $trad) {
-		if (_request($it) == 'yes' OR _request($it) == 'no') {
+		if ($allowed_values[_request($it)]) {
 			$old_value = read_meta($it);
 			if (_request($it) != $old_value) {
 				write_meta($it, _request($it));
