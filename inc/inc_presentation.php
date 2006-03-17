@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.234 2006/03/16 16:24:54 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.235 2006/03/17 21:11:15 mlutfy Exp $
 */
 
 //
@@ -1048,14 +1048,38 @@ function get_yes_no($name, $value = '') {
 		$val_no  = 'N';
 	}
 
-	$yes = ($value == $val_yes ? ' selected="selected"' : '');
-	$no = ($value == $val_no ? ' selected="selected"' : '');
-	$other = ($yes || $no ? '' : ' selected="selected"');
+	$yes = isSelected($value == $val_yes);
+	$no = isSelected($value == $val_no);
+	$other = isSelected(! ($yes || $no));
 
 	// until we format with tables, better to keep the starting space
 	$ret .= ' <select name="' . $name . '" class="sel_frm">' . "\n";
 	$ret .= '<option value="' . $val_yes . '"' . $yes . '>' . _T('info_yes') . '</option>';
 	$ret .= '<option value="' . $val_no  . '"' . $no .  '>' . _T('info_no') . '</option>';
+
+	if ($other)
+		$ret .= '<option value=""' . $other . '> </option>';
+
+	$ret .= '</select>' . "\n";
+
+	return $ret;
+}
+
+// Returns a "select" with choice of yes(opt)/yes(mandatory)/no
+function get_yes_no_mand($name, $value = '') {
+	$ret = '';
+
+	// [ML] sorry for this stupid patch, practical for keywords.php
+	$yes_opt = isSelected($value == 'yes_optional');
+	$yes_mand = isSelected($value == 'yes_mandatory');
+	$no = isSelected($value == 'no');
+	$other = isSelected(! ($yes_mand || $yes_opt || $no));
+
+	// until we format with tables, better to keep the starting space
+	$ret .= ' <select name="' . $name . '" class="sel_frm">' . "\n";
+	$ret .= '<option value="yes_optional"' . $yes_opt . '>' . _T('info_yes_optional') . '</option>';
+	$ret .= '<option value="yes_mandatory"' . $yes_mand . '>' . _T('info_yes_mandatory') . '</option>';
+	$ret .= '<option value="no"' . $no .  '>' . _T('info_no') . '</option>';
 
 	if ($other)
 		$ret .= '<option value=""' . $other . '> </option>';
@@ -1837,7 +1861,7 @@ function isSelected($expr) {
 	if ($expr)
 		return ' selected="selected" ';
 	else
-		return ' ';
+		return '';
 }
 
 ?>

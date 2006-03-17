@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.26 2006/03/01 21:55:24 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.27 2006/03/17 21:11:15 mlutfy Exp $
 */
 
 
@@ -284,10 +284,10 @@ function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_na
 	$type = '';
 
 	if ($type_person == 'client' || $type_person == 'org') {
-		if ($_SESSION['form_data']['new_contact_type_name'][$num_new])
+		if (isset($_SESSION['form_data']['new_contact_type_name'][$num_new]))
 			$type = $_SESSION['form_data']['new_contact_type_name'][$num_new];
 
-		if ($_SESSION['form_data']['new_contact_value'][$num_new])
+		if (isset($_SESSION['form_data']['new_contact_value'][$num_new]))
 			$value = $_SESSION['form_data']['new_contact_value'][$num_new];
 	} else if ($type_person == 'author') { // TODO, change usr to 'form_data' in edit_user.php et al
 		if ($_SESSION['usr']['new_contact_type_name'][$num_new])
@@ -383,6 +383,7 @@ function show_all_contacts($type_person, $id_of_person) {
 	$hide_emails = read_meta('hide_emails');
 
 	$contacts = get_contacts($type_person, $id_of_person);
+	$html = "";
 
 	foreach($contacts as $c) {
 		// Check if the contact is an e-mail
@@ -442,8 +443,10 @@ function update_contacts_request($type_person, $id_of_person) {
 		for ($cpt = 0; isset($c_ids[$cpt]); $cpt++) {
 			if (isset($_REQUEST['del_contact_' . $c_ids[$cpt]]) && $_REQUEST['del_contact_' . $c_ids[$cpt]]) {
 				delete_contact($c_ids[$cpt]);
+				lcm_debug("Contact DEL: $type_person, $id_of_person, " . $c_ids[$cpt], 1);
 			} else {
 				update_contact($c_ids[$cpt], $contacts[$cpt]);
+				lcm_debug("Contact UPD: $type_person, $id_of_person, " . $c_ids[$cpt] . ' = ' . $contacts[$cpt], 1);
 			}
 		}
 	}
@@ -462,6 +465,7 @@ function update_contacts_request($type_person, $id_of_person) {
 				// And make sure that they have a "type of contact"
 				if ($c_type_names[$cpt]) {
 					add_contact($type_person, $id_of_person, $c_type_names[$cpt], $new_contacts[$cpt]);
+					lcm_debug("Contact NEW: $type_person, $id_of_person, Name = " . $c_type_names[$cpt] . ', ' . $new_contacts[$cpt], 1);
 				} else {
 					$_SESSION['errors']['new_contact_' . $cpt] = "Please specify the type of contact."; // TRAD
 				}

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.31 2006/03/16 16:24:54 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.32 2006/03/17 21:11:15 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -143,6 +143,12 @@ function get_kwg_from_id($id_group) {
 }
 
 function get_kwg_from_name($kwg_name) {
+	global $system_kwg;
+
+	// Check cache
+	if (isset($system_kwg[$kwg_name]))
+		return $system_kwg[$kwg_name];
+
 	$query = "SELECT *
 				FROM lcm_keyword_group
 				WHERE name = '" . $kwg_name . "'";

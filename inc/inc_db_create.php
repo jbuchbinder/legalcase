@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.48 2006/03/15 23:29:12 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.49 2006/03/17 21:11:14 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -310,8 +310,9 @@ function create_database() {
 
 	$fields = array (
 		"id_entry bigint(21) NOT NULL auto_increment",
-		"id_keyword bigint(21) NOT NULL default '0'",
-		"id_client bigint(21) NOT NULL default '0'",
+		"id_keyword bigint(21) NOT NULL DEFAULT 0",
+		"id_client bigint(21) NOT NULL DEFAULT 0",
+		"value text NOT NULL DEFAULT ''",
 		"PRIMARY KEY (id_entry)"
 	);
 
@@ -325,8 +326,9 @@ function create_database() {
 
 	$fields = array (
 		"id_entry bigint(21) NOT NULL auto_increment",
-		"id_keyword bigint(21) NOT NULL default '0'",
-		"id_org bigint(21) NOT NULL default '0'",
+		"id_keyword bigint(21) NOT NULL DEFAULT 0",
+		"id_org bigint(21) NOT NULL DEFAULT 0",
+		"value text NOT NULL DEFAULT ''",
 		"PRIMARY KEY (id_entry)"
 	);
 
