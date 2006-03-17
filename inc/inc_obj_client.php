@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.8 2006/03/17 19:21:23 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.9 2006/03/17 20:43:30 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -179,6 +179,12 @@ class LcmClient extends LcmObject {
 
 		if (read_meta('client_citizen_number') == 'yes_mandatory' && (!$this->getDataString('citizen_number')))
 			$errors['citizen_number'] = _Ti('person_input_citizen_number') . _T('warning_field_mandatory');
+
+		if (read_meta('client_civil_status') == 'yes_mandatory' && (!$this->getDataString('civil_status')))
+			$errors['civil_status'] = _Ti('person_input_civil_status') . _T('warning_field_mandatory');
+
+		if (read_meta('client_income') == 'yes_mandatory' && (!$this->getDataString('income')))
+			$errors['income'] = _Ti('person_input_income') . _T('warning_field_mandatory');
 
 		$genders = array('unknown' => 1, 'female' => 1, 'male' => 1);
 
@@ -399,28 +405,34 @@ class LcmClientInfoUI extends LcmClient {
 		
 		if (substr($client_citizen_number, 0, 3) == 'yes') {
 			echo "<tr>\n";
-			echo '<td>' . _T('person_input_citizen_number') . '</td>';
+			echo '<td>' . f_err_star('citizen_number') .  _T('person_input_citizen_number') . '</td>';
 			echo '<td><input name="citizen_number" value="' . clean_output($this->getDataString('citizen_number')) . '" class="search_form_txt"></td>';
 			echo "</tr>\n";
 		}
 		
-		global $system_kwg; // FIXME use keyword functions
-		
 		if (substr($client_civil_status, 0, 3) == 'yes') {
 			echo "<tr>\n";
-			echo '<td>' . _Ti('person_input_civil_status') . '</td>';
+			echo '<td>' . f_err_star('civil_status') . _Ti('person_input_civil_status') . '</td>';
 			echo '<td>';
 			echo '<select name="civil_status">';
+
+			if (! $this->getDataInt('id_client')) 
+				echo '<option value=""></option>';
+
+			$kwg = get_kwg_from_name('civilstatus');
+			$all_kw = get_keywords_in_group_name('civilstatus');
 	
-			if (! $this->getDataString('civil_status')) {
+			// A bit overkill, but if the user made the error of not entering
+			// a valid civil_status, make sure that the field stays empty
+			if (! $this->getDataString('civil_status') || ! count($_SESSION['errors'])) {
 				if ($this->getDataInt('id_client')) {
-					$this->data['civil_status'] = $system_kwg['civilstatus']['keywords']['unknown']['name'];
+					$this->data['civil_status'] = $all_kw['unknown']['name'];
 				} else {
-					$this->data['civil_status'] = $system_kwg['civilstatus']['suggest'];
+					$this->data['civil_status'] = $kwg['suggest'];
 				}
 			}
 	
-			foreach($system_kwg['civilstatus']['keywords'] as $kw) {
+			foreach($all_kw as $kw) {
 				$sel = ($this->getDataString('civil_status') == $kw['name'] ? ' selected="selected"' : '');
 				echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
 			}
@@ -429,22 +441,28 @@ class LcmClientInfoUI extends LcmClient {
 			echo '</td>';
 			echo "</tr>\n";
 		}
-		
+
 		if (substr($client_income, 0, 3) == 'yes') {
 			echo "<tr>\n";
-			echo '<td>' . _Ti('person_input_income') . '</td>';
+			echo '<td>' . f_err_star('income') .  _Ti('person_input_income') . '</td>';
 			echo '<td>';
 			echo '<select name="income">';
+
+			if (! $this->getDataInt('id_client')) 
+				echo '<option value=""></option>';
+
+			$kwg = get_kwg_from_name('income');
+			$all_kw = get_keywords_in_group_name('income');
 			
-			if (! $this->getDataString('income')) {
+			if (! $this->getDataString('income') && ! count($_SESSION['errors'])) {
 				if ($this->getDataInt('id_client')) {
-					$this->data['income'] = $system_kwg['income']['keywords']['unknown']['name'];
+					$this->data['income'] = $all_kw['unknown']['name'];
 				} else {
-					$this->data['income'] = $system_kwg['income']['suggest'];
+					$this->data['income'] = $kwg['suggest'];
 				}
 			}
 
-			foreach($system_kwg['income']['keywords'] as $kw) {
+			foreach($all_kw as $kw) {
 				$sel = ($this->getDataString('income') == $kw['name'] ? ' selected="selected"' : '');
 				echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>';
 			}
