@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.27 2006/03/17 21:11:15 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.28 2006/03/17 23:42:40 mlutfy Exp $
 */
 
 
@@ -140,6 +140,13 @@ function add_contact($type_person, $id_person, $type_contact, $value) {
 	if (! $id_person)
 		lcm_panic("add_contact: no id_person was provided");
 
+	if (is_readable('custom/validation/validate_contact.php')) {
+		include('custom/validation/validate_contact.php');
+		$foo = new LcmCustomValidateContact();
+		if ($err = $foo->validate($type_contact, $id_person, $type_contact, $value))
+			return $err;
+	}
+
 	if ($type_contact == 'email')
 		$type_contact = get_contact_type_id('email_main');
 	else
@@ -150,18 +157,31 @@ function add_contact($type_person, $id_person, $type_contact, $value) {
 			. intval($type_contact) . ", " . "'" . addslashes($value) . "')";
 
 	lcm_query($query);
+	return '';
 }
 
 // Access rights check is the responsability of parent function
 function update_contact($id_contact, $new_value) {
 	if (! $id_contact)
 		lcm_panic("update_contact: no id_contact was provided");
+	
+	if (is_readable('custom/validation/validate_contact.php')) {
+		$old_info = get_contact_by_id($id_contact);
+		$kw = get_kw_from_id($old_info['type_contact']);
+		$type_contact = $kw['name'];
+
+		include('custom/validation/validate_contact.php');
+		$foo = new LcmCustomValidateContact();
+		if ($err = $foo->validate($old_info['type_person'], $old_info['id_of_person'], $type_contact, $new_value))
+			return $err;
+	}
 
 	$query = "UPDATE lcm_contact
 				SET value = '" . clean_input($new_value) . "'
 				WHERE id_contact = " . intval($id_contact);
 
 	lcm_query($query);
+	return '';
 }
 
 // Access rights check is the responsability of parent function
@@ -234,7 +254,9 @@ function show_existing_contact($c, $num) {
 	// of the user/client/org, and the value of a contact was changed, then
 	// the modification will be lost, because we didn't use the $_SESSION value.
 	
-	echo '<tr><td align="left" valign="top">' . _Ti($c['title']) . "</td>\n";
+	echo '<tr><td align="left" valign="top">' 
+		. f_err_star('upd_contact_' . $num, $_SESSION['errors'])
+		. _Ti($c['title']) . "</td>\n";
 	echo '<td align="left" valign="top">';
 
 	echo '<input name="contact_id[]" id="contact_id_' . $num . '" '
@@ -245,7 +267,9 @@ function show_existing_contact($c, $num) {
 	// [ML] Removed spaces (nbsp) between elements, or it causes the layout
 	// to show on two lines when using a large font.
 	echo '<input name="contact_value[]" id="contact_value_' . $num . '" type="text" '
-		. 'class="search_form_txt" size="35" value="' . clean_output($c['value']) . '"/>';
+		. 'class="search_form_txt" size="35" value="' 
+		. (isset($_SESSION['form_data']['contact_value'][$num]) ?  $_SESSION['form_data']['contact_value'][$num] : clean_output($c['value']))
+		. '"/>';
 	echo f_err('email', $_SESSION['errors']) . "";
 
 	echo '<label for="id_del_contact' . $num . '">';
@@ -384,6 +408,7 @@ function show_all_contacts($type_person, $id_of_person) {
 
 	$contacts = get_contacts($type_person, $id_of_person);
 	$html = "";
+	$i = 1; // FIXME dark/light stuff.. did php warnings
 
 	foreach($contacts as $c) {
 		// Check if the contact is an e-mail
@@ -442,11 +467,14 @@ function update_contacts_request($type_person, $id_of_person) {
 
 		for ($cpt = 0; isset($c_ids[$cpt]); $cpt++) {
 			if (isset($_REQUEST['del_contact_' . $c_ids[$cpt]]) && $_REQUEST['del_contact_' . $c_ids[$cpt]]) {
-				delete_contact($c_ids[$cpt]);
 				lcm_debug("Contact DEL: $type_person, $id_of_person, " . $c_ids[$cpt], 1);
+				delete_contact($c_ids[$cpt]);
 			} else {
-				update_contact($c_ids[$cpt], $contacts[$cpt]);
 				lcm_debug("Contact UPD: $type_person, $id_of_person, " . $c_ids[$cpt] . ' = ' . $contacts[$cpt], 1);
+				$err = update_contact($c_ids[$cpt], $contacts[$cpt]);
+
+				if ($err)
+					$_SESSION['errors']['upd_contact_' . $cpt] = $err;
 			}
 		}
 	}
@@ -464,8 +492,11 @@ function update_contacts_request($type_person, $id_of_person) {
 			if ($new_contacts[$cpt]) {
 				// And make sure that they have a "type of contact"
 				if ($c_type_names[$cpt]) {
-					add_contact($type_person, $id_of_person, $c_type_names[$cpt], $new_contacts[$cpt]);
 					lcm_debug("Contact NEW: $type_person, $id_of_person, Name = " . $c_type_names[$cpt] . ', ' . $new_contacts[$cpt], 1);
+					$err = add_contact($type_person, $id_of_person, $c_type_names[$cpt], $new_contacts[$cpt]);
+
+					if ($err) 
+						$_SESSION['errors']['new_contact_' . $cpt] = $err;
 				} else {
 					$_SESSION['errors']['new_contact_' . $cpt] = "Please specify the type of contact."; // TRAD
 				}
