@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.88 2006/03/10 15:44:22 mlutfy Exp $
+	$Id: inc_version.php,v 1.89 2006/03/17 20:48:06 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -69,12 +69,6 @@ feed_globals('HTTP_SERVER_VARS', false); // use $_SERVER instead
 
 $included_files = array();
 
-function include_local($file) {
-	if ($GLOBALS['included_files'][$file]) return;
-	include($file);
-	$GLOBALS['included_files'][$file] = 1;
-}
-
 function include_lcm($file) {
 	$lcmfile = 'inc/' . $file . '.php';
 
@@ -88,9 +82,9 @@ function include_lcm($file) {
 	if (! @file_exists($lcmfile))
 		lcm_panic("File for include_lcm does not exist: $lcmfile");
 
-	lcm_debug("include_lcm: (start) $lcmfile");
+	lcm_debug("include_lcm: (start) $lcmfile", 5);
 	include($lcmfile);
-	lcm_debug("include_lcm: (ready) $lcmfile");
+	lcm_debug("include_lcm: (ready) $lcmfile", 5);
 }
 
 function include_config_exists($file) {
@@ -120,10 +114,10 @@ function include_config($file) {
 		if ($GLOBALS['debug']) echo lcm_getbacktrace();
 	}
 	
-	lcm_debug("include_config: (start) $lcmfile");
+	lcm_debug("include_config: (start) $lcmfile", 5);
 	include($lcmfile);
 	$GLOBALS['included_files'][$lcmfile] = 1;
-	lcm_debug("include_config: (ready) $lcmfile");
+	lcm_debug("include_config: (ready) $lcmfile", 5);
 }
 
 function include_data_exists($file) {
@@ -153,10 +147,10 @@ function include_data($file) {
 		if ($GLOBALS['debug']) echo lcm_getbacktrace();
 	}
 	
-	lcm_debug("include_data: (start) $lcmfile");
+	lcm_debug("include_data: (start) $lcmfile", 5);
 	include($lcmfile);
 	$GLOBALS['included_files'][$lcmfile] = 1;
-	lcm_debug("include_data: (ready) $lcmfile");
+	lcm_debug("include_data: (ready) $lcmfile", 5);
 }
 
 
@@ -204,7 +198,7 @@ $auto_compress = true;
 $convert_command = 'convert';
 
 // Should we debug in data/lcm.log ?
-$debug = false;
+$debug = 0; // 0 = No debug, see lcm_debug function for more info
 
 // Shoud we highlight translation strings? (helps to find non-translated strings)
 $debug_tr = false;
@@ -245,7 +239,7 @@ $lcm_version = 0.700;
 $lcm_version_shown = "0.7.0 CVS";
 
 // Current version of LCM database
-$lcm_db_version = 42;
+$lcm_db_version = 43;
 
 // Error reporting
 // error_reporting(E_ALL); // [ML] recommended for debug
@@ -402,7 +396,7 @@ function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 		if (preg_match('/^var: Deprecated. Please use the public\/private\/protected modifiers/', $errmsg))
 			return;
 
-		lcm_debug("[dbg] " . $err);
+		lcm_debug("[dbg] " . $err, 2);
 	}
 }
 
@@ -1182,9 +1176,15 @@ function lcm_assert_value($value, $allow_zero = false) {
 	return $value;
 }
 
-function lcm_debug($message) {
-	if ($GLOBALS['debug'])
-		lcm_log($message);
+function lcm_debug($message, $level = 1) {
+	// Level 0: No debug
+	// Level 1: General debug
+	// Level 2: PHP warnings
+	// Level 3-4: future use?
+	// Level 5: 1-4 + Includes
+
+	if (isset($GLOBALS['debug']) && $GLOBALS['debug'] >= $level)
+		lcm_log("[D$level] $message");
 }
 
 function lcm_header($h) {
