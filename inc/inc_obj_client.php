@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.7 2006/03/16 23:08:45 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.8 2006/03/17 19:21:23 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -174,6 +174,12 @@ class LcmClient extends LcmObject {
 		if (! $this->getDataString('name_last'))
 			$errors['name_last'] = _Ti('person_input_name_last') . _T('warning_field_mandatory');
 
+		if (read_meta('client_name_middle') == 'yes_mandatory' && (!$this->getDataString('name_middle')))
+			$errors['name_middle'] = _Ti('person_input_name_middle') . _T('warning_field_mandatory');
+
+		if (read_meta('client_citizen_number') == 'yes_mandatory' && (!$this->getDataString('citizen_number')))
+			$errors['citizen_number'] = _Ti('person_input_citizen_number') . _T('warning_field_mandatory');
+
 		$genders = array('unknown' => 1, 'female' => 1, 'male' => 1);
 
 		if (! array_key_exists($this->getDataString('gender'), $genders))
@@ -209,8 +215,7 @@ class LcmClient extends LcmObject {
 			lcm_query($q);
 		} else {
 			$q = "INSERT INTO lcm_client
-					SET id_client = 0,
-						date_creation = NOW(),
+					SET date_creation = NOW(),
 						date_update = NOW(),
 						$cl";
 	
@@ -241,6 +246,10 @@ class LcmClientInfoUI extends LcmClient {
 	}
 
 	function printGeneral($show_subtitle = true) {
+		$meta_citizen_number = read_meta('client_citizen_number');
+		$meta_civil_status = read_meta('client_civil_status');
+		$meta_income = read_meta('client_income');
+
 		if ($show_subtitle)
 			show_page_subtitle(_T('generic_subtitle_general'), 'clients_intro');
 
@@ -265,13 +274,13 @@ class LcmClientInfoUI extends LcmClient {
 			. '<span class="value1">' . $gender . '</span>'
 			. "</li>\n";
 
-		if (read_meta('client_citizen_number') == 'yes')
+		if (substr($meta_citizen_number, 0, 3) == 'yes')
 			echo '<li>'
 				. '<span class="label2">' . _Ti('person_input_citizen_number') . '</span>'
 				. '<span class="value2">' . clean_output($this->getDataString('citizen_number')) . '</span>'
 				. "</li>\n";
 
-		if (read_meta('client_civil_status') == 'yes') {
+		if (substr($meta_civil_status, 0, 3) == 'yes') {
 			// [ML] Patch for bug #1372138 (LCM < 0.6.4)
 			$civil_status = $this->getDataString('civil_status', 'unknown');
 
@@ -281,7 +290,7 @@ class LcmClientInfoUI extends LcmClient {
 				. "</li>\n";
 		}
 
-		if (read_meta('client_income') == 'yes') {
+		if (substr($meta_income, 0, 3) == 'yes') {
 			// [ML] Patch for bug #1372138 (LCM < 0.6.4)
 			$income = $this->getDataString('income', 'unknown');
 
@@ -354,7 +363,7 @@ class LcmClientInfoUI extends LcmClient {
 		echo '<td><input name="name_first" value="' . clean_output($this->getDataString('name_first')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		
 		// [ML] always show middle name, if any, no matter the configuration
-		if ($this->getDataString('name_middle') || $client_name_middle == 'yes') {
+		if ($this->getDataString('name_middle') || substr($client_name_middle, 0, 3) == 'yes') {
 			echo '<tr><td>' . f_err_star('name_middle') . _T('person_input_name_middle') . '</td>' . "\n";
 			echo '<td><input name="name_middle" value="' . clean_output($this->getDataString('name_middle')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		}
@@ -388,7 +397,7 @@ class LcmClientInfoUI extends LcmClient {
 			echo "</tr>\n";
 		}
 		
-		if ($client_citizen_number == 'yes') {
+		if (substr($client_citizen_number, 0, 3) == 'yes') {
 			echo "<tr>\n";
 			echo '<td>' . _T('person_input_citizen_number') . '</td>';
 			echo '<td><input name="citizen_number" value="' . clean_output($this->getDataString('citizen_number')) . '" class="search_form_txt"></td>';
@@ -397,7 +406,7 @@ class LcmClientInfoUI extends LcmClient {
 		
 		global $system_kwg; // FIXME use keyword functions
 		
-		if ($client_civil_status == 'yes') {
+		if (substr($client_civil_status, 0, 3) == 'yes') {
 			echo "<tr>\n";
 			echo '<td>' . _Ti('person_input_civil_status') . '</td>';
 			echo '<td>';
@@ -421,7 +430,7 @@ class LcmClientInfoUI extends LcmClient {
 			echo "</tr>\n";
 		}
 		
-		if ($client_income == 'yes') {
+		if (substr($client_income, 0, 3) == 'yes') {
 			echo "<tr>\n";
 			echo '<td>' . _Ti('person_input_income') . '</td>';
 			echo '<td>';
