@@ -18,13 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.53 2006/03/10 15:12:04 mlutfy Exp $
+	$Id: client_det.php,v 1.54 2006/03/17 20:47:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_contacts');
+include_lcm('inc_obj_client');
 
-$client = intval($_REQUEST['client']);
+$client = intval(_request('client'));
 
 if (! ($client > 0))
 	die("Which client?");
@@ -49,11 +50,6 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row), '', '', 'c
 		*/
 
 		$edit = true;
-
-		if ($row['gender'] == 'male' || $row['gender'] == 'female')
-			$gender = _T('person_input_gender_' . $row['gender']);
-		else
-			$gender = _T('info_not_available');
 
 		// Show tabs
 		$groups = array(
@@ -89,68 +85,9 @@ lcm_page_start(_T('title_client_view') . ' ' . get_person_name($row), '', '', 'c
 				// Show client general information
 				//
 				echo '<fieldset class="info_box">';
-				show_page_subtitle(_T('generic_subtitle_general'), 'clients_intro');
 		
-				echo '<ul class="info">';
-				echo '<li>' 
-					. '<span class="label1">' . _Ti('client_input_id') . '</span>'
-					. '<span class="value1">' . $row['id_client'] . '</span>'
-					. "</li>\n";
-
-				echo '<li>'
-					. '<span class="label1">' . _Ti('person_input_name') . '</span>'
-					. '<span class="value1">' . get_person_name($row) . '</span>'
-					. "</li>\n";
-
-				echo '<li>'
-					. '<span class="label1">' . _Ti('person_input_gender') . '</span>'
-					. '<span class="value1">' . $gender . '</span>'
-					. "</li>\n";
-		
-				if (read_meta('client_citizen_number') == 'yes')
-					echo '<li>'
-						. '<span class="label2">' . _Ti('person_input_citizen_number') . '</span>'
-						. '<span class="value2">' . $row['citizen_number'] . '</span>'
-						. "</li>\n";
-		
-				if (read_meta('client_civil_status') == 'yes') {
-					// [ML] Patch for bug #1372138 (LCM < 0.6.4)
-					if (! $row['civil_status'])
-						$row['civil_status'] = 'unknown';
-
-					echo '<li>'
-						. '<span class="label2">' . _Ti('person_input_civil_status') . '</span>'
-						. '<span class="value2">' . _Tkw('civilstatus', $row['civil_status']) . '</span>'
-						. "</li>\n";
-				}
-
-				if (read_meta('client_income') == 'yes') {
-					// [ML] Patch for bug #1372138 (LCM < 0.6.4)
-					if (! $row['income'])
-						$row['income'] = 'unknown';
-
-					echo '<li>' 
-						. '<span class="label2">' . _Ti('person_input_income') . '</span>'
-						. '<span class="value2">' . _Tkw('income', $row['income']) . '</span>'
-						. "</li>\n";
-				}
-
-				show_all_keywords('client', $row['id_client']);
-
-				echo '<li>'
-					. '<span class="label2">' . _Ti('case_input_date_creation') . '</span>'
-					. '<span class="value2">' . format_date($row['date_creation']) . '</span>'
-					. "</li>\n";
-				// [ML] echo 'Last update date: ' . $row['date_update'] . "<br/>\n";
-
-				echo '<li class="large">'
-					. '<span class="label2">' . _Ti('client_input_notes') . '</span>' 
-					. '<span class="value2">'. nl2br($row['notes']) . '</span>'
-					. "</li>\n";
-				echo "</ul>\n";
-		
-				// Show client contacts (if any)
-				show_all_contacts('client', $row['id_client']);
+				$obj_client = new LcmClientInfoUI($row['id_client']);
+				$obj_client->printGeneral();
 
 				if ($edit)
 					echo '<a href="edit_client.php?client=' .
