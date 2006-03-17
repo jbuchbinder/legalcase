@@ -15,7 +15,7 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 	if (@is_readable('inc/lang/' . $name . '.php')) {
 		$GLOBALS['idx_lang'] = 'i18n_' . $name;
 		include_lcm('lang/' . $name);
-		lcm_debug($name . ": Language file loaded");
+		lcm_debug($name . ": Language file loaded", 5);
 	} else {
 		// If the language file of the module does not exist, we fallback
 		// on English, which *by definition* must exist. We then recopy the
@@ -29,16 +29,16 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 		lcm_log("Translation does not exist or file not readable. Fellback on English");
 	}
 
-	lcm_debug($name . ": " . count($GLOBALS['i18n_' . $name]) . " string(s)");
+	lcm_debug($name . ": " . count($GLOBALS['i18n_' . $name]) . " string(s)", 5);
 
 	// The local system administrator can overload official strings
 	if (@is_readable('inc/lang/perso.php')) {
-		lcm_debug("Loading inc/lang/perso.php");
+		lcm_debug("Loading inc/lang/perso.php", 5);
 		overload_lang('lang/perso');
 	}
 	
 	if (@is_readable('inc/lang/perso_' . $lang . '.php')) {
-		lcm_debug("Loading inc/lang/perso_" . $lang . ".php");
+		lcm_debug("Loading inc/lang/perso_" . $lang . ".php", 5);
 		overload_lang('lang/perso_' . $lang);
 	}
 }
