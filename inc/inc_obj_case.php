@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.9 2006/03/16 23:08:45 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.10 2006/03/17 21:09:15 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -196,6 +196,14 @@ class LcmCase extends LcmObject {
 		// * Date assignment must be a vaid date
 		if (! checkdate_sql($this->getDataString('date_assignment')))
 			$errors['date_assignment'] = _Ti('case_input_date_assigned') . 'Invalid date.'; // TRAD
+
+		// * Depending on site policy, legal reason may be mandatory
+		if (read_meta('case_legal_reason') == 'yes_mandatory' && (!$this->getDataString('legal_reason')))
+			$errors['legal_reason'] = _Ti('case_input_legal_reason') . _T('warning_field_mandatory');
+
+		// * Depending on site policy, alleged crime may be mandatory
+		if (read_meta('case_alledged_crime') == 'yes_mandatory' && (!$this->getDataString('alledged_crime')))
+			$errors['alledged_crime'] = _Ti('case_input_alledged_crime') . _T('warning_field_mandatory');
 
 		// * TODO: Status must be a valid option (where do we have official list?)
 		if (! $this->getDataString('status'))
@@ -610,7 +618,7 @@ class LcmCaseInfoUI extends LcmCase {
 		}
 		
 		echo '<tr><td><label for="input_title">' 
-			. f_err_star('title', $_SESSION['errors']) . _T('case_input_title')
+			. f_err_star('title') . _T('case_input_title')
 			. "</label></td>\n";
 		echo '<td><input size="35" name="title" id="input_case_title" value="'
 			. clean_output($this->getDataString('title'))
@@ -628,8 +636,8 @@ class LcmCaseInfoUI extends LcmCase {
 		}
 			
 		// Legal reason
-		if ($case_legal_reason == 'yes') {
-			echo '<tr><td><label for="input_legal_reason">' . _T('case_input_legal_reason') . "</label></td>\n";
+		if (substr($case_legal_reason, 0, 3) == 'yes') {
+			echo '<tr><td><label for="input_legal_reason">' . f_err_star('legal_reason') . _T('case_input_legal_reason') . "</label></td>\n";
 			echo '<td>';
 			echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
 			echo clean_output($this->getDataString('legal_reason'));
@@ -639,8 +647,8 @@ class LcmCaseInfoUI extends LcmCase {
 		}
 		
 		// Alledged crime
-		if ($case_alledged_crime == 'yes') {
-			echo '<tr><td><label for="input_alledged_crime">' . _T('case_input_alledged_crime') . "</label></td>\n";
+		if (substr($case_alledged_crime, 0, 3) == 'yes') {
+			echo '<tr><td><label for="input_alledged_crime">' . f_err_star('alledged_crime') . _T('case_input_alledged_crime') . "</label></td>\n";
 			echo '<td>';
 			echo '<textarea name="alledged_crime" id="input_alledged_crime" class="frm_tarea" rows="2" cols="60">';
 			echo clean_output($this->getDataString('alledged_crime'));
