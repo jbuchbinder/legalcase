@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.19 2006/03/17 16:25:26 mlutfy Exp $
+	$Id: upd_client.php,v 1.20 2006/03/17 18:03:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,7 +33,7 @@ $_SESSION['form_data'] = array();
 foreach($_POST as $key => $value)
 	$_SESSION['form_data'][$key] = $value;
 
-$ref_upd_client = 'edit_client.php?client=' . $_SESSION['form_data']['id_client'];
+$ref_upd_client = 'edit_client.php?client=' . _session('id_client');
 if ($_SERVER['HTTP_REFERER'])
 	$ref_upd_client = $_SERVER['HTTP_REFERER'];
 
@@ -45,6 +45,7 @@ $client = new LcmClient(_session('id_client'));
 $errs = $client->save();
 
 if (count($errs)) {
+	$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
 	lcm_header("Location: " . $ref_upd_client);
 	exit;
 }
@@ -52,25 +53,10 @@ if (count($errs)) {
 //
 // Add organisation
 //
-if (!empty($_SESSION['form_data']['new_org'])) {
+if (_session('new_org')) {
 	$q = "REPLACE INTO lcm_client_org
-		VALUES (" . $_SESSION['form_data']['id_client'] . ',' . $_SESSION['form_data']['new_org'] . ")";
+		VALUES (" . _session('id_client') . ',' . _session('new_org') . ")";
 	$result = lcm_query($q);
-}
-
-// Keywords
-update_keywords_request('client', $client->getDataInt('id_client', '__ASSERT__'));
-
-//
-// Insert/update client contacts
-//
-
-include_lcm('inc_contacts');
-update_contacts_request('client', $client->getDataInt('id_client', '__ASSERT__'));
-
-if (count($_SESSION['errors'])) {
-	header('Location: ' . $ref_upd_client);
-	exit;
 }
 
 //
