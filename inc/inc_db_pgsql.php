@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_pgsql.php,v 1.3 2006/03/16 16:24:54 mlutfy Exp $
+	$Id: inc_db_pgsql.php,v 1.4 2006/03/20 23:04:51 mlutfy Exp $
 */
 
 if (defined('_INC_DB_PGSQL')) return;
@@ -28,6 +28,8 @@ if (! function_exists("pg_query"))
 	die("ERROR: PostgreSQL is not correctly installed. Verify that the php-mysql
 	module is installed and that the php.ini has something similar to
 	'extension=pgsql.so'. Refer to the user's manual FAQ for more information.");
+
+$GLOBALS['db'] = 'pgsql';
 
 //
 // SQL query functions
@@ -121,7 +123,7 @@ function lcm_query_create_table($table, $fields, $keys = array()) {
 				$tmp .= "DEFAULT " . $regs[1];
 		}
 
-		$tmp = preg_replace("/datetime DEFAULT '0000-00-00 00:00:00' NOT NULL/", "timestamp", $tmp);
+		$tmp = preg_replace("/datetime DEFAULT '0000-00-00 00:00:00' NOT NULL/", "timestamp NOT NULL", $tmp);
 
 		$new_fields[] = $tmp;
 	}
@@ -155,6 +157,50 @@ function process_query($query) {
 	if ($GLOBALS['mysql_recall_link'] AND $db = $GLOBALS['lcm_mysql_db'])
 		$db = '`'.$db.'`.';
 
+	//
+	// Fix syntax "INSERT INTO table SET f0 = v1, f1 = v2, etc."
+	//
+
+	// Put query on only one-line to facilitate other regexes
+	$query = preg_replace('/\n/m', ' ', $query);
+
+	if (preg_match("/^INSERT INTO ([_A-Za-z0-9]+)\s*SET (.*)/m", $query, $regs)) {
+		$table = $regs[1];
+		$fields = $regs[2];
+		$conditions = "";
+
+		// [ML] Apologies for this sloppy programming.. :-)
+		if (preg_match("/(.*) WHERE (.*)/", $query, $regs)) {
+			$fields = $regs[1];
+			$conditions = $regs[2];
+		}
+
+		$all_fields = explode(',', $fields);
+		$str_new_fields = "";
+		$str_new_values = "";
+
+		foreach ($all_fields as $f) { 
+			$f = trim($f);
+			if ($f) {
+
+				if (preg_match('/^([_a-zA-Z0-9\.]+)\s*=\s*(.*)$/', $f, $regs)) {
+					$str_new_fields .= $regs[1] . ',';
+					$str_new_values .= $regs[2] . ',';
+				} else {
+					lcm_panic("Could not parse $f");
+				}
+			}
+		}
+
+		if (preg_match('/,$/', $str_new_fields))
+			$str_new_fields = preg_replace('/,$/', '', $str_new_fields);
+
+		if (preg_match('/,$/', $str_new_values))
+			$str_new_values = preg_replace('/,$/', '', $str_new_values);
+
+		$query = "INSERT INTO $table ($str_new_fields) VALUES ($str_new_values)";
+	}
+
 	// change the names of the tables ($table_prefix)
 	// for example, lcm_case may become foo_case
 	if ($GLOBALS['flag_pcre']) {
@@ -183,21 +229,15 @@ function process_query($query) {
 function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 	global $lcm_pgsql_link, $lcm_mysql_db;	// for multiple connections
 
-	lcm_debug("lcm_connect_db: host = $host, login = $login, pass =~ " . strlen($pass) . " chars", "lcm");
-
 	if (! $login)
 		lcm_panic("missing login?");
 
-// [ML] not used .. and pgsql requires dbname to connect anyway..
-//	if ($link && $db)
-//		return mysql_select_db($db);
-
+	// TODO: add port?
 	$str  = ($host ? "host=$host " : '');
 	$str .= ($login ? "user=$login " : '');
 	$str .= ($pass  ? "password=$pass " : '');
 	$str .= ($db ? "dbname=$db" : '');
 
-	// if ($port > 0) $host = "$host:$port";
 	$lcm_pgsql_link = @pg_connect($str);
 
 /* [ML] not necessary
@@ -391,6 +431,20 @@ function lcm_query_trunc_field($date, $type) {
 	}
 
 	return $ret;
+}
+
+function lcm_query_sum_time($field_start, $field_end) {
+	return "SUM($field_end - $field_start)";
+	/*
+	return "SUM(CASE 
+				WHEN $field_end - $field_start > 0 THEN $field_end - $field_start
+				ELSE 0
+			END) as time";
+	*/
+}
+
+function lcm_query_subst_time($field_start, $field_end) {
+	return " $field_end - $field_start ";
 }
 
 // Put a local lock on a given LCM installation

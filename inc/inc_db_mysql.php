@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.28 2006/03/16 16:24:54 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.29 2006/03/20 23:04:51 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -207,8 +207,6 @@ function process_query($query) {
 function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 	global $lcm_mysql_link, $lcm_mysql_db;	// for multiple connections
 
-	lcm_debug("lcm_connect_db: host = $host, login = $login, pass =~ " . strlen($pass) . " chars", "lcm");
-
 	if (! $login)
 		lcm_panic("missing login?");
 
@@ -383,6 +381,18 @@ function lcm_query_trunc_field($date, $type) {
 	}
 
 	return $ret;
+}
+
+function lcm_query_sum_time($field_start, $field_end) {
+	return "sum("
+		. "IF(UNIX_TIMESTAMP($field_end) > 0,"
+			. "UNIX_TIMESTAMP($field_end)-UNIX_TIMESTAMP($field_start),"
+			. "0)"
+		. ") as time";
+}
+
+function lcm_query_subst_time($field_start, $field_end) {
+	return "IF(UNIX_TIMESTAMP($field_end) > 0, UNIX_TIMESTAMP($field_end) - UNIX_TIMESTAMP($field_start), 0)";
 }
 
 // Put a local lock on a given LCM installation
