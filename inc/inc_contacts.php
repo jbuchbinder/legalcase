@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.28 2006/03/17 23:42:40 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.29 2006/03/20 20:58:49 mlutfy Exp $
 */
 
 
@@ -140,8 +140,8 @@ function add_contact($type_person, $id_person, $type_contact, $value) {
 	if (! $id_person)
 		lcm_panic("add_contact: no id_person was provided");
 
-	if (is_readable('custom/validation/validate_contact.php')) {
-		include('custom/validation/validate_contact.php');
+	if (include_validator_exists('contact')) {
+		include_validator('contact');
 		$foo = new LcmCustomValidateContact();
 		if ($err = $foo->validate($type_contact, $id_person, $type_contact, $value))
 			return $err;
@@ -164,13 +164,14 @@ function add_contact($type_person, $id_person, $type_contact, $value) {
 function update_contact($id_contact, $new_value) {
 	if (! $id_contact)
 		lcm_panic("update_contact: no id_contact was provided");
+
 	
-	if (is_readable('custom/validation/validate_contact.php')) {
+	if (include_validator_exists('contact')) {
 		$old_info = get_contact_by_id($id_contact);
 		$kw = get_kw_from_id($old_info['type_contact']);
 		$type_contact = $kw['name'];
 
-		include('custom/validation/validate_contact.php');
+		include_validator('contact');
 		$foo = new LcmCustomValidateContact();
 		if ($err = $foo->validate($old_info['type_person'], $old_info['id_of_person'], $type_contact, $new_value))
 			return $err;
