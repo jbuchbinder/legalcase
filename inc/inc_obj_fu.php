@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.7 2006/03/16 23:08:45 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.8 2006/03/20 21:39:34 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -169,10 +169,8 @@ class LcmFollowup extends LcmObject {
 		//
 		$fl = " date_start = '" . $this->getDataString('date_start') . "',
 				date_end   = '" . $this->getDataString('date_end') . "',
-				type       = '" . $this->getDataString('type') . "'"; 
-		
-		if ($this->getDataString('sumbilled', 0))
-			$fl .= ", sumbilled    = '" . $this->getDataString('sumbilled') . "'";
+				type       = '" . $this->getDataString('type') . "',
+				sumbilled  = " . $this->getDataString('sumbilled', 0);
 
 		if ($this->getDataString('type') == 'stage_change') {
 			// [ML] To be honest, we should "assert" most of the
@@ -264,7 +262,7 @@ class LcmFollowup extends LcmObject {
 
 			// Add the new follow-up
 			$q = "INSERT INTO lcm_followup
-				SET	id_case=" . $this->getDataInt('id_case') . ",
+					SET id_case=" . $this->getDataInt('id_case') . ",
 					id_author=" . $GLOBALS['author_session']['id_author'] . ",
 					$fl,
 					case_stage='$case_stage'";
