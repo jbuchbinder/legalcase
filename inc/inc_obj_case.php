@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.10 2006/03/17 21:09:15 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.11 2006/03/20 20:58:11 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -218,6 +218,28 @@ class LcmCase extends LcmObject {
 
 		if ($_SESSION['errors'])
 			$errors = array_merge($errors, $_SESSION['errors']);
+
+		//
+		// Custom validation functions
+		//
+		$id_case = $this->getDataInt('id_case');
+		$fields = array('title' => 'CaseTitle',
+					'legal_reason' => 'CaseLegalReason',
+					'alledged_crime' => 'CaseAllegedCrime',
+					'status' => 'CaseStatus',
+					'stage' => 'CaseStage');
+
+		foreach ($fields as $f => $func) {
+			if (include_validator_exists($f)) {
+				include_validator($f);
+				$class = "LcmCustomValidate$func";
+				$data = $this->getDataString($f);
+				$v = new $class();
+
+				if ($err = $v->validate($id_case, $data)) 
+					$errors[$f] = _Ti('case_input_' . $f) . $err;
+			}
+		}
 
 		return $errors;
 	}

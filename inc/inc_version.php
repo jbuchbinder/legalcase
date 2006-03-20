@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.89 2006/03/17 20:48:06 mlutfy Exp $
+	$Id: inc_version.php,v 1.90 2006/03/20 20:58:11 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -151,6 +151,29 @@ function include_data($file) {
 	include($lcmfile);
 	$GLOBALS['included_files'][$lcmfile] = 1;
 	lcm_debug("include_data: (ready) $lcmfile", 5);
+}
+
+function include_validator_exists($file) {
+	$lcmfile = 'custom/validation/validate_' . $file . '.php';
+	return @file_exists($lcmfile);
+}
+
+function include_validator($file) {
+	$lcmfile = 'custom/validation/validate_' . $file . '.php';
+
+	// This does not work correctly on PHP5, and who knows for PHP4..
+	if (! isset($GLOBALS['included_files'][$file]))
+		@$GLOBALS['included_files'][$file] = 0;
+	
+	if (@$GLOBALS['included_files'][$file]++)
+		return;
+
+	if (! @file_exists($lcmfile))
+		lcm_panic("File for include_lcm does not exist: $lcmfile");
+
+	lcm_debug("include_validator: (start) $lcmfile", 5);
+	include($lcmfile);
+	lcm_debug("include_validator: (ready) $lcmfile", 5);
 }
 
 

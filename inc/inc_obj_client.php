@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.9 2006/03/17 20:43:30 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.10 2006/03/20 20:58:11 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -161,11 +161,7 @@ class LcmClient extends LcmObject {
 		return get_person_name($this->data);
 	}
 
-	//
-	// Save client record in DB (create/update)
-	// Returns array of errors, if any
-	//
-	function save() {
+	function validate() {
 		$errors = array();
 
 		if (! $this->getDataString('name_first'))
@@ -190,6 +186,54 @@ class LcmClient extends LcmObject {
 
 		if (! array_key_exists($this->getDataString('gender'), $genders))
 			$errors['gender'] = _Ti('person_input_gender') . 'Incorrect format.'; // TRAD FIXME
+
+		//
+		// Custom validation functions
+		//
+
+		// * Client name (special function)
+		if (include_validator_exists('client_name')) {
+			include_validator('client_name');
+			$foo = new LcmCustomValidateClientName();
+
+			$test = array('first', 'middle', 'last');
+			foreach ($test as $t) {
+				$n = $this->getDataString('name_' . $t);
+
+				if ($err = $foo->validate($this->getDataInt('id_client'), $t, $n))
+					$errors['name_' . $t] = _Ti('person_input_name_' . $t) . $err;
+			}
+		}
+
+		// * other fields
+		$id_client = $this->getDataInt('id_client');
+
+		$fields = array('citizen_number' => 'ClientCitizenNumber', 
+					'civil_status' => 'ClientCivilStatus',
+					'income' => 'ClientIncome', 
+					'gender' => 'PersonGender');
+
+		foreach ($fields as $f => $func) {
+			if (include_validator_exists($f)) {
+				include_validator($f);
+				$class = "LcmCustomValidate$func";
+				$data = $this->getDataString($f);
+				$v = new $class();
+
+				if ($err = $v->validate($id_client, $data)) 
+					$errors[$f] = _Ti('person_input_' . $f) . $err;
+			}
+		}
+
+		return $errors;
+	}
+
+	//
+	// Save client record in DB (create/update)
+	// Returns array of errors, if any
+	//
+	function save() {
+		$errors = $this->validate();
 
 		if (count($errors))
 			return $errors;
