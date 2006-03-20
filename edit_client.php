@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_client.php,v 1.49 2006/03/17 17:55:16 mlutfy Exp $
+	$Id: edit_client.php,v 1.50 2006/03/20 23:03:10 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -68,8 +68,7 @@ if ($id_client > 0) {
 	lcm_page_start(_T('title_client_new'), '', '', 'clients_newclient');
 }
 
-if (isset($_SESSION['errors']))
-	echo show_all_errors($_SESSION['errors']);
+echo show_all_errors();
 
 echo '<form action="upd_client.php" method="post">' . "\n";
 

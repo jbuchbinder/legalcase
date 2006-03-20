@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.18 2005/06/14 22:27:43 antzi Exp $
+	$Id: upd_app.php,v 1.19 2006/03/20 23:03:09 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -167,7 +167,7 @@ if (count($_SESSION['errors'])) {
 
 		$result = lcm_query($q);
 
-		$id_app = lcm_insert_id();
+		$id_app = lcm_insert_id('lcm_app', 'id_app');
 		$_SESSION['app_data']['id_app'] = $id_app;
 
 		// Add relationship with the creator
