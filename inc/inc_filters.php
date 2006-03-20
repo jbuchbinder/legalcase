@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.82 2006/03/20 20:59:12 mlutfy Exp $
+	$Id: inc_filters.php,v 1.83 2006/03/20 23:05:51 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -112,23 +112,42 @@ function format_time($timestamp = '', $format = 'short') {
 function format_time_interval($time, $hours_only=false, $hours_only_format='%.2f') {
 	$ret = array();
 
-	if (! is_numeric($time))
-		return '';
-	
-	if ($time == 0)
-		return '0';
-	
-	if ($time < 0)
-		return '-1'; // should never happen, right? :-)
+	if (isset($GLOBALS['db']) && $GLOBALS['db'] == 'pgsql') {
+		// FIXME rather bad patch..
+		$tmp = recup_time($time);
 
-	if ($hours_only) {
 		$days = 0;
-		$hours = $time / 3600;
-		$minutes = 0;
+
+		if ($hours_only) {
+			$hours = $tmp[0];
+			$minutes = 0;
+
+			if ($tmp[1])
+				$hours += ($tmp[1] + 0) / 60;
+
+		} else {
+			$hours = $tmp[0] + 0;
+			$minutes = $tmp[1] + 0;
+		}
 	} else {
-		$days = (int) ($time / 86400);
-		$hours = (int) ( ($time % 86400) / 3600);
-		$minutes = (int) ( ($time % 3600) / 60);
+		if (! is_numeric($time))
+			return '';
+
+		if ($time == 0)
+			return '0';
+
+		if ($time < 0)
+			return '-1'; // should never happen, right? :-)
+
+		if ($hours_only) {
+			$days = 0;
+			$hours = $time / 3600;
+			$minutes = 0;
+		} else {
+			$days = (int) ($time / 86400);
+			$hours = (int) ( ($time % 86400) / 3600);
+			$minutes = (int) ( ($time % 3600) / 60);
+		}
 	}
 
 	if ($days)
