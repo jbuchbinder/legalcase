@@ -18,19 +18,20 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.35 2006/03/10 15:12:04 mlutfy Exp $
+	$Id: fu_det.php,v 1.36 2006/03/20 23:03:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
+include_lcm('inc_obj_fu');
 
 if (isset($_GET['followup'])) {
 	$followup = intval($_GET['followup']);
 
 	// Fetch the details on the specified follow-up
-	$q="SELECT fu.*, a.name_first, a.name_middle, a.name_last,
-			IF(UNIX_TIMESTAMP(fu.date_end) > 0, UNIX_TIMESTAMP(fu.date_end) - UNIX_TIMESTAMP(fu.date_start), 0) as length
+	$q="SELECT fu.*, a.name_first, a.name_middle, a.name_last, " . 
+		lcm_query_subst_time('fu.date_start', 'fu.date_end') . " as length
 		FROM lcm_followup as fu, lcm_author as a
 		WHERE id_followup = $followup
 			AND fu.id_author = a.id_author";
@@ -111,80 +112,9 @@ if ($fu_data['hidden'] == 'Y') {
 	echo "</p>\n";
 }
 
-echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
+$obj_fu = new LcmFollowupInfoUI($fu_data['id_followup']);
+$obj_fu->printGeneral();
 
-// Author
-echo "<tr>\n";
-echo '<td>' . _Ti('case_input_author') . "</td>\n";
-echo '<td>' . get_author_link($fu_data) . "</td>\n";
-echo "</tr>\n";
-
-// Date start
-echo "<tr>\n";
-echo '<td>' . _Ti('time_input_date_start') . "</td>\n";
-echo '<td>' . format_date($fu_data['date_start']) . "</td>\n";
-echo "</tr>\n";
-
-// Date end
-echo "<tr>\n";
-echo '<td>' . _Ti('time_input_date_end') . "</td>\n";
-echo '<td>' . format_date($fu_data['date_end']) . "</td>\n";
-echo "</tr>\n";
-
-// Date length
-echo "<tr>\n";
-echo '<td>' . _Ti('time_input_length') . "</td>\n";
-echo '<td>' . format_time_interval_prefs($fu_data['length']) . "</td>\n";
-echo "</tr>\n";
-
-// FU type
-echo "<tr>\n";
-echo '<td>' . _Ti('fu_input_type') . "</td>\n";
-echo '<td>' . _Tkw('followups', $fu_data['type']) . "</td>\n";
-echo "</tr>\n";
-
-// Conclusion for case/status change
-if ($fu_data['type'] == 'status_change' || $fu_data['type'] == 'stage_change') {
-	$tmp = lcm_unserialize($fu_data['description']);
-
-	echo "<tr>\n";
-	echo '<td>' . _Ti('fu_input_conclusion') . "</td>\n";
-
-	echo '<td>';
-
-	if (read_meta('case_result') == 'yes' && $tmp['result'])
-		echo _Tkw('_crimresults', $tmp['result']) . "<br />\n";
-	
-	echo _Tkw('conclusion', $tmp['conclusion']) . "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr>\n";
-	echo '<td>' . _Ti('fu_input_sentence') . "</td>\n";
-	echo '<td>' . _Tkw('sentence', $tmp['sentence']) . "</td>\n";
-	echo "</tr>\n";
-}
-
-// Description
-$desc = get_fu_description($fu_data, false);
-
-echo "<tr>\n";
-echo '<td valign="top">' . _T('fu_input_description') . "</td>\n";
-echo '<td>' . $desc . "</td>\n";
-echo "</tr>\n";
-
-// Sum billed (if activated from policy)
-$fu_sum_billed = read_meta('fu_sum_billed');
-
-if ($fu_sum_billed == 'yes') {
-	echo "<tr><td>" . _T('fu_input_sum_billed') . "</td>\n";
-	echo "<td>";
-	echo format_money(clean_output($fu_data['sumbilled']));
-	$currency = read_meta('currency');
-	echo htmlspecialchars($currency);
-	echo "</td></tr>\n";
-}
-				
-echo "</table>\n";
 echo "<br />";
 
 // Edit button
