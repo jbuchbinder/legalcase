@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_org.php,v 1.13 2006/03/16 23:07:21 mlutfy Exp $
+	$Id: upd_org.php,v 1.14 2006/03/21 16:18:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -58,7 +58,7 @@ if (count($_SESSION['errors'])) {
 		$q = "UPDATE lcm_org SET date_update=NOW(),$ol WHERE id_org = " . $_SESSION['form_data']['id_org'];
 		$result = lcm_query($q);
 	} else {
-		$q = "INSERT INTO lcm_org SET id_org=0,date_update=NOW(),$ol";
+		$q = "INSERT INTO lcm_org SET date_update = NOW(), $ol";
 		$result = lcm_query($q);
 		$_SESSION['form_data']['id_org'] = lcm_insert_id('lcm_org', 'id_org');
 

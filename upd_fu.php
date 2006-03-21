@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.54 2006/03/16 23:07:21 mlutfy Exp $
+	$Id: upd_fu.php,v 1.55 2006/03/21 16:18:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -202,13 +202,13 @@ if (isset($_SESSION['form_data']['add_appointment'])) {
 		";
 
 	// Add the new appointment
-	$q = "INSERT INTO lcm_app SET id_app=0";
+	$q = "INSERT INTO lcm_app SET ";
 	// Add case ID
-	$q .= ',id_case=' . $_SESSION['form_data']['id_case'];
+	$q .= 'id_case = ' . $_SESSION['form_data']['id_case'] . ',';
 	// Add ID of the creator
-	$q .= ',id_author=' . $GLOBALS['author_session']['id_author'];
+	$q .= 'id_author = ' . $GLOBALS['author_session']['id_author'] . ',';
 	// Add the rest of the fields
-	$q .= ",$fl,date_creation=NOW()";
+	$q .= "$fl, date_creation = NOW()";
 
 	$result = lcm_query($q);
 
