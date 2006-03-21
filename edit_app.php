@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.42 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: edit_app.php,v 1.43 2006/03/21 15:56:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,29 +35,29 @@ if (! $ac['w'])
 
 if (empty($_SESSION['errors'])) {
 	// Clear form data
-	$_SESSION['app_data'] = array('ref_edit_app' => ( $_GET['ref'] ? clean_input($_GET['ref']) : $GLOBALS['HTTP_REFERER']) );
+	$_SESSION['form_data'] = array('ref_edit_app' => ( _request('ref') ? _request('ref') : $_SERVER['HTTP_REFERER']) );
 	$_SESSION['authors'] = array();
 
 	if ($_GET['app']>0) {
-		$_SESSION['app_data']['id_app'] = intval($_GET['app']);
+		$_SESSION['form_data']['id_app'] = intval(_request('app'));
 
 		// Fetch the details on the specified appointment
 		$q="SELECT *
 			FROM lcm_app
-			WHERE id_app=" . $_SESSION['app_data']['id_app'];
+			WHERE id_app=" . _session('id_app');
 
 		$result = lcm_query($q);
 
 		if ($row = lcm_fetch_array($result)) {
 			foreach($row as $key=>$value) {
-				$_SESSION['app_data'][$key] = $value;
+				$_SESSION['form_data'][$key] = $value;
 			}
 
 			// Get appointment participants
 			$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
 				FROM lcm_author_app,lcm_author
 				WHERE lcm_author_app.id_author=lcm_author.id_author
-					AND id_app=" . $_SESSION['app_data']['id_app'] . "
+					AND id_app=" . _session('id_app') . "
 				ORDER BY name_first,name_middle,name_last";
 			$result = lcm_query($q);
 
@@ -72,33 +72,36 @@ if (empty($_SESSION['errors'])) {
 
 	} else {
 		// This is new appointment
-		$_SESSION['app_data']['id_app'] = 0;
+		$_SESSION['form_data']['id_app'] = 0;
 		
 		// New appointment created from case
-		if (!empty($_GET['case'])) {
-			$_SESSION['app_data']['id_case'] = intval($_GET['case']);
-		}
+		if (!empty($_GET['case']))
+			$_SESSION['form_data']['id_case'] = intval(_request('case'));
 
 		// New appointment created from followup
-		if (!empty($_GET['followup'])) {
-			$_SESSION['app_data']['id_followup'] = intval($_GET['followup']);
-			if (empty($_SESSION['app_data']['id_case'])) {
-				$result = lcm_query("SELECT id_case FROM lcm_followup WHERE id_followup=" . $_SESSION['app_data']['id_followup']);
+		if (($id_followup = intval(_request('followup')))) { 
+			$_SESSION['form_data']['id_followup'] = $id_followup;
+
+			if (! _session('id_case')) {
+				$result = lcm_query("SELECT id_case FROM lcm_followup WHERE id_followup = $id_followup");
+
 				if ($row = lcm_fetch_array($result))
-					$_SESSION['app_data']['id_case'] = $row['id_case'];
+					$_SESSION['form_data']['id_case'] = $row['id_case'];
 			}
 		}
 
 		// Setup default values
-		$_SESSION['app_data']['title'] = _T('title_app_new');
-		if (!empty($_GET['time'])) {
-			$time = rawurldecode($_GET['time']);
+		$_SESSION['form_data']['title'] = _T('title_app_new');
+
+		if (_request('time')) {
+			$time = rawurldecode(_request('time'));
 		} else {
 			$time = date('Y-m-d H:i:s');
 		}
-		$_SESSION['app_data']['start_time'] = $time;
-		$_SESSION['app_data']['end_time']   = $time;
-		$_SESSION['app_data']['reminder']   = $time;
+
+		$_SESSION['form_data']['start_time'] = $time;
+		$_SESSION['form_data']['end_time']   = $time;
+		$_SESSION['form_data']['reminder']   = $time;
 
 		// erases the "New appointment" when focuses (taken from Spip)
 		$title_onfocus = " onfocus=\"if(!title_antifocus) { this.value = ''; title_antifocus = true;}\" "; 
@@ -119,7 +122,7 @@ if (empty($_SESSION['errors'])) {
 	$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
 		FROM lcm_author_app,lcm_author
 		WHERE lcm_author_app.id_author=lcm_author.id_author
-			AND id_app=" . $_SESSION['app_data']['id_app'] . "
+			AND id_app=" . $_SESSION['form_data']['id_app'] . "
 		ORDER BY name_first,name_middle,name_last";
 	$result = lcm_query($q);
 	$_SESSION['authors'] = array();
@@ -127,24 +130,24 @@ if (empty($_SESSION['errors'])) {
 		$_SESSION['authors'][$row['id_author']] = $row;
 }
 
-if ($_SESSION['app_data']['id_app'] > 0)
+if (_session('id_app', 0) > 0)
 	lcm_page_start(_T('title_app_edit'), '', '', 'tools_agenda');
 else
 	lcm_page_start(_T('title_app_new'), '', '', 'tools_agenda');
 
-if ($_SESSION['app_data']['id_case'] > 0) {
+if (_session('id_case', 0) > 0) {
 	// Show a bit of background on the case
 	show_context_start();
-	show_context_case_title($_SESSION['app_data']['id_case']);
-	show_context_case_involving($_SESSION['app_data']['id_case']);
+	show_context_case_title(_session('id_case'));
+	show_context_case_involving(_session('id_case'));
 	show_context_end();
 }
 
 // Show the errors (if any)
-echo show_all_errors($_SESSION['errors']);
+echo show_all_errors();
 
 // Disable inputs when edit is not allowed for the field
-$ac = get_ac_app($app, $_SESSION['app_data']['id_case']);
+$ac = get_ac_app($app, _session('id_case'));
 
 $admin = $ac['a'];
 $write = $ac['w'];
@@ -165,9 +168,9 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 	echo "<td>";
 
 	$name = ($edit ? 'start' : '');
-	echo get_date_inputs($name, $_SESSION['app_data']['start_time'], false);
+	echo get_date_inputs($name, _session('start_time'), false);
 	echo ' ' . _T('time_input_time_at') . ' ';
-	echo get_time_inputs($name, $_SESSION['app_data']['start_time']);
+	echo get_time_inputs($name, _session('start_time'));
 
 	echo "</td>\n";
 
@@ -181,20 +184,20 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		echo "<td>" . f_err_star('end_time') . _T('app_input_date_end') . "</td>\n";
 		echo "<td>";
 
-		$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'end' : '');
-		echo get_date_inputs($name, $_SESSION['app_data']['end_time']);
+		$name = (($admin || ($edit && ($_SESSION['form_data']['end_time']=='0000-00-00 00:00:00'))) ? 'end' : '');
+		echo get_date_inputs($name, $_SESSION['form_data']['end_time']);
 		echo ' ';
 		echo _T('time_input_time_at') . ' ';
-		echo get_time_inputs($name, $_SESSION['app_data']['end_time']);
+		echo get_time_inputs($name, $_SESSION['form_data']['end_time']);
 
 		echo "</td>\n";
 	} else {
 		echo "<td>" . f_err_star('end_time') . _T('app_input_time_length') . "</td>\n";
 		echo "<td>";
 
-		$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'delta' : '');
-		$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
-				strtotime($_SESSION['app_data']['end_time']) - strtotime($_SESSION['app_data']['start_time']) : 0);
+		$name = (($admin || ($edit && ($_SESSION['form_data']['end_time']=='0000-00-00 00:00:00'))) ? 'delta' : '');
+		$interval = ( ($_SESSION['form_data']['end_time']!='0000-00-00 00:00:00') ?
+				strtotime($_SESSION['form_data']['end_time']) - strtotime($_SESSION['form_data']['start_time']) : 0);
 		echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 
 		echo "</td>\n";
@@ -217,20 +220,20 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		echo "<td>" . f_err_star('reminder') . _T('app_input_reminder_time') . "</td>\n";
 		echo "<td>";
 
-		$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'reminder' : '');
-		echo get_date_inputs($name, $_SESSION['app_data']['reminder']);
+		$name = (($admin || ($edit && ($_SESSION['form_data']['end_time']=='0000-00-00 00:00:00'))) ? 'reminder' : '');
+		echo get_date_inputs($name, $_SESSION['form_data']['reminder']);
 		echo ' ';
 		echo _T('time_input_time_at') . ' ';
-		echo get_time_inputs($name, $_SESSION['app_data']['reminder']);
+		echo get_time_inputs($name, $_SESSION['form_data']['reminder']);
 
 		echo "</td>\n";
 	} else {
 		echo "<td>" . f_err_star('reminder') . _T('app_input_reminder_offset') . "</td>\n";
 		echo "<td>";
 
-		$name = (($admin || ($edit && ($_SESSION['app_data']['end_time']=='0000-00-00 00:00:00'))) ? 'rem_offset' : '');
-		$interval = ( ($_SESSION['app_data']['end_time']!='0000-00-00 00:00:00') ?
-				strtotime($_SESSION['app_data']['start_time']) - strtotime($_SESSION['app_data']['reminder']) : 0);
+		$name = (($admin || ($edit && ($_SESSION['form_data']['end_time']=='0000-00-00 00:00:00'))) ? 'rem_offset' : '');
+		$interval = ( ($_SESSION['form_data']['end_time']!='0000-00-00 00:00:00') ?
+				strtotime($_SESSION['form_data']['start_time']) - strtotime($_SESSION['form_data']['reminder']) : 0);
 		echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 		echo " " . _T('time_info_before_start');
 		echo f_err_star('reminder',$_SESSION['errors']);
@@ -246,7 +249,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		<!-- Appointment title -->
 		<tr><td valign="top"><?php echo f_err_star('title') . _T('app_input_title'); ?></td>
 			<td><input type="text" <?php echo $title_onfocus . $dis; ?> name="title" size="50" value="<?php
-			echo clean_output($_SESSION['app_data']['title']) . "\" /></td></tr>\n"; ?>
+			echo clean_output($_SESSION['form_data']['title']) . "\" /></td></tr>\n"; ?>
 
 		<!-- Appointment type -->
 		<tr><td><?php echo _T('app_input_type'); ?></td>
@@ -255,8 +258,8 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 
 			global $system_kwg;
 
-			if ($_SESSION['app_data']['type'])
-				$default_app = $_SESSION['app_data']['type'];
+			if ($_SESSION['form_data']['type'])
+				$default_app = $_SESSION['form_data']['type'];
 			else
 				$default_app = $system_kwg['appointments']['suggest'];
 
@@ -271,7 +274,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		<!-- Appointment description -->
 		<tr><td valign="top"><?php echo _T('app_input_description'); ?></td>
 			<td><textarea <?php echo $dis; ?> name="description" rows="5" cols="40" class="frm_tarea"><?php
-			echo clean_output($_SESSION['app_data']['description']) . "</textarea></td></tr>\n";
+			echo clean_output($_SESSION['form_data']['description']) . "</textarea></td></tr>\n";
 
 		// Appointment participants - authors
 		echo "\t\t<tr><td valign=\"top\">";
@@ -297,13 +300,13 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 /*		$q = "SELECT lcm_author.id_author,lcm_author.name_first,lcm_author.name_middle,lcm_author.name_last
 			FROM lcm_author
 			LEFT JOIN lcm_author_app
-			ON (lcm_author.id_author=lcm_author_app.id_author AND id_app=" . $_SESSION['app_data']['id_app'] . ")
+			ON (lcm_author.id_author=lcm_author_app.id_author AND id_app=" . $_SESSION['form_data']['id_app'] . ")
 			WHERE id_app IS NULL";
 */
 		
 		$q = "SELECT id_author,name_first,name_middle,name_last
-			FROM lcm_author
-			WHERE id_author NOT IN (" . join(',',$author_ids) . ")
+			FROM lcm_author " .
+			(count($author_ids) ? " WHERE id_author NOT IN (" . join(',',$author_ids) . ")" : "") . "
 			ORDER BY name_first,name_middle,name_last";
 		$result = lcm_query($q);
 		echo "\t\t\t<select name=\"author\">\n";
@@ -324,7 +327,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		$q = "SELECT lcm_client.id_client,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.id_org,lcm_org.name
 			FROM lcm_client,lcm_app_client_org
 			LEFT JOIN lcm_org USING (id_org)
-			WHERE id_app=" . $_SESSION['app_data']['id_app'] . "
+			WHERE id_app=" . $_SESSION['form_data']['id_app'] . "
 				AND lcm_client.id_client=lcm_app_client_org.id_client
 			ORDER BY lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name";
 		$result = lcm_query($q);
@@ -343,7 +346,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 			FROM lcm_client AS c
 			LEFT JOIN lcm_client_org AS co USING (id_client)
 			LEFT JOIN lcm_org AS o ON (co.id_org=o.id_org)
-			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=" . $_SESSION['app_data']['id_app'] . ")
+			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=" . $_SESSION['form_data']['id_app'] . ")
 			WHERE id_app IS NULL
 			ORDER BY c.name_first,c.name_last,o.name";
 		
@@ -363,7 +366,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		echo "	</table>\n";
 
 		// Form buttons
-		if ($_SESSION['app_data']['id_app']>0) {
+		if (_session('id_app', 0) > 0) {
 			// When editing appointment
 			echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 			if ($prefs['mode'] == 'extended')
@@ -379,24 +382,23 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 		}
 
-		echo '<input type="hidden" name="id_app" value="' . $_SESSION['app_data']['id_app'] . '" />' . "\n";
-		echo '<input type="hidden" name="id_case" value="' . $_SESSION['app_data']['id_case'] . '" />' . "\n";
-		echo '<input type="hidden" name="id_followup" value="' . $_SESSION['app_data']['id_followup'] . '" />' . "\n";
+		echo '<input type="hidden" name="id_app" value="' . _session('id_app', 0) . '" />' . "\n";
+		echo '<input type="hidden" name="id_case" value="' . _session('id_case', 0) . '" />' . "\n";
+		echo '<input type="hidden" name="id_followup" value="' . _session('id_followup', 0) . '" />' . "\n";
 
 		// because of XHTML validation...
-		$ref_link = new Link($_SESSION['app_data']['ref_edit_app']);
-		
-		echo '<input type="hidden" name="ref_edit_app" value="' . $ref_link->getUrl() . '" />' . "\n";
+		if (_session('ref_edit_app')) {
+			$ref_link = new Link(_session('ref_edit_app'));
+			echo '<input type="hidden" name="ref_edit_app" value="' . $ref_link->getUrl() . '" />' . "\n";
+		}
 
-	?>
-
-</form>
-
-<?php
+echo "</form>\n";
 
 lcm_page_end();
 
 // Clear the errors, in case user jumps to other 'edit' page
 $_SESSION['errors'] = array();
+$_SESSION['app_data'] = array(); // DEPRECATED since 0.7.0
+$_SESSION['form_data'] = array();
 
 ?>
