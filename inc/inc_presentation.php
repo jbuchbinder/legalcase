@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.235 2006/03/17 21:11:15 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.236 2006/03/21 16:11:49 mlutfy Exp $
 */
 
 //
@@ -704,11 +704,12 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 	// TODO: Add global variables (optional) in my_options.php to
 	// modify the date range.
 
-	// Date and month have no default selection, Year does
+	// Extract date values
+	// First check in session variable (if error), fallback on $date
 	$split_date = recup_date($date);
-	$default_month = $split_date[1];
-	$default_day = $split_date[2];
-	$default_year = $split_date[0];
+	$default_month = _session($name . '_month', $split_date[1]);
+	$default_day   = _session($name . '_day',   $split_date[2]);
+	$default_year  = _session($name . '_year',  $split_date[0]);
 
 	// If name is empty, disable fields
 	$dis = (($name) ? '' : 'disabled="disabled"');
@@ -718,6 +719,10 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n"
 			. "<tr>\n"
 			. "<td><!-- " . _T('select_date_day') . "<br/ -->\n";
+
+	$ret .= "<input size=\"4\" type=\"text\" $dis value=\"$default_day\" name=\"" . $name . "_day\" id=\"" . $name . "_day\" />\n";
+
+	/*
 	$ret .= "<select $dis name=\"" . $name . "_day\" id=\"" . $name . "_day\">\n";
 
 	// Day of month
@@ -730,6 +735,7 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 		$default = ($default_day == 0 ? ' selected="selected"' : '');
 		$ret .= "<option" . $default . " value=\"\"></option>\n";
 	}
+	*/
 
 	// Month of year
 	$ret .= "</select>\n";
@@ -753,6 +759,10 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 	if ($table)
 		$ret .= "</td>\n"
 			. "<td><!-- " . _T('select_date_year') . "<br/ -->\n";
+
+	$ret .= "<input size=\"4\" type=\"text\" $dis value=\"$default_year\" name=\"" . $name . "_year\" id=\"" . $name . "_year\" />\n";
+
+	/* [ML] Was..
 	$ret .= "<select $dis name=\"" . $name . "_year\" id=\"" . $name . "_year\">\n";
 
 	for ($i = 1999; $i <= 2006; $i++) {
@@ -766,6 +776,8 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 	}
 
 	$ret .= "</select>\n";
+	*/
+
 	if ($table)
 		$ret .= "</td>\n"
 			. "</tr>\n"
