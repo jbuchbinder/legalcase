@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.32 2006/03/17 21:11:15 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.33 2006/03/21 16:30:57 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -47,7 +47,9 @@ function get_kwg_all($type, $exclude_empty = false) {
 		if ($in_type)
 			$query .= " AND type $in_type ";
 
-		$query .= " GROUP BY id_group HAVING COUNT(k.id_keyword) > 0";
+		// pgsql requires that we group on all fields
+		$query .= " GROUP BY kwg.id_group, kwg.name, kwg.title, kwg.description, kwg.type, kwg.policy, kwg.quantity, kwg.suggest, kwg.ac_admin, kwg.ac_author 
+					HAVING COUNT(k.id_keyword) > 0";
 	} else {
 		$query = "SELECT *
 					FROM lcm_keyword_group ";
