@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.83 2006/03/20 23:05:51 mlutfy Exp $
+	$Id: inc_filters.php,v 1.84 2006/03/21 16:47:55 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -282,6 +282,9 @@ function get_person_name($item) {
 		return '';
 	}
 
+	if (! isset($item['name_middle']))
+		$item['name_middle'] = ''; // because of PHP warnings
+
 	$format = read_meta('person_name_format');
 
 	if (! $format)
@@ -433,8 +436,11 @@ function recup_date($numdate) {
 		$month = $regs[2];
 	}
 
-	if ($year > 4000) $year -= 9000;
-	if (substr($day, 0, 1) == '0') $day = substr($day, 1);
+	if ($year > 4000)
+		$year -= 9000;
+
+	if (substr($day, 0, 1) == '0')
+		$day = substr($day, 1);
 
 	return array($year, $month, $day);
 }
@@ -450,52 +456,65 @@ function recup_time($numdate) {
 	return array($hours, $minutes, $seconds);
 }
 
-function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = '') {
+/*
+ * get_datetime_from_array:
+ * $source = array
+ * $prefix = 'foo_year', for example (in html widgets)
+ * $type = 'start' or 'end' (so that dates fallback on start or end of month, if no value entered)
+ * $fallback = if no date entered at all, it will return $fallback
+ * $soften_errors = if one field is missing (ex: day or month), it will
+ *   fallback on the 1st or last unit. This is good for filters, especially
+ *   in the reports functions, but not recommended in follow-ups or apps.
+ */
+function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = '', $soften_errors = true) {
 	$has_date = false;
 	$ret = '';
 
 	if ($prefix)
 		$prefix = $prefix . '_';
 
-	if (isset($source[$prefix . 'year']) && is_numeric($source[$prefix . 'year'])) {
-		$ret .= sprintf("%04d", $source[$prefix . 'year']) . '-';
+	if (isset($source[$prefix . 'year']) && is_numeric(trim($source[$prefix .  'year']))) {
+		$ret .= sprintf("%04d", trim($source[$prefix . 'year'])) . '-';
 		$has_date = true;
 	} else {
 		$ret .= '0000-';
 	}
 
-	if (isset($source[$prefix . 'month']) && is_numeric($source[$prefix . 'month'])) {
-		$ret .= sprintf("%02d", $source[$prefix . 'month']) . '-';
+	if (isset($source[$prefix . 'month']) && is_numeric(trim($source[$prefix . 'month']))) {
+		$ret .= sprintf("%02d", trim($source[$prefix . 'month'])) . '-';
 		$has_date = true;
 	} else {
 		$ret .= ($type == 'start' ? '01-' : '12-');
 	}
 	
-	if (isset($source[$prefix . 'day']) && is_numeric($source[$prefix . 'day'])) {
-		$ret .= sprintf("%02d", $source[$prefix . 'day']);
+	// [ML] Too much fool-proof, show errors, if any
+	if (isset($source[$prefix . 'day']) && is_numeric(trim($source[$prefix . 'day']))) {
+		$ret .= sprintf("%02d", trim($source[$prefix . 'day']));
 		$has_date = true;
-	} else {
+	} elseif ($soften_errors) {
 		$ret .= ($type == 'start' ? '01' : '31');
+	} else {
+		$ret .= $source[$prefix . 'day'];
 	}
 
 	$ret .= " ";
 
-	if (isset($source[$prefix . 'hour']) && is_numeric($source[$prefix . 'hour'])) {
-		$ret .= sprintf("%02d", $source[$prefix . 'hour']) . ':';
+	if (isset($source[$prefix . 'hour']) && is_numeric(trim($source[$prefix . 'hour']))) {
+		$ret .= sprintf("%02d", trim($source[$prefix . 'hour'])) . ':';
 		$has_date = true;
 	} else {
 		$ret .= ($type == 'start' ? '00:' : '23:');
 	}
 
-	if (isset($source[$prefix . 'minutes']) && is_numeric($source[$prefix . 'minutes'])) {
-		$ret .= sprintf("%02d", $source[$prefix . 'minutes']) . ':';
+	if (isset($source[$prefix . 'minutes']) && is_numeric(trim($source[$prefix . 'minutes']))) {
+		$ret .= sprintf("%02d", trim($source[$prefix . 'minutes'])) . ':';
 		$has_date = true;
 	} else {
 		$ret .= ($type == 'start' ? '00:' : '59:');
 	}
 	
-	if (isset($source[$prefix . 'seconds']) && is_numeric($source[$prefix . 'seconds'])) {
-		$ret .= sprintf("%02d", $source[$prefix . 'seconds']);
+	if (isset($source[$prefix . 'seconds']) && is_numeric(trim($source[$prefix . 'seconds']))) {
+		$ret .= sprintf("%02d", trim($source[$prefix . 'seconds']));
 		$has_date = true;
 	} else {
 		$ret .= ($type == 'start' ? '00' : '59');
