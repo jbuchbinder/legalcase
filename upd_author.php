@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_author.php,v 1.24 2006/03/16 23:07:21 mlutfy Exp $
+	$Id: upd_author.php,v 1.25 2006/03/21 19:11:12 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -158,7 +158,7 @@ if ($_SESSION['usr']['id_author'] != $author_session['id_author'])
 //
 // Start SQL query
 //
-$fl = 'date_update = NOW()';
+$fl = "date_update = NOW(), username = '', password = ''";
 
 // First name must have at least one character
 if (strlen(lcm_utf8_decode($_SESSION['usr']['name_first'])) < 1) {
