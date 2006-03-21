@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.21 2006/03/21 16:04:29 mlutfy Exp $
+	$Id: upd_app.php,v 1.22 2006/03/21 16:50:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -53,7 +53,7 @@ if (! $ac['w'])
 //
 // Start date
 //
-$_SESSION['form_data']['start_time'] = get_datetime_from_array($_SESSION['form_data'], 'start', 'start');
+$_SESSION['form_data']['start_time'] = get_datetime_from_array($_SESSION['form_data'], 'start', 'start', '', false);
 $unix_start_time = strtotime($_SESSION['form_data']['start_time']);
 
 if (($unix_start_time < 0) || ! checkdate_sql($_SESSION['form_data']['start_time']))
@@ -63,7 +63,7 @@ if (($unix_start_time < 0) || ! checkdate_sql($_SESSION['form_data']['start_time
 // End date
 //
 if ($prefs['time_intervals'] == 'absolute') {
-	$_SESSION['form_data']['end_time'] = get_datetime_from_array($_SESSION['form_data'], 'end', 'start');
+	$_SESSION['form_data']['end_time'] = get_datetime_from_array($_SESSION['form_data'], 'end', 'start', '', false);
 
 	// Set to default empty date if all fields empty
 	if (! isset_datetime_from_array($_SESSION['form_data'], 'end', 'date_only')) { 
@@ -100,10 +100,10 @@ if ($prefs['time_intervals']=='absolute') {
 		// Report error if some of the fields empty
 	elseif (!$_SESSION['form_data']['reminder_year'] || !$_SESSION['form_data']['reminder_month'] || !$_SESSION['form_data']['reminder_day']) {
 		$_SESSION['errors']['reminder'] = 'Incomplete reminder time'; // TRAD
-		$_SESSION['form_data']['reminder'] = get_datetime_from_array($_SESSION['form_data'], 'reminder', 'start');
+		$_SESSION['form_data']['reminder'] = get_datetime_from_array($_SESSION['form_data'], 'reminder', 'start', '', false);
 	} else {
 		// Join fields and check resulting time
-		$_SESSION['form_data']['reminder'] = get_datetime_from_array($_SESSION['form_data'], 'reminder', 'start');
+		$_SESSION['form_data']['reminder'] = get_datetime_from_array($_SESSION['form_data'], 'reminder', 'start', '', false);
 		$unix_reminder_time = strtotime($_SESSION['form_data']['reminder']);
 
 		if ( ($unix_reminder_time<0) || !checkdate($_SESSION['form_data']['reminder_month'],$_SESSION['form_data']['reminder_day'],$_SESSION['form_data']['reminder_year']) )
