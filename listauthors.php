@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listauthors.php,v 1.32 2006/03/07 19:05:55 mlutfy Exp $
+	$Id: listauthors.php,v 1.33 2006/03/21 19:01:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,7 +35,7 @@ show_find_box('author', $find_author_string);
 
 $q = "SELECT id_author,name_first,name_middle,name_last,status
 		FROM lcm_author
-		WHERE (1";
+		WHERE (1=1 ";
 
 // Add search criteria if any
 if (strlen($find_author_string)>1) {
