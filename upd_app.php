@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.20 2006/03/21 15:56:11 mlutfy Exp $
+	$Id: upd_app.php,v 1.21 2006/03/21 16:04:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -155,13 +155,13 @@ if (count($_SESSION['errors'])) {
 		$result = lcm_query($q);
 	} else {
 		// Add the new appointment
-		$q = "INSERT INTO lcm_app SET id_app=0";
+		$q = "INSERT INTO lcm_app SET ";
 		// Add case ID if available
-		$q .= (_session('id_case') ? ',id_case=' . _session('id_case') : '');
+		$q .= (_session('id_case') ? 'id_case=' . _session('id_case') . ',' : '');
 		// Add ID of the creator
-		$q .= ',id_author=' . $GLOBALS['author_session']['id_author'];
+		$q .= 'id_author = ' . $GLOBALS['author_session']['id_author'] . ',';
 		// Add the rest of the fields
-		$q .= ",$fl,date_creation=NOW()";
+		$q .= "$fl, date_creation = NOW()";
 
 		$result = lcm_query($q);
 
@@ -179,9 +179,9 @@ if (count($_SESSION['errors'])) {
 
 	// Add/update appointment participants (authors)
 	if (_session('author')) {
-		$q = "INSERT IGNORE INTO lcm_author_app SET id_app = $id_app, id_author = " . _session('author');
+		$q = "INSERT INTO lcm_author_app SET id_app = $id_app, id_author = " . _session('author');
 
-		lcm_query($q);
+		lcm_query($q, true); // ignore errors
 		$_SESSION['errors']['author_added'] = "An author was added to the participants of this appointment."; // TRAD
 	}
 
@@ -197,13 +197,13 @@ if (count($_SESSION['errors'])) {
 	// Add/update appointment clients/organisations
 	if (_session('client')) {
 		$client_org = explode(':', _session('client'));
-		$q = "INSERT IGNORE INTO lcm_app_client_org SET id_app=$id_app";
+		$q = "INSERT INTO lcm_app_client_org SET id_app=$id_app";
 		$q .= ',id_client=' . $client_org[0];
 
 		if ($client_org[1])
 			$q .= ',id_org=' . $client_org[1];
 
-		lcm_query($q);
+		lcm_query($q, true); // ignore errors
 		$_SESSION['errors']['client_added'] = "An client/organisation was added to the participants of this appointment.";
 	}
 

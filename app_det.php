@@ -18,12 +18,12 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.22 2006/02/20 03:01:36 mlutfy Exp $
+	$Id: app_det.php,v 1.23 2006/03/21 16:04:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
-$app = intval($_GET['app']);
+$app = intval(_request('app'));
 
 $ac = get_ac_app($app);
 
@@ -184,5 +184,8 @@ echo '<p class="normal_text">' . "\n";
 	echo "</fieldset>\n";
 
 	lcm_page_end();
+
+	$_SESSION['form_data'] = array();
+	$_SESSION['errors'] = array();
 
 ?>
