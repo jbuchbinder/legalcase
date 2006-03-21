@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.55 2006/03/21 16:18:57 mlutfy Exp $
+	$Id: upd_fu.php,v 1.56 2006/03/21 17:52:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -60,7 +60,7 @@ if (isset($_SESSION['form_data']['add_appointment'])) {
 	//
 	// Start time
 	//
-	$_SESSION['form_data']['app_start_time'] = get_datetime_from_array($_SESSION['form_data'], 'app_start', 'start');
+	$_SESSION['form_data']['app_start_time'] = get_datetime_from_array($_SESSION['form_data'], 'app_start', 'start', '', false);
 	$unix_app_start_time = strtotime($_SESSION['form_data']['app_start_time']);
 	
 	if (($unix_app_start_time<0) || ! checkdate_sql($_SESSION['form_data']['app_start_time']))
@@ -76,10 +76,10 @@ if (isset($_SESSION['form_data']['add_appointment'])) {
 			// Report error if some of the fields empty TODO
 		elseif (!$_SESSION['form_data']['app_end_year'] || !$_SESSION['form_data']['app_end_month'] || !$_SESSION['form_data']['app_end_day']) {
 			$_SESSION['errors']['app_end_time'] = 'Partial appointment end time!';
-			$_SESSION['form_data']['app_end_time'] = get_datetime_from_array($_SESSION['form_data'], 'app_end', 'start');
+			$_SESSION['form_data']['app_end_time'] = get_datetime_from_array($_SESSION['form_data'], 'app_end', 'start', '', false);
 		} else {
 			// Join fields and check resulting date
-			$_SESSION['form_data']['app_end_time'] = get_datetime_from_array($_SESSION['form_data'], 'app_end', 'start');
+			$_SESSION['form_data']['app_end_time'] = get_datetime_from_array($_SESSION['form_data'], 'app_end', 'start', '', false);
 			$unix_app_end_time = strtotime($_SESSION['form_data']['app_end_time']);
 	
 			if ( ($unix_app_end_time<0) || !checkdate($_SESSION['form_data']['app_end_month'],$_SESSION['form_data']['app_end_day'],$_SESSION['form_data']['app_end_year']) )
@@ -108,10 +108,10 @@ if (isset($_SESSION['form_data']['add_appointment'])) {
 			// Report error if some of the fields empty
 		elseif (!$_SESSION['form_data']['app_reminder_year'] || !$_SESSION['form_data']['app_reminder_month'] || !$_SESSION['form_data']['app_reminder_day']) {
 			$_SESSION['errors']['app_reminder'] = 'Partial appointment reminder time!'; // TRAD
-			$_SESSION['form_data']['app_reminder'] = get_datetime_from_array($_SESSION['form_data'], 'app_reminder', 'start');
+			$_SESSION['form_data']['app_reminder'] = get_datetime_from_array($_SESSION['form_data'], 'app_reminder', 'start', '', false);
 		} else {
 			// Join fields and check resulting time
-			$_SESSION['form_data']['app_reminder'] = get_datetime_from_array($_SESSION['form_data'], 'app_reminder', 'start');
+			$_SESSION['form_data']['app_reminder'] = get_datetime_from_array($_SESSION['form_data'], 'app_reminder', 'start', '', false);
 			$unix_app_reminder_time = strtotime($_SESSION['form_data']['app_reminder']);
 	
 			if ( ($unix_app_reminder_time<0) || !checkdate($_SESSION['form_data']['app_reminder_month'],$_SESSION['form_data']['app_reminder_day'],$_SESSION['form_data']['app_reminder_year']) )
@@ -152,10 +152,13 @@ if (count($_SESSION['errors'])) {
 $fu = new LcmFollowup($id_followup);
 $errs = $fu->save();
 
+if (count ($errs))
+	$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
+
 if (! $id_followup)
 	$id_followup = $fu->getDataInt('id_followup', '__ASSERT__');
 
-if (count($errs)) {
+if (count($_SESSION['errors'])) {
     lcm_header("Location: " . $_SERVER['HTTP_REFERER']);
     exit;
 }
@@ -173,14 +176,14 @@ if (isset($_REQUEST['new_stage']) && $_REQUEST['new_stage']) {
 // Update lcm_case.date_update (if fu.date_start > c.date_update)
 //
 
-$q = "SELECT date_update FROM lcm_case WHERE id_case = " . $_SESSION['form_data']['id_case'];
+$q = "SELECT date_update FROM lcm_case WHERE id_case = " . $fu->getDataInt('id_case', '__ASSERT__');
 $result = lcm_query($q);
 
 if (($row = lcm_fetch_array($result))) {
-	if ($_SESSION['form_data']['date_start'] > $row['date_update']) {
+	if ($fu->getDataString('date_start', '__ASSERT__') > $row['date_update']) {
 		$q = "UPDATE lcm_case
-				SET date_update = '" . $_SESSION['form_data']['date_start'] . "'
-				WHERE id_case = " . $_SESSION['form_data']['id_case'];
+				SET date_update = '" . $fu->getDatastring('date_start') . "'
+				WHERE id_case = " . $fu->getDataInt('id_case', '__ASSERT__');
 
 		lcm_query($q);
 	}
