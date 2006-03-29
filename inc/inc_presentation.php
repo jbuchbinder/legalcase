@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.236 2006/03/21 16:11:49 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.237 2006/03/29 17:20:41 mlutfy Exp $
 */
 
 //
@@ -266,6 +266,9 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 
 	if (read_meta('org_hide_all') != 'yes')
 		echo show_navmenu_item("listorgs.php", 'main_orgs');
+
+	if (read_meta('expenses_hide_all') != 'yes')
+		echo show_navmenu_item("listexpenses.php", "main_expenses");
 
 	echo show_navmenu_item("listauthors.php", 'main_authors');
 
