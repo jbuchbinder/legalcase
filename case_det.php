@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.166 2006/03/20 23:03:09 mlutfy Exp $
+	$Id: case_det.php,v 1.167 2006/03/29 17:28:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -177,7 +177,7 @@ if ($case > 0) {
 				}
 
 				// Total time spent on case (redundant with "reports/times")
-				$query = "SELECT " . lcm_query_sum_time('fu.date_start', 'fu.date_end') . "
+				$query = "SELECT " . lcm_query_sum_time('fu.date_start', 'fu.date_end') . " as time
 							FROM lcm_followup as fu 
 							WHERE fu.id_case = " . $row['id_case'] . "
 							  AND fu.hidden = 'N'";
