@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_pgsql.php,v 1.4 2006/03/20 23:04:51 mlutfy Exp $
+	$Id: inc_db_pgsql.php,v 1.5 2006/03/29 17:25:04 mlutfy Exp $
 */
 
 if (defined('_INC_DB_PGSQL')) return;
@@ -123,7 +123,7 @@ function lcm_query_create_table($table, $fields, $keys = array()) {
 				$tmp .= "DEFAULT " . $regs[1];
 		}
 
-		$tmp = preg_replace("/datetime DEFAULT '0000-00-00 00:00:00' NOT NULL/", "timestamp NOT NULL", $tmp);
+		$tmp = preg_replace("/datetime( DEFAULT '0000-00-00 00:00:00')? NOT NULL/", "timestamp NOT NULL", $tmp);
 
 		$new_fields[] = $tmp;
 	}
@@ -381,10 +381,12 @@ function lcm_num_rows($r) {
 
 function lcm_data_seek($r,$n) {
 	if ($r)
-		return mysql_data_seek($r,$n);
+		return pg_result_seek($r,$n);
 }
 
 function lcm_free_result($r) {
+	lcm_panic("Not implemented");
+
 	if ($r)
 		return mysql_free_result($r);
 }
