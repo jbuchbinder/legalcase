@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: client_det.php,v 1.54 2006/03/17 20:47:00 mlutfy Exp $
+	$Id: client_det.php,v 1.55 2006/03/29 17:17:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -31,8 +31,8 @@ if (! ($client > 0))
 	die("Which client?");
 
 $q="SELECT *
-	FROM lcm_client
-	WHERE lcm_client.id_client = $client";
+	FROM lcm_client as c
+	WHERE c.id_client = $client";
 
 $result = lcm_query($q);
 

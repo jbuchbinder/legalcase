@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: exp_det.php,v 1.1 2006/03/22 23:27:22 mlutfy Exp $
+	$Id: exp_det.php,v 1.2 2006/03/29 17:17:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -46,10 +46,11 @@ echo '<fieldset class="info_box">';
 
 $obj_expense = new LcmExpenseInfoUI($expense);
 $obj_expense->printGeneral();
+$obj_expense->printComments();
 
 // if ($edit)
 	echo '<p><a href="edit_exp.php?expense=' . $expense . '" class="edit_lnk">' . _T('expense_button_edit') . '</a></p>' . "\n";
-	echo '<p><a href="edit_exp.php?comment=1&expense=' . $expense . '" class="edit_lnk">' . _T('expense_button_comment') . '</a></p>' . "\n";
+	echo '<p><a href="edit_exp.php?edit_comment=1&expense=' . $expense . '" class="edit_lnk">' . _T('expense_button_comment') . '</a></p>' . "\n";
 
 echo "</fieldset>\n";
 

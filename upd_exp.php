@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_exp.php,v 1.1 2006/03/22 23:27:22 mlutfy Exp $
+	$Id: upd_exp.php,v 1.2 2006/03/29 17:17:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,16 +33,24 @@ $_SESSION['form_data'] = array();
 foreach($_POST as $key => $value)
 	$_SESSION['form_data'][$key] = $value;
 
-$ref_url = 'edit_exp.php?expense=' . _session('id_expense', 0);
+$id_expense = _request('id_expense', 0);
+$id_comment = _request('id_comment', 0);
+$edit_comment = _request('edit_comment', 0);
+
+$ref_url = "edit_exp.php?expense=$id_expense&edit_comment=$edit_comment&c=$id_comment";
+
 if ($_SERVER['HTTP_REFERER'])
 	$ref_url = $_SERVER['HTTP_REFERER'];
 
 //
 // Update data
 //
+if ($id_comment || $edit_comment)
+	$obj = new LcmExpenseComment($id_expense, $id_comment);
+else
+	$obj = new LcmExpense($id_expense);
 
-$expense = new LcmExpense(_session('id_expense', 0));
-$errs = $expense->save();
+$errs = $obj->save();
 
 if (count($errs)) {
 	$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
@@ -54,6 +62,6 @@ if (count($errs)) {
 // Go to the 'view details' page
 //
 
-lcm_header('Location: exp_det.php?expense=' . $expense->getDataInt('id_expense', '__ASSERT__'));
+lcm_header('Location: exp_det.php?expense=' . $obj->getDataInt('id_expense', '__ASSERT__'));
 
 ?>
