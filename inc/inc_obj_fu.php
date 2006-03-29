@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.10 2006/03/21 17:50:12 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.11 2006/03/29 17:21:24 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -757,7 +757,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo '<div id="new_app" style="display: none;">';
 			echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
 			echo "<!-- Start time -->\n\t\t<tr><td>";
-			echo _T('app_input_date_start');
+			echo _T('time_input_date_start');
 			echo "</td><td>";
 			echo get_date_inputs('app_start', $this->data['app_start_time'], false);
 			echo ' ' . _T('time_input_time_at') . ' ';
@@ -766,7 +766,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo "</td></tr>\n";
 
 			echo "<!-- End time -->\n\t\t<tr><td>";
-			echo (($prefs['time_intervals'] == 'absolute') ? _T('app_input_date_end') : _T('app_input_time_length'));
+			echo (($prefs['time_intervals'] == 'absolute') ? _T('time_input_date_end') : _T('app_input_time_length'));
 			echo "</td><td>";
 			if ($prefs['time_intervals'] == 'absolute') {
 				echo get_date_inputs('app_end', $this->data['app_end_time']);
