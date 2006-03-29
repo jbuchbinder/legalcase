@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.58 2006/03/17 21:11:14 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.59 2006/03/29 17:25:50 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -956,6 +956,42 @@ function upgrade_database($old_db_version) {
 						SET value = 'yes_optional'
 						WHERE value = 'yes' AND name = '$m'");
 		}
+
+
+		$fields = array (
+			"id_expense bigint(21) NOT NULL auto_increment",
+			"id_case bigint(21) NOT NULL DEFAULT 0",
+			"id_followup bigint(21) NOT NULL DEFAULT 0", 
+			"id_author bigint(21) NOT NULL",
+			"id_admin bigint(21) NOT NULL DEFAULT 0", // 0 = not approved
+			"status ENUM('pending', 'granted', 'refused', 'deleted') NOT NULL",
+			"type varchar(255) NOT NULL", // will use system-keyword
+			"cost decimal(19,4) NOT NULL DEFAULT 0",
+			"description text NOT NULL DEFAULT ''",
+			"date_creation datetime NOT NULL",
+			"date_update datetime NOT NULL",
+			"pub_read tinyint(1) NOT NULL",
+			"pub_write tinyint(1) NOT NULL"
+		);
+
+		$keys = array (
+			"id_case" => "id_case",
+			"id_author" => "id_author"
+		);
+
+		lcm_query_create_table("lcm_expense", $fields, $keys);
+
+
+		$fields = array (
+			"id_comment bigint(21) NOT NULL auto_increment",
+			"id_expense bigint(21) NOT NULL",
+			"id_author bigint(21) NOT NULL",
+			"date_creation datetime NOT NULL",
+			"date_update datetime NOT NULL",
+			"comment text NOT NULL DEFAULT ''"
+		);
+
+		lcm_query_create_table("lcm_expense_comment", $fields);
 
 		upgrade_db_version (44);
 	}
