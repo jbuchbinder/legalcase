@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.43 2006/03/21 15:56:11 mlutfy Exp $
+	$Id: edit_app.php,v 1.44 2006/03/30 01:06:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -164,7 +164,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		<tr>
 <?php
 
-	echo "<td>" . f_err_star('start_time') . _T('app_input_date_start') . "</td>\n";
+	echo "<td>" . f_err_star('start_time') . _T('time_input_date_start') . "</td>\n";
 	echo "<td>";
 
 	$name = ($edit ? 'start' : '');
@@ -181,7 +181,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 <?php
 
 	if ($prefs['time_intervals'] == 'absolute') {
-		echo "<td>" . f_err_star('end_time') . _T('app_input_date_end') . "</td>\n";
+		echo "<td>" . f_err_star('end_time') . _T('time_input_date_end') . "</td>\n";
 		echo "<td>";
 
 		$name = (($admin || ($edit && ($_SESSION['form_data']['end_time']=='0000-00-00 00:00:00'))) ? 'end' : '');

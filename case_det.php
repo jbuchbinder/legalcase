@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.167 2006/03/29 17:28:45 mlutfy Exp $
+	$Id: case_det.php,v 1.168 2006/03/30 01:06:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -252,7 +252,7 @@ if ($case > 0) {
 					$statuses = get_possible_case_statuses($row['status']);
 
 					foreach ($statuses as $s => $futype) {
-						$sel = ($s == $row['status'] ? ' selected="selected"' : '');
+						$sel = isSelected($s == $row['status']);
 						echo '<option value="' . $futype . '"' . $sel . '>' . _T('case_status_option_' . $s) . "</option>\n";
 					}
 
