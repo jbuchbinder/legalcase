@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_exp.php,v 1.2 2006/03/29 17:17:32 mlutfy Exp $
+	$Id: upd_exp.php,v 1.3 2006/03/30 01:07:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -45,12 +45,22 @@ if ($_SERVER['HTTP_REFERER'])
 //
 // Update data
 //
-if ($id_comment || $edit_comment)
+if ($id_comment || $edit_comment) {
 	$obj = new LcmExpenseComment($id_expense, $id_comment);
-else
-	$obj = new LcmExpense($id_expense);
+	$errs = $obj->save($true);
 
-$errs = $obj->save();
+	if (! count($errs) && _request('new_exp_status')) {
+		$obj = new LcmExpense($id_expense);
+		$errs = $obj->setStatus(_request('new_exp_status'));
+	}
+} else {
+	$obj = new LcmExpense($id_expense);
+	$errs = $obj->save();
+}
+
+
+// TODO 
+// save expense status
 
 if (count($errs)) {
 	$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);

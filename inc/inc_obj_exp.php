@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.2 2006/03/29 17:24:01 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.3 2006/03/30 01:07:29 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -234,6 +234,49 @@ class LcmExpense extends LcmObject {
 
 		return $errors;
 	}
+
+	function setStatus($new_status) {
+		$errors = array();
+
+		global $author_session;
+
+		// Check if $new_status exists
+		$allowed_statuses = $this->getPossibleStatuses($new_status);
+
+		if (! $allowed_statuses[$new_status])
+			lcm_panic("Unknown status type: " . htmlspecialchars($new_status));
+
+		if ($author_session['status'] == 'admin') {
+			$query = "UPDATE lcm_expense 
+						SET status = '$new_status'
+						WHERE id_expense = " . $this->getDataInt('id_expense', '__ASSERT__');
+
+			lcm_query($query);
+		} else {
+			$errors['status'] = "Permission denied."; // TRAD
+		}
+
+		return $errors;
+	}
+
+	function getPossibleStatuses() {
+		$all = array();
+
+		// [ML] To be honest, this is here mostly for historical reasons:
+		// switching between various status does not always allow to switch
+		// to any other status, but in this case, yes.
+	
+		switch($this->getDataString('status')) {
+			case 'pending':
+			case 'granted':
+			case 'refused':
+			case 'deleted':
+			default:
+				$all = array('pending' => 1, 'granted' => 1, 'refused' => 1, 'deleted' => 1);
+		}
+
+		return $all;
+	}
 }
 
 class LcmExpenseInfoUI extends LcmExpense {
@@ -244,6 +287,8 @@ class LcmExpenseInfoUI extends LcmExpense {
 	function printGeneral($show_subtitle = true) {
 		if ($show_subtitle)
 			show_page_subtitle(_T('generic_subtitle_general'), 'expenses_intro');
+
+		$is_status_change = (_request('new_exp_status') ? true : false);
 
 		echo '<ul class="info">';
 		echo '<li>' 
@@ -260,6 +305,50 @@ class LcmExpenseInfoUI extends LcmExpense {
 			. '<span class="label2">' . _Ti('expense_input_cost') . '</span>'
 			. '<span class="value2">' .  format_money($this->getDataInt('cost')) . '</span>'
 			. "</li>\n";
+
+		// Expense status
+		if (! $is_status_change && ! _request('edit_comment') /* && has_edit_rights */ ) {
+			echo '<form action="edit_exp.php" method="get">'
+				. '<input type="hidden" name="expense" value="' . $this->getDataInt('id_expense') . '" />';
+
+			echo '<li>'
+				. '<span class="label2">' . _Ti('expense_input_status') . '</span>'
+				. '<span class="value2">';
+	
+			echo '<select name="new_exp_status" class="sel_frm" onchange="lcm_show(\'submit_exp_status\')">';
+	
+			$statuses = $this->getPossibleStatuses($my_status);
+	
+			foreach ($statuses as $key => $val) {
+				$sel = isSelected($key == $this->getDataString('status'));
+				echo '<option value="' . $key . '"' . $sel . '>' . _T('expense_status_option_' . $key) . "</option>";
+			}
+	
+			echo '</select>';
+			echo "<button type='submit' name='submit' id='submit_exp_status' value='set_exp_status' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
+	
+			echo '</span>'
+				. "</li>\n";
+			echo '</form>';
+		} else {
+			echo '<li>'
+				. '<span class="label2">' . _Ti('expense_input_status') . '</span>'
+				. '<span class="value2">'
+				. _T('expense_status_option_' . $this->getDataString('status'))
+				. '</span>'
+				. "</li>\n";
+
+			if ($is_status_change) {
+				echo '<input type="hidden" name="new_exp_status" value="' . _request('new_exp_status') . '" />' . "\n";
+
+				echo '<li>'
+					. '<span class="label1">' . 'new status:' /* _Ti('expense_input_status') */ . '</span>' // TRAD
+					. '<span class="value1">'
+					. _T('expense_status_option_' . _request('new_exp_status'))
+					. '</span>'
+					. "</li>\n";
+			}
+		}
 
 		echo "</ul>\n";
 	}
@@ -325,7 +414,6 @@ class LcmExpenseInfoUI extends LcmExpense {
 	
 		echo "</table>\n";
 	}
-
 }
 
 class LcmExpenseComment extends LcmObject {
@@ -383,11 +471,14 @@ class LcmExpenseComment extends LcmObject {
 	function validate() {
 		$errors = array();
 
+		if (! $this->getDataString('comment'))
+			$errors['comment'] = _Ti('expense_input_comment') . _T('warning_field_mandatory');
+
 		return $errors;
 	}
 
 	function save() {
-		$errors = $this->validate();
+		$errors = $this->validate($must_have_comment);
 
 		if (count($errors))
 			return $errors;
@@ -469,11 +560,15 @@ class LcmExpenseCommentInfoUI extends LcmExpenseComment {
 			echo '<input type="hidden" name="id_comment" value="' . $id_comment . '" />' . "\n";
 		}
 
-		echo '<p class="normal_text">';
-		echo '<textarea name="comment" id="input_expense_comment" class="frm_tarea" rows="3" cols="60">'
+		echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
+		echo '<tr>';
+		echo "<td>" . f_err_star('comment') . _Ti('expense_input_comment') . "</td>\n";
+		echo '<td><textarea name="comment" id="input_expense_comment" class="frm_tarea" rows="3" cols="60">'
 			. clean_output($this->getDataString('comment'))
-			. "</textarea>\n";
-		echo "</p>\n";
+			. "</textarea>\n"
+			. "</td>\n";
+		echo "</tr>\n";
+		echo "</table>\n";
 	}
 }
 
@@ -667,7 +762,7 @@ class LcmExpenseListUI {
 
 			// Status
 			echo "<td class='tbl_cont_" . $css . "'>";
-			echo $row['status'];
+			echo _T('expense_status_option_' . $row['status']);
 			echo "</td>\n";
 
 			echo "</tr>\n";

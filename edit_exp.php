@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_exp.php,v 1.1 2006/03/22 23:27:22 mlutfy Exp $
+	$Id: edit_exp.php,v 1.2 2006/03/30 01:07:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -49,16 +49,18 @@ if (!($admin || $write))
 // Start page
 //
 
-if (_request('comment')) {
+if (_request('c')) { // comment
 	if (! _request('expense'))
 		lcm_panic("Missing expense ID");
 	
 	lcm_page_start(_T('title_expense_comment'), '', '', 'expenses');
+} elseif (_request('expense')) {
+	if (_request('submit') == 'set_exp_status') 
+		lcm_page_start(_T('title_expense_comment'), '', '', 'expenses');
+	else
+		lcm_page_start(_T('title_expense_comment'), '', '', 'expenses');
 } else {
-	if (_request('expense'))
-		lcm_page_start(_T('title_expense_edit'), '', '', 'expenses');
-	else 
-		lcm_page_start(_T('title_expense_new'), '', '', 'expenses');
+	lcm_page_start(_T('title_expense_new'), '', '', 'expenses');
 }
 
 /* TODO
@@ -74,14 +76,18 @@ echo show_all_errors();
 
 echo '<form action="upd_exp.php" method="post">' . "\n";
 
-if (_request('comment')) {
-	$obj_exp = new LcmExpenseInfoUI(_request('expense', 0));
+$id_expense = _request('expense', 0);
+$id_comment = _request('c', 0);
+$status     = _request('new_exp_status');
+
+if ($status || $id_comment || _request('edit_comment')) {
+	$obj_exp = new LcmExpenseInfoUI($id_expense);
 	$obj_exp->printGeneral();
 
 	show_page_subtitle(_T('expenses_subtitle_comment'), 'expenses_comment');
 
-	echo "<p>and add comment box here..</p>"; // TODO
-
+	$obj_comment = new LcmExpenseCommentInfoUI($id_expense, $id_comment);
+	$obj_comment->printEdit();
 } else {
 	$obj_exp = new LcmExpenseInfoUI(_request('expense', 0));
 	$obj_exp->printEdit();
@@ -96,6 +102,7 @@ echo '<input type="hidden" name="id_followup" value="' . _session('id_followup',
 echo "</form>\n";
 
 lcm_page_end();
+
 
 // Clear the errors, in case user jumps to other 'edit' page
 $_SESSION['errors'] = array();
