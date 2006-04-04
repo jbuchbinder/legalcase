@@ -480,6 +480,38 @@ function get_default_keywords() {
 				"description" => "kw__institutions_003_description",
 				"ac_author" => "Y" )
 		)
+	),
+
+	"_exptypes" => array (
+		"name" => "_exptypes",
+		"title" => "kwg__exptypes_title",
+		"description" => "kwg__exptypes_description",
+		"type" => "system",
+		"policy" => "mandatory",
+		"quantity" => "one",
+		"suggest" => "",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array (
+			array (
+				"name" => "_exptypes01",
+				"title" => "10. kw__exptypes__exptypes01_title",
+				"description" => "kw__exptypes__exptypes01_description",
+				"hasvalue" => "N",
+				"ac_author" => "Y"),
+			array (
+				"name" => "_exptypes02",
+				"title" => "10. kw__exptypes__exptypes02_title",
+				"description" => "kw__exptypes__exptypes02_description",
+				"hasvalue" => "N",
+				"ac_author" => "Y"),
+			array (
+				"name" => "_exptypes_other",
+				"title" => "90. kw__exptypes__exptypes_other_title",
+				"description" => "kw__exptypes__exptypes_other_description",
+				"hasvalue" => "N",
+				"ac_author" => "Y")
+		)
 	)
   );
 
