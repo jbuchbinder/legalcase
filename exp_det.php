@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: exp_det.php,v 1.3 2006/03/30 01:06:44 mlutfy Exp $
+	$Id: exp_det.php,v 1.4 2006/04/04 23:33:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -31,14 +31,6 @@ if (! ($expense > 0))
 
 lcm_page_start(_T('title_expense_view') . ' ' . _request('expense'), '', '', 'expenses_intro');
 
-		/* Saved for future use
-			// Check for access rights
-			if (!($row['public'] || allowed($client,'r'))) {
-				die("You don't have permission to view this client details!");
-			}
-			$edit = allowed($client,'w');
-		*/
-
 //
 // Show general information
 //
@@ -47,13 +39,8 @@ echo '<fieldset class="info_box">';
 $obj_expense = new LcmExpenseInfoUI($expense);
 $obj_expense->printGeneral();
 
-// if ($edit)
-	echo '<p><a href="edit_exp.php?expense=' . $expense . '" class="edit_lnk">' . _T('expense_button_edit') . '</a></p>' . "\n";
-
+$obj_exp_ac = new LcmExpenseAccess(0, 0, $obj_expense);
 $obj_expense->printComments();
-
-// if ($edit)
-	echo '<p><a href="edit_exp.php?edit_comment=1&expense=' . $expense . '" class="edit_lnk">' . _T('expense_button_comment') . '</a></p>' . "\n";
 
 echo "</fieldset>\n";
 
@@ -62,4 +49,5 @@ $_SESSION['form_data'] = array();
 $_SESSION['errors'] = array();
 
 lcm_page_end();
+
 ?>
