@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.11 2006/03/29 17:21:24 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.12 2006/04/04 23:27:16 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -671,7 +671,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			$kw_found = false;
 
 			foreach($futype_kws as $kw) {
-				$sel = ($kw['name'] == $default_fu ? ' selected="selected"' : '');
+				$sel = isSelected($kw['name'] == $default_fu);
 				if ($sel) $kw_found = true;
 				echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 			}

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.29 2006/03/20 23:04:51 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.30 2006/04/04 23:27:16 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -163,8 +163,8 @@ function lcm_query_create_table($table, $fields, $keys = array()) {
 	return lcm_query($query);
 }
 
-lcm_query_create_unique_index($table, $idx_name, $field) {
-	lcm_query("CREATE UNIQUE INDEX $idx_name ON $table ($field)";
+function lcm_query_create_unique_index($table, $idx_name, $field) {
+	lcm_query("CREATE UNIQUE INDEX $idx_name ON $table ($field)");
 }
 
 
@@ -388,7 +388,7 @@ function lcm_query_sum_time($field_start, $field_end) {
 		. "IF(UNIX_TIMESTAMP($field_end) > 0,"
 			. "UNIX_TIMESTAMP($field_end)-UNIX_TIMESTAMP($field_start),"
 			. "0)"
-		. ") as time";
+		. ") ";
 }
 
 function lcm_query_subst_time($field_start, $field_end) {

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_pgsql.php,v 1.5 2006/03/29 17:25:04 mlutfy Exp $
+	$Id: inc_db_pgsql.php,v 1.6 2006/04/04 23:27:16 mlutfy Exp $
 */
 
 if (defined('_INC_DB_PGSQL')) return;
@@ -200,6 +200,10 @@ function process_query($query) {
 
 		$query = "INSERT INTO $table ($str_new_fields) VALUES ($str_new_values)";
 	}
+
+	// Make search queries case-insensitive
+	if (preg_match("/^SELECT (.*) LIKE '(.*)$/", $query, $regs))
+		$query = "SELECT " . $regs[1] . " ILIKE '" . $regs[2];
 
 	// change the names of the tables ($table_prefix)
 	// for example, lcm_case may become foo_case
