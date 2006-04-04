@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.3 2006/03/30 01:07:29 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.4 2006/04/04 23:28:01 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -26,6 +26,7 @@ if (defined('_INC_OBJ_EXPENSE')) return;
 define('_INC_OBJ_EXPENSE', '1');
 
 include_lcm('inc_obj_generic');
+include_lcm('inc_obj_exp_ac');
 
 class LcmExpense extends LcmObject {
 	// Note: Since PHP5 we should use "private", and generates a warning,
@@ -41,7 +42,11 @@ class LcmExpense extends LcmObject {
 		$this->LcmObject();
 
 		if ($id_expense > 0) {
-			$query = "SELECT * FROM lcm_expense WHERE id_expense = $id_expense";
+			$query = "SELECT e.*, a.name_first, a.name_middle, a.name_last
+						FROM lcm_expense as e, lcm_author as a
+						WHERE e.id_author = a.id_author
+						  AND id_expense = $id_expense";
+
 			$result = lcm_query($query);
 
 			if (($row = lcm_fetch_array($result))) 
@@ -284,9 +289,16 @@ class LcmExpenseInfoUI extends LcmExpense {
 		$this->LcmExpense($id_expense);
 	}
 
-	function printGeneral($show_subtitle = true) {
-		if ($show_subtitle)
+	function printGeneral($full_ui = true) {
+		$obj_acc = new LcmExpenseAccess(0, 0, $this);
+
+		if ($full_ui)
 			show_page_subtitle(_T('generic_subtitle_general'), 'expenses_intro');
+
+		if (! $obj_acc->getRead()) {
+			echo '<p>' . "Access denied. You do not have the permission to view this information." . "</p>\n"; // TRAD (make function!)
+			return;
+		}
 
 		$is_status_change = (_request('new_exp_status') ? true : false);
 
@@ -296,18 +308,35 @@ class LcmExpenseInfoUI extends LcmExpense {
 			. '<span class="value1">' . $this->getDataInt('id_expense') . '</span>'
 			. "</li>\n";
 
+		echo '<li>'
+			. '<span class="label2">' . _Ti('case_input_author') . '</span>' 
+			. '<span class="value2">' . get_author_link($this->data) . '</span>'
+			. "</li>\n";
+
+		echo '<li>'
+			. '<span class="label2">' . _Ti('time_input_date_creation') . '</span>' 
+			. '<span class="value2">' . format_date($this->getDataString('date_creation')) . '</span>'
+			. "</li>\n";
+
+		if ($this->getDataString('date_creation') != $this->getDataString('date_update')) {
+			echo '<li>'
+				. '<span class="label2">' . _Ti('time_input_date_updated') . '</span>' 
+				. '<span class="value2">' . format_date($this->getDataString('date_update')) . '</span>'
+				. "</li>\n";
+		}
+
 		echo '<li class="large">'
 			. '<span class="label2">' . _Ti('expense_input_description') . '</span>' 
-			. '<span class="value2">'. nl2br(clean_output($this->getDataString('description'))) . '</span>'
+			. '<span class="value2">' . nl2br(clean_output($this->getDataString('description'))) . '</span>'
 			. "</li>\n";
 
 		echo '<li>'
 			. '<span class="label2">' . _Ti('expense_input_cost') . '</span>'
-			. '<span class="value2">' .  format_money($this->getDataInt('cost')) . '</span>'
+			. '<span class="value2">' . format_money($this->getDataInt('cost'), true, true) . '</span>'
 			. "</li>\n";
 
 		// Expense status
-		if (! $is_status_change && ! _request('edit_comment') /* && has_edit_rights */ ) {
+		if (! $is_status_change && ! _request('edit_comment') && $obj_acc->getAdmin()) {
 			echo '<form action="edit_exp.php" method="get">'
 				. '<input type="hidden" name="expense" value="' . $this->getDataInt('id_expense') . '" />';
 
@@ -351,13 +380,25 @@ class LcmExpenseInfoUI extends LcmExpense {
 		}
 
 		echo "</ul>\n";
+
+		if ($full_ui) {
+			if ($obj_acc->getEdit())
+				echo '<p><a href="edit_exp.php?expense=' . $this->getDataInt('id_expense') . '" class="edit_lnk">' . _T('expense_button_edit') . '</a></p>' . "\n";
+		}
 	}
 
-	function printComments($find_case_string = '') {
+	function printComments($full_ui = true) {
 		$cpt = 0;
 		$my_list_pos = intval(_request('list_pos', 0));
+		$obj_acc = new LcmExpenseAccess(0, 0, $this);
 
-		show_page_subtitle(_T('expenses_subtitle_comments'), 'expenses_comments');
+		if ($full_ui)
+			show_page_subtitle(_T('expenses_subtitle_comments'), 'expenses_comments');
+		
+		if (! $obj_acc->getRead()) {
+			echo '<p>' . "Access denied. You do not have the permission to view this information." . "</p>\n"; // TRAD (make function!)
+			return;
+		}
 
 		for ($cpt = 0, $this->getCommentStart(); (! $this->getCommentDone()); $cpt++) {
 			$id_comment = $this->getCommentIterator();
@@ -369,7 +410,12 @@ class LcmExpenseInfoUI extends LcmExpense {
 		if (! $cpt)
 			echo "<p>No comments</p>"; // TRAD
 
-		show_listcase_end($my_list_pos, $this->getCommentTotal());
+		show_list_end($my_list_pos, $this->getCommentTotal());
+
+		if ($full_ui) {
+			if ($obj_acc->getEdit())
+				echo '<p><a href="edit_exp.php?edit_comment=1&expense=' . $this->getDataInt('id_expense') . '" class="edit_lnk">' . _T('expense_button_comment') . '</a></p>' . "\n";
+		}
 	}
 
 	function printEdit() {
@@ -394,11 +440,28 @@ class LcmExpenseInfoUI extends LcmExpense {
 		echo "</tr>\n";
 		
 		echo '<tr><td>' . f_err_star('type') . _T('expense_input_type') . '</td>' . "\n";
-		echo '<td><input name="type" value="' . clean_output($this->getDataString('type')) . '" class="search_form_txt" /></td></tr>' . "\n";
+		echo '<td>';
+
+		echo '<select ' . $dis . ' name="type" size="1" class="sel_frm">' . "\n";
+
+		$default_exp = $this->getDataString('type', get_suggest_in_group_name('_exptypes'));
+		$exptype_kws = get_keywords_in_group_name('_exptypes');
+
+		foreach($exptype_kws as $kw) {
+			$sel = isSelected($kw['name'] == $default_exp);
+			if ($sel) $kw_found = true;
+			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
+		}
+		
+	//	<input name="type" value="' . clean_output($this->getDataString('type')) . '" class="search_form_txt" />
+		echo '</td></tr>' . "\n";
 
 		// TODO: add currency
 		echo '<tr><td>' . f_err_star('cost') . _T('expense_input_cost') . '</td>' . "\n";
-		echo '<td><input name="cost" value="' . $this->getDataInt('cost') . '" class="search_form_txt" /></td></tr>' . "\n";
+		echo '<td>';
+		echo '<input type="text" name="cost" value="' . $this->getDataInt('cost') . '" class="search_form_txt" size="10" />';
+		echo ' ' . htmlspecialchars(read_meta('currency'));
+		echo "</td></tr>\n";
 		
 
 		// Show comment box only if new expense (not edit)
@@ -478,7 +541,7 @@ class LcmExpenseComment extends LcmObject {
 	}
 
 	function save() {
-		$errors = $this->validate($must_have_comment);
+		$errors = $this->validate();
 
 		if (count($errors))
 			return $errors;
@@ -509,6 +572,13 @@ class LcmExpenseComment extends LcmObject {
 			$this->data['id_comment'] = lcm_insert_id('lcm_expense_comment', 'id_comment');
 		}
 
+		// Update date_update for associated expense
+		$query = "UPDATE lcm_expense
+					SET date_update = NOW()
+					WHERE id_expense = " . $this->getDataInt('id_expense', '__ASSERT__');
+
+		lcm_query($query);
+
 		return $errors;
 	}
 }
@@ -523,9 +593,10 @@ class LcmExpenseCommentInfoUI extends LcmExpenseComment {
 	}
 
 	function printGeneral() {
-		echo "<div style='border-bottom: 1px solid #ccc;'>"; // CSS
+		$obj_ac = new LcmExpenseCommentAccess(0, $this);
 
-		echo "<!-- ID: " . $this->getDataInt('id_comment') . "<br/ -->\n";
+		echo "<!-- ID: " . $this->getDataInt('id_comment') . " -->\n";
+		echo "<div style='border-bottom: 1px solid #ccc;'>"; // CSS
 
 		echo '<p class="normal_text">'
 			. get_author_link($this->data)
@@ -537,15 +608,17 @@ class LcmExpenseCommentInfoUI extends LcmExpenseComment {
 
 		echo "</p>\n";
 
-		echo "<div style='float: right;'>";
-		echo '<a title="Edit this comment" '
-				. 'class="edit_lnk href="edit_exp.php?expense=' . $this->getDataInt('id_expense', '__ASSERT__') 
-				. '&ct=' . $this->getDataInt('id_comment', '__ASSERT__')
-				. '">' . _T('edit') . '</a>'; // TRAD
-		echo "</div>\n";
+		// Allow edit if author of comment + if expense is pending
+		if ($obj_ac->getEdit()) {
+			echo "<div style='float: right;'>";
+			echo '<a title="Edit this comment" '
+					. 'class="edit_lnk" href="edit_exp.php?expense=' . $this->getDataInt('id_expense', '__ASSERT__') 
+					. '&c=' . $this->getDataInt('id_comment', '__ASSERT__')
+					. '">' . _T('edit') . '</a>'; // TRAD
+			echo "</div>\n";
+		}
 
 		echo '<p class="normal_text">' . nl2br($this->getDataString('comment')) . "</p>\n";
-		
 		echo "</div>\n";
 	}
 
@@ -743,7 +816,7 @@ class LcmExpenseListUI {
 
 			echo "<td class='tbl_cont_" . $css . "'>";
 			echo '<a class="content_link" href="exp_det.php?expense=' . $row['id_expense'] . '">';
-			echo nl2br($description);
+			echo nl2br(highlight_matches($description, $this->search));
 			echo "</a>";
 			echo "</td>\n";
 
