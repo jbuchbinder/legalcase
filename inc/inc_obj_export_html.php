@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_export_html.php,v 1.1 2006/03/15 15:10:46 mlutfy Exp $
+	$Id: inc_obj_export_html.php,v 1.2 2006/04/04 23:29:13 mlutfy Exp $
 */
 
 // Not needed for now, but maybe later?
@@ -28,6 +28,29 @@ class LcmExportHtml /* extends LcmExportObject */ {
 
 	function LcmExportHtml() {
 		// $this->LcmExportObject();
+	}
+
+	function printStartDoc($title, $description, $helpref) {
+		$title = trim($title);
+		$description = trim($description);
+
+		lcm_page_start($title, '', '', $helpref);
+
+		if ($description)
+			echo '<p class="normal_text">' . $description . "</p>\n";
+	}
+
+	function printHeaderValueStart() {
+		echo "<table class='tbl_usr_dtl' width='98%' align='center' border='1'>";
+		echo "<tr>\n";
+	}
+
+	function printHeaderValue($val) {
+		echo '<th class="heading">' . $val . "</th>\n";
+	}
+
+	function printHeaderValueEnd() {
+		$this->printEndLine();
 	}
 
 	function printValue($val, $h, $css) {
@@ -76,4 +99,3 @@ class LcmExportHtml /* extends LcmExportObject */ {
 }
 
 ?>
-

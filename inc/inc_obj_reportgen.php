@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_reportgen.php,v 1.2 2006/03/15 15:11:41 mlutfy Exp $
+	$Id: inc_obj_reportgen.php,v 1.3 2006/04/04 23:29:47 mlutfy Exp $
 */
 
 include_lcm('inc_obj_generic');
@@ -39,6 +39,7 @@ class LcmReportGen extends LcmObject {
 	var $journal;
 	var $debug;
 	var $line_count;
+	var $col_count;
 
 	function LcmReportGen($my_id_report, $my_debug = false) {
 		$this->id_report = $my_id_report;
@@ -57,7 +58,9 @@ class LcmReportGen extends LcmObject {
 		$this->options = array();
 		$this->journal = array();
 		$this->debug = $my_debug;
+
 		$this->line_count = 0;
+		$this->col_count = 0;
 	}
 
 	function getId() {
@@ -214,7 +217,7 @@ class LcmReportGenUI extends LcmReportGen {
 	var $exporter;
 	var $ui;
 
-	function LcmReportGenUI($my_id_report, $my_export = '', $my_debug = false) {
+	function LcmReportGenUI($my_id_report, $my_export = 'html', $my_debug = false) {
 		$this->ui = $my_export;
 
 		if ($my_export == 'csv') {
@@ -228,11 +231,36 @@ class LcmReportGenUI extends LcmReportGen {
 		$this->LcmReportGen($my_id_report, $my_debug);
 	}
 
-	function printValue($val, $h, $css) {
+	function printStartDoc($title, $description, $helpref) {
+		if ($this->ui == 'html') {
+			$title = _Ti('title_rep_run') . $title;
+			$this->setOption('headers_sent', 'yes');
+		}
+	
+		$this->exporter->printStartDoc(remove_number_prefix($title), $description, $helpref);
+	}
+
+	function printHeaderValueStart() {
+		$this->exporter->printHeaderValueStart();
+	}
+
+	function printHeaderValue($val) {
+		$this->exporter->printHeaderValue($val);
+	}
+
+	function printHeaderValueEnd() {
+		$this->exporter->printHeaderValueEnd();
+	}
+
+	function printValue($val, $h = array(), $css = '') {
 		// TODO: Some preprocessing on the headers should be done 
 		// here instead of in $exporter->printValue()
+
+		if (! count($h))
+			$h = $this->headers[$this->col_count];
 		
 		$this->exporter->printValue($val, $h, $css);
+		$this->col_count++;
 	}
 
 	function printStartLine() {
@@ -241,6 +269,8 @@ class LcmReportGenUI extends LcmReportGen {
 
 	function printEndLine() {
 		$this->exporter->printEndLine();
+		$this->col_count = 0;
+		// $this->line_count++; ? (may be better than incrementing explicitely)
 	}
 }
 

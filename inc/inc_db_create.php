@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.50 2006/03/29 17:25:50 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.51 2006/04/04 23:29:13 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -371,6 +371,7 @@ function create_database() {
 		"line_src_name text NOT NULL DEFAULT ''",
 		"col_src_type text NOT NULL DEFAULT ''",
 		"col_src_name text NOT NULL DEFAULT ''",
+		"filecustom text NOT NULL DEFAULT ''",
 		"PRIMARY KEY  (id_report)"
 	);
 
