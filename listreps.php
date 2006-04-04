@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.15 2006/02/20 02:55:17 mlutfy Exp $
+	$Id: listreps.php,v 1.16 2006/04/04 21:52:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -114,7 +114,7 @@ while (($f = readdir($handle)) != '') {
 	if (is_file("custom/reports/" . $f)) {
 		// matches: custom/reports/alpha-num_name.php
 		if (preg_match("/^([_a-zA-Z0-9]+)\.php/", $f, $regs)) {
-			$custom_reports[] = $f;
+			$custom_reports[] = $regs[1];
 		}
 	}
 }
@@ -135,7 +135,7 @@ if (count($custom_reports)) {
 		echo "<tr><td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 		// TODO: how to extract name of report?
 		// an 'include(report) + $report->get_name() would be overkill..
-		echo '<a class="content_link" href="edit_rep.php?custom=' .  $custom_reports[$i] . '">' . $custom_reports[$i] . '</a>';
+		echo '<a class="content_link" href="edit_rep.php?filecustom=' .  $custom_reports[$i] . '">' . $custom_reports[$i] . '</a>';
 		echo "</td>\n";
 		echo "</tr>\n";
 	}
