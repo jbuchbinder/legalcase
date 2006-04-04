@@ -18,30 +18,30 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep.php,v 1.11 2006/03/21 16:18:56 mlutfy Exp $
+	$Id: upd_rep.php,v 1.12 2006/04/04 23:32:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 
+global $author_session;
+
 // Clear all previous errors
 $_SESSION['errors'] = array();
 
-// Register form data in the session
-if(!session_is_registered("rep_data"))
-    session_register("rep_data");
-
 // Get form data from POST fields
-foreach($_POST as $key => $value)
-    $rep_data[$key]=$value;
+foreach($_POST as $key => $value) {
+	$_SESSION['form_data'][$key] = _request($key);
+    $rep_data[$key] = _request($key);
+}
 
 // Clean input values
-$rep_data['id_report'] = intval($rep_data['id_report']);
-$rep_data['id_author'] = intval($rep_data['id_author']);
+$_SESSION['form_data']['id_report'] = intval(_session('id_report'));
+$_SESSION['form_data']['id_author'] = $author_session['id_author'];
 
 // Check report data for validity
-if (!$rep_data['title']) 
+if (! _session('title'))
 	$_SESSION['errors']['title'] = _Ti('rep_input_title') . _T('warning_field_mandatory');
 
 if (count($_SESSION['errors'])) {
@@ -53,11 +53,22 @@ if (count($_SESSION['errors'])) {
 // Proceed with update of report info
 //
 
-$fl = "title = '" . clean_input($rep_data['title']) . "', "
-	. "id_author = " . $rep_data['id_author'] . ", "
-	. "description = '" . clean_input($rep_data['description']) . "', "
-	. "notes = '" . clean_input($rep_data['notes']) . "', "
+$fl = "title = '" . _session('title') . "', "
+	. "id_author = " . _session('id_author') . ", "
+	. "description = '" . _session('description') . "', "
+	. "notes = '" . _session('notes') . "', "
 	. "date_update = NOW()";
+
+if (! _session('id_report')) {
+	if (_session('filecustom')) {
+		if (! preg_match("/^[-_A-Za-z0-9]+$/", _session('filecustom')))
+			$_SESSION['errors']['filecustom'] = htmlspecialchars(_session('filecustom')) . ": " . "Report file name has illegal characters"; // TRAD
+		elseif (! include_custom_report_exists(_session('filecustom')))
+			$_SESSION['errors']['filecustom'] = htmlspecialchars(_session('filecustom')) . ": " . "Report file does not exist"; // TRAD
+		else
+			$fl .= ", filecustom = '" . _session('filecustom') . "'";
+	}
+}
 
 // Put public access rights settings in a separate string
 //	$public_access_rights = '';
@@ -72,21 +83,21 @@ $fl = "title = '" . clean_input($rep_data['title']) . "', "
 //		$public_access_rights .= ", pub_write=0";
 
 
-if ($rep_data['id_report'] > 0) {
+if (_session('id_report') > 0) {
 	// Check access rights
 	// if (!allowed($id_report,'e')) die("You don't have permission to change this case's information!");
 	// If admin access is allowed, set all fields
 
 	if (true)
-		$q = "UPDATE lcm_report SET $fl WHERE id_report = " . $rep_data['id_report'];
+		$q = "UPDATE lcm_report SET $fl WHERE id_report = " . _session('id_report');
 	else 
-		$q = "UPDATE lcm_report SET $fl WHERE id_report = " . $rep_data['id_report'];
+		$q = "UPDATE lcm_report SET $fl WHERE id_report = " . _session('id_report');
 	
 	lcm_query($q);
 } else {
 	$q = "INSERT INTO lcm_report SET date_creation=NOW(),$fl";
 	$result = lcm_query($q);
-	$rep_data['id_report'] = lcm_insert_id('lcm_report', 'id_report');
+	$_SESSION['form_data']['id_report'] = lcm_insert_id('lcm_report', 'id_report');
 
 	// Insert new case_author relation
 	//$q = "INSERT INTO lcm_case_author SET
@@ -102,20 +113,12 @@ if ($rep_data['id_report'] > 0) {
 //$q="INSERT INTO lcm_case $cl VALUES $vl ON DUPLICATE KEY UPDATE $fl";
 // $result = lcm_query($q);
 
-//header("Location: rep_det.php?rep=$id_report");
-$ref_edit_rep = ($rep_data['ref_edit_rep'] ? $rep_data['ref_edit_rep'] : "rep_det.php?rep=" . $rep_data['id_report']);
 
-// Proceed according to the button type
-switch ($submit) {
-	case 'addnew':
-		header("Location: edit_rep.php?rep=0&ref=$ref_edit_rep");
-		break;
-	case 'adddet':
-		header("Location: rep_det.php?rep=" . $rep_data['id_report']);
-		break;
-	default:
-		// [ML] header("Location: $ref_edit_rep");
-		header("Location: rep_det.php?rep=" . $rep_data['id_report']);
-}
+// Forward to upd_rep_field.php if custom_report
+if (_session('filecustom'))
+	lcm_header("Location: upd_rep_field.php?" . "rep=" . _session('id_report')
+			. "&filecustom=" . _session('filecustom'));
+else
+	lcm_header("Location: rep_det.php?rep=" . _session('id_report'));
 
 ?>

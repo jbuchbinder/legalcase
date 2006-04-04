@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.30 2006/03/15 14:50:21 mlutfy Exp $
+	$Id: run_rep.php,v 1.31 2006/04/04 23:32:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -451,14 +451,12 @@ if ($author_session['status'] != 'admin') {
 
 
 $_SESSION['errors'] = array();
-$rep = intval($_GET['rep']); // Report ID
+$rep = intval(_request('rep', 0));
 
 if (! $rep) {
 	header('Location: listreps.php');
 	exit;
 }
-
-$report = new LcmReportGenUI(intval(_request('rep')), _request('debug'));
 
 //
 // Show title and description of the report
@@ -466,32 +464,28 @@ $report = new LcmReportGenUI(intval(_request('rep')), _request('debug'));
 
 $q = "SELECT *
 		FROM lcm_report
-		WHERE id_report = " . $report->getId();
+		WHERE id_report = " . $rep;
 
 $result = lcm_query($q);
 
 if (! ($rep_info = lcm_fetch_array($result)))
-	die("Report # " . $report->getId() . " doest not exist.");
+	lcm_panic("Report # " . $report->getId() . " doest not exist.");
 
-if (! $rep_info['line_src_name']) {
+if ((! $rep_info['line_src_name']) && (! $rep_info['filecustom'])) {
 	$_SESSION['errors']['rep_line'] = _T('rep_warning_atleastlineinfo');
-	header('Location: rep_det.php?rep=' . $report->getId());
+	lcm_header('Location: rep_det.php?rep=' . $report->getId());
 	exit;
 }
-	
-if ($_REQUEST['export'] == 'csv') {
-	header("Content-Type: text/comma-separated-values");
-	header('Content-Disposition: filename="' . remove_number_prefix($rep_info['title']) . '.csv"');
-	header("Content-Description: " . remove_number_prefix($rep_info['title']));
-	header("Content-Transfer-Encoding: binary");
-} else {
-	lcm_page_start(_T('title_rep_run') . " " . remove_number_prefix($rep_info['title']), '', '', 'report_intro');
-	$report->setOption('headers_sent', 'yes');
 
-	if ($rep_info['description'])
-		echo '<p class="normal_text">' . $rep_info['description'] . "</p>\n";
+if ($rep_info['filecustom']) {
+	include_custom_report($rep_info['filecustom']);
+	$report = new CustomReportGen(intval(_request('rep')), _request('export', 'html'), _request('debug'));
+} else {
+	$report = new LcmReportGenUI(intval(_request('rep')), _request('export', 'html'), _request('debug'));
 }
 
+$report->printStartDoc($rep_info['title'], $rep_info['description'], 'report_intro');
+	
 if ($rep_info['line_src_type'] == 'table')
 	$my_line_table = "lcm_" . $rep_info['line_src_name'];
 else
@@ -1040,29 +1034,33 @@ if ($report->getOption('headers_sent') == 'yes' && $_REQUEST['debug'] == 2) {
 	}
 }
 
-$result = lcm_query($report->getSQL(), true);
+if ($rep_info['filecustom']) {
+	$result = null;
+} else {
+	$result = lcm_query($report->getSQL(), true);
 
-if (! $result) {
-	if (isset($_REQUEST['debug'])) {
-		echo "The report could not be generated. Please send the following
-		information to the software developers if you think that this is a
-		bug."; // TRAD
+	if (! $result) {
+		if (isset($_REQUEST['debug'])) {
+			echo "The report could not be generated. Please send the following
+				information to the software developers if you think that this is a
+				bug."; // TRAD
 
-		echo "SQL = " . $report->getSQL();
+				echo "SQL = " . $report->getSQL();
 
-		$dbg = $report->getJournal();
+			$dbg = $report->getJournal();
 
-		foreach($dbg as $line)
-			echo $line;
-	} else {
-		$tmp_link = new Link();
-		$tmp_link->addVar('debug', '2');
+			foreach($dbg as $line)
+				echo $line;
+		} else {
+			$tmp_link = new Link();
+			$tmp_link->addVar('debug', '2');
 
-		echo "The report could not be generated. Try running again using the "
-			. '<a href="' . $tmp_link->getUrl() . '">debug mode</a>.'; // TRAD
+			echo "The report could not be generated. Try running again using the "
+				. '<a href="' . $tmp_link->getUrl() . '">debug mode</a>.'; // TRAD
+		}
+
+		exit;
 	}
-
-	exit;
 }
 
 //
@@ -1075,31 +1073,19 @@ show_filters_info($report);
 // Ready for report line
 //
 
-if ($report->getOption('headers_sent') == 'yes') {
-	echo "<table class='tbl_usr_dtl' width='98%' align='center' border='1'>";
-	echo "<tr>\n";
-
-	$h_before = '<th class="heading">';
-	$h_between = '';
-	$h_after  = "</th>\n";
-} else {
-	$h_before = '"';
-	$h_between = ', ';
-	$h_after = "\"";
-}
+$report->printHeaderValueStart();
 
 $my_headers = $report->getHeaders();
 
-foreach ($my_headers as $h) {
-	echo $h_before . _Th(remove_number_prefix($h['description'])) . $h_after . $h_between;
-}
+foreach ($my_headers as $h)
+	$report->printHeaderValue($h['description']);
 
-$report->printEndLine();
+$report->printHeaderValueEnd();
 
-$cpt_lines = 0;
-$cpt_col = 0;
+if ($rep_info['filecustom']) 
+	$report->run();
 
-for ($cpt_lines = $cpt_col = 0; $row = lcm_fetch_array($result); $cpt_lines++) {
+for ($cpt_lines = $cpt_col = 0; $result && ($row = lcm_fetch_array($result)); $cpt_lines++) {
 	$report->printStartLine();
 
 	foreach ($row as $key => $val) {

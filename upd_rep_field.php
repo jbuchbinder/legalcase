@@ -18,19 +18,25 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.11 2005/12/06 09:29:39 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.12 2006/04/04 23:32:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 
-$rep = intval($_REQUEST['rep']);
+$rep = intval(_request('rep', 0));
+
+if (! $rep) {
+	lcm_log("upd_rep_field.php: missing rep (id)");
+	lcm_header("Location: listreps.php");
+	exit;
+}
 
 // After returning to the page referer, jump to a specific place
 // Ex: #line, #col, #filter, etc.
 $ref_tag = "";
 
-if (isset($_REQUEST['remove'])) {
+if (_request('remove')) {
 	$remove = $_REQUEST['remove']; // = { 'col', 'line' }
 
 	if ($remove == 'col') {
@@ -73,7 +79,7 @@ if (isset($_REQUEST['remove'])) {
 	}
 }
 
-if (isset($_REQUEST['add'])) {
+if (_request('add')) {
 	$add = $_REQUEST['add']; // = { 'col', 'line', 'filter' }
 	$id_field = intval($_REQUEST['id_field']);
 
@@ -119,10 +125,9 @@ if (isset($_REQUEST['add'])) {
 		lcm_query($query);
 		$ref_tag = "#filter";
 	}
-
 }
 
-if (isset($_REQUEST['update'])) {
+if (_request('update')) {
 	$update = $_REQUEST['update']; // = { 'filter' }
 	$id_filter = intval($_REQUEST['id_filter']);
 
@@ -184,7 +189,7 @@ if (isset($_REQUEST['update'])) {
 	}
 }
 
-if (isset($_REQUEST['select_col_type']) && isset($_REQUEST['select_col_name'])) {
+if (_request('select_col_type') && _request('select_col_name')) {
 	// Update only if not already set, or it will create mess
 	// if (! ($rep_info['col_src_type'] && $rep_info['col_src_name'])) {
 		$query = "UPDATE lcm_report
@@ -198,7 +203,7 @@ if (isset($_REQUEST['select_col_type']) && isset($_REQUEST['select_col_name'])) 
 	$ref_tag = "#col";
 }
 
-if (isset($_REQUEST['select_line_type']) && isset($_REQUEST['select_line_name'])) {
+if (_request('select_line_type') && _request('select_line_name')) {
 	// Update only if not already set, or it will create mess
 	// if (! ($rep_info['line_src_type'] && $rep_info['line_src_name'])) {
 		$query = "UPDATE lcm_report
@@ -212,7 +217,7 @@ if (isset($_REQUEST['select_line_type']) && isset($_REQUEST['select_line_name'])
 	$ref_tag = "#line";
 }
 
-if (isset($_REQUEST['unselect_col'])) {
+if (_request('unselect_col')) {
 	$query = "UPDATE lcm_report
 			SET col_src_type = '',
 				col_src_name = ''
@@ -222,7 +227,7 @@ if (isset($_REQUEST['unselect_col'])) {
 	$ref_tag = "#col";
 }
 
-if (isset($_REQUEST['unselect_line'])) {
+if (_request('unselect_line')) {
 	$query = "UPDATE lcm_report
 			SET line_src_type = '',
 				line_src_name = ''
@@ -232,6 +237,39 @@ if (isset($_REQUEST['unselect_line'])) {
 	$ref_tag = "#line";
 }
 
-header("Location: " . $_SERVER['HTTP_REFERER'] . $ref_tag);
+if (_request('filecustom')) {
+	if (include_custom_report_exists(_request('filecustom'))) {
+		include_custom_report(_request('filecustom'));
+		$obj = new CustomReportSpecs();
+
+		$do_update = false;
+		$query = "UPDATE lcm_report SET ";
+
+		if (($info = $obj->getReportLine())) {
+			$query .= "line_src_type = '" . $info['type'] . "',
+						line_src_name = '" . $info['name'] . "'";
+
+			$do_update = true;
+		}
+
+		if (($info = $obj->getReportCol())) {
+			if ($do_update)
+				$query .= ", ";
+
+			$query .= " col_src_type = '" . $info['type'] . "',
+						col_src_name = '" . $info['name'] . "'";
+
+			$do_update = true;
+		}
+
+		if ($do_update)
+			lcm_query($query);
+	} else {
+		$_SESSION['errors']['filecustom'] = "Custom report file does not exist: "
+				. htmlspecialchars(_request('filecustom'));
+	}
+}
+
+lcm_header("Location: rep_det.php?rep=" . $rep . $ref_tag);
 
 ?>

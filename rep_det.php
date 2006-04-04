@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.36 2006/02/20 03:26:18 mlutfy Exp $
+	$Id: rep_det.php,v 1.37 2006/04/04 23:32:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -66,17 +66,19 @@ function show_report_field_edit($type, $rep_info) {
 				echo "<tr>\n";
 				echo "<td>" . _Th($field['description']) . "</td>\n";
 				echo "<td><a href='upd_rep_field.php?rep=" . $rep_info['id_report'] . "&amp;"
-					. "remove=" . $type . "&amp;" . $my_id . "=" . $field[$my_id] . "' class='content_link'>" . "X" . "</a></td>\n";
+					. "remove=" . $type . "&amp;" . $my_id . "=" . $field[$my_id] . "' class='content_link'>" . "X" . "</a></td>\n"; // ACCESSIBILITY
 				echo "</tr>\n";
 				array_push($my_fields, $field['id_field']);
 			}
 
 			echo "</table>\n";
 		} else {
-			// Allow to change the source table
-			echo ' <a href="upd_rep_field.php?rep=' . $rep_info['id_report'] 
-				. '&amp;unselect_' . $type . '=1" class="content_link">' . "X" . '</a>'; // TRAD
-				echo "</p>\n";
+			if (! $rep_info['filecustom']) {
+				// Allow to change the source table
+				echo ' <a href="upd_rep_field.php?rep=' . $rep_info['id_report'] 
+					. '&amp;unselect_' . $type . '=1" class="content_link">' . "X" . '</a>'; // TRAD ACCESSIBILITY
+					echo "</p>\n";
+			}
 		}
 
 		// Add field (if line_src_type == table)
@@ -217,10 +219,30 @@ $edit = (($GLOBALS['author_session']['status'] == 'admin') ||
 echo "<fieldset class='info_box'>";
 show_page_subtitle(_T('generic_subtitle_general'), 'reports_intro');
 
-echo "<p class='normal_text'>";
-echo _Ti('rep_input_id') . $rep_info['id_report'] . "<br />\n";
-echo _Ti('rep_input_title') . remove_number_prefix($rep_info['title']) . "<br />\n";
-echo _Ti('time_input_date_creation') . format_date($rep_info['date_creation']) . "</p>\n";
+echo '<ul class="info">';
+echo '<li>'
+	. '<span class="label1">' . _Ti('rep_input_id') . '</span>'
+	. '<span class="value1">' . $rep_info['id_report'] . '</span>'
+	. "</li>\n";
+
+echo '<li>'
+	. '<span class="label1">' . _Ti('rep_input_title') . '</span>'
+	. '<span class="value1">' . remove_number_prefix($rep_info['title']) . '</span>'
+	. "</li>\n";
+
+echo '<li>'
+	. '<span class="label2">' . _Ti('time_input_date_creation') . '</span>'
+	. '<span class="value2">' . format_date($rep_info['date_creation']) . '</span>'
+	. "</li>\n";
+
+if ($rep_info['filecustom']) {
+	echo '<li>'
+		. '<span class="label2">' . 'Custom report: ' . '</span>' // TRAD
+		. '<span class="value2">' . $rep_info['filecustom'] . '</span>'
+		. "</li>\n";
+}
+
+echo "</ul>\n";
 
 if ($rep_info['description'])
 	echo '<p class="normal_text">' . $rep_info['description'] . '</p>' . "\n";
@@ -235,7 +257,6 @@ echo "</p></fieldset>";
 //
 // Matrix line
 //
-
 echo '<a name="line"></a>' . "\n";
 echo "<fieldset class='info_box'>";
 show_page_subtitle(_T('rep_subtitle_line'), 'reports_edit', 'line');
@@ -245,7 +266,6 @@ echo "</fieldset>\n";
 //
 // Matrix column (Experimental)
 //
-
 echo '<a name="col"></a>' . "\n";
 echo "<fieldset class='info_box'>";
 show_page_subtitle(_T('rep_subtitle_column'), 'reports_edit', 'columns');
