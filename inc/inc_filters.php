@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.84 2006/03/21 16:47:55 mlutfy Exp $
+	$Id: inc_filters.php,v 1.85 2006/04/04 23:30:30 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -174,7 +174,7 @@ function format_time_interval_prefs($time) {
 	return format_time_interval($time, $hours_only);
 }
 
-function format_money($money, $two_cents = true) {
+function format_money($money, $two_cents = true, $show_currency_sign = false) {
 	// this is very stupid i18n because windows does not have strfmon,
 	// altough we cannot depend on locales on all servers for all languages
 	// so for our small needs, this should be good enough.
@@ -200,10 +200,16 @@ function format_money($money, $two_cents = true) {
 		$str_hundreds = ($hundreds % 1000) . $seperator_hundreds . $str_hundreds;
 	}
 
+	$str_final = $str_hundreds;
+
 	if ($str_cents)
-		return $str_hundreds . $seperator_cents . $str_cents;
-	else
-		return $str_hundreds;
+		$str_final .= $seperator_cents . $str_cents;
+
+	if ($show_currency_sign)
+		$str_final = _T('currency_format_placement',
+				array('currency' => htmlspecialchars(read_meta('currency')), 'money' => $str_final));
+
+	return $str_final;
 }
 
 // Error display function
