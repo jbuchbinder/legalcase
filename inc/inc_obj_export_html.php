@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_export_html.php,v 1.2 2006/04/04 23:29:13 mlutfy Exp $
+	$Id: inc_obj_export_html.php,v 1.3 2006/04/06 21:27:54 mlutfy Exp $
 */
 
 // Not needed for now, but maybe later?
@@ -95,6 +95,10 @@ class LcmExportHtml /* extends LcmExportObject */ {
 
 	function printEndLine() {
 		echo "</tr>\n";
+	}
+
+	function printEndDoc() {
+		// nothing
 	}
 }
 
