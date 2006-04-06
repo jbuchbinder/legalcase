@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.31 2006/04/04 23:32:52 mlutfy Exp $
+	$Id: run_rep.php,v 1.32 2006/04/06 21:37:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -1135,7 +1135,9 @@ for ($cpt_lines = $cpt_col = 0; $result && ($row = lcm_fetch_array($result)); $c
 						// This puts <td> in values ... 
 						// $row_tmp[0] = get_ui_print_value($row_tmp[0], $my_headers[$cpt_col]);
 
-						if ($_REQUEST['export'] == 'csv') {
+						// FIXME [ML] $report should have a method, such as $r->supportsHtml()
+						// or $r->addHtml() .. 
+						if ($_REQUEST['export'] == 'csv' || $_REQUEST['export'] == 'ods') {
 							$val .= $row_tmp[0];
 						} else {
 							$val .= '<li style="padding: 0; margin: 0;">';
@@ -1150,7 +1152,7 @@ for ($cpt_lines = $cpt_col = 0; $result && ($row = lcm_fetch_array($result)); $c
 							$tmp_link = new Link();
 							$tmp_link->addVar('zoom' . $cpt_lines . "-" . $cpt_col, 1);
 
-							if ($_REQUEST['export'] == 'csv') {
+							if ($_REQUEST['export'] == 'csv' || $_REQUEST['export'] == 'ods') { // FIXME
 								$val .= $row_tmp[0];
 							} else {
 								$val .= '<a class="content_link" style="display: block;" href="' . $tmp_link->getUrl() . '">';
@@ -1266,6 +1268,7 @@ foreach ($my_headers as $h) {
 }
 
 $report->printEndLine();
+$report->printEndDoc();
 
 if ($report->getOption('headers_sent') == 'yes') {
 	echo "</table>\n";
