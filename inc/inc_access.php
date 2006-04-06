@@ -8,6 +8,9 @@ function create_random_password($length = 8, $salt = "") {
 	$seed = (double) (microtime() + 1) * time();
 	mt_srand($seed);
 	srand($seed);
+	
+	$s = $salt;
+	$pass = '';
 
 	for ($i = 0; $i < $length; $i++) {
 		if (!$s) {
@@ -36,7 +39,7 @@ function create_random_password($length = 8, $salt = "") {
 	return $pass;
 }
 
-function creer_pass_aleatoire($lenght = 8, $salt = "") {
+function creer_pass_aleatoire($length = 8, $salt = "") {
 	lcm_log("Use of deprecated function creer_pass_aleatoire, use create_random_password() instead.");
 	return create_random_password($length, $salt);
 }
@@ -44,7 +47,7 @@ function creer_pass_aleatoire($lenght = 8, $salt = "") {
 function initialiser_sel() {
 	global $htsalt;
 
-	$htsalt = '$1$'.creer_pass_aleatoire();
+	$htsalt = '$1$' . create_random_password();
 }
 
 
