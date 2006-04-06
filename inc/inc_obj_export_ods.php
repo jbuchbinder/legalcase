@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_export_ods.php,v 1.1 2006/04/06 21:21:48 mlutfy Exp $
+	$Id: inc_obj_export_ods.php,v 1.2 2006/04/06 21:25:35 mlutfy Exp $
 */
 
 // Not needed for now, but maybe later?
@@ -107,17 +107,13 @@ class LcmExportODS /* extends LcmExportObject */ {
 		$description = trim($description);
 
 		// Prepare the ZIP file
-		/*
 		@include("pear/Archive/Zip.php");
 
 		if (! class_exists("Archive_Zip"))
 			lcm_panic("You must have PEAR installed (Archive/Zip.php)");
-		*/
-
-		include_lcm('pclzip.lib');
 
 		$this->zipname = 'inc/data/' . $title . '.ods';
-		$this->zipfile = new PclZip($this->zipname);
+		$this->zipfile = new Archive_Zip($this->zipname);
 
 		header("Content-Type: " . $this->mimetype);
 		header('Content-Disposition: filename="' . $title . '.ods"');
@@ -345,8 +341,7 @@ class LcmExportODS /* extends LcmExportObject */ {
 			'remove_path' => $this->dir
 		);
 
-		// $this->zipfile->create($all_files, $params);
-		$this->zipfile->create($all_files, PCLZIP_OPT_REMOVE_PATH, $this->dir);
+		$this->zipfile->create($all_files, $params);
 		
 		// Send it to the user for download
 		if (! ($f = fopen($this->zipname, 'r'))) 
