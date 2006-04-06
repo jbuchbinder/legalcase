@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.91 2006/04/04 23:29:13 mlutfy Exp $
+	$Id: inc_version.php,v 1.92 2006/04/06 21:34:02 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -410,6 +410,8 @@ if (!$PATH_TRANSLATED) {
 	else if ($DOCUMENT_ROOT && $SCRIPT_URL) $PATH_TRANSLATED = $DOCUMENT_ROOT.$SCRIPT_URL;
 }
 
+// For error handling after failed fopen/mkdir/etc
+$lcm_errormsg = '';
 
 function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 	$dt = date("Y-m-d H:i:s (T)");
@@ -444,6 +446,9 @@ function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 
 		lcm_debug("[dbg] " . $err, 2);
 	}
+
+	// set our custom errno, because PHP doesn't seem to have one!
+	$GLOBALS['lcm_errormsg'] = $errmsg;
 }
 
 $old_error_handler = set_error_handler("userErrorHandler");
