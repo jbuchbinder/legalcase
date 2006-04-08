@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_export_ods.php,v 1.2 2006/04/06 21:25:35 mlutfy Exp $
+	$Id: inc_obj_export_ods.php,v 1.3 2006/04/08 15:40:59 mlutfy Exp $
 */
 
 // Not needed for now, but maybe later?
@@ -112,8 +112,12 @@ class LcmExportODS /* extends LcmExportObject */ {
 		if (! class_exists("Archive_Zip"))
 			lcm_panic("You must have PEAR installed (Archive/Zip.php)");
 
-		$this->zipname = 'inc/data/' . $title . '.ods';
+		// Zip filename must use random ID, to avoid overwriting existing reports
+		// not catastrophic if that happens, but annoyance nonetheless.
+		$this->zipname = $this->dir . '.ods';
 		$this->zipfile = new Archive_Zip($this->zipname);
+
+		$title = preg_replace('/\s+/', '_', $title);
 
 		header("Content-Type: " . $this->mimetype);
 		header('Content-Disposition: filename="' . $title . '.ods"');
@@ -248,21 +252,19 @@ class LcmExportODS /* extends LcmExportObject */ {
 	}
 
 	function printHeaderValueStart() {
-		/*
-		echo "<table class='tbl_usr_dtl' width='98%' align='center' border='1'>";
-		echo "<tr>\n";
-		*/
+		$this->printStartLine();
 	}
 
 	function printHeaderValue($val) {
-		// echo '<th class="heading">' . $val . "</th>\n";
+		$h = array('filter' => 'text');
+		$this->printValue($val, $h);
 	}
 
 	function printHeaderValueEnd() {
-		// $this->printEndLine();
+		$this->printEndLine();
 	}
 
-	function printValue($val, $h, $css) {
+	function printValue($val, $h, $css = '') {
 		$xml = '<table:table-cell ';
 
 		$align = '';
@@ -304,8 +306,6 @@ class LcmExportODS /* extends LcmExportObject */ {
 		$xml .= $format . '>';
 		$xml .= '<text:p>' . $val . '</text:p>';
 		$xml .= '</table:table-cell>';
-
-		// echo '<td ' . $align . ' ' . $css . '>' . $val . "</td>\n";
 
 		fwrite($this->fcontent, $xml);
 	}
@@ -351,6 +351,16 @@ class LcmExportODS /* extends LcmExportObject */ {
 			echo $data;
 
 		fclose($f);
+
+		// TODO: Delete temporary files
+		unlink($this->dir . '/content.xml');
+		unlink($this->dir . '/styles.xml');
+		unlink($this->dir . '/meta.xml');
+		unlink($this->dir . '/mimetype');
+		unlink($this->dir . '/META-INF/manifest.xml');
+		rmdir($this->dir  . '/META-INF/');
+		rmdir($this->dir);
+
 	}
 }
 
