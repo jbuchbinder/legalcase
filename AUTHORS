@@ -1,5 +1,5 @@
 # 	This file is part of the Legal Case Management System (LCM).
-# 	(C) 2004-2005 Free Software Foundation, Inc.
+# 	(C) 2004-2006 Free Software Foundation, Inc.
 # 
 # 	This program is free software; you can redistribute it and/or modify it
 # 	under the terms of the GNU General Public License as published by the
@@ -15,16 +15,17 @@
 # 	with this program; if not, write to the Free Software Foundation, Inc.,
 # 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 # 
-# 	$Id: AUTHORS,v 1.3 2005/12/06 09:43:40 mlutfy Exp $
+# 	$Id: AUTHORS,v 1.4 2006/04/11 22:28:59 mlutfy Exp $
 
 Main authors:
 	Mathieu Lutfy (mathieu -at- ngo-bg.org, www.bidon.ca), maintainer + php/sql
-	Anastas Giokov (antzi -at- antzi.bg, www.antzi.bg), main php/sql writer
-	Krasimir Makaveev (krasi -at- makaveev.com, www.makaveev.com), main html/css dev+design
+	Anastas Giokov (antzi -at- antzi.bg, www.antzi.bg), php/sql 
+	Krasimir Makaveev (krasi -at- makaveev.com, www.makaveev.com), html/css dev+design
 
 Translators:
 	Alexander Shopov (ash -at- contact.bg), Bulgarian
 	Maria Velichkova (mariavel -at- ngo-bg.org), Bulgarian
+	Mateusz Hołysz (mateusz_holysz -at- o2.pl), Polish
 	Luís André Beckhauser (luisandre -at- beckhauser.adv.br), Portuguese of Brasil
 	Sergey Salnikov (salnsg -at- gmail.com), Russian
 	Roberto Leal Guerra (roberto.leal -at- realhost.com.mx), Spanish
@@ -34,3 +35,5 @@ Documentation:
 	Christina Haralanova (christina -at- consultant.bg)
 	Mathieu Lutfy (mathieu -at- bidon.ca)
 
+Libraries included:
+	Pclzip v2.6-RC1, by Vincent Blavet (vincent -at- phpconcept.net, www.phpconcept.net)
