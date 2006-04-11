@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.12 2006/04/04 23:32:52 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.13 2006/04/11 23:35:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -256,8 +256,13 @@ if (_request('filecustom')) {
 			if ($do_update)
 				$query .= ", ";
 
-			$query .= " col_src_type = '" . $info['type'] . "',
-						col_src_name = '" . $info['name'] . "'";
+			$query .= " col_src_type = '" . $info['type'] . "'";
+			
+			// Ignore if name not set, or name restricts the choice (ex:  keyword that applies to 'case')
+			if (! $info['name'] || substr($info['name'], 0, 4) == 'FOR:')
+				$query .= ", col_src_name = '' ";
+			else
+				$query .= ", col_src_name = '" . $info['name'] . "' ";
 
 			$do_update = true;
 		}
