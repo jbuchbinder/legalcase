@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.37 2006/04/04 23:32:52 mlutfy Exp $
+	$Id: rep_det.php,v 1.38 2006/04/11 23:34:35 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -115,43 +115,64 @@ function show_report_field_edit($type, $rep_info) {
 			echo "</form>\n";
 		}
 	} else {
-		echo "<form action='upd_rep_field.php' name='frm_" . $type . "_source' method='post'>\n";
-		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-		echo '<p class="normal_text">' . f_err_star('rep_' . $type) . _Ti('rep_info_source_table');
-		echo "<input name='select_" . $type . "_type' value='table' type='hidden' />\n";
-		echo "<select name='select_" . $type . "_name' class='sel_frm'>
-			<option value='author'>" . _T('rep_info_table_lcm_author') . "</option>
-			<option value='case'>" . _T('rep_info_table_lcm_case') . "</option>
-			<option value='stage'>" . _T('rep_info_table_lcm_stage') . "</option>
-			<option value='client'>" . _T('rep_info_table_lcm_client') . "</option>
-			<option value='followup'>" . _T('rep_info_table_lcm_followup') . "</option>
-			</select>\n";
+		if (! $src_type || $src_type != 'keyword') {
+			echo "<form action='upd_rep_field.php' name='frm_" . $type . "_source' method='post'>\n";
+			echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+			echo '<p class="normal_text">' . f_err_star('rep_' . $type) . _Ti('rep_info_source_table');
+			echo "<input name='select_" . $type . "_type' value='table' type='hidden' />\n";
+			echo "<select name='select_" . $type . "_name' class='sel_frm'>
+				<option value='author'>" . _T('rep_info_table_lcm_author') . "</option>
+				<option value='case'>" . _T('rep_info_table_lcm_case') . "</option>
+				<option value='stage'>" . _T('rep_info_table_lcm_stage') . "</option>
+				<option value='client'>" . _T('rep_info_table_lcm_client') . "</option>
+				<option value='followup'>" . _T('rep_info_table_lcm_followup') . "</option>
+				</select>\n";
 
-		echo "<button class='simple_form_btn' name='validate_" . $type . "_source'>" . _T('button_validate') . "</button>\n";
-		echo "</p>\n";
-		echo "</form>\n";
+			echo "<button class='simple_form_btn' name='validate_" . $type . "_source'>" . _T('button_validate') . "</button>\n";
+			echo "</p>\n";
+			echo "</form>\n";
+		}
 
-		echo '<p class="normal_text">' . _T('info_or') . "</p>\n";
+		if (! $src_type)
+			echo '<p class="normal_text">' . _T('info_or') . "</p>\n";
 
-		echo "<form action='upd_rep_field.php' name='frm_" . $type . "_source' method='post'>\n";
-		echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
-		echo "<p class='normal_text'>" . _Ti('rep_info_source_keyword');
-		echo "<input name='select_" . $type . "_type' value='keyword' type='hidden' />\n";
+		if (! $src_type || $src_type != 'table') {
+			echo "<form action='upd_rep_field.php' name='frm_" . $type . "_source' method='post'>\n";
+			echo "<input name='rep' value='" . $rep_info['id_report'] . "' type='hidden' />\n";
+			echo "<p class='normal_text'>" . _Ti('rep_info_source_keyword');
+			echo "<input name='select_" . $type . "_type' value='keyword' type='hidden' />\n";
 
-		$all_kwgs = get_kwg_all('', true);
+			// Restrict list of keywords if custom report
+			if ($rep_info['filecustom']) {
+				include_custom_report($rep_info['filecustom']);
+				$obj = new CustomReportSpecs();
 
-		echo "<select name='select_" . $type . "_name' class='sel_frm'>\n";
+				$info = ($type == 'line' ? $obj->getReportLine() : $obj->getReportCol());
 
-		foreach ($all_kwgs as $kwg)
-			echo "<option value='" . $kwg['name'] . "'>" 
+				if (substr($info['name'], 0, 4) == 'FOR:') {
+					$choices = split(':', $info['name']);
+					$all_kwgs = get_kwg_all($choices[1], true);
+				} else {
+					lcm_panic("Error in custom report specifications.");
+				}
+			} else {
+				$all_kwgs = get_kwg_all('', true);
+			}
+
+			echo "<select name='select_" . $type . "_name' class='sel_frm'>\n";
+			echo "<option value=''>...</option>\n";
+
+			foreach ($all_kwgs as $kwg)
+				echo "<option value='" . $kwg['name'] . "'>" 
 				. _T('rep_info_table_lcm_' . $kwg['type']) . " - " . _T(remove_number_prefix($kwg['title']))
 				. "</option>\n";
 
-		echo "</select>\n";
+			echo "</select>\n";
 
-		echo "<button class='simple_form_btn' name='validate_" . $type . "_source_kw'>" . _T('button_validate') . "</button>\n";
-		echo "</p>\n";
-		echo "</form>\n";
+			echo "<button class='simple_form_btn' name='validate_" . $type . "_source_kw'>" . _T('button_validate') . "</button>\n";
+			echo "</p>\n";
+			echo "</form>\n";
+		}
 	}
 }
 
@@ -193,17 +214,20 @@ if (! $rep_info) {
 // if they are not present (old reports).
 //
 
-if (! $rep_info['col_src_name']) {
+if (! $rep_info['col_src_type']) {
 	$q = "SELECT f.table_name
 		FROM lcm_fields as f, lcm_rep_col as c
 		WHERE f.id_field = c.id_field
 		AND c.id_report = " . $rep;
 
 	$result = lcm_query($q);
-	$tmp_info = lcm_fetch_array($result);
 
-	$rep_info['col_src_name'] = $tmp_info['table_name'];
-	$rep_info['col_src_type'] = 'table';
+	if (lcm_num_rows($result)) {
+		$tmp_info = lcm_fetch_array($result);
+
+		$rep_info['col_src_name'] = $tmp_info['table_name'];
+		$rep_info['col_src_type'] = 'table';
+	}
 }
 
 //
