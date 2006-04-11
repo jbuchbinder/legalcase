@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_conditions.php,v 1.9 2006/02/20 03:34:29 mlutfy Exp $
+	$Id: inc_conditions.php,v 1.10 2006/04/11 23:30:16 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -274,7 +274,7 @@ function show_report_filters($id_report, $is_runtime = false) {
 		array_push($sources, "'" . $row['table_name'] . "'");
 
 	// Fetch all keyword sources
-	if ($rep_info['col_src_type'] == 'keyword') {
+	if ($rep_info['col_src_type'] == 'keyword' && $rep_info['col_src_name']) {
 		$kwg = get_kwg_from_name($rep_info['col_src_name']);
 
 		if ($kwg['type'] == 'system') {
