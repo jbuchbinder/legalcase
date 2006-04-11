@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.32 2006/04/06 21:37:52 mlutfy Exp $
+	$Id: run_rep.php,v 1.33 2006/04/11 23:37:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -495,49 +495,14 @@ else
 // For report headers (used later)
 //
 
-$do_grouping = false;
+// $do_grouping = false;
+$report->setOption('do_grouping', 'no');
 
 //
 // Get report line fields, store into $report->lines for later
 //
 
-$q = "SELECT *
-		FROM lcm_rep_line as l, lcm_fields as f
-		WHERE id_report = " . $report->getId() . "
-		AND l.id_field = f.id_field
-		ORDER BY col_order, id_line ASC";
-
-$result = lcm_query($q);
-
-while ($row = lcm_fetch_array($result)) {
-	$my_line_table = $row['table_name'];
-	$report->addLine(prefix_field($row['table_name'], $row['field_name']));
-	$report->addHeader($row['description'], $row['filter'], $row['enum_type'], '', $row['field_name']);
-
-	if ($row['field_name'] == 'count(*)')
-		$do_grouping = true;
-}
-
-// No fields were specified: show them all (avoids errors)
-if (! count($report->getLines())) {
-	if ($rep_info['line_src_type'] == 'table') {
-		$q = "SELECT * 
-			FROM lcm_fields 
-			WHERE table_name = '$my_line_table'
-			AND field_name != 'count(*)'";
-		$result = lcm_query($q);
-
-		while ($row = lcm_fetch_array($result)) {
-			$my_line_table = $row['table_name'];
-			$report->addLine(prefix_field($row['table_name'], $row['field_name']));
-			$report->addHeader($row['description'], $row['filter'], $row['enum_type'], '', $row['field_name']);
-		}
-	} elseif ($rep_info['line_src_type'] == 'keyword') {
-		$kwg = get_kwg_from_name($rep_info['line_src_name']);
-		$report->addLine("k.title as 'TRAD'");
-		$report->addHeader(_T(remove_number_prefix($kwg['title'])), $kwg['filter'], $kwg['enum_type'], '', 'k.id_keyword'); // XXX not sure about id_keyword
-	}
-}
+$report->setupReportLines();
 
 //
 // Get report columns fields, store into $report->columns for later
@@ -560,7 +525,7 @@ while ($row = lcm_fetch_array($result)) {
 	$my_col_table = $row['table_name'];
 
 	if ($row['field_name'] == "count(*)")
-		$do_grouping = true;
+		$report->setOption('do_grouping', 'yes'); // $do_grouping = true;
 	
 	if ($row['enum_type']) {
 		$enum = split(":", $row['enum_type']);
@@ -651,7 +616,8 @@ while ($row = lcm_fetch_array($result)) {
 				$special_id = $report->addSpecial($sql);
 				$report->addColumn("1 as \"LCM_SQL:special:$special_id\"");
 
-				$do_grouping = true;
+				$report->setOption('do_grouping', 'yes');
+				// $do_grouping = true;
 			} else {
 				echo "\n\n QUERY = " . $report->getSQL() . " \n\n";
 				lcm_panic("Not yet implemented -" . $enum[1] . "-");
@@ -688,7 +654,7 @@ while ($row = lcm_fetch_array($result)) {
 			// For report headers
 			// $k['filter'] = 'number';
 			// $k['description'] = $k['title'];
-			$report->addHeader($k['title'], 'number', $k['enum_type']);
+			$report->addHeader(_Th($k['title']), 'number', $k['enum_type']);
 
 			// Store special SQL command.
 			$special_id = $report->addSpecial($sql);
@@ -708,7 +674,8 @@ while ($row = lcm_fetch_array($result)) {
 		$special_id = $report->addSpecial($sql);
 		$report->addColumn("1 as \"LCM_SQL:special:$special_id\"");
 
-		$do_grouping = true;
+		// $do_grouping = true;
+		$report->setOption('do_grouping', 'yes');
 	} else {
 		$report->addColumn(prefix_field($row['table_name'], $row['field_name']));
 		$report->addHeader($row['description'], $row['filter'], $row['enum_type']);
@@ -716,7 +683,7 @@ while ($row = lcm_fetch_array($result)) {
 	}
 }
 
-if ($rep_info['col_src_type'] == 'keyword' && ! count($report->getColumns())) {
+if ($rep_info['col_src_type'] == 'keyword' && $rep_info['col_src_name'] && ! count($report->getColumns())) {
 	$all_kw_names = array();
 	$all_kw_ids = array();
 	$kwg = get_kwg_from_name($rep_info['col_src_name']);
@@ -736,7 +703,7 @@ if ($rep_info['col_src_type'] == 'keyword' && ! count($report->getColumns())) {
 		$exists_stage_filter = true;
 
 	if ($kwg['type'] == $rep_info['line_src_name']) {
-		$report->addHeader(_T(remove_number_prefix($kwg['title'])), 'text');
+		$report->addHeader(_Th(remove_number_prefix($kwg['title'])), 'text');
 		$report->addColumn("k.title as 'TRAD'");
 	//	$report->addWhere("k.id_group = " . $kwg['id_group']);
 
@@ -752,7 +719,7 @@ if ($rep_info['col_src_type'] == 'keyword' && ! count($report->getColumns())) {
 
 			if ($my_line_table == 'lcm_author') {
 				// TODO: can't we use k.id_keyword instead? and drop lcm_keyword?
-				$report->addHeader(_T(remove_number_prefix($kw['title'])), 'number', $kw['enum_type']);
+				$report->addHeader(_Th(remove_number_prefix($kw['title'])), 'number', $kw['enum_type']);
 
 				$sql = "SELECT count(*) FROM lcm_keyword_" . $kwg['type'] . " as ka, "
 					. " lcm_case_author as ca, lcm_keyword as k, lcm_case as c " . ($exists_stage_filter ? ", lcm_stage as s " : "")
@@ -763,7 +730,7 @@ if ($rep_info['col_src_type'] == 'keyword' && ! count($report->getColumns())) {
 					. " AND k.name = '" . $kw['name'] . "'"
 					. $sql_filter;
 			} elseif ($my_line_table == 'lcm_followup') {
-				$report->addHeader(_T(remove_number_prefix($kw['title'])), 'time_input_length', '', 'time_length');
+				$report->addHeader(_Th(remove_number_prefix($kw['title'])), 'time_input_length', '', 'time_length');
 
 				$sql = "SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > UNIX_TIMESTAMP(fu.date_start), UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) "
 					. "FROM lcm_keyword_" . $kwg['type'] . " as ka, lcm_followup as fu, lcm_case as c "
@@ -771,7 +738,9 @@ if ($rep_info['col_src_type'] == 'keyword' && ! count($report->getColumns())) {
 					. " AND c.id_case = fu.id_case "
 					. " AND ka.id_keyword = " . $kw['id_keyword']
 					. $sql_filter;
-				$do_grouping = true;
+
+				// $do_grouping = true;
+				$report->setOption('do_grouping', 'yes');
 			}
 
 			// Store special SQL command. This was stored as "LCM_SQL: very long SQL",
@@ -863,7 +832,8 @@ if ($rep_info['line_src_type'] == 'table'
 
 	foreach ($tmp_lines as $l) {
 		if (preg_match("/^(.+\.)?id_/", $l)) {
-			$report->setLineKeyField($l);
+			if (! $report->getLineKeyField())
+				$report->setLineKeyField($l);
 		}
 	}
 
@@ -891,6 +861,7 @@ $report->addSQL("SELECT " . $my_line_fields);
 if ($my_line_fields && $report->getLineKeyField()) {
 	$my_line_fields .= ", " . $report->getLineKeyField(); // [ML] only for backward compat
 	$report->addSQL(", " . $report->getLineKeyField() . " as 'LCM_HIDE_ID' ");
+	$report->addLine($report->getLineKeyField() . " as 'LCM_HIDE_ID'");
 }
 
 if ($my_col_fields)
@@ -899,7 +870,7 @@ if ($my_col_fields)
 if ($rep_info['line_src_type'] == 'table') {
 	$report->addSQL(" FROM " . $my_line_table . suffix_table($my_line_table));
 
-	if ($rep_info['col_src_type'] == 'keyword') {
+	if ($rep_info['col_src_type'] == 'keyword' && $rep_info['col_src_name']) {
 		$kwg = get_kwg_from_name($rep_info['col_src_name']);
 		$kws = get_keywords_in_group_name($rep_info['col_src_name']);
 		$kw_list_id = array();
@@ -1000,7 +971,7 @@ if (count($report->getWhere())) {
 	$report->addSQL(implode(" AND ", $report->getWhere()));
 }
 
-if ($do_grouping) {
+if ($report->getOption('do_grouping') == 'yes') { // $do_grouping) {
 	$group_fields = "";
 	$tmp = array();
 	$my_lines = $report->getLines();
@@ -1208,7 +1179,7 @@ for ($cpt_lines = $cpt_col = 0; $result && ($row = lcm_fetch_array($result)); $c
 						$cpt_items += $row_tmp[0];
 				}
 			} elseif ($key == 'TRAD') {
-				$val = remove_number_prefix(_T($val));
+				$val = remove_number_prefix(_Th($val));
 
 				// [ML] I don't remember what $val might be, but it is probably 
 				// numeric (if we are translating it), but just in case..
@@ -1273,7 +1244,7 @@ $report->printEndDoc();
 if ($report->getOption('headers_sent') == 'yes') {
 	echo "</table>\n";
 
-	echo "<p>Number of lines: " . $report->getLineCount() . "</p>\n"; // TRAD
+	echo "<p>Number of rows: " . $report->getRowCount() . "</p>\n"; // TRAD
 
 	// Report footnotes (ex: signed by manager, etc. -- allow HTML)
 	echo $rep_info['notes'];
