@@ -6,7 +6,7 @@
 // http://www.phpconcept.net
 // --------------------------------------------------------------------------------
 //
-// $Id: inc_pclzip.php,v 1.2 2006/04/11 22:22:52 mlutfy Exp $
+// $Id: inc_pclzip.php,v 1.3 2006/04/11 22:43:13 mlutfy Exp $
 
 /* 
 	This notice was added by Mathieu Lutfy, for distribution with 
@@ -5223,7 +5223,10 @@
   // --------------------------------------------------------------------------------
   function PclZipUtilTranslateWinPath($p_path, $p_remove_disk_letter=true)
   {
-    if (stristr(php_uname(), 'windows')) {
+    // ATTENTION: PATCH !
+    // Replaced uname() by PHP_OS. uname() is often blocked by ISPs
+	// (patch taken from SPIP 1.8.3, wwww.spip.net)
+    if (stristr(PHP_OS, 'windows')) {
       // ----- Look for potential disk letter
       if (($p_remove_disk_letter) && (($v_position = strpos($p_path, ':')) != false)) {
           $p_path = substr($p_path, $v_position+1);
