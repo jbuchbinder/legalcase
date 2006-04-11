@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_reportgen.php,v 1.4 2006/04/06 21:27:54 mlutfy Exp $
+	$Id: inc_obj_reportgen.php,v 1.5 2006/04/11 01:18:10 mlutfy Exp $
 */
 
 include_lcm('inc_obj_generic');
@@ -208,7 +208,7 @@ class LcmReportGen extends LcmObject {
 		$this->line_count++;
 	}
 
-	function getLineCount() {
+	function getRowCount() {
 		return $this->line_count;
 	}
 }
@@ -217,7 +217,7 @@ class LcmReportGenUI extends LcmReportGen {
 	var $exporter;
 	var $ui;
 
-	function LcmReportGenUI($my_id_report, $my_export = 'html', $my_debug = false) {
+	function LcmReportGenUI($my_id_report, $my_export = 'html', $my_debug = 0) {
 		$this->ui = $my_export;
 
 		switch ($my_export) {
