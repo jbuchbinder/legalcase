@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_reportgen.php,v 1.5 2006/04/11 01:18:10 mlutfy Exp $
+	$Id: inc_obj_reportgen.php,v 1.6 2006/04/11 23:29:12 mlutfy Exp $
 */
 
 include_lcm('inc_obj_generic');
@@ -27,6 +27,7 @@ class LcmReportGen extends LcmObject {
 	var $id_report;
 	
 	var $line_key_field;
+	var $rep_info;
 
 	var $query;
 	var $where;
@@ -61,6 +62,16 @@ class LcmReportGen extends LcmObject {
 
 		$this->line_count = 0;
 		$this->col_count = 0;
+
+		// Get report info
+		$q = "SELECT *
+				FROM lcm_report
+				WHERE id_report = " . $my_id_report;
+		
+		$result = lcm_query($q);
+		
+		if (! ($this->rep_info = lcm_fetch_array($result)))
+			lcm_panic("Report # $my_id_report doest not exist.");
 	}
 
 	function getId() {
@@ -101,6 +112,51 @@ class LcmReportGen extends LcmObject {
 
 	function getLines() {
 		return $this->lines;
+	}
+
+	function setupReportLines() {
+		$this->addComment("setupReportLines() called.");
+
+		$q = "SELECT *
+				FROM lcm_rep_line as l, lcm_fields as f
+				WHERE id_report = " . $this->getId() . "
+				AND l.id_field = f.id_field
+				ORDER BY col_order, id_line ASC";
+		
+		$result = lcm_query($q);
+		
+		while ($row = lcm_fetch_array($result)) {
+			$my_line_table = $row['table_name'];
+			$this->addLine(prefix_field($row['table_name'], $row['field_name']));
+			$this->addHeader(_Th($row['description']), $row['filter'], $row['enum_type'], '', $row['field_name']);
+		
+			if ($row['field_name'] == 'count(*)')
+				$this->setOption('do_grouping', 'yes');
+				// $do_grouping = true;
+		}
+		
+		if (count($this->getLines()))
+			return;
+
+		//
+		// No fields were specified: show them all (avoids errors)
+		//
+		if ($this->rep_info['line_src_type'] == 'table') {
+			$q = "SELECT * 
+					FROM lcm_fields 
+					WHERE table_name = 'lcm_" . $this->rep_info['line_src_name'] . "'
+					  AND field_name != 'count(*)'";
+			$result = lcm_query($q);
+	
+			while ($row = lcm_fetch_array($result)) {
+				$this->addLine(prefix_field($row['table_name'], $row['field_name']));
+				$this->addHeader(_Th($row['description']), $row['filter'], $row['enum_type'], '', $row['field_name']);
+			}
+		} elseif ($this->rep_info['line_src_type'] == 'keyword') {
+			$kwg = get_kwg_from_name($this->rep_info['line_src_name']);
+			$this->addLine("k.title as 'TRAD'");
+			$this->addHeader(_Th(remove_number_prefix($kwg['title'])), $kwg['filter'], $kwg['enum_type'], '', 'k.id_keyword'); // XXX not sure about id_keyword
+		}
 	}
 
 	function addColumn($string) {
