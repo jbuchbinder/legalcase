@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.30 2006/04/04 23:27:16 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.31 2006/04/16 11:53:57 antzi Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -230,10 +230,11 @@ function lcm_connect_db_test($host, $login, $pass, $db = '', $port = 0) {
 
 	// Non-silent connect, should be shown in <!-- --> anyway
 	if ($port > 0) $host = "$host:$port";
-	$link = mysql_connect($host, $login, $pass, $port);
+	$link = mysql_connect($host, $login, $pass, true);
 
 	if ($link) {
-		mysql_close($link);
+//		mysql_close($link);
+		$link = null;
 		return true;
 	} else {
 		return false;
