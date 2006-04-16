@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.31 2006/04/16 11:53:57 antzi Exp $
+	$Id: inc_db_mysql.php,v 1.32 2006/04/16 15:47:17 antzi Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -196,6 +196,9 @@ function process_query($query) {
 		$query = ereg_replace('([[:space:],])lcm_', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
 	}
 
+	// Change RANDOM() to RAND() for MySQL/PosgreSQL unification
+	$query = str_replace('RANDOM(','RAND(',$query);
+		
 	return $query;
 }
 
