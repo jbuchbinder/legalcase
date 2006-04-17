@@ -319,6 +319,13 @@ fieldset.conf_info_box, fieldset.info_box {
 
 /* --- [ Errors list ] --- */
 
+.err_box {
+	border: 1px solid #f00;
+	margin: 0.5em;
+	padding: 0.5em;
+	-moz-border-radius: 5px;
+}
+
 ul.err_list li {
 	color: #f00;
 }
