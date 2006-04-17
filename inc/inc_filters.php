@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.86 2006/04/17 15:44:55 mlutfy Exp $
+	$Id: inc_filters.php,v 1.87 2006/04/17 16:59:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -230,7 +230,9 @@ function f_err_star($fn, $errors = array()) {
 }
 
 function show_all_errors($all_errors = array()) {
-	$ret = "<div align=\"left\"><ul class=\"err_list\">";
+	$ret = '<div align="left" class="err_box">'
+		. '<p class="normal_text">' . _Ti('title_error') . '</p>'
+		. '<ul class="err_list">';
 
 	if (! count($all_errors))
 		if (isset($_SESSION['errors']))
