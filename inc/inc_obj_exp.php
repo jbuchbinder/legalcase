@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.4 2006/04/04 23:28:01 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.5 2006/04/17 18:40:20 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -165,6 +165,9 @@ class LcmExpense extends LcmObject {
 
 		if (!$this->getDataString('description'))
 			$errors['description'] = _Ti('expense_input_description') . _T('warning_field_mandatory');
+
+		if (! preg_match('/^\d*\.?\d*$/', $this->getDataString('cost')))
+			$errors['cost'] = _Ti('expense_input_cost') . 'Format not recognised, please use 9999.99 format'; // TRAD
 
 		//
 		// Custom validation functions
