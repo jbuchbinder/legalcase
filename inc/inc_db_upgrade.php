@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.60 2006/04/04 23:29:13 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.61 2006/04/17 17:42:42 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -971,7 +971,8 @@ function upgrade_database($old_db_version) {
 			"date_creation datetime NOT NULL",
 			"date_update datetime NOT NULL",
 			"pub_read tinyint(1) NOT NULL",
-			"pub_write tinyint(1) NOT NULL"
+			"pub_write tinyint(1) NOT NULL",
+			"PRIMARY KEY  (id_expense)"
 		);
 
 		$keys = array (
@@ -988,7 +989,8 @@ function upgrade_database($old_db_version) {
 			"id_author bigint(21) NOT NULL",
 			"date_creation datetime NOT NULL",
 			"date_update datetime NOT NULL",
-			"comment text NOT NULL DEFAULT ''"
+			"comment text NOT NULL DEFAULT ''",
+			"PRIMARY KEY  (id_comment)"
 		);
 
 		lcm_query_create_table("lcm_expense_comment", $fields);
