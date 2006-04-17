@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listexps.php,v 1.1 2006/04/11 22:29:38 mlutfy Exp $
+	$Id: listexps.php,v 1.2 2006/04/17 19:01:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -50,8 +50,11 @@ show_find_box('exp', $find_exp_string);
 //
 $prefs_change = false;
 
-$types_owner = array('my', 'public');
+$types_owner = array('my' => 1, 'public' => 1);
 $types_period = array('m1' => 30, 'm3' => 91, 'm6' => 182, 'y1' => 365); // 30 days, 3 months, 6 months, 1 year
+
+if ($author_session['status'] == 'admin')
+	$types_owner['all'] = 1;
 
 if (($v = _request('case_owner'))) {
 	if ($prefs['case_owner'] != $v) {
@@ -67,7 +70,7 @@ if (($v = _request('case_owner'))) {
 $q_owner = " (e.id_author = " . $author_session['id_author'];
 
 if ($prefs['case_owner'] == 'public')
-	$q_owner .= " OR e.public = 1";
+	$q_owner .= " OR e.pub_read = 1";
 
 if ($author_session['status'] == 'admin' && $prefs['case_owner'] == 'all')
 	$q_owner .= " OR 1=1 ";
@@ -98,17 +101,12 @@ if ($prefs_change) {
 //
 echo '<form action="listexps.php" method="get">' . "\n";
 echo "<p class=\"normal_text\">\n";
-echo _T('input_filter_case_owner'); // XXX
-echo '<select name="expense_owner">';
+echo _T('input_filter_case_owner');
+echo '<select name="case_owner">';
 
-foreach ($types_owner as $t) {
+foreach ($types_owner as $t => $foo) {
 	$sel = ($prefs['case_owner'] == $t ? ' selected="selected" ' : '');
-	echo '<option value="' . $t . '"' . $sel . '>' . _T('case_filter_owner_option_' . $t) . "</option>\n";
-}
-
-if ($author_session['status'] == 'admin') {
-	$sel = ($prefs['case_owner'] == 'all' ? ' selected="selected" ' : '');
-	echo '<option value="all"' . $sel . '>' . _T('case_filter_owner_option_all') . "</option>\n";
+	echo '<option value="' . $t . '"' . $sel . '>' . _T('expense_filter_owner_option_' . $t) . "</option>\n";
 }
 
 echo "</select>\n";
