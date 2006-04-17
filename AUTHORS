@@ -15,7 +15,7 @@
 # 	with this program; if not, write to the Free Software Foundation, Inc.,
 # 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 # 
-# 	$Id: AUTHORS,v 1.4 2006/04/11 22:28:59 mlutfy Exp $
+# 	$Id: AUTHORS,v 1.5 2006/04/17 20:45:12 mlutfy Exp $
 
 Main authors:
 	Mathieu Lutfy (mathieu -at- ngo-bg.org, www.bidon.ca), maintainer + php/sql
@@ -36,4 +36,5 @@ Documentation:
 	Mathieu Lutfy (mathieu -at- bidon.ca)
 
 Libraries included:
-	Pclzip v2.6-RC1, by Vincent Blavet (vincent -at- phpconcept.net, www.phpconcept.net)
+	Pclzip v2.6-RC1, by Vincent Blavet (vincent -at- phpconcept.net, www.phpconcept.net), GPL
+	liveUpdater.js (derivative), originally by Avai Bryant and modifications by Leslie A. Hensley, public domain
