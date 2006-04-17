@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.33 2006/04/11 23:37:00 mlutfy Exp $
+	$Id: run_rep.php,v 1.34 2006/04/17 21:35:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -1266,11 +1266,21 @@ if ($report->getOption('headers_sent') == 'yes') {
 	//
 	// Make a link to export the report
 	//
+	echo '<p>';
+
 	$link_csv = new Link();
 	$link_csv->delVar('export');
 	$link_csv->addVar('export', 'csv');
 
-	echo '<p><a href="' . $link_csv->getUrl() . '" class="exp_lnk">' . _T('rep_button_exportcsv') . '</a></p>';
+	echo '<a href="' . $link_csv->getUrl() . '" class="exp_lnk">' . _T('rep_button_exportcsv') . '</a> ';
+
+	$link_ods = new Link();
+	$link_ods->delVar('export');
+	$link_ods->addVar('export', 'ods');
+
+	echo '<a href="' . $link_ods->getUrl() . '" class="exp_lnk">' .  _T('rep_button_exportcsv') . ' (ODS)' . '</a>'; // TRAD
+	
+	echo "</p>\n";
 
 	//
 	// Print debug information, if requested
