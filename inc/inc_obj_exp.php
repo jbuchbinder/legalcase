@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.5 2006/04/17 18:40:20 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.6 2006/04/17 20:08:52 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -803,7 +803,7 @@ class LcmExpenseListUI {
 
 			// Type
 			echo "<td class='tbl_cont_" . $css . "'>";
-			echo $row['type'];
+			echo _Tkw('_exptypes', $row['type']);
 			echo "</td>\n";
 
 			// Description
