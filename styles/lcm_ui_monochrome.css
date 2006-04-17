@@ -322,3 +322,8 @@ fieldset.conf_info_box, fieldset.info_box {
 ul.err_list li {
 	color: #f00;
 }
+
+ul.err_list li a {
+	color: #f00;
+	text-decoration: none;
+}
