@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.13 2006/04/11 23:35:34 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.14 2006/04/17 20:01:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -83,10 +83,10 @@ if (_request('add')) {
 	$add = $_REQUEST['add']; // = { 'col', 'line', 'filter' }
 	$id_field = intval($_REQUEST['id_field']);
 
-	if (! $id_field)
-		die ("add column: missing valid 'id_field'");
-
-	if ($add == 'col') {
+	if (! $id_field) {
+		// This is normal to happen, but log in case we have weird bugs
+		lcm_log("upd_rep_field: add column: no id_field provided");
+	} elseif ($add == 'col') {
 		$order = intval($_REQUEST['order']);
 		$header = clean_input($_REQUEST['header']);
 		$sort = clean_input($_REQUEST['sort']);

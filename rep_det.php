@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: rep_det.php,v 1.38 2006/04/11 23:34:35 mlutfy Exp $
+	$Id: rep_det.php,v 1.39 2006/04/17 20:01:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -101,17 +101,18 @@ function show_report_field_edit($type, $rep_info) {
 			echo "<th class='heading'>" . _Ti('rep_input_item_add') . "</th>\n";
 			echo "<td>\n";
 			echo "<select name='id_field' class='sel_frm'>";
+			echo "<option value=''>...</option>\n";
 
 			while ($row = lcm_fetch_array($result)) {
 				echo "<option value='" . $row['id_field'] . "'>" . _Th($row['description']) . "</option>\n";
 			}
 
 			echo "</select>\n";
+			echo "<button class='simple_form_btn' name='validate_" . $type . "_additem'>" . _T('button_validate') . "</button>\n";
 			echo "</td>\n";
 			echo "</tr>\n";
 			echo "</table>\n";
 
-			echo "<p><button class='simple_form_btn' name='validate_" . $type . "_additem'>" . _T('button_validate') . "</button></p>\n";
 			echo "</form>\n";
 		}
 	} else {
