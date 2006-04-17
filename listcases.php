@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.69 2006/04/17 19:01:46 mlutfy Exp $
+	$Id: listcases.php,v 1.70 2006/04/17 19:39:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,7 +57,7 @@ if ($author_session['status'] == 'admin')
 
 if (($v = _request('case_owner'))) {
 	if ($prefs['case_owner'] != $v) {
-		if (! array_key_exists($v, $types_owner))
+		if (! array_search($v, $types_owner))
 			lcm_panic("Value for case owner not permitted: " . htmlspecialchars($v));
 		
 		$prefs['case_owner'] = _request('case_owner');

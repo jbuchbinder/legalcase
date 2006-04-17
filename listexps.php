@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listexps.php,v 1.2 2006/04/17 19:01:46 mlutfy Exp $
+	$Id: listexps.php,v 1.3 2006/04/17 19:39:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -82,7 +82,7 @@ $q_owner .= " ) ";
 //
 if (($v = _request('case_period'))) {
 	if ($prefs['case_period'] != $v) {
-		if (! array_key_exists($v, $types_period))
+		if (! array_search($v, $types_period))
 			lcm_panic("Value for case period not permitted: " . htmlspecialchars($v));
 
 		$prefs['case_period'] = $v;
