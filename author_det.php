@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.26 2006/02/20 03:01:36 mlutfy Exp $
+	$Id: author_det.php,v 1.27 2006/04/17 09:48:42 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -270,7 +270,12 @@ $result = lcm_query($q);
 								UNIX_TIMESTAMP(date_end)-UNIX_TIMESTAMP(date_start), 0)) as total_time
 					FROM lcm_followup
 					WHERE id_author = $author
-				 	GROUP BY id_author";
+					  AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" .  $date_start . "') ";
+
+				if ($date_end != "-1")
+					$q .= " AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
+				
+				$q .= "	GROUP BY id_author";
 
 				$result = lcm_query($q);
 				$row = lcm_fetch_array($result);
