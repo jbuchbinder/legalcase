@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listexps.php,v 1.3 2006/04/17 19:39:18 mlutfy Exp $
+	$Id: listexps.php,v 1.4 2006/04/19 16:30:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -82,8 +82,9 @@ $q_owner .= " ) ";
 //
 if (($v = _request('case_period'))) {
 	if ($prefs['case_period'] != $v) {
-		if (! array_search($v, $types_period))
-			lcm_panic("Value for case period not permitted: " . htmlspecialchars($v));
+		// [ML] Ignoring filter, since case period may be 1,5,50 days, but also v = 2005, 2006, etc.
+		// if (! array_search($v, $types_period))
+		//	lcm_panic("Value for case period not permitted: " . htmlspecialchars($v));
 
 		$prefs['case_period'] = $v;
 		$prefs_change = true;
@@ -105,7 +106,7 @@ echo _T('input_filter_case_owner');
 echo '<select name="case_owner">';
 
 foreach ($types_owner as $t => $foo) {
-	$sel = ($prefs['case_owner'] == $t ? ' selected="selected" ' : '');
+	$sel = isSelected($prefs['case_owner'] == $t);
 	echo '<option value="' . $t . '"' . $sel . '>' . _T('expense_filter_owner_option_' . $t) . "</option>\n";
 }
 
@@ -114,7 +115,7 @@ echo "</select>\n";
 echo '<select name="case_period">';
 
 foreach ($types_period as $key => $val) {
-	$sel = ($prefs['case_period'] == $val ? ' selected="selected" ' : '');
+	$sel = isSelected($prefs['case_period'] == $val);
 	echo '<option value="' . $val . '"' . $sel . '>' . _T('case_filter_period_option_' . $key) . "</option>\n";
 }
 
@@ -124,8 +125,10 @@ $q_dates = "SELECT DISTINCT " . lcm_query_trunc_field('date_creation', 'year') .
 
 $result = lcm_query($q_dates);
 
-while($row = lcm_fetch_array($result))
+while($row = lcm_fetch_array($result)) {
+	$sel = isSelected($prefs['case_period'] == $row['year']);
 	echo '<option value="' . $row['year'] . '">' . _T('case_filter_period_option_year', array('year' => $row['year'])) . "</option>\n";
+}
 
 echo "</select>\n";
 
