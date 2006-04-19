@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.6 2006/04/17 20:08:52 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.7 2006/04/19 16:30:47 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -746,8 +746,7 @@ class LcmExpenseListUI {
 		// Period (date_creation) to show
 		if ($prefs['case_period'] < 1900) // since X days
 			// $q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_creation) < " . $prefs['case_period'];
-			$q .= " AND " . lcm_query_trunc_field('NOW()', 'day') . ' - '
-				. lcm_query_trunc_field('e.date_creation', 'day') . ' < ' . $prefs['case_period'];
+			$q .= " AND " . lcm_query_subst_time('e.date_creation', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
 		else // for year X
 			$q .= " AND " . lcm_query_trunc_field('e.date_creation', 'year') . ' = ' . $prefs['case_period'];
 
