@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.61 2006/04/17 17:42:42 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.62 2006/04/19 15:02:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -73,7 +73,6 @@ function upgrade_database_conf() {
 }
 
 function upgrade_database($old_db_version) {
-	global $lcm_db_version;
 	$log = "";
 
 	$lcm_db_version_current = $old_db_version;
@@ -980,6 +979,11 @@ function upgrade_database($old_db_version) {
 			"id_author" => "id_author"
 		);
 
+		// If user installs LCM 0.7.0, then imports a 0.6.4 database, the 
+		// lcm_expense table will already exist. It is better to drop and 
+		// re-create because we may "ALTER" the table later. On the other 
+		// hand, there is a risk that we accidently drop a table with data.
+		lcm_query("DROP TABLE lcm_expense", true);
 		lcm_query_create_table("lcm_expense", $fields, $keys);
 
 
@@ -993,6 +997,7 @@ function upgrade_database($old_db_version) {
 			"PRIMARY KEY  (id_comment)"
 		);
 
+		lcm_query("DROP TABLE lcm_expense_comment", true);
 		lcm_query_create_table("lcm_expense_comment", $fields);
 
 		upgrade_db_version (44);
