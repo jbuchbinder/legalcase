@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.70 2006/04/17 19:39:18 mlutfy Exp $
+	$Id: listcases.php,v 1.71 2006/04/19 16:29:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,7 +57,7 @@ if ($author_session['status'] == 'admin')
 
 if (($v = _request('case_owner'))) {
 	if ($prefs['case_owner'] != $v) {
-		if (! array_search($v, $types_owner))
+		if (! array_key_exists($v, $types_owner))
 			lcm_panic("Value for case owner not permitted: " . htmlspecialchars($v));
 		
 		$prefs['case_owner'] = _request('case_owner');
@@ -79,10 +79,11 @@ $q_owner .= " ) ";
 //
 // For "Filter case date_creation"
 //
-if (($v = _request('case_period'))) {
+if (($v = intval(_request('case_period')))) {
 	if ($prefs['case_period'] != $v) {
-		if (! array_key_exists($v, $types_period))
-			lcm_panic("Value for case period not permitted: " . htmlspecialchars($v));
+		// [ML] Ignoring filter, since case period may be 1,5,50 days, but also v = 2005, 2006, etc.
+		// if (! array_search($v, $types_period))
+		//	lcm_panic("Value for case period not permitted: " . htmlspecialchars($v));
 
 		$prefs['case_period'] = $v;
 		$prefs_change = true;
@@ -113,7 +114,7 @@ echo "</select>\n";
 echo '<select name="case_period">';
 
 foreach ($types_period as $key => $val) {
-	$sel = ($prefs['case_period'] == $val ? ' selected="selected" ' : '');
+	$sel = isSelected($prefs['case_period'] == $val);
 	echo '<option value="' . $val . '"' . $sel . '>' . _T('case_filter_period_option_' . $key) . "</option>\n";
 }
 
@@ -123,8 +124,10 @@ $q_dates = "SELECT DISTINCT " . lcm_query_trunc_field('date_creation', 'year') .
 
 $result = lcm_query($q_dates);
 
-while($row = lcm_fetch_array($result))
-	echo '<option value="' . $row['year'] . '">' . _T('case_filter_period_option_year', array('year' => $row['year'])) . "</option>\n";
+while($row = lcm_fetch_array($result)) {
+	$sel = isSelected($prefs['case_period'] == $row['year']);
+	echo '<option value="' . $row['year'] . '"' . $sel . '>' . _T('case_filter_period_option_year', array('year' => $row['year'])) . "</option>\n";
+}
 
 echo "</select>\n";
 
@@ -150,21 +153,6 @@ if (strlen($find_case_string) > 0) {
 	$q .= " kc.value LIKE '%$find_case_string%' OR "
 	 	. " c.title LIKE '%$find_case_string%' ";
 	
-	// [ML] This is because of a problem in MySQL <= 4.1.xx and unicode support.
-	// Most databases are set in latin1 by default, but we store unicode in it
-	// therefore, we cannot use case-insensitive search of MySQL, nor LOWER()/UPPER()
-	// Any suggestions on how to avoid this would be very welcomed
-	// [ML] 2005-12-23: MySQL <= 4.1 no longer supported
-	/*
-	if (function_exists('mb_convert_case')) {
-		// Avoid useless overhead is search is numeric
-		if (! is_numeric($find_case_string))
-			$q .= "OR c.title LIKE '%" . mb_convert_case($find_case_string, MB_CASE_TITLE, "UTF-8") . "%' "
-				. "OR c.title LIKE '%" . mb_convert_case($find_case_string, MB_CASE_LOWER, "UTF-8") . "%' "
-				. "OR c.title LIKE '%" . mb_convert_case($find_case_string, MB_CASE_UPPER, "UTF-8") . "%' ";
-	}
-	*/
-
 	$q .= " )";
 }
 
@@ -180,8 +168,7 @@ $q .= " AND " . $q_owner;
 // Period (date_creation) to show
 if ($prefs['case_period'] < 1900) // since X days
 	// $q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_creation) < " . $prefs['case_period'];
-	$q .= " AND " . lcm_query_trunc_field('NOW()', 'day') . ' - '
-				  . lcm_query_trunc_field('date_creation', 'day') . ' < ' . $prefs['case_period'];
+	$q .= " AND " . lcm_query_subst_time('date_creation', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
 else // for year X
 	$q .= " AND " . lcm_query_trunc_field('date_creation', 'year') . ' = ' . $prefs['case_period'];
 
@@ -250,8 +237,7 @@ $q = "SELECT fu.id_case, fu.id_followup, fu.date_start, fu.date_end, fu.type, fu
 
 	if ($prefs['case_period'] < 1900) // since X days
 		// $q_temp .= " AND TO_DAYS(NOW()) - TO_DAYS(c.date_creation) < " . $prefs['case_period'];
-		$q_temp .= " AND " . lcm_query_trunc_field('NOW()', 'day') . ' - '
-							. lcm_query_trunc_field('c.date_creation', 'day') . ' < ' . $prefs['case_period'];
+		$q_temp .= " AND " . lcm_query_subst_time('c.date_creation', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
 	else // for year X
 		// $q_temp .= " AND YEAR(date_creation) = " . $prefs['case_period'];
 		$q_temp .= " AND " . lcm_query_trunc_field('c.date_creation', 'year') . ' = ' . $prefs['case_period'];
@@ -281,8 +267,7 @@ if (! ($prefs['case_owner'] == 'all' && $author_session['status'] == 'admin')) {
 // Period (date_creation) to show
 if ($prefs['case_period'] < 1900) // since X days
 	// $q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_start) < " . $prefs['case_period'];
-	$q .= " AND " . lcm_query_trunc_field('NOW()', 'day') . ' - '
-				  . lcm_query_trunc_field('date_start', 'day') . ' < ' . $prefs['case_period'];
+	$q .= " AND " . lcm_query_subst_time('date_start', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
 else // for year X
 	// $q .= " AND YEAR(date_start) = " . $prefs['case_period'];
 	$q .= " AND " . lcm_query_trunc_field('date_start', 'year') . ' = ' . $prefs['case_period'];
