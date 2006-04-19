@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.87 2006/04/17 16:59:07 mlutfy Exp $
+	$Id: inc_filters.php,v 1.88 2006/04/19 18:02:33 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -476,66 +476,79 @@ function recup_time($numdate) {
  */
 function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = '', $soften_errors = true) {
 	$has_date = false;
-	$ret = '';
+
+	$day = $month = $year = '';
+	$hour = $min = $sec = '';
 
 	if ($prefix)
 		$prefix = $prefix . '_';
 
 	if (isset($source[$prefix . 'year']) && is_numeric(trim($source[$prefix .  'year']))) {
-		$ret .= sprintf("%04d", trim($source[$prefix . 'year'])) . '-';
+		$year = sprintf("%04d", trim($source[$prefix . 'year']));
 		$has_date = true;
-	} else {
-		$ret .= '0000-';
 	}
 
+	if (! $year)
+		$year = '0000';
+
 	if (isset($source[$prefix . 'month']) && is_numeric(trim($source[$prefix . 'month']))) {
-		$ret .= sprintf("%02d", trim($source[$prefix . 'month'])) . '-';
+		$month = sprintf("%02d", trim($source[$prefix . 'month']));
 		$has_date = true;
-	} else {
-		$ret .= ($type == 'start' ? '01-' : '12-');
 	}
+
+	if ($month < 0) $month = 0;
+	if ($month > 12) $month = 12;
+
+	if (! $month)
+		$month = ($type == 'start' ? '01' : '12');
 	
 	// [ML] Too much fool-proof, show errors, if any
 	if (isset($source[$prefix . 'day']) && is_numeric(trim($source[$prefix . 'day']))) {
-		$ret .= sprintf("%02d", trim($source[$prefix . 'day']));
+		$day = sprintf("%02d", trim($source[$prefix . 'day']));
 		$has_date = true;
 	} elseif ($soften_errors) {
-		$ret .= ($type == 'start' ? '01' : '31');
+		$day = ($type == 'start' ? '01' : '31');
 	} else {
-		$ret .= $source[$prefix . 'day'];
+		$day = $source[$prefix . 'day'];
 	}
 
-	$ret .= " ";
+	if ($day > 31) $day = 31;
+	if ($day < 0) $day = 0;
+
+	// Try to eliminate days, such as Feb 31 2006, but don't loop indefinately
+	// if the year is invalid
+	while ($year != '0000' && $day > 28 && (! checkdate($month, $day, $year)))
+		$day--;
 
 	if (isset($source[$prefix . 'hour']) && is_numeric(trim($source[$prefix . 'hour']))) {
-		$ret .= sprintf("%02d", trim($source[$prefix . 'hour'])) . ':';
+		$hour = sprintf("%02d", trim($source[$prefix . 'hour']));
 		$has_date = true;
 	} else {
-		$ret .= ($type == 'start' ? '00:' : '23:');
+		$hour = ($type == 'start' ? '00' : '23');
 	}
 
 	if (isset($source[$prefix . 'minutes']) && is_numeric(trim($source[$prefix . 'minutes']))) {
-		$ret .= sprintf("%02d", trim($source[$prefix . 'minutes'])) . ':';
+		$min = sprintf("%02d", trim($source[$prefix . 'minutes']));
 		$has_date = true;
 	} else {
-		$ret .= ($type == 'start' ? '00:' : '59:');
+		$min = ($type == 'start' ? '00' : '59');
 	}
 	
 	if (isset($source[$prefix . 'seconds']) && is_numeric(trim($source[$prefix . 'seconds']))) {
-		$ret .= sprintf("%02d", trim($source[$prefix . 'seconds']));
+		$sec = sprintf("%02d", trim($source[$prefix . 'seconds']));
 		$has_date = true;
 	} else {
-		$ret .= ($type == 'start' ? '00' : '59');
+		$sec = ($type == 'start' ? '00' : '59');
 	}
 
 	if ($has_date)
-		return $ret;
+		return "$year-$month-$day $hour:$min:$sec";
 	
 	if ($fallback) 
 		return $fallback;
 	
 	// Return empty date (0000-01-01 00:00:00 or 0000-01-01 23:59:59)
-	return $ret;
+	return "$year-$month-$day $hour:$min:$sec";
 }
 
 function isset_datetime_from_array($source, $prefix, $check = 'year_only') {
