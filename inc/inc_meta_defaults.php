@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta_defaults.php,v 1.15 2006/03/07 18:39:43 mlutfy Exp $
+	$Id: inc_meta_defaults.php,v 1.16 2006/04/20 19:06:26 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -104,6 +104,8 @@ function init_default_config() {
 		// in the future, but may have uses.
 		'charset' => 'UTF-8'
 	);
+
+	$modifs = false;
 
 	while (list($key, $value) = each($list_meta)) {
 		if (!read_meta($key)) {
