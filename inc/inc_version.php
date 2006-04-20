@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.93 2006/04/17 20:41:12 mlutfy Exp $
+	$Id: inc_version.php,v 1.94 2006/04/20 19:23:49 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1227,7 +1227,7 @@ function lcm_assert_value($value, $allow_zero = false) {
 	return $value;
 }
 
-function lcm_debug($message, $level = 1) {
+function lcm_debug($message, $level = 1, $type = 'lcm') {
 	// Level 0: No debug
 	// Level 1: General debug
 	// Level 2: PHP warnings
@@ -1235,7 +1235,7 @@ function lcm_debug($message, $level = 1) {
 	// Level 5: 1-4 + Includes
 
 	if (isset($GLOBALS['debug']) && $GLOBALS['debug'] >= $level)
-		lcm_log("[D$level] $message");
+		lcm_log("[D$level] $message", $type);
 }
 
 function lcm_header($h) {
@@ -1247,6 +1247,7 @@ function lcm_header($h) {
 }
 
 // In debug mode, log the calling URI
-lcm_debug($_SERVER['REQUEST_METHOD'] . ": " . $_SERVER['REQUEST_URI']);
+lcm_debug($_SERVER['REQUEST_METHOD'] . ": " . $_SERVER['REQUEST_URI'], 1);
+lcm_debug($_SERVER['REQUEST_METHOD'] . ": " . $_SERVER['REQUEST_URI'], 1, 'sql');
 
 ?>

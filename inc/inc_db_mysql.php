@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.32 2006/04/16 15:47:17 antzi Exp $
+	$Id: inc_db_mysql.php,v 1.33 2006/04/20 19:23:49 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -98,7 +98,7 @@ function lcm_query_db($query, $accept_fail = false) {
 	}
 
 	if ($my_debug)
-		lcm_log("QUERY: $query\n", "mysql");
+		lcm_debug("QUERY: $query\n", 1, 'sql');
 
 	if (lcm_sql_errno() && (!$accept_fail)) {
 		$s = lcm_sql_error();

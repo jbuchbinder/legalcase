@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_pgsql.php,v 1.6 2006/04/04 23:27:16 mlutfy Exp $
+	$Id: inc_db_pgsql.php,v 1.7 2006/04/20 19:23:49 mlutfy Exp $
 */
 
 if (defined('_INC_DB_PGSQL')) return;
@@ -70,7 +70,7 @@ function lcm_query_db($query, $accept_fail = false) {
 	}
 
 	if ($my_debug)
-		lcm_log("QUERY: $query\n", "pgsql");
+		lcm_debug("QUERY: $query\n", 1, 'sql');
 
 	if (! $result) {
 		$err = lcm_sql_error();
