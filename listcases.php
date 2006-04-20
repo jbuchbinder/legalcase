@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.72 2006/04/20 08:00:37 antzi Exp $
+	$Id: listcases.php,v 1.73 2006/04/20 16:51:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -147,7 +147,7 @@ if (strlen($find_case_string) > 0)
 //
 
 // Start WHERE clause
-$q .= " WHERE 1 ";
+$q .= " WHERE 1=1 ";
 
 // Add search criteria, if any
 if (strlen($find_case_string) > 0) {
