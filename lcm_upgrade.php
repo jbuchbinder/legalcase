@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_upgrade.php,v 1.12 2006/04/20 13:53:27 mlutfy Exp $
+	$Id: lcm_upgrade.php,v 1.13 2006/04/20 22:24:12 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -38,6 +38,7 @@ $current_version = read_meta('lcm_db_version');
 // Quite unlikely to happen, because it would cause warnings
 // But let's be paranoid, nothing to loose..
 if (! $current_version) {
+	lcm_log("lcm_upgrade: meta is misbehaving, searching in DB");
 	$query = "SELECT value FROM lcm_meta WHERE name = 'lcm_db_version'";
 	$result = lcm_query($query);
 
