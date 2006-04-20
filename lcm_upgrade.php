@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_upgrade.php,v 1.11 2005/08/18 22:53:11 mlutfy Exp $
+	$Id: lcm_upgrade.php,v 1.12 2006/04/20 13:53:27 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -26,15 +26,36 @@ include_lcm('inc_presentation');
 include_lcm('inc_meta');
 include_lcm('inc_auth');
 
+global $lcm_db_version;
+
+// Usually done in inc.php, but we cannot include it otherwise
+// it will loop on "please upgrade your database".
+if (! include_data_exists('inc_meta_cache'))
+	write_metas();
+
 $current_version = read_meta('lcm_db_version');
-if (!$current_version) $current_version = 0;
+
+// Quite unlikely to happen, because it would cause warnings
+// But let's be paranoid, nothing to loose..
+if (! $current_version) {
+	$query = "SELECT value FROM lcm_meta WHERE name = 'lcm_db_version'";
+	$result = lcm_query($query);
+
+	if (($row = lcm_fetch_array($result)))
+		$current_version = $row['value'];
+	else
+		lcm_panic("Could not find lcm_db_version");
+}
+
+lcm_log("lcm_upgrade test: current = $current_version, should be = $lcm_db_version");
 
 // test if upgraded necessary
-if ($lcm_db_version <> $current_version) {
+if ($current_version < $lcm_db_version) {
 	include_lcm('inc_db_upgrade');
 	lcm_page_start(_T('title_upgrade_database'));
 	
 	echo "\n<!-- Upgrading from $current_version to $lcm_db_version -->\n";
+
 	$log = upgrade_database($current_version);
 
 	// Create new meta information, if necessary
