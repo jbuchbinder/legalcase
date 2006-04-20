@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.71 2006/04/19 16:29:11 mlutfy Exp $
+	$Id: listcases.php,v 1.72 2006/04/20 08:00:37 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -137,30 +137,30 @@ echo "</form>\n";
 
 // Select cases of which the current user is author
 $q = "SELECT DISTINCT c.id_case, title, status, public, pub_write, date_creation
-		FROM lcm_case as c, lcm_case_author as a ";
+		FROM lcm_case as c NATURAL JOIN lcm_case_author as a ";
 
 if (strlen($find_case_string) > 0)
-	$q .= " LEFT JOIN lcm_keyword_case as kc ON kc.id_case = c.id_case ";
+	$q .= " NATURAL LEFT JOIN lcm_keyword_case as kc ";
 
-$q .= " WHERE (c.id_case = a.id_case ";
+//
+// Apply filters to SELECT output
+//
 
+// Start WHERE clause
+$q .= " WHERE 1 ";
+
+// Add search criteria, if any
 if (strlen($find_case_string) > 0) {
 	$q .= " AND (";
 
 	if (is_numeric($find_case_string))
-		$q .= " c.id_case = $find_case_string OR ";
+		$q .= " (c.id_case = $find_case_string) OR ";
 		
-	$q .= " kc.value LIKE '%$find_case_string%' OR "
-	 	. " c.title LIKE '%$find_case_string%' ";
+	$q .= " (kc.value LIKE '%$find_case_string%') OR "
+	 	. " (c.title LIKE '%$find_case_string%') ";
 	
 	$q .= " )";
 }
-
-$q .= ")";
-
-//
-// Apply filters to SQL
-//
 
 // Case owner
 $q .= " AND " . $q_owner;
@@ -171,6 +171,10 @@ if ($prefs['case_period'] < 1900) // since X days
 	$q .= " AND " . lcm_query_subst_time('date_creation', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
 else // for year X
 	$q .= " AND " . lcm_query_trunc_field('date_creation', 'year') . ' = ' . $prefs['case_period'];
+
+//
+// Sort results
+//
 
 // Sort cases by creation date
 $case_order = 'DESC';
