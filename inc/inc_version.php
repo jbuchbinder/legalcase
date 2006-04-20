@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.94 2006/04/20 19:23:49 mlutfy Exp $
+	$Id: inc_version.php,v 1.95 2006/04/20 22:23:08 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -288,7 +288,7 @@ $lcm_version_shown = "0.7.0 CVS";
 $lcm_db_version = 45;
 
 // Error reporting
-// error_reporting(E_ALL); // [ML] recommended for debug
+# error_reporting(E_ALL); // [ML] recommended for debug
 error_reporting(E_ALL ^ E_NOTICE); // PHP default
 
 // ** Security **
@@ -384,10 +384,12 @@ if ($cookie_prefix != 'lcm') {
 // [ML] alot was removed
 //
 
+/* [ML] DEPRECATED ?
 $os_server = '';
 
-if (eregi('\(Win', $HTTP_SERVER_VARS['SERVER_SOFTWARE']))
+if (eregi('\(Win', $_SERVER['SERVER_SOFTWARE']))
 	$os_server = 'windows';
+*/
 
 // By default, set maximum access rights
 // [ML] This will require auditing..
@@ -397,18 +399,6 @@ if (eregi('\(Win', $HTTP_SERVER_VARS['SERVER_SOFTWARE']))
 //
 // Information on the current file
 //
-
-// Compatibility with servers who don't provide $REQUEST_URI
-if (!$REQUEST_URI) {
-	$REQUEST_URI = $PHP_SELF;
-	if (!strpos($REQUEST_URI, '?') && $QUERY_STRING)
-		$REQUEST_URI .= '?'.$QUERY_STRING;
-}
-
-if (!$PATH_TRANSLATED) {
-	if ($SCRIPT_FILENAME) $PATH_TRANSLATED = $SCRIPT_FILENAME;
-	else if ($DOCUMENT_ROOT && $SCRIPT_URL) $PATH_TRANSLATED = $DOCUMENT_ROOT.$SCRIPT_URL;
-}
 
 // For error handling after failed fopen/mkdir/etc
 $lcm_errormsg = '';
