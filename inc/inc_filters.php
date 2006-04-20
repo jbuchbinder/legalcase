@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.88 2006/04/19 18:02:33 mlutfy Exp $
+	$Id: inc_filters.php,v 1.89 2006/04/20 11:17:08 antzi Exp $
 */
 
 // Execute this file only once
@@ -178,7 +178,7 @@ function format_money($money, $two_cents = true, $show_currency_sign = false) {
 	// this is very stupid i18n because windows does not have strfmon,
 	// altough we cannot depend on locales on all servers for all languages
 	// so for our small needs, this should be good enough.
-	if (! is_numeric($money))
+	if (! ($money===0.0 || is_numeric($money)) )
 		lcm_panic("parameter is not a valid number: " . $money);
 	
 	$seperator_cents    = _T('currency_format_seperator_cents');

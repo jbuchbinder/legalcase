@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.12 2006/04/04 23:27:16 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.13 2006/04/20 11:17:08 antzi Exp $
 */
 
 // Execute this file only once
@@ -185,7 +185,7 @@ class LcmFollowup extends LcmObject {
 		$fl = " date_start = '" . $this->getDataString('date_start') . "',
 				date_end   = '" . $this->getDataString('date_end') . "',
 				type       = '" . $this->getDataString('type') . "',
-				sumbilled  = " . $this->getDataString('sumbilled', 0);
+				sumbilled  = " . $this->getDataFloat('sumbilled', 0.00);
 
 		if ($this->getDataString('type') == 'stage_change') {
 			// [ML] To be honest, we should "assert" most of the
