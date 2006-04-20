@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Mathieu Lutfy <mathieu@bidon.ca>
 
 Package: legalcase
-Version: 0.6.4-2
+Version: 0.7.0-2
 Architecture: all
 Depends: apache | apache-ssl | apache2 , php4 (>=4.1.0) | php5, mysql-client, php4-mysql | php5-mysql
 Recommends: mysql-server (>= 3.23), php4-pear | php-pear
