@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.27 2006/04/17 09:48:42 antzi Exp $
+	$Id: author_det.php,v 1.28 2006/04/20 13:49:08 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -228,7 +228,7 @@ $result = lcm_query($q);
 					  AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" .  $date_start . "') ";
 
 				if ($date_end != "-1")
-					$q .= " AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
+					$q .= " AND UNIX_TIMESTAMP(date_start) <= UNIX_TIMESTAMP('" . $date_end . "')";
 			
 				// Add ordering
 				if ($fu_order)
