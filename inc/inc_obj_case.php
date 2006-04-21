@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.12 2006/04/21 19:11:34 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.13 2006/04/21 19:27:55 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -791,18 +791,33 @@ class LcmCaseInfoUI extends LcmCase {
 }
 
 class LcmCaseListUI {
-	var $search;
 	var $list_pos;
 	var $number_of_rows;
 
+	// filters
+	var $search;
+	var $date_start;
+	var $date_end;
+
 	function LcmCaseList() {
 		$this->search = '';
+		$this->date_start = '';
+		$this->date_end = '';
+
 		$this->list_pos = intval(_request('list_pos', 0));
 		$this->number_of_rows = 0;
 	}
 
 	function setSearchTerm($term) {
 		$this->search = $term;
+	}
+
+	function setDateInterval($start, $end) {
+		if ($start && $start != -1)
+			$this->date_start = $start;
+
+		if ($end && $end != -1)
+			$this->date_end = $end;
 	}
 
 	function start() {
@@ -856,10 +871,18 @@ class LcmCaseListUI {
 		$q .= " AND " . $q_owner; 
 
 		// Period (date_creation) to show
-		if ($prefs['case_period'] < 1900) // since X days
-			$q .= " AND " . lcm_query_subst_time('date_creation', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
-		else // for year X
-			$q .= " AND " . lcm_query_trunc_field('date_creation', 'year') . ' = ' . $prefs['case_period'];
+		if ($this->date_start || $this->date_end) {
+			if ($this->date_start)
+				$q .= " AND date_creation >= '" . $this->date_start . "'";
+
+			if ($this->date_end)
+				$q .= " AND date_creation <= '" . $this->date_end . "'";
+		} else {
+			if ($prefs['case_period'] < 1900) // since X days
+				$q .= " AND " . lcm_query_subst_time('date_creation', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
+			else // for year X
+				$q .= " AND " . lcm_query_trunc_field('date_creation', 'year') . ' = ' . $prefs['case_period'];
+		}
 
 		//
 		// Sort results
