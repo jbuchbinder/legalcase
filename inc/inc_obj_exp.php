@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.8 2006/04/21 15:02:38 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.9 2006/04/21 16:00:34 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -708,7 +708,6 @@ class LcmExpenseListUI {
 
 		$headers[$cpt]['title'] = _Th('expense_input_type');
 		$headers[$cpt]['order'] = 'type_order';
-		$headers[$cpt]['default'] = 'DESC';
 		$cpt++;
 
 		$headers[$cpt]['title'] = _Th('expense_input_description');
@@ -722,13 +721,12 @@ class LcmExpenseListUI {
 
 		$headers[$cpt]['title'] = _Th('time_input_date_updated');
 		$headers[$cpt]['order'] = 'upddate_order';
-		$headers[$cpt]['default'] = 'DESC';
 		$cpt++;
 
-		// XXX actually, it would be nice to be able to order..
-		// but this would require us to put numbers in status names
+		// It doesn't order in a very logical way, but better
+		// than nothing!
 		$headers[$cpt]['title'] = _Th('expense_input_status');
-		$headers[$cpt]['order'] = 'no_order';
+		$headers[$cpt]['order'] = 'status_order';
 		$cpt++;
 
 		show_list_start($headers);
@@ -741,10 +739,13 @@ class LcmExpenseListUI {
 		$q = "SELECT e.id_expense, e.id_case, e.id_author, e.status, e.type, 
 				e.description, e.date_creation, e.date_update, e.pub_read,
 				e.pub_write, a.name_first, a.name_middle, a.name_last,
-				count(ec.id_expense) as nb_comments
-			FROM lcm_expense as e, lcm_expense_comment as ec, lcm_author as a ";
+				count(ec.id_expense) as nb_comments, c.title as case_title
+			FROM lcm_expense as e
+			LEFT JOIN lcm_expense_comment as ec ON (ec.id_expense = e.id_expense)
+			LEFT JOIN lcm_author as a ON (a.id_author = e.id_author) 
+			LEFT JOIN lcm_case as c ON (c.id_case = e.id_case) ";
 
-		$q .= " WHERE (ec.id_expense = e.id_expense AND a.id_author = e.id_author ";
+		$q .= " WHERE (1=1 ";
 
 		if ($this->search) {
 			$q .= " AND (";
@@ -775,17 +776,32 @@ class LcmExpenseListUI {
 		else // for year X
 			$q .= " AND " . lcm_query_trunc_field('e.date_creation', 'year') . ' = ' . $prefs['case_period'];
 
-		// Sort cases by creation date TODO
-		/*
-		$case_order = 'DESC';
-		if (isset($_REQUEST['case_order']))
-			if ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'DESC')
-				$case_order = $_REQUEST['case_order'];
+		$q .= " GROUP BY e.id_expense, e.id_case, e.id_author, e.status, e.type, e.description, e.date_creation, e.date_update, e.pub_read, e.pub_write, a.name_first, a.name_middle, a.name_last, c.title ";
 
-		$q .= " ORDER BY date_creation " . $case_order;
-		*/
+		//
+		// Sort
+		//
 
-		$q .= " GROUP BY e.id_expense, e.id_case, e.id_author, e.status, e.type, e.description, e.date_creation, e.date_update, e.pub_read, e.pub_write, a.name_first, a.name_middle, a.name_last ";
+		$sort_clauses = array();
+		$sort_allow = array('ASC' => 1, 'DESC' => 1);
+
+		// Sort by request type
+		if ($sort_allow[_request('type_order')])
+			$sort_clauses[] = "type " . _request('type_order');
+
+		if ($sort_allow[_request('status_order')])
+			$sort_clauses[] = "status " . _request('status_order');
+
+		// Sort cases by creation or update date
+		if ($sort_allow[_request('date_order')])
+			$sort_clauses[] = "date_creation " . _request('date_order');
+		elseif ($sort_allow[_request('upddate_order')])
+			$sort_clauses[] = "date_update " . _request('upddate_order');
+
+		if (count($sort_clauses))
+			$q .= " ORDER BY " . implode(', ', $sort_clauses);
+		else
+			$q .= " ORDER BY date_creation DESC"; // default sort
 
 		$result = lcm_query($q);
 
@@ -810,14 +826,17 @@ class LcmExpenseListUI {
 			echo highlight_matches($row['id_expense'], $this->search);
 			echo "</td>\n";
 
-			// Attached to case..
+			// Author
 			echo "<td class='tbl_cont_" . $css . "'>";
 			echo get_person_initials($row);
 			echo "</td>\n";
 
 			// Attached to case..
 			echo "<td class='tbl_cont_" . $css . "'>";
-			echo ($row['id_case'] ? $row['id_case'] : '');
+
+			if ($row['id_case'])
+				echo '<abbr title="' . $row['case_title'] . '">' .  $row['id_case'] . '</a>';
+
 			echo "</td>\n";
 
 			// Date creation
