@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.7 2006/04/19 16:30:47 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.8 2006/04/21 15:02:38 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -42,16 +42,20 @@ class LcmExpense extends LcmObject {
 		$this->LcmObject();
 
 		if ($id_expense > 0) {
-			$query = "SELECT e.*, a.name_first, a.name_middle, a.name_last
-						FROM lcm_expense as e, lcm_author as a
-						WHERE e.id_author = a.id_author
-						  AND id_expense = $id_expense";
+			$query = "SELECT e.*, a.name_first, a.name_middle, a.name_last, c.title as case_title
+						FROM lcm_expense as e
+						LEFT JOIN lcm_author as a ON (a.id_author = e.id_author)
+						LEFT JOIN lcm_case as c ON (c.id_case = e.id_case)
+						WHERE e.id_expense = $id_expense";
 
 			$result = lcm_query($query);
 
 			if (($row = lcm_fetch_array($result))) 
 				foreach ($row as $key => $val) 
 					$this->data[$key] = $val;
+		} else {
+			// Will be overwritten later by _request('id_case') if any (or _session)
+			$this->data['id_case'] = intval(_request('case', 0));
 		}
 
 		// If any, populate form values submitted
@@ -62,6 +66,7 @@ class LcmExpense extends LcmObject {
 				$nkey = substr($key, 8);
 
 			$this->data[$nkey] = _request($key);
+			lcm_log("data-req: $nkey = " . _request($key));
 		}
 
 		// If any, populate with session variables (for error reporting)
@@ -73,6 +78,7 @@ class LcmExpense extends LcmObject {
 					$nkey = substr($key, 8);
 
 				$this->data[$nkey] = _session($key);
+				lcm_log("data-sess: $nkey = " . _request($key));
 			}
 		}
 
@@ -166,7 +172,7 @@ class LcmExpense extends LcmObject {
 		if (!$this->getDataString('description'))
 			$errors['description'] = _Ti('expense_input_description') . _T('warning_field_mandatory');
 
-		if (! preg_match('/^\d*\.?\d*$/', $this->getDataString('cost')))
+		if (! preg_match('/^\d*\.?\d*$/', $this->getDataFloat('cost')))
 			$errors['cost'] = _Ti('expense_input_cost') . 'Format not recognised, please use 9999.99 format'; // TRAD
 
 		//
@@ -209,7 +215,7 @@ class LcmExpense extends LcmObject {
 		$cl = "type   = '"      . $this->getDataString('type') . "',
 			   cost   = "      . $this->getDataInt('cost') . ",
 			   description = '" . $this->getDataString('description') . "',
-			   date_update = 'NOW()',
+			   date_update = NOW(),
 			   pub_read  = 1,
 			   pub_write = 1";
 		
@@ -227,14 +233,13 @@ class LcmExpense extends LcmObject {
 					SET date_creation = NOW(), 
 						id_admin    = 0,
 						id_author   = " . $this->getDataInt('id_author') . ",
-						id_followup = "  . $this->getDataInt('id_followup') . ",
-						id_case     = "      . $this->getDataInt('id_case') . ",
+						id_followup = " . $this->getDataInt('id_followup') . ",
+						id_case     = " . $this->getDataInt('id_case') . ",
 						status      = 'pending',
 						$cl";
 	
 			$result = lcm_query($q);
 			$this->data['id_expense'] = lcm_insert_id('lcm_expense', 'id_expense');
-
 
 			$comment = new LcmExpenseComment($this->data['id_expense'], 0);
 			$comment->save();
@@ -338,6 +343,15 @@ class LcmExpenseInfoUI extends LcmExpense {
 			. '<span class="value2">' . format_money($this->getDataInt('cost'), true, true) . '</span>'
 			. "</li>\n";
 
+		echo '<li>'
+			. '<span class="label2">' . _Ti('app_input_related_to_case') . '</span>'
+			. '<span class="value2">' 
+				. '<a href="case_det.php?case=' . $this->getDataInt('id_case') . '" class="content_link">'
+				. $this->getDataString('case_title')
+				. '</a>'
+				. '</span>'
+			. "</li>\n";
+
 		// Expense status
 		if (! $is_status_change && ! _request('edit_comment') && $obj_acc->getAdmin()) {
 			echo '<form action="edit_exp.php" method="get">'
@@ -422,12 +436,17 @@ class LcmExpenseInfoUI extends LcmExpense {
 	}
 
 	function printEdit() {
+		echo '<input type="hidden" name="id_case" value="' . $this->getDataInt('id_case') . '" />' . "\n";
+
 		echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 
 		// TODO:
-		// Ajouter contexte
 		// Ajouter auteur, etc.
 		// Ajouter "approved by" si id_admin != 0
+
+		show_context_start();
+		show_context_case_title($this->getDataInt('id_case'), 'exps');
+		show_context_end();
 		
 		if($this->getDataInt('id_expense')) {
 			echo "<tr><td>" . _T('expense_input_id') . "</td>\n";
@@ -456,13 +475,11 @@ class LcmExpenseInfoUI extends LcmExpense {
 			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 		}
 		
-	//	<input name="type" value="' . clean_output($this->getDataString('type')) . '" class="search_form_txt" />
 		echo '</td></tr>' . "\n";
 
-		// TODO: add currency
 		echo '<tr><td>' . f_err_star('cost') . _T('expense_input_cost') . '</td>' . "\n";
 		echo '<td>';
-		echo '<input type="text" name="cost" value="' . $this->getDataInt('cost') . '" class="search_form_txt" size="10" />';
+		echo '<input type="text" name="cost" value="' . $this->getDataFloat('cost') . '" class="search_form_txt" size="10" />';
 		echo ' ' . htmlspecialchars(read_meta('currency'));
 		echo "</td></tr>\n";
 		
@@ -650,6 +667,7 @@ class LcmExpenseCommentInfoUI extends LcmExpenseComment {
 
 class LcmExpenseListUI {
 	var $search;
+	var $id_case;
 	var $list_pos;
 	var $number_of_rows;
 
@@ -661,6 +679,10 @@ class LcmExpenseListUI {
 
 	function setSearchTerm($term) {
 		$this->search = $term;
+	}
+
+	function setCase($id_case) {
+		$this->id_case = $id_case;
 	}
 
 	function start() {
@@ -733,6 +755,9 @@ class LcmExpenseListUI {
 			$q .= " e.description LIKE '%" . $this->search . "%' ";
 			$q .= " )";
 		}
+
+		if ($this->id_case)
+			$q .= " AND e.id_case = " . $this->id_case;
 
 		$q .= ")";
 
