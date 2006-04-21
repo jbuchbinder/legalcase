@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listexps.php,v 1.4 2006/04/19 16:30:04 mlutfy Exp $
+	$Id: listexps.php,v 1.5 2006/04/21 16:34:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -127,7 +127,7 @@ $result = lcm_query($q_dates);
 
 while($row = lcm_fetch_array($result)) {
 	$sel = isSelected($prefs['case_period'] == $row['year']);
-	echo '<option value="' . $row['year'] . '">' . _T('case_filter_period_option_year', array('year' => $row['year'])) . "</option>\n";
+	echo '<option value="' . $row['year'] . '"' . $sel . '>' . _T('case_filter_period_option_year', array('year' => $row['year'])) . "</option>\n";
 }
 
 echo "</select>\n";
