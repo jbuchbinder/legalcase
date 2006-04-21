@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.13 2006/04/21 19:27:55 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.14 2006/04/21 19:36:52 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -798,11 +798,13 @@ class LcmCaseListUI {
 	var $search;
 	var $date_start;
 	var $date_end;
+	var $owner;
 
 	function LcmCaseList() {
 		$this->search = '';
 		$this->date_start = '';
 		$this->date_end = '';
+		$this->owner = '';
 
 		$this->list_pos = intval(_request('list_pos', 0));
 		$this->number_of_rows = 0;
@@ -818,6 +820,10 @@ class LcmCaseListUI {
 
 		if ($end && $end != -1)
 			$this->date_end = $end;
+	}
+
+	function setFilterOwner($type) {
+		$this->owner = $type;
 	}
 
 	function start() {
@@ -866,6 +872,8 @@ class LcmCaseListUI {
 
 		if ($author_session['status'] == 'admin' && $prefs['case_owner'] == 'all')
 			$q_owner .= " OR 1=1 ";
+		elseif ($author_session['status'] == 'admin' && $this->owner == 'all')
+			$q_owner .= " OR 1=1 "; // for archive.php
 
 		$q_owner .= " ) ";
 		$q .= " AND " . $q_owner; 
