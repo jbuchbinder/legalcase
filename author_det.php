@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.28 2006/04/20 13:49:08 mlutfy Exp $
+	$Id: author_det.php,v 1.29 2006/04/21 08:38:47 antzi Exp $
 */
 
 include('inc/inc.php');
@@ -95,8 +95,10 @@ $result = lcm_query($q);
 				'appointments' => array('name' => _T('generic_tab_agenda'), 
 								'tooltip' => _T('author_subtitle_appointments', array('author' => $fullname))),
 				'times' => array('name' => _T('generic_tab_reports'),
-								'tooltip' => _T('author_subtitle_reports', array('author' => $fullname)))); 
-				// 'attachments' => _T('generic_tab_documents'));
+								'tooltip' => _T('author_subtitle_reports', array('author' => $fullname))), 
+				'attachments' => array('name' => _T('generic_tab_documents'),
+								'tooltip' => _T('author_subtitle_attachments', array('author' => $fullname))),
+			);
 		} else {
 			$groups = array(
 				'general' => array('name' => _T('generic_tab_general'),
@@ -519,15 +521,38 @@ $result = lcm_query($q);
 
 				break;
 	
-			/*
-			case 'attachments':
-				echo "Not yet implemented";
-				
-				// Should show all attached documents by author
-				// but not allow to upload
+			//
+			// Case attachments
+			//
+			case 'attachments' :
+				// Show the errors (if any)
+				//echo show_all_errors($_SESSION['errors']);
+
+				//echo '<fieldset class="info_box">';
+				show_page_subtitle(_T('author_subtitle_attachments'), 'tools_documents');
+
+				echo "<p class=\"normal_text\">\n";
+
+				//echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
+				//echo '<input type="hidden" name="case" value="' . $case . '" />' . "\n";
+
+				// List of attached files
+				show_author_attachments($author);
+
+				// Attach new file form
+				/*if ($add)
+					show_attachments_upload('case', $case, $_SESSION['user_file']['name'], $_SESSION['user_file']['description']);
+
+				echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
+				echo "</form>\n";
+				*/
+				echo "</p>\n";
+				//echo "</fieldset>\n";
+
+				//$_SESSION['errors'] = array();
+				//$_SESSION['user_file'] = array();
 
 				break;
-			*/
 		}
 
 		echo "</fieldset>\n";
