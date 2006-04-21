@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.11 2006/03/20 20:58:11 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.12 2006/04/21 19:11:34 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -787,6 +787,119 @@ class LcmCaseInfoUI extends LcmCase {
 
 		show_list_end($my_list_pos, $this->getFollowupTotal(), true);
 		echo "</p>\n";
+	}
+}
+
+class LcmCaseListUI {
+	var $search;
+	var $list_pos;
+	var $number_of_rows;
+
+	function LcmCaseList() {
+		$this->search = '';
+		$this->list_pos = intval(_request('list_pos', 0));
+		$this->number_of_rows = 0;
+	}
+
+	function setSearchTerm($term) {
+		$this->search = $term;
+	}
+
+	function start() {
+		show_listcase_start();
+	}
+
+	function printList() {
+		global $prefs;
+
+		// Select cases of which the current user is author
+		$q = "SELECT DISTINCT c.id_case, title, status, public, pub_write, date_creation
+			FROM lcm_case as c NATURAL JOIN lcm_case_author as a ";
+
+		if ($this->search)
+			$q .= " NATURAL LEFT JOIN lcm_keyword_case as kc ";
+
+		//
+		// Apply filters to SELECT output
+		//
+
+		$q .= " WHERE 1=1 ";
+
+		// Add search criteria, if any
+		if ($this->search) {
+			$q .= " AND (";
+
+			if (is_numeric($this->search))
+				$q .= " (c.id_case = $this->search) OR ";
+		
+			$q .= " (kc.value LIKE '%" . $this->search . "%') OR "
+				. " (c.title LIKE '%" . $this->search . "%') ";
+
+			$q .= " )";
+		}
+
+		//
+		// Case owner
+		//
+
+		// always include 'my' cases
+		global $author_session;
+		$q_owner = " (a.id_author = " . $author_session['id_author'];
+
+		if ($prefs['case_owner'] == 'public')
+			$q_owner .= " OR c.public = 1";
+
+		if ($author_session['status'] == 'admin' && $prefs['case_owner'] == 'all')
+			$q_owner .= " OR 1=1 ";
+
+		$q_owner .= " ) ";
+		$q .= " AND " . $q_owner; 
+
+		// Period (date_creation) to show
+		if ($prefs['case_period'] < 1900) // since X days
+			$q .= " AND " . lcm_query_subst_time('date_creation', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
+		else // for year X
+			$q .= " AND " . lcm_query_trunc_field('date_creation', 'year') . ' = ' . $prefs['case_period'];
+
+		//
+		// Sort results
+		//
+
+		$sort_clauses = array();
+		$sort_allow = array('ASC' => 1, 'DESC' => 1);
+
+		// Sort cases by creation date
+		if ($sort_allow[_request('status_order')])
+			$sort_clauses[] = "status " . _request('status_order');
+
+		if ($sort_allow[_request('case_order')])
+			$sort_clauses[] = 'date_creation ' . _request('case_order');
+		elseif ($sort_allow[_request('upddate_order')])
+			$sort_clauses[] = "date_update " . _request('upddate_order');
+		else
+			$sort_clauses[] = 'date_creation DESC'; // default
+
+		$q .= " ORDER BY " . implode(', ', $sort_clauses);
+
+		$result = lcm_query($q);
+
+		// Check for correct start position of the list
+		$this->number_of_rows = lcm_num_rows($result);
+
+		if ($this->list_pos >= $this->number_of_rows)
+			$this->list_pos = 0;
+
+		// Position to the page info start
+		if ($this->list_pos > 0)
+			if (! lcm_data_seek($result, $this->list_pos))
+				lcm_panic("Error seeking position " . $this->list_pos . " in the result");
+
+		for ($i = 0; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++)
+			show_listcase_item($row, $i, $this->search);
+	}
+
+	function finish() {
+		show_listcase_end($this->list_pos, $this->number_of_rows);
 	}
 }
 
