@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.29 2006/04/21 08:38:47 antzi Exp $
+	$Id: author_det.php,v 1.30 2006/04/21 19:27:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -150,59 +150,21 @@ $result = lcm_query($q);
 			// Cases tab
 			//
 			case 'cases':
-				// Show recent cases
+				include_lcm('inc_obj_case');
+
 				show_page_subtitle(_T('author_subtitle_cases', array('author' => get_person_name($author_data)), 'cases_participants'));
 
 				$foo = get_date_range_fields();
 				echo $foo['html'];
-				
-				$q = "SELECT c.id_case, title, date_creation, status
-						FROM lcm_case_author as a, lcm_case as c
-						WHERE id_author = " . $author . "
-							AND a.id_case = c.id_case 
-							AND UNIX_TIMESTAMP(date_creation) >= UNIX_TIMESTAMP('" . $foo['date_start'] . "') ";
 
-				if ($foo['date_end'] != "-1")
-					$q .= " AND UNIX_TIMESTAMP(date_creation) <= UNIX_TIMESTAMP('" . $foo['date_end'] . "')";
+				$case_list = new LcmCaseListUI();
 
-				// If user is looking at other user, show only public cases
-				if (! allowed_author($author, 'r'))
-					$q .= " AND c.public = 1";
+				// $case_list->setSearchTerm($find_case_string); // There is no UI for this at the moment
+				$case_list->setDateInterval($foo['date_start'], $foo['date_end']);
 
-				// Sort cases by creation date
-				$case_order = 'DESC';
-				if (isset($_REQUEST['case_order']))
-					if ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'DESC')
-						$case_order = $_REQUEST['case_order'];
-				
-				$q .= " ORDER BY date_creation " . $case_order;
-		
-				$result = lcm_query($q);
-				$number_of_rows = lcm_num_rows($result);
-				$list_pos = 0;
-				
-				if (isset($_REQUEST['list_pos']))
-					$list_pos = $_REQUEST['list_pos'];
-				
-				if ($list_pos >= $number_of_rows)
-					$list_pos = 0;
-				
-				// Position to the page info start
-				if ($list_pos > 0)
-					if (!lcm_data_seek($result,$list_pos))
-						lcm_panic("Error seeking position $list_pos in the result");
-
-				if (lcm_num_rows($result)) {
-					echo "<p class=\"normal_text\">\n";
-					show_listcase_start();
-		
-					for ($cpt = 0; $row1 = lcm_fetch_array($result); $cpt++) {
-						show_listcase_item($row1, $cpt);
-					}
-
-					show_listcase_end($list_pos, $number_of_rows);
-					echo "</p>\n";
-				}
+				$case_list->start();
+				$case_list->printList();
+				$case_list->finish();
 
 				break;
 			//
