@@ -18,13 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.18 2006/03/01 21:53:31 mlutfy Exp $
+	$Id: archive.php,v 1.19 2006/04/21 19:30:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 include_lcm('inc_filters');
 include_lcm('inc_impex');
+include_lcm('inc_obj_case');
 
 // Restrict page to administrators
 if ($author_session['status'] != 'admin') {
@@ -55,48 +56,13 @@ show_tabs_links($tabs,0);
 
 show_find_box('case', $find_case_string, '__self__');
 
-$q = "SELECT DISTINCT c.id_case, title, status, public, pub_write, c.date_creation
-		FROM lcm_case as c, lcm_case_author as ca
-		WHERE (c.id_case = ca.id_case";
+$case_list = new LcmCaseListUI();
 
-// Add search criteria if any
-if (strlen($find_case_string) > 1) {
-	$q .= " AND ((c.title LIKE '%$find_case_string%')
-				OR (c.status LIKE '%$find_case_string%'))";
-}
-
-$q .= ")";
-
-// Sort cases by creation date
-$case_order = 'DESC';
-if (isset($_REQUEST['case_order']))
-	if ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'DESC')
-		$case_order = $_REQUEST['case_order'];
-
-$q .= " ORDER BY date_creation " . $case_order;
-
-$result = lcm_query($q);
-$number_of_rows = lcm_num_rows($result);
-
-// Check for correct start position of the list
-$list_pos = (isset($_REQUEST['list_pos']) ? $_REQUEST['list_pos'] : 0);
-
-if ($list_pos >= $number_of_rows)
-	$list_pos = 0;
-
-// Position to the page info start
-if ($list_pos > 0)
-	if (!lcm_data_seek($result,$list_pos))
-		die("Error seeking position $list_pos in the result");
-
-// Process the output of the query
-show_listcase_start();
-
-for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
-	show_listcase_item($row, $i, $find_case_string);
-}
-
-show_listcase_end($list_pos, $number_of_rows);
+$case_list->setSearchTerm($find_case_string);
+$case_list->start();
+$case_list->printList();
+$case_list->finish();
 
 lcm_page_end();
+
 ?>
