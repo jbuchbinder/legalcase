@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.95 2006/04/20 22:23:08 mlutfy Exp $
+	$Id: inc_version.php,v 1.96 2006/04/21 18:20:30 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1022,7 +1022,7 @@ function lcm_log($message, $type = 'lcm') {
 
 	// Keep about 20Kb of data per file, on 4 files (.1, .2, .3)
 	// generates about 80Kb in total per log type.
-	$kb_size = ($GLOBALS['debug'] ? 100 : 20);
+	$kb_size = ($GLOBALS['debug'] ? 200 : 20); // more if we debug!
 	if (is_file($logfile) && @filesize($logfile) > $kb_size * 1024) {
 		$rotate = true;
 		$message .= "[-- rotate --]\n";
