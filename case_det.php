@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.168 2006/03/30 01:06:44 mlutfy Exp $
+	$Id: case_det.php,v 1.169 2006/04/21 19:14:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -74,8 +74,9 @@ if ($case > 0) {
 		// Show tabs
 		$groups = array(
 			'general' => array('name' => _T('generic_tab_general'), 'tooltip' => _T('case_subtitle_general')),
-			'followups' => array('name' => _T('generic_tab_followups'), 'tooltip' => _T('case_subtitle_followups')),
+		//	'followups' => array('name' => _T('generic_tab_followups'), 'tooltip' => _T('case_subtitle_followups')),
 			'appointments' => array('name' => _T('generic_tab_agenda'), 'tooltip' => _T('case_subtitle_appointments')),
+			'exps' => array('name' => 'Requests', 'tooltip' => 'Internal requests'), // TRAD
 			'times' => array('name' => _T('generic_tab_reports'), 'tooltip' => _T('case_subtitle_times')),
 			'attachments' => array('name' => _T('generic_tab_documents'), 'tooltip' => _T('case_subtitle_attachments')));
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
@@ -149,6 +150,14 @@ if ($case > 0) {
 					}
 
 					$cpt++;
+				}
+
+				if ($admin) {
+					echo '<span class="noprint">';
+					echo '<a href="sel_auth.php?case=' . $case . '" title="' . _T('add_user_case') . '">'
+						. '<img src="images/jimmac/stock_attach-16.png" width="16" height="16" border="0" alt="' . _T('add_user_case') . '" />'
+						. '</a>';
+					echo "</span>\n";
 				}
 		
 				echo "</li>\n";
@@ -324,10 +333,6 @@ if ($case > 0) {
 	//			if ($GLOBALS['author_session']['status'] == 'admin')
 	//				echo '<p><a href="export.php?item=case&amp;id=' . $row['id_case'] . '" class="exp_lnk">' . _T('export_button_case') . '</a></p>';
 
-				if ($admin)
-					echo '<p><a href="sel_auth.php?case=' . $case . '" class="add_lnk">' . _T('add_user_case') . '</a></p>';
-		
-				echo "<br />\n";
 
 				//
 				// Show case client(s)
@@ -432,91 +437,21 @@ if ($case > 0) {
 		
 				if ($admin) {
 					echo "<p><a href=\"sel_client.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_client') . "</a>\n";
-					echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') . "</a><br /></p>\n";
+					if (read_meta('org_hide_all') != 'yes')
+						echo "<a href=\"sel_org.php?case=$case\" class=\"add_lnk\">" . _T('case_button_add_org') .  "</a>";
+						
+					echo "<br /></p>\n";
 				}
 		
 				echo "</form>\n";
-				echo "</fieldset>\n";
-				break;
-
-			//
-			// Case appointments
-			//
-			case 'appointments' :
-				echo '<fieldset class="info_box">' . "\n";
-				show_page_subtitle(_T('case_subtitle_appointments'), 'tools_agenda');
-
-				echo "<p class=\"normal_text\">\n";
-
-				$q = "SELECT *
-					FROM lcm_app as a
-					WHERE a.id_case=$case";
-				$result = lcm_query($q);
-				
-				// Get the number of rows in the result
-				$number_of_rows = lcm_num_rows($result);
-				if ($number_of_rows) {
-					$headers = array( array('title' => _Th('time_input_date_start')),
-							array('title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ) ),
-							array('title' => _Th('app_input_type')),
-							array('title' => _Th('app_input_title')),
-							array('title' => _Th('app_input_reminder')) );
-
-					show_list_start($headers);
-
-					// Check for correct start position of the list
-					$list_pos = 0;
-					
-					if (isset($_REQUEST['list_pos']))
-						$list_pos = $_REQUEST['list_pos'];
-
-					if (is_numeric($list_pos)) {
-						if ($list_pos >= $number_of_rows)
-							$list_pos = 0;
-
-						// Position to the page info start
-						if ($list_pos > 0)
-							if (!lcm_data_seek($result,$list_pos))
-								lcm_panic("Error seeking position $list_pos in the result");
-
-						$show_all = false;
-					} elseif ($list_pos == 'all') {
-						$show_all = true;
-					}
-					
-					// Show page of the list
-					for ($i = 0 ; ((($i<$prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result))) ; $i++) {
-						$css = ' class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '"';
-
-						echo "<tr>\n";
-						echo "<td $css>" . format_date($row['start_time'], 'short') . '</td>';
-
-						echo "<td $css>"
-							. ( ($prefs['time_intervals'] == 'absolute') ?
-								format_date($row['end_time'], 'short') : 
-								format_time_interval_prefs(strtotime($row['end_time']) - strtotime($row['start_time'])) 
-							) . '</td>';
-
-						echo "<td $css>" . _Tkw('appointments', $row['type']) . '</td>';
-						echo "<td $css>" . '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
-						echo "<td $css>" . format_date($row['reminder'], 'short') . '</td>';
-						echo "</tr>\n";
-					}
-
-					show_list_end($list_pos, $number_of_rows, true);
-				}
-
-				echo "<p><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">" . _T('app_button_new') . "</a></p>\n";
-
-				echo "</p>\n";
-				echo "</fieldset>\n";
-
-				break;
+			//	echo "</fieldset>\n";
+				// break; // XXX  [ML] testing
 			//
 			// Case followups
 			//
 			case 'followups' :
-				echo '<fieldset class="info_box">';
+		//		echo '<fieldset class="info_box">';
+				echo '<a name="followups"></a>' . "\n";
 				show_page_subtitle(_T('case_subtitle_followups'), 'cases_followups');
 
 				// By default, show from "case creation date" to NOW().
@@ -601,8 +536,82 @@ if ($case > 0) {
 					echo "</p>\n";
 				}
 
-				echo "</fieldset>\n";
+	//			echo "</fieldset>\n";
 				
+				break;
+
+			//
+			// Case appointments
+			//
+			case 'appointments' :
+				echo '<fieldset class="info_box">' . "\n";
+				show_page_subtitle(_T('case_subtitle_appointments'), 'tools_agenda');
+
+				echo "<p class=\"normal_text\">\n";
+
+				$q = "SELECT *
+					FROM lcm_app as a
+					WHERE a.id_case=$case";
+				$result = lcm_query($q);
+				
+				// Get the number of rows in the result
+				$number_of_rows = lcm_num_rows($result);
+				if ($number_of_rows) {
+					$headers = array( array('title' => _Th('time_input_date_start')),
+							array('title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ) ),
+							array('title' => _Th('app_input_type')),
+							array('title' => _Th('app_input_title')),
+							array('title' => _Th('app_input_reminder')) );
+
+					show_list_start($headers);
+
+					// Check for correct start position of the list
+					$list_pos = 0;
+					
+					if (isset($_REQUEST['list_pos']))
+						$list_pos = $_REQUEST['list_pos'];
+
+					if (is_numeric($list_pos)) {
+						if ($list_pos >= $number_of_rows)
+							$list_pos = 0;
+
+						// Position to the page info start
+						if ($list_pos > 0)
+							if (!lcm_data_seek($result,$list_pos))
+								lcm_panic("Error seeking position $list_pos in the result");
+
+						$show_all = false;
+					} elseif ($list_pos == 'all') {
+						$show_all = true;
+					}
+					
+					// Show page of the list
+					for ($i = 0 ; ((($i<$prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result))) ; $i++) {
+						$css = ' class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '"';
+
+						echo "<tr>\n";
+						echo "<td $css>" . format_date($row['start_time'], 'short') . '</td>';
+
+						echo "<td $css>"
+							. ( ($prefs['time_intervals'] == 'absolute') ?
+								format_date($row['end_time'], 'short') : 
+								format_time_interval_prefs(strtotime($row['end_time']) - strtotime($row['start_time'])) 
+							) . '</td>';
+
+						echo "<td $css>" . _Tkw('appointments', $row['type']) . '</td>';
+						echo "<td $css>" . '<a href="app_det.php?app=' . $row['id_app'] . '" class="content_link">' . $row['title'] . '</a></td>';
+						echo "<td $css>" . format_date($row['reminder'], 'short') . '</td>';
+						echo "</tr>\n";
+					}
+
+					show_list_end($list_pos, $number_of_rows, true);
+				}
+
+				echo "<p><a href=\"edit_app.php?case=$case&amp;app=0\" class=\"create_new_lnk\">" . _T('app_button_new') . "</a></p>\n";
+
+				echo "</p>\n";
+				echo "</fieldset>\n";
+
 				break;
 			//
 			// Time spent on case by authors
@@ -739,6 +748,23 @@ if ($case > 0) {
 				echo "</tr>\n";
 
 				echo "\t</table>\n</p></fieldset>\n";
+				break;
+			//
+			// Internal requests (expenses) related to this case
+			//
+			case 'exps':
+				include_lcm('inc_obj_exp');
+				$exp_list = new LcmExpenseListUI();
+
+				$exp_list->setSearchTerm($find_exp_string);
+				$exp_list->setCase($case);
+
+				$exp_list->start();
+				$exp_list->printList();
+				$exp_list->finish();
+
+				echo '<p><a href="edit_exp.php?case=' . $case . '" class="create_new_lnk">' . _T('expense_button_new') . "</a></p>\n";
+
 				break;
 			//
 			// Case attachments
