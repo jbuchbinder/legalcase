@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_upgrade.php,v 1.13 2006/04/20 22:24:12 mlutfy Exp $
+	$Id: lcm_upgrade.php,v 1.14 2006/04/21 18:21:49 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -58,10 +58,6 @@ if ($current_version < $lcm_db_version) {
 	echo "\n<!-- Upgrading from $current_version to $lcm_db_version -->\n";
 
 	$log = upgrade_database($current_version);
-
-	// Create new meta information, if necessary
-	include_lcm('inc_meta_defaults');
-	init_default_config();
 
 	// To be honest, in most cases, it will cause a lcm_panic() and this will
 	// not show, altough we could (in the future) catch/interpret errors.
