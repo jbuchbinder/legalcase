@@ -18,10 +18,11 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listcases.php,v 1.73 2006/04/20 16:51:33 mlutfy Exp $
+	$Id: listcases.php,v 1.74 2006/04/21 19:12:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
+include_lcm('inc_obj_case');
 
 global $author_session;
 global $prefs;
@@ -65,7 +66,7 @@ if (($v = _request('case_owner'))) {
 	}
 }
 
-// always include 'my' cases [ML] $q_owner is re-used below
+// always include 'my' cases 
 $q_owner = " (a.id_author = " . $author_session['id_author'];
 
 if ($prefs['case_owner'] == 'public')
@@ -135,81 +136,18 @@ echo ' <button name="submit" type="submit" value="submit" class="simple_form_btn
 echo "</p>\n";
 echo "</form>\n";
 
-// Select cases of which the current user is author
-$q = "SELECT DISTINCT c.id_case, title, status, public, pub_write, date_creation
-		FROM lcm_case as c NATURAL JOIN lcm_case_author as a ";
-
-if (strlen($find_case_string) > 0)
-	$q .= " NATURAL LEFT JOIN lcm_keyword_case as kc ";
-
 //
-// Apply filters to SELECT output
+// Show the list of cases
 //
-
-// Start WHERE clause
-$q .= " WHERE 1=1 ";
-
-// Add search criteria, if any
-if (strlen($find_case_string) > 0) {
-	$q .= " AND (";
-
-	if (is_numeric($find_case_string))
-		$q .= " (c.id_case = $find_case_string) OR ";
-		
-	$q .= " (kc.value LIKE '%$find_case_string%') OR "
-	 	. " (c.title LIKE '%$find_case_string%') ";
-	
-	$q .= " )";
-}
-
-// Case owner
-$q .= " AND " . $q_owner;
-
-// Period (date_creation) to show
-if ($prefs['case_period'] < 1900) // since X days
-	// $q .= " AND TO_DAYS(NOW()) - TO_DAYS(date_creation) < " . $prefs['case_period'];
-	$q .= " AND " . lcm_query_subst_time('date_creation', 'NOW()') . ' < ' . $prefs['case_period'] * 3600 * 24;
-else // for year X
-	$q .= " AND " . lcm_query_trunc_field('date_creation', 'year') . ' = ' . $prefs['case_period'];
-
-//
-// Sort results
-//
-
-// Sort cases by creation date
-$case_order = 'DESC';
-if (isset($_REQUEST['case_order']))
-	if ($_REQUEST['case_order'] == 'ASC' || $_REQUEST['case_order'] == 'DESC')
-		$case_order = $_REQUEST['case_order'];
-
-$q .= " ORDER BY date_creation " . $case_order;
-
-$result = lcm_query($q);
-
-// Check for correct start position of the list
-$number_of_rows = lcm_num_rows($result);
-
-if (isset($_REQUEST['list_pos']))
-	$list_pos = $_REQUEST['list_pos'];
-else
-	$list_pos = 0;
-
-if ($list_pos >= $number_of_rows)
-	$list_pos = 0;
-
-// Position to the page info start
-if ($list_pos > 0)
-	if (!lcm_data_seek($result,$list_pos))
-		lcm_panic("Error seeking position $list_pos in the result");
-
-// Process the output of the query
 echo '<p class="normal_text">' . "\n";
-show_listcase_start();
 
-for ($i = 0 ; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++)
-	show_listcase_item($row, $i, $find_case_string);
+$case_list = new LcmCaseListUI();
 
-show_listcase_end($list_pos, $number_of_rows);
+$case_list->setSearchTerm($find_case_string);
+$case_list->start();
+$case_list->printList();
+$case_list->finish();
+
 echo "</p>\n";
 
 echo '<p><a href="edit_case.php?case=0" class="create_new_lnk">' . _T('case_button_new') . "</a></p>\n";
