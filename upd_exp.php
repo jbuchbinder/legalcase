@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_exp.php,v 1.3 2006/03/30 01:07:19 mlutfy Exp $
+	$Id: upd_exp.php,v 1.4 2006/04/21 16:01:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -58,9 +58,6 @@ if ($id_comment || $edit_comment) {
 	$errs = $obj->save();
 }
 
-
-// TODO 
-// save expense status
 
 if (count($errs)) {
 	$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
