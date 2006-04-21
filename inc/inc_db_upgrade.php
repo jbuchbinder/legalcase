@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.63 2006/04/20 22:23:42 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.64 2006/04/21 18:21:23 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -46,13 +46,11 @@ function upgrade_database_conf() {
 	// This must be done at the end, in case keyword DB structure changed
 	//
 
-	// Do not remove, or variables won't be declared
-	global $system_keyword_groups;
-	$system_keyword_groups = array();
-
 	include_lcm('inc_meta');
 	include_lcm('inc_keywords_default');
-	create_groups($system_keyword_groups);
+
+	$all_default_kwgs = get_default_keywords();
+	create_groups($all_default_kwgs);
 
 	//
 	// Create new meta (if necessary)
