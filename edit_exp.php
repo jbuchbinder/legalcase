@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_exp.php,v 1.2 2006/03/30 01:07:19 mlutfy Exp $
+	$Id: edit_exp.php,v 1.3 2006/04/21 15:03:47 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -94,11 +94,6 @@ if ($status || $id_comment || _request('edit_comment')) {
 }
 
 echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-
-echo '<input type="hidden" name="id_followup" value="' . _session('id_followup', 0) . '">
-	<input type="hidden" name="id_case" value="' . _session('id_case') . '">
-	<input type="hidden" name="ref_edit_fu" value="' . _session('ref_url') . '">' . "\n";
-
 echo "</form>\n";
 
 lcm_page_end();
