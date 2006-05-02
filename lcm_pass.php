@@ -18,8 +18,10 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.19 2006/03/16 23:07:21 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.20 2006/05/02 10:16:52 mlutfy Exp $
 */
+
+session_start();
 
 include('inc/inc_version.php');
 
@@ -193,15 +195,33 @@ function print_pass_forgotten_form() {
 			//--></script>\n";
 }
 
-function send_registration_by_email($email, $username, $name_first, $name_last) {
-	global $system_kwg;
+function send_registration_by_email() {
+	$_SESSION['form_data'] = array();
+	$_SESSION['errors'] = array();
+
+	include_lcm('inc_keywords');
+	$kw_email = get_kw_from_name('contacts', 'email_main');
+
+	$form_items = array (
+		'name_first' => 'person_input_name_first',
+		'name_last'  => 'person_input_name_last',
+		'email'      => 'input_email',
+		'username'   => 'authoredit_input_username'
+	);
+
+	foreach ($form_items as $field => $trad) {
+		$_SESSION['form_data'][$field] = _request($field);
+
+		if (! _session($field))
+			$_SESSION['errors'][$field] = _Ti($trad) . _T('warning_field_mandatory');
+	}
+
+	if (count($_SESSION['errors'])) {
+		lcm_header("Location: lcm_pass.php?register=yes");
+		exit;
+	}
 
 	install_html_start(_T('pass_title_register'), 'login');
-
-	if (! $email)
-		lcm_panic("INTERNAL: Missing email in send_registration_form");
-
-	$email = clean_input($email);
 
 	// There is a risk that an author changes his e-mail after his account
 	// is created, to the e-mail of another person, and therefore block the
@@ -209,9 +229,9 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 	// person to hijack the account, so it would be a stupid DoS.
 	$query = "SELECT id_of_person, status FROM lcm_contact as c, lcm_author as a
 		WHERE c.id_of_person = a.id_author
-		AND value = '" . $email . "'
+		AND value = '" . _session('email') . "'
 		AND type_person = 'author'
-		AND type_contact = " . $system_kwg['contacts']['keywords']['email_main']['id_keyword']; // XXX
+		AND type_contact = " . $kw_email['id_keyword'];
 
 	$result = lcm_query($query);
 
@@ -220,12 +240,10 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 		$id_author = $row['id_of_person'];
 		$status = $row['status'];
 
-		unset ($continue);
+		// TODO: if status = 'pending for validation by admin', show message
 		if ($status == 'trash') {
 			echo "<br />\n";
 			echo "<div class='box_error'>" . _T('pass_registration_denied') . "</div>\n";
-		} else if ($status == 'nouveau') {
-			lcm_query("DELETE FROM lcm_author WHERE id_author=$id_author");
 		} else {
 			echo "<br />\n";
 			echo "<div class='box_error'>" . _T('pass_warning_already_registered') . "</div>\n";
@@ -239,28 +257,23 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 	include_lcm('inc_access');
 	include_lcm('inc_mail');
 
-	$username = get_unique_username(clean_input($username));
+	$username = get_unique_username(_session('username'));
 	$pass = create_random_password(8, $username);
 	$mdpass = md5($pass);
 
 	// TODO: If subscriptions moderated, send cookie + email to sysadmin
 	lcm_query("INSERT INTO lcm_author (name_first, name_last, username, password, status) "
-			. "VALUES ('".clean_input($name_first)."', '".clean_input($name_last)."', '$username', '$mdpass', 'normal')");
+			. "VALUES ('" . _session('name_first') . "', '" . _session('name_last') . "', '$username', '$mdpass', 'normal')");
 
 	$id_author = lcm_insert_id('lcm_author', 'id_author');
 
 	// Add e-mail to lcm_contact
 	lcm_query("INSERT INTO lcm_contact (type_person, type_contact, id_of_person, value)
-			VALUES ('author', " . $system_kwg['contacts']['keywords']['email_main']['id_keyword'] . ", $id_author, '" .  $email . "')");
+			VALUES ('author', " . $kw_email['id_keyword'] . ", $id_author, '" .  _session('email') . "')");
 
 	// Prepare the e-mail to send to the user
-	$site_name = read_meta('site_name');
+	$site_name = _T(read_meta('site_name'));
 	$site_address = read_meta('site_address');
-
-	// This is only a last resort solution. It is not info
-	// which can be trusted, and could be abused.
-	if (! $site_address)
-		$site_address = $GLOBALS['fallback_site_address']; // TODO
 
 	$message = _T('pass_info_automated_msg') . "\n\n";
 	$message .= _T('info_greetings') . ",\n\n";
@@ -268,10 +281,10 @@ function send_registration_by_email($email, $username, $name_first, $name_last) 
 	$message .= "- "._T('login_login') . _T('typo_column') . " $username\n";
 	$message .= "- "._T('login_password') . _T('typo_column') . " $pass\n\n";
 
-	if (send_email($email, "[$site_name] " . _T('pass_title_personal_identifier'), $message)) {
+	if (send_email(_session('email'), "[$site_name] " . _T('pass_title_personal_identifier'), $message)) {
 		echo "<p>" . _T('pass_info_identifier_mail') . "</p>\n";
 	} else {
-		$email_admin = meta_read('email_sysadmin');
+		$email_admin = read_meta('email_sysadmin');
 		echo "<div class=\"box_error\"><p>" 
 			.  _T('pass_warning_mail_failure', array('email_admin' => $email_admin))
 			. "</p></div>\n";
@@ -284,11 +297,13 @@ function print_registration_form() {
 
 	$link = new Link;
 	$url = $link->getUrl();
-	$url = quote_amp($url);
 
-	echo "<p>" . _T('pass_info_why_register') . "</p>\n";
-	echo "<form method='get' action='$url' style='border: 0px; margin: 0px;'>\n";
-	echo '<input type="hidden" name="register" value="yes" />' . "\n";
+	echo '<p align="left" class="normal_text">' . _T('pass_info_why_register') . "</p>\n";
+
+	echo show_all_errors();
+	
+	echo "<form method='post' action='$url' style='border: 0px; margin: 0px;'>\n";
+	echo '<input type="hidden" name="register" value="data" />' . "\n";
 
 	echo "<fieldset><label><b>". _T('info_your_contact_information') . "</b><br></label>\n";
 
@@ -298,23 +313,22 @@ function print_registration_form() {
 	echo "<tr>\n";
 	echo "<td>
 			<label for='name_first'>" . f_err_star('name_first') . _Ti('person_input_name_first') . "</label><br />
-			<input type='text' style='width: 100%;' id='name_first' name='name_first' class='formo' value='$name_first' size='20'>
+			<input type='text' style='width: 100%;' id='name_first' name='name_first' class='formo' value='" . _session('name_first') . "' size='20'>
 		</td>\n";
 	echo "<td>
 			<label for='name_last'>" . f_err_star('name_last') . _Ti('person_input_name_last') . "</label><br />
-			<input type='text' style='width: 100%;' id='name_last' name='name_last' class='formo' value='$name_last' size='20'>
+			<input type='text' style='width: 100%;' id='name_last' name='name_last' class='formo' value='" . _session('name_last') . "' size='20'>
 		</td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "<td colspan='2'>";
 
-	echo "<p><label for='email'>" . f_err_star('email') .  _Ti('input_email') . "</label><br />";
-	echo "<input type='text' id='email' name='email' class='formo' value=\"$email\" size='40'></p>\n";
+	echo "<p><label for='email'>" . f_err_star('email') . _Ti('input_email') . "</label><br />";
+	echo "<input type='text' id='email' name='email' class='formo' value='" . _session('email') . "' size='40'></p>\n";
 
-	// echo "<p><b>" . _T('input_connection_identifiers') . "</b></p>";
-	echo "<p><label for='username'>" . _Ti('authoredit_input_username') . "</label> ";
+	echo "<p><label for='username'>" . f_err_star('username') . _Ti('authoredit_input_username') . "</label> ";
 	echo "<small>" . _T('info_more_than_three') . "</small><br />";
-	echo "<input type='text' id='username' name='username' class='formo' value=\"$username\" size='40'></p>\n";
+	echo "<input type='text' id='username' name='username' class='formo' value='" . _session('username') . "' size='40'></p>\n";
 
 	echo "<small>" . _T('pass_info_password_by_mail') . "</small>\n";
 	echo "</fieldset>\n";
@@ -324,31 +338,34 @@ function print_registration_form() {
 	echo "</p>";
 
 	echo "</form>\n";
+
+	$_SESSION['form_data'] = array();
+	$_SESSION['errors'] = array();
 }
 
 use_language_of_site();
 use_language_of_visitor();
 
 $open_subscription = read_meta("site_open_subscription");
-unset($error);
 
-if ($_REQUEST['p']) {
-	reset_pass($_REQUEST['p'], $_REQUEST['password']);
+
+if (_request('p')) {
+	reset_pass(_request('p'), _request('password'));
 }
 
-else if ($_REQUEST['user_email']) {
-	send_cookie_by_email($_REQUEST['user_email']);
+else if (_request('user_email')) {
+	send_cookie_by_email(_request('user_email'));
 }
 
-else if ($_REQUEST['register']) {
+else if (($reg = _request('register'))) {
 	if ($open_subscription == 'yes' || $open_subscription == 'moderated') {
-		if ($email) {
-			send_registration_by_email($email, $username, $name_first, $name_last);
-		} else {
-			print_registration_form($email);
-		}
+		if ($reg == 'data')
+			send_registration_by_email();
+		else 
+			print_registration_form();
 	} else {
 		install_html_start(_T('pass_title_register'), 'login');
+		// FIXME ? show error ?
 	}
 }
 
