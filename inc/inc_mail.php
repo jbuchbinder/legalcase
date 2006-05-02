@@ -37,7 +37,7 @@ function send_email($email, $subject, $texte, $from = "", $headers = "") {
 
 	if (!is_valid_email($email)) return false;
 
-	lcm_log("mail ($email): $subject");
+	lcm_debug("mail ($email): $subject");
 	$charset = read_meta('charset');
 
 	$headers = "From: $from\n".
