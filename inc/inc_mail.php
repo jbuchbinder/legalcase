@@ -76,9 +76,15 @@ function send_email($email, $subject, $texte, $from = "", $headers = "") {
 	case 'free':
 		return false;
 	case 'online':
-		return @email('webmaster', $email, $subject, $texte);
+		if (! ($ret = @email('webmaster', $email, $subject, $texte)))
+			lcm_log("ERROR mail: (online) returned false");
+
+		return $ret;
 	default:
-		return @mail($email, $subject, $texte, $headers);
+		if (! ($ret = @mail($email, $subject, $texte, $headers)))
+			lcm_log("ERROR mail: (default) returned false");
+
+		return $ret;
 	}
 }
 
