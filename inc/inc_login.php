@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.32 2006/03/10 18:55:56 mlutfy Exp $
+	$Id: inc_login.php,v 1.33 2006/05/04 06:32:36 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -61,8 +61,6 @@ function close_login() {
 }
 
 function show_login($cible, $prive = 'prive', $message_login='') {
-	$pass_popup = 'href="lcm_pass.php?register=yes" target="lcm_pass" '
-		. ' onclick="' . "javascript:window.open('lcm_pass.php?register=yes', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=450'); return false;\"";
 
 	$error = '';
 	$login = (isset($_REQUEST['var_login']) ? $_REQUEST['var_login'] : '');
@@ -276,12 +274,15 @@ function show_login($cible, $prive = 'prive', $message_login='') {
 	// button for "forgotten password"
 	include_lcm('inc_mail');
 	if (tester_mail()) {
-		echo '<a href="lcm_pass.php?pass_forgotten=yes" target="lcm_pass" onclick="' ."javascript:window.open(this.href, 'lcm_pass', 'scrollbars=yes, resizable=yes, width=480, height=280'); return false;\" class=\"link_btn\">" ._T('login_password_forgotten').'</a>';
+		echo '<a href="lcm_pass.php?pass_forgotten=yes" target="lcm_pass" onclick="' ."javascript:window.open(this.href, 'lcm_pass', 'scrollbars=yes, resizable=yes, width=640, height=280'); return false;\" class=\"link_btn\">" ._T('login_password_forgotten').'</a>';
 	}
+
+	$register_popup = 'href="lcm_pass.php?register=yes" target="lcm_pass" '
+		. ' onclick="' . "javascript:window.open('lcm_pass.php?register=yes', 'lcm_pass', 'scrollbars=yes, resizable=yes, width=640, height=500'); return false;\"";
 	
 	$open_subscription = read_meta("site_open_subscription");
 	if ($open_subscription == 'yes' || $open_subscription == 'moderated')
-		echo "&nbsp;&nbsp;&nbsp;<a $pass_popup class=\"link_btn\">" . _T('login_register').'</a>';
+		echo "&nbsp;&nbsp;&nbsp;<a $register_popup class=\"link_btn\">" . _T('login_register').'</a>';
 
 	echo "</div>\n";
 
