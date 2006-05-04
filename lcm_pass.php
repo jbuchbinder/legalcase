@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.20 2006/05/02 10:16:52 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.21 2006/05/04 08:15:27 mlutfy Exp $
 */
 
 session_start();
@@ -261,7 +261,16 @@ function send_registration_by_email() {
 	$pass = create_random_password(8, $username);
 	$mdpass = md5($pass);
 
-	// TODO: If subscriptions moderated, send cookie + email to sysadmin
+	$open_subscription = read_meta("site_open_subscription");
+
+	if (! ($open_subscription == 'yes' || $open_subscription == 'moderated'))
+		lcm_panic("Subscriptions not permitted.");
+
+	$status = 'waiting';
+
+	if ($open_subscription == 'yes')
+		$status = 'normal';
+
 	lcm_query("INSERT INTO lcm_author (name_first, name_last, username, password, status) "
 			. "VALUES ('" . _session('name_first') . "', '" . _session('name_last') . "', '$username', '$mdpass', 'normal')");
 
@@ -275,11 +284,15 @@ function send_registration_by_email() {
 	$site_name = _T(read_meta('site_name'));
 	$site_address = read_meta('site_address');
 
-	$message = _T('pass_info_automated_msg') . "\n\n";
-	$message .= _T('info_greetings') . ",\n\n";
+	$message = _T('info_greetings') . ",\n\n";
 	$message .= _T('pass_info_here_info', array('site_name' => $site_name, 'site_address' => $site_address)) . "\n\n";
-	$message .= "- "._T('login_login') . _T('typo_column') . " $username\n";
-	$message .= "- "._T('login_password') . _T('typo_column') . " $pass\n\n";
+	$message .= "- ". _Ti('login_login') . " $username\n";
+	$message .= "- ". _Ti('login_password') . " $pass\n\n";
+
+	if ($open_subscription == 'moderated')
+		$message .= _T('pass_info_moderated') . "\n\n";
+
+	$message .= _T('pass_info_automated_msg') . "\n\n";
 
 	if (send_email(_session('email'), "[$site_name] " . _T('pass_title_personal_identifier'), $message)) {
 		echo "<p>" . _T('pass_info_identifier_mail') . "</p>\n";
@@ -288,6 +301,13 @@ function send_registration_by_email() {
 		echo "<div class=\"box_error\"><p>" 
 			.  _T('pass_warning_mail_failure', array('email_admin' => $email_admin))
 			. "</p></div>\n";
+	}
+
+	// If moderated, send copy to site admin
+	if ($open_subscription == 'moderated') {
+		$email_admin = read_meta('email_sysadmin');
+
+		send_email($email_admin, "[$site_name] " . _T('pass_title_personal_identifier'), $message);
 	}
 }
 
