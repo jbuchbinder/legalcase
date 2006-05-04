@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.97 2006/05/04 09:15:01 mlutfy Exp $
+	$Id: inc_version.php,v 1.98 2006/05/04 09:19:02 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1208,6 +1208,11 @@ function lcm_panic($message) {
 	$error .= "Request: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'] . "\n";
 	$error .= "Error: " . $message . "\n";
 
+	// Show DB version in meta cache
+	$error .= "Version-DB: " . read_meta('lcm_db_version') . " (in cache)\n";
+
+	// Show existence + size of cache, in case it doesnt exist, or there were
+	// problems while generating it (i.e. it will be less than 30kb)
 	if (include_data_exists('inc_meta_cache')) {
 		 if (isset($_SERVER['LcmDataDir']))
 		 	$prefix = $_SERVER['LcmDataDir'] . '/';
@@ -1229,8 +1234,6 @@ function lcm_panic($message) {
 	lcm_log($error . lcm_getbacktrace(false) . "END OF REPORT\n");
 	die("<pre>" . $error . " " . lcm_getbacktrace() . "END OF REPORT\n</pre>");
 }
-
-lcm_panic("test");
 
 function lcm_assert_value($value, $allow_zero = false) {
 	if (is_numeric($value) && $value == 0 && (! $allow_zero))
