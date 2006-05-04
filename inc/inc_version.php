@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.96 2006/04/21 18:20:30 mlutfy Exp $
+	$Id: inc_version.php,v 1.97 2006/05/04 09:15:01 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1189,6 +1189,12 @@ function get_var_dump($v = null) {
 function lcm_panic($message) {
 	global $lcm_version, $lcm_db_version;
 
+	function lcm_ini_get($param) {
+		$ret = ini_get($param);
+
+		return ($ret ? $ret : 'n/a');
+	}
+
 	echo "<p>" . _T('warning_panic_is_useful') . "</p>\n";
 	$error = "[INTERNAL] (v" . $lcm_version . "-db" . $lcm_db_version . ", PHP v" . PHP_VERSION . ")\n";
 	$error .= "Server: " . $_SERVER['SERVER_SOFTWARE'] . "\n";
@@ -1202,10 +1208,29 @@ function lcm_panic($message) {
 	$error .= "Request: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'] . "\n";
 	$error .= "Error: " . $message . "\n";
 
+	if (include_data_exists('inc_meta_cache')) {
+		 if (isset($_SERVER['LcmDataDir']))
+		 	$prefix = $_SERVER['LcmDataDir'] . '/';
+		else
+			$prefix = 'inc/data/';
+	
+		$error .= "inc_meta_cache: exists (" . filesize($prefix . 'inc_meta_cache.php') . " bytes)\n";
+	} else {
+		$error .= "inc_meta_cache: does NOT exists\n";
+	}
+
+	$check_confs = array('safe_mode', 'safe_mode_gid', 'safe_mode_include_dir', 'safe_mode_exec_dir',
+						'open_basedir', 'disable_functions');
+
+	foreach ($check_confs as $conf)
+		$error .= $conf . ': ' . lcm_ini_get($conf) . "\n";
+
 	// Make different lcm_getbacktrace() calls to avoid html in logs
-	lcm_log($error . lcm_getbacktrace(false));
-	die("<pre>" . $error . " " . lcm_getbacktrace() . "</pre>");
+	lcm_log($error . lcm_getbacktrace(false) . "END OF REPORT\n");
+	die("<pre>" . $error . " " . lcm_getbacktrace() . "END OF REPORT\n</pre>");
 }
+
+lcm_panic("test");
 
 function lcm_assert_value($value, $allow_zero = false) {
 	if (is_numeric($value) && $value == 0 && (! $allow_zero))
