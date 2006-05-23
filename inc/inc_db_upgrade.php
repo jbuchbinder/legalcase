@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.64 2006/04/21 18:21:23 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.65 2006/05/23 10:28:22 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1011,6 +1011,14 @@ function upgrade_database($old_db_version) {
 					ADD filecustom text NOT NULL DEFAULT ''");
 
 		upgrade_db_version (45);
+	}
+
+	// This should have been done a long time ago!
+	if ($lcm_db_version_current < 46) {
+		lcm_query("ALTER TABLE lcm_fields
+			CHANGE filter filter ENUM('none','date','number','text','currency') NOT NULL DEFAULT 'none'");
+
+		upgrade_db_version (46);
 	}
 
 	// Update the meta, lcm_fields, keywords, etc.
