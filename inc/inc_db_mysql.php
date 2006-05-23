@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.34 2006/05/23 10:14:38 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.35 2006/05/23 10:26:44 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -209,6 +209,7 @@ function process_query($query) {
 
 function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 	global $lcm_mysql_link, $lcm_mysql_db;	// for multiple connections
+	global $debug;
 
 	if (! $login)
 		lcm_panic("missing login?");
@@ -218,6 +219,10 @@ function lcm_connect_db($host, $port = 0, $login, $pass, $db = 0, $link = 0) {
 
 	if ($port > 0) $host = "$host:$port";
 	$lcm_mysql_link = @mysql_connect($host, $login, $pass);
+
+	if ($debug)
+		mysql_query("SET SESSION sql_mode='STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO'");
+		
 
 	if ($lcm_mysql_link && $db) {
 		$lcm_mysql_db = $db;
