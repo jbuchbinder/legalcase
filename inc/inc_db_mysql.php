@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.33 2006/04/20 19:23:49 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.34 2006/05/23 10:14:38 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -256,7 +256,7 @@ function lcm_list_databases($host, $login, $pass, $port = 0) {
 		if ($result AND (($num = mysql_num_rows($result)) > 0)) {
 			for ($i = 0; $i < $num; $i++) {
 				$name = mysql_dbname($result, $i);
-				if ($name != 'test')
+				if ($name != 'test' && $name != 'information_schema')
 					array_push($databases, $name);
 			}
 		}
