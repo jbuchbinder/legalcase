@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.99 2006/05/23 10:26:21 mlutfy Exp $
+	$Id: inc_version.php,v 1.100 2006/05/26 10:08:35 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1135,6 +1135,9 @@ function lcm_getbacktrace($html = true, $level = 0)
 
 	if ($html)
 		$s = '<pre align="left">';
+
+	if (! function_exists("debug_backtrace"))
+		return "debug_backtrace function not available (PHP = " . PHP_VERSION . ")";
 
 	$traceArr = debug_backtrace();
 	array_shift($traceArr);
