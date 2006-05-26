@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.13 2006/03/15 23:30:27 mlutfy Exp $
+	$Id: import_db.php,v 1.14 2006/05/26 11:06:45 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -76,8 +76,12 @@ function show_import_form() {
 	echo "<strong>" . _Ti('archives_input_select_backup') . "</strong><br />";
 	echo "<select name='file' class='sel_frm'>\n";
 
+	lcm_debug("opendir: " . DIR_BACKUPS);
+
 	$storage = opendir(DIR_BACKUPS);
 	while (($file = readdir($storage))) {
+		lcm_debug("file in opendir: $file");
+
 		if (is_dir(DIR_BACKUPS . '/' . $file) && (strpos($file,'db-')===0))
 			echo "\t\t<option value='" . substr($file,3) . "'>" . substr($file,3) . "</option>\n";
 	}
@@ -327,8 +331,11 @@ function upload_backup_file() {
 			// XXX is this safe to do this here? What if file exists?
 			// FIXME: check extractList() to modify dest path
 			$tar_object->extract();
+
+			lcm_debug("untar should be OK");
 		} else {
 			$_SESSION['errors']['upload_file'] = "Archive::Tar not installed"; // TRAD
+			lcm_log("Archive::Tar not installed");
 			return;
 		}
 	} else {
@@ -350,14 +357,14 @@ if ($author_session['status'] != 'admin') {
 	exit;
 }
 
-switch($_REQUEST['action']) {
+switch(_request('action')) {
 	case 'upload_file':
-		upload_backup_file($_REQUEST['file']);
+		upload_backup_file(_request('file'));
 		show_import_form();
 		break;
 	case 'import':
-		if ($_REQUEST['file']) {
-			import_database($_REQUEST['file']);
+		if (($f = _request('file'))) {
+			import_database($f);
 		} else {
 			// FIXME: show error message
 			show_import_form();
