@@ -18,16 +18,14 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listclients.php,v 1.36 2006/03/07 18:58:08 mlutfy Exp $
+	$Id: listclients.php,v 1.37 2006/05/26 06:54:07 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_impex');
 
-$find_client_string = '';
-if (isset($_REQUEST['find_client_string']))
-	$find_client_string = $_REQUEST['find_client_string'];
+$find_client_string = trim(_request('find_client_string'));
 
 if (!empty($_REQUEST['export']) && ($GLOBALS['author_session']['status'] == 'admin')) {
 	export('client', $_REQUEST['exp_format'], $find_client_string);
@@ -42,11 +40,19 @@ show_find_box('client', $find_client_string, '', (string)($GLOBALS['author_sessi
 $q = "SELECT id_client,name_first,name_middle,name_last
 		FROM lcm_client";
 
-if (strlen($find_client_string)>1) {
-	// Add search criteria
+//
+// Add search criteria
+//
+if ($find_client_string) {
+	// remove useless spaces
+	$find_client_string = preg_replace('/ +/', ' ', $find_client_string);
+
 	$q .= " WHERE ((name_first LIKE '%$find_client_string%')
 			OR (name_middle LIKE '%$find_client_string%')
-			OR (name_last LIKE '%$find_client_string%'))";
+			OR (name_last LIKE '%$find_client_string%')
+			OR (CONCAT(name_first, ' ', name_middle, ' ', name_last) LIKE '%$find_client_string%')
+			OR (CONCAT(name_first, ' ', name_last) LIKE '%$find_client_string%')
+		) ";
 }
 
 // Sort clients by ID
