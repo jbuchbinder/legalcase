@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_pgsql.php,v 1.7 2006/04/20 19:23:49 mlutfy Exp $
+	$Id: inc_db_pgsql.php,v 1.8 2006/05/26 08:11:55 mlutfy Exp $
 */
 
 if (defined('_INC_DB_PGSQL')) return;
@@ -221,6 +221,9 @@ function process_query($query) {
 		}
 		$query = ereg_replace('([[:space:],])lcm_', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
 	}
+
+	// Change RAND() to RANDOM() for MySQL -> PosgreSQL unification
+	$query = str_replace('RAND(','RANDOM(',$query);
 
 	return $query;
 }

@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.51 2006/03/15 23:31:57 mlutfy Exp $
+	$Id: install.php,v 1.52 2006/05/26 08:11:25 mlutfy Exp $
 */
 
 session_start();
@@ -155,7 +155,7 @@ function install_step_5() {
 				. "NOW(),"
 				. "'temp',"
 				. "'',"
-				. "FLOOR(32000*RANDOM())," // FIXME RAND() on mySQL, RANDOM() on PgSQL?
+				. "FLOOR(32000*RAND()),"
 				. "'admin',"
 				. "NOW()"
 				. ")";
