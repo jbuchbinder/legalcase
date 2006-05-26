@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.36 2006/05/26 08:11:55 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.37 2006/05/26 11:49:21 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -117,6 +117,21 @@ function lcm_query_restore_table($query) {
 		// Remove possible ENGINE=MyISAM, CHARSET=latin1, etc. at end of query
 		$query = preg_replace("/\) (ENGINE=|TYPE=)[^\)]*/", ")", $query);
 
+		//
+		// Clean table structure, for backups from MySQL 4.x imported into MySQL 5.x
+		//
+		
+		// MySQL 5.1: foo_field datetime DEFAULT '0000-00-00 00:00:00' NOT NULL -> not allowed
+		// so transform into: foo_field datetime NOT NULL. Default values are bad anyway for datetime.
+		$query = preg_replace("/default '0000-00-00 00:00:00'/i", " ", $query);
+
+		// Remove 'FULLTEXT KEY' entries...
+		$query = preg_replace("/FULLTEXT KEY `?\w+`? \(`?\w+`?\),?/", " ", $query);
+
+		// Sometimes, the previous statement ends the query with: "foo_statement,)"
+		$query = preg_replace("/,\s*\)/m", " )", $query);
+
+
 		// Activate UTF-8 only if using MySQL >= 4.1
 		// (regexp excludes MySQL <= 4.0, easier for forward compatibility)
 		if (! preg_match("/^(4\.0|3\.)/", $ver)) {
@@ -139,9 +154,20 @@ function lcm_query_restore_table($query) {
 
 function lcm_query_create_table($table, $fields, $keys = array()) {
 	$ver = @mysql_get_server_info();
+	$new_fields = array();
 
+	foreach ($fields as $f) {
+		$tmp = $f;
 
-	$query = "CREATE TABLE $table (" . implode(", ", $fields);
+		// MySQL 5.1: foo_field datetime DEFAULT '0000-00-00 00:00:00' NOT NULL -> not allowed
+		// so transform into: foo_field datetime NOT NULL. Default values are bad anyway for datetime.
+		$tmp = preg_replace("/default '0000-00-00 00:00:00'/i", " ", $tmp);
+
+		$new_fields[] = $tmp;
+	}
+
+	$query = "CREATE TABLE $table ("
+		. implode(", ", $new_fields);
 
 	if (count($keys)) {
 		$query .= ', ';
