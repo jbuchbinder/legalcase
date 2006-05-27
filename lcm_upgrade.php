@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_upgrade.php,v 1.14 2006/04/21 18:21:49 mlutfy Exp $
+	$Id: lcm_upgrade.php,v 1.15 2006/05/27 13:47:25 mlutfy Exp $
 */
 
 include('inc/inc_version.php');
@@ -27,6 +27,14 @@ include_lcm('inc_meta');
 include_lcm('inc_auth');
 
 global $lcm_db_version;
+
+// Check dir permissions: if we upgrade the LCM files, the permissions
+// of the directories may have changed.
+// c.f. Mateusz Hołysz (1148727224.9101.18.camel@localhost.localdomain)
+if (_request('dirs_ok') != 1) {
+	lcm_header('Location: lcm_test_dirs.php?' . urlencode("url=lcm_upgrade.php?dirs_ok=1"));
+	exit;
+}
 
 // Usually done in inc.php, but we cannot include it otherwise
 // it will loop on "please upgrade your database".

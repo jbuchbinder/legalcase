@@ -84,6 +84,7 @@ function test_write($my_dir) {
 //
 
 $install = ! include_config_exists('inc_connect');
+$dest_url = _request('url', 'index.php');
 
 // Files to test
 $test_dirs[] = (isset($_SERVER['LcmLogDir']) ? $_SERVER['LcmLogDir'] : 'log');
@@ -127,9 +128,9 @@ if (!empty($bad_dirs)) {
 	absent_dirs($absent_dirs, $test_dir);
 } else {
 	if ($install)
-		header("Location: ./install.php?step=1");
+		lcm_header("Location: install.php?step=1");
 	else
-		header("Location: ./index.php");
+		lcm_header("Location: " . $dest_url);
 }
 
 ?>
