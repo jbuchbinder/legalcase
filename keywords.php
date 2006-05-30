@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.37 2006/05/26 07:57:37 mlutfy Exp $
+	$Id: keywords.php,v 1.38 2006/05/30 11:45:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -77,11 +77,6 @@ function show_all_keywords_type($type = '') {
 					echo _T('keywords_info_kw_hidden');
 				echo "</td>";
 
-				// TODO: Keyword occurences?
-				// [ML] really messy, because we don't know to what applies
-				// a system keyword (except by making a big switch) and poking
-				// everywhere..
-
 				echo "</tr>\n";
 				// echo "</li>\n";
 				$cpt_kw++;
@@ -91,10 +86,19 @@ function show_all_keywords_type($type = '') {
 			echo "</ul>\n";
 		}
 
-		echo '<p><a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
+		echo '<p>';
+		
+		// New keyword
+		echo '<a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
 			. 'id_group=' . $kwg['id_group'] . '">'
-			. _T('keywords_button_kw_new') . "</a></p>\n";
+			. _T('keywords_button_kw_new') . '</a>';
+
+		// New sub-group
+		echo '<a class="edit_lnk" href="keywords.php?action=edit_subgroup&amp;id_subgroup=0&amp;'
+			. 'id_group=' . $kwg['id_group'] . '">'
+			. _T('keywords_button_subkwg_new') . '</a>';
 	
+		echo "</p>\n";
 		echo "</fieldset>\n";
 	}
 
@@ -107,16 +111,24 @@ function show_all_keywords_type($type = '') {
 //
 // View the details on a keyword group
 //
-function show_keyword_group_id($id_group) {
+function show_keyword_group_id($id_group, $id_subgroup = 0, $sub_group = false) {
 	global $system_kwg;
+
+	$kwg = array();
+	$sub_kwg = array();
 
 	if (! $id_group) {
 		$kwg['name'] = '';
 		$kwg['type'] = 'user';
 		lcm_page_start(_T('title_kwg_new'));
 	} else {
-		$kwg = get_kwg_from_id($id_group);
-		lcm_page_start(_T('title_kwg_edit'));
+		if ($sub_group) {
+			$kwg = get_kwg_from_id($id_group);
+			lcm_page_start(_T('title_subkwg_edit'));
+		} else {
+			$kwg = get_kwg_from_id($id_group);
+			lcm_page_start(_T('title_kwg_edit'));
+		}
 	}
 
 	echo show_all_errors($_SESSION['errors']);
@@ -128,18 +140,27 @@ function show_keyword_group_id($id_group) {
 	
 	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
 	echo "<tr>\n";
+
+	if ($sub_group) {
+		echo "<td>" . _Ti('keywords_parent_group_title') . "</td>\n";
+		echo "<td>" . _T($kwg['title']) . "</td>\n";
+		echo "</tr><tr>\n";
+	}
+	
 	echo '<td width="30%"><label for="kwg_type">' . _T('keywords_input_type') . "</label></td>\n";
 	echo "<td>";
 	
-	if ($kwg['type'] == 'system') {
-		echo _T('keywords_input_type_system');
+	if ($kwg['type'] == 'system' || $sub_group) {
+		echo _T('keywords_input_type_' . $kwg['type']);
 	} else {
 		$all_types = array("case", "stage", "client", "org", "client_org");  // "author", "followup"
 		
 		echo '<select name="kwg_type" id="kwg_type">';
 
-		foreach ($all_types as $t)
-			echo '<option value="' . $t . '">' . _T('keywords_input_type_' . $t) . '</option>';
+		foreach ($all_types as $t) {
+			$sel = isSelected($t == $kwg['type']);
+			echo '<option value="' . $t . '"' . $sel . '>' . _T('keywords_input_type_' . $t) . '</option>';
+		}
 
 		echo "</select>\n";
 	}
@@ -149,14 +170,14 @@ function show_keyword_group_id($id_group) {
 	echo '<td><label for="kwg_policy">' . _T('keywords_input_policy') . "</label></td>\n";
 	echo "<td>";
 
-	if ($kwg['type'] == 'system') {
+	if ($kwg['type'] == 'system' || $sub_group) {
 		echo _T('keywords_input_policy_' . $kwg['policy']);
 	} else {
 		$all_policy = array('mandatory', 'optional', 'recommended');
 		echo '<select name="kwg_policy" id="kwg_policy">';
 
 		foreach ($all_policy as $pol) {
-			$sel = ($kwg['policy'] == $pol ? ' selected="selected"' : '');
+			$sel = isSelected($kwg['policy'] == $pol);
 			echo '<option value="' . $pol . '"' . $sel . '>' 
 				. _T('keywords_input_policy_' . $pol)
 				. "</option>\n";
@@ -170,12 +191,12 @@ function show_keyword_group_id($id_group) {
 	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
 	echo "<td>";
 	echo '<select name="kwg_suggest" class="sel_frm">';
-	echo '<option value=""' . $sel . '>' . "none" . '</option>' . "\n"; // TRAD
+	echo '<option value="">' . "none" . '</option>' . "\n"; // TRAD
 	
 	if ($id_group) {
 		$all_kw = get_keywords_in_group_name($kwg['name']);
 		foreach ($all_kw as $kw) {
-			$sel = ($kw['name'] == $kwg['suggest'] ? ' selected="selected"' : '');
+			$sel = isSelected($kw['name'] == $kwg['suggest']);
 			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>' . "\n";
 		}
 	}
@@ -512,22 +533,27 @@ if (isset($_REQUEST['action'])) {
 	switch ($_REQUEST['action']) {
 		case 'edit_group' :
 			// Show form to edit a keyword group and exit
-			show_keyword_group_id(intval($_REQUEST['id_group']));
+			show_keyword_group_id(intval(_request('id_group', 0)));
+
+			break;
+		case 'edit_subgroup':
+			// Show form to edit a keyword sub-group and exit
+			show_keyword_group_id(intval(_request('id_group', 0)), intval(_request('id_subgroup', 0)),  true);
 
 			break;
 		case 'edit_keyword':
 			// Show form to edit a keyword and exit
-			show_keyword_id(intval($_REQUEST['id_keyword']));
+			show_keyword_id(intval(_request('id_keyword', 0)));
 
 			break;
 		case 'update_group':
 			// Update the information on a keyword group then goes to edit group
-			update_keyword_group(intval($_REQUEST['id_group']));
+			update_keyword_group(intval(_request('id_group', 0)));
 
 			break;
 		case 'update_keyword':
 			// Update the information on a keyword group then goes to edit group
-			update_keyword(intval($_REQUEST['id_keyword']));
+			update_keyword(intval(_request('id_keyword', 0)));
 
 			break;
 		case 'refresh':
