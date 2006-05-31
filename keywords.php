@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.38 2006/05/30 11:45:21 mlutfy Exp $
+	$Id: keywords.php,v 1.39 2006/05/31 08:55:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -94,8 +94,8 @@ function show_all_keywords_type($type = '') {
 			. _T('keywords_button_kw_new') . '</a>';
 
 		// New sub-group
-		echo '<a class="edit_lnk" href="keywords.php?action=edit_subgroup&amp;id_subgroup=0&amp;'
-			. 'id_group=' . $kwg['id_group'] . '">'
+		echo '<a class="edit_lnk" href="keywords.php?action=edit_group&amp;id_group=0&amp;'
+			. 'id_parent=' . $kwg['id_group'] . '">'
 			. _T('keywords_button_subkwg_new') . '</a>';
 	
 		echo "</p>\n";
@@ -111,46 +111,84 @@ function show_all_keywords_type($type = '') {
 //
 // View the details on a keyword group
 //
-function show_keyword_group_id($id_group, $id_subgroup = 0, $sub_group = false) {
+function show_keyword_group_id($id_group, $id_parent = 0) {
 	global $system_kwg;
 
 	$kwg = array();
 	$sub_kwg = array();
+	$parent_kwg = array();
 
 	if (! $id_group) {
-		$kwg['name'] = '';
-		$kwg['type'] = 'user';
-		lcm_page_start(_T('title_kwg_new'));
-	} else {
-		if ($sub_group) {
-			$kwg = get_kwg_from_id($id_group);
+		// set default values (common to both new kwg or sub-kwg)
+		$kwg['title'] = $kwg['description'] = '';
+		$kwg['ac_author'] = 'Y';
+		$kwg['policy'] = '';
+		$kwg['suggest'] = '';
+		$kwg['quantity'] = 'one';
+
+		if ($id_parent) {
+			// New keyword sub-group
+			$parent_kwg = get_kwg_from_id($id_parent);
+
+			// set default values (based on parent kwg)
+			$kwg['type'] = $parent_kwg['type'];
+
+			// recommend a new name
+			$all_kws = get_subgroups_in_group_name($parent_kwg['name'], false);
+			$cpt = sprintf("%02d", count($all_kws) + 1);
+
+			while (get_kw_from_name($parent_kwg['name'], $parent_kwg['name'] . '_sub' . $cpt))
+				$cpt = sprintf("%02d", ++$cpt);
+
+			$kwg['name'] = $parent_kwg['name'] . '_sub' . $cpt;
+
 			lcm_page_start(_T('title_subkwg_edit'));
 		} else {
-			$kwg = get_kwg_from_id($id_group);
-			lcm_page_start(_T('title_kwg_edit'));
+			// New keyword group, set default values
+			$kwg['name'] = '';
+			$kwg['type'] = 'user';
+
+			lcm_page_start(_T('title_kwg_new'));
 		}
+	} else {
+		// Editing existing (parent or sub) keyword group
+		$kwg = get_kwg_from_id($id_group);
+		lcm_page_start(_T('title_kwg_edit'));
 	}
 
 	echo show_all_errors($_SESSION['errors']);
-	
+
+	//
+	// Start form
+	//
 	echo '<form action="keywords.php" method="post">' . "\n";
-	
 	echo '<input type="hidden" name="action" value="update_group" />' . "\n";
 	echo '<input type="hidden" name="id_group" value="' . $id_group . '" />' . "\n";
+	
+	if ($id_parent) {
+		echo '<input type="hidden" name="id_parent" value="' . $id_parent . '" />' . "\n";
+		echo '<input type="hidden" name="name_parent" value="' . $parent_kwg['name'] . '" />' . "\n";
+	}
 	
 	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
 	echo "<tr>\n";
 
-	if ($sub_group) {
+	// 
+	// Parent group (if sub-group)
+	//
+	if ($id_parent) {
 		echo "<td>" . _Ti('keywords_parent_group_title') . "</td>\n";
-		echo "<td>" . _T($kwg['title']) . "</td>\n";
+		echo "<td>" . _T($parent_kwg['title']) . "</td>\n";
 		echo "</tr><tr>\n";
 	}
-	
-	echo '<td width="30%"><label for="kwg_type">' . _T('keywords_input_type') . "</label></td>\n";
+
+	//
+	// Keyword group type (applies to..)
+	//
+	echo '<td width="30%"><label for="kwg_type">' . f_err_star('type') . _T('keywords_input_type') . "</label></td>\n";
 	echo "<td>";
 	
-	if ($kwg['type'] == 'system' || $sub_group) {
+	if ($kwg['type'] == 'system' || $id_parent) {
 		echo _T('keywords_input_type_' . $kwg['type']);
 	} else {
 		$all_types = array("case", "stage", "client", "org", "client_org");  // "author", "followup"
@@ -164,17 +202,27 @@ function show_keyword_group_id($id_group, $id_subgroup = 0, $sub_group = false) 
 
 		echo "</select>\n";
 	}
-	
+
 	echo "</td>\n";
-	echo "</tr><tr>\n";
-	echo '<td><label for="kwg_policy">' . _T('keywords_input_policy') . "</label></td>\n";
+	echo "</tr>\n";
+
+	//
+	// Policy
+	// Note: if sub-group, there could be a per-subgroup policy
+	// E.g. one kw from SubGroupAlpha mandatory, one kw from SubGroupBeta optional
+	//
+	echo "<tr>\n";
+	echo '<td><label for="kwg_policy">' . f_err_star('policy') . _T('keywords_input_policy') . "</label></td>\n";
 	echo "<td>";
 
-	if ($kwg['type'] == 'system' || $sub_group) {
+	if ($kwg['type'] == 'system') {
 		echo _T('keywords_input_policy_' . $kwg['policy']);
 	} else {
 		$all_policy = array('mandatory', 'optional', 'recommended');
 		echo '<select name="kwg_policy" id="kwg_policy">';
+
+		if (! $kwg['policy'])
+			echo '<option value="">...</option>';
 
 		foreach ($all_policy as $pol) {
 			$sel = isSelected($kwg['policy'] == $pol);
@@ -187,7 +235,12 @@ function show_keyword_group_id($id_group, $id_subgroup = 0, $sub_group = false) 
 	}
 
 	echo "</td>\n";
-	echo "</tr><tr>\n";
+	echo "</tr>\n";
+
+	//
+	// Default suggested keyword
+	//
+	echo "<tr>\n";
 	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
 	echo "<td>";
 	echo '<select name="kwg_suggest" class="sel_frm">';
@@ -205,23 +258,34 @@ function show_keyword_group_id($id_group, $id_subgroup = 0, $sub_group = false) 
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 
+	//
 	// Name (only for new keywords, must be unique and cannot be changed)
+	//
 	$disabled = ($id_group ? ' disabled="disabled" ' : '');
+
 	echo "<td colspan='2'>";
 	echo "<p class='normal_text'>";
 	echo "<strong>" . f_err_star('name') . _T('keywords_input_name') . "</strong> " 
 		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
+	
 	echo '<input ' . $disabled . ' type="text" style="width:99%;" id="kwg_name" name="kwg_name" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
+
 	echo "</p>\n";
 
+	//
+	// Title
+	//
 	echo "<p class='normal_text'>";
 	echo "<strong>" . f_err_star('title') . _T('keywords_input_title') . "</strong><br />\n";
 	echo "<input type='text' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
 	echo "</p>\n";
 
+	//
+	// Description
+	//
 	echo "<p class='normal_text'>";
 	echo "<strong>" . _T('keywords_input_description') . "</strong><br />\n";
-	echo "<textarea id='kwg_desc' name='kwg_desc' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
+	echo "<textarea id='kwg_description' name='kwg_description' style='width:99%' rows='2' cols='45' wrap='soft' class='frm_tarea'>";
 	echo $kwg['description'];
 	echo "</textarea>\n";
 	echo "</p>\n";
@@ -232,23 +296,23 @@ function show_keyword_group_id($id_group, $id_subgroup = 0, $sub_group = false) 
 	echo '<ul class="info">';
 
 	// Quantity: relevevant only for user keywords (ex: 'thematics' for cases)
-	if ($kwg['type'] != 'system') {
-		// [ML] Yes, strange UI, but imho it works great (otherwise confusing, I hate checkboxes)
-		$html_quantity = '<select name="kwg_quantity" id="kwg_quantity">'
-			. '<option value="one"' . ($kwg['quantity'] == 'one' ? ' selected="selected"' : '') . '>' . _T('keywords_option_quantity_one') . '</option>'
-			. '<option value="many"' . ($kwg['quantity'] == 'many' ? ' selected="selected"' : '') . '>' . _T('keywords_option_quantity_many') . '</option>'
-			. '</select>';
-	} else {
+	if ($kwg['type'] == 'system') {
 		$html_quantity = _T('keywords_option_quantity_' . $kwg['quantity'])
 			. '<input type="hidden" name="kwg_quantity" value="' . $kwg['quantity'] . '" />';
+	} else {
+		$my_qty = $kwg['quantity'];
+
+		// [ML] Yes, strange UI, but imho it works great (otherwise confusing, I hate checkboxes)
+		$html_quantity = '<select name="kwg_quantity" id="kwg_quantity">'
+			. '<option value=""></option>'
+			. '<option value="one"' . isSelected($my_qty == 'one') . '>' . _T('keywords_option_quantity_one') . '</option>'
+			. '<option value="many"' . isSelected($my_qty == 'many') . '>' . _T('keywords_option_quantity_many') . '</option>'
+			. '</select>';
 	}
 	
 	echo '<li>' . _T('keywords_info_quantity', array('quantity' => $html_quantity)) . "</li>\n";
 
 	if ($kwg['type'] != 'system') {
-		if (! $id_group)
-			$kwg['ac_author'] = 'Y';
-	
 		echo '<li>'
 			. _T('keywords_info_kwg_ac_author') . " " . get_yes_no('kwg_ac_author', $kwg['ac_author'])
 			. "</li>\n";
@@ -361,31 +425,46 @@ function show_keyword_id($id_keyword = 0) {
 //
 // Update the information on a keyword group
 //
-function update_keyword_group($id_group) {
-	$kwg_suggest = _request('kwg_suggest'); // sys + user
-	$kwg_name    = _request('kwg_name');    // user only
-	$kwg_title   = _request('kwg_title');   // sys + user
-	$kwg_desc    = _request('kwg_desc');    // sys + user
-	$kwg_type    = _request('kwg_type');    // user only
-	$kwg_policy  = _request('kwg_policy');  // user only
-	$kwg_quantity = _request('kwg_quantity'); // user only
-	$kwg_hasvalue = _request('kwg_hasvalue'); // user only
-	$kwg_ac_author = _request('kwg_ac_author'); // user only
+function update_keyword_group($id_group, $id_parent = 0) {
+	$return_tab = 'user'; // in which keyword tab to return (user/system)
+
+	$kwg = array(
+		'name'      => '__ASSERT__', // user only (new sys-kwg not allowed)
+		'title'     => '__ASSERT__', // sys + user
+		'description' => '',         // sys + user
+		'type'      => '__ASSERT__', // user only (if sub-kwg, will inherit from parent)
+		'policy'    => '__ASSERT__', // user only
+		'quantity'  => 'one',
+		'hasvalue'  => 'N',   // user only
+		'suggest'   => '',    // sys + user (default: none)
+		'ac_author' => 'Y');  // user only
+
+	// If editing existing keywords, load existing values as defaults
+	if ($id_group)
+		$kwg = array_merge($kwg, get_kwg_from_id($id_group));
+
+	// First get user-submitted values (fallback on default values)
+	foreach ($kwg as $f => $default_val)
+		$kwg[$f] = _request('kwg_' . $f, $default_val);
+
+	// If sub-kwg, set default values from parent (overwrite user values, if any)
+	if ($id_parent) {
+		$parent_kwg = get_kwg_from_id($id_parent);
+		$kwg['type'] = $parent_kwg['type'];
+	}
 
 	//
 	// Check for errors
 	//
+	// * Mandatory fields
+	foreach ($kwg as $f => $val)
+		if ($val == '__ASSERT__')
+			$_SESSION['errors'][$f] = _Ti('keywords_input_' . $f) . _T('warning_field_mandatory');
 
-	if (! $id_group) {
-		if (! $kwg_name)
-			$_SESSION['errors']['name'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
-
+	// * Unique kwg name, if new kwg
+	if (! $id_group)
 		if (! check_if_kwg_name_unique($kwg_name))
 			$_SESSION['errors']['name'] = _T('keywords_warning_kwg_code_exists');
-	}
-
-	if (! $kwg_title)
-		$_SESSION['errors']['title'] = _Ti('keywords_input_title') . _T('warning_field_mandatory');
 
 	if (count($_SESSION['errors'])) {
 		header("Location: " . $_SERVER['HTTP_REFERER']);
@@ -397,37 +476,39 @@ function update_keyword_group($id_group) {
 	//
 
 	if (! $id_group) { // new
-		if ($kwg_type == 'system')
-			lcm_panic("Operation not allowed (type = $kwg_type)");
+		// FIXME: add validation checks for new sub-kwg FIXME XXX
+	
+		if ($kwg['type'] == 'system')
+			lcm_panic("Operation not allowed (type = " . $kwg['type']);
 	
 		$query = "INSERT INTO lcm_keyword_group
-					SET type = '" . $kwg_type . "',
-						name = '" . $kwg_name . "',
-						title = '" . $kwg_title . "',
-						description = '" . $kwg_desc . "',
+					SET type = '" . $kwg['type'] . "',
+						name = '" . $kwg['name'] . "',
+						title = '" . $kwg['title'] . "',
+						description = '" . $kwg['description'] . "',
 						suggest = '',
-						policy = '" . $kwg_policy . "',
-						quantity = '" . $kwg_quantity . "',
-						ac_author = '" . $kwg_ac_author . "',
+						policy = '" . $kwg['policy'] . "',
+						quantity = '" . $kwg['quantity'] . "',
+						ac_author = '" . $kwg['ac_author'] . "',
 						ac_admin = 'Y'";
 
 		lcm_query($query);
 		$id_group = lcm_insert_id('lcm_keyword_group', 'id_group');
-		$kwg_info = get_kwg_from_id($id_group);
+		$return_tab = 'user'; // (creating sys-kwg is not allowed)
 	} else {
 		// Get current kwg information (kwg_type & name cannot be changed)
-		$kwg_info = get_kwg_from_id($id_group);
+		$old_kwg = get_kwg_from_id($id_group);
 
-		$fl = " suggest = '$kwg_suggest', "
-			. "title = '$kwg_title', "
-			. "description = '$kwg_desc' ";
+		$fl = " suggest = '" . $kwg['suggest'] . "', "
+			. "title = '" . $kwg['title'] . "', "
+			. "description = '" . $kwg['description'] . "' ";
 	
-		if ($kwg_info['type'] != 'system') {
-			$fl .= ", quantity = '$kwg_quantity' ";
-			$fl .= ", policy = '$kwg_policy' ";
+		if ($old_kwg['type'] != 'system') {
+			$fl .= ", quantity = '" . $kwg['quantity'] . "' ";
+			$fl .= ", policy = '" . $kwg['policy'] . "' ";
 
-			if ($kwg_ac_author == 'Y' || $kwg_ac_author == 'N')
-				$fl .= ", ac_author = '$kwg_ac_author' ";
+			if ($kwg['ac_author'] == 'Y' || $kwg['ac_author'] == 'N')
+				$fl .= ", ac_author = '" . $kwg['ac_author'] "' ";
 		}
 		
 		$query = "UPDATE lcm_keyword_group
@@ -435,12 +516,12 @@ function update_keyword_group($id_group) {
 					WHERE id_group = $id_group";
 		
 		lcm_query($query);
+		$return_tab = ($old_kwg['type'] == 'system' ? 'system' : 'user');
 	}
 	
 	write_metas(); // update inc_meta_cache.php
 
-	$tab = ($kwg_info['type'] == 'system' ? 'system' : 'user');
-	header("Location: keywords.php?tab=" . $tab . "#" . $kwg_info['name']);
+	header("Location: keywords.php?tab=" . $return_tab . "#" . $kwg['name']);
 	exit;
 }
 
@@ -533,12 +614,7 @@ if (isset($_REQUEST['action'])) {
 	switch ($_REQUEST['action']) {
 		case 'edit_group' :
 			// Show form to edit a keyword group and exit
-			show_keyword_group_id(intval(_request('id_group', 0)));
-
-			break;
-		case 'edit_subgroup':
-			// Show form to edit a keyword sub-group and exit
-			show_keyword_group_id(intval(_request('id_group', 0)), intval(_request('id_subgroup', 0)),  true);
+			show_keyword_group_id(intval(_request('id_group', 0)), intval(_request('id_parent', 0)));
 
 			break;
 		case 'edit_keyword':
@@ -548,7 +624,7 @@ if (isset($_REQUEST['action'])) {
 			break;
 		case 'update_group':
 			// Update the information on a keyword group then goes to edit group
-			update_keyword_group(intval(_request('id_group', 0)));
+			update_keyword_group(intval(_request('id_group', 0)), intval(_request('id_parent', 0)));
 
 			break;
 		case 'update_keyword':
