@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.52 2006/04/16 11:59:02 antzi Exp $
+	$Id: inc_db_create.php,v 1.53 2006/06/01 13:06:51 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -343,6 +343,7 @@ function create_database() {
 
 	$fields = array (
 		"id_group bigint(21) NOT NULL auto_increment",
+		"id_parent bigint(21) NOT NULL DEFAULT 0",
 		"name VARCHAR(255) NOT NULL",
 		"title text NOT NULL DEFAULT ''",
 		"description text NOT NULL DEFAULT ''",
