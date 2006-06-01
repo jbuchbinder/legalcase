@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.100 2006/05/26 10:08:35 mlutfy Exp $
+	$Id: inc_version.php,v 1.101 2006/06/01 13:06:19 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -285,7 +285,7 @@ $lcm_version = 0.710;
 $lcm_version_shown = "0.7.1 CVS";
 
 // Current version of LCM database
-$lcm_db_version = 46;
+$lcm_db_version = 47;
 
 // Error reporting
 # error_reporting(E_ALL); // [ML] recommended for debug
@@ -986,8 +986,8 @@ function _Tkw($grp, $val, $args = '') {
 
 include_lcm('inc_filters');
 function _request ($name, $default = '') {
-	if (isset($_REQUEST[$name]) && $_REQUEST[$name])
-		return clean_input($_REQUEST[$name]);
+	if (isset($_REQUEST[$name]) && ($v = trim(clean_input($_REQUEST[$name]))))
+		return $v;
 	else
 		return $default;
 }
@@ -1232,6 +1232,10 @@ function lcm_panic($message) {
 
 	foreach ($check_confs as $conf)
 		$error .= $conf . ': ' . lcm_ini_get($conf) . "\n";
+
+	// Too much paranoia? I am not even sure if we can inject code
+	// either XSS or shellcode .. but should not hurt..
+	$error = htmlspecialchars($error);
 
 	// Make different lcm_getbacktrace() calls to avoid html in logs
 	lcm_log($error . lcm_getbacktrace(false) . "END OF REPORT\n");
