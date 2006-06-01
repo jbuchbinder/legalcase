@@ -18,94 +18,111 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.39 2006/05/31 08:55:29 mlutfy Exp $
+	$Id: keywords.php,v 1.40 2006/06/01 14:09:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
 //
-// Show all kwg for a given type (system, user, case, followup,
-// client, org, author).
+// Show kwg info (used by show_all_keywords_type, recursively)
 //
-function show_all_keywords_type($type = '') {
-	if (! $type)
-		$type = 'system';
-	
-	$kwg_all = get_kwg_all($type);
+function show_kwg_info($kwg, $level = 0) {
+	// test ac-admin?
+	$suggest = $kwg['suggest'];
 
-	foreach ($kwg_all as $kwg) {
-		// test ac-admin?
-		$suggest = $kwg['suggest'];
-		
-		echo '<a name="' . $kwg['name'] . '"></a>' . "\n";
-		echo "<fieldset class='info_box'>\n";
-		echo "<div class='prefs_column_menu_head'>";
-		echo "<a href='?action=edit_group&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>"
-			. _T($kwg['title']) 
-			. "</a>";
+	echo '<a name="' . $kwg['name'] . '"></a>' . "\n";
+	echo "<fieldset class='info_box'>\n";
+	echo "<div class='prefs_column_menu_head'>";
+	echo "<a href='?action=edit_group&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>"
+		. _T($kwg['title']) 
+		. "</a>";
 
+	// Applies to: show only if not sub-kwg, because otherwise redundant info
+	if (! $level)
 		if ($kwg['type'] != 'system')
 			echo " - " . _Ti('keywords_input_type') .  _T('keywords_input_type_' . $kwg['type']);
 
-		if ($kwg['ac_author'] != 'Y')
-			echo ' ' . _T('keywords_info_kwg_hidden');
+	if ($kwg['ac_author'] != 'Y')
+		echo ' ' . _T('keywords_info_kwg_hidden');
 
-		echo "</div>\n";
+	echo "</div>\n";
 
-		$kw_all = get_keywords_in_group_id($kwg['id_group'], false);
+	$kw_all = get_keywords_in_group_id($kwg['id_group'], false);
 
-		if (count($kw_all)) {
-			$cpt_kw = 0;
-			echo "<ul class='wo_blt'>\n";
-			echo '<table border="0" align="center" class="tbl_usr_dtl" width="100%">' . "\n";
+	if (count($kw_all)) {
+		$cpt_kw = 0;
+		echo "<ul class='wo_blt'>\n";
+		echo '<table border="0" align="center" class="tbl_usr_dtl" width="100%">' . "\n";
 
-			foreach ($kw_all as $key => $kw) {
-				$css = ' class="tbl_cont_' . ($cpt_kw %2 ? "dark" : "light") . '" ';
-				// echo '<li>';
-				echo "<tr>\n";
+		foreach ($kw_all as $key => $kw) {
+			$css = ' class="tbl_cont_' . ($cpt_kw %2 ? "dark" : "light") . '" ';
+			// echo '<li>';
+			echo "<tr>\n";
 
-				// Keyword name
-				echo "<td width='80%' $css>";
-				if ($suggest == $kw['name']) echo "<b>";
-				echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T(remove_number_prefix($kw['title'])) . "</a>";
-				if ($suggest == $kw['name']) echo "</b>";
-				echo "</td>";
+			// Keyword name
+			echo "<td width='80%' $css>";
+			if ($suggest == $kw['name']) echo "<b>";
+			echo "<a href='?action=edit_keyword&amp;id_keyword=" . $kw['id_keyword'] . "' class='content_link'>". _T(remove_number_prefix($kw['title'])) . "</a>";
+			if ($suggest == $kw['name']) echo "</b>";
+			echo "</td>";
 
-				// Hidden kw?
-				echo "<td $css>";
-				if ($kw['ac_author'] != 'Y')
-					echo _T('keywords_info_kw_hidden');
-				echo "</td>";
+			// Hidden kw?
+			echo "<td $css>";
+			if ($kw['ac_author'] != 'Y')
+				echo _T('keywords_info_kw_hidden');
+			echo "</td>";
 
-				echo "</tr>\n";
-				// echo "</li>\n";
-				$cpt_kw++;
-			}
-
-			echo "</table>\n";
-			echo "</ul>\n";
+			echo "</tr>\n";
+			// echo "</li>\n";
+			$cpt_kw++;
 		}
 
-		echo '<p>';
-		
-		// New keyword
-		echo '<a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
-			. 'id_group=' . $kwg['id_group'] . '">'
-			. _T('keywords_button_kw_new') . '</a>';
-
-		// New sub-group
-		echo '<a class="edit_lnk" href="keywords.php?action=edit_group&amp;id_group=0&amp;'
-			. 'id_parent=' . $kwg['id_group'] . '">'
-			. _T('keywords_button_subkwg_new') . '</a>';
-	
-		echo "</p>\n";
-		echo "</fieldset>\n";
+		echo "</table>\n";
+		echo "</ul>\n";
 	}
+
+	//
+	// Sub-groups (recursive)
+	//
+	if ($kwg['type'] != 'system') {
+		$sub_kwgs = get_subgroups_in_group_id($kwg['id_group']);
+
+		foreach ($sub_kwgs as $skwg)
+			show_kwg_info($skwg, $level + 1);
+	}
+
+	//
+	// Buttons
+	//
+	echo '<p>';
+
+	// New keyword
+	echo '<a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
+		. 'id_group=' . $kwg['id_group'] . '">'
+		. _T('keywords_button_kw_new') . '</a>';
+
+	// New sub-group
+	echo '<a class="edit_lnk" href="keywords.php?action=edit_group&amp;id_group=0&amp;'
+		. 'id_parent=' . $kwg['id_group'] . '">'
+		. _T('keywords_button_subkwg_new') . '</a>';
+
+	echo "</p>\n";
+	echo "</fieldset>\n";
+}
+
+//
+// Show all kwg for a given type (system, user, case, followup,
+// client, org, author).
+//
+function show_all_keywords_type($type = 'system') {
+	$kwg_all = get_kwg_all($type);
+
+	foreach ($kwg_all as $kwg)
+		show_kwg_info($kwg);
 
 	if ($type == 'user')
 		echo '<p><a href="keywords.php?action=edit_group&amp;id_group=0" class="create_new_lnk">'
 			. _T('keywords_button_kwg_new') . '</a></p>' . "\n";
-
 }
 
 //
@@ -134,7 +151,7 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 			$kwg['type'] = $parent_kwg['type'];
 
 			// recommend a new name
-			$all_kws = get_subgroups_in_group_name($parent_kwg['name'], false);
+			$all_kws = get_subgroups_in_group_id($id_parent, false);
 			$cpt = sprintf("%02d", count($all_kws) + 1);
 
 			while (get_kw_from_name($parent_kwg['name'], $parent_kwg['name'] . '_sub' . $cpt))
@@ -154,6 +171,11 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 		// Editing existing (parent or sub) keyword group
 		$kwg = get_kwg_from_id($id_group);
 		lcm_page_start(_T('title_kwg_edit'));
+
+		if ($kwg['id_parent']) {
+			$parent_kwg = get_kwg_from_id($kwg['id_parent']);
+			$id_parent = $kwg['id_parent'];
+		}
 	}
 
 	echo show_all_errors($_SESSION['errors']);
@@ -167,7 +189,9 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	
 	if ($id_parent) {
 		echo '<input type="hidden" name="id_parent" value="' . $id_parent . '" />' . "\n";
-		echo '<input type="hidden" name="name_parent" value="' . $parent_kwg['name'] . '" />' . "\n";
+
+		// Not used:
+		// echo '<input type="hidden" name="name_parent" value="' . $parent_kwg['name'] . '" />' . "\n";
 	}
 	
 	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
@@ -176,7 +200,7 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	// 
 	// Parent group (if sub-group)
 	//
-	if ($id_parent) {
+	if ($id_parent || $kwg['id_parent']) {
 		echo "<td>" . _Ti('keywords_parent_group_title') . "</td>\n";
 		echo "<td>" . _T($parent_kwg['title']) . "</td>\n";
 		echo "</tr><tr>\n";
@@ -220,9 +244,6 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	} else {
 		$all_policy = array('mandatory', 'optional', 'recommended');
 		echo '<select name="kwg_policy" id="kwg_policy">';
-
-		if (! $kwg['policy'])
-			echo '<option value="">...</option>';
 
 		foreach ($all_policy as $pol) {
 			$sel = isSelected($kwg['policy'] == $pol);
@@ -467,7 +488,7 @@ function update_keyword_group($id_group, $id_parent = 0) {
 			$_SESSION['errors']['name'] = _T('keywords_warning_kwg_code_exists');
 
 	if (count($_SESSION['errors'])) {
-		header("Location: " . $_SERVER['HTTP_REFERER']);
+		lcm_header("Location: " . $_SERVER['HTTP_REFERER']);
 		exit;
 	}
 
@@ -482,7 +503,8 @@ function update_keyword_group($id_group, $id_parent = 0) {
 			lcm_panic("Operation not allowed (type = " . $kwg['type']);
 	
 		$query = "INSERT INTO lcm_keyword_group
-					SET type = '" . $kwg['type'] . "',
+					SET id_parent = " . $id_parent . ",
+						type = '" . $kwg['type'] . "',
 						name = '" . $kwg['name'] . "',
 						title = '" . $kwg['title'] . "',
 						description = '" . $kwg['description'] . "',
@@ -500,7 +522,7 @@ function update_keyword_group($id_group, $id_parent = 0) {
 		$old_kwg = get_kwg_from_id($id_group);
 
 		$fl = " suggest = '" . $kwg['suggest'] . "', "
-			. "title = '" . $kwg['title'] . "', "
+			. "title = '" . $kwg['title'] . "', "
 			. "description = '" . $kwg['description'] . "' ";
 	
 		if ($old_kwg['type'] != 'system') {
@@ -508,7 +530,7 @@ function update_keyword_group($id_group, $id_parent = 0) {
 			$fl .= ", policy = '" . $kwg['policy'] . "' ";
 
 			if ($kwg['ac_author'] == 'Y' || $kwg['ac_author'] == 'N')
-				$fl .= ", ac_author = '" . $kwg['ac_author'] "' ";
+				$fl .= ", ac_author = '" . $kwg['ac_author'] . "' ";
 		}
 		
 		$query = "UPDATE lcm_keyword_group
@@ -521,7 +543,7 @@ function update_keyword_group($id_group, $id_parent = 0) {
 	
 	write_metas(); // update inc_meta_cache.php
 
-	header("Location: keywords.php?tab=" . $return_tab . "#" . $kwg['name']);
+	lcm_header("Location: keywords.php?tab=" . $return_tab . "#" . $kwg['name']);
 	exit;
 }
 
@@ -559,7 +581,7 @@ function update_keyword($id_keyword) {
 		$_SESSION['errors']['title'] = _Ti('keywords_input_name') . _T('warning_field_mandatory');
 
 	if (count($_SESSION['errors'])) {
-		header("Location: " . $_SERVER['HTTP_REFERER']);
+		lcm_header("Location: " . $_SERVER['HTTP_REFERER']);
 		exit;
 	}
 
@@ -600,7 +622,7 @@ function update_keyword($id_keyword) {
 	write_metas(); // update inc_meta_cache.php
 
 	$tab = ($kw_info['type'] == 'system' ? 'system' : 'user');
-	header("Location: keywords.php?tab=" . $tab . "#" . $kw_info['kwg_name']);
+	lcm_header("Location: keywords.php?tab=" . $tab . "#" . $kw_info['kwg_name']);
 	exit;
 }
 
@@ -608,42 +630,42 @@ function update_keyword($id_keyword) {
 //
 // Main
 //
+switch (_request('action')) {
+	case 'edit_group' :
+		// Show form to edit a keyword group and exit
+		show_keyword_group_id(intval(_request('id_group', 0)), intval(_request('id_parent', 0)));
 
-// Do any requested actions
-if (isset($_REQUEST['action'])) {
-	switch ($_REQUEST['action']) {
-		case 'edit_group' :
-			// Show form to edit a keyword group and exit
-			show_keyword_group_id(intval(_request('id_group', 0)), intval(_request('id_parent', 0)));
+		break;
+	case 'edit_keyword':
+		// Show form to edit a keyword and exit
+		show_keyword_id(intval(_request('id_keyword', 0)));
 
-			break;
-		case 'edit_keyword':
-			// Show form to edit a keyword and exit
-			show_keyword_id(intval(_request('id_keyword', 0)));
+		break;
+	case 'update_group':
+		// Update the information on a keyword group then goes to edit group
+		update_keyword_group(intval(_request('id_group', 0)), intval(_request('id_parent', 0)));
 
-			break;
-		case 'update_group':
-			// Update the information on a keyword group then goes to edit group
-			update_keyword_group(intval(_request('id_group', 0)), intval(_request('id_parent', 0)));
+		break;
+	case 'update_keyword':
+		// Update the information on a keyword group then goes to edit group
+		update_keyword(intval(_request('id_keyword', 0)));
 
-			break;
-		case 'update_keyword':
-			// Update the information on a keyword group then goes to edit group
-			update_keyword(intval(_request('id_keyword', 0)));
+		break;
+	case 'refresh':
+		include_lcm('inc_meta');
+		include_lcm('inc_keywords_default');
 
-			break;
-		case 'refresh':
-			include_lcm('inc_meta');
-			include_lcm('inc_keywords_default');
+		$system_keyword_groups = get_default_keywords();
+		create_groups($system_keyword_groups);
+		write_metas(); // regenerate inc/data/inc_meta_cache.php
 
-			$system_keyword_groups = get_default_keywords();
-			create_groups($system_keyword_groups);
-			write_metas(); // regenerate inc/data/inc_meta_cache.php
-			
-			break;
-		default:
-			die("No such action! (" . $_REQUEST['action'] . ")");
-	}
+		break;
+	case '':
+		// Do Nothing
+
+		break;
+	default:
+		lcm_panic("No such action (" . _request('action') . ")");
 }
 
 lcm_page_start(_T('menu_admin_keywords'), '', '', 'keywords_intro');
@@ -655,7 +677,7 @@ lcm_bubble('keyword_list');
 $groups = array('system' => _T('keywords_tab_system'),
 				'user'   => _T('keywords_tab_user'),
 				'maint'  => _T('keywords_tab_maintenance'));
-$tab = (isset($_GET['tab']) ? $_GET['tab'] : 'system');
+$tab = _request('tab', 'system');
 
 show_tabs($groups, $tab, $_SERVER['SCRIPT_NAME']);
 
