@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.33 2006/03/21 16:30:57 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.34 2006/06/01 14:11:47 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -31,7 +31,7 @@ include_lcm('inc_filters');
 // type. If type is 'user', then all keyword groups of type
 // case, followup, client, org and author are returned.
 // 
-function get_kwg_all($type, $exclude_empty = false) {
+function get_kwg_all($type, $exclude_empty = false, $show_subgroups = false) {
 	$ret = array();
 
 	if ($type == 'user')
@@ -47,8 +47,11 @@ function get_kwg_all($type, $exclude_empty = false) {
 		if ($in_type)
 			$query .= " AND type $in_type ";
 
+		if (! $show_subgroups)
+			$query .= " AND id_parent = 0 ";
+
 		// pgsql requires that we group on all fields
-		$query .= " GROUP BY kwg.id_group, kwg.name, kwg.title, kwg.description, kwg.type, kwg.policy, kwg.quantity, kwg.suggest, kwg.ac_admin, kwg.ac_author 
+		$query .= " GROUP BY kwg.id_group, kwg.name, kwg.title, kwg.description, kwg.type, kwg.policy, kwg.quantity, kwg.suggest, kwg.ac_admin, kwg.ac_author, kwg.id_parent
 					HAVING COUNT(k.id_keyword) > 0";
 	} else {
 		$query = "SELECT *
@@ -56,6 +59,9 @@ function get_kwg_all($type, $exclude_empty = false) {
 
 		if ($in_type)
 			$query .= " WHERE type $in_type ";
+
+		if (! $show_subgroups)
+			$query .= " AND id_parent = 0 ";
 	}
 
 	$result = lcm_query($query);
@@ -107,7 +113,7 @@ function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 	// required by PostgreSQL
 	$query = "SELECT kwg.id_group, kwg.name, kwg.title, kwg.policy, kwg.suggest, kwg.quantity, COUNT(k.id_keyword) as cpt
 				FROM lcm_keyword_group as kwg, lcm_keyword as k
-				WHERE kwg.ac_author = 'Y' AND (type = '$type_obj' ";
+				WHERE kwg.ac_author = 'Y' AND kwg.id_parent = 0 AND (type = '$type_obj' ";
 	
 	if ($type_obj == 'client' || $type_obj == 'org')
 		$query .= " OR type = 'client_org' ";
@@ -234,6 +240,30 @@ function get_keywords_in_group_name($kwg_name, $visible_only = true) {
 	lcm_panic("Keyword group not found: $kwg_name");
 }
 
+//
+// get_subgroups_in_group_id: Returns all keyword groups inside a given group ID.
+// 
+function get_subgroups_in_group_id($kwg_id, $visible_only = true) {
+	$ret = array();
+
+	$query = "SELECT * 
+				FROM lcm_keyword_group
+				WHERE id_parent = " . intval($kwg_id);
+	
+	if ($visible_only)
+		$query .= " AND ac_author = 'Y'";
+	
+	$result = lcm_query($query);
+
+	while ($row = lcm_fetch_array($result)) 
+		$ret[$row['title']] = $row;
+
+	ksort($ret);
+	reset($ret);
+
+	return $ret;
+}
+
 function get_suggest_in_group_name($kwg_name) {
 	global $system_kwg;
 
@@ -344,6 +374,8 @@ function show_all_keywords($type_obj, $id_obj, $id_obj_sec = 0) {
 }
 
 function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
+	include_lcm('inc_access');
+
 	if (! ($type_obj == 'case' || $type_obj == 'stage' || $type_obj == 'client' || $type_obj == 'org'))
 		lcm_panic("Invalid object type requested");
 
@@ -433,11 +465,20 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 			. _Ti($kwg['title']) . '</label>'
 			. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
 
+		echo "<td>";
+
+		//
+		// Keywords
+		//
 		$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
 		if (count($kw_for_kwg)) {
-			echo "<td>";
+			$obj_id_ajax = 'kw_' . create_random_password(15, time());
+
 			echo '<input type="hidden" name="new_kwg_' . $type_obj . '_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
-			echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" name="new_keyword_' . $type_obj . '_value[]">';
+			echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" '
+				. 'name="new_keyword_' . $type_obj . '_value[]" '
+				. "onchange=\"getKeywordInfo('get_kwg_in','" . $kwg['name'] . "', 'case', $id_obj, 0, '$obj_id_ajax')\"" // XXX
+				. '>';
 			echo '<option value="">' . '' . "</option>\n";
 
 			$show_kw_value = false;
@@ -474,11 +515,30 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 				echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt_kw . '" ' . 'value="' . $tmp_value . '" />' . "\n";
 			}
 
-			echo "</td>\n";
+			echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
 		} else {
-			// This should not happen, we should get only non-empty groups
+			//
+			// Sub-keyword group(s), since no top-level keywords
+			//
+			$sub_kwgs = get_subgroups_in_group_id($kwg['id_group']);
+
+			if (count($sub_kwgs)) {
+				// FIXME
+				// TODO: onchange ajax
+				echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" name="new_keyword_' . $type_obj . '_value[]">';
+				echo '<option value="">' . '' . "</option>\n";
+
+				foreach ($sub_kwgs as $sg) {
+					echo '<option value="' . $sg['name'] . '">' . _T($sg['title']) . "</option>\n";
+				}
+
+				echo "</select>\n";
+			}
+
+			echo '<div id="keywords_in_group_data' . $kwg['id_group'] . '"></div>' . "\n";
 		}
 		
+		echo "</td>\n";
 		echo "</tr>\n";
 		$cpt_kw++;
 	}
