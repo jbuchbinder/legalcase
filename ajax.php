@@ -12,12 +12,12 @@ echo '<?xml version="1.0"?>';
 
 echo "<body>";
 
-if (isset($_REQUEST['find_name_client']) && $_REQUEST['find_name_client']) {
+if (_request('find_name_client')) {
 	include_lcm('inc_obj_client');
 	echo "<div id=\"autocomplete-client-popup\">";
 
 	$cpt = 0;
-	$search = clean_input($_REQUEST['find_name_client']);
+	$search = _request('find_name_client');
 
 	// $search = 
 
@@ -25,7 +25,8 @@ if (isset($_REQUEST['find_name_client']) && $_REQUEST['find_name_client']) {
 				FROM lcm_client
 				WHERE name_last LIKE '%$search%'
 					OR name_first LIKE '%$search%'
-					OR CONCAT(name_first, ' ', IF (name_middle != '', CONCAT(name_middle, ' '), ''), name_last) LIKE '%$search%'";
+					OR CONCAT(name_first, ' ', name_middle, ' ', name_last) LIKE '%$search%'
+					OR CONCAT(name_first, ' ', name_last) LIKE '%$search%'";
 
 	$result = lcm_query($query);
 
@@ -41,12 +42,12 @@ if (isset($_REQUEST['find_name_client']) && $_REQUEST['find_name_client']) {
 
 	echo "</ul>\n";
 	echo "</div>\n";
-} elseif (isset($_REQUEST['find_name_case']) && $_REQUEST['find_name_case']) {
+} elseif (_request('find_name_case')) {
 	include_lcm('inc_obj_case');
 	echo "<div id=\"autocomplete-case-popup\">";
 
 	$cpt = 0;
-	$search = clean_input($_REQUEST['find_name_case']);
+	$search = _request('find_name_case');
 
 	// $search = 
 
@@ -69,20 +70,122 @@ if (isset($_REQUEST['find_name_client']) && $_REQUEST['find_name_client']) {
 
 	echo "</ul>\n";
 	echo "</div>\n";
-} elseif (isset($_REQUEST['id_client']) && (intval($_REQUEST['id_client']) > 0)) {
+} elseif (intval(_request('id_client', 0)) > 0) {
 	include_lcm('inc_obj_client');
-	$client = new LcmClientInfoUI(intval($_REQUEST['id_client']));
+	$client = new LcmClientInfoUI(intval(_request('id_client', 0)));
 	$client->printGeneral(false);
 	$client->printCases();
 	$client->printAttach();
-} elseif (isset($_REQUEST['id_case']) && (intval($_REQUEST['id_case']) > 0)) {
+} elseif (($action = _request('action'))) {
+	if ($action == 'get_kwg_in') {
+		// Searching keywords to add to a case (experimental)
+		include_lcm('inc_keywords');
+		include_lcm('inc_access');
+
+		echo '<div id="' . _request('div') . '">';
+
+		$kwg = get_kwg_from_name(_request('group_name', '__ASSERT__'));
+		$id_group = $kwg['id_group'];
+
+		$sub_kwgs = get_subgroups_in_group_id($id_group);
+
+		$type_obj = _request('type_obj', 'case');
+		$id_obj = _request('id_obj', 0);
+		$id_obj_sec = _request('id_obj_sec', 0);
+
+		$cpt_kw = 99; // XXX
+
+		if (count($sub_kwgs)) {
+			$obj_id_ajax = 'kw_' . create_random_password(15, time());
+
+			// FIXME
+			$gn = _request('group_name');
+			echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" '
+				. 'name="new_keyword_' . $type_obj . '_value[]" '
+				. "onchange=\"getKeywordInfo('get_kws_in', this.value, '$type_obj', $id_obj, $id_obj_sec, '$obj_id_ajax')\""
+				. '>';
+			echo '<option value="">' . '' . "</option>\n";
+
+			foreach ($sub_kwgs as $sg) {
+				echo '<option value="' . $sg['name'] . '">' . _T($sg['title']) . "</option>\n";
+			}
+
+			echo "</select>\n";
+			echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
+		}
+
+		echo "</div>\n";
+	} elseif ($action == 'get_kws_in') {
+		// Searching keywords to add to a case (experimental)
+		include_lcm('inc_keywords');
+		include_lcm('inc_access');
+
+		$type_obj = _request('type_obj', 'case');
+		$group_name = _request('group_name');
+		$kwg = get_kwg_from_name($group_name);
+		$id_group = $kwg['id_group'];
+
+		echo '<div id="' . _request('div') . '">';
+
+		$kw_for_kwg = get_keywords_in_group_id($id_group);
+		if (count($kw_for_kwg)) {
+			$obj_id_ajax = 'kw_' . create_random_password(15, time());
+
+			echo '<input type="hidden" name="new_kwg_' . $type_obj . '_id[]" value="' . $id_group . '" />' . "\n";
+			echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" '
+				. 'name="new_keyword_' . $type_obj . '_value[]" '
+				. "onchange=\"getKeywordInfo('get_kwg_in','$group_name','case',$id_obj,0, '$obj_id_ajax')\"" // XXX
+				. '>';
+			echo '<option value="">' . '' . "</option>\n";
+
+			$show_kw_value = false;
+
+			foreach ($kw_for_kwg as $kw) {
+				if ($kw['hasvalue'] == 'Y')
+					$show_kw_value = true;
+
+				// For default value, use the form_data (if present), else use suggested keyword
+				if (isset($_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw])
+					&& $_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw] == $kw['id_keyword']) 
+				{
+					$sel = ' selected="selected" ';
+				} elseif ($kwg['suggest'] == $kw['name']) {
+					$sel = ' selected="selected" ';
+				} else {
+					$sel = '';
+				}
+
+				// $sel = ($kwg['suggest'] == $kw['name'] ? ' selected="selected" ' : '');
+				echo '<option ' . $sel . ' value="' . $kw['id_keyword'] . '">' 
+					. _T(remove_number_prefix($kw['title']))
+					. "</option>\n";
+			}
+
+			echo "</select>\n";
+
+			if ($show_kw_value) {
+				$tmp_value = '';
+				if (isset($_SESSION['form_data']['new_kw_entryval_' . $type_obj . $cpt_kw]))
+					$tmp_value = $_SESSION['form_data']['new_kw_entryval_' . $type_obj . $cpt_kw];
+
+				echo "<br />\n";
+				echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt_kw . '" ' . 'value="' . $tmp_value . '" />' . "\n";
+			}
+
+			echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
+		}
+
+		echo "</div>\n";
+
+	}
+} elseif (intval(_request('id_case', 0)) > 0) {
 	include_lcm('inc_obj_case');
 	echo '<div id="case_data">';
 
 	// Must remove &nbsp; otherwise requestXML cannot parse (?!)
 	ob_start();
 
-	$case = new LcmCaseInfoUI(intval($_REQUEST['id_case']));
+	$case = new LcmCaseInfoUI(intval(_request('id_case', 0)));
 	$case->printGeneral(false, false);
 	$case->printFollowups();
 
