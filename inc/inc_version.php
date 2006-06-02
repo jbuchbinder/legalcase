@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.101 2006/06/01 13:06:19 mlutfy Exp $
+	$Id: inc_version.php,v 1.102 2006/06/02 13:55:33 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -986,10 +986,28 @@ function _Tkw($grp, $val, $args = '') {
 
 include_lcm('inc_filters');
 function _request ($name, $default = '') {
-	if (isset($_REQUEST[$name]) && ($v = trim(clean_input($_REQUEST[$name]))))
-		return $v;
-	else
+	if (! isset($_REQUEST[$name]))
 		return $default;
+
+	if (is_array($_REQUEST[$name])) {
+		// TODO: recursively clean all array items ?
+		// (note: at the moment, we don't have arrays with more than 1 level)
+		$ret = array();
+
+		foreach ($_REQUEST[$name] as $key => $val)
+			$ret[$key] = trim(clean_input($val));
+
+		return $ret;
+	}
+
+	if (is_string($_REQUEST[$name]))
+		if ($v = trim(clean_input($_REQUEST[$name])))
+			return $v;
+		return $default;
+
+	lcm_log("** WARNING: suspicious data received in request:");
+	lcm_log(htmlspecialchars(get_var_dump($_REQUEST[$name])));
+	return $default;
 }
 
 function _session ($name, $default = '') {
