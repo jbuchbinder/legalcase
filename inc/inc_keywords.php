@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.34 2006/06/01 14:11:47 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.35 2006/06/02 13:55:57 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -477,7 +477,7 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 			echo '<input type="hidden" name="new_kwg_' . $type_obj . '_id[]" value="' . $kwg['id_group'] . '" />' . "\n";
 			echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" '
 				. 'name="new_keyword_' . $type_obj . '_value[]" '
-				. "onchange=\"getKeywordInfo('get_kwg_in','" . $kwg['name'] . "', 'case', $id_obj, 0, '$obj_id_ajax')\"" // XXX
+				. "onchange=\"getKeywordInfo('get_kwg_in','" . $kwg['name'] . "', '$type_obj', $id_obj, 0, '$obj_id_ajax')\"" // XXX
 				. '>';
 			echo '<option value="">' . '' . "</option>\n";
 
@@ -525,7 +525,7 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 			if (count($sub_kwgs)) {
 				// FIXME
 				// TODO: onchange ajax
-				echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" name="new_keyword_' . $type_obj . '_value[]">';
+				echo '<select id="nop_kwg_' . $type_obj . $cpt_kw . '" name="nop_kwg_' . $type_obj . '_value[]">';
 				echo '<option value="">' . '' . "</option>\n";
 
 				foreach ($sub_kwgs as $sg) {
@@ -556,6 +556,8 @@ function validate_update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 
 	$new_keywords = _request('new_keyword_' . $type_obj . '_value');
 	$new_kwg_id = _request('new_kwg_' . $type_obj . '_id');
+
+	lcm_log("HERE _--------------------------_");
 
 	$kwg_count = array();
 	$kwg_applicable = get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec);
@@ -591,6 +593,7 @@ function validate_update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 
 			if (! (isset($kwg_count[$kwg['id_group']]) && $kwg_count[$kwg['id_group']] > 0)) {
 				$_SESSION['errors']['kwg' . $kwg['id_group']] = _Ti($kwg['title']) . _T('warning_field_mandatory');
+				lcm_panic("FAILED");
 			}
 		}
 	}
