@@ -84,34 +84,34 @@ if (_request('find_name_client')) {
 
 		echo '<div id="' . _request('div') . '">';
 
-		$kwg = get_kwg_from_name(_request('group_name', '__ASSERT__'));
-		$id_group = $kwg['id_group'];
+		if (_request('group_name')) {
+			$kwg = get_kwg_from_name(_request('group_name', '__ASSERT__'));
+			$id_group = $kwg['id_group'];
+			$type_obj = _request('type_obj', 'case');
+			$id_obj = _request('id_obj', 0);
+			$id_obj_sec = _request('id_obj_sec', 0);
+			$sub_kwgs = get_subgroups_in_group_id($id_group);
 
-		$sub_kwgs = get_subgroups_in_group_id($id_group);
+			$cpt_kw = 99; // XXX
 
-		$type_obj = _request('type_obj', 'case');
-		$id_obj = _request('id_obj', 0);
-		$id_obj_sec = _request('id_obj_sec', 0);
+			if (count($sub_kwgs)) {
+				$obj_id_ajax = 'kw_' . create_random_password(15, time());
 
-		$cpt_kw = 99; // XXX
+				// FIXME
+				$gn = _request('group_name');
+				echo '<select id="nop_kwg_' . $type_obj . $cpt_kw . '" '
+					. 'name="nop_kwg_' . $type_obj . '_value[]" '
+					. "onchange=\"getKeywordInfo('get_kws_in', this.value, '$type_obj', $id_obj, $id_obj_sec, '$obj_id_ajax')\""
+					. '>';
+				echo '<option value="">' . '' . "</option>\n";
 
-		if (count($sub_kwgs)) {
-			$obj_id_ajax = 'kw_' . create_random_password(15, time());
+				foreach ($sub_kwgs as $sg) {
+					echo '<option value="' . $sg['name'] . '">' . _T($sg['title']) . "</option>\n";
+				}
 
-			// FIXME
-			$gn = _request('group_name');
-			echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" '
-				. 'name="new_keyword_' . $type_obj . '_value[]" '
-				. "onchange=\"getKeywordInfo('get_kws_in', this.value, '$type_obj', $id_obj, $id_obj_sec, '$obj_id_ajax')\""
-				. '>';
-			echo '<option value="">' . '' . "</option>\n";
-
-			foreach ($sub_kwgs as $sg) {
-				echo '<option value="' . $sg['name'] . '">' . _T($sg['title']) . "</option>\n";
+				echo "</select>\n";
+				echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
 			}
-
-			echo "</select>\n";
-			echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
 		}
 
 		echo "</div>\n";
@@ -120,59 +120,63 @@ if (_request('find_name_client')) {
 		include_lcm('inc_keywords');
 		include_lcm('inc_access');
 
-		$type_obj = _request('type_obj', 'case');
-		$group_name = _request('group_name');
-		$kwg = get_kwg_from_name($group_name);
-		$id_group = $kwg['id_group'];
-
 		echo '<div id="' . _request('div') . '">';
 
-		$kw_for_kwg = get_keywords_in_group_id($id_group);
-		if (count($kw_for_kwg)) {
-			$obj_id_ajax = 'kw_' . create_random_password(15, time());
+		$id_obj = _request('id_obj', 0);
+		$type_obj = _request('type_obj', '__ASSERT__');
+		$group_name = _request('group_name');
 
-			echo '<input type="hidden" name="new_kwg_' . $type_obj . '_id[]" value="' . $id_group . '" />' . "\n";
-			echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" '
-				. 'name="new_keyword_' . $type_obj . '_value[]" '
-				. "onchange=\"getKeywordInfo('get_kwg_in','$group_name','case',$id_obj,0, '$obj_id_ajax')\"" // XXX
-				. '>';
-			echo '<option value="">' . '' . "</option>\n";
+		if ($group_name) {
+			$kwg = get_kwg_from_name($group_name);
+			$id_group = $kwg['id_group'];
 
-			$show_kw_value = false;
+			$kw_for_kwg = get_keywords_in_group_id($id_group);
+			if (count($kw_for_kwg)) {
+				$obj_id_ajax = 'kw_' . create_random_password(15, time());
 
-			foreach ($kw_for_kwg as $kw) {
-				if ($kw['hasvalue'] == 'Y')
-					$show_kw_value = true;
+				echo '<input type="hidden" name="new_kwg_' . $type_obj . '_id[]" value="' . $id_group . '" />' . "\n";
+				echo '<select id="new_keyword_' . $type_obj . $cpt_kw . '" '
+					. 'name="new_keyword_' . $type_obj . '_value[]" '
+					. "onchange=\"getKeywordInfo('get_kwg_in','$group_name','$type_obj',$id_obj,0, '$obj_id_ajax')\"" // XXX
+					. '>';
+				echo '<option value="">' . '' . "</option>\n";
 
-				// For default value, use the form_data (if present), else use suggested keyword
-				if (isset($_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw])
-					&& $_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw] == $kw['id_keyword']) 
-				{
-					$sel = ' selected="selected" ';
-				} elseif ($kwg['suggest'] == $kw['name']) {
-					$sel = ' selected="selected" ';
-				} else {
-					$sel = '';
+				$show_kw_value = false;
+
+				foreach ($kw_for_kwg as $kw) {
+					if ($kw['hasvalue'] == 'Y')
+						$show_kw_value = true;
+
+					// For default value, use the form_data (if present), else use suggested keyword
+					if (isset($_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw])
+							&& $_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw] == $kw['id_keyword']) 
+					{
+						$sel = ' selected="selected" ';
+					} elseif ($kwg['suggest'] == $kw['name']) {
+						$sel = ' selected="selected" ';
+					} else {
+						$sel = '';
+					}
+
+					// $sel = ($kwg['suggest'] == $kw['name'] ? ' selected="selected" ' : '');
+					echo '<option ' . $sel . ' value="' . $kw['id_keyword'] . '">' 
+						. _T(remove_number_prefix($kw['title']))
+						. "</option>\n";
 				}
 
-				// $sel = ($kwg['suggest'] == $kw['name'] ? ' selected="selected" ' : '');
-				echo '<option ' . $sel . ' value="' . $kw['id_keyword'] . '">' 
-					. _T(remove_number_prefix($kw['title']))
-					. "</option>\n";
+				echo "</select>\n";
+
+				if ($show_kw_value) {
+					$tmp_value = '';
+					if (isset($_SESSION['form_data']['new_kw_entryval_' . $type_obj . $cpt_kw]))
+						$tmp_value = $_SESSION['form_data']['new_kw_entryval_' . $type_obj . $cpt_kw];
+
+					echo "<br />\n";
+					echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt_kw . '" ' . 'value="' . $tmp_value . '" />' . "\n";
+				}
+
+				echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
 			}
-
-			echo "</select>\n";
-
-			if ($show_kw_value) {
-				$tmp_value = '';
-				if (isset($_SESSION['form_data']['new_kw_entryval_' . $type_obj . $cpt_kw]))
-					$tmp_value = $_SESSION['form_data']['new_kw_entryval_' . $type_obj . $cpt_kw];
-
-				echo "<br />\n";
-				echo '<input type="text" name="new_kw_entryval_' . $type_obj . $cpt_kw . '" ' . 'value="' . $tmp_value . '" />' . "\n";
-			}
-
-			echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
 		}
 
 		echo "</div>\n";
