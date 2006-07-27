@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.15 2006/07/27 14:42:28 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.16 2006/07/27 15:25:41 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -442,7 +442,7 @@ class LcmCaseInfoUI extends LcmCase {
 
 			if ($admin) {
 				echo '<span class="noprint">';
-				echo '&nbsp;<a href="edit_auth.php?case=' . $case . '&amp;author=' . $author['id_author'] . '"'
+				echo '&nbsp;<a href="edit_auth.php?case=' . $this->getDataInt('id_case') . '&amp;author=' . $author['id_author'] . '"'
 					. ' title="' .
 					_T('case_tooltip_view_access_rights', array('author' => $name)) . '">'
 					. '<img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" />'
@@ -451,6 +451,15 @@ class LcmCaseInfoUI extends LcmCase {
 			}
 
 			$cpt++;
+		}
+
+		// [ML] FIXME Double-check if this is OK here in all scenarios
+		if ($admin) {
+			echo '<span class="noprint">';
+			echo '<a href="sel_auth.php?case=' . $this->getDataInt('id_case') . '" title="' . _T('add_user_case') . '">'
+				. '<img src="images/jimmac/stock_attach-16.png" width="16" height="16" border="0" alt="' . _T('add_user_case') . '" />'
+				. '</a>';
+			echo "</span>\n";
 		}
 		
 		echo "</li>\n";
@@ -479,8 +488,7 @@ class LcmCaseInfoUI extends LcmCase {
 		}
 
 		// Total time spent on case (redundant with "reports/times")
-		$query = "SELECT sum(IF(UNIX_TIMESTAMP(fu.date_end) > 0, 
-						UNIX_TIMESTAMP(fu.date_end)-UNIX_TIMESTAMP(fu.date_start), 0)) as time 
+		$query = "SELECT " . lcm_query_sum_time('fu.date_start', 'fu.date_end') . " as time
 					FROM lcm_followup as fu 
 					WHERE fu.id_case = " . $this->getDataInt('id_case', '__ASSERT__') . "
 					  AND fu.hidden = 'N'";
