@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.11 2006/07/27 15:08:59 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.12 2006/07/27 21:19:56 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -332,7 +332,8 @@ class LcmClientInfoUI extends LcmClient {
 
 		if (substr($meta_date_birth, 0, 3) == 'yes')
 			echo '<li>'
-				. format_date($this->getDataString('date_birth'))
+				. format_date($this->getDataString('date_birth')) 
+				. " (" . _T('person_info_years_old', array('years' => years_diff($this->getDataString('date_birth')))) . ")"
 				. "</li>\n";
 
 		echo '<li>'
