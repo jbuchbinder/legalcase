@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.241 2006/04/21 19:11:34 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.242 2006/07/27 22:00:25 mlutfy Exp $
 */
 
 //
@@ -704,8 +704,7 @@ function help_page_end() {
 //
 
 function get_date_inputs($name = 'select', $date = '', $blank = true, $table = false) {
-	// TODO: Add global variables (optional) in my_options.php to
-	// modify the date range.
+	// $table parameter above is deprecated
 
 	// Extract date values
 	// First check in session variable (if error), fallback on $date
@@ -723,48 +722,31 @@ function get_date_inputs($name = 'select', $date = '', $blank = true, $table = f
 	// If name is empty, disable fields
 	$dis = (($name) ? '' : 'disabled="disabled"');
 
-	$ret = '';
-	if ($table)
-		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n"
-			. "<tr>\n"
-			. "<td><!-- " . _T('select_date_day') . "<br/ -->\n";
-
-	$ret .= "<input size=\"4\" type=\"text\" $dis value=\"$default_day\" name=\"" . $name . "_day\" id=\"" . $name . "_day\" />\n";
+	$ret = "<input size=\"4\" type=\"text\" $dis value=\"$default_day\" name=\"" . $name . "_day\" id=\"" . $name . "_day\" />\n";
 
 	// Month of year
-	$ret .= "</select>\n";
-	if ($table)
-		$ret .= "</td>\n"
-			. "<td><!-- " . _T('select_date_month') . "<br/ -->\n";
-	$ret .= "<select $dis name=\"" . $name . "_month\" id=\"" . $name . "_month\">\n";
+	$ret .= "<select $dis name=\"" . $name . "_month\" id=\"" . $name . "_month\">";
 
 	for ($i = 1; $i <= 12; $i++) {
-		$default = ($i == $default_month ? ' selected="selected"' : '');
-		$ret .= "<option" . $default . " value=\"" . $i . "\">" . _T('date_month_' . $i) . "</option>\n";
+		$default = isSelected($i == $default_month);
+		$ret .= "<option" . $default . " value=\"" . $i . "\">" .  _T('date_month_' . $i) . "</option>";
 	}
 
 	if ($blank) {
-		$default = ($default_month == 0 ? ' selected="selected"' : '');
-		$ret .= "<option" . $default . " value=\"\"></option>\n";
+		$default = isSelected($default_month == 0);
+		$ret .= '<option' . $default . ' value=""></option>';
 	}
 
-	// Year
 	$ret .= "</select>\n";
-	if ($table)
-		$ret .= "</td>\n"
-			. "<td><!-- " . _T('select_date_year') . "<br/ -->\n";
 
+	// Year
 	$ret .= "<input size=\"4\" type=\"text\" $dis value=\"$default_year\" name=\"" . $name . "_year\" id=\"" . $name . "_year\" />\n";
-
-	if ($table)
-		$ret .= "</td>\n"
-			. "</tr>\n"
-			. "</table>\n";
 
 	return $ret;
 }
 
 function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_seconds = false, $table = false) {
+	// table parameter above is deprecated
 
 	$split_time = recup_time($time);
 	$default_hour = $split_time[0];
@@ -774,15 +756,8 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 	// If name is empty, disable fields
 	$dis = (($name) ? '' : 'disabled="disabled"');
 
-	$ret = '';
-
 	// Hour
-	if ($table)
-		$ret .= "<table cellpadding=\"3\" cellspacing=\"3\">\n"
-			. "<tr>\n"
-			. "<td><!-- " . _T('select_time_hour') . "<br/ -->\n";
-
-	$ret .= "<select $dis name=\"" . $name . "_hour\" id=\"" . $name . "_hour\" align=\"right\">\n";
+	$ret = "<select $dis name=\"" . $name . "_hour\" id=\"" . $name . "_hour\">\n";
 
 	for ($i = 0; $i < 24; $i++) {
 		$default = ($i == $default_hour ? ' selected="selected"' : '');
@@ -792,49 +767,32 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 		} else {
 			$ret .= gmdate('g a',($i * 3600));
 		}
-		$ret .= "</option>\n";
+		$ret .= "</option>";
 	}
 
-	$ret .= "</select>";
-
-	if ($table)
-		$ret .= "</td>\n";
+	$ret .= "</select>\n";
 
 	// Minutes
-	if ($table)
-		$ret .= "<td><!-- " . _T('select_time_minutes') . "<br/ -->\n";
-	$ret .= ":<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
+	$ret .= ":<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\">\n";
 
 	for ($i = 0; $i < 60; $i += 5) {
 		$default = ($i == $default_minutes ? ' selected="selected"' : '');
-		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
+		$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>";
 	}
 
-	$ret .= "</select>";
-
-	if ($table)
-		$ret .= "</td>\n";
+	$ret .= "</select>\n";
 
 	// Seconds
 	if ($show_seconds) {
-		if ($table)
-			$ret .= "<td><!-- " . _T('select_time_seconds') . "<br/ -->\n";
-		$ret .= ":<select $dis name=\"" . $name . "_seconds\" id=\"" . $name . "_seconds\" align=\"right\">\n";
+		$ret .= ":<select $dis name=\"" . $name . "_seconds\" id=\"" . $name . "_seconds\">\n";
 
 		for ($i = 0; $i < 60; $i++) {
 			$default = ($i == $default_seconds ? ' selected="selected"' : '');
-			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
+			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>";
 		}
 
 		$ret .= "</select>\n";
-
-		if ($table)
-			$ret .= "</td>\n";
 	}
-
-	if ($table)
-		$ret .= "</tr>\n"
-			. "</table>\n";
 
 	return $ret;
 }
