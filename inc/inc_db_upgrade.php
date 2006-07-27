@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.66 2006/06/01 13:06:51 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.67 2006/07/27 14:48:29 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1026,6 +1026,13 @@ function upgrade_database($old_db_version) {
 			ADD id_parent bigint(21) NOT NULL DEFAULT 0 AFTER id_group");
 
 		upgrade_db_version (47);
+	}
+
+	if ($lcm_db_version_current < 48) {
+		lcm_query("ALTER TABLE lcm_client
+			ADD date_birth datetime DEFAULT '0000-00-00 00:00:00' NOT NULL AFTER date_update");
+
+		upgrade_db_version(48);
 	}
 
 	// Update the meta, lcm_fields, keywords, etc.
