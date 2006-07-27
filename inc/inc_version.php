@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.102 2006/06/02 13:55:33 mlutfy Exp $
+	$Id: inc_version.php,v 1.103 2006/07/27 14:56:33 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -285,7 +285,7 @@ $lcm_version = 0.710;
 $lcm_version_shown = "0.7.1 CVS";
 
 // Current version of LCM database
-$lcm_db_version = 47;
+$lcm_db_version = 48;
 
 // Error reporting
 # error_reporting(E_ALL); // [ML] recommended for debug
