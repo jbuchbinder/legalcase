@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.10 2006/03/20 20:58:11 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.11 2006/07/27 15:08:59 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -72,6 +72,9 @@ class LcmClient extends LcmObject {
 				$this->data[$nkey] = _session($key);
 			}
 		}
+
+		if (get_datetime_from_array($_SESSION['form_data'], 'date_birth', 'start', -1) != -1)
+			$this->data['date_birth'] = get_datetime_from_array($_SESSION['form_data'], 'date_birth', 'start');
 	}
 
 	/* private */
@@ -196,7 +199,11 @@ class LcmClient extends LcmObject {
 			include_validator('client_name');
 			$foo = new LcmCustomValidateClientName();
 
-			$test = array('first', 'middle', 'last');
+			$test = array('first', 'last');
+			
+			if (substr(read_meta('client_name_middle'), 0, 3) == 'yes')
+				array_push($test, 'middle');
+
 			foreach ($test as $t) {
 				$n = $this->getDataString('name_' . $t);
 
@@ -246,6 +253,9 @@ class LcmClient extends LcmObject {
 			   name_last = '"   . clean_input($this->getDataString('name_last')) . "',
 			   gender = '"      . clean_input($this->getDataString('gender')) . "',
 			   notes = '"       . clean_input($this->getDataString('notes')) . "'"; // , 
+
+		if ($this->getDataString('date_birth'))
+			$cl .= ", date_birth = '" . $this->getDataString('date_birth') . "'";
 	
 		if (clean_input($this->getDataString('citizen_number')))
 			$cl .= ", citizen_number = '" . clean_input($this->getDataString('citizen_number')) . "'";
@@ -299,6 +309,7 @@ class LcmClientInfoUI extends LcmClient {
 		$meta_citizen_number = read_meta('client_citizen_number');
 		$meta_civil_status = read_meta('client_civil_status');
 		$meta_income = read_meta('client_income');
+		$meta_date_birth = read_meta('client_date_birth');
 
 		if ($show_subtitle)
 			show_page_subtitle(_T('generic_subtitle_general'), 'clients_intro');
@@ -318,6 +329,11 @@ class LcmClientInfoUI extends LcmClient {
 			$gender = _T('person_input_gender_' . $this->getDataString('gender'));
 		else
 			$gender = _T('info_not_available');
+
+		if (substr($meta_date_birth, 0, 3) == 'yes')
+			echo '<li>'
+				. format_date($this->getDataString('date_birth'))
+				. "</li>\n";
 
 		echo '<li>'
 			. '<span class="label1">' . _Ti('person_input_gender') . '</span>'
@@ -400,6 +416,7 @@ class LcmClientInfoUI extends LcmClient {
 		$client_citizen_number = read_meta('client_citizen_number');
 		$client_civil_status = read_meta('client_civil_status');
 		$client_income = read_meta('client_income');
+		$meta_date_birth = read_meta('client_date_birth');
 
 		echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 		
@@ -421,9 +438,18 @@ class LcmClientInfoUI extends LcmClient {
 		echo '<tr><td>' . f_err_star('name_last') . _T('person_input_name_last') . '</td>' . "\n";
 		echo '<td><input name="name_last" value="' . clean_output($this->getDataString('name_last')) . '" class="search_form_txt" /></td></tr>' . "\n";
 		
+		if (substr($meta_date_birth, 0, 3) == 'yes') {
+			echo "<tr>\n";
+			echo "<td>" . f_err_star('date_birth') . _Ti('person_input_date_birth') . "</td>\n";
+			echo "<td>" 
+				. get_date_inputs('date_birth', $this->getDataString('date_birth'), false)
+				. "</td>\n";
+			echo "</tr>\n";
+		}
+		
 		echo '<tr><td>' . f_err_star('gender') . _T('person_input_gender') . '</td>' . "\n";
 		echo '<td><select name="gender" class="sel_frm">' . "\n";
-		
+
 		$opt_sel_male = $opt_sel_female = $opt_sel_unknown = '';
 		
 		if ($this->getDataString('gender') == 'male')
