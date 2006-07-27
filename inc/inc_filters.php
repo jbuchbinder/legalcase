@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.89 2006/04/20 11:17:08 antzi Exp $
+	$Id: inc_filters.php,v 1.90 2006/07/27 21:20:56 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -178,6 +178,12 @@ function format_money($money, $two_cents = true, $show_currency_sign = false) {
 	// this is very stupid i18n because windows does not have strfmon,
 	// altough we cannot depend on locales on all servers for all languages
 	// so for our small needs, this should be good enough.
+	if (is_string($money))
+		$money = trim($money);
+
+	if (! $money)
+		$money = 0.0;
+
 	if (! ($money===0.0 || is_numeric($money)) )
 		lcm_panic("parameter is not a valid number: " . $money);
 	
@@ -210,6 +216,22 @@ function format_money($money, $two_cents = true, $show_currency_sign = false) {
 				array('currency' => htmlspecialchars(read_meta('currency')), 'money' => $str_final));
 
 	return $str_final;
+}
+
+function years_diff($start, $end = '') {
+	if (! $end)
+		$end = date("Y-m-d", mktime()); // Today
+
+	$s = recup_date($start);
+	$e = recup_date($end);
+
+	$year_diff = $e[0] - $s[0];
+
+	// check if birthdate has passed in current year (if not, decrease)
+	if (($s[1] > $e[1]) || ($s[1] == $e[1] && $e[2] < $s[2]))
+		$year_diff--;
+
+	return $year_diff; 
 }
 
 // Error display function
