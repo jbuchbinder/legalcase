@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_auth.php,v 1.17 2006/07/27 15:29:10 mlutfy Exp $
+	$Id: edit_auth.php,v 1.18 2006/07/27 15:31:22 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -101,7 +101,7 @@ show_context_end();
 
 	echo "</table>\n";
 	echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
-	echo '<input type="hidden" name="case" value="' . $case '" />' . "\n";
+	echo '<input type="hidden" name="case" value="' . $case . '" />' . "\n";
 
 	$link = new Link($_SERVER['HTTP_REFERER']);
 	echo '<input type="hidden" name="ref_edit_auth" value="' . $link->getUrl() . '"/>' . "\n";
