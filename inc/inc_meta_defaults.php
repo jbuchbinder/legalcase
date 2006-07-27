@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta_defaults.php,v 1.16 2006/04/20 19:06:26 mlutfy Exp $
+	$Id: inc_meta_defaults.php,v 1.17 2006/07/27 14:41:23 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -86,18 +86,19 @@ function init_default_config() {
 		'client_hide_all' => 'no',
 		'client_share_read' => 'yes', // depends on hide_all
 		'client_share_write' => 'yes', // depends on read = yes
+		'client_date_birth' => 'no', // = { yes_optional, yes_mandatory, no }
 		'person_name_format' => '1', // First Middle Last (ex: Ivan Petrov Ivanov)
 		'org_hide_all' => 'no',
 		'org_share_read' => 'yes', // depends on hide_all
 		'org_share_write' => 'yes', // depends on read = yes
-		'case_court_archive' => 'yes',
-		'case_assignment_date' => 'yes',
-		'case_alledged_crime' => 'yes',
-		'case_legal_reason' => 'yes',
-		'case_allow_modif' => 'yes',
-		'fu_sum_billed' => 'no',
-		'fu_allow_modif' => 'yes',
-		'hide_emails' => 'no',
+		'case_court_archive' => 'no', // deprecated ?
+		'case_assignment_date' => 'yes', // = { yes, no } assignment date defaults to case creation date (so no "mandatory" option)
+		'case_alledged_crime' => 'yes_optional', // = { yes_optional, yes_mandatory, no }
+		'case_legal_reason' => 'yes_optional', // = { yes_optional, yes_mandatory, no }
+		'case_allow_modif' => 'yes', // = { yes , no }
+		'fu_sum_billed' => 'no', // = { yes , no }
+		'fu_allow_modif' => 'yes', // = { yes , no }
+		'hide_emails' => 'no', // = { yes , no }
 		'db_utf8' => $db_utf8,
 
 		// Default character set, it may not even be a question
