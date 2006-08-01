@@ -198,7 +198,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_subtitle_contacts' => 'Contacts',
 'client_subtitle_organisations' => 'Organisations',
 'client_subtitle_view_general' => 'General information',
-'creation_date' => 'Creation date',
 'currency_default_format' => '€',
 'currency_format_placement' => '@currency@@money@',
 'currency_format_seperator_cents' => '.',
@@ -496,7 +495,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_step_three' => 'Third step:',
 'install_step_two' => 'Second step:',
 'install_title_admin_account' => 'Personal information for the administrator access',
-'install_title_connection_attempt' => 'Attempting to connect to the SQL database',
 'install_title_creating_database' => 'Creation of the database tables',
 'install_title_installation_start' => 'Legal Case Management Software installation ...',
 'install_title_select_database' => 'Choosing your database',
@@ -505,7 +503,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_warning_no_databases_1' => 'The installer could not read the names of the available databases.',
 'install_warning_no_databases_2' => 'Either there are no databases available, or the feature allowing the listing of the databases was disabled for security reasons (which is the case with a lot of hosts).',
 'install_warning_no_databases_3' => 'In case the second alternative was true, it is possible that a database named after your login could be usable:',
-'install_warning_nonfatal_sql_errors' => 'There were warnings while installing or upgrading the database, but they may not be fatal. Errors such as \'Table already exists\' can safely be ignored. Errors such as \'Syntax errors\' are most probably bugs and should be reported to the LCM development team ([lcm-devel@lists.sourceforge.net->mailto:lcm-devel@lists.sourceforge.net]).',
 'install_warning_update_impossible' => '<b>Warning!</b> Failed to update the SQL database from version @old_version@ to version @version@, maybe due to a permissions problem on the database. Please contact your administrator. A full technical listing of the possible errors is provided below.',
 
 
@@ -705,10 +702,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // P
-'parameter' => 'Parameter',
 'pass_back_to_site' => 'Back to the site entrance',
 'pass_close_this_window' => 'Close this window',
-'pass_enter_name_and_email' => 'Enter here your name and e-mail address. You will receive your personal identifier shortly by e-mail.',
 'pass_enter_new_pass' => 'Please choose your new password',
 'pass_info_automated_msg' => '(this is an automated message)',
 'pass_info_enter_email' => 'Enter below the e-mail address with which you registered previously. You will receive an e-mail explaining how you can retreive your access.',
@@ -719,7 +714,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_info_password_by_mail' => 'Your password will be sent to you by e-mail.',
 'pass_info_receive_mail' => 'You will receive an e-mail explaining how you can retrieve your access to the site.',
 'pass_info_remind_username' => 'Reminder: your identifier (login) is "@login@".',
-'pass_info_why_register' => 'To use the legal case management system, you must create a personnal account. You can register to the site by entering your e-mail address below.',
+'pass_info_why_register' => 'You must create a personnal account to use the legal case management system. To create your account, please complete the form below.',
 'pass_mail_cookie1' => 'To retrieve your access to the site:',
 'pass_mail_cookie2' => 'Please go to the following address:',
 'pass_mail_cookie3' => 'You can then enter a new password and connect again to the site.',
