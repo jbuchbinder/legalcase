@@ -206,7 +206,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // D
-'date' => 'Date',
 'date_day_1' => '1st',
 'date_day_10' => '10th',
 'date_day_11' => '11th',
@@ -280,7 +279,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_wday_short_5' => 'Fr',
 'date_wday_short_6' => 'Sa',
 'date_wday_short_7' => 'Su',
-'description' => 'Description',
 'directories_bad_rights' => 'The following directories do not have write permission',
 'directories_bad_rights_cause' => 'To change this, use your SSH/SFTP client in order to set access permissions for each of these directories. The procedure is detailed in the install guide.',
 'directories_continue' => 'Once you are ready, you can reload this page.',
@@ -335,9 +333,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'file_size_info_gbytes' => '@size@ Gb',
 'file_size_info_kbytes' => '@size@ Kb',
 'file_size_info_mbytes' => '@size@ Mb',
-'filter_id' => 'Filter ID',
-'filter_title' => 'Title',
-'filter_type' => 'Conditions logic',
 'format_date_full' => '@day_name@, @day_order@ @month_name@ @year@',
 'format_date_short' => '@day@ @month_short@ @year@',
 'format_datetime_full' => '@day_name@, @day_order@ @month_name@ @year@, @hours@h@mins@',
