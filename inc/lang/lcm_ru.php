@@ -127,7 +127,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'calendar_button_weekly' => 'Еженедельный календарь',
 'calendar_info_date' => 'Дата',
 'calendar_info_noacts' => 'Нет работ.',
-'calendar_info_time' => 'Время',
 'case_ac_input_rights' => '<NEW>Access right:',
 'case_button_add_client' => 'Добавить клиента',
 'case_button_add_org' => 'Добавить организацию',
@@ -201,7 +200,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_subtitle_contacts' => 'Контакты',
 'client_subtitle_organisations' => 'Организации',
 'client_subtitle_view_general' => 'Общая информация',
-'creation_date' => 'Дата создания',
 'currency_default_format' => 'в‚¬',
 'currency_format_placement' => '@currency@@money@',
 'currency_format_seperator_cents' => '.',
@@ -209,7 +207,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // D
-'date' => 'Дата',
 'date_day_1' => '1-го',
 'date_day_10' => '10-го',
 'date_day_11' => '11-го',
@@ -283,7 +280,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_wday_short_5' => 'Пя',
 'date_wday_short_6' => 'Су',
 'date_wday_short_7' => 'Во',
-'description' => 'Описание',
 'directories_bad_rights' => 'Следующие директории не имеют прав записи',
 'directories_bad_rights_cause' => 'Чтобы изменить это, используйте Ваш SSH/SFTP -клиент, чтобы установить права доступа для каждой из этих директорий. Эта процедура детально описана в Руководстве по установке.',
 'directories_continue' => 'Как только Вы будете готовы, Вы можете перезагрузить эту страницу.',
@@ -338,9 +334,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'file_size_info_gbytes' => '<NEW>@size@ Gb',
 'file_size_info_kbytes' => '<NEW>@size@ Kb',
 'file_size_info_mbytes' => '<NEW>@size@ Mb',
-'filter_id' => 'Код фильтра',
-'filter_title' => 'Заголовок',
-'filter_type' => 'Логические условия',
 'format_date_full' => '@day_name@, @day_order@ @month_name@ @year@',
 'format_date_short' => '@day@ @month_short@ @year@',
 'format_datetime_full' => '@day_name@, @day_order@ @month_name@ @year@, @hours@h@mins@',
@@ -504,7 +497,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_step_three' => 'Третий шаг:',
 'install_step_two' => 'Второй шаг:',
 'install_title_admin_account' => 'Персональная информация для административного доступа',
-'install_title_connection_attempt' => 'Попытка соединения с базой данных SQL',
 'install_title_creating_database' => 'Создание таблиц базы данных',
 'install_title_installation_start' => 'Установка системы управления судебными делами ...',
 'install_title_select_database' => 'Выберите Вашу базу данных',
@@ -513,7 +505,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_warning_no_databases_1' => 'Инсталлятор не смог прочитать имена доступных баз данных.',
 'install_warning_no_databases_2' => 'Или нет доступных баз данных, или он не выдается по соображениям безопасности (что случается со многими хостами).',
 'install_warning_no_databases_3' => 'Во втором случае, возможно, что база данных, названная Вами после авторизации, будет доступна:',
-'install_warning_nonfatal_sql_errors' => 'Были предупреждения во время установки или обновления базы данных, но они не были фатальными. Ошибки типа \'Таблица уже существует\' можно благополучно игнорировать. Ошибки типа \'Синтаксическая ошибка\' скорее всего баги системы и должны быть отправлены команде разработчиков системы ([lcm-devel@lists.sourceforge.net->mailto:lcm-devel@lists.sourceforge.net]).',
 'install_warning_update_impossible' => '<b>Предупреждение!</b> Неудача при обновлении базы данных SQL с версии @old_version@ на версию @version@, возможно дело в проблемах доступа к этой базе данных. Пожалуйста, свяжитесь с Вашим администратором. Полный технический список возможных ошибок представлен ниже.',
 
 
@@ -713,10 +704,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // P
-'parameter' => 'Параметр',
 'pass_back_to_site' => 'Вернуться на вход сайта',
 'pass_close_this_window' => 'Закрыть это окно',
-'pass_enter_name_and_email' => 'Введите здесь Ваше имя и адрес e-mail. Вы получите персональный идентификатор вскоре по e-mail.',
 'pass_enter_new_pass' => 'Пожалуйста, выберите Ваш пароль',
 'pass_info_automated_msg' => '(это автоматическое сообщение)',
 'pass_info_enter_email' => 'Введите ниже адрес e-mail, с которого Вы регистрировались прошлый раз. Вы получите письмо по e-mail, объясняющее, как Вы можете восстановить Ваш доступ.',
@@ -743,9 +732,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_warning_not_registered' => '<b>Ошибка:</b> адрес <tt>@user_email@</tt> не зарегистрирован на сайте.',
 'pass_warning_too_short' => 'The password must be more than 5 characters.',
 'pass_warning_unknown_cookie' => '<b>Ошибка:</b> этот код неизвестен.',
+'person_info_years_old' => '<NEW>@years@ years old',
 'person_input_address' => 'Адрес:',
 'person_input_citizen_number' => 'Гражданский код:',
 'person_input_civil_status' => 'Гражданский статус:',
+'person_input_date_birth' => '<NEW>Date of birth:',
 'person_input_gender' => 'Пол:',
 'person_input_gender_female' => 'женщина',
 'person_input_gender_male' => 'мужчина',
