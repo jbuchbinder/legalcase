@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.170 2006/07/27 15:21:50 mlutfy Exp $
+	$Id: case_det.php,v 1.171 2006/08/04 21:19:52 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -41,7 +41,12 @@ if (isset($_GET['fu_order']))
 	if ($_GET['fu_order'] == 'ASC' || $_GET['fu_order'] == 'DESC')
 		$fu_order = clean_input($_GET['fu_order']);
 
-if ($case > 0) {
+if (! ($case > 0)) {
+	header("Location: listcases.php");
+	exit;
+}
+
+
 	$q="SELECT *
 		FROM lcm_case
 		WHERE id_case=$case";
@@ -571,7 +576,8 @@ if ($case > 0) {
 		}
 	} else {
 		lcm_page_start(_T('title_error'));
-		echo _T('error_no_such_case');
+		// [ML] Maybe not worth translating, since it should never happen. // TRAD
+		echo "<p>" . _Ti('title_error') . 'The case no. "' . htmlspecialchars($case) . '" does not exist in the database.' . "</p>\n";
 	}
 
 	$_SESSION['errors'] = array();
@@ -580,10 +586,5 @@ if ($case > 0) {
 	$_SESSION['fu_data'] = array();
 
 	lcm_page_end();
-} else {
-	lcm_page_start(_T('title_error'));
-	echo "<p>" . _T('error_no_case_specified') . "</p>\n";
-	lcm_page_end();
-}
 
 ?>
