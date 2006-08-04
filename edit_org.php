@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.25 2006/02/20 03:14:30 mlutfy Exp $
+	$Id: edit_org.php,v 1.26 2006/08/04 21:18:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -131,16 +131,12 @@ echo '<h4>' . _T('client_subtitle_contacts') . '</h4>';
 echo '</td>';
 echo "</tr>\n";
 
-show_edit_contacts_form('org', $_SESSION['form_data']['id_org']);
+show_edit_contacts_form('org', _session('id_org'));
 
 echo "</table>\n";
 
-echo '<input type="hidden" name="ref_edit_org" value="' . $_SESSION['form_data']['ref_edit_org'] . '" />' . "\n";
+echo '<input type="hidden" name="ref_edit_org" value="' . _session('ref_edit_org') . '" />' . "\n";
 echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
-
-if ($org && $prefs['mode'] == 'extended')
-	echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . '</button>' . "\n";
-
 echo "</form>\n";
 
 // Clear errors and form data

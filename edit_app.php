@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.44 2006/03/30 01:06:44 mlutfy Exp $
+	$Id: edit_app.php,v 1.45 2006/08/04 21:18:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -365,22 +365,8 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 
 		echo "	</table>\n";
 
-		// Form buttons
-		if (_session('id_app', 0) > 0) {
-			// When editing appointment
-			echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-			if ($prefs['mode'] == 'extended')
-				echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
-		} else {
-			// When adding appointment(s)
-			if ($prefs['mode'] == 'extended') {
-				// More buttons for 'extended' mode
-				echo '<button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-				echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
-				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n"; }
-			else	// Less buttons in simple mode
-				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-		}
+		// Submit buttons
+		echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 
 		echo '<input type="hidden" name="id_app" value="' . _session('id_app', 0) . '" />' . "\n";
 		echo '<input type="hidden" name="id_case" value="' . _session('id_case', 0) . '" />' . "\n";

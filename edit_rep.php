@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_rep.php,v 1.18 2006/04/04 23:34:24 mlutfy Exp $
+	$Id: edit_rep.php,v 1.19 2006/08/04 21:18:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -170,17 +170,9 @@ echo "</textarea></p>\n";
 
 //echo "</table>\n";
 
-// Validation buttons
-echo '	<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-
-// More buttons for 'extended' mode
-if ($prefs['mode'] == 'extended') {
-	echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
-	echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n";
-	echo '	<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
-}
-
-echo '<input type="hidden" name="ref_edit_rep" value="' . $_SESSION['form_data']['ref_edit_rep'] . '">' . "\n";
+// Submit button
+echo '<input type="hidden" name="ref_edit_rep" value="' . _session('ref_edit_rep') . '">' . "\n";
+echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 echo '</form>' . "\n";
 
 echo "</fieldset>";

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.87 2006/03/16 16:21:42 mlutfy Exp $
+	$Id: edit_case.php,v 1.88 2006/08/04 21:18:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -252,21 +252,7 @@ if (! $id_case) {
 	echo "</div>\n";
 }
 
-// Different buttons for edit existing and for new case
-if ($id_case) {
-	echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
-} else {
-	// More buttons for 'extended' mode
-	if ($prefs['mode'] == 'extended') {
-		echo '<p>';
-		echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . '</button>';
-		echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
-		echo "</p>\n";
-	} else {
-		// Less buttons in simple mode
-		echo '<p><button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
-	}
-}
+echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
 
 echo '<input type="hidden" name="admin" value="' . $_SESSION['form_data']['admin'] . "\" />\n";
 echo '<input type="hidden" name="ref_edit_case" value="' . $_SESSION['form_data']['ref_edit_case'] . "\" />\n";

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.113 2006/03/07 16:22:41 mlutfy Exp $
+	$Id: edit_fu.php,v 1.114 2006/08/04 21:18:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -285,32 +285,18 @@ echo '<form action="upd_fu.php" method="post">' . "\n";
 $obj_fu = new LcmFollowupInfoUI($_SESSION['follow']);
 $obj_fu->printEdit();
 
-		echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
+echo '<input type="hidden" name="id_followup" value="' .  _session('id_followup') . '" />';
+echo '<input type="hidden" name="id_case" value="' . _session('id_case') . '">';
+echo '<input type="hidden" name="id_app" value="' . _session('id_app', 0) . '">';
+echo '<input type="hidden" name="ref_edit_fu" value="' . _session('ref_edit_fu') . '">';
+echo "</form>\n";
 
-		if (isset($_SESSION['followup'])) {
-			if ($prefs['mode'] == 'extended')
-				echo '<button name="reset" type="reset" class="simple_form_btn">' . _T('button_reset') . "</button>\n";
-		} else {
-			// More buttons for 'extended' mode
-			if ($prefs['mode'] == 'extended') {
-				echo '<button name="submit" type="submit" value="add" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-				echo '<button name="submit" type="submit" value="addnew" class="simple_form_btn">' . _T('add_and_open_new') . "</button>\n";
-				echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('add_and_go_to_details') . "</button>\n";
-			}
-		}
-	?>
+lcm_page_end();
 
-	<input type="hidden" name="id_followup" value="<?php echo $_SESSION['form_data']['id_followup']; ?>">
-	<input type="hidden" name="id_case" value="<?php echo $_SESSION['form_data']['id_case']; ?>">
-	<input type="hidden" name="id_app" value="<?php echo (isset($_SESSION['form_data']['id_app']) ? $_SESSION['form_data']['id_app'] : 0); ?>">
-	<input type="hidden" name="ref_edit_fu" value="<?php echo $_SESSION['form_data']['ref_edit_fu']; ?>">
-</form>
+// Clear the errors, in case user jumps to other 'edit' page
+$_SESSION['errors'] = array();
+$_SESSION['form_data'] = array();
+$_SESSION['fu_data'] = array(); // DEPRECATED LCM 0.7.0
 
-<?php
-	lcm_page_end();
-
-	// Clear the errors, in case user jumps to other 'edit' page
-	$_SESSION['errors'] = array();
-	$_SESSION['form_data'] = array();
-	$_SESSION['fu_data'] = array(); // DEPRECATED LCM 0.7.0
 ?>
