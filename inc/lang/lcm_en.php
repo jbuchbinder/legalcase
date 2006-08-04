@@ -13,8 +13,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // A
-'add_and_go_to_details' => 'Add &amp; go to details',
-'add_and_open_new' => 'Add &amp; open new',
 'add_user_case' => 'Add a user to the case',
 'app_button_edit' => 'Edit this appointment',
 'app_button_new' => 'Enter a new activity',
@@ -107,10 +105,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'button_delete' => 'Delete',
 'button_next' => 'Next',
 'button_reload_page' => 'Reload this page',
-'button_reset' => 'Reset',
 'button_search' => 'Search',
 'button_validate' => 'Validate',
-'button_view_listfu' => 'View latest follow-ups by case',
 'button_zoom' => 'zoom',
 
 
@@ -290,7 +286,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // E
 'edit' => 'Edit',
 'edit_case_information' => 'Edit case information',
-'edit_filter_details' => 'Edit filter details',
 'error_add_auth_no_rights' => 'You don\'t have permission to add access rights to this case!',
 'error_no_case_specified' => 'No case was specified',
 'error_no_edit_permission' => 'You don\'t have permission to edit this case!',
@@ -925,12 +920,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_technical_message' => 'Technical message',
 'title_technical_problem' => 'Technical problem',
 'title_upgrade_database' => 'Database upgrade',
-'type' => 'Type',
 'typo_column' => ':',
-
-
-// V
-'value' => 'Value',
 
 
 // W
