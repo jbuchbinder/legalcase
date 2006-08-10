@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.52 2006/05/26 08:11:25 mlutfy Exp $
+	$Id: install.php,v 1.53 2006/08/10 14:56:52 mlutfy Exp $
 */
 
 session_start();
@@ -247,7 +247,7 @@ function install_step_5() {
 	echo "</div>\n\n";
 
 	echo "<form action='index.php' method='post'>\n";
-	echo "<div align='$lcm_lang_right'>"
+	echo "<div align='" . $GLOBALS['lcm_lang_right'] . "'>"
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
@@ -327,7 +327,7 @@ function install_step_4() {
 
 	echo "</fieldset>\n\n";
 
-	echo "<br /><div align='$lcm_lang_right'>"
+	echo "<br /><div align='" . $GLOBALS['lcm_lang_right'] . "'>"
 		. "<button type='submit' name='validate'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 
@@ -619,7 +619,7 @@ function install_step_2() {
 	}
 
 	echo "</fieldset>\n";
-	echo "<br /><div align='$lcm_lang_right'>"
+	echo "<br /><div align='$" . $GLOBALS['lcm_lang_right'] . "'>"
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
@@ -684,7 +684,7 @@ function install_step_1() {
 
 	echo "</fieldset>\n";
 
-	echo "<div align='$lcm_lang_right'>"
+	echo "<div align='" . $GLOBALS['lcm_lang_right'] . "'>"
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
@@ -742,7 +742,7 @@ else if (!$step) {
 
 	echo "<form action='install.php' method='get'>\n";
 	echo "\t<input type='hidden' name='step' value='dirs' />\n";
-	echo "\t<div align='$lcm_lang_right'>"
+	echo "\t<div align='$" . $GLOBALS['lcm_lang_right'] . "'>"
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>";
 	echo "</form>";
