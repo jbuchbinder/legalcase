@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.50 2006/07/27 14:44:56 mlutfy Exp $
+	$Id: config_site.php,v 1.51 2006/08/10 19:16:44 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -225,8 +225,8 @@ function show_config_form_regional() {
 		$GLOBALS['lcm_lang'] = $current_lang;
 	}
 
-	echo "\t<input type='hidden' name='conf_modified_regional' value='yes'/>\n";
-	echo "\t<input type='hidden' name='panel' value='regional'/>\n";
+	echo "<input type='hidden' name='conf_modified_regional' value='yes' />\n";
+	echo "<input type='hidden' name='panel' value='regional' />\n";
 
 	echo "<fieldset class='conf_info_box'>\n";
 	show_page_subtitle(_T('siteconf_subtitle_regional'), 'siteconfig_regional');
@@ -266,8 +266,8 @@ function show_config_form_policy() {
 	foreach ($meta as $m => $val)
 		$meta[$m] = read_meta($m);
 
-	echo "\t<input type='hidden' name='conf_modified_policy' value='yes'/>\n";
-	echo "\t<input type='hidden' name='panel' value='policy'/>\n";
+	echo "<input type='hidden' name='conf_modified_policy' value='yes' />\n";
+	echo "<input type='hidden' name='panel' value='policy' />\n";
 
 	// ** CLIENTS
 	echo "<fieldset class='conf_info_box'>\n";
@@ -280,23 +280,23 @@ function show_config_form_policy() {
 		. "<td>" . get_yes_no_mand('client_name_middle', $meta['client_name_middle']) .  "</td>\n"
 		. "</tr>\n";
 
-	echo "<tr><td>" . _T('siteconf_input_citizen_number') ."</td>"
+	echo "<tr><td>" . _Ti('siteconf_input_citizen_number') ."</td>"
 		. "<td>" . get_yes_no_mand('client_citizen_number', $meta['client_citizen_number']) . "</td>"
 		. "</tr>\n";
 
-	echo "<tr><td>" . _T('siteconf_input_client_birth') ."</td>"
+	echo "<tr><td>" . _Ti('person_input_date_birth') ."</td>"
 		. "<td>" . get_yes_no_mand('client_date_birth', $meta['client_date_birth']) . "</td>"
 		. "</tr>\n";
 
-	echo "<tr><td>" . _T('siteconf_input_civil_status') ."</td>"
+	echo "<tr><td>" . _Ti('person_input_civil_status') ."</td>"
 		. "<td>" . get_yes_no_mand('client_civil_status', $meta['client_civil_status']) . "</td>"
 		. "</tr>\n";
 
-	echo "<tr><td>" . _T('siteconf_input_client_income') ."</td>"
+	echo "<tr><td>" . _Ti('siteconf_input_client_income') ."</td>"
 		. "<td>" . get_yes_no_mand('client_income', $meta['client_income']) . "</td>"
 		. "</tr>\n";
 
-	echo "<tr><td>" . _T('siteconf_info_hide_emails') . "</td>\n"
+	echo "<tr><td>" . _Ti('siteconf_info_hide_emails') . "</td>\n"
 		. "<td>" . get_yes_no('hide_emails', $meta['hide_emails']) . "</td>"
 		. "</tr>\n";
 
@@ -322,18 +322,14 @@ function show_config_form_policy() {
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_case_fields') . "</small></p>\n";
 
 	echo "<table width=\"99%\" class=\"tbl_usr_dtl\">";
-	echo "<tr><td>" . _T('siteconf_input_assignment_date') ."</td><td>"
-		. get_yes_no('case_assignment_date', $meta['case_assignment_date'])
-		. "</td></tr>\n";
-	echo "<tr><td> " . _T('siteconf_input_alledged_crime') ."</td><td>"
-		. get_yes_no_mand('case_alledged_crime', $meta['case_alledged_crime'])
-		. "</td></tr>\n";
-	echo "<tr><td> " . _T('case_input_legal_reason') ."</td><td>"
-		. get_yes_no_mand('case_legal_reason', $meta['case_legal_reason'])
-		. "</td></tr>\n";
-	echo "<tr><td>" . _T('siteconf_input_case_allow_modif') ."</td><td>"
-		. get_yes_no('case_allow_modif', $meta['case_allow_modif'])
-		. "</td></tr>\n";
+	echo "<tr><td>" . _Ti('case_input_date_assigned') ."</td>"
+		. "<td>" . get_yes_no('case_assignment_date', $meta['case_assignment_date']) . "</td></tr>\n";
+	echo "<tr><td> " . _Ti('case_input_alledged_crime') ."</td>"
+		. "<td>" . get_yes_no_mand('case_alledged_crime', $meta['case_alledged_crime']) . "</td></tr>\n";
+	echo "<tr><td> " . _Ti('case_input_legal_reason') ."</td>"
+		. "<td>" . get_yes_no_mand('case_legal_reason', $meta['case_legal_reason']) . "</td></tr>\n";
+	echo "<tr><td>" . _Ti('siteconf_input_case_allow_modif') ."</td>"
+		. "<td>" . get_yes_no('case_allow_modif', $meta['case_allow_modif']) . "</td></tr>\n";
 	echo "</table>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate6' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
@@ -346,12 +342,10 @@ function show_config_form_policy() {
 	echo "<p><small class='sm_11'>" . _T('siteconf_info_followups_fields') . "</small></p>\n";
 
 	echo "<table width=\"99%\" class=\"tbl_usr_dtl\">";
-	echo "<tr><td width=\"300\">" . _T('siteconf_input_sum_billed') ."</td><td>"
-		. get_yes_no('fu_sum_billed', $meta['fu_sum_billed'])
-		. "</td></tr>\n";
-	echo "<tr><td>" . _T('siteconf_input_fu_allow_modif') ."</td><td>"
-		. get_yes_no('fu_allow_modif', $meta['fu_allow_modif'])
-		. "</td></tr>\n";
+	echo "<tr><td width=\"300\">" . _T('fu_input_sum_billed') ."</td>"
+		. "<td>" . get_yes_no('fu_sum_billed', $meta['fu_sum_billed']) . "</td></tr>\n";
+	echo "<tr><td>" . _T('siteconf_input_fu_allow_modif') ."</td>"
+		. "<td>" . get_yes_no('fu_allow_modif', $meta['fu_allow_modif']) . "</td></tr>\n";
 	echo "</table>\n";
 
 	echo "<p align='$lcm_lang_right'><button type='submit' name='Validate' id='Validate7' class='simple_form_btn'>" .  _T('button_validate') . "</button></p>\n";
@@ -362,10 +356,10 @@ function show_config_form_policy() {
 function apply_conf_changes_general() {
 	$log = array();
 
-	$site_name = $_REQUEST['site_name'];
-	$site_desc = $_REQUEST['site_desc'];
-	$site_address = $_REQUEST['site_address'];
-	$email_sysadmin = $_REQUEST['email_sysadmin'];
+	$site_name = _request('site_name');
+	$site_desc = _request('site_desc');
+	$site_address = _request('site_address');
+	$email_sysadmin = _request('email_sysadmin');
 
 	// Site name
 	if (! empty($site_name)) {
@@ -498,11 +492,11 @@ function apply_conf_changes_policy() {
 				'client_civil_status'   => 'person_input_civil_status',
 				'client_income'         => 'person_input_income',
 				'hide_emails'           => 'siteconf_info_hide_emails',
-				'case_assignment_date'  => 'siteconf_input_assignment_date',
-				'case_alledged_crime'   => 'siteconf_input_alledged_crime',
+				'case_assignment_date'  => 'case_input_date_assigned',
+				'case_alledged_crime'   => 'case_input_alledged_crime',
 				'case_legal_reason'		=> 'case_input_legal_reason',
 				'case_allow_modif'      => 'siteconf_input_case_allow_modif', 
-				'fu_sum_billed'         => 'siteconf_input_sum_billed',
+				'fu_sum_billed'         => 'fu_input_sum_billed',
 				'fu_allow_modif'        => 'siteconf_input_fu_allow_modif');
 
 	$allowed_values = array('yes' => 1, 'yes_mandatory' => 1, 'yes_optional' => 1, 'no' => 1);
