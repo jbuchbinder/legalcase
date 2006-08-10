@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.41 2006/07/27 21:23:48 mlutfy Exp $
+	$Id: keywords.php,v 1.42 2006/08/10 15:24:55 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -327,7 +327,7 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 
 		// [ML] Yes, strange UI, but imho it works great (otherwise confusing, I hate checkboxes)
 		$html_quantity = '<select name="kwg_quantity" id="kwg_quantity">'
-			. '<option value=""></option>'
+			. (! $my_qty ? '<option value=""></option>' : '')
 			. '<option value="one"' . isSelected($my_qty == 'one') . '>' . _T('keywords_option_quantity_one') . '</option>'
 			. '<option value="many"' . isSelected($my_qty == 'many') . '>' . _T('keywords_option_quantity_many') . '</option>'
 			. '</select>';
