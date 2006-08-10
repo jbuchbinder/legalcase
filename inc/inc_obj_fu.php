@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.13 2006/04/20 11:17:08 antzi Exp $
+	$Id: inc_obj_fu.php,v 1.14 2006/08/10 16:50:18 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -762,7 +762,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo get_date_inputs('app_start', $this->data['app_start_time'], false);
 			echo ' ' . _T('time_input_time_at') . ' ';
 			echo get_time_inputs('app_start', $this->data['app_start_time']);
-			echo f_err_star('app_start_time',$_SESSION['errors']);
+			echo f_err_star('app_start_time');
 			echo "</td></tr>\n";
 
 			echo "<!-- End time -->\n\t\t<tr><td>";
@@ -772,13 +772,13 @@ class LcmFollowupInfoUI extends LcmFollowup {
 				echo get_date_inputs('app_end', $this->data['app_end_time']);
 				echo ' ' . _T('time_input_time_at') . ' ';
 				echo get_time_inputs('app_end', $this->data['app_end_time']);
-				echo f_err_star('app_end_time',$_SESSION['errors']);
+				echo f_err_star('app_end_time');
 			} else {
 				$interval = ( ($this->data['app_end_time']!='0000-00-00 00:00:00') ?
 						strtotime($this->data['app_end_time']) - strtotime($this->data['app_start_time']) : 0);
 				//	echo _T('calendar_info_time') . ' ';
 				echo get_time_interval_inputs('app_delta', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
-				echo f_err_star('app_end_time',$_SESSION['errors']);
+				echo f_err_star('app_end_time');
 			}
 			echo "</td></tr>\n";
 
@@ -790,14 +790,14 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			   echo get_date_inputs('app_reminder', $this->data['app_reminder']);
 			   echo ' ' . _T('time_input_time_at') . ' ';
 			   echo get_time_inputs('app_reminder', $this->data['app_reminder']);
-			   echo f_err_star('app_reminder',$_SESSION['errors']);
+			   echo f_err_star('app_reminder');
 			   } else {
 			   $interval = ( ($this->data['app_end_time']!='0000-00-00 00:00:00') ?
 			   strtotime($this->data['app_start_time']) - strtotime($this->data['app_reminder']) : 0);
 			//	echo _T('calendar_info_time') . ' ';
 			echo get_time_interval_inputs('app_rem_offset', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 			echo " " . _T('time_info_before_start');
-			echo f_err_star('app_reminder',$_SESSION['errors']);
+			echo f_err_star('app_reminder');
 			}
 			echo "</td></tr>\n";
 			 */

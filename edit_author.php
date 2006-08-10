@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.40 2005/05/17 13:50:46 mlutfy Exp $
+	$Id: edit_author.php,v 1.41 2006/08/10 16:50:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -99,7 +99,7 @@ echo show_all_errors($_SESSION['errors']);
 			</td>
 		</tr>
 
-		<tr><td align="left" valign="top"><?php echo f_err_star('name_first', $_SESSION['errors']) . _T('person_input_name_first'); ?></td>
+		<tr><td align="left" valign="top"><?php echo f_err_star('name_first') . _T('person_input_name_first'); ?></td>
 			<td align="left" valign="top"><input name="name_first" type="text" class="search_form_txt" id="name_first" size="35" value="<?php echo clean_output($user['name_first']); ?>"/></td>
 		</tr>
 
@@ -115,7 +115,7 @@ echo show_all_errors($_SESSION['errors']);
 		<?php
 			}
 		?>
-		<tr><td align="left" valign="top"><?php echo f_err_star('name_last', $_SESSION['errors']) . _T('person_input_name_last'); ?></td>
+		<tr><td align="left" valign="top"><?php echo f_err_star('name_last') . _T('person_input_name_last'); ?></td>
 			<td align="left" valign="top"><input name="name_last" type="text" class="search_form_txt" id="name_last" size="35"  value="<?php echo clean_output($user['name_last']); ?>"/></td>
 		</tr>
 <?php
@@ -144,7 +144,7 @@ echo show_all_errors($_SESSION['errors']);
 ?>
 			</td>
 		</tr>
-		<tr><td align="left" valign="top"><?php echo f_err_star('username', $_SESSION['errors']) . _T('authoredit_input_username'); ?></td>
+		<tr><td align="left" valign="top"><?php echo f_err_star('username') . _T('authoredit_input_username'); ?></td>
 			<td align="left" valign="top">
 
 		<?php
@@ -188,18 +188,18 @@ echo show_all_errors($_SESSION['errors']);
 				if ($user['id_author'] && $author_session['status'] != 'admin') {
 					echo '
 		<tr>
-			<td align="left" valign="top">' . f_err_star('password_current', $_SESSION['errors']) . _T('authorconf_input_password_current') . '</td>
+			<td align="left" valign="top">' . f_err_star('password_current') . _T('authorconf_input_password_current') . '</td>
 			<td align="left" valign="top"><input name="usr_old_passwd" type="password" class="search_form_txt" id="usr_old_passwd" size="35" /></td>
 		</tr>' . "\n";
 				}
 		?>
 		
 		<tr>
-			<td align="left" valign="top"><?php echo f_err_star('password_confirm', $_SESSION['errors']) . _T('authorconf_input_password_new'); ?></td>
+			<td align="left" valign="top"><?php echo f_err_star('password_confirm') . _T('authorconf_input_password_new'); ?></td>
 			<td align="left" valign="top"><input name="usr_new_passwd" type="password" class="search_form_txt" id="usr_new_passwd" size="35" /></td>
 		</tr>
 		<tr>
-			<td align="left" valign="top"><?php echo f_err_star('password_confirm', $_SESSION['errors']) . _T('authorconf_input_password_confirm'); ?></td>
+			<td align="left" valign="top"><?php echo f_err_star('password_confirm') . _T('authorconf_input_password_confirm'); ?></td>
 			<td align="left" valign="top"><input name="usr_retype_passwd" type="password" class="search_form_txt" id="usr_retype_passwd" size="35" /></td>
 		</tr>
 

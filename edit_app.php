@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.45 2006/08/04 21:18:34 mlutfy Exp $
+	$Id: edit_app.php,v 1.46 2006/08/10 16:50:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -236,7 +236,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 				strtotime($_SESSION['form_data']['start_time']) - strtotime($_SESSION['form_data']['reminder']) : 0);
 		echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
 		echo " " . _T('time_info_before_start');
-		echo f_err_star('reminder',$_SESSION['errors']);
+		echo f_err_star('reminder');
 
 		echo "</td>\n";
 	}

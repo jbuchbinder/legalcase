@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.29 2006/03/20 20:58:49 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.30 2006/08/10 16:50:18 mlutfy Exp $
 */
 
 
@@ -256,7 +256,7 @@ function show_existing_contact($c, $num) {
 	// the modification will be lost, because we didn't use the $_SESSION value.
 	
 	echo '<tr><td align="left" valign="top">' 
-		. f_err_star('upd_contact_' . $num, $_SESSION['errors'])
+		. f_err_star('upd_contact_' . $num)
 		. _Ti($c['title']) . "</td>\n";
 	echo '<td align="left" valign="top">';
 
@@ -271,7 +271,7 @@ function show_existing_contact($c, $num) {
 		. 'class="search_form_txt" size="35" value="' 
 		. (isset($_SESSION['form_data']['contact_value'][$num]) ?  $_SESSION['form_data']['contact_value'][$num] : clean_output($c['value']))
 		. '"/>';
-	echo f_err('email', $_SESSION['errors']) . "";
+	echo f_err('email') . "";
 
 	echo '<label for="id_del_contact' . $num . '">';
 	echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="' . _T('generic_info_delete_contact') . '" title="' . _T('generic_info_delete_contact') . '" />';
@@ -290,7 +290,7 @@ function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_na
 
 	// Contact type (either specific or 'Add contact')
 	echo '<td align="left" valign="top">'
-		. f_err_star('new_contact_' . $num_new, $_SESSION['errors']);
+		. f_err_star('new_contact_' . $num_new);
 
 	if ($type_kw == "__add__") {
 		echo _Ti('generic_input_contact_other');
