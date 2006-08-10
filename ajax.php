@@ -181,6 +181,8 @@ if (_request('find_name_client')) {
 
 		echo "</div>\n";
 
+	} elseif ($action == 'changefont') {
+		// should already be changed becaused we included inc.php
 	}
 } elseif (intval(_request('id_case', 0)) > 0) {
 	include_lcm('inc_obj_case');
