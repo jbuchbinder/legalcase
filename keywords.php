@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.42 2006/08/10 15:24:55 mlutfy Exp $
+	$Id: keywords.php,v 1.43 2006/08/10 15:58:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -391,7 +391,8 @@ function show_keyword_id($id_keyword = 0) {
 
 	if (! $id_keyword) {
 		echo "<ul style=\"padding-left: 0.5em; padding-top: 0.2; padding-bottom: 0.2; font-size: 12px;\">\n";
-		echo '<li style="list-style-type: none;">' . _T('keywords_input_for_group') . " " . _T($kwg['title']) . "</li>\n";
+		echo '<li style="list-style-type: none;">' . _T('keywords_input_for_group') . " " 
+			. '<a class="content_link" href="keywords.php?action=edit_group&id_group=' . $kwg['id_group'] . '">' . _T($kwg['title']) . "</a></li>\n";
 		echo "</ul>\n";
 	}
 	
@@ -403,15 +404,15 @@ function show_keyword_id($id_keyword = 0) {
 	echo '<input type="hidden" name="id_group" value="' . $kw['id_group'] . '" />' . "\n"; // for new keyword only
 
 	// Name (only for new keywords, must be unique and cannot be changed)
-	echo "<strong>" . f_err_star('name', $_SESSION['errors']) . _T('keywords_input_name') . "</strong> " 
+	echo "<strong>" . f_err_star('name') . _T('keywords_input_name') . "</strong> " 
 		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
 
-	$disabled = ($id_keyword ? ' disabled="disabled" ' : '');
+	$disabled = isDisabled($id_keyword);
 	echo '<input ' . $disabled . ' type="text" id="kw_name" name="kw_name" value="' . $kw['name'] . '" class="search_form_txt" />' . "\n";
 	echo "<br /><br />\n";
 	
 	// Title
-	echo "<strong>" . f_err_star('title', $_SESSION['errors']) . _T('keywords_input_title') . "</strong><br />\n";
+	echo "<strong>" . f_err_star('title') . _T('keywords_input_title') . "</strong><br />\n";
 	echo "<input type='text' id='kw_title' name='kw_title' value='" .  $kw['title'] . "' class='search_form_txt' />\n";
 	echo "<br /><br />\n";
 
