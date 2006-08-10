@@ -622,7 +622,7 @@ function copyAttributes(source, destination)
 }
 
 /* [ML] Functions for other more boring stuff */
-function getCaseInfo(id_case, destination) 
+function getCaseInfo(id_case)
 {
     function constructUri() 
 	{
@@ -634,3 +634,52 @@ function getCaseInfo(id_case, destination)
 
 	updater();
 }
+
+function getKeywordInfo(action, group_name, type_obj, id_obj, id_obj_sec, div)
+{
+    function constructUri() 
+	{
+        return 'ajax.php?action=' + action + '&group_name=' + group_name 
+			+ '&type_obj=' + type_obj + '&id_obj=' + id_obj + '&id_obj_sec' + id_obj_sec
+			+ '&div=' + div;
+    }
+
+    var updater = liveUpdater(constructUri);
+    var timeout = false;
+
+	updater();
+}
+
+
+// [ML] This was in ss_switcher.js, moved to here to combine with liveUpdater
+// ----------------------------------------------
+// StyleSwitcher functions written by Paul Sowden
+// http://www.idontsmoke.co.uk/ss/
+// - - - - - - - - - - - - - - - - - - - - - - -
+// For the details, visit ALA:
+// http://www.alistapart.com/stories/alternate/
+
+function setActiveStyleSheet(title)
+{
+    var i, a, main;
+
+    function constructUri() 
+	{
+        return 'ajax.php?author_ui_modified=1&action=changefont' + '&font_size=' + title;
+    }
+
+    var updater = liveUpdater(constructUri);
+    var timeout = false;
+
+    for(i=0; (a = document.getElementsByTagName("link")[i]); i++)
+    {
+	    if(a.getAttribute("rel").indexOf("style") != -1 && a.getAttribute("title"))
+	    {
+        	    a.disabled = true;
+        	    if(a.getAttribute("title") == title) { a.disabled = false; }
+	    }
+    }
+
+	updater();
+}
+
