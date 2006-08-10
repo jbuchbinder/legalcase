@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.59 2005/12/06 10:02:26 mlutfy Exp $
+	$Id: config_author.php,v 1.60 2006/08/10 19:41:23 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -236,47 +236,37 @@ function apply_author_ui_change() {
 	global $log;
 
 	// From the form
-	global $sel_language, $old_language;
-	global $sel_theme, $old_theme;
-	global $sel_screen, $old_screen;
-	global $font_size, $old_font_size;
-	global $page_rows, $old_page_rows;
+	$sel_language = _request('sel_language');
+	$old_language = _request('old_language');
+	$sel_theme = _request('sel_theme');
+	$old_theme = _request('old_theme');
+	$sel_screen = _request('sel_screen');
+	$old_screen = _request('old_screen');
+	$font_size = _request('font_size');
+	$old_font_size = _request('old_font_size');
+	$page_rows = _request('page_rows');
+	$old_page_rows = _request('old_page_rows');
 
-	//
 	// Change the user's language (done in inc.php, we only log the result)
-	//
-
 	if ($sel_language <> $old_language) {
 		array_push($log, "Language set to " .
 			translate_language_name($sel_language) . ", was " .
 			translate_language_name($old_language) . ".");
 	}
 
-	//
 	// Change the user's UI colors (done in inc.php, we only log the result)
-	//
-
 	if ($sel_theme == $prefs['theme'] && $sel_theme <> $old_theme)
 		array_push($log, "Theme set to " . $sel_theme . ", was " . $old_theme . ".");
 
-	//
 	// Change the type of the screen - wide or narrow
-	//
-
 	if ($sel_screen == $prefs['sel_screen'] && $sel_screen <> $old_screen)
 		array_push($log, "Screen mode set to " . $sel_screen . ", was " . $old_screen . ".");
 
-	//
 	// Change the font size
-	//
-
 	if ($font_size == $prefs['font_size'] && $font_size <> $old_font_size)
 		array_push($log, "Screen mode set to " . $font_size . ", was " . $old_font_size . ".");
 
-	//
 	// Change the rows per page
-	//
-
 	if ($page_rows == $prefs['page_rows'] && $page_rows <> $old_page_rows)
 		array_push($log, "Rows per page set to " . $page_rows . ", was " . $old_page_rows . ".");
 
@@ -289,28 +279,22 @@ function apply_author_advanced_settings_change() {
 	global $log;
 
 	// From the form
-	global $sel_mode, $old_mode;
-	global $sel_time_intervals, $old_time_intervals;
-	global $sel_time_intervals_notation, $old_time_intervals_notation;
+	$sel_mode = _request('sel_mode');
+	$old_mode = _request('old_mode');
+	$sel_time_intervals = _request('sel_time_intervals');
+	$old_time_intervals = _request('old_time_intervals');
+	$sel_time_intervals_notation = _request('sel_time_intervals_notation');
+	$old_time_intervals_notation = _request('old_time_intervals_notation');
 
-	//
 	// Change the interface mode
-	//
-
 	if ($sel_mode == $prefs['mode'] && $sel_mode <> $old_mode)
 		array_push($log, "User interface mode set to $sel_mode, was $old_mode.");
 
-	//
 	// Change the time intervals
-	//
-
 	if ($sel_time_intervals == $prefs['time_intervals'] && $sel_time_intervals <> $old_time_intervals)
 		array_push($log, "Time intervals set to $sel_time_intervals, was $old_time_intervals.");
 	
-	//
 	// Change the time intervals notation
-	//
-
 	if ($sel_time_intervals_notation == $prefs['time_intervals_notation'] && $sel_time_intervals_notation <> $old_time_intervals_notation)
 		array_push($log, "Time intervals notation set to $sel_time_intervals_notation, was $old_time_intervals_notation.");
 }
@@ -345,38 +329,27 @@ if (isset($_POST['author_ui_modified']))
 if (isset($_POST['author_advanced_settings_modified']))
 	apply_author_advanced_settings_change();
 
-// [ML] I find this useful only for debugging, otherwise confusing for the user
-/*
-if (count($log) > 0) {
-	lcm_page_start(_T('title_authorconf'),'','<meta http-equiv="refresh" content="5; url=' . $_POST['referer'] . '">');
-	show_changes();
-	lcm_page_end();
-} else {
-*/
+// Referer may be set by the form, but also by lcm_cookie.php which
+// is called before config_author.php via inc.php (ahem..)
+// [ML] If this is removed, the user will not be correctly sent to the 
+// referer when the language setting is changed
+if (isset($_REQUEST['referer'])) {
+	$target = new Link($_REQUEST['referer']);
+	header('Location: ' . $target->getUrlForHeader());
+	exit;
+}
 
-	// Referer may be set by the form, but also by lcm_cookie.php which
-	// is called before config_author.php via inc.php (ahem..)
-	// [ML] If this is removed, the user will not be correctly sent to the 
-	// referer when the language setting is changed
-	if (isset($_REQUEST['referer'])) {
-		$target = new Link($_REQUEST['referer']);
-		header('Location: ' . $target->getUrlForHeader());
-		exit;
-	}
+lcm_page_start(_T('title_authorconf'));
+	
+// Show tabs
+$groups = array('interface' => _T('authorconf_tab_interface'),
+				'advanced' => _T('authorconf_tab_advanced'));
 
-	lcm_page_start(_T('title_authorconf'));
+$tab = (isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'interface' );
+//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
+show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME'] . "?ref=" . urlencode( isset($_GET['ref']) ? urldecode(clean_input($_GET['ref'])) : $_SERVER['HTTP_REFERER']) );
 	
-	// Show tabs
-	$groups = array('interface' => _T('authorconf_tab_interface'),
-					'advanced' => _T('authorconf_tab_advanced'));
-
-	$tab = (isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'interface' );
-	//show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
-	show_tabs($groups,$tab,$_SERVER['SCRIPT_NAME'] . "?ref=" . urlencode( isset($_GET['ref']) ? urldecode(clean_input($_GET['ref'])) : $_SERVER['HTTP_REFERER']) );
-	
-	show_author_form($tab);
-	
-	lcm_page_end();
-// }
+show_author_form($tab);
+lcm_page_end();
 
 ?>
