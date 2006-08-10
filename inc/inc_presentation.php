@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.242 2006/07/27 22:00:25 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.243 2006/08/10 15:59:17 mlutfy Exp $
 */
 
 //
@@ -1871,6 +1871,13 @@ function isChecked($expr) {
 function isSelected($expr) {
 	if ($expr)
 		return ' selected="selected" ';
+	else
+		return '';
+}
+
+function isDisabled($expr) {
+	if ($expr)
+		return ' disabled="disabled" ';
 	else
 		return '';
 }
