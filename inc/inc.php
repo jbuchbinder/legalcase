@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.56 2006/04/19 19:45:52 mlutfy Exp $
+	$Id: inc.php,v 1.57 2006/08/10 16:47:11 mlutfy Exp $
 */
 
 include ('inc/inc_version.php');
@@ -53,11 +53,11 @@ global $author_session;
 // Clear preferences modified flag
 $prefs_mod = false;
 
-if (isset($_REQUEST['author_ui_modified'])) {
+if (_request('author_ui_modified')) {
 	// Set UI theme
-	if ($_REQUEST['sel_theme'] != $_REQUEST['old_theme']) {	// Value is changed
+	if (_request('sel_theme') != _request('old_theme')) {
 		// XSS risk: Theme names can only be alpha-numeric, "-" and "_"
-		$sel_theme = preg_replace("/[^-_a-zA-Z0-9]/", '', $_REQUEST['sel_theme']);
+		$sel_theme = preg_replace("/[^-_a-zA-Z0-9]/", '', _request('sel_theme'));
 
 		if (file_exists("styles/lcm_ui_" . $sel_theme . ".css")) {
 			$prefs['theme'] = ($sel_theme);
@@ -66,21 +66,22 @@ if (isset($_REQUEST['author_ui_modified'])) {
 	}
 
 	// Set wide/narrow screen mode preference
-	if ($_REQUEST['sel_screen'] != $_REQUEST['old_screen']) {	// Value is changed
-		if ($_REQUEST['sel_screen'] == 'narrow' || $_REQUEST['sel_screen'] == 'wide') {
-			$prefs['screen'] = $_REQUEST['sel_screen'];
+	if (_request('sel_screen') != _request('old_screen')) {
+		if (_request('sel_screen') == 'narrow' || _request('sel_screen') == 'wide') {
+			$prefs['screen'] = _request('sel_screen');
 			$prefs_mod = true;
 		}
 	}
 
 	// Set rows per page preference
-	if (intval($_REQUEST['page_rows']) > 0) {
-		$prefs['page_rows'] = intval($_REQUEST['page_rows']);
+	if (intval(_request('page_rows', 0)) > 0) {
+		$prefs['page_rows'] = intval(_request('page_rows', 0));
 		$prefs_mod = true;
 	}
 
 	// Set font size
-	if ($_REQUEST['font_size'] != $_REQUEST['old_font_size']) {
+	if (_request('font_size') != _request('old_font_size')) {
+		$font_size = _request('font_size');
 		if ($font_size == 'small_font' || $font_size == 'medium_font' || $font_size == 'large_font') {
 			$prefs['font_size'] = $font_size;
 			$prefs_mod = true;
@@ -90,10 +91,7 @@ if (isset($_REQUEST['author_ui_modified'])) {
 	// [ML] This is very important (but dirty hack) to change the language
 	// from config_author.php but passing by lcm_cookie.php
 	// It must be called last, because FORM values will be lost in the redirect
-	if (isset($_REQUEST['sel_language']))
-		$lang = $_REQUEST['sel_language'];
-	else
-		$lang = $_COOKIE['lcm_lang'];
+	$lang = _request('sel_language', $_COOKIE['lcm_lang']);
 	
 }
 
