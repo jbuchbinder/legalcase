@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.173 2006/08/11 19:52:24 mlutfy Exp $
+	$Id: case_det.php,v 1.174 2006/08/11 19:56:37 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -237,6 +237,8 @@ if (! ($case > 0)) {
 					echo "<a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a>&nbsp;\n";
 					echo "</p>\n";
 				}
+
+				echo "</fieldset>\n";
 				
 				break;
 
