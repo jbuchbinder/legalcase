@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.103 2006/07/27 14:56:33 mlutfy Exp $
+	$Id: inc_version.php,v 1.104 2006/08/11 19:51:45 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -51,17 +51,6 @@ function feed_globals($table, $insecure = true, $ignore_variables_contexte = fal
         }
 	}
 }
-
-/* [ML] In theory, this is deprecated.
-   I am testing without, but for 'stable' use, better to leave it
-   in order to avoid surprises.. In some PHP environments, this
-   makes little effect, therefore strange bugs would arise...
-   c.f. DW@TRB
-*/
-feed_globals('HTTP_COOKIE_VARS', true, true); // use $_COOKIE instead
-feed_globals('HTTP_GET_VARS'); // use $_REQUEST instead
-feed_globals('HTTP_POST_VARS'); // use $_REQUEST instead
-feed_globals('HTTP_SERVER_VARS', false); // use $_SERVER instead
 
 //
 // Management of inclusion and information on directories
@@ -232,6 +221,10 @@ $table_prefix = 'lcm';
 $cookie_prefix = 'lcm';
 $cookie_path = '';
 
+// Maximum size of uploaded files
+// NOTE: also check your php.ini, very often, it is less than this.
+$max_file_upload_size = 10 * 1024 * 1024; // 3 megs
+
 // [ML] This is probably not used
 // Should we authorize LCM to compress the pages on the fly when
 // the navigator accepts it (Apache 1.3 only) ?
@@ -285,7 +278,7 @@ $lcm_version = 0.710;
 $lcm_version_shown = "0.7.1 CVS";
 
 // Current version of LCM database
-$lcm_db_version = 48;
+$lcm_db_version = 50;
 
 // Error reporting
 # error_reporting(E_ALL); // [ML] recommended for debug
