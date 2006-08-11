@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.244 2006/08/11 16:44:35 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.245 2006/08/11 19:35:37 mlutfy Exp $
 */
 
 //
@@ -1706,14 +1706,21 @@ function show_attachments_list($type, $id_type) {
 			echo "<tr>\n";
 
 			// Mimetype
-			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
-			echo '<a title="' . $row['filename'] . '" '
+			// [ML] We were using the mimetype sent by the browser, but it
+			// ends up being rather useless, since MSIE and Firefox don't agree on
+			// the mimetypes.. ex: .jpg = image/jpeg (FFx), but under MSIE is image/pjeg
+			// So may as well just use the extention of the file, even if not reliable.
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '" align="center">';
+			echo '<a title="' . $row['type'] . '" '
 				. 'href="view_file.php?type=' . $type . '&amp;file_id=' .  $row['id_attachment'] . '">';
-			
-			if (is_file("images/mimetypes/" . $row['type'] . ".png"))
-				echo '<img src="images/mimetypes/' . $row['type'] . '.png" border="0" alt="' . $row['type'] . '" />';
-			else
+
+			if (preg_match("/\.([a-zA-Z0-9]+)$/", $row['filename'], $regs)
+				&& is_file("images/mimetypes/" . strtolower($regs[1]) . ".png"))
+			{
+					echo '<img src="images/mimetypes/' . $regs[1] . '.png" border="0" alt="' . $row['type'] . '" />';
+			} else {
 				echo '<img src="images/mimetypes/unknown.png" border="0" alt="' . $row['type'] . '" />';
+			}
 
 			echo '</a>';
 			echo '</td>';
@@ -1834,9 +1841,9 @@ function show_attachments_upload($type, $id_type, $filename='', $description='')
 
 //	echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
 //	echo '<input type="hidden" name="' . $type . '" value="' . $id_type . '" />' . "\n";
-	echo '<input type="hidden" name="MAX_FILE_SIZE" value="300000" />' . "\n";
+	echo '<input type="hidden" name="MAX_FILE_SIZE" value="' . $GLOBALS['max_file_upload_size'] . '" />' . "\n";
 
-	echo '<strong>' . _Ti('file_input_name') . "</strong><br />";
+	echo '<strong>' . f_err_star('file') . _Ti('file_input_name') . "</strong><br />";
 	echo '<input type="file" name="filename" size="40" value="' . $filename . '" />' . "<br />\n";
 
 	echo '<strong>' . _Ti('file_input_description') . "</strong><br />\n";
