@@ -32,14 +32,14 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 	lcm_debug($name . ": " . count($GLOBALS['i18n_' . $name]) . " string(s)", 5);
 
 	// The local system administrator can overload official strings
-	if (@is_readable('inc/lang/perso.php')) {
+	if (include_config_exists('perso')) {
 		lcm_debug("Loading inc/lang/perso.php", 5);
-		overload_lang('lang/perso');
+		overload_lang('perso');
 	}
 	
-	if (@is_readable('inc/lang/perso_' . $lang . '.php')) {
+	if (include_config_exists('perso_' . $lang)) {
 		lcm_debug("Loading inc/lang/perso_" . $lang . ".php", 5);
-		overload_lang('lang/perso_' . $lang);
+		overload_lang('perso_' . $lang);
 	}
 }
 
@@ -50,7 +50,7 @@ function load_language_file($lang, $module = 'lcm', $force = false) {
 function overload_lang($f) {
 	$idx_lang_current = $GLOBALS['idx_lang'];
 	$GLOBALS['idx_lang'] .= '_temp';
-	include_lcm($f);
+	include_config($f);
 
 	if (is_array($GLOBALS[$GLOBALS['idx_lang']]))
 		foreach ($GLOBALS[$GLOBALS['idx_lang']] as $var => $val)
