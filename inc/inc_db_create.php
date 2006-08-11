@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.56 2006/08/11 15:26:23 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.57 2006/08/11 19:51:01 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -65,7 +65,7 @@ function create_database() {
 		"id_case bigint(21) NOT NULL DEFAULT 0", 
 		"id_author bigint(21) NOT NULL DEFAULT 0", 
 		"filename varchar(255) NOT NULL DEFAULT ''", 
-		"type varchar(255) DEFAULT NULL", 
+		"type varchar(255) DEFAULT '' NOT NULL",
 		"size bigint(21) NOT NULL DEFAULT 0", 
 		"description text", 
 		"content longblob",
@@ -191,12 +191,12 @@ function create_database() {
 		"id_client bigint(21) NOT NULL DEFAULT 0",
 		"id_author bigint(21) NOT NULL DEFAULT 0",
 		"filename varchar(255) NOT NULL DEFAULT ''",
-		"type varchar(255) DEFAULT NULL", // XXX hum!
+		"type varchar(255) DEFAULT '' NOT NULL",
 		"size bigint(21) NOT NULL DEFAULT 0",
 		"description text",
 		"content longblob",
-		"date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_attached datetime NOT NULL",
+		"date_removed datetime DEFAULT NULL", // may be null
 		"PRIMARY KEY  (id_attachment)"
 	);
 
@@ -230,7 +230,7 @@ function create_database() {
 		"id_org bigint(21) NOT NULL DEFAULT '0'",
 		"id_author bigint(21) NOT NULL DEFAULT '0'",
 		"filename varchar(255) NOT NULL DEFAULT ''",
-		"type varchar(255) DEFAULT NULL",
+		"type varchar(255) DEFAULT '' NOT NULL",
 		"size bigint(21) NOT NULL DEFAULT '0'",
 		"description text",
 		"content longblob",

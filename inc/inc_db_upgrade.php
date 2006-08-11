@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.68 2006/08/11 14:37:00 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.69 2006/08/11 19:51:01 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1060,6 +1060,21 @@ function upgrade_database($old_db_version) {
 
 		lcm_query("ALTER TABLE lcm_stage
 			CHANGE date_agreement date_agreement datetime DEFAULT NULL");
+
+		lcm_query("ALTER TABLE lcm_case_attachment
+			CHANGE date_removed date_removed datetime DEFAULT NULL");
+
+		lcm_query("ALTER TABLE lcm_client_attachment
+			CHANGE date_removed date_removed datetime DEFAULT NULL");
+
+		lcm_query("ALTER TABLE lcm_org_attachment
+			CHANGE date_removed date_removed datetime DEFAULT NULL");
+
+		lcm_query("ALTER TABLE lcm_followup
+			CHANGE date_end date_end datetime DEFAULT NULL");
+
+		lcm_query("ALTER TABLE lcm_app
+			CHANGE reminder reminder datetime DEFAULT NULL");
 
 		upgrade_db_version(50);
 	}
