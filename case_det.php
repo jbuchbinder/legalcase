@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.171 2006/08/04 21:19:52 mlutfy Exp $
+	$Id: case_det.php,v 1.172 2006/08/11 16:55:05 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -551,8 +551,6 @@ if (! ($case > 0)) {
 				echo '<fieldset class="info_box">';
 				show_page_subtitle(_T('case_subtitle_attachments'), 'tools_documents');
 
-				echo "<p class=\"normal_text\">\n";
-
 				echo '<form enctype="multipart/form-data" action="attach_file.php" method="post">' . "\n";
 				echo '<input type="hidden" name="case" value="' . $case . '" />' . "\n";
 
@@ -566,10 +564,8 @@ if (! ($case > 0)) {
 				echo '<input type="submit" name="submit" value="' . _T('button_validate') . '" class="search_form_btn" />' . "\n";
 				echo "</form>\n";
 
-				echo "</p>\n";
 				echo "</fieldset>\n";
 
-				$_SESSION['errors'] = array();
 				$_SESSION['user_file'] = array();
 
 				break;
