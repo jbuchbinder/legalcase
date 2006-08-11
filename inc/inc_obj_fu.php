@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.14 2006/08/10 16:50:18 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.15 2006/08/11 14:31:31 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -118,10 +118,10 @@ class LcmFollowup extends LcmObject {
 		// And parts of this code should be in the constructor.
 		global $prefs;
 		if ($prefs['time_intervals'] == 'absolute') {
-			if (!($_SESSION['form_data']['end_year'] || $_SESSION['form_data']['end_month'] || $_SESSION['form_data']['end_day'])) {
+			if (isempty_datetime_from_array($_SESSION['form_data'], 'end', 'date_only')) {
 				// Set to default empty date if all fields empty
 				$this->data['date_end'] = '0000-00-00 00:00:00';
-			} elseif (!$_SESSION['form_data']['end_year'] || !$_SESSION['form_data']['end_month'] || !$_SESSION['form_data']['end_day']) {
+			} elseif (! isset_datetime_from_array($_SESSION['form_data'], 'end', 'date_only')) {
 				// Report error if some of the fields empty
 				$this->data['date_end'] = get_datetime_from_array($_SESSION['form_data'], 'end', 'start', '', false);
 				$errors['date_end'] = 'Partial end date!'; // TRAD
@@ -169,6 +169,29 @@ class LcmFollowup extends LcmObject {
 		   if ( !(strlen($this->data['description']) > 0) )
 		   $errors['description'] = _Ti('fu_input_description') . _T('warning_field_mandatory');
 		 */
+
+		validate_update_keywords_request('followup', $this->getDataInt('id_followup'));
+
+		if ($_SESSION['errors'])
+			$errors = array_merge($errors, $_SESSION['errors']);
+
+		//
+		// Custom validation functions
+		//
+		$id_case = $this->getDataInt('id_case');
+		$fields = array('description' => 'FollowupDescription');
+
+		foreach ($fields as $f => $func) {
+			if (include_validator_exists($f)) {
+				include_validator($f);
+				$class = "LcmCustomValidate$func";
+				$data = $this->getDataString($f);
+				$v = new $class();
+
+				if ($err = $v->validate($id_case, $data)) 
+					$errors[$f] = _Ti('fu_input_' . $f) . $err;
+			}
+		}
 
 		return $errors;
 	}
@@ -371,6 +394,8 @@ class LcmFollowup extends LcmObject {
 			}
 		}
 
+		// Keywords
+		update_keywords_request('followup', $this->getDataInt('id_followup'));
 
 		return $errors;
 	}
@@ -400,78 +425,86 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		if ($show_subtitle)
 			show_page_subtitle(_T('generic_subtitle_general'), 'cases_intro');
 
-		echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
+		echo '<ul class="info">';
+		// TODO: fix html
 		
 		// Author
-		echo "<tr>\n";
-		echo '<td>' . _Ti('case_input_author') . "</td>\n";
-		echo '<td>' . get_author_link($this->data) . "</td>\n";
-		echo "</tr>\n";
+		echo '<li>'
+			. '<span class="label2">' . _Ti('case_input_author') . '</span>'
+			. '<span class="value2">' . get_author_link($this->data) . '</span>'
+			. "</li>\n";
 		
 		// Date start
-		echo "<tr>\n";
-		echo '<td>' . _Ti('time_input_date_start') . "</td>\n";
-		echo '<td>' . format_date($this->data['date_start']) . "</td>\n";
-		echo "</tr>\n";
+		echo '<li>'
+			. '<span class="label2">' . _Ti('time_input_date_start') . '</span>'
+			. '<span class="value2">' . format_date($this->data['date_start']) . '</span>'
+			. "</li>\n";
 		
 		// Date end
-		echo "<tr>\n";
-		echo '<td>' . _Ti('time_input_date_end') . "</td>\n";
-		echo '<td>' . format_date($this->data['date_end']) . "</td>\n";
-		echo "</tr>\n";
+		echo '<li>'
+			. '<span class="label2">' . _Ti('time_input_date_end') . '</span>'
+			. '<span class="value2">' . format_date($this->data['date_end']) . '</span>'
+			. "</li>\n";
 		
 		// Date length
-		echo "<tr>\n";
-		echo '<td>' . _Ti('time_input_length') . "</td>\n";
-		echo '<td>' . format_time_interval_prefs($this->data['length']) . "</td>\n";
-		echo "</tr>\n";
+		echo '<li>'
+			. '<span class="label2">' . _Ti('time_input_length') . '</span>'
+			. '<span class="value2">' . format_time_interval_prefs($this->data['length']) . '</span>'
+			. "</li>\n";
 		
 		// FU type
-		echo "<tr>\n";
-		echo '<td>' . _Ti('fu_input_type') . "</td>\n";
-		echo '<td>' . _Tkw('followups', $this->data['type']) . "</td>\n";
-		echo "</tr>\n";
+		echo '<li>'
+			. '<span class="label2">' . _Ti('fu_input_type') . '</span>'
+			. '<span class="value2">' . _Tkw('followups', $this->data['type']) . '</span>'
+			. "</li>\n";
+
+		// Keywords
+		show_all_keywords('followup', $this->getDataInt('id_followup'));
 		
 		// Conclusion for case/status change
 		if ($this->data['type'] == 'status_change' || $this->data['type'] == 'stage_change') {
 			$tmp = lcm_unserialize($this->data['description']);
 		
-			echo "<tr>\n";
-			echo '<td>' . _Ti('fu_input_conclusion') . "</td>\n";
-		
-			echo '<td>';
+			echo '<li>'
+				. '<span class="label2">' . _Ti('fu_input_conclusion') .  '</span>';
+
+			echo '<span class="value2">';
 		
 			if (read_meta('case_result') == 'yes' && $tmp['result'])
 				echo _Tkw('_crimresults', $tmp['result']) . "<br />\n";
 			
-			echo _Tkw('conclusion', $tmp['conclusion']) . "</td>\n";
-			echo "</tr>\n";
+			echo _Tkw('conclusion', $tmp['conclusion']) . '</span>';
+			echo "</li>\n";
 		
-			echo "<tr>\n";
-			echo '<td>' . _Ti('fu_input_sentence') . "</td>\n";
-			echo '<td>' . _Tkw('sentence', $tmp['sentence']) . "</td>\n";
-			echo "</tr>\n";
+			echo '<li>'
+				. '<span class="label2">' . _Ti('fu_input_sentence') . '</li>'
+				. '<span class="value2">' . _Tkw('sentence', $tmp['sentence']) . '</span>'
+				. "</li>\n";
 		}
 		
 		// Description
 		$desc = get_fu_description($this->data, false);
 		
-		echo "<tr>\n";
-		echo '<td valign="top">' . _T('fu_input_description') . "</td>\n";
-		echo '<td>' . $desc . "</td>\n";
-		echo "</tr>\n";
+		echo '<li class="large">'
+			. '<span class="label2">' . _T('fu_input_description') . '</span>'
+			. '<span class="value2">' . $desc . '</span>'
+			. "</li>\n";
 		
 		// Sum billed (if activated from policy)
 		if ($this->show_sum_billed == 'yes') {
-			echo "<tr><td>" . _T('fu_input_sum_billed') . "</td>\n";
-			echo "<td>";
-			echo format_money(clean_output($this->data['sumbilled']));
+			echo '<li>'
+				. '<span class="label2">' . _T('fu_input_sum_billed') . '</span>'
+				. '<span class="value2">';
+
+			echo  format_money(clean_output($this->data['sumbilled']));
 			$currency = read_meta('currency');
 			echo htmlspecialchars($currency);
-			echo "</td></tr>\n";
+
+			echo '</span>';
+			echo "</li>\n";
 		}
 						
-		echo "</table>\n";
+		echo "</ul>\n";
 	}
 
 	// XXX error checking! ($_SESSION['errors'])
@@ -557,7 +590,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 					$default = $this->data['result'];
 	
 				foreach ($kws_result as $kw) {
-					$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
+					$sel = isSelected($kw['name'] == $default);
 					echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 				}
 	
@@ -572,7 +605,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 				$default = $this->data['conclusion'];
 	
 			foreach ($kws_conclusion as $kw) {
-				$sel = ($kw['name'] == $default ? ' selected="selected"' : '');
+				$sel = isSelected($kw['name'] == $default);
 				echo '<option ' . $sel . ' value="' . $kw['name'] . '">' . _T(remove_number_prefix($kw['title'])) . "</option>\n";
 			}
 	
@@ -685,6 +718,9 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo "</td>\n";
 			echo "</tr>\n";
 		}
+
+		// Keywords (if any)
+		show_edit_keywords_form('followup', $this->getDataInt('id_followup'));
 	
 		// Description
 		echo "<tr>\n";
