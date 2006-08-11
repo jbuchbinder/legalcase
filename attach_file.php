@@ -18,16 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: attach_file.php,v 1.11 2005/03/28 21:35:41 antzi Exp $
+	$Id: attach_file.php,v 1.12 2006/08/11 19:52:45 mlutfy Exp $
 */
 
 include("inc/inc.php");
 include_lcm('inc_filters');
 
 // Get POST values
-$case = intval($_POST['case']);
-$client = intval($_POST['client']);
-$org = intval($_POST['org']);
+$case = intval(_request('case', 0));
+$client = intval(_request('client', 0));
+$org = intval(_request('org', 0));
 
 if ($case > 0) {
 	$type = 'case';
@@ -38,11 +38,11 @@ if ($case > 0) {
 } else if ($org > 0) {
 	$type = 'org';
 	$id_type = $org;
-} else die("Attach file to what?");	// TRAD
+} else 
+	lcm_panic("Missing object type for attachment.");
 
 $_SESSION['errors'] = array();
 
-//print_r($_POST);
 if (isset($_POST['rem_file']) && is_array($_POST['rem_file']) && (count($_POST['rem_file']) > 0) ) {
 	$rem_files = join(',',$_POST['rem_file']);
 	$result = lcm_query("UPDATE lcm_{$type}_attachment
@@ -51,11 +51,10 @@ if (isset($_POST['rem_file']) && is_array($_POST['rem_file']) && (count($_POST['
 				AND id_attachment IN ($rem_files)");
 }
 if (strlen($_FILES['filename']['name']) > 0) {
-//	print_r($_FILES['filename']);
 	$_SESSION['user_file'] = $_FILES['filename'];
-	$_SESSION['user_file']['description'] = clean_input($_POST['description']);
+	$_SESSION['user_file']['description'] = _request('description');
 	$filename = $_SESSION['user_file']['tmp_name'];
-//	echo $filename;
+
 	if (is_uploaded_file($filename) && $_SESSION['user_file']['size'] > 0) {
 		$file = fopen($filename,"r");
 		$file_contents = fread($file, filesize($filename));
@@ -89,10 +88,9 @@ if (strlen($_FILES['filename']['name']) > 0) {
 		} else {
 			$_SESSION['errors']['file'] = 'Empty file or access denied!';	// TRAD
 		}
-		// . ' uploading file ' . $_SESSION['user_file']['name'] . '!');
 	}
 }
 
-header("Location: " . $_SERVER['HTTP_REFERER']);
+lcm_header("Location: " . $_SERVER['HTTP_REFERER']);
 
 ?>
