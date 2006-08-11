@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.16 2006/07/27 15:25:41 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.17 2006/08/11 14:34:12 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -319,7 +319,7 @@ class LcmCase extends LcmObject {
 			}
 		} else {
 			// This is new case
-			$q = "INSERT INTO lcm_case SET date_creation=NOW(),$fl,$public_access_rights";
+			$q = "INSERT INTO lcm_case SET date_creation = NOW(), date_update = NOW(), $fl,$public_access_rights";
 			$result = lcm_query($q);
 			$id_case = lcm_insert_id('lcm_case', 'id_case');
 			$id_author = $author_session['id_author'];
