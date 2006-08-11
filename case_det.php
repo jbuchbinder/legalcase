@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.172 2006/08/11 16:55:05 mlutfy Exp $
+	$Id: case_det.php,v 1.173 2006/08/11 19:52:24 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -88,7 +88,7 @@ if (! ($case > 0)) {
 		$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 		show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
 
-		echo show_all_errors($_SESSION['errors']);
+		echo show_all_errors();
 
 		switch ($tab) {
 			//
@@ -225,93 +225,18 @@ if (! ($case > 0)) {
 			// Case followups
 			//
 			case 'followups' :
-		//		echo '<fieldset class="info_box">';
+				// [ML] Since 0.7.1, this tab is not called directly,
+				// it is part of the "general" tab
 				echo '<a name="followups"></a>' . "\n";
-				show_page_subtitle(_T('case_subtitle_followups'), 'cases_followups');
 
-				// By default, show from "case creation date" to NOW().
-				$link = new Link();
-				$link->delVar('date_start_day');
-				$link->delVar('date_start_month');
-				$link->delVar('date_start_year');
-				$link->delVar('date_end_day');
-				$link->delVar('date_end_month');
-				$link->delVar('date_end_year');
-				echo $link->getForm();
-
-				echo "<p class=\"normal_text\">\n";
-				$date_end = get_datetime_from_array($_REQUEST, 'date_end', 'end', '0000-00-00 00:00:00'); // date('Y-m-d H:i:s'));
-				$date_start = get_datetime_from_array($_REQUEST, 'date_start', 'start', '0000-00-00 00:00:00'); // $row['date_creation']);
-
-				echo _Ti('time_input_date_start');
-				echo get_date_inputs('date_start', $date_start);
-
-				echo _Ti('time_input_date_end');
-				echo get_date_inputs('date_end', $date_end);
-				echo ' <button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
-				echo "</p>\n";
-				echo "</form>\n";
-
-				echo "<p class=\"normal_text\">\n";
-				show_listfu_start('case');
-			
-				$q = "SELECT fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description, fu.case_stage,
-						fu.hidden, a.name_first, a.name_middle, a.name_last
-					FROM lcm_followup as fu, lcm_author as a
-					WHERE id_case = $case
-					  AND fu.id_author = a.id_author ";
-
-				if (year($date_start) != '0000')
-					$q .= " AND UNIX_TIMESTAMP(date_start) >= UNIX_TIMESTAMP('" . $date_start . "')";
-
-				if (year($date_end) != '0000')
-					$q .= " AND UNIX_TIMESTAMP(date_end) <= UNIX_TIMESTAMP('" . $date_end . "')";
-			
-				// Add ordering
-				if ($fu_order) $q .= " ORDER BY date_start $fu_order, id_followup $fu_order";
-			
-				$result = lcm_query($q);
-
-				// Check for correct start position of the list
-				$number_of_rows = lcm_num_rows($result);
-				$list_pos = 0;
-				
-				if (isset($_REQUEST['list_pos']))
-					$list_pos = $_REQUEST['list_pos'];
-
-				if (is_numeric($list_pos)) {
-					if ($list_pos >= $number_of_rows)
-						$list_pos = 0;
-				
-					// Position to the page info start
-					if ($list_pos > 0)
-						if (!lcm_data_seek($result,$list_pos))
-							lcm_panic("Error seeking position $list_pos in the result");
-				
-					$show_all = false;
-				} elseif ($list_pos == 'all') {
-					$show_all = true;
-				}
-				
-				// Position to the page info start
-				if ($list_pos > 0)
-					if (!lcm_data_seek($result,$list_pos))
-						lcm_panic("Error seeking position $list_pos in the result");
-			
-				// Process the output of the query
-				for ($i = 0 ; ((($i<$prefs['page_rows']) || $show_all) && ($row = lcm_fetch_array($result))); $i++)
-					show_listfu_item($row, $i, 'case');
-			
-				show_list_end($list_pos, $number_of_rows, true);
-				echo "</p>\n";
+				$obj_case_ui = new LcmCaseInfoUI($row['id_case']);
+				$obj_case_ui->printFollowups(true);
 
 				if ($add) {
 					echo '<p class="normal_text">';
 					echo "<a href=\"edit_fu.php?case=$case\" class=\"create_new_lnk\">" . _T('new_followup') . "</a>&nbsp;\n";
 					echo "</p>\n";
 				}
-
-	//			echo "</fieldset>\n";
 				
 				break;
 
@@ -545,9 +470,6 @@ if (! ($case > 0)) {
 			// Case attachments
 			//
 			case 'attachments' :
-				// Show the errors (if any)
-				echo show_all_errors($_SESSION['errors']);
-
 				echo '<fieldset class="info_box">';
 				show_page_subtitle(_T('case_subtitle_attachments'), 'tools_documents');
 
