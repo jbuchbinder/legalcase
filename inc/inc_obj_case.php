@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.17 2006/08/11 14:34:12 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.18 2006/08/11 19:08:24 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -445,7 +445,7 @@ class LcmCaseInfoUI extends LcmCase {
 				echo '&nbsp;<a href="edit_auth.php?case=' . $this->getDataInt('id_case') . '&amp;author=' . $author['id_author'] . '"'
 					. ' title="' .
 					_T('case_tooltip_view_access_rights', array('author' => $name)) . '">'
-					. '<img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" />'
+					. '<img src="images/jimmac/stock_access_rights-16.png" width="16" height="16" border="0" alt="" />'
 					. '</a>';
 				echo "</span>\n";
 			}
@@ -549,9 +549,11 @@ class LcmCaseInfoUI extends LcmCase {
 	//	echo "</ul>\n";
 	//	echo "<p class='normal_text'>";
 
-		// Show case status (if closed, only site admin can re-open)
-		if ($allow_edit && allowed($this->getDataInt('id_case'), 'a')) {
-			// Change status form
+		if ($allow_edit && $admin) {
+			// Show case status (if closed, only site admin can re-open)
+			echo '<li>';
+
+
 			echo "<form action='edit_fu.php' method='get'>\n";
 			echo "<input type='hidden' name='case' value='" . $this->getDataInt('id_case') . "' />\n";
 
@@ -569,13 +571,8 @@ class LcmCaseInfoUI extends LcmCase {
 			echo "</select>\n";
 			echo "<button type='submit' name='submit' id='submit_status' value='set_status' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 			echo "</form>\n";
-		} else {
-			echo '<li>' . _Ti('case_input_status') . _T('case_status_option_' . $this->getDataString('status')) . "</li>\n";
-		}
 
-		// Show case stage
-		if ($allow_edit && $admin) {
-			// Change stage form
+			// Show case stage
 			echo "<form action='edit_fu.php' method='get'>\n";
 			echo "<input type='hidden' name='case' value='" . $this->getDataInt('id_case') . "' />\n";
 			echo "<input type='hidden' name='type' value='stage_change' />\n";
@@ -592,7 +589,10 @@ class LcmCaseInfoUI extends LcmCase {
 			echo "</select>\n";
 			echo "<button type='submit' name='submit' id='submit_stage' value='set_stage' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 			echo "</form>\n";
+
+			echo "</li>\n";
 		} else {
+			echo '<li>' . _Ti('case_input_status') . _T('case_status_option_' . $this->getDataString('status')) . "</li>\n";
 			echo '<li>' . _Ti('case_input_stage') . _Tkw('stage', $this->data['stage']) . "</li>\n";
 		}
 
@@ -610,12 +610,13 @@ class LcmCaseInfoUI extends LcmCase {
 			$row_tmp = lcm_fetch_array($r_tmp);
 
 			if ($row_tmp) {
+				echo '<li>';
 				echo '<div style="background: #f0f0f0; padding: 4px; border: 1px solid #aaa;">';
 				echo _Ti('fu_input_conclusion');
 				echo get_fu_description($row_tmp, false);
 				echo ' <a class="content_link" href="fu_det.php?followup=' . $row_tmp['id_followup'] . '">...</a>';
 				echo "</div>\n";
-				echo "<br />\n";
+				echo "</li>\n";
 			}
 		}
 
