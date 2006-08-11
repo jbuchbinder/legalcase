@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.243 2006/08/10 15:59:17 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.244 2006/08/11 16:44:35 mlutfy Exp $
 */
 
 //
@@ -1696,21 +1696,37 @@ function show_attachments_list($type, $id_type) {
 	if ($i > 0) {
 		echo '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
 		echo "<tr>\n";
-		echo '<th class="heading">' . _Th('file_input_name') . "</th>\n";
 		echo '<th class="heading">' . _Th('file_input_type') . "</th>\n";
-		echo '<th class="heading">' . _Th('file_input_size') . "</th>\n";
 		echo '<th class="heading">' . _Th('file_input_description') . "</th>\n";
+		echo '<th class="heading">' . _Th('file_input_size') . "</th>\n";
 		echo '<th class="heading">' . "</th>\n";
 		echo "</tr>\n";
 
 		for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
 			echo "<tr>\n";
+
+			// Mimetype
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
+			echo '<a title="' . $row['filename'] . '" '
+				. 'href="view_file.php?type=' . $type . '&amp;file_id=' .  $row['id_attachment'] . '">';
+			
+			if (is_file("images/mimetypes/" . $row['type'] . ".png"))
+				echo '<img src="images/mimetypes/' . $row['type'] . '.png" border="0" alt="' . $row['type'] . '" />';
+			else
+				echo '<img src="images/mimetypes/unknown.png" border="0" alt="' . $row['type'] . '" />';
+
+			echo '</a>';
+			echo '</td>';
+
+			// File name (or description, if any)
 			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
-				. '<a href="view_file.php?type=' . $type . '&amp;file_id=' . $row['id_attachment']
-				. '" class="content_link">' . $row['filename'] . '</a></td>';
-			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
-			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
-			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
+				. '<a title="' . $row['filename'] . '" '
+				. 'href="view_file.php?type=' . $type . '&amp;file_id=' . $row['id_attachment'] . '" class="content_link">';
+			echo (trim($row['description']) ? $row['description'] : $row['filename']);
+			echo '</a></td>';
+
+			// Size
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . size_in_bytes($row['size']) . '</td>';
 
 			// Delete icon
 			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
