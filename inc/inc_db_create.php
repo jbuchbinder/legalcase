@@ -18,30 +18,11 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.55 2006/08/11 14:37:00 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.56 2006/08/11 15:26:23 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
 define('_INC_DB_CREATE', '1');
-
-// [ML] Is this needed?  XXX
-// [AG] I don't see any reason for it.
-// include_lcm('inc_access');
-
-// XXX DEPRECATED
-function log_if_not_duplicate_table($errno) {
-	if ($errno) {
-		$error = lcm_sql_error();
-		// XXX 1- If MySQL set by default in non-English, may not catch the error
-		//        (needs testing, and we can simply add the regexp in _T())
-		// XXX 2- PostgreSQL may have different error format.
-		if (! preg_match("/.*Table.*already exists.*/", $error)) {
-			return lcm_sql_error() . "\n";
-		}
-	}
-
-	return "";
-}
 
 // For details on the various fields, see:
 // http://www.lcm.ngo-bg.org/article2.html
@@ -63,16 +44,16 @@ function create_database() {
 	$fields = array (
 		"id_case bigint(21) NOT NULL auto_increment",
 		"title text NOT NULL",
-		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_assignment datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"legal_reason text NOT NULL",
-		"alledged_crime text NOT NULL",
-		"notes text NOT NULL DEFAULT ''",
+		"date_creation datetime NOT NULL",
+		"date_assignment datetime NOT NULL",
+		"date_update datetime NOT NULL",
+		"legal_reason text DEFAULT '' NOT NULL",
+		"alledged_crime text DEFAULT '' NOT NULL",
+		"notes text DEFAULT '' NOT NULL",
 		"status text NOT NULL",
 		"stage varchar(255) NOT NULL",
 		"public tinyint(1) DEFAULT 0 NOT NULL",
-		"pub_write tinyint(1) DEFAULT '0' NOT NULL",
+		"pub_write tinyint(1) DEFAULT 0 NOT NULL",
 		"PRIMARY KEY (id_case)"
 	);
 
@@ -81,15 +62,15 @@ function create_database() {
 
 	$fields = array (
 		"id_attachment bigint(21) NOT NULL auto_increment", 
-		"id_case bigint(21) NOT NULL default 0", 
-		"id_author bigint(21) NOT NULL default 0", 
-		"filename varchar(255) NOT NULL default ''", 
-		"type varchar(255) default NULL", 
-		"size bigint(21) NOT NULL default 0", 
+		"id_case bigint(21) NOT NULL DEFAULT 0", 
+		"id_author bigint(21) NOT NULL DEFAULT 0", 
+		"filename varchar(255) NOT NULL DEFAULT ''", 
+		"type varchar(255) DEFAULT NULL", 
+		"size bigint(21) NOT NULL DEFAULT 0", 
 		"description text", 
 		"content longblob",
-		"date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL", 
-		"date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL", 
+		"date_attached datetime NOT NULL", 
+		"date_removed datetime DEFAULT NULL",  // may be null
 		"PRIMARY KEY  (id_attachment)"
 	);
 
@@ -106,17 +87,17 @@ function create_database() {
 	$fields = array (
 		"id_entry bigint(21) NOT NULL auto_increment",
 		"id_case bigint(21) DEFAULT 0 NOT NULL",
-		"kw_case_stage varchar(255) NOT NULL DEFAULT ''",
-		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"kw_case_stage varchar(255) DEFAULT '' NOT NULL",
+		"date_creation datetime NOT NULL",
 		"id_fu_creation bigint(21) NOT NULL DEFAULT 0",
-		"date_conclusion datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_conclusion datetime DEFAULT NULL", // may be null
 		"id_fu_conclusion bigint(21) NOT NULL DEFAULT 0",
 		"kw_result varchar(255) NOT NULL DEFAULT ''",
 		"kw_conclusion varchar(255) NOT NULL DEFAULT ''",
 		"kw_sentence varchar(255) NOT NULL DEFAULT ''",
 		"sentence_val text NOT NULL DEFAULT ''",
-		"date_agreement datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"latest tinyint(1) DEFAULT '0' NOT NULL",
+		"date_agreement datetime DEFAULT NULL", // may be null
+		"latest tinyint(1) DEFAULT 0 NOT NULL",
 		"PRIMARY KEY (id_entry)"
 	);
 
@@ -130,12 +111,12 @@ function create_database() {
 
 	$fields = array (
 		"id_followup bigint(21) NOT NULL auto_increment",
-		"id_case bigint(21) DEFAULT '0' NOT NULL",
-		"id_author bigint(21) DEFAULT '0' NOT NULL",
-		"date_start datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_end datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"type varchar(255) NOT NULL DEFAULT 'other'",
-		"description text NOT NULL",
+		"id_case bigint(21) DEFAULT 0 NOT NULL",
+		"id_author bigint(21) DEFAULT 0 NOT NULL",
+		"date_start datetime NOT NULL",
+		"date_end datetime DEFAULT NULL", // may be null
+		"type varchar(255) NOT NULL",
+		"description text DEFAULT '' NOT NULL",
 		"case_stage varchar(255) NOT NULL",
 		"sumbilled decimal(19,4) NOT NULL DEFAULT 0",
 		"hidden ENUM('N', 'Y') NOT NULL DEFAULT 'N'",
@@ -155,13 +136,13 @@ function create_database() {
 		"id_author bigint(21) NOT NULL auto_increment",
 		"id_office bigint(21) DEFAULT 0 NOT NULL",
 		"name_first text NOT NULL",
-		"name_middle text NOT NULL",
+		"name_middle text DEFAULT '' NOT NULL",
 		"name_last text NOT NULL",
-		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_creation datetime NOT NULL",
+		"date_update datetime NOT NULL",
 		"username VARCHAR(255) NOT NULL", /* [ML] 0.7.0 removed 'BINARY', I see no use for it */
 		"password tinytext NOT NULL",
-		"lang VARCHAR(10) DEFAULT '' NOT NULL",
+		"lang VARCHAR(10) DEFAULT 'en' NOT NULL",
 		"prefs text NOT NULL DEFAULT ''",
 		"status ENUM('admin', 'normal', 'external', 'trash', 'waiting', 'suspended') NOT NULL DEFAULT 'normal'",
 		"cookie_recall tinytext NOT NULL DEFAULT ''",
@@ -190,12 +171,12 @@ function create_database() {
 		"name_first text NOT NULL",
 		"name_middle text NOT NULL DEFAULT ''",
 		"name_last text NOT NULL",
-		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_birth datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_creation datetime NOT NULL",
+		"date_update datetime NOT NULL",
+		"date_birth datetime DEFAULT NULL", // may be null
 		"citizen_number text NOT NULL DEFAULT ''",
 		"address text NOT NULL DEFAULT ''",
-		"gender ENUM('female','male', 'unknown') NOT NULL DEFAULT 'unknown'",
+		"gender ENUM('female','male', 'unknown') NOT NULL",
 		"civil_status varchar(255) DEFAULT 'unknown' NOT NULL",
 		"income varchar(255) DEFAULT 'unknown' NOT NULL",
 		"notes text DEFAULT '' NOT NULL",
@@ -207,11 +188,11 @@ function create_database() {
 
 	$fields = array (
 		"id_attachment bigint(21) NOT NULL auto_increment",
-		"id_client bigint(21) NOT NULL default 0",
-		"id_author bigint(21) NOT NULL default 0",
-		"filename varchar(255) NOT NULL default ''",
-		"type varchar(255) default NULL", // XXX hum!
-		"size bigint(21) NOT NULL default 0",
+		"id_client bigint(21) NOT NULL DEFAULT 0",
+		"id_author bigint(21) NOT NULL DEFAULT 0",
+		"filename varchar(255) NOT NULL DEFAULT ''",
+		"type varchar(255) DEFAULT NULL", // XXX hum!
+		"size bigint(21) NOT NULL DEFAULT 0",
 		"description text",
 		"content longblob",
 		"date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
@@ -231,13 +212,13 @@ function create_database() {
 	$fields = array (
 		"id_org bigint(21) NOT NULL auto_increment",
 		"name text NOT NULL",
-		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_creation datetime DEFAULT NULL",
+		"date_update datetime DEFAULT NULL",
 		"address text NOT NULL",
 		"notes text NOT NULL DEFAULT ''",
-		"court_reg text NOT NULL default ''",
-		"tax_number text NOT NULL default ''",
-		"stat_number text NOT NULL default ''",
+		"court_reg text NOT NULL DEFAULT ''",
+		"tax_number text NOT NULL DEFAULT ''",
+		"stat_number text NOT NULL DEFAULT ''",
 		"PRIMARY KEY (id_org)"
 	);
 
@@ -246,15 +227,15 @@ function create_database() {
 
 	$fields = array (
 		"id_attachment bigint(21) NOT NULL auto_increment",
-		"id_org bigint(21) NOT NULL default '0'",
-		"id_author bigint(21) NOT NULL default '0'",
-		"filename varchar(255) NOT NULL default ''",
-		"type varchar(255) default NULL",
-		"size bigint(21) NOT NULL default '0'",
+		"id_org bigint(21) NOT NULL DEFAULT '0'",
+		"id_author bigint(21) NOT NULL DEFAULT '0'",
+		"filename varchar(255) NOT NULL DEFAULT ''",
+		"type varchar(255) DEFAULT NULL",
+		"size bigint(21) NOT NULL DEFAULT '0'",
 		"description text",
 		"content longblob",
-		"date_attached datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_removed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"date_attached datetime NOT NULL",
+		"date_removed datetime DEFAULT NULL", // may be null
 		"PRIMARY KEY  (id_attachment)"
 	);
 
@@ -269,10 +250,10 @@ function create_database() {
 
 	$fields = array (
 		"id_contact bigint(21) NOT NULL auto_increment",
-		"type_person ENUM('author', 'client', 'org') NOT NULL DEFAULT 'author'",
-		"id_of_person bigint(21) DEFAULT 0 NOT NULL",
+		"type_person ENUM('author', 'client', 'org') NOT NULL",
+		"id_of_person bigint(21) NOT NULL",
 		"value text NOT NULL",
-		"type_contact tinyint(2) DEFAULT 0 NOT NULL",
+		"type_contact tinyint(2) DEFAULT 0 NOT NULL", // XXX do we really need a default value?
 		"PRIMARY KEY (id_contact)"
 	);
 
@@ -281,9 +262,9 @@ function create_database() {
 
 	$fields = array (
 		"id_keyword bigint(21) NOT NULL auto_increment",
-		"id_group bigint(21) NOT NULL DEFAULT 0",
+		"id_group bigint(21) NOT NULL",
 		"name VARCHAR(255) NOT NULL",
-		"title text NOT NULL DEFAULT ''",
+		"title text NOT NULL",
 		"description text NOT NULL DEFAULT ''",
 		"hasvalue ENUM('Y', 'N') NOT NULL DEFAULT 'N'",
 		"ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y'",
@@ -295,10 +276,10 @@ function create_database() {
 
 	$fields = array (
 		"id_entry bigint(21) NOT NULL auto_increment",
-		"id_keyword bigint(21) NOT NULL default 0",
-		"id_case bigint(21) NOT NULL default 0",
-		"id_stage bigint(21) NOT NULL default 0",
-		"value text NOT NULL default ''",
+		"id_keyword bigint(21) NOT NULL",
+		"id_case bigint(21) NOT NULL",
+		"id_stage bigint(21) NOT NULL DEFAULT 0",
+		"value text NOT NULL DEFAULT ''",
 		"PRIMARY KEY (id_entry)"
 	);
 
@@ -311,8 +292,8 @@ function create_database() {
 
 	$fields = array (
 		"id_entry bigint(21) NOT NULL auto_increment",
-		"id_keyword bigint(21) NOT NULL DEFAULT 0",
-		"id_client bigint(21) NOT NULL DEFAULT 0",
+		"id_keyword bigint(21) NOT NULL",
+		"id_client bigint(21) NOT NULL",
 		"value text NOT NULL DEFAULT ''",
 		"PRIMARY KEY (id_entry)"
 	);
@@ -327,9 +308,9 @@ function create_database() {
 
 	$fields = array (
 		"id_entry bigint(21) NOT NULL auto_increment",
-		"id_keyword bigint(21) NOT NULL default 0",
-		"id_followup bigint(21) NOT NULL default 0",
-		"value text NOT NULL default ''",
+		"id_keyword bigint(21) NOT NULL",
+		"id_followup bigint(21) NOT NULL",
+		"value text NOT NULL DEFAULT ''",
 		"PRIMARY KEY (id_entry)"
 	);
 
@@ -343,8 +324,8 @@ function create_database() {
 
 	$fields = array (
 		"id_entry bigint(21) NOT NULL auto_increment",
-		"id_keyword bigint(21) NOT NULL DEFAULT 0",
-		"id_org bigint(21) NOT NULL DEFAULT 0",
+		"id_keyword bigint(21) NOT NULL",
+		"id_org bigint(21) NOT NULL",
 		"value text NOT NULL DEFAULT ''",
 		"PRIMARY KEY (id_entry)"
 	);
@@ -362,7 +343,7 @@ function create_database() {
 		"id_group bigint(21) NOT NULL auto_increment",
 		"id_parent bigint(21) NOT NULL DEFAULT 0",
 		"name VARCHAR(255) NOT NULL",
-		"title text NOT NULL DEFAULT ''",
+		"title text NOT NULL",
 		"description text NOT NULL DEFAULT ''",
 		"type ENUM('system', 'case', 'stage', 'followup', 'client', 'org', 'client_org', 'author') NOT NULL",
 		"policy ENUM('optional', 'recommended', 'mandatory') NOT NULL DEFAULT 'optional'",
@@ -379,12 +360,12 @@ function create_database() {
 
 	$fields = array (
 		"id_report bigint(21) NOT NULL auto_increment",
-		"title varchar(255) NOT NULL default ''",
-		"description text NOT NULL default ''",
-		"notes text NOT NULL default ''",
-		"id_author bigint(21) NOT NULL default '0'",
-		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"title varchar(255) NOT NULL",
+		"description text NOT NULL DEFAULT ''",
+		"notes text NOT NULL DEFAULT ''",
+		"id_author bigint(21) NOT NULL",
+		"date_creation datetime DEFAULT NOT NULL",
+		"date_update datetime DEFAULT NOT NULL",
 		"line_src_type text NOT NULL DEFAULT ''",
 		"line_src_name text NOT NULL DEFAULT ''",
 		"col_src_type text NOT NULL DEFAULT ''",
@@ -396,11 +377,12 @@ function create_database() {
 	lcm_query_create_table('lcm_report', $fields);
 
 
+	// XXX maybe double-check whether default values are necessary
 	$fields = array (
 		"id_field bigint(21) NOT NULL auto_increment",
-		"table_name varchar(255) NOT NULL default ''",
-		"field_name varchar(255) NOT NULL default ''",
-		"description varchar(255) NOT NULL default ''",
+		"table_name varchar(255) NOT NULL DEFAULT ''",
+		"field_name varchar(255) NOT NULL DEFAULT ''",
+		"description varchar(255) NOT NULL DEFAULT ''",
 		"filter ENUM('none','date','number','text','currency') NOT NULL DEFAULT 'none'",
 		"enum_type text NOT NULL DEFAULT ''",
 		"PRIMARY KEY  (id_field)"
@@ -409,11 +391,12 @@ function create_database() {
 	lcm_query_create_table('lcm_fields', $fields);
 
 
+	// XXX we can drop this table
 	$fields = array (
 		"id_filter bigint(21) NOT NULL auto_increment",
-		"title varchar(255) NOT NULL default ''",
+		"title varchar(255) NOT NULL",
 		"type ENUM('AND','OR') NOT NULL DEFAULT 'AND'",
-		"id_author bigint(21) NOT NULL default '0'",
+		"id_author bigint(21) NOT NULL DEFAULT '0'",
 		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
 		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
 		"PRIMARY KEY  (id_filter)"
@@ -424,16 +407,16 @@ function create_database() {
 
 	$fields = array (
 		"id_app bigint(21) NOT NULL auto_increment",
-		"id_case bigint(21) NOT NULL default '0'",
-		"id_author bigint(21) NOT NULL default '0'",
-		"type varchar(255) NOT NULL default ''",
-		"title varchar(255) NOT NULL default ''",
-		"description text NOT NULL",
-		"start_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"end_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"reminder datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_creation datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-		"date_update datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+		"id_case bigint(21) NOT NULL DEFAULT 0",
+		"id_author bigint(21) NOT NULL DEFAULT 0",
+		"type varchar(255) NOT NULL DEFAULT ''",
+		"title varchar(255) NOT NULL",
+		"description text NOT NULL DEFAULT ''",
+		"start_time datetime NOT NULL",
+		"end_time datetime NOT NULL",
+		"reminder datetime DEFAULT NULL", // may be null
+		"date_creation datetime NOT NULL",
+		"date_update datetime NOT NULL",
 		"PRIMARY KEY  (id_app)"
 	);
 
@@ -490,9 +473,9 @@ function create_database() {
 	lcm_log("creating the tables used for relations between objects", 'install');
 
 	$fields = array (
-		"id_app bigint(21) NOT NULL default '0'",
-		"id_client bigint(21) NOT NULL default '0'",
-		"id_org bigint(21) NOT NULL default '0'"
+		"id_app bigint(21) NOT NULL",
+		"id_client bigint(21) NOT NULL DEFAULT 0", // may be 0, if app with org
+		"id_org bigint(21) NOT NULL DEFAULT 0" // may be 0, if app with client
 	);
 
 	lcm_query_create_table('lcm_app_client_org', $fields);
@@ -500,8 +483,8 @@ function create_database() {
 
 	
 	$fields = array (
-		"id_app bigint(21) NOT NULL default '0'",
-		"id_followup bigint(21) NOT NULL default '0'",
+		"id_app bigint(21) NOT NULL",
+		"id_followup bigint(21) NOT NULL",
 		"relation ENUM('parent','child') NOT NULL DEFAULT 'parent'"
 	);
 
@@ -510,8 +493,8 @@ function create_database() {
 
 
 	$fields = array (
-		"id_author bigint(21) NOT NULL default '0'",
-		"id_app bigint(21) NOT NULL default '0'"
+		"id_author bigint(21) NOT NULL",
+		"id_app bigint(21) NOT NULL"
 	);
 
 	lcm_query_create_table('lcm_author_app', $fields);
@@ -519,9 +502,9 @@ function create_database() {
 
 
 	$fields = array (
-		"id_case bigint(21) DEFAULT '0' NOT NULL",
-		"id_client bigint(21) DEFAULT '0' NOT NULL",
-		"id_org bigint(21) DEFAULT '0' NOT NULL"
+		"id_case bigint(21) NOT NULL",
+		"id_client bigint(21) DEFAULT 0 NOT NULL",
+		"id_org bigint(21) DEFAULT 0 NOT NULL"
 	);
 
 	$keys = array (
@@ -535,8 +518,8 @@ function create_database() {
 
 
 	$fields = array (
-		"id_case bigint(21) DEFAULT 0 NOT NULL",
-		"id_author bigint(21) DEFAULT 0 NOT NULL",
+		"id_case bigint(21) NOT NULL",
+		"id_author bigint(21) NOT NULL",
 		"ac_read tinyint(1) DEFAULT 1 NOT NULL",
 		"ac_write tinyint(1) DEFAULT 0 NOT NULL",
 		"ac_edit tinyint(1) DEFAULT 0 NOT NULL",
@@ -553,8 +536,8 @@ function create_database() {
 
 
 	$fields = array (
-		"id_client bigint(21) DEFAULT '0' NOT NULL",
-		"id_org bigint(21) DEFAULT '0' NOT NULL"
+		"id_client bigint(21) NOT NULL",
+		"id_org bigint(21) NOT NULL"
 	);
 
 	$keys = array (
@@ -566,14 +549,15 @@ function create_database() {
 	lcm_query_create_unique_index('lcm_client_org', 'idx_uniq', 'id_client,id_org');
 
 
+	// XXX is this used?
 	$fields = array (
 		"id_column bigint(21) NOT NULL auto_increment",
-		"id_report bigint(21) NOT NULL default 0",
-		"id_field bigint(21) NOT NULL default 0",
-		"col_order bigint(21) NOT NULL default 0",
-		"header varchar(255) NOT NULL default ''",
+		"id_report bigint(21) NOT NULL",
+		"id_field bigint(21) NOT NULL DEFAULT 0",
+		"col_order bigint(21) NOT NULL DEFAULT 0",
+		"header varchar(255) NOT NULL DEFAULT ''",
 		"sort ENUM('asc','desc') NOT NULL DEFAULT 'asc'",
-		"total tinyint(1) NOT NULL default 0",
+		"total tinyint(1) NOT NULL DEFAULT 0",
 		"col_group ENUM('COUNT','SUM') NOT NULL",
 		"PRIMARY KEY  (id_column)"
 	);
@@ -589,7 +573,7 @@ function create_database() {
 
 	$fields = array (
 		"id_line bigint(21) NOT NULL auto_increment",
-		"id_report bigint(21) NOT NULL DEFAULT 0",
+		"id_report bigint(21) NOT NULL",
 		"id_field bigint(21) NOT NULL DEFAULT 0",
 		"sort_type ENUM('asc', 'desc') NOT NULL DEFAULT 'asc'",
 		"col_order bigint(21) NOT NULL DEFAULT 0",
@@ -606,9 +590,10 @@ function create_database() {
 	lcm_query_create_table('lcm_rep_line', $fields, $keys);
 
 
+	// XXX Deprecated ?
 	$fields = array (
-		"id_report bigint(21) NOT NULL default 0",
-		"id_filter bigint(21) NOT NULL default 0",
+		"id_report bigint(21) NOT NULL",
+		"id_filter bigint(21) NOT NULL",
 		"type ENUM('AND','OR') NOT NULL DEFAULT 'AND'",
 	);
 
@@ -616,12 +601,13 @@ function create_database() {
 	lcm_query_create_unique_index('lcm_rep_filters', 'idx_uniq', 'id_report,id_filter');
 
 
+	// XXX Deprecated ?
 	$fields = array (
-		"id_filter bigint(21) NOT NULL default 0",
-		"id_field bigint(21) NOT NULL default 0",
-		"cond_order bigint(21) NOT NULL default 0",
-		"type tinyint(2) NOT NULL default 0",
-		"value varchar(255) default NULL"
+		"id_filter bigint(21) NOT NULL DEFAULT 0",
+		"id_field bigint(21) NOT NULL DEFAULT 0",
+		"cond_order bigint(21) NOT NULL DEFAULT 0",
+		"type tinyint(2) NOT NULL DEFAULT 0",
+		"value varchar(255) DEFAULT NULL"
 	);
 
 	lcm_query_create_table('lcm_filter_conds', $fields);
@@ -630,10 +616,10 @@ function create_database() {
 
 	$fields = array (
 		"id_filter bigint(21) NOT NULL auto_increment",
-		"id_report bigint(21) NOT NULL default 0",
-		"id_field bigint(21) NOT NULL default 0",
-		"type varchar(255) NOT NULL default ''",
-		"value varchar(255) NOT NULL default ''",
+		"id_report bigint(21) NOT NULL",
+		"id_field bigint(21) NOT NULL DEFAULT 0", // XXX is 0 possible ?
+		"type varchar(255) NOT NULL DEFAULT ''",
+		"value varchar(255) NOT NULL DEFAULT ''",
 		"PRIMARY KEY  (id_filter)"
 	);
 
