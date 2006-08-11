@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.54 2006/07/27 14:48:29 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.55 2006/08/11 14:37:00 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -323,6 +323,22 @@ function create_database() {
 	);
 	
 	lcm_query_create_table('lcm_keyword_client', $fields, $keys);
+
+
+	$fields = array (
+		"id_entry bigint(21) NOT NULL auto_increment",
+		"id_keyword bigint(21) NOT NULL default 0",
+		"id_followup bigint(21) NOT NULL default 0",
+		"value text NOT NULL default ''",
+		"PRIMARY KEY (id_entry)"
+	);
+
+	$keys = array (
+			'id_keyword' => 'id_keyword',
+			'id_followup' => 'id_followup'
+	);
+	
+	lcm_query_create_table('lcm_keyword_followup', $fields, $keys);
 
 
 	$fields = array (

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.67 2006/07/27 14:48:29 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.68 2006/08/11 14:37:00 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1030,9 +1030,38 @@ function upgrade_database($old_db_version) {
 
 	if ($lcm_db_version_current < 48) {
 		lcm_query("ALTER TABLE lcm_client
-			ADD date_birth datetime DEFAULT '0000-00-00 00:00:00' NOT NULL AFTER date_update");
+			ADD date_birth datetime DEFAULT NULL AFTER date_update");
 
 		upgrade_db_version(48);
+	}
+
+	if ($lcm_db_version_current < 49) {
+		$fields = array (
+			"id_entry bigint(21) NOT NULL auto_increment",
+			"id_keyword bigint(21) NOT NULL default 0",
+			"id_followup bigint(21) NOT NULL default 0",
+			"value text NOT NULL default ''",
+			"PRIMARY KEY (id_entry)"
+		);
+	
+		$keys = array (
+				'id_keyword' => 'id_keyword',
+				'id_followup' => 'id_followup'
+		);
+		
+		lcm_query_create_table('lcm_keyword_followup', $fields, $keys);
+
+		upgrade_db_version(49);
+	}
+
+	if ($lcm_db_version_current < 50) {
+		lcm_query("ALTER TABLE lcm_stage
+			CHANGE date_conclusion date_conclusion datetime DEFAULT NULL");
+
+		lcm_query("ALTER TABLE lcm_stage
+			CHANGE date_agreement date_agreement datetime DEFAULT NULL");
+
+		upgrade_db_version(50);
 	}
 
 	// Update the meta, lcm_fields, keywords, etc.
