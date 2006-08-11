@@ -18,13 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.35 2006/06/02 13:55:57 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.36 2006/08/11 14:35:26 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
 define('_INC_KEYWORDS', '1');
 
 include_lcm('inc_filters');
+
+// define legal "objects" which accept keywords
+$GLOBALS['legal_obj'] = array('case' => 1, 'stage' => 1, 'client' => 1, 'org' => 1, 'followup' => 1);
 
 //
 // get_kwg_all: Returns all keyword groups (kwg) of a given
@@ -75,7 +78,7 @@ function get_kwg_all($type, $exclude_empty = false, $show_subgroups = false) {
 function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 	$ret = array();
 
-	if (! ($type_obj == 'case' || $type_obj == 'stage' || $type_obj == 'client' || $type_obj == 'org' || $type_obj == 'author'))
+	if (! $GLOBALS['legal_obj'][$type_obj])
 		lcm_panic("Unknown type_obj: " . $type_obj);
 	
 	// Build 'NOT IN' list (already applied keywords, with quantity 'one')
@@ -327,7 +330,7 @@ function check_if_kwg_name_unique($name) {
 
 // Return a list of keywords attached to type (case/client/org/..) for a given ID
 function get_keywords_applied_to($type, $id, $id_sec = 0) {
-	if (! ($type == 'case' || $type == 'stage' || $type == 'client' || $type == 'org' || $type == 'author'))
+	if (! $GLOBALS['legal_obj'][$type])
 		lcm_panic("Unknown type: " . $type);
 	
 	if ($type == 'stage') {
@@ -376,7 +379,7 @@ function show_all_keywords($type_obj, $id_obj, $id_obj_sec = 0) {
 function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 	include_lcm('inc_access');
 
-	if (! ($type_obj == 'case' || $type_obj == 'stage' || $type_obj == 'client' || $type_obj == 'org'))
+	if (! $GLOBALS['legal_obj'][$type_obj])
 		lcm_panic("Invalid object type requested");
 
 	//
@@ -557,8 +560,6 @@ function validate_update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 	$new_keywords = _request('new_keyword_' . $type_obj . '_value');
 	$new_kwg_id = _request('new_kwg_' . $type_obj . '_id');
 
-	lcm_log("HERE _--------------------------_");
-
 	$kwg_count = array();
 	$kwg_applicable = get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec);
 
@@ -593,7 +594,6 @@ function validate_update_keywords_request($type_obj, $id_obj, $id_obj_sec = 0) {
 
 			if (! (isset($kwg_count[$kwg['id_group']]) && $kwg_count[$kwg['id_group']] > 0)) {
 				$_SESSION['errors']['kwg' . $kwg['id_group']] = _Ti($kwg['title']) . _T('warning_field_mandatory');
-				lcm_panic("FAILED");
 			}
 		}
 	}
