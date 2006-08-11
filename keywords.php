@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.43 2006/08/10 15:58:59 mlutfy Exp $
+	$Id: keywords.php,v 1.44 2006/08/11 19:52:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -217,7 +217,7 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	if ($kwg['type'] == 'system' || $id_parent) {
 		echo _T('keywords_input_type_' . $kwg['type']);
 	} else {
-		$all_types = array("case", "stage", "client", "org", "client_org");  // "author", "followup"
+		$all_types = array("case", "stage", "followup", "client", "org", "client_org");  // "author", "followup"
 		
 		echo '<select name="kwg_type" id="kwg_type">';
 
