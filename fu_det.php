@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.36 2006/03/20 23:03:29 mlutfy Exp $
+	$Id: fu_det.php,v 1.37 2006/08/11 14:30:22 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -59,7 +59,7 @@ echo '<fieldset class="info_box">';
 // Show a bit of background on the case
 $case = $fu_data['id_case'];
 show_context_start();
-show_context_case_title($fu_data['id_case'], 'followups');
+show_context_case_title($fu_data['id_case']);
 show_context_case_stage($fu_data['id_case'], $fu_data['id_followup']);
 show_context_case_involving($fu_data['id_case']);
 
