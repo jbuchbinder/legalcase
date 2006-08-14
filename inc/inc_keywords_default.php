@@ -95,49 +95,86 @@ function get_default_keywords() {
 				"ac_author" => "Y")
 		)
 	),
-	
-	"contacts" => array(
-		"name" => "contacts",
-		"title" => "kwg_contacts_title",
-		"description" => "kwg_contacts_description",
-		"type" => "system",
+
+	//
+	// Contacts
+	//
+	"+email_main" => array(
+		"name" => "+email_main",
+		"title" => "kw_contacts_emailmain_title",
+		"description" => "kw_contacts_emailmain_description",
+		"type" => "contact",
+		"policy" => "optional",
+		"quantity" => "one",
+		"suggest" => "",
+		"ac_admin" => "N", // required by system
+		"ac_author" => "Y",
+		"keywords" => array()
+	),
+
+	"+email_alternate" => array(
+		"name" => "+email_alternate",
+		"title" => "kw_contacts_emailalternate_title",
+		"description" => "kw_contacts_emailalternate_description",
+		"type" => "contact",
 		"policy" => "optional",
 		"quantity" => "many",
 		"suggest" => "",
 		"ac_admin" => "Y",
 		"ac_author" => "Y",
-		"keywords" => array(
-			array (
-				"name" => "email_main",
-				"title" => "kw_contacts_emailmain_title",
-				"description" => "kw_contacts_emailmain_description",
-				"ac_author" => "Y"),
-			array (
-				"name" => "email_alternate",
-				"title" => "kw_contacts_emailalternate_title",
-				"description" => "kw_contacts_emailalternate_description",
-				"ac_author" => "Y"),
-			array (
-				"name" => "phone_home",
-				"title" => "kw_contacts_phonehome_title",
-				"description" => "kw_contacts_phonehome_description",
-				"ac_author" => "Y"),
-			array (
-				"name" => "phone_office",
-				"title" => "kw_contacts_phoneoffice_title",
-				"description" => "kw_contacts_phoneoffice_description",
-				"ac_author" => "Y"),
-			array (
-				"name" => "phone_mobile",
-				"title" => "kw_contacts_phonemobile_title",
-				"description" => "kw_contacts_phonemobile_description",
-				"ac_author" => "Y"),
-			array (
-				"name" => "address_main",
-				"title" => "kw_contacts_addressmain_title",
-				"description" => "kw_contacts_addressmain_description",
-				"ac_author" => "Y")
-		)
+		"keywords" => array()
+	),
+
+	"+phone_home" => array(
+		"name" => "+phone_home",
+		"title" => "kw_contacts_phonehome_title",
+		"description" => "kw_contacts_phonehome_description",
+		"type" => "contact",
+		"policy" => "recommended",
+		"quantity" => "many",
+		"suggest" => "",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array()
+	),
+
+	"+phone_office" => array(
+		"name" => "+phone_office",
+		"title" => "kw_contacts_phoneoffice_title",
+		"description" => "kw_contacts_phoneoffice_description",
+		"type" => "contact",
+		"policy" => "optional",
+		"quantity" => "many",
+		"suggest" => "",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array()
+	),
+
+	"+phone_mobile" => array(
+		"name" => "+phone_mobile",
+		"title" => "kw_contacts_phonemobile_title",
+		"description" => "kw_contacts_phonemobile_description",
+		"type" => "contact",
+		"policy" => "optional",
+		"quantity" => "many",
+		"suggest" => "",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array()
+	),
+
+	"+address_main" => array(
+		"name" => "+address_main",
+		"title" => "kw_contacts_addressmain_title",
+		"description" => "kw_contacts_addressmain_description",
+		"type" => "contact",
+		"policy" => "recommended",
+		"quantity" => "one",
+		"suggest" => "",
+		"ac_admin" => "Y",
+		"ac_author" => "Y",
+		"keywords" => array()
 	),
 	
 	"appointments" => array(
