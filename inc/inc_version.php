@@ -18,39 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.104 2006/08/11 19:51:45 mlutfy Exp $
+	$Id: inc_version.php,v 1.105 2006/08/14 19:26:34 mlutfy Exp $
 */
 
 // Execute this file only once
 if (defined('_INC_VERSION')) return;
 define('_INC_VERSION', '1');
 
-
-//
-// Dirty against the register_globals to 'Off' (PHP 4.1.x)
-// [ML] probably not used anymore, test one day..
-//
-$INSECURE = array();
-
-function feed_globals($table, $insecure = true, $ignore_variables_contexte = false) {
-	global $INSECURE;
-
-	// ignore cookies which could include context information
-	$is_contexte = array('id_parent'=>1, 'id_rubrique'=>1, 'id_article'=>1, 'id_auteur'=>1,
-		'id_breve'=>1, 'id_forum'=>1, 'id_secteur'=>1, 'id_syndic'=>1, 'id_syndic_article'=>1,
-		'id_mot'=>1, 'id_groupe'=>1, 'id_document'=>1, 'date'=>1, 'lang'=>1);
-
-	if (isset($GLOBALS[$table]) && is_array($GLOBALS[$table])) {
-        reset($GLOBALS[$table]);
-        while (list($key, $val) = each($GLOBALS[$table])) {
-			if ($ignore_variables_contexte AND isset($is_contexte[$key]))
-				unset ($GLOBALS[$key]);
-			else
-				$GLOBALS[$key] = $val;
-			if ($insecure) $INSECURE[$key] = $val;
-        }
-	}
-}
 
 //
 // Management of inclusion and information on directories
@@ -278,7 +252,7 @@ $lcm_version = 0.710;
 $lcm_version_shown = "0.7.1 CVS";
 
 // Current version of LCM database
-$lcm_db_version = 50;
+$lcm_db_version = 51;
 
 // Error reporting
 # error_reporting(E_ALL); // [ML] recommended for debug
@@ -353,6 +327,8 @@ function lcm_setcookie ($name='', $value='', $expire=0, $path='AUTO', $domain=''
 		@setcookie($name, $value);
 }
 
+// XXX TODO Double-check this one day
+// Probably doesn't work anymore because we use $_COOKIE
 if ($cookie_prefix != 'lcm') {
 	reset ($HTTP_COOKIE_VARS);
 	while (list($name,$value) = each($HTTP_COOKIE_VARS)) {
@@ -365,7 +341,7 @@ if ($cookie_prefix != 'lcm') {
 	while (list($name,$value) = each($HTTP_COOKIE_VARS)) {
 		if (ereg('^'.$cookie_prefix, $name)) {
 			$spipname = ereg_replace ('^'.$cookie_prefix, 'lcm', $name);
-			$HTTP_COOKIE_VARS[$spipname] = $INSECURE[$spipname] = $value;
+			$HTTP_COOKIE_VARS[$spipname] = $value;
 			$$spipname = $value;
 		}
 	}
@@ -930,6 +906,10 @@ function _Th($text, $args = '') {
 function _Tkw($grp, $val, $args = '') {
 	global $system_kwg;
 	$kwg = array();
+
+	// If a 'contact' keyword (starts with +), remove the +
+	if (substr($val, 0, 1) == '+')
+		$val = substr($val, 1);
 
 	if ($system_kwg[$grp])
 		$kwg = $system_kwg[$grp]['keywords'];
