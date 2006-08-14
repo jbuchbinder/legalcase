@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.44 2006/08/11 19:52:11 mlutfy Exp $
+	$Id: keywords.php,v 1.45 2006/08/14 20:03:18 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,13 +33,11 @@ function show_kwg_info($kwg, $level = 0) {
 	echo '<a name="' . $kwg['name'] . '"></a>' . "\n";
 	echo "<fieldset class='info_box'>\n";
 	echo "<div class='prefs_column_menu_head'>";
-	echo "<a href='?action=edit_group&amp;id_group=" . $kwg['id_group'] . "' class='content_link'>"
-		. _T($kwg['title']) 
-		. "</a>";
+	echo _T($kwg['title']);
 
 	// Applies to: show only if not sub-kwg, because otherwise redundant info
 	if (! $level)
-		if ($kwg['type'] != 'system')
+		if ($kwg['type'] != 'system' && $kwg['type'] != 'contact')
 			echo " - " . _Ti('keywords_input_type') .  _T('keywords_input_type_' . $kwg['type']);
 
 	if ($kwg['ac_author'] != 'Y')
@@ -84,7 +82,7 @@ function show_kwg_info($kwg, $level = 0) {
 	//
 	// Sub-groups (recursive)
 	//
-	if ($kwg['type'] != 'system') {
+	if ($kwg['type'] != 'system' && $kwg['type'] != 'contact') {
 		$sub_kwgs = get_subgroups_in_group_id($kwg['id_group']);
 
 		foreach ($sub_kwgs as $skwg)
@@ -96,13 +94,21 @@ function show_kwg_info($kwg, $level = 0) {
 	//
 	echo '<p>';
 
+	if ($kwg['ac_admin']) {
+		echo '<a class="edit_lnk" href="keywords.php?action=edit_group&amp;id_group=' . $kwg['id_group'] . '">'
+			. _T('keywords_button_kwg_edit')
+			. '</a>';
+	}
+
 	// New keyword
-	echo '<a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
-		. 'id_group=' . $kwg['id_group'] . '">'
-		. _T('keywords_button_kw_new') . '</a>';
+	if ($kwg['type'] != 'contact') {
+		echo '<a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
+			. 'id_group=' . $kwg['id_group'] . '">'
+			. _T('keywords_button_kw_new') . '</a>';
+	}
 
 	// New sub-group
-	if ($kwg['type'] != 'system') {
+	if ($kwg['type'] != 'system' && $kwg['type'] != 'contact') {
 		echo '<a class="edit_lnk" href="keywords.php?action=edit_group&amp;id_group=0&amp;'
 			. 'id_parent=' . $kwg['id_group'] . '">'
 			. _T('keywords_button_subkwg_new') . '</a>';
@@ -124,6 +130,9 @@ function show_all_keywords_type($type = 'system') {
 
 	if ($type == 'user')
 		echo '<p><a href="keywords.php?action=edit_group&amp;id_group=0" class="create_new_lnk">'
+			. _T('keywords_button_kwg_new') . '</a></p>' . "\n";
+	elseif ($type == 'contact')
+		echo '<p><a href="keywords.php?action=edit_group&amp;type=contact&amp;id_group=0" class="create_new_lnk">'
 			. _T('keywords_button_kwg_new') . '</a></p>' . "\n";
 }
 
@@ -164,11 +173,18 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 			lcm_page_start(_T('title_subkwg_edit'));
 		} else {
 			// New keyword group, set default values
-			$kwg['name'] = '';
-			$kwg['type'] = 'user';
+
+			if (_request('type')) {
+				$kwg['name'] = '';
+				$kwg['type'] = _request('type');
+			} else {
+				$kwg['name'] = '';
+				$kwg['type'] = 'user';
+			}
 
 			lcm_page_start(_T('title_kwg_new'));
 		}
+
 	} else {
 		// Editing existing (parent or sub) keyword group
 		$kwg = get_kwg_from_id($id_group);
@@ -189,12 +205,8 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	echo '<input type="hidden" name="action" value="update_group" />' . "\n";
 	echo '<input type="hidden" name="id_group" value="' . $id_group . '" />' . "\n";
 	
-	if ($id_parent) {
+	if ($id_parent)
 		echo '<input type="hidden" name="id_parent" value="' . $id_parent . '" />' . "\n";
-
-		// Not used:
-		// echo '<input type="hidden" name="name_parent" value="' . $parent_kwg['name'] . '" />' . "\n";
-	}
 	
 	echo "<table border='0' width='99%' align='left' class='tbl_usr_dtl'>\n";
 	echo "<tr>\n";
@@ -214,10 +226,11 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	echo '<td width="30%"><label for="kwg_type">' . f_err_star('type') . _T('keywords_input_type') . "</label></td>\n";
 	echo "<td>";
 	
-	if ($kwg['type'] == 'system' || $id_parent) {
+	if ($kwg['type'] == 'system' || $kwg['type'] == 'contact' || $id_parent) {
 		echo _T('keywords_input_type_' . $kwg['type']);
+		echo '<input type="hidden" name="kwg_type" value="' . $kwg['type'] . '" />' . "\n";
 	} else {
-		$all_types = array("case", "stage", "followup", "client", "org", "client_org");  // "author", "followup"
+		$all_types = array("case", "stage", "followup", "client", "org", "client_org");  // "author"
 		
 		echo '<select name="kwg_type" id="kwg_type">';
 
@@ -263,23 +276,27 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	//
 	// Default suggested keyword
 	//
-	echo "<tr>\n";
-	echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
-	echo "<td>";
-	echo '<select name="kwg_suggest" class="sel_frm">';
-	echo '<option value="">' . "none" . '</option>' . "\n"; // TRAD
-	
-	if ($id_group) {
-		$all_kw = get_keywords_in_group_name($kwg['name']);
-		foreach ($all_kw as $kw) {
-			$sel = isSelected($kw['name'] == $kwg['suggest']);
-			echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>' . "\n";
-		}
-	}
+	if ($kwg['type'] != 'contact') {
+		echo "<tr>\n";
+		echo "<td>" . _T('keywords_input_suggest') . "</td>\n";
+		echo "<td>";
+		echo '<select name="kwg_suggest" class="sel_frm">';
+		echo '<option value="">' . "none" . '</option>' . "\n"; // TRAD
 
-	echo '</select>';
-	echo "</td>\n";
-	echo "</tr><tr>\n";
+		if ($id_group) {
+			$all_kw = get_keywords_in_group_name($kwg['name']);
+			foreach ($all_kw as $kw) {
+				$sel = isSelected($kw['name'] == $kwg['suggest']);
+				echo '<option value="' . $kw['name'] . '"' . $sel . '>' . _T($kw['title']) . '</option>' . "\n";
+			}
+		}
+
+		echo '</select>';
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
+	
+	echo "<tr>\n";
 
 	//
 	// Name (only for new keywords, must be unique and cannot be changed)
@@ -541,7 +558,7 @@ function update_keyword_group($id_group, $id_parent = 0) {
 					WHERE id_group = $id_group";
 		
 		lcm_query($query);
-		$return_tab = ($old_kwg['type'] == 'system' ? 'system' : 'user');
+		$return_tab = ($old_kwg['type'] == 'system' || $old_kwg['type'] == 'contact' ? $old_kwg['type'] : 'user');
 	}
 	
 	write_metas(); // update inc_meta_cache.php
@@ -679,17 +696,19 @@ lcm_bubble('keyword_list');
 //
 $groups = array('system' => _T('keywords_tab_system'),
 				'user'   => _T('keywords_tab_user'),
+				'contact' => _T('keywords_tab_contact'),
 				'maint'  => _T('keywords_tab_maintenance'));
 $tab = _request('tab', 'system');
 
 show_tabs($groups, $tab, $_SERVER['SCRIPT_NAME']);
 
 switch ($tab) {
-	case 'system' :
-	case 'user' :
+	case 'system':
+	case 'user':
+	case 'contact':
 		show_all_keywords_type($tab);
 		break;
-	case 'maint' :
+	case 'maint':
 		echo '<fieldset class="info_box">' . "\n";
 		echo '<form method="post" action="' . $_SERVER['REQUEST_URI'] . '">' . "\n";
 		echo '<p>' . _T('keywords_info_maintenance') . "</p>\n";
