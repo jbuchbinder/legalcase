@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.36 2006/08/11 14:35:26 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.37 2006/08/14 19:24:45 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -33,6 +33,7 @@ $GLOBALS['legal_obj'] = array('case' => 1, 'stage' => 1, 'client' => 1, 'org' =>
 // get_kwg_all: Returns all keyword groups (kwg) of a given
 // type. If type is 'user', then all keyword groups of type
 // case, followup, client, org and author are returned.
+// Type may also be 'contact'.
 // 
 function get_kwg_all($type, $exclude_empty = false, $show_subgroups = false) {
 	$ret = array();
