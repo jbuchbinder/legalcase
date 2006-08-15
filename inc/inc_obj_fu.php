@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.15 2006/08/11 14:31:31 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.16 2006/08/15 20:28:52 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -563,9 +563,9 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			if (empty($_SESSION['errors'])) {
 				$interval = (($this->getDataString('date_end') != '0000-00-00 00:00:00') ?
 						strtotime($this->getDataString('date_end')) - strtotime($this->getDataString('date_start')) : 0);
-				echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+				echo get_time_interval_inputs($name, $interval);
 			} else {
-				echo get_time_interval_inputs_from_array($name, $this->data, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+				echo get_time_interval_inputs_from_array($name, $this->data);
 			}
 		}
 
@@ -813,7 +813,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 				$interval = ( ($this->data['app_end_time']!='0000-00-00 00:00:00') ?
 						strtotime($this->data['app_end_time']) - strtotime($this->data['app_start_time']) : 0);
 				//	echo _T('calendar_info_time') . ' ';
-				echo get_time_interval_inputs('app_delta', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+				echo get_time_interval_inputs('app_delta', $interval);
 				echo f_err_star('app_end_time');
 			}
 			echo "</td></tr>\n";
@@ -831,7 +831,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			   $interval = ( ($this->data['app_end_time']!='0000-00-00 00:00:00') ?
 			   strtotime($this->data['app_start_time']) - strtotime($this->data['app_reminder']) : 0);
 			//	echo _T('calendar_info_time') . ' ';
-			echo get_time_interval_inputs('app_rem_offset', $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+			echo get_time_interval_inputs('app_rem_offset', $interval);
 			echo " " . _T('time_info_before_start');
 			echo f_err_star('app_reminder');
 			}

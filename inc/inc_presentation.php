@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.245 2006/08/11 19:35:37 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.246 2006/08/15 20:28:52 mlutfy Exp $
 */
 
 //
@@ -797,7 +797,11 @@ function get_time_inputs($name = 'select', $time = '', $hours24 = true, $show_se
 	return $ret;
 }
 
-function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $select_hours = true, $table = false) {
+function get_time_interval_inputs($name = 'select', $time) {
+	global $prefs;
+
+	$ret = '';
+	$hours_only = ($prefs['time_intervals_notation'] == 'hours_only');
 
 	if ($hours_only) {
 		$days = 0;
@@ -810,72 +814,27 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 	}
 
 	// If name is empty, disable fields
-	$dis = (($name) ? '' : 'disabled="disabled"');
+	$dis = isDisabled(! $name);
 
-	$ret = '';
-
-	if ($table && !$hours_only)
-		$ret .= '<table cellpadding="3" cellspacing="3">' . "\n<tr>\n";
-		
 	// Days
 	if ($hours_only) {
 		$ret .= "<input type=\"hidden\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" value=\"$days\" />\n";
 	} else {
-		if ($table)
-			$ret .= "<td>\n";
-		
-		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
+		$ret .= "<input $dis size=\"4\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
 		$ret .= "&nbsp;" . _T('time_info_short_day') . ", ";
-				
-		if ($table)
-			$ret .= "</td>\n";
 	}
 
 	// Hour
-	if ($hours_only || !$select_hours) {
-		$ret .= "<input $dis size=\"4\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
-		$ret .= _T('time_info_short_hour');
-	} else {
-		if ($table)
-			$ret .= "<td>\n";
-
-		$ret .= "<select $dis name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\">\n";
-	
-		for ($i = 0; $i < 24; $i++) {
-			$default = ($i == $hours ? ' selected="selected"' : '');
-			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">$i</option>\n";
-		}
-	
-		$ret .= "</select>";
-		
-		$ret .= "&nbsp;" . _T('time_info_short_hour') . ", ";
-	
-		if ($table)
-			$ret .= "</td>\n";
-	}
+	$ret .= "<input $dis size=\"4\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
+	$ret .= _T('time_info_short_hour') . "\n";
 	
 	// Minutes
 	if ($hours_only) {
 		$ret .= "<input type=\"hidden\" name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" value=\"$minutes\" />\n";
 	} else {
-		if ($table)
-			$ret .= "<td>\n";
-		
-		$ret .= "<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
-	
-		for ($i = 0; $i < 60; $i += 5) {
-			$default = ($i == $minutes ? ' selected="selected"' : '');
-			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
-		}
-	
-		$ret .= "</select>";
-		$ret .= "&nbsp;" . _T('time_info_short_min');
-	
-		if ($table)
-			$ret .= "</td>\n";
+		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_minutes\" id=\"" . $name .  "_minutes\" value=\"$minutes\" />\n";
+		$ret .= "&nbsp;" . _T('time_info_short_min') . "\n";
 	}
-
-	if ($table && !$hours_only) $ret .= "</tr>\n</table>\n";
 
 	return $ret;
 }
@@ -884,80 +843,38 @@ function get_time_interval_inputs($name = 'select', $time, $hours_only = true, $
 // They should probably be split into many smaller functions.
 // And since we have many such functions, it would not be bad
 // to put them in their own include file..
-function get_time_interval_inputs_from_array($name = 'select', $source, $hours_only = true, $select_hours = true, $table = false)
-{
+function get_time_interval_inputs_from_array($name = 'select', $source) {
+	global $prefs;
 	$ret = '';
+
+	$hours_only = ($prefs['time_intervals_notation'] == 'hours_only');
 
 	$days = $source[$name . '_days'];
 	$hours = $source[$name . '_hours'];
 	$minutes = $source[$name . '_minutes'];
 
 	// If name is empty, disable fields
-	$dis = (($name) ? '' : 'disabled="disabled"');
+	$dis = isDisabled(! $name);
 
-	if ($table && !$hours_only)
-		$ret .= '<table cellpadding="3" cellspacing="3">' . "\n<tr>\n";
-		
 	// Days
 	if ($hours_only) {
 		$ret .= "<input type=\"hidden\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" value=\"$days\" />\n";
 	} else {
-		if ($table)
-			$ret .= "<td>\n";
-		
-		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
+		$ret .= "<input $dis size=\"4\" name=\"" . $name . "_days\" id=\"" . $name . "_days\" align=\"right\" value=\"$days\" />";
 		$ret .= "&nbsp;" . _T('time_info_short_day') . ", ";
-				
-		if ($table)
-			$ret .= "</td>\n";
 	}
 
 	// Hour
-	if ($hours_only || !$select_hours) {
-		$ret .= "<input $dis size=\"4\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
-		$ret .= _T('time_info_short_hour');
-	} else {
-		if ($table)
-			$ret .= "<td>\n";
-
-		$ret .= "<select $dis name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\">\n";
-	
-		for ($i = 0; $i < 24; $i++) {
-			$default = ($i == $hours ? ' selected="selected"' : '');
-			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">$i</option>\n";
-		}
-	
-		$ret .= "</select>";
-		
-		$ret .= "&nbsp;" . _T('time_info_short_hour') . ", ";
-	
-		if ($table)
-			$ret .= "</td>\n";
-	}
+	$ret .= "<input $dis size=\"4\" name=\"" . $name . "_hours\" id=\"" . $name . "_hours\" align=\"right\" value=\"$hours\" />";
+	$ret .= _T('time_info_short_hour');
 	
 	// Minutes
 	if ($hours_only) {
 		$ret .= "<input type=\"hidden\" name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" value=\"$minutes\" />\n";
 	} else {
-		if ($table)
-			$ret .= "<td>\n";
-		
-		$ret .= "<select $dis name=\"" . $name . "_minutes\" id=\"" . $name . "_minutes\" align=\"right\">\n";
-	
-		for ($i = 0; $i < 60; $i += 5) {
-			$default = ($i == $minutes ? ' selected="selected"' : '');
-			$ret .= "<option" . $default . " value=\"" . sprintf('%02u',$i) . "\">" . sprintf('%02u',$i) . "</option>\n";
-		}
-	
-		$ret .= "</select>";
+		$ret .= "<input $dis size=\"2\" name=\"" . $name . "_minutes\" id=\"" . $name .  "_minutes\" value=\"$minutes\" />\n";
 		$ret .= "&nbsp;" . _T('time_info_short_min');
-	
-		if ($table)
-			$ret .= "</td>\n";
 	}
-
-	if ($table && !$hours_only)
-		$ret .= "</tr>\n</table>\n";
 
 	return $ret;
 }
