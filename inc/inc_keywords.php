@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.37 2006/08/14 19:24:45 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.38 2006/08/15 20:49:39 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -70,8 +70,13 @@ function get_kwg_all($type, $exclude_empty = false, $show_subgroups = false) {
 
 	$result = lcm_query($query);
 
-	while ($row = lcm_fetch_array($result)) 
-		$ret[$row['name']] = $row;
+	while ($row = lcm_fetch_array($result)) {
+		$ret[$row['title']] = $row;
+		$ret[$row['title']]['title'] = remove_number_prefix($row['title']);
+	}
+
+	ksort($ret);
+	reset($ret);
 	
 	return $ret;
 }

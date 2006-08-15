@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.34 2006/08/15 15:50:42 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.35 2006/08/15 20:49:39 mlutfy Exp $
 */
 
 
@@ -74,8 +74,13 @@ function get_contacts($type_person, $id, $type_contact = '', $not = '') {
 	$result = lcm_query($query);
 	$tmp_row = array();
 
-	while($row = lcm_fetch_array($result))
-		$contacts[] = $row;
+	while($row = lcm_fetch_array($result)) {
+		$contacts[$row['title'] . $row['id_contact']] = $row;
+		$contacts[$row['title'] . $row['id_contact']]['title'] = remove_number_prefix($row['title']);
+	}
+
+	ksort($contacts);
+	reset($contacts);
 
 	return $contacts;
 }
