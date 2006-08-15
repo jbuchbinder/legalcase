@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.57 2006/08/10 16:47:11 mlutfy Exp $
+	$Id: inc.php,v 1.58 2006/08/15 20:35:33 mlutfy Exp $
 */
 
 include ('inc/inc_version.php');
@@ -96,14 +96,6 @@ if (_request('author_ui_modified')) {
 }
 
 if (isset($_REQUEST['author_advanced_settings_modified'])) {
-	// Set normal/advanced UI mode preference
-	if ($_REQUEST['sel_mode'] != $_REQUEST['old_mode']) {
-		if ($_REQUEST['sel_mode'] == 'simple' || $_REQUEST['sel_mode'] == 'extended') {
-			$prefs['mode'] = $_REQUEST['sel_mode'];
-			$prefs_mod = true;
-		}
-	}
-
 	// Set absolute/relative time intervals
 	if ($_REQUEST['sel_time_intervals'] != $_REQUEST['old_time_intervals']) {
 		if ($_REQUEST['sel_time_intervals'] == 'absolute' || $_REQUEST['sel_time_intervals'] == 'relative') {
