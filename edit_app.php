@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.46 2006/08/10 16:50:46 mlutfy Exp $
+	$Id: edit_app.php,v 1.47 2006/08/15 20:31:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -198,7 +198,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		$name = (($admin || ($edit && ($_SESSION['form_data']['end_time']=='0000-00-00 00:00:00'))) ? 'delta' : '');
 		$interval = ( ($_SESSION['form_data']['end_time']!='0000-00-00 00:00:00') ?
 				strtotime($_SESSION['form_data']['end_time']) - strtotime($_SESSION['form_data']['start_time']) : 0);
-		echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+		echo get_time_interval_inputs($name, $interval);
 
 		echo "</td>\n";
 	}
@@ -234,7 +234,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		$name = (($admin || ($edit && ($_SESSION['form_data']['end_time']=='0000-00-00 00:00:00'))) ? 'rem_offset' : '');
 		$interval = ( ($_SESSION['form_data']['end_time']!='0000-00-00 00:00:00') ?
 				strtotime($_SESSION['form_data']['start_time']) - strtotime($_SESSION['form_data']['reminder']) : 0);
-		echo get_time_interval_inputs($name, $interval, ($prefs['time_intervals_notation']=='hours_only'), ($prefs['time_intervals_notation']=='floatdays_hours_minutes'));
+		echo get_time_interval_inputs($name, $interval);
 		echo " " . _T('time_info_before_start');
 		echo f_err_star('reminder');
 
