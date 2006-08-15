@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.45 2006/08/14 20:03:18 mlutfy Exp $
+	$Id: keywords.php,v 1.46 2006/08/15 15:20:35 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -521,6 +521,9 @@ function update_keyword_group($id_group, $id_parent = 0) {
 	
 		if ($kwg['type'] == 'system')
 			lcm_panic("Operation not allowed (type = " . $kwg['type']);
+
+		if ($kwg['type'] == 'contact' && substr($kwg['name'], 0, 1) != '+')
+			$kwg['name'] = '+' . $kwg['name'];
 	
 		$query = "INSERT INTO lcm_keyword_group
 					SET id_parent = " . $id_parent . ",
@@ -536,7 +539,7 @@ function update_keyword_group($id_group, $id_parent = 0) {
 
 		lcm_query($query);
 		$id_group = lcm_insert_id('lcm_keyword_group', 'id_group');
-		$return_tab = 'user'; // (creating sys-kwg is not allowed)
+		$return_tab = ($kwg['type'] == 'contact' ? 'contact' : 'user'); // (creating sys-kwg is not allowed)
 	} else {
 		// Get current kwg information (kwg_type & name cannot be changed)
 		$old_kwg = get_kwg_from_id($id_group);
