@@ -304,8 +304,9 @@ a.main_nav_btn:hover {
 
 .prefs_column_menu_head {
 	font-weight: bold;
-	padding: 4px;
 	text-align: left;
+	padding: 4px;
+	margin-bottom: 5px;
 }
 
 p.prefs_column_text {
