@@ -809,6 +809,10 @@ a.prefs_normal_lnk {
 	font-size: 12px;
 }
 
+#main_column button {
+	display: none;
+}
+
 form.search_form {
 	font-size: 11px;
 }
