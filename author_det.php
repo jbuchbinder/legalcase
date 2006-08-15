@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.30 2006/04/21 19:27:14 mlutfy Exp $
+	$Id: author_det.php,v 1.31 2006/08/15 20:31:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -69,7 +69,7 @@ global $prefs;
 $author = intval($_REQUEST['author']);
 
 if (! ($author > 0)) {
-	header("Location: listauthors.php");
+	lcm_header("Location: listauthors.php");
 	exit;
 }
 
@@ -79,9 +79,13 @@ $q = "SELECT *
 		WHERE id_author = $author";
 $result = lcm_query($q);
 
-	if ($author_data = lcm_fetch_array($result)) {
-		$fullname = get_person_name($author_data);
-		lcm_page_start(_T('title_author_view') . ' ' . $fullname, '', '', 'authors_intro');
+if (! ($author_data = lcm_fetch_array($result))) {
+	lcm_header("Location: listauthors.php");
+	exit;
+}
+
+$fullname = get_person_name($author_data);
+lcm_page_start(_T('title_author_view') . ' ' . $fullname, '', '', 'authors_intro');
 
 		// Show tabs
 		if ($author == $author_session['id_author'] || $author_session['status'] == 'admin') {
@@ -517,10 +521,7 @@ $result = lcm_query($q);
 				break;
 		}
 
-		echo "</fieldset>\n";
-		lcm_page_end();
-	} else {
-		die("There's no such author!");
-	}
+echo "</fieldset>\n";
+lcm_page_end();
 
 ?>

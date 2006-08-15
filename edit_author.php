@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.41 2006/08/10 16:50:46 mlutfy Exp $
+	$Id: edit_author.php,v 1.42 2006/08/15 20:31:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -48,7 +48,7 @@ if ($existing) {
 	// Check if user is permitted to edit this author's data
 	if (($author_session['status'] != 'admin') &&
 			($author != $author_session['id_author'])) {
-		die("You don't have the right to edit this author's details");
+		die("You don't have the right to edit this user's details");
 	}
 
 	// Get author data
@@ -58,8 +58,10 @@ if ($existing) {
 		foreach ($row as $key => $value) {
 			$user[$key] = $value;
 		}
-	} else
-		die(_T('error_no_such_user'));
+	} else {
+		lcm_header("Location: listauthors.php");
+		exit;
+	}
 } else {
 	$user['id_author'] = 0;
 	$user['email'] = '';
