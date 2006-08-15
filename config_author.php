@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_author.php,v 1.60 2006/08/10 19:41:23 mlutfy Exp $
+	$Id: config_author.php,v 1.61 2006/08/15 20:30:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -27,7 +27,8 @@ include_lcm('inc_filters');
 function read_author_data($id_author) {
 	$q = "SELECT * FROM lcm_author WHERE id_author=" . $id_author;
 	$result = lcm_query($q);
-	if (!($usr = lcm_fetch_array($result))) die(_T('error_no_such_user'));
+	if (!($usr = lcm_fetch_array($result)))
+		lcm_panic("The user #$id_author does not exist in the database.");
 
 	return $usr;
 }
@@ -46,33 +47,36 @@ function show_author_form($tab) {
 
 	$http_ref_link = new Link($http_ref);
 
+	echo '<form name="upd_user_profile" method="post" action="config_author.php">' . "\n";
+	echo '<input type="hidden" name="referer" value="' . $http_ref_link->getUrl() . '" />' . "\n";
+	echo '<input type="hidden" name="author_' . ($tab == 'advanced' ? 'advanced_settings' : 'ui' ) . '_modified" value="yes" />' . "\n";
+
+	if ($tab == 'advanced')
+		echo '<input type="hidden" name="tab" value="1" />' . "\n";
+
+	echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
+	echo "<tr>\n";
+	echo '<td colspan="2" align="center" valign="middle" class="heading">';
+	echo '<h4>' . _T('authorconf_subtitle_' . $tab) . "</h4></td>\n";
+	echo "</tr>\n";
+
 	switch ($tab) {
 		//
 		// User interface
 		//
-		case 'interface' : ?>
-<form name="upd_user_profile" method="post" action="config_author.php">
-	<input type="hidden" name="author_ui_modified" value="yes"/>
-	<input type="hidden" name="referer" value="<?php echo $http_ref_link->getUrl(); ?>" />
+		case 'interface':
+			if ($GLOBALS['all_langs']) {
+				echo "
+					<tr>
+					<td align=\"right\" valign=\"top\">" . _T('authorconf_input_language') . "</td>
+					<td align=\"left\" valign=\"top\">
+					<input type='hidden' name='old_language' value='" . $GLOBALS['lcm_lang']  /* [ML] A cookie might cause problems in 1% of cases $author_session['lang'] */ . "'/>\n";
 
-	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
-		<tr>
-			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authorconf_subtitle_interface'); ?></h4></td>
-		</tr>
-<?php
-	if ($GLOBALS['all_langs']) {
-		echo "
-			<tr>
-				<td align=\"right\" valign=\"top\">" . _T('authorconf_input_language') . "</td>
-				<td align=\"left\" valign=\"top\">
-					<input type='hidden' name='old_language' value='" .
-					$GLOBALS['lcm_lang']  /* [ML] A cookie might cause problems in 1% of cases $author_session['lang'] */ . "'/>\n";
-
-		echo menu_languages('sel_language');
-		echo "
-				</td>
-			</tr>\n";
-	}
+				echo menu_languages('sel_language');
+				echo "
+					</td>
+					</tr>\n";
+			}
 ?>
 	    <tr>
 	    	<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_screen') ?></td>
@@ -143,90 +147,59 @@ function show_author_form($tab) {
 					echo $prefs['page_rows']; ?>" />
 			</td>
 		</tr>
-	<!-- Submit button -->
-		<tr>
-			<td colspan="2" align="center" valign="middle">
-				<input name="validate" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
-		</tr>
 	</table>
-</form>
 <?php			break;
 
 		//
 		// Advanced settings
 		//
-		case 'advanced' : ?>
-<form name="upd_user_profile" method="post" action="config_author.php">
-	<input type="hidden" name="tab" value="1" />
-	<input type="hidden" name="author_advanced_settings_modified" value="yes"/>
-	<input type="hidden" name="referer" value="<?php echo $http_ref_link->getUrl(); ?>" />
+		case 'advanced':
+			// Absolute/relative time intervals setting
+			echo "<tr>\n";
+			echo '<td align="left" valign="top">' . _T('authorconf_input_ui_time') . "</td>\n";
+			echo '<td align="left" valign="top">'
+				. '<input type="hidden" name="old_time_intervals" id="old_time_intervals" value="' . $prefs['time_intervals'] . '" />'
+				. '<select name="sel_time_intervals" class="sel_frm">';
 
-	<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">
-		<tr>
-			<td colspan="2" align="center" valign="middle" class="heading"><h4><?php echo _T('authorconf_subtitle_advanced'); ?></h4></td>
-		</tr>
-		<tr>
-			<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_ui_level') ?></td>
-			<td align="left" valign="top">
-				<input type="hidden" name="old_mode" id="old_mode" value="<?php echo $prefs['mode'] ?>" />
-				<select name="sel_mode" class="sel_frm">
-<?php	// [AG] Exactly these names have to be used in the code to avoid changing in every place where the preference is checked
-	$interface_modes = array("simple", "extended"); 
-	foreach ($interface_modes as $ifm) {
-		$selected_mode = ($ifm == $prefs['mode'] ? " selected='selected'" : '');
-		echo "\t\t\t\t\t<option value='" . $ifm . "'" . $selected_mode . ">"
-			. _T('authorconf_input_ui_level_' . $ifm)
-			. "</option>\n";
+			$time_intervals = array("absolute", "relative");
+			foreach ($time_intervals as $ti) {
+				echo '<option value="' . $ti . '"' . isSelected($ti == $prefs['time_intervals']) . '>'
+					. _T('authorconf_input_time_interval_' . $ti)
+					. "</option>\n";
+			}
+
+			echo "</select>\n";
+			echo "</td>\n";
+			echo "</tr>\n";
+
+			// Relative time intervals notation setting (hours only / float days,hours,minutes / float days, float hours, minutes)
+			echo "<tr>\n";
+			echo '<td align="left" valign="top">' . _T('authorconf_input_time_intervals_notation') . "</td>\n";
+			echo '<td align="left" valign="top">'
+				. '<input type="hidden" name="old_time_intervals_notation" id="old_time_intervals_notation" value="' . $prefs['time_intervals_notation'] . '" />'
+				. '<select name="sel_time_intervals_notation" class="sel_frm">';
+
+			$time_intervals_notation = array("hours_only", "floatdays_hours_minutes");
+			foreach ($time_intervals_notation as $tin) {
+				echo "<option value='" . $tin . "'" . isSelected($tin == $prefs['time_intervals_notation']) . ">"
+					. _T('authorconf_input_time_intervals_notation_' . $tin)
+					. "</option>\n";
+			}
+
+			echo "</select>\n";
+			echo "</td>\n";
+			echo "</tr>\n";
+			echo "</table>\n";
+
+			break;
 	}
-?>
-				</select>
-			</td>
-		</tr>
-	<!-- Absolute/relative time intervals setting -->
-		<tr>
-			<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_ui_time') ?></td>
-			<td align="left" valign="top">
-				<input type="hidden" name="old_time_intervals" id="old_time_intervals" value="<?php echo $prefs['time_intervals'] ?>" />
-				<select name="sel_time_intervals" class="sel_frm">
-<?php
-	$time_intervals = array("absolute", "relative");
-	foreach ($time_intervals as $ti) {
-		$selected_ti = ($ti == $prefs['time_intervals'] ? " selected='selected'" : '');
-		echo "\t\t\t\t\t<option value='" . $ti . "'" . $selected_ti . ">"
-			. _T('authorconf_input_time_interval_' . $ti)
-			. "</option>\n";
-	}
-?>
-				</select>
-			</td>
-		</tr>
-	<!-- Relative time intervals notation setting (hours only / float days,hours,minutes / float days, float hours, minutes) -->
-		<tr>
-			<td align="right" valign="top" width="50%"><?php echo _T('authorconf_input_time_intervals_notation') ?></td>
-			<td align="left" valign="top">
-				<input type="hidden" name="old_time_intervals_notation" id="old_time_intervals_notation" value="<?php echo $prefs['time_intervals_notation'] ?>" />
-				<select name="sel_time_intervals_notation" class="sel_frm">
-<?php
-	$time_intervals_notation = array("hours_only", "floatdays_hours_minutes", "floatdays_floathours_minutes");
-	foreach ($time_intervals_notation as $tin) {
-		$selected_tin = ($tin == $prefs['time_intervals_notation'] ? " selected='selected'" : '');
-		echo "\t\t\t\t\t<option value='" . $tin . "'" . $selected_tin . ">"
-			. _T('authorconf_input_time_intervals_notation_' . $tin)
-			. "</option>\n";
-	}
-?>
-				</select>
-			</td>
-		</tr>
-	<!-- Submit button -->
-		<tr>
-			<td colspan="2" align="center" valign="middle">
-				<input name="validate" type="submit" class="search_form_btn" id="submit" value="<?php echo _T('authorconf_button_update_preferences'); ?>" /></td>
-		</tr>
-	</table>
-</form>
-<?php			break;
-	} // switch()
+
+	// Submit button
+	echo '<p align="' . $GLOBALS['lcm_lang_left'] . '">';
+	echo '<input name="validate" type="submit" class="search_form_btn" id="submit" value="' . _T('authorconf_button_update_preferences') . '" />';
+	echo "</p>\n";
+
+	echo "</form>\n";
 }
 
 function apply_author_ui_change() {
