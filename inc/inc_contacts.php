@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.32 2006/08/14 20:20:49 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.33 2006/08/15 14:31:42 mlutfy Exp $
 */
 
 
@@ -48,7 +48,7 @@ function get_contacts($type_person, $id, $type_contact = '', $not = '') {
 	if ($type_contact == 'email')
 		$type_contact = 'email_main';
 	
-	$query = "SELECT c.type_contact, c.value, c.id_contact, kwg.name, kwg.title
+	$query = "SELECT c.type_contact, c.value, c.id_contact, c.date_update, kwg.name, kwg.title, kwg.policy, kwg.quantity
 				FROM lcm_contact as c, lcm_keyword_group as kwg
 				WHERE kwg.id_group = c.type_contact
 					AND id_of_person = " . intval($id) . " 
@@ -74,15 +74,8 @@ function get_contacts($type_person, $id, $type_contact = '', $not = '') {
 	$result = lcm_query($query);
 	$tmp_row = array();
 
-	while($row = lcm_fetch_array($result)) {
-		$tmp_row['type_contact'] = $row['type_contact'];
-		$tmp_row['name'] = $row['name'];
-		$tmp_row['title'] = $row['title'];
-		$tmp_row['value'] = $row['value'];
-		$tmp_row['id_contact'] = $row['id_contact'];
-
-		$contacts[] = $tmp_row;
-	}
+	while($row = lcm_fetch_array($result))
+		$contacts[] = $row;
 
 	return $contacts;
 }
@@ -230,7 +223,9 @@ function show_existing_contact($c, $num) {
 	
 	echo '<tr><td align="left" valign="top">' 
 		. f_err_star('upd_contact_' . $num)
-		. _Ti($c['title']) . "</td>\n";
+		. _Ti($c['title'])
+		. ($c['policy'] != 'optional' ? '<br/>(' . _T('keywords_input_policy_' . $c['policy']) . ')' : '')
+		. "</td>\n";
 	echo '<td align="left" valign="top">';
 
 	echo '<input name="contact_id[]" id="contact_id_' . $num . '" '
@@ -257,8 +252,9 @@ function show_existing_contact($c, $num) {
 
 
 // For new contact (may be specific 'email_main', etc. or empty for combobox)
-// Should be used in a two column table (ID + Value)
-function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_name = "__add__") {
+// Should be used in a two column html table (ID + Value)
+// The $exceptions allow to filter out contact types which are quantity = 'one'.
+function show_new_contact($num_new, $type_person, $ctype = "__add__", $exceptions = array()) {
 	$all_contact_types = get_kwg_all('contact');
 
 	// There may be a config error, or admin removed all contact types
@@ -270,10 +266,12 @@ function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_na
 	// Contact type (either specific or 'Add contact')
 	echo '<td align="left" valign="top">' . f_err_star('new_contact_' . $num_new);
 
-	if ($type_kw == "__add__") {
+	if ($ctype == "__add__") {
 		echo _Ti('generic_input_contact_other');
 	} else {
-		echo _Ti($all_contact_types[$type_kw]['title']);
+		$c = $all_contact_types[$ctype];
+		echo _Ti($c['title']);
+		echo ($c['policy'] != 'optional' ? '<br/>(' . _T('keywords_input_policy_' . $c['policy']) . ')' : '');
 	}
 
 	echo '</td>';
@@ -299,14 +297,16 @@ function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_na
 			$value = $_SESSION['usr']['new_contact_value'][$num_new];
 	}
 
-	if ($type_name == "__add__") {
+	if ($ctype == "__add__") {
 		echo "<div>\n";
 		echo '<select name="new_contact_type_name[]" id="new_contact_type_' . $num_new . '" class="sel_frm">' . "\n";
 		echo "<option value=''>" . " ... " . "</option>\n";
 
 		foreach ($all_contact_types as $contact) {
-			$sel = isSelected($type == $contact['name']);
-			echo "<option value='" . $contact['name'] . "' $sel>" . _T($contact['title']) . "</option>\n";
+			if (! ($contact['quantity'] == 'one' && isset($exceptions[$contact['name']]) && $type != $contact['name'])) {
+				$sel = isSelected($type == $contact['name']);
+				echo "<option value='" . $contact['name'] . "' $sel>" . _T($contact['title']) . "</option>\n";
+			}
 		}
 
 		echo "</select>\n";
@@ -319,7 +319,7 @@ function show_new_contact($num_new, $type_person, $type_kw = "__add__", $type_na
 		echo "</div>\n";
 	} else {
 		echo '<input name="new_contact_type_name[]" id="new_contact_type_name_' . $num_new . '" '
-			. 'type="hidden" value="' . $type_name . '" />' . "\n";
+			. 'type="hidden" value="' . $ctype . '" />' . "\n";
 
 		echo '<input name="new_contact_value[]" id="new_contact_value_' . $num_new . '" type="text" '
 			. 'class="search_form_txt" size="35" value="' . $value . '"/>&nbsp;';
@@ -346,31 +346,33 @@ function show_edit_contacts_form($type_person, $id_person) {
 			if (count($foo)) {
 				foreach ($foo as $f) {
 					show_existing_contact($f, $cpt);
-					$seen_contacts[] = $c['name'];
 					$cpt++;
 				}
 			} else {
-				show_new_contact($cpt_new, $type_person, $c['name'], $c['name']);
+				show_new_contact($cpt_new, $type_person, $c['name']);
 				$cpt_new++;
 			}
+
+			$seen_contacts[$c['name']] = 1;
 		}
 	}
 
 	//
 	// Show all the rest
 	//
-	$contacts_other = get_contacts($type_person, $id_person, implode(',', $seen_contacts), 'not');
+	$contacts_other = get_contacts($type_person, $id_person, implode(',', array_keys($seen_contacts)), 'not');
 	
 	foreach ($contacts_other as $contact) {
 		show_existing_contact($contact, $cpt);
+		$seen_contacts[$contact['name']] = 1;
 		$cpt++;
 	}
 
 	// Show "other new contact" (twice)
-	show_new_contact($cpt_new, $type_person);
+	show_new_contact($cpt_new, $type_person, '__add__', $seen_contacts);
 	$cpt_new++;
 
-	show_new_contact($cpt_new, $type_person);
+	show_new_contact($cpt_new, $type_person, '__add__', $seen_contacts);
 	$cpt_new++;
 }
 
@@ -382,33 +384,33 @@ function show_all_contacts($type_person, $id_of_person) {
 	$html = "";
 	$i = 0;
 
+	if (! count($contacts))
+		return;
+
+	show_page_subtitle(_T('generic_subtitle_contacts'));
+	echo '<table border="0" class="tbl_usr_dtl" width="100%">' . "\n";
+
 	foreach($contacts as $c) {
 		// Check if the contact is an e-mail
-		if ($show_emails && strpos($c['name'],'email') === 0) {
-			$html .= "<tr>\n";
-			$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>\n";
-			$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
-			$html .= '<a href="mailto:' . $c['value'] . '" class="content_link">' . $c['value'] . '</a></td>\n';
-			$html .= "</tr>\n";
-		} else {
-			$html .= "<tr>\n";
-			$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>\n";
-			$html .= "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $c['value'] . "</td>\n";
-			$html .= "</tr>\n";
-		}
+		echo "<tr>\n";
+		echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . _T($c['title']) . ":</td>\n";
+		echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+
+		if ($show_emails && strpos($c['name'],'email') === 0)
+			echo '<a href="mailto:' . $c['value'] . '" class="content_link">' . $c['value'] . '</a></td>\n';
+		else
+			echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>" . $c['value'] . "</td>\n";
+
+		echo '<td class="tbl_cont_' . ($i % 2 ? 'dark' : 'light') . '">' 
+			. ($c['date_update'] != null ? format_date($c['date_update'], 'date_short') : '')
+			. "</td>\n";
+		echo "</tr>\n";
 
 		$i++;
 	}
 
-	if ($html) {
-		show_page_subtitle(_T('generic_subtitle_contacts'));
-		echo '<table border="0" class="tbl_usr_dtl" width="100%">' . "\n";
-
-		echo $html;
-
-		echo "</table>\n";
-		echo "<br />\n";
-	}
+	echo "</table>\n";
+	echo "<br />\n";
 }
 
 function update_contacts_request($type_person, $id_of_person) {
