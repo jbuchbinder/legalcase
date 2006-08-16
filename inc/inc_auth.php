@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_auth.php,v 1.30 2006/02/20 03:44:10 mlutfy Exp $
+	$Id: inc_auth.php,v 1.31 2006/08/16 13:48:12 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -160,14 +160,11 @@ function auth() {
 		// OK, but he does not exist in the authors table. Possible cause:
 		// the database was restaured and the author does not exist (and
 		// the user was authentified by another source, such as LDAP).
-		include_lcm('inc_presentation');
-		include_lcm('inc_text');
+		// Note: we use to show a strange error message which would advice
+		// to logout, but since it occurs only after db upgrade, just logout
+		// brutally (with cookie_admin=no to forget the username).
 
-		install_html_start(_T('login_warning_connection_failed'));
-		echo "<p>" . _T('login_warning_connection_failed1', array('username' => $auth_login));
-		echo " <a href='lcm_cookie.php?logout=$auth_login'>" 
-			. _T('login_warning_connection_failed1') . "</a>";
-		install_html_end();
+		lcm_header('Location: lcm_cookie.php?cookie_admin=no&logout=' . $auth_login);
 		exit;
 	}
 
