@@ -2,6 +2,47 @@
 
 // This is a LCM language file  --  Ceci est un fichier langue de LCM
 
+/*
+    To translate LCM, you may translate this file and send it to legalcase-devel@lists.sf.net.
+    You may also use the Web translation system: http://www.lcm.ngo-bg.org/trad-lang/trad_lang.php
+
+    Some translations need help, they are no longuer maintained. You can update them by fixing
+    this file, and sending it to legalcase-devel@lists.sf.net, or use the Web translation system.
+    (Using the web translation system to update translations is highly recommended!)
+
+    Note: Strings with <NEW> are new strings, which have never been translated.
+          Strings with <MODIF> are strings which have been updated in the English translation.
+
+    If you wish to only modify a few strings for local requirements, please
+    read: http://www.lcm.ngo-bg.org/article136.html
+
+    Also please note that translations contributed to the project must have
+    the copyright notice below. As a recognition to the translators work, we
+    add their name to the 'AUTHORS' file and we announce the new translation
+    on our website (unless explicitely requested otherwise).
+
+   -----------------------------------------------------------------------
+
+    This file is part of the Legal Case Management System (LCM).
+    (C) 2004-2006 Free Software Foundation, Inc.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+    $Id: lcm_pl.php,v 1.6 2006/08/16 15:35:51 mlutfy Exp $
+*/ 
+
 $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
@@ -13,8 +54,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // A
-'add_and_go_to_details' => 'Zatwierdż i pokaż szczegóły',
-'add_and_open_new' => 'Zatwierdż i dodaj nowy',
 'add_user_case' => 'Dodaj prawnika do sprawy',
 'app_button_edit' => 'Zmień treść zadania',
 'app_button_new' => 'Nowe zadanie',
@@ -79,12 +118,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_time_interval_absolute' => 'Bezwzględny (czas rozpoczęcia - czas zakończenia)',
 'authorconf_input_time_interval_relative' => 'Względny (czas rozpoczęcia + czas trwania)',
 'authorconf_input_time_intervals_notation' => 'Powiadomienie o okresach przerw',
-'authorconf_input_time_intervals_notation_floatdays_floathours_minutes' => 'Dni, godziny, całkowite minuty (0-59)',
-'authorconf_input_time_intervals_notation_floatdays_hours_minutes' => 'Dni, całkowite godziny (0-23), całkowite minuty (0-59)',
-'authorconf_input_time_intervals_notation_hours_only' => 'Okres czasu w godzinach',
-'authorconf_input_ui_level' => 'Typ nawigacji:',
-'authorconf_input_ui_level_extended' => 'Rozszeżony',
-'authorconf_input_ui_level_simple' => 'Normalny',
+'authorconf_input_time_intervals_notation_floatdays_hours_minutes' => '<MODIF>Dni, całkowite godziny (0-23), całkowite minuty (0-59)',
+'authorconf_input_time_intervals_notation_hours_only' => '<MODIF>Okres czasu w godzinach',
 'authorconf_input_ui_time' => 'Metoda wprowadzania dla przerw:',
 'authorconf_subtitle_advanced' => 'Zaawansowane cechy',
 'authorconf_subtitle_interface' => 'Interfejs',
@@ -109,10 +144,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'button_delete' => 'Usuń',
 'button_next' => 'Następny',
 'button_reload_page' => 'Odświerz tę stronę',
-'button_reset' => 'Kasuj',
 'button_search' => 'Szukaj',
 'button_validate' => 'Zatwierdź',
-'button_view_listfu' => 'Zobacz ostatnie zdarzenia w sprawie',
 'button_zoom' => 'Zoom',
 
 
@@ -145,7 +178,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_info_client_emptylist' => 'Nie ma klientów związanych ze sprawą.',
 'case_info_delete_client' => 'Usuń tego klienta ze sprawy.',
 'case_info_delete_org' => 'Usuń tę organizację ze sprawy.',
-'case_input_alledged_crime' => 'Zarzucone przestępstwo:',
+'case_input_alledged_crime' => '<MODIF>Zarzucone przestępstwo:',
 'case_input_author' => 'Prawnik:',
 'case_input_authors' => 'Prawnicy:',
 'case_input_clients' => 'Klienci:',
@@ -157,7 +190,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_date_conclusion' => 'Data rozstrzygnięcia:',
 'case_input_date_creation' => 'Data utworzenia:',
 'case_input_id' => 'Numer sprawy:',
-'case_input_legal_reason' => 'Synteza prawna:',
+'case_input_legal_reason' => '<MODIF>Synteza prawna:',
 'case_input_notes' => 'Notatki:',
 'case_input_option_ac_admin' => 'Prawnik zarządzający sprawą',
 'case_input_option_ac_read' => 'Prawnik może odczytać dane w tej sprawie',
@@ -292,13 +325,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // E
 'edit' => 'Zmień',
 'edit_case_information' => 'Zmień informację o sprawie',
-'edit_filter_details' => 'Zmień szczegóły filtra',
 'error_add_auth_no_rights' => 'Nie masz uprawnień do zmiany uprawnień do tej sprawy!',
 'error_no_case_specified' => 'Żadna sprawa nie została wybrana',
 'error_no_edit_permission' => 'Nie masz uprawnień do dokonywania zmian w tej sprawie!',
 'error_no_read_permission' => 'Nie masz uprawnień do wglądu w sprawę!',
-'error_no_such_case' => 'Nie ma takiej sprawy!',
-'error_no_such_user' => 'Nie ma takiego prawnika w bazie!',
 'expense_button_comment' => '<NEW>Add a comment',
 'expense_button_edit' => '<NEW>Edit request',
 'expense_button_new' => '<NEW>New request',
@@ -395,7 +425,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'help_intro_case_list' => 'Lista spraw, nad którymi pracujesz. Kliknij na tytuł sprawy poniżej aby zobaczyć szczegóły sprawy. Możesz dostosować listę wyświetlanych spraw używając filtra.',
 'help_intro_client_list' => 'Lista zarejstrowanych klientów. kliknij na nazwisko klienta aby zobaczyć szczegółowe informacje. Możesz także zarejstrować nowego klienta.',
 'help_intro_expenses_list' => '<NEW>List of internal requests, such as requests to cover expenses related to a case, which are waiting for approval from office administrators or have recently been approved. You can click on the expense description in the list below to view more information about it.',
-'help_intro_keyword_list' => 'Słowa kluczowe służą do dostosowania sytemu do twojego środowiska pracy. Słowa kluczowe są zazwyczaj z gromadzeniem danych statystycznych i dlatego przewidziano ograniczony zasób opcji. Systemowe słowa kluczowe slużą do opisu takich elementów jak zdarzenia, szczegóły kontaktów, względnie spotkań itp.Słowa kluczowe prawnika służą do dodowania nowych pół o znaczeniu statystycznym. ',
+'help_intro_keyword_list' => '<MODIF>Słowa kluczowe służą do dostosowania sytemu do twojego środowiska pracy. Słowa kluczowe są zazwyczaj z gromadzeniem danych statystycznych i dlatego przewidziano ograniczony zasób opcji. Systemowe słowa kluczowe slużą do opisu takich elementów jak zdarzenia, szczegóły kontaktów, względnie spotkań itp.Słowa kluczowe prawnika służą do dodowania nowych pół o znaczeniu statystycznym. ',
 'help_intro_org_list' => 'Lista zarejstrowanych organizacji. kliknij na nazwę organizacji aby zobaczyć szczegółowe informacje. Możesz także zarejstrować nową organizację.',
 'help_title_about' => 'O ...',
 'help_title_about_contrib' => 'Contributors',
@@ -423,11 +453,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'help_title_install_permissions' => 'Ustawianie praw dostępu do katalogów',
 'help_title_install_personal' => 'Informacje osobiste',
 'help_title_installation' => 'Instalacja',
-'help_title_keywords' => 'Słowa kluczowe',
+'help_title_keywords' => '<MODIF>Słowa kluczowe',
 'help_title_keywords_intro' => 'Wstęp',
-'help_title_keywords_new' => 'Tworzenie nowego słowa kluczowego',
-'help_title_keywords_new_group' => 'Tworzenie nowej grupy słów kluczowych',
-'help_title_keywords_remove' => 'Usuwanie słowa kluczowego',
+'help_title_keywords_new' => '<MODIF>Tworzenie nowego słowa kluczowego',
+'help_title_keywords_new_group' => '<MODIF>Tworzenie nowej grupy słów kluczowych',
+'help_title_keywords_remove' => '<MODIF>Usuwanie słowa kluczowego',
 'help_title_reports' => 'Raporty',
 'help_title_reports_edit' => 'Dostosowywanie raportu',
 'help_title_reports_intro' => 'Wstęp',
@@ -509,16 +539,18 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // K
-'keywords_button_kw_new' => 'Dodaj słowo kluczowe do grupy',
-'keywords_button_kwg_new' => 'Utwórz nową grupę słów kluczowych',
-'keywords_info_kw_ac_author' => 'Czy prawnicy mogą uzywać tego słowa kluczowego? (w przeciwnym razie słowo kluczowe pozostanie ukryte)',
+'keywords_button_kw_new' => '<MODIF>Dodaj słowo kluczowe do grupy',
+'keywords_button_kwg_edit' => '<NEW>Modify field group',
+'keywords_button_kwg_new' => '<MODIF>Utwórz nową grupę słów kluczowych',
+'keywords_button_subkwg_new' => '<NEW>Create a new sub-group',
+'keywords_info_kw_ac_author' => '<MODIF>Czy prawnicy mogą uzywać tego słowa kluczowego? (w przeciwnym razie słowo kluczowe pozostanie ukryte)',
 'keywords_info_kw_hidden' => 'ukryte',
-'keywords_info_kwg_ac_author' => 'Czy prawnicy mogą uzywać tej grupy słów kluczowych? (w przeciwnym razie grupa pozostanie ukryta)',
+'keywords_info_kwg_ac_author' => '<MODIF>Czy prawnicy mogą uzywać tej grupy słów kluczowych? (w przeciwnym razie grupa pozostanie ukryta)',
 'keywords_info_kwg_hidden' => '(ukryta)',
-'keywords_info_maintenance' => 'It is possible that, between LCM upgrades, a problem could have occured while updating the system keyword groups. To force the system keywords groups to be updated again, click on the validation button below. This will not affect your existing configuration.',
+'keywords_info_maintenance' => '<MODIF>It is possible that, between LCM upgrades, a problem could have occured while updating the system keyword groups. To force the system keywords groups to be updated again, click on the validation button below. This will not affect your existing configuration.',
 'keywords_info_quantity' => 'Users can select @quantity@ of this group in a given situation (case, follow-up, etc.).',
 'keywords_input_description' => 'Opis:',
-'keywords_input_for_group' => 'W grupie:',
+'keywords_input_for_group' => '<MODIF>W grupie:',
 'keywords_input_name' => 'Kod:',
 'keywords_input_policy' => 'Polityka:',
 'keywords_input_policy_mandatory' => 'Obowiązkowe',
@@ -530,17 +562,19 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'keywords_input_type_case' => 'Sprawy',
 'keywords_input_type_client' => 'Klienci',
 'keywords_input_type_client_org' => 'Klienci i organizacje',
+'keywords_input_type_contact' => '<NEW>Contacts',
 'keywords_input_type_followup' => 'Zdarzenia',
 'keywords_input_type_org' => 'Organizacje',
 'keywords_input_type_stage' => 'Etap',
 'keywords_input_type_system' => 'System',
-'keywords_option_quantity_many' => 'wiele słów kluczowych',
-'keywords_option_quantity_one' => 'jedno słowo kluczowe',
+'keywords_option_quantity_many' => '<MODIF>wiele słów kluczowych',
+'keywords_option_quantity_one' => '<MODIF>jedno słowo kluczowe',
+'keywords_tab_contact' => '<NEW>Contact types',
 'keywords_tab_maintenance' => 'Utrzymanie',
-'keywords_tab_system' => 'Systemowe słowa kluczowe',
-'keywords_tab_user' => 'Słowa kluczowe prawnika',
-'keywords_warning_kw_code_exists' => 'Kod słowa kluczowego już wcześniej został wykorzystany prze inne słowo kluczowe w tej grupie.',
-'keywords_warning_kwg_code_exists' => 'Kod został użyty przez inną grupę słów kluczowych.',
+'keywords_tab_system' => '<MODIF>Systemowe słowa kluczowe',
+'keywords_tab_user' => '<MODIF>Słowa kluczowe prawnika',
+'keywords_warning_kw_code_exists' => '<MODIF>Kod słowa kluczowego już wcześniej został wykorzystany prze inne słowo kluczowe w tej grupie.',
+'keywords_warning_kwg_code_exists' => '<MODIF>Kod został użyty przez inną grupę słów kluczowych.',
 'kw__crimresults_none_title' => 'Brak rozstrzygnięcia',
 'kw__crimresults_res001_title' => 'Wyrok',
 'kw__crimresults_res002_title' => 'Decyzja',
@@ -615,8 +649,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kwg_appointments_title' => 'Zadania',
 'kwg_civilstatus_title' => 'Stan cywilny',
 'kwg_conclusion_title' => 'Zakończenie sprawy',
-'kwg_contacts_title' => 'Słowa kluczowe odnośnie kontaktów',
-'kwg_followups_title' => 'Słowa kluczowe odnośnie zdarzeń',
+'kwg_contacts_title' => '<MODIF>Słowa kluczowe odnośnie kontaktów',
+'kwg_followups_title' => '<MODIF>Słowa kluczowe odnośnie zdarzeń',
 'kwg_income_title' => 'Dochód',
 'kwg_sentence_title' => 'Wyrok Sądu',
 'kwg_stage_title' => 'Etap sprawy',
@@ -642,9 +676,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_this_way' => 'Jesteś już zalogowany... tędy proszę...',
 'login_title_login' => 'Login',
 'login_warning_already_exists' => 'Ten login już istnieje.',
-'login_warning_connection_failed' => 'Połączenie zawiodło.',
-'login_warning_connection_failed1' => 'You identified yourself with the identifier <b>@username@</b>, but it does not exist in the database (anymore). It is possible that a database backup was recently imported into the system and that your username has changed.',
-'login_warning_connection_failed2' => 'Proszę spróbuj połączyć się ponownie.',
 'login_warning_cookie' => 'Twoja przeglądarka nie akceptuje pliku cookie, który jest niezbędny do zalogowania się.',
 'login_warning_password_change_failed' => 'Zmiana loginu zawiodła:',
 'login_warning_password_dont_match' => 'Hasła nie są takie same.',
@@ -656,8 +687,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_admin_archives' => 'Archiwum',
 'menu_admin_archives_tooltip' => 'Panel administracyjny - narzędzia do archiwizacji danych.',
 'menu_admin_filters' => 'Filtry',
-'menu_admin_keywords' => 'Słowa kluczowe',
-'menu_admin_keywords_tooltip' => 'Panel administracyjny - słowa kluczowe',
+'menu_admin_keywords' => '<MODIF>Słowa kluczowe',
+'menu_admin_keywords_tooltip' => '<MODIF>Panel administracyjny - słowa kluczowe',
 'menu_admin_reports' => 'Raporty',
 'menu_admin_reports_tooltip' => 'Panel administracyjny - narzędzia do tworzenia raportów.',
 'menu_admin_siteconf' => 'Konfiguracja strony',
@@ -771,7 +802,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'rep_filter_text_eq' => '=',
 'rep_filter_text_neq' => '!=',
 'rep_info_select_source_first' => 'To apply filters, you must first select the content that will be used for the report line and columns.',
-'rep_info_source_keyword' => 'Keyword:',
+'rep_info_source_keyword' => '<MODIF>Keyword:',
 'rep_info_source_table' => 'Table:',
 'rep_info_table_lcm_author' => 'Prawnik',
 'rep_info_table_lcm_case' => 'Sprawa',
@@ -795,7 +826,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // S
 'save' => 'Zapisz',
-'siteconf_info_admin_email' => 'E-mail of the contact for administrative requests or problems. This e-mail can be a mailing-list.',
+'siteconf_info_admin_email' => '<NEW>E-mail of the contact for administrative requests or problems.',
 'siteconf_info_available_languages' => 'If you have added a new language file to LCM or if you have upgraded the software and not all languages are available, click on "Validate" to refresh the list of available languages.',
 'siteconf_info_case_fields' => 'You can customize what type of information to store on each case. This depends on mostly on the activities of your organisation.',
 'siteconf_info_changes_made' => 'The following configurations were updated:',
@@ -824,12 +855,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_access_write_global_no' => 'No, any user assigned on the case (and with "edit" rights) can modify the write access.',
 'siteconf_input_access_write_global_yes' => 'Tak, tylko administrator może zmieniać prawa do zapisu danych.',
 'siteconf_input_admin_email' => 'E-mail administratora strony:',
-'siteconf_input_alledged_crime' => 'Zarzucany czyn',
-'siteconf_input_assignment_date' => 'Data przydzielenia',
 'siteconf_input_available_languages' => 'Odświerz listę dostępnych języków:',
 'siteconf_input_case_allow_modif' => 'Czy zezwolisz na modyfikację informacji o sprawie po utworzeniu sprawy?',
 'siteconf_input_citizen_number' => 'PESEL',
-'siteconf_input_civil_status' => 'Stan cywilny',
 'siteconf_input_client_income' => 'Dochód',
 'siteconf_input_court_archive' => 'Sygnatura akt',
 'siteconf_input_currency' => 'Waluta:',
@@ -843,7 +871,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_site_address' => 'Adres internetowy, albo położenie w sieci lokalnej:',
 'siteconf_input_site_desc' => 'Opis strony:',
 'siteconf_input_site_name' => 'Nazwa strony:',
-'siteconf_input_sum_billed' => 'Naliczone koszty',
 'siteconf_subtitle_case_fields' => 'Sprawy',
 'siteconf_subtitle_client_fields' => 'Klienci i prawnicy',
 'siteconf_subtitle_collab_work' => 'Współpraca w grupie',
@@ -871,7 +898,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'time_input_date_end' => 'Koniec:',
 'time_input_date_start' => 'Start:',
 'time_input_date_updated' => '<NEW>Updated:',
-'time_input_duration' => 'Czas trwania:',
 'time_input_length' => 'Długość:',
 'time_input_time_at' => 'o',
 'time_warning_invalid_format' => 'Wpisana długość czasu nie jest poprawna.',
@@ -906,10 +932,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_fu_edit' => 'Zmień zdarzenie',
 'title_fu_new' => 'Nowe zdarzenie',
 'title_fu_view' => 'Szczegóły zdarzenia',
-'title_keyword_edit' => 'Zmień słowo kluczowe',
-'title_keyword_new' => 'Nowe słowo kluczowe',
-'title_kwg_edit' => 'Zmień grupę słów kluczowych',
-'title_kwg_new' => 'Nowa grupa słów kluczowych',
+'title_keyword_edit' => '<MODIF>Zmień słowo kluczowe',
+'title_keyword_new' => '<MODIF>Nowe słowo kluczowe',
+'title_kwg_edit' => '<MODIF>Zmień grupę słów kluczowych',
+'title_kwg_new' => '<MODIF>Nowa grupa słów kluczowych',
 'title_my_cases' => 'Moje sprawy',
 'title_org_edit' => 'Zmień organizację:',
 'title_org_list' => 'Lista organizacji:',
@@ -927,12 +953,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_technical_message' => 'Informacja systemowa',
 'title_technical_problem' => 'Problem systemowy',
 'title_upgrade_database' => 'Aktualizacja bazy danych',
-'type' => 'Typ',
 'typo_column' => ':',
-
-
-// V
-'value' => 'Wartość',
 
 
 // W

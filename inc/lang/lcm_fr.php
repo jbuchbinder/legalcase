@@ -2,6 +2,47 @@
 
 // This is a LCM language file  --  Ceci est un fichier langue de LCM
 
+/*
+    To translate LCM, you may translate this file and send it to legalcase-devel@lists.sf.net.
+    You may also use the Web translation system: http://www.lcm.ngo-bg.org/trad-lang/trad_lang.php
+
+    Some translations need help, they are no longuer maintained. You can update them by fixing
+    this file, and sending it to legalcase-devel@lists.sf.net, or use the Web translation system.
+    (Using the web translation system to update translations is highly recommended!)
+
+    Note: Strings with <NEW> are new strings, which have never been translated.
+          Strings with <MODIF> are strings which have been updated in the English translation.
+
+    If you wish to only modify a few strings for local requirements, please
+    read: http://www.lcm.ngo-bg.org/article136.html
+
+    Also please note that translations contributed to the project must have
+    the copyright notice below. As a recognition to the translators work, we
+    add their name to the 'AUTHORS' file and we announce the new translation
+    on our website (unless explicitely requested otherwise).
+
+   -----------------------------------------------------------------------
+
+    This file is part of the Legal Case Management System (LCM).
+    (C) 2004-2006 Free Software Foundation, Inc.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+    $Id: lcm_fr.php,v 1.26 2006/08/16 15:35:51 mlutfy Exp $
+*/ 
+
 $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
@@ -633,9 +674,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_this_way' => 'Vous êtes déjà enregistré... par ici...',
 'login_title_login' => 'Ouverture de session',
 'login_warning_already_exists' => 'Le nom d&rsquo;utilisateur existe déjà.',
-'login_warning_connection_failed' => '<NEW>La connection a échouée.',
-'login_warning_connection_failed1' => '<NEW>Vous vous êtes identifié comme étant <b>@username@</b>, mais cet identifiant n&rsquo;existe plus dans la base de données. Il est fort probable que la base de données du système vient d&rsquo;être rétablie à une version antérieure',
-'login_warning_connection_failed2' => '<NEW>Please try to reconnect.',
 'login_warning_cookie' => '<NEW>Your Web browser did not accept the cookie which is required in order to login.',
 'login_warning_password_change_failed' => 'Échec lors de la modification du nom d&rsquo;utilisateur:',
 'login_warning_password_dont_match' => 'Les mots de passes ne correspondent pas.',
@@ -786,7 +824,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // S
 'save' => '<NEW>Save',
-'siteconf_info_admin_email' => 'Adresse courriel du contact administratif  en cas de problème.',
+'siteconf_info_admin_email' => '<MODIF>Adresse courriel du contact administratif  en cas de problème.',
 'siteconf_info_available_languages' => 'Si vous avez ajouté un nouveau fichier de langue à LCM, ou si vous venez de faire une mise à jour du logiciel et que la liste des langues est incomplète, cliquer sur le bouton &laquo;valider&raquo; afin de rafraîchir la liste de langues disponibles.',
 'siteconf_info_case_fields' => 'Vous pouvez spécifier quelles informations sont exigées ou recommandées pour les dossiers, selon les activités de vorte organisation.',
 'siteconf_info_changes_made' => 'Les configurations suivantes ont été mises à jour:',
@@ -858,7 +896,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'time_input_date_end' => 'Fin:',
 'time_input_date_start' => 'Début:',
 'time_input_date_updated' => 'Mise à jour:',
-'time_input_duration' => 'Durée:',
 'time_input_length' => 'Durée',
 'time_input_time_at' => 'à',
 'time_warning_invalid_format' => 'La valeur saisie n&rsquo;est pas dans un format valide.',

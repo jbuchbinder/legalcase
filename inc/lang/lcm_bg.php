@@ -2,6 +2,47 @@
 
 // This is a LCM language file  --  Ceci est un fichier langue de LCM
 
+/*
+    To translate LCM, you may translate this file and send it to legalcase-devel@lists.sf.net.
+    You may also use the Web translation system: http://www.lcm.ngo-bg.org/trad-lang/trad_lang.php
+
+    Some translations need help, they are no longuer maintained. You can update them by fixing
+    this file, and sending it to legalcase-devel@lists.sf.net, or use the Web translation system.
+    (Using the web translation system to update translations is highly recommended!)
+
+    Note: Strings with <NEW> are new strings, which have never been translated.
+          Strings with <MODIF> are strings which have been updated in the English translation.
+
+    If you wish to only modify a few strings for local requirements, please
+    read: http://www.lcm.ngo-bg.org/article136.html
+
+    Also please note that translations contributed to the project must have
+    the copyright notice below. As a recognition to the translators work, we
+    add their name to the 'AUTHORS' file and we announce the new translation
+    on our website (unless explicitely requested otherwise).
+
+   -----------------------------------------------------------------------
+
+    This file is part of the Legal Case Management System (LCM).
+    (C) 2004-2006 Free Software Foundation, Inc.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+    $Id: lcm_bg.php,v 1.62 2006/08/16 15:35:51 mlutfy Exp $
+*/ 
+
 $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
@@ -13,8 +54,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // A
-'add_and_go_to_details' => 'Добавяне и отиване към детайлите',
-'add_and_open_new' => 'Добавяне и отваряне на нов',
 'add_user_case' => 'Добавяне на потребител към случай',
 'app_button_edit' => 'Редактиране на тази среща',
 'app_button_new' => 'Въвеждане на нова дейност',
@@ -77,12 +116,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_time_interval_absolute' => 'абсолютен (начало - край)',
 'authorconf_input_time_interval_relative' => 'относителен (начало + продължителност)',
 'authorconf_input_time_intervals_notation' => 'Начин на задаване на времевите интервали',
-'authorconf_input_time_intervals_notation_floatdays_floathours_minutes' => 'Дни, часове, цели минути [0÷59]',
-'authorconf_input_time_intervals_notation_floatdays_hours_minutes' => 'Дни, цели часове [0÷23], цели минути [0÷59]',
-'authorconf_input_time_intervals_notation_hours_only' => 'Продължителност в часове',
-'authorconf_input_ui_level' => 'Тип на навигацията',
-'authorconf_input_ui_level_extended' => 'техническа',
-'authorconf_input_ui_level_simple' => 'нормална',
+'authorconf_input_time_intervals_notation_floatdays_hours_minutes' => 'Дни, часове, и минути (отделни полета за всяка стойност)',
+'authorconf_input_time_intervals_notation_hours_only' => 'Продължителност в часове (например: 5 = 5 часа, и 0.2 = 12 минути)',
 'authorconf_input_ui_time' => 'Начин на задаване на времеви интервали:',
 'authorconf_subtitle_advanced' => 'Инструменти за напреднали',
 'authorconf_subtitle_interface' => 'Интерфейс',
@@ -107,10 +142,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'button_delete' => 'Изтриване',
 'button_next' => 'По-нататък',
 'button_reload_page' => 'Презареждане на страницата',
-'button_reset' => 'Изчистване',
 'button_search' => 'Търсене',
 'button_validate' => 'Изпращане',
-'button_view_listfu' => 'Преглед на последните продължения по случаи',
 'button_zoom' => 'увеличаване',
 
 
@@ -143,7 +176,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_info_client_emptylist' => 'Няма клиенти свързани с този случай.',
 'case_info_delete_client' => 'Махане на този клиент от случая.',
 'case_info_delete_org' => 'Махане на тази организация от случая.',
-'case_input_alledged_crime' => 'Предполагаемо престъпление:',
+'case_input_alledged_crime' => '<MODIF>Предполагаемо престъпление:',
 'case_input_author' => 'Потребител:',
 'case_input_authors' => 'Потребители:',
 'case_input_clients' => 'Клиенти:',
@@ -155,7 +188,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_input_date_conclusion' => 'Дата на заключение:',
 'case_input_date_creation' => 'Дата на създаване:',
 'case_input_id' => 'Номер на случая:',
-'case_input_legal_reason' => 'Юридическо основание:',
+'case_input_legal_reason' => '<MODIF>Юридическо основание:',
 'case_input_notes' => 'Бележки:',
 'case_input_option_ac_admin' => 'Администратор на случая',
 'case_input_option_ac_read' => 'Консултиране с информацията за случай',
@@ -198,7 +231,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_subtitle_contacts' => 'Контакти',
 'client_subtitle_organisations' => 'Организации',
 'client_subtitle_view_general' => 'Обща информация',
-'creation_date' => 'Дата на създаване',
 'currency_default_format' => 'лв.',
 'currency_format_placement' => '@money@@currency@',
 'currency_format_seperator_cents' => ',',
@@ -206,7 +238,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // D
-'date' => 'Дата',
 'date_day_1' => '1-ви',
 'date_day_10' => '10-ти',
 'date_day_11' => '11-ти',
@@ -280,7 +311,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_wday_short_5' => 'пт',
 'date_wday_short_6' => 'сб',
 'date_wday_short_7' => 'нд',
-'description' => 'Описание',
 'directories_bad_rights' => 'Следните директории са без право за запис:',
 'directories_bad_rights_cause' => 'Използвайте Вашият клиент за SSH/SFTP, за да промените правата за достъп на тези директории. Процедурата е обяснена в документацията за инсталиране.',
 'directories_continue' => 'След като сте готови, можете да презаредите тази страница.',
@@ -293,13 +323,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // E
 'edit' => 'Редактиране',
 'edit_case_information' => 'Редактиране на информация по случая',
-'edit_filter_details' => 'Редактиране на настройките на филтър',
 'error_add_auth_no_rights' => 'Нямате право да добавяте права за достъп за този случай!',
 'error_no_case_specified' => 'Не е указан случай',
 'error_no_edit_permission' => 'Нямате права да редактирате този случай!',
 'error_no_read_permission' => 'Нямате права да разглеждате този случай!',
-'error_no_such_case' => 'Няма такъв случай!',
-'error_no_such_user' => 'Няма такъв потребител в базата за данни. Как влязохте?',
 'expense_button_comment' => '<NEW>Add a comment',
 'expense_button_edit' => '<NEW>Edit request',
 'expense_button_new' => '<NEW>New request',
@@ -335,9 +362,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'file_size_info_gbytes' => '@size@ ГБ',
 'file_size_info_kbytes' => '@size@ КБ',
 'file_size_info_mbytes' => '@size@ МБ',
-'filter_id' => 'Идентификатор на филтър',
-'filter_title' => 'Наименование',
-'filter_type' => 'Логика на условията',
 'format_date_full' => '@day_name@, @day@ @month_name@ @year@&nbsp;г.',
 'format_date_short' => '@day@ @month_short@ @year@&nbsp;г.',
 'format_datetime_full' => '@day_name@, @day@ @month_name@ @year@&nbsp;г., @hours@:@mins@&nbsp;ч.',
@@ -400,7 +424,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'help_intro_case_list' => 'Списък със случаите, върху които работите. Можете да щракнете с мишката върху наименование на случай от списъка по-долу, за да получите повече информация. Можете да ограничите списъка със случаите по определени критерии като използвате филтрите.',
 'help_intro_client_list' => 'Списък с всички клиенти, които са регистрирани в системата. Можете да щракнете с мишката върху име на клиент, за да видите повече информация. Можете да регистрирате нов клиент с бутона отдолу.',
 'help_intro_expenses_list' => '<NEW>List of internal requests, such as requests to cover expenses related to a case, which are waiting for approval from office administrators or have recently been approved. You can click on the expense description in the list below to view more information about it.',
-'help_intro_keyword_list' => 'Ключовите думи се използват, за да настроите системата според Вашия начин на работа. Обикновено те се отнасят до статистическа информация, затова те предлагат ограничени по брой алтернативи за избор. „Системните“ ключови думи се използват в някои модули на програмата, като: видове продължения, контакти или срещи. „Потребителските“ ключови думи могат да бъдат използвани, за да се добавят нови статистически полета към някои елементи на системата като случаи, клиенти, организации.',
+'help_intro_keyword_list' => '<MODIF>Ключовите думи се използват, за да настроите системата според Вашия начин на работа. Обикновено те се отнасят до статистическа информация, затова те предлагат ограничени по брой алтернативи за избор. „Системните“ ключови думи се използват в някои модули на програмата, като: видове продължения, контакти или срещи. „Потребителските“ ключови думи могат да бъдат използвани, за да се добавят нови статистически полета към някои елементи на системата като случаи, клиенти, организации.',
 'help_intro_org_list' => 'Списък с всички организации, които са регистрирани в системата. Можете да щракнете с мишката върху име на организация, за да видите повече информация. Можете да регистрирате нова организация с бутона отдолу.',
 'help_title_about' => 'Относно ...',
 'help_title_about_contrib' => 'Сътрудници',
@@ -428,11 +452,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'help_title_install_permissions' => 'Задаване на правата за достъп до директориите',
 'help_title_install_personal' => 'Лични данни',
 'help_title_installation' => 'Инсталация',
-'help_title_keywords' => 'Ключови думи',
+'help_title_keywords' => '<MODIF>Ключови думи',
 'help_title_keywords_intro' => 'Въведение',
-'help_title_keywords_new' => 'Създаване на нова ключова дума',
-'help_title_keywords_new_group' => 'Създаване на нова група ключови думи',
-'help_title_keywords_remove' => 'Премахване на ключова дума',
+'help_title_keywords_new' => '<MODIF>Създаване на нова ключова дума',
+'help_title_keywords_new_group' => '<MODIF>Създаване на нова група ключови думи',
+'help_title_keywords_remove' => '<MODIF>Премахване на ключова дума',
 'help_title_reports' => 'Отчети',
 'help_title_reports_edit' => 'Настройване на отчет',
 'help_title_reports_intro' => 'Въведение',
@@ -465,8 +489,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_upgrade_database3' => 'Успешно обновяване на базата за данни.',
 'info_upgrade_database5' => 'Щракнете с мишката тук, за да отидете на основната страница.',
 'info_yes' => 'да',
-'info_yes_mandatory' => '<NEW>yes (mandatory)',
-'info_yes_optional' => '<NEW>yes (optional)',
+'info_yes_mandatory' => 'да (задължително)',
+'info_yes_optional' => 'да (но не е задължително)',
 'info_your_contact_information' => 'Информацията за контакт с Вас ...',
 'input_connection_identifiers' => 'Идентификация на Вашата връзка ...',
 'input_email' => 'Адрес на ел. поща:',
@@ -502,7 +526,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_step_three' => 'Трета стъпка:',
 'install_step_two' => 'Втора стъпка:',
 'install_title_admin_account' => 'Лична информация за административен достъп',
-'install_title_connection_attempt' => 'Опит за свързване към базата за данни',
 'install_title_creating_database' => 'Създаване на таблиците в базата за данни',
 'install_title_installation_start' => 'Инсталация на софтуера за управление на юридически случаи',
 'install_title_select_database' => 'Избор на базата за данни',
@@ -511,21 +534,22 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_warning_no_databases_1' => 'Инсталаторът не успя да прочете имената на наличните бази за данни.',
 'install_warning_no_databases_2' => 'Или въобще няма бази за данни, които да се достъпят, или е забранено да се изброят наличните бази за данни поради причини свързани със сигурността (това е често срещан случай).',
 'install_warning_no_databases_3' => 'Във втория случай е вероятно да имате достъп до база за данни с име, което съвпада с потребителското Ви име:',
-'install_warning_nonfatal_sql_errors' => 'Имаше предупредителни съобщения по време на инсталация или обновяване на базата за данни. Възможно е да не са фатални. Грешки като „Table already exists“ може спокойно да бъдат игнорирани. Грешки като „Syntax errors“ представляват най-вероятно програмни грешки и трябва да бъдат докладвани на екипа разработващ LCM ([lcm-devel@lists.sourceforge.net->mailto:lcm-devel@lists.sourceforge.net]).',
 'install_warning_update_impossible' => '<b>Предупреждение!</b> Неуспех при обновяване на базата за данни от версия @old_version@ към версия @version@. Най-вероятната причина е проблем с правата на достъп. Свържете се с администратора. Отдолу е дадено пълно техническо описание на възможните грешки.',
 
 
 // K
-'keywords_button_kw_new' => 'Добавяне на нова ключова дума към тази група',
-'keywords_button_kwg_new' => 'Създаване на нова група ключови думи',
+'keywords_button_kw_new' => '<MODIF>Добавяне на нова ключова дума към тази група',
+'keywords_button_kwg_edit' => '<NEW>Modify field group',
+'keywords_button_kwg_new' => '<MODIF>Създаване на нова група ключови думи',
+'keywords_button_subkwg_new' => '<NEW>Create a new sub-group',
 'keywords_info_kw_ac_author' => 'Могат ли потребителите да ползват тази ключова дума? (ако не могат, тя ще бъде скрита)',
 'keywords_info_kw_hidden' => 'скрита',
 'keywords_info_kwg_ac_author' => 'Могат ли потребителите да ползват тази група ключови думи? (ако не могат, те ще бъдат скрити)',
 'keywords_info_kwg_hidden' => '(скрити)',
-'keywords_info_maintenance' => 'Възможно е да е възникнал проблем между две последователни обновявания на LCM свързан с групите ключови думи. За да накарате групите с ключови думи да се обновят, натиснете бутона отдолу. Това няма да засегне текущите настройки.',
+'keywords_info_maintenance' => '<MODIF>Възможно е да е възникнал проблем между две последователни обновявания на LCM свързан с групите ключови думи. За да накарате групите с ключови думи да се обновят, натиснете бутона отдолу. Това няма да засегне текущите настройки.',
 'keywords_info_quantity' => 'Потребителите могат да изберат @quantity@ обект/а от тази група в дадена ситуация (случай, продължение, и т.н.)',
 'keywords_input_description' => 'Описание:',
-'keywords_input_for_group' => 'В коя група ключови думи е:',
+'keywords_input_for_group' => '<MODIF>В коя група ключови думи е:',
 'keywords_input_name' => 'Код:',
 'keywords_input_policy' => 'Политика за въвеждане:',
 'keywords_input_policy_mandatory' => 'задължителна',
@@ -537,17 +561,19 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'keywords_input_type_case' => 'случаи',
 'keywords_input_type_client' => 'клиенти',
 'keywords_input_type_client_org' => 'клиенти и организации',
+'keywords_input_type_contact' => '<NEW>Contacts',
 'keywords_input_type_followup' => 'продължения',
 'keywords_input_type_org' => 'организации',
 'keywords_input_type_stage' => 'Стадий',
 'keywords_input_type_system' => 'системата',
-'keywords_option_quantity_many' => 'много ключови думи',
-'keywords_option_quantity_one' => 'една ключова дума',
+'keywords_option_quantity_many' => '<MODIF>много ключови думи',
+'keywords_option_quantity_one' => '<MODIF>една ключова дума',
+'keywords_tab_contact' => '<NEW>Contact types',
 'keywords_tab_maintenance' => 'Поддръжка',
-'keywords_tab_system' => 'Системни ключови думи',
-'keywords_tab_user' => 'Потребителски ключови думи',
-'keywords_warning_kw_code_exists' => 'Кодът вече е зает от друга ключова дума в същата група.',
-'keywords_warning_kwg_code_exists' => 'Кодът вече е зает от друга ключова група.',
+'keywords_tab_system' => '<MODIF>Системни ключови думи',
+'keywords_tab_user' => '<MODIF>Потребителски ключови думи',
+'keywords_warning_kw_code_exists' => '<MODIF>Кодът вече е зает от друга ключова дума в същата група.',
+'keywords_warning_kwg_code_exists' => '<MODIF>Кодът вече е зает от друга ключова група.',
 'kw__crimresults_none_title' => 'без резултат',
 'kw__crimresults_res001_title' => 'присъда',
 'kw__crimresults_res002_title' => 'решение',
@@ -622,8 +648,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kwg_appointments_title' => 'Срещи',
 'kwg_civilstatus_title' => 'Гражданско състояние',
 'kwg_conclusion_title' => 'Заключение на случая',
-'kwg_contacts_title' => 'Ключови думи за контакти',
-'kwg_followups_title' => 'Ключови думи за продължения',
+'kwg_contacts_title' => '<MODIF>Ключови думи за контакти',
+'kwg_followups_title' => '<MODIF>Ключови думи за продължения',
 'kwg_income_title' => 'Доход',
 'kwg_sentence_title' => 'Присъда',
 'kwg_stage_title' => 'Фаза на случая',
@@ -649,9 +675,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_this_way' => 'Регистрацията е успешна... сега насам...',
 'login_title_login' => 'Потребителско име',
 'login_warning_already_exists' => 'Това потребителско име вече е заето.',
-'login_warning_connection_failed' => 'Неуспешно свързване.',
-'login_warning_connection_failed1' => 'Идентифицирали сте се с потребителското име <b>@username@</b>, но то (вече) не съществува в базата за данни. Възможно е възстановяване от архивно копие да го е променило.',
-'login_warning_connection_failed2' => 'Опитайте да се свържете отново.',
 'login_warning_cookie' => 'Вашият браузър не прие бисквитката, а тя е необходима, за да се свържете.',
 'login_warning_password_change_failed' => 'Неуспех при смяната на потребителското име:',
 'login_warning_password_dont_match' => 'Паролите не съвпадат.',
@@ -663,8 +686,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_admin_archives' => 'Архиви',
 'menu_admin_archives_tooltip' => 'Административен панел с инструменти за архивиране на системата.',
 'menu_admin_filters' => 'Филтри',
-'menu_admin_keywords' => 'Ключови думи',
-'menu_admin_keywords_tooltip' => 'Административен панел за ключовите думи.',
+'menu_admin_keywords' => '<MODIF>Ключови думи',
+'menu_admin_keywords_tooltip' => '<MODIF>Административен панел за ключовите думи.',
 'menu_admin_reports' => 'Отчети',
 'menu_admin_reports_tooltip' => 'Административен панел за създаване и генериране на отчети по дейността.',
 'menu_admin_siteconf' => 'Настройки на сайта',
@@ -711,10 +734,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
 // P
-'parameter' => 'Параметър',
 'pass_back_to_site' => 'Обратно към входа към сайта',
 'pass_close_this_window' => 'Затваряне на прозореца',
-'pass_enter_name_and_email' => 'Попълнете тук името си и адреса на електронна  си поща. Ще получите информация за идентификация след малко.',
 'pass_enter_new_pass' => 'Изберете нова парола',
 'pass_info_automated_msg' => '(това съобщение е изпратено автоматично)',
 'pass_info_enter_email' => 'Попълнете по-долу адреса на електронна поща, с който вече сте се регистрирали. Ще получите писмо, в което е обяснено как да отново да получите достъп.',
@@ -781,7 +802,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'rep_filter_text_eq' => '=',
 'rep_filter_text_neq' => '!=',
 'rep_info_select_source_first' => 'За да приложите филтри, трябва първо да изберете съдържание, което ще се използва за редовете и колоните на отчета.',
-'rep_info_source_keyword' => 'Ключова дума:',
+'rep_info_source_keyword' => '<MODIF>Ключова дума:',
 'rep_info_source_table' => 'Таблица:',
 'rep_info_table_lcm_author' => 'Потребител',
 'rep_info_table_lcm_case' => 'Случай',
@@ -805,7 +826,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // S
 'save' => 'записано',
-'siteconf_info_admin_email' => 'Адресът на ел. поща за връзка за заявки към администраторите или за докладване на проблеми. Това може да е адресът на пощенски списък.',
+'siteconf_info_admin_email' => 'Адресът на ел. поща за връзка за заявки към администраторите или за докладване на проблеми.',
 'siteconf_info_available_languages' => 'Ако сте добавили нов превод към LCM или сте обновили софтуера, но не се показват всички преводи, натиснете бутона отдолу, за да обновите списъка с наличните преводи.',
 'siteconf_info_case_fields' => 'Можете да конфигурирате какъв вид информация да се съхранява за всеки отделен случай. Това зависи най-вече от дейността на Вашата организация.',
 'siteconf_info_changes_made' => 'Следните настройки са обновени:',
@@ -834,12 +855,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_access_write_global_no' => 'Не! Всеки потребител работещ по случай с права за „редактиране“ да може да промяна достъпа за четене.',
 'siteconf_input_access_write_global_yes' => 'Да! Само администраторите да могат да променят достъпа за четене.',
 'siteconf_input_admin_email' => 'Адрес на ел. поща на администратора:',
-'siteconf_input_alledged_crime' => 'Предполагаемо престъпление',
-'siteconf_input_assignment_date' => 'Дата на задаване',
 'siteconf_input_available_languages' => 'Обновяване на списъка с наличните преводи:',
 'siteconf_input_case_allow_modif' => 'Да се позволи ли информацията за случай да се променя от потребителите след въвеждането й?',
 'siteconf_input_citizen_number' => 'ЕГН/ЛНЧ (само за клиенти)',
-'siteconf_input_civil_status' => 'Гражданско състояние',
 'siteconf_input_client_income' => 'Доход',
 'siteconf_input_court_archive' => 'Номер на дело в съда',
 'siteconf_input_currency' => 'Парична единица:',
@@ -853,7 +871,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_site_address' => 'Интернет или мрежови адрес:',
 'siteconf_input_site_desc' => 'Описание на сайта:',
 'siteconf_input_site_name' => 'Име на сайта:',
-'siteconf_input_sum_billed' => 'Начислена такса',
 'siteconf_subtitle_case_fields' => 'Случаи',
 'siteconf_subtitle_client_fields' => 'Клиенти и потребители',
 'siteconf_subtitle_collab_work' => 'Съвместна работа',
@@ -881,7 +898,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'time_input_date_end' => 'Край:',
 'time_input_date_start' => 'Начало:',
 'time_input_date_updated' => '<NEW>Updated:',
-'time_input_duration' => 'Продължителност:',
 'time_input_length' => 'Продължителност:',
 'time_input_time_at' => 'на',
 'time_warning_invalid_format' => 'Интервалът от време не е валиден.',
@@ -916,10 +932,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_fu_edit' => 'Редактиране на продължение',
 'title_fu_new' => 'Ново продължение',
 'title_fu_view' => 'Подробна информация за продължение',
-'title_keyword_edit' => 'Редактиране на ключова дума',
-'title_keyword_new' => 'Нова ключова дума',
-'title_kwg_edit' => 'Редактиране на група от ключови думи',
-'title_kwg_new' => 'Нова група от ключови думи',
+'title_keyword_edit' => '<MODIF>Редактиране на ключова дума',
+'title_keyword_new' => '<MODIF>Нова ключова дума',
+'title_kwg_edit' => '<MODIF>Редактиране на група от ключови думи',
+'title_kwg_new' => '<MODIF>Нова група от ключови думи',
 'title_my_cases' => 'Моите случаи',
 'title_org_edit' => 'Редактиране на организация:',
 'title_org_list' => 'Списък с организации',
@@ -937,12 +953,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_technical_message' => 'Техническо съобщение',
 'title_technical_problem' => 'Технически проблем',
 'title_upgrade_database' => 'Обновяване на базата за данни',
-'type' => 'Вид',
 'typo_column' => ':',
-
-
-// V
-'value' => 'Стойност',
 
 
 // W

@@ -2,6 +2,47 @@
 
 // This is a LCM language file  --  Ceci est un fichier langue de LCM
 
+/*
+    To translate LCM, you may translate this file and send it to legalcase-devel@lists.sf.net.
+    You may also use the Web translation system: http://www.lcm.ngo-bg.org/trad-lang/trad_lang.php
+
+    Some translations need help, they are no longuer maintained. You can update them by fixing
+    this file, and sending it to legalcase-devel@lists.sf.net, or use the Web translation system.
+    (Using the web translation system to update translations is highly recommended!)
+
+    Note: Strings with <NEW> are new strings, which have never been translated.
+          Strings with <MODIF> are strings which have been updated in the English translation.
+
+    If you wish to only modify a few strings for local requirements, please
+    read: http://www.lcm.ngo-bg.org/article136.html
+
+    Also please note that translations contributed to the project must have
+    the copyright notice below. As a recognition to the translators work, we
+    add their name to the 'AUTHORS' file and we announce the new translation
+    on our website (unless explicitely requested otherwise).
+
+   -----------------------------------------------------------------------
+
+    This file is part of the Legal Case Management System (LCM).
+    (C) 2004-2006 Free Software Foundation, Inc.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+    $Id: lcm_en.php,v 1.122 2006/08/16 15:35:51 mlutfy Exp $
+*/ 
+
 $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
