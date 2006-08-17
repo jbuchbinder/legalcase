@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_generic.php,v 1.3 2006/04/20 11:17:08 antzi Exp $
+	$Id: inc_obj_generic.php,v 1.4 2006/08/17 14:10:51 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -60,6 +60,20 @@ class LcmObject {
 			lcm_panic("Value does not exist.");
 
 		return $default;
+	}
+
+	function setDataInt($field, $value) {
+		if ((! is_integer($value)) || $value != intval($value))
+			lcm_panic("Incorrect format: value is not an integer.");
+
+		$this->data[$field] = $value;
+	}
+
+	function setDataString($field, $value) {
+		if (! is_string($value))
+			lcm_panic("Incorrect format: value is not a string.");
+
+		$this->data[$field] = $value;
 	}
 }
 
