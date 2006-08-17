@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: archive.php,v 1.20 2006/04/21 19:36:23 mlutfy Exp $
+	$Id: archive.php,v 1.21 2006/08/17 15:44:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -59,7 +59,7 @@ show_find_box('case', $find_case_string, '__self__');
 $case_list = new LcmCaseListUI();
 
 $case_list->setSearchTerm($find_case_string);
-$case_list->setFilterOwner('all'); // force filter
+$case_list->setData('owner', 'all'); // force filter
 
 $case_list->start();
 $case_list->printList();
