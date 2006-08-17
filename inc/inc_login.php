@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.33 2006/05/04 06:32:36 mlutfy Exp $
+	$Id: inc_login.php,v 1.34 2006/08/17 15:43:27 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -63,10 +63,8 @@ function close_login() {
 function show_login($cible, $prive = 'prive', $message_login='') {
 
 	$error = '';
-	$login = (isset($_REQUEST['var_login']) ? $_REQUEST['var_login'] : '');
-	// [ML] useless 
-	// $essai_auth_http = (isset($GLOBALS['var_essai_auth_http']) ? $GLOBALS['var_essai_auth_http'] : '');
-	$logout = (isset($_REQUEST['var_logout']) ? $_REQUEST['var_logout'] : '');
+	$login = _request('var_login');
+	$logout = _request('var_logout');
 
 	// If the cookie fails, inc_auth tried to redirect to lcm_cookie who
 	// then tried to put a cookie. If it is not there, it is "cookie failed"
@@ -74,19 +72,15 @@ function show_login($cible, $prive = 'prive', $message_login='') {
 	// a cookie failure.
 	$cookie_failed = "";
 
-	if (isset($_REQUEST['var_cookie_failed']))
+	if (_request('var_cookie_failed'))
 		$cookie_failed = ($_COOKIE['lcm_session'] != 'cookie_test_failed');
 
 	global $author_session;
 	global $lcm_session;
 	global $clean_link;
 
-	if (!$cible) { // cible = destination
-		if (isset($_REQUEST['var_url']) && $_REQUEST['var_url'])
-			$cible = new Link($_REQUEST['var_url']);
-		else 
-			$cible = new Link('index.php');
-	}
+	if (!$cible) // cible = destination
+		$cible = new Link(_request('var_url', 'index.php'));
 
 	$cible->delVar('var_erreur');
 	$cible->delVar('var_url');
@@ -113,7 +107,7 @@ function show_login($cible, $prive = 'prive', $message_login='') {
 		return;
 	}
 
-	if (isset($_REQUEST['var_erreur']) && $_REQUEST['var_erreur'] == 'pass')
+	if (_request('var_erreur') == 'pass')
 		$error = _T('login_password_incorrect');
 
 	// The login is memorized in the cookie for a possible future admin login
