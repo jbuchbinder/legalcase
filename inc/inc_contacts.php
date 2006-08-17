@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.36 2006/08/17 14:10:20 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.37 2006/08/17 15:21:49 mlutfy Exp $
 */
 
 
@@ -247,10 +247,12 @@ function show_existing_contact($c, $num) {
 		. '"/>';
 	echo f_err('email') . "";
 
-	echo '<label for="id_del_contact' . $num . '">';
-	echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="' . _T('generic_info_delete_contact') . '" title="' . _T('generic_info_delete_contact') . '" />';
-	echo '</label>';
-	echo '&nbsp;<input type="checkbox" id="id_del_contact' . $num . '" name="del_contact_' . $c['id_contact'] . '"/>';
+	if ($c['policy'] != 'mandatory') {
+		echo '<label for="id_del_contact' . $num . '">';
+		echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="' . _T('generic_info_delete_contact') . '" title="' . _T('generic_info_delete_contact') . '" />';
+		echo '</label>';
+		echo '&nbsp;<input type="checkbox" id="id_del_contact' . $num . '" name="del_contact_' . $c['id_contact'] . '"/>';
+	}
 
 	echo "</td>\n</tr>\n\n";
 }
@@ -413,6 +415,8 @@ function show_all_contacts($type_person, $id_of_person) {
 }
 
 function update_contacts_request($type_person, $id_of_person) {
+	// This will be useful later, to check mandatory/optional contacts
+	$all_contact_kwg = get_kwg_all('contact');
 
 	//
 	// Update existing contacts
@@ -439,7 +443,8 @@ function update_contacts_request($type_person, $id_of_person) {
 		}
 
 		for ($cpt = 0; isset($c_ids[$cpt]); $cpt++) {
-			if (isset($_REQUEST['del_contact_' . $c_ids[$cpt]]) && $_REQUEST['del_contact_' . $c_ids[$cpt]]) {
+			if (_request('del_contact_' . $c_ids[$cpt])) {
+				// TODO: Check first to see if the contact is mandatory
 				lcm_debug("Contact DEL: $type_person, $id_of_person, " . $c_ids[$cpt], 1);
 				delete_contact($c_ids[$cpt]);
 			} else {
@@ -482,7 +487,6 @@ function update_contacts_request($type_person, $id_of_person) {
 	//
 	// Check if all mandatory contacts were provided
 	//
-	$all_contact_kwg = get_kwg_all('contact');
 	$all_contacts = get_contacts($type_person, $id_of_person);
 	
 	foreach ($all_contact_kwg as $c) {
@@ -490,7 +494,7 @@ function update_contacts_request($type_person, $id_of_person) {
 			$found = false;
 
 			foreach ($all_contacts as $a)
-				if ($a['name'] == $c['name'])
+				if ($a['name'] == $c['name'] && trim($a['value']))
 					$found = true;
 			
 			if (! $found)
