@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.35 2006/08/15 20:49:39 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.36 2006/08/17 14:10:20 mlutfy Exp $
 */
 
 
@@ -275,9 +275,10 @@ function show_new_contact($num_new, $type_person, $ctype = "__add__", $exception
 	if ($ctype == "__add__") {
 		echo _Ti('generic_input_contact_other');
 	} else {
-		$c = $all_contact_types[$ctype];
+		$c = get_kwg_from_name($ctype);
+
 		echo f_err_star('contact_' . $c['name']);
-		echo _Ti($c['title']);
+		echo _Ti(remove_number_prefix($c['title']));
 		echo ($c['policy'] != 'optional' ? '<br/>(' . _T('keywords_input_policy_' . $c['policy']) . ')' : '');
 	}
 
@@ -285,24 +286,15 @@ function show_new_contact($num_new, $type_person, $ctype = "__add__", $exception
 	echo '<td align="left" valign="top">';
 
 
-	// [ML] clean this.. one day...
-	// It avoids that the values in these fields get lost when there is an error after submitting the form
+	// Avoids that the values in these fields get lost when there is an error after submitting the form
 	$value = '';
 	$type = '';
 
-	if ($type_person == 'client' || $type_person == 'org') {
-		if (isset($_SESSION['form_data']['new_contact_type_name'][$num_new]))
-			$type = $_SESSION['form_data']['new_contact_type_name'][$num_new];
+	if (isset($_SESSION['form_data']['new_contact_type_name'][$num_new]))
+		$type = $_SESSION['form_data']['new_contact_type_name'][$num_new];
 
-		if (isset($_SESSION['form_data']['new_contact_value'][$num_new]))
-			$value = $_SESSION['form_data']['new_contact_value'][$num_new];
-	} else if ($type_person == 'author') { // TODO, change usr to 'form_data' in edit_user.php et al
-		if ($_SESSION['usr']['new_contact_type_name'][$num_new])
-			$type = $_SESSION['usr']['new_contact_type_name'][$num_new];
-
-		if ($_SESSION['usr']['new_contact_value'][$num_new])
-			$value = $_SESSION['usr']['new_contact_value'][$num_new];
-	}
+	if (isset($_SESSION['form_data']['new_contact_value'][$num_new]))
+		$value = $_SESSION['form_data']['new_contact_value'][$num_new];
 
 	if ($ctype == "__add__") {
 		echo "<div>\n";
