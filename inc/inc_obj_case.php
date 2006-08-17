@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.19 2006/08/11 19:47:25 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.20 2006/08/17 14:11:37 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -823,21 +823,21 @@ class LcmCaseInfoUI extends LcmCase {
 	}
 }
 
-class LcmCaseListUI {
+class LcmCaseListUI extends LcmObject {
 	var $list_pos;
 	var $number_of_rows;
 
-	// filters
+	// filters (other smaller details are set in LcmObjet's data)
 	var $search;
 	var $date_start;
 	var $date_end;
-	var $owner;
 
 	function LcmCaseList() {
+		$this->LcmObject();
+
 		$this->search = '';
 		$this->date_start = '';
 		$this->date_end = '';
-		$this->owner = '';
 
 		$this->list_pos = intval(_request('list_pos', 0));
 		$this->number_of_rows = 0;
@@ -853,10 +853,6 @@ class LcmCaseListUI {
 
 		if ($end && $end != -1)
 			$this->date_end = $end;
-	}
-
-	function setFilterOwner($type) {
-		$this->owner = $type;
 	}
 
 	function start() {
@@ -893,20 +889,29 @@ class LcmCaseListUI {
 		}
 
 		//
-		// Case owner
+		// Case owner: may be used by listcases.php, archives.php, author_det.php, etc.
+		// Also, it may be a user checking another user's profile (in that case, show only public cases)
+		// or it may be an admin checking another user's profile. etc.
 		//
-
-		// always include 'my' cases
 		global $author_session;
-		$q_owner = " (a.id_author = " . $author_session['id_author'];
 
-		if ($prefs['case_owner'] == 'public')
-			$q_owner .= " OR c.public = 1";
+		$owner_filter = $this->getDataString('owner', $prefs['case_owner']);
+		$owner_id     = $this->getDataInt('id_author', $author_session['id_author']);
 
-		if ($author_session['status'] == 'admin' && $prefs['case_owner'] == 'all')
-			$q_owner .= " OR 1=1 ";
-		elseif ($author_session['status'] == 'admin' && $this->owner == 'all')
-			$q_owner .= " OR 1=1 "; // for archive.php
+		$q_owner = " (a.id_author = " . $owner_id;
+
+		if ($owner_id == $author_session['id_author']) {
+			// Either in listcases, or user looking at his page in author_det
+			if ($owner_filter == 'public')
+				$q_owner .= " OR c.public = 1";
+
+			if ($author_session['status'] == 'admin' && $owner_filter == 'all')
+				$q_owner .= " OR 1=1 ";
+		} else {
+			// If not an admin, show only public cases of that user
+			if ($author_session['status'] != 'admin')
+				$q_owner .= " AND c.public = 1";
+		}
 
 		$q_owner .= " ) ";
 		$q .= " AND " . $q_owner; 
