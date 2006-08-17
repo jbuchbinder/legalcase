@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.31 2006/08/15 20:31:49 mlutfy Exp $
+	$Id: author_det.php,v 1.32 2006/08/17 15:46:33 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -66,7 +66,7 @@ function get_date_range_fields() {
 }
 
 global $prefs;
-$author = intval($_REQUEST['author']);
+$author = intval(_request('author'));
 
 if (! ($author > 0)) {
 	lcm_header("Location: listauthors.php");
@@ -156,6 +156,9 @@ lcm_page_start(_T('title_author_view') . ' ' . $fullname, '', '', 'authors_intro
 			case 'cases':
 				include_lcm('inc_obj_case');
 
+				// Note: If the user is looking at his/her cases, then list only those
+				// If a user is looking at another users's cases, then list only public cases
+				// If the admin is looking at another users's cases, then show all
 				show_page_subtitle(_T('author_subtitle_cases', array('author' => get_person_name($author_data)), 'cases_participants'));
 
 				$foo = get_date_range_fields();
@@ -163,8 +166,12 @@ lcm_page_start(_T('title_author_view') . ' ' . $fullname, '', '', 'authors_intro
 
 				$case_list = new LcmCaseListUI();
 
-				// $case_list->setSearchTerm($find_case_string); // There is no UI for this at the moment
+				if (($find_case_string = _request('find_case_string')))
+					$case_list->setSearchTerm($find_case_string); // There is no UI for this at the moment XXX test
+
 				$case_list->setDateInterval($foo['date_start'], $foo['date_end']);
+				$case_list->setDataInt('id_author', $author);
+				$case_list->setDataString('owner', 'my');
 
 				$case_list->start();
 				$case_list->printList();
@@ -438,7 +445,7 @@ lcm_page_start(_T('title_author_view') . ' ' . $fullname, '', '', 'authors_intro
 				$number_of_rows = lcm_num_rows($result);
 				if ($number_of_rows) {
 					$headers = array( array( 'title' => _Th('time_input_date_start'), 'order' => 'order', 'default' => 'DESC'),
-							array( 'title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ), 'order' => 'no_order'),
+							array( 'title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length') ), 'order' => 'no_order'),
 							array( 'title' => _Th('app_input_type'), 'order' => 'no_order'),
 							array( 'title' => _Th('app_input_title'), 'order' => 'no_order'));
 							// array( 'title' => _Th('app_input_reminder'), 'order' => 'no_order'));

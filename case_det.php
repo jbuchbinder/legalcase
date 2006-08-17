@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.174 2006/08/11 19:56:37 mlutfy Exp $
+	$Id: case_det.php,v 1.175 2006/08/17 15:46:13 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -260,7 +260,7 @@ if (! ($case > 0)) {
 				$number_of_rows = lcm_num_rows($result);
 				if ($number_of_rows) {
 					$headers = array( array('title' => _Th('time_input_date_start')),
-							array('title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_duration') ) ),
+							array('title' => ( ($prefs['time_intervals'] == 'absolute') ? _Th('time_input_date_end') : _Th('time_input_length') ) ),
 							array('title' => _Th('app_input_type')),
 							array('title' => _Th('app_input_title')),
 							array('title' => _Th('app_input_reminder')) );
