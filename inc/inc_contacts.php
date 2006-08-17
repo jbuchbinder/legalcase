@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.37 2006/08/17 15:21:49 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.38 2006/08/17 15:40:48 mlutfy Exp $
 */
 
 
@@ -443,16 +443,34 @@ function update_contacts_request($type_person, $id_of_person) {
 		}
 
 		for ($cpt = 0; isset($c_ids[$cpt]); $cpt++) {
-			if (_request('del_contact_' . $c_ids[$cpt])) {
-				// TODO: Check first to see if the contact is mandatory
-				lcm_debug("Contact DEL: $type_person, $id_of_person, " . $c_ids[$cpt], 1);
-				delete_contact($c_ids[$cpt]);
-			} else {
-				lcm_debug("Contact UPD: $type_person, $id_of_person, " . $c_ids[$cpt] . ' = ' . $contacts[$cpt], 1);
-				$err = update_contact($c_ids[$cpt], $contacts[$cpt]);
+			// Check first to see if the contact is mandatory
+			$kwg = get_kwg_from_id($c_types[$cpt]);
+			$delete_allowed = true;
 
-				if ($err)
-					$_SESSION['errors']['upd_contact_' . $cpt] = $err;
+			if ($kwg['policy'] == 'mandatory') {
+				// XXX Having policy == 'mandatory' but quantity = many
+				// really makes a mess, and is not handled.
+
+				$delete_allowed = false;
+			}
+
+			if (_request('del_contact_' . $c_ids[$cpt])) {
+				if ($delete_allowed) {
+					lcm_debug("Contact DEL: $type_person, $id_of_person, " . $c_ids[$cpt], 1);
+					delete_contact($c_ids[$cpt]);
+				} else {
+					$_SESSION['errors']['upd_contact_' . $cpt] = _T('warning_field_mandatory');
+				}
+			} else {
+				if ((! $delete_allowed) && (! $contacts[$cpt])) {
+					$_SESSION['errors']['upd_contact_' . $cpt] = _T('warning_field_mandatory');
+				} else {
+					lcm_debug("Contact UPD: $type_person, $id_of_person, " . $c_ids[$cpt] . ' = ' . $contacts[$cpt], 1);
+					$err = update_contact($c_ids[$cpt], $contacts[$cpt]);
+
+					if ($err)
+						$_SESSION['errors']['upd_contact_' . $cpt] = $err;
+				}
 			}
 		}
 	}
