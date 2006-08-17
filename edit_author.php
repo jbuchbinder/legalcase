@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_author.php,v 1.42 2006/08/15 20:31:49 mlutfy Exp $
+	$Id: edit_author.php,v 1.43 2006/08/17 14:05:53 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -27,7 +27,7 @@ include_lcm('inc_contacts');
 
 global $author_session;
 $user = array(); // form data
-$author = intval($_GET['author']);
+$author = intval(_request('author'));
 
 $statuses = array('admin', 'normal', 'external', 'trash'); // , 'suspended'
 
@@ -36,8 +36,8 @@ if ($meta_subscription == 'moderated' || $meta_subscription == 'yes')
 	array_push($statuses, 'waiting');
 
 // Set the returning page
-if (isset($_REQUEST['ref']))
-	$user['ref_edit_author'] = $ref;
+if (_request('ref'))
+	$user['ref_edit_author'] = _request('ref');
 else
 	$user['ref_edit_author'] = $GLOBALS['HTTP_REFERER'];
 
@@ -69,8 +69,8 @@ if ($existing) {
 }
 
 // Fetch values that caused errors to show them with the error message
-if (isset($_SESSION['usr']))
-	foreach($_SESSION['usr'] as $key => $value)
+if (isset($_SESSION['form_data']))
+	foreach($_SESSION['form_data'] as $key => $value)
 		$user[$key] = $value;
 
 // Start the page with the proper title
@@ -243,6 +243,7 @@ lcm_page_end();
 
 // Reset error messages
 $_SESSION['errors'] = array();
-$_SESSION['usr'] = array();
+$_SESSION['form_data'] = array();
+$_SESSION['usr'] = array(); // DEPRECATED 0.7.1
 
 ?>
