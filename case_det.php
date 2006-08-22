@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.175 2006/08/17 15:46:13 mlutfy Exp $
+	$Id: case_det.php,v 1.176 2006/08/22 17:56:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -229,7 +229,7 @@ if (! ($case > 0)) {
 				// it is part of the "general" tab
 				echo '<a name="followups"></a>' . "\n";
 
-				$obj_case_ui = new LcmCaseInfoUI($row['id_case']);
+				$obj_case_ui = new LcmCaseInfoUI($case);
 				$obj_case_ui->printFollowups(true);
 
 				if ($add) {
