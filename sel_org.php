@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,13 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_org.php,v 1.8 2005/03/18 09:48:13 mlutfy Exp $
+	$Id: sel_org.php,v 1.9 2006/08/22 19:00:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
 lcm_page_start("Select organisation(s)");
 
-$case = intval($_REQUEST['case']);
+$case = intval(_request('case'));
 
 if (! $case > 0)
 	die("There's no such case!");
@@ -58,26 +58,24 @@ show_context_end();
 	<table border="0" class="tbl_usr_dtl">
 		<tr>
 			<th class="heading">&nbsp;</th>
-			<th class="heading" width="350"><?php echo "Organisation name"; /* TRAD */ ?></th>
+			<th class="heading" width="350"><?php echo _Th('org_input_name'); ?></th>
 		</tr>
 <?php
 	while ($row = lcm_fetch_array($result)) {
-?>
-		<tr>
-			<td><input type="checkbox" name="orgs[]" value="<?php echo $row['id_org']; ?>"></td>
-			<td><?php echo $row['name']; ?></td>
-		</tr>
-<?php
+		echo "<tr>\n";
+		echo '<td><input type="checkbox" name="orgs[]" id="org_' . $row['id_org'] . '" value="' . $row['id_org'] . '"></td>';
+		echo '<td><label for="org_' . $row['id_org'] . '">' . $row['name'] . "</label></td>\n";
+		echo "</tr>\n";
 	}
 ?>
 		<tr>
 			<td>&nbsp;</td>
-			<td><a href="edit_org.php" class="content_link"><?php echo "Add new organisation"; /* TRAD */ ?></a></td>
+			<td><a href="edit_org.php" class="content_link"><?php echo _T('org_button_new'); ?></a></td>
 		</tr>
 	</table>
 
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
-	<input type="hidden" name="ref_sel_org" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
+	<input type="hidden" name="ref_sel_org" value="<?php echo $_SERVER['HTTP_REFERER']; ?>">
 	<p><button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button></p>
 
 </form>
