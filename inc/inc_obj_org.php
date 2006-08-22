@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_org.php,v 1.1 2006/08/22 12:32:16 mlutfy Exp $
+	$Id: inc_obj_org.php,v 1.2 2006/08/22 21:19:57 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -108,6 +108,8 @@ class LcmOrg extends LcmObject {
 	}
 
 	function getCaseStart() {
+		global $prefs;
+
 		$start_from = _request('list_pos', 0);
 
 		// just in case
@@ -126,15 +128,10 @@ class LcmOrg extends LcmObject {
 	function getCaseIterator() {
 		global $prefs;
 
-		if ($this->getCaseDone)
+		if ($this->getCaseDone())
 			lcm_panic("LcmOrg::getCaseIterator called but getCaseDone() returned true");
 
-		$ret = array_shift($this->cases);
-
-		if ($this->getCaseDone())
-			$this->loadCases($start_from + $prefs['page_rows']);
-
-		return $ret;
+		return array_shift($this->cases);
 	}
 
 	function getCaseTotal() {
@@ -371,7 +368,7 @@ class LcmOrgInfoUI extends LcmOrg {
 		echo "</tr>\n";
 
 		// Creation date
-		if ($_SESSION['form_data']['id_org']) {
+		if ($this->getDataInt('id_org')) {
 			echo "<tr>\n";
 			echo '<td>' . _Ti('time_input_date_creation') . '</td>';
 			echo '<td>' . format_date($this->getDataString('date_creation'), 'full') . '</td>';
