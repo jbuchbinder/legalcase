@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.58 2006/08/15 20:35:33 mlutfy Exp $
+	$Id: inc.php,v 1.59 2006/08/22 17:52:19 mlutfy Exp $
 */
 
 include ('inc/inc_version.php');
@@ -40,6 +40,10 @@ include_lcm('inc_keywords');
 
 if (! include_data_exists('inc_meta_cache'))
 	write_metas();
+
+// Just precaution, avoids PHP warnings sometimes
+if (! isset($_SESSION['form_data']))
+	$_SESSION['form_data'] = array();
 
 // [AG] Adding to validate later references to it
 global $author_session;

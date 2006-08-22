@@ -52,11 +52,13 @@ function overload_lang($f) {
 	$GLOBALS['idx_lang'] .= '_temp';
 	include_config($f);
 
-	if (is_array($GLOBALS[$GLOBALS['idx_lang']]))
+	// Perhaps a bit excessive, but avoids PHP warnings.
+	if (isset($GLOBALS[$GLOBALS['idx_lang']]) && is_array($GLOBALS[$GLOBALS['idx_lang']])) {
 		foreach ($GLOBALS[$GLOBALS['idx_lang']] as $var => $val)
 			$GLOBALS[$idx_lang_current][$var] = $val; 
 
-	lcm_debug($f . ": " . count($GLOBALS[$GLOBALS['idx_lang']]) . " string(s)");
+		lcm_debug($f . ": " . count($GLOBALS[$GLOBALS['idx_lang']]) . " string(s)");
+	}
 
 	unset ($GLOBALS[$GLOBALS['idx_lang']]);
 	$GLOBALS['idx_lang'] = $idx_lang_current;
