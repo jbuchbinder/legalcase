@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.21 2006/08/22 17:52:52 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.22 2006/08/22 20:49:12 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -673,7 +673,9 @@ class LcmCaseInfoUI extends LcmCase {
 			
 		// Legal reason
 		if (substr($case_legal_reason, 0, 3) == 'yes') {
-			echo '<tr><td><label for="input_legal_reason">' . f_err_star('legal_reason') . _T('case_input_legal_reason') . "</label></td>\n";
+			echo '<tr><td><label for="input_legal_reason">' . f_err_star('legal_reason') . _T('case_input_legal_reason') . "</label>"
+				. "<br/>(" . ($case_legal_reason == 'yes_mandatory' ?  _T('keywords_input_policy_mandatory') : '') . ")"
+				. "</td>\n";
 			echo '<td>';
 			echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
 			echo clean_output($this->getDataString('legal_reason'));
@@ -684,7 +686,9 @@ class LcmCaseInfoUI extends LcmCase {
 		
 		// Alledged crime
 		if (substr($case_alledged_crime, 0, 3) == 'yes') {
-			echo '<tr><td><label for="input_alledged_crime">' . f_err_star('alledged_crime') . _T('case_input_alledged_crime') . "</label></td>\n";
+			echo '<tr><td><label for="input_alledged_crime">' . f_err_star('alledged_crime') . _T('case_input_alledged_crime') . "</label>"
+				. "<br/>(" . ($case_alledged_crime == 'yes_mandatory' ?  _T('keywords_input_policy_mandatory') : '') . ")"
+				. "</td>\n";
 			echo '<td>';
 			echo '<textarea name="alledged_crime" id="input_alledged_crime" class="frm_tarea" rows="2" cols="60">';
 			echo clean_output($this->getDataString('alledged_crime'));
@@ -747,7 +751,7 @@ class LcmCaseInfoUI extends LcmCase {
 		// Public access rights
 		// FIXME FIXME FIXME
 		if ( $this->data['admin'] || (read_meta('case_read_always') != 'yes') || (read_meta('case_write_always') != 'yes') ) {
-			$dis = ( allowed($this->data['id_case'], 'a') ? '' : ' disabled="disabled"');
+			$dis = isDisabled(! allowed($this->getDataInt('id_case'), 'a'));
 			echo '<tr><td colspan="2">' . _T('case_input_collaboration')
 				.  ' <br /><ul>';
 
