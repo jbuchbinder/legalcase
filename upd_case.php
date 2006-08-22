@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.59 2006/08/22 19:22:17 mlutfy Exp $
+	$Id: upd_case.php,v 1.60 2006/08/22 21:11:48 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -101,24 +101,17 @@ if (_request('add_fu')) {
 	}
 }
 
-	$send_to = _request('ref_edit_case', "case_det.php?case=" . $case->getDataInt('id_case'));
+$send_to = _request('ref_edit_case', "case_det.php?case=" . $case->getDataInt('id_case'));
 
-	// Send to add_client if any client to attach
-	if (_session('attach_client')) {
-		lcm_header("Location: add_client.php?case=" . $case->getDataInt('id_case')
-			. "&clients[]=" . _session('attach_client') 
-			. "&ref_sel_client=" . rawurlencode($send_to));
-		exit;
-	}
+// Send to add_client if any client/org to attach
+if (_session('attach_client') || _session('attach_org')) {
+	lcm_header("Location: add_client.php?case=" . $case->getDataInt('id_case')
+		. (_session('attach_client') ? "&clients[]=" . _session('attach_client') : '')
+		. (_session('attach_org') ? "&orgs[]=" . _session('attach_org') : '')
+		. "&ref_sel_client=" . rawurlencode($send_to));
+	exit;
+}
 
-	// Send to add_org if any org to attach
-	if (_session('attach_org')) {
-		lcm_header("Location: add_org.php?case=" . $case->getDataInt('id_case')
-			. "&orgs[]=" . _session('attach_org')
-			. "&ref_sel_client=" . rawurlencode($send_to));
-		exit;
-	}
-
-	lcm_header("Location: " . $send_to);
+lcm_header("Location: " . $send_to);
 
 ?>
