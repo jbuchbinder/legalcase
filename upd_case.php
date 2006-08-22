@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_case.php,v 1.58 2006/03/10 15:41:51 mlutfy Exp $
+	$Id: upd_case.php,v 1.59 2006/08/22 19:22:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -42,7 +42,6 @@ $id_case = _request('id_case', 0);
 //
 // Create client, if requested
 //
-
 if (_request('add_client')) {
 	include_lcm('inc_obj_client');
 
@@ -57,9 +56,25 @@ if (_request('add_client')) {
 }
 
 //
+// Create organisation, if requested
+//
+if (_request('add_org')) {
+	include_lcm('inc_obj_org');
+
+	$org = new LcmOrg();
+	$errs = $org->save();
+
+	if (count($errs)) {
+		$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
+	} else {
+		$_SESSION['form_data']['attach_org'] = $org->getDataInt('id_org', '__ASSERT__');
+	}
+}
+
+
+//
 // Create or update case data
 //
-
 $case = new LcmCase($id_case);
 $errs = $case->save();
 
@@ -73,7 +88,6 @@ if (count($errs)) {
 //
 // Create follow-up data
 //
-
 if (_request('add_fu')) {
 	include_lcm('inc_obj_fu');
 
@@ -87,25 +101,7 @@ if (_request('add_fu')) {
 	}
 }
 
-	// [AG] "edit_case" could be invoked from diferent places i.e. edit existing case or add new or other.
-	// [AG] User could come to edit from listcases.php or case_det.php. Also, other references could be added later.
-	// [ML] 2006-03-07: Removed 'ref_edit_case' from 'edit_case.php', so that
-	//      it returns to 'case_det.php' by default. Other places, if any, can use the
-	//      ref_edit_case variable.
-	$ref_edit_case = _request('ref_edit_case', "case_det.php?case=" . $case->getDataInt('id_case'));
-	$send_to = '';
-
-	// Proceed accoring to the button type
-	switch (_request('submit')) {
-		case 'addnew':
-			$send_to = "edit_case.php?case=0&ref=$ref_edit_case";
-			break;
-		case 'adddet':
-			$send_to = "case_det.php?case=" . $case->getDataInt('id_case');
-			break;
-		default :
-			$send_to = $ref_edit_case;
-	}
+	$send_to = _request('ref_edit_case', "case_det.php?case=" . $case->getDataInt('id_case'));
 
 	// Send to add_client if any client to attach
 	if (_session('attach_client')) {
