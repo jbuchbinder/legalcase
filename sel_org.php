@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_org.php,v 1.9 2006/08/22 19:00:32 mlutfy Exp $
+	$Id: sel_org.php,v 1.10 2006/08/22 20:16:29 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -53,7 +53,7 @@ show_context_case_involving($case);
 show_context_end();
 
 ?>
-<form action="add_org.php" method="post">
+<form action="add_client.php" method="post">
 
 	<table border="0" class="tbl_usr_dtl">
 		<tr>
