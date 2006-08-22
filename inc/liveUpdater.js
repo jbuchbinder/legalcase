@@ -318,6 +318,8 @@ function autocomplete(id, popupId, uri, popupData, hideAlt)
 
 		if (id == "clientsearchkey")
 			action = "find_name_client";
+		else if (id == "orgsearchkey")
+			action = "find_name_org";
 		else if (id == "casesearchkey")
 			action = "find_name_case";
 			
