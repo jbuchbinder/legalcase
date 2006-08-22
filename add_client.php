@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,21 +18,16 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: add_client.php,v 1.7 2005/04/15 12:19:41 mlutfy Exp $
+	$Id: add_client.php,v 1.8 2006/08/22 21:13:16 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_acc');
 
-$case = intval($_REQUEST['case']);
+$case = intval(_request('case'));
 $_SESSION['errors'] = array();
 
 $destination = "case_det.php?case=$case";
-
-/* [ML] Not useful for now (my prefs redirection bug)
-if (isset($_REQUEST['ref_sel_client']) && $_REQUEST['ref_sel_client'])
-	$destination = $ref_sel_client;
-*/
 
 // Test access rights (unlikely to happen, unless hack attempt)
 if (! ($case && allowed($case, 'a'))) {
@@ -52,6 +47,22 @@ if (isset($_REQUEST['clients'])) {
 				SET id_case=$case,id_client=$client";
 
 			$result = lcm_query($q);
+		}
+	}
+}
+
+// Add organisation to case
+if (isset($_REQUEST['orgs'])) {
+	foreach ($_REQUEST['orgs'] as $key => $value) 
+		$orgs[$key] = intval($value);
+
+	if ($orgs) {
+		foreach($orgs as $org) {
+			$q = "INSERT INTO lcm_case_client_org
+					SET id_case = $case,
+						id_org = $org";
+
+			lcm_query($q);
 		}
 	}
 }
@@ -78,6 +89,6 @@ if (isset($_REQUEST['id_del_org'])) {
 	}
 }
 
-header("Location: " . $destination . "#clients");
+lcm_header("Location: " . $destination . "#clients");
 
 ?>
