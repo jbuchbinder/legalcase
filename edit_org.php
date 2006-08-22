@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,12 +18,13 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.26 2006/08/04 21:18:34 mlutfy Exp $
+	$Id: edit_org.php,v 1.27 2006/08/22 12:37:48 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_contacts');
+include_lcm('inc_obj_org');
 
 // Initialise variables
 $org = intval($_GET['org']);
@@ -39,7 +40,6 @@ if (empty($_SESSION['errors'])) {
 			FROM lcm_org
 			WHERE id_org=$org";
 
-		// Do the query
 		$result = lcm_query($q);
 
 		// Process the output of the query
@@ -49,9 +49,6 @@ if (empty($_SESSION['errors'])) {
 				$_SESSION['form_data'][$key]=$value;
 			}
 		}
-	} else {
-		// Setup default values
-		//$_SESSION['form_data']['date_creation'] = date('Y-m-d H:i:s'); // '2004-09-16 16:32:37'
 	}
 }
 
@@ -64,76 +61,9 @@ else
 echo show_all_errors($_SESSION['errors']);
 
 echo '<form action="upd_org.php" method="post">' . "\n";
-echo '<table width="99%" border="0" align="center" cellpadding="5" cellspacing="0" class="tbl_usr_dtl">' . "\n";
 
-// Organisation ID
-if ($_SESSION['form_data']['id_org']) {
-	echo "<tr>\n";
-	echo "<td>" . _Ti('org_input_id') . "</td>\n";
-	echo "<td>" . $_SESSION['form_data']['id_org'] 
-		. '<input type="hidden" name="id_org" value="' . $_SESSION['form_data']['id_org'] . '" />'
-		. "</td>\n";
-	echo "</tr>\n";
-}
-
-// Organisation name
-echo "<tr>\n";
-echo "<td>" . f_err_star('name') . _Ti('org_input_name') . "</td>\n";
-echo '<td><input name="name" value="' . clean_output($_SESSION['form_data']['name']) . '" class="search_form_txt" />'
-	. "</td>\n";
-echo "</tr>\n";
-
-// Court registration number
-echo "<tr>\n";
-echo "<td>" . f_err_star('court_reg') . _Ti('org_input_court_reg') . "</td>\n";
-echo '<td><input name="court_reg" value="' . clean_output($_SESSION['form_data']['court_reg']) . '" class="search_form_txt" />'
-	. "</td>\n";
-echo "</tr>\n";
-
-// Tax number
-echo "<tr>\n";
-echo "<td>" . f_err_star('tax_number') . _Ti('org_input_tax_number') . "</td>\n";
-echo '<td><input name="tax_number" value="' . clean_output($_SESSION['form_data']['tax_number']) . '" class="search_form_txt" />'
-	. "</td>\n";
-echo "</tr>\n";
-
-// Statistical number
-echo "<tr>\n";
-echo "<td>" . f_err_star('stat_number') . _Ti('org_input_stat_number') . "</td>\n";
-echo '<td><input name="stat_number" value="' . clean_output($_SESSION['form_data']['stat_number']) . '" class="search_form_txt" />'
-	. "</td>\n";
-echo "</tr>\n";
-
-// Notes
-echo "<tr>\n";
-echo "<td>" . f_err_star('notes') . _Ti('org_input_notes') . "</td>\n";
-echo '<td><textarea name="notes" id="input_notes" class="frm_tarea" rows="3" cols="60">'
-	. clean_output($_SESSION['form_data']['notes'])
-	. "</textarea>\n"
-	. "</td>\n";
-echo "</tr>\n";
-
-// Creation date
-if ($_SESSION['form_data']['id_org']) {
-	echo "<tr>\n";
-	echo '<td>' . _Ti('time_input_date_creation') . '</td>';
-	echo '<td>' . format_date($_SESSION['form_data']['date_creation'], 'full') . '</td>';
-	echo "</tr>\n";
-}
-
-//
-// Contacts (e-mail, phones, etc.)
-//
-
-echo "<tr>\n";
-echo '<td colspan="2" align="center" valign="middle" class="heading">';
-echo '<h4>' . _T('client_subtitle_contacts') . '</h4>';
-echo '</td>';
-echo "</tr>\n";
-
-show_edit_contacts_form('org', _session('id_org'));
-
-echo "</table>\n";
+$obj_org = new LcmOrgInfoUI($org);
+$obj_org->printEdit();
 
 echo '<input type="hidden" name="ref_edit_org" value="' . _session('ref_edit_org') . '" />' . "\n";
 echo '<p><button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button></p>\n";
