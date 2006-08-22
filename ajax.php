@@ -103,6 +103,12 @@ if (_request('find_name_client')) {
 	$client->printGeneral(false);
 	$client->printCases();
 	$client->printAttach();
+} elseif (intval(_request('id_org', 0)) > 0) {
+	include_lcm('inc_obj_org');
+	$org = new LcmOrgInfoUI(intval(_request('id_org', 0)));
+	$org->printGeneral(false);
+	$org->printCases();
+	$org->printAttach();
 } elseif (($action = _request('action'))) {
 	if ($action == 'get_kwg_in') {
 		// Searching keywords to add to a case (experimental)
