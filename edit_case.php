@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.89 2006/08/22 13:32:14 mlutfy Exp $
+	$Id: edit_case.php,v 1.90 2006/08/22 17:59:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -203,42 +203,43 @@ if (! $id_case) {
 		//
 		// Find of create an organisation for case
 		//
-		show_page_subtitle(_Th('title_org_view'), 'clients_intro');
-
-		echo '<p class="normal_text">';
-		echo '<input type="checkbox"' . isChecked(_session('add_org')) .  'name="add_org" id="box_new_org" onclick="display_block(\'new_org\', \'flip\')"; />';
-		echo '<label for="box_new_org">' . _T('case_button_add_org') . '</label>';
-		echo "</p>\n";
-
-		// Open box that hides this form by default
-		echo '<div id="new_org" ' . (_session('add_org') ? '' : ' style="display: none;"') . '>';
-
-		echo "<div style='overflow: hidden; width: 100%;'>";
-		echo '<div style="float: left; text-align: right; width: 29%;">';
-		echo '<p class="normal_text" style="margin: 0; padding: 4px;">' .  _Ti('input_search_org') . '</p>';
-		echo "</div>\n";
-
-		echo '<div style="float: right; width: 69%;">';
-		echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" autocomplete="off" name="orgsearchkey" id="orgsearchkey" size="25" />' . "</p>\n";
-		echo '<span id="autocomplete-org-popup" class="autocomplete" style="position: absolute; visibility: hidden;"><span></span></span>';
-		echo '</div>';
-
-		echo '<div style="clear: right;"></div>';
-
-		echo '<div id="autocomplete-org-data"></div>' . "\n";
-		echo "</div>\n";
-
-		echo '<div id="autocomplete-org-alt">';
-		$org = new LcmOrgInfoUI();
-		$org->printEdit();
-		echo '</div>';
-
-		echo "<script type=\"text/javascript\">
-			autocomplete('orgsearchkey', 'autocomplete-org-popup', 'ajax.php', 'autocomplete-org-data', 'autocomplete-org-alt')
-			</script>\n";
-
-		echo "</div>\n"; // closes box that hides this form by default
-
+		if (read_meta('case_new_showorg') == 'yes') {
+			show_page_subtitle(_Th('title_org_view'), 'clients_intro');
+	
+			echo '<p class="normal_text">';
+			echo '<input type="checkbox"' . isChecked(_session('add_org')) .  'name="add_org" id="box_new_org" onclick="display_block(\'new_org\', \'flip\')"; />';
+			echo '<label for="box_new_org">' . _T('case_button_add_org') . '</label>';
+			echo "</p>\n";
+	
+			// Open box that hides this form by default
+			echo '<div id="new_org" ' . (_session('add_org') ? '' : ' style="display: none;"') . '>';
+	
+			echo "<div style='overflow: hidden; width: 100%;'>";
+			echo '<div style="float: left; text-align: right; width: 29%;">';
+			echo '<p class="normal_text" style="margin: 0; padding: 4px;">' .  _Ti('input_search_org') . '</p>';
+			echo "</div>\n";
+	
+			echo '<div style="float: right; width: 69%;">';
+			echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" autocomplete="off" name="orgsearchkey" id="orgsearchkey" size="25" />' . "</p>\n";
+			echo '<span id="autocomplete-org-popup" class="autocomplete" style="position: absolute; visibility: hidden;"><span></span></span>';
+			echo '</div>';
+	
+			echo '<div style="clear: right;"></div>';
+	
+			echo '<div id="autocomplete-org-data"></div>' . "\n";
+			echo "</div>\n";
+	
+			echo '<div id="autocomplete-org-alt">';
+			$org = new LcmOrgInfoUI();
+			$org->printEdit();
+			echo '</div>';
+	
+			echo "<script type=\"text/javascript\">
+				autocomplete('orgsearchkey', 'autocomplete-org-popup', 'ajax.php', 'autocomplete-org-data', 'autocomplete-org-alt')
+				</script>\n";
+	
+			echo "</div>\n"; // closes box that hides this form by default
+		}
 	}
 }
 
