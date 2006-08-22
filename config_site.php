@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.52 2006/08/22 13:44:10 mlutfy Exp $
+	$Id: config_site.php,v 1.53 2006/08/22 18:02:23 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -497,7 +497,7 @@ function apply_conf_changes_policy() {
 				'case_assignment_date'  => 'case_input_date_assigned',
 				'case_alledged_crime'   => 'case_input_alledged_crime',
 				'case_legal_reason'		=> 'case_input_legal_reason',
-				'case_new_showorg'		=> 'siteconf_input_case_new_shororg',
+				'case_new_showorg'		=> 'siteconf_input_case_new_showorg',
 				'case_allow_modif'      => 'siteconf_input_case_allow_modif', 
 				'fu_sum_billed'         => 'fu_input_sum_billed',
 				'fu_allow_modif'        => 'siteconf_input_fu_allow_modif');
