@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.92 2006/08/11 14:36:08 mlutfy Exp $
+	$Id: inc_filters.php,v 1.93 2006/08/22 17:51:24 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -527,7 +527,9 @@ function get_datetime_from_array($source, $prefix, $type = 'start', $fallback = 
 	} elseif ($soften_errors) {
 		$day = ($type == 'start' ? '01' : '31');
 	} else {
-		$day = $source[$prefix . 'day'];
+		// [ML] This use to return $source[$prefix . 'day'] but that's
+		// nonsense, since it would be unset (tested above)
+		return $fallback;
 	}
 
 	if ($day > 31) $day = 31;
