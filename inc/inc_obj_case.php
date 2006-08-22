@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.20 2006/08/17 14:11:37 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.21 2006/08/22 17:52:52 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -87,16 +87,20 @@ class LcmCase extends LcmObject {
 		$q = "SELECT fu.id_followup, fu.date_start, fu.date_end, fu.type, fu.description, fu.case_stage,
 					fu.hidden, a.name_first, a.name_middle, a.name_last
 				FROM lcm_followup as fu, lcm_author as a
-				WHERE id_case = " . $this->data['id_case'] . "
+				WHERE id_case = " . $this->getDataInt('id_case', '__ASSERT__') . "
 				  AND fu.id_author = a.id_author ";
 
-		// TODO
-		// Add date_start filter!
+		// Date filters (from interface)
+		if (($date_start = get_datetime_from_array($this->data, 'date_start', 'start', -1)) != -1)
+			$q .= " AND fu.date_start >= '$date_start' ";
+
+		if (($date_end = get_datetime_from_array($this->data, 'date_end', 'start', -1)) != -1)
+			$q .= " AND fu.date_end <= '$date_end' ";
 
 		// Sort follow-ups by creation date
 		$fu_order = 'DESC';
 		if (_request('fu_order') == 'ASC' || _request('fu_order') == 'DESC')
-				$fu_order = _request('fu_order');
+			$fu_order = _request('fu_order');
 		
 		$q .= " ORDER BY fu.date_start " . $fu_order;
 
@@ -112,21 +116,22 @@ class LcmCase extends LcmObject {
 				lcm_panic("Error seeking position $list_pos in the result");
 
 		if (lcm_num_rows($result)) {
-			for ($cpt = 0; (($cpt < $prefs['page_rows']) && ($row = lcm_fetch_array($result))); $cpt++)
+			for ($cpt = 0; (($cpt < $prefs['page_rows'] || _request('list_pos') == 'all') && ($row = lcm_fetch_array($result))); $cpt++)
 				array_push($this->followups, $row);
 		}
 	}
 
 	function getFollowupStart() {
-		$start_from = _request('list_pos', 0);
+		global $prefs;
+
+		$this->fu_start_from = _request('list_pos', 0);
 
 		// just in case
-		if (! ($start_from >= 0)) $start_from = 0;
+		if (! ($this->fu_start_from >= 0)) $this->fu_start_from = 0;
 		if (! $prefs['page_rows']) $prefs['page_rows'] = 10; 
 
 		$this->followups = array();
-		$this->fu_start_from = $start_from;
-		$this->loadFollowups($start_from);
+		$this->loadFollowups($this->fu_start_from);
 	}
 
 	function getFollowupDone() {
@@ -136,15 +141,10 @@ class LcmCase extends LcmObject {
 	function getFollowupIterator() {
 		global $prefs;
 
-		if ($this->getFollowupDone)
+		if ($this->getFollowupDone())
 			lcm_panic("LcmClient::getFollowupIterator called but getFollowupDone() returned true");
 
-		$ret = array_shift($this->followups);
-
-		if ($this->getFollowupDone())
-			$this->loadFollowups($start_from + $prefs['page_rows']);
-
-		return $ret;
+		return array_shift($this->followups);
 	}
 
 	function getFollowupTotal() {
@@ -386,6 +386,11 @@ class LcmCaseInfoUI extends LcmCase {
 	}
 
 	function printGeneral($show_subtitle = true, $allow_edit = true) {
+		// Read site configuration preferences
+		$case_assignment_date = read_meta('case_assignment_date');
+		$case_alledged_crime  = read_meta('case_alledged_crime');
+		$case_legal_reason    = read_meta('case_legal_reason');
+
 		if ($show_subtitle)
 			show_page_subtitle(_T('generic_subtitle_general'), 'cases_intro');
 
