@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.88 2006/08/04 21:18:34 mlutfy Exp $
+	$Id: edit_case.php,v 1.89 2006/08/22 13:32:14 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,6 +26,7 @@ include_lcm('inc_acc');
 include_lcm('inc_filters');
 
 include_lcm('inc_obj_client');
+include_lcm('inc_obj_org');
 include_lcm('inc_obj_case');
 include_lcm('inc_obj_fu');
 
@@ -146,28 +147,31 @@ echo '<form action="upd_case.php" method="post">' . "\n";
 
 if (! $id_case) {
 	if ($attach_client) {
-		show_page_subtitle("Client information", 'clients_intro'); // TRAD
+		show_page_subtitle(_Th('title_client_view'), 'clients_intro');
 
 		$client = new LcmClientInfoUI($attach_client);
 		$client->printGeneral(false);
 		$client->printCases();
 		$client->printAttach();
 	} elseif ($attach_org) {
-		// TODO: $org = new OrgInfoUI($attach_org);
-		// $org->printGeneral(false);
-		// $org->printCases();
-		echo '<input type="hidden" name="attach_org" value="' . $attach_org . '" />' . "\n";
+		show_page_subtitle(_Th('title_org_view'), 'clients_intro');
+
+		$org = new OrgInfoUI($attach_org);
+		$org->printGeneral(false);
+		$org->printCases();
+		$org->printAttach();
 	} else {
 		//
 		// For to find or create new client for case
 		//
-		show_page_subtitle("Client information", 'clients_intro'); // TRAD
+		show_page_subtitle(_Th('title_client_view'), 'clients_intro');
 
 		echo '<p class="normal_text">';
 		echo '<input type="checkbox"' . isChecked(_session('add_client')) . 'name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
-		echo '<label for="box_new_client">' . "Add a client to this case" . '</label>'; // TRAD
+		echo '<label for="box_new_client">' . _T('case_button_add_client') . '</label>';
 		echo "</p>\n";
 
+		// Open box that hides this form by default
 		echo '<div id="new_client" ' . (_session('add_client') ? '' : ' style="display: none;"') . '>';
 
 		echo "<div style='overflow: hidden; width: 100%;'>";
@@ -194,7 +198,47 @@ if (! $id_case) {
 			autocomplete('clientsearchkey', 'autocomplete-client-popup', 'ajax.php', 'autocomplete-client-data', 'autocomplete-client-alt')
 			</script>\n";
 
-		echo "</div>\n"; // box that hides this function by default
+		echo "</div>\n"; // closes box that hides this form by default
+
+		//
+		// Find of create an organisation for case
+		//
+		show_page_subtitle(_Th('title_org_view'), 'clients_intro');
+
+		echo '<p class="normal_text">';
+		echo '<input type="checkbox"' . isChecked(_session('add_org')) .  'name="add_org" id="box_new_org" onclick="display_block(\'new_org\', \'flip\')"; />';
+		echo '<label for="box_new_org">' . _T('case_button_add_org') . '</label>';
+		echo "</p>\n";
+
+		// Open box that hides this form by default
+		echo '<div id="new_org" ' . (_session('add_org') ? '' : ' style="display: none;"') . '>';
+
+		echo "<div style='overflow: hidden; width: 100%;'>";
+		echo '<div style="float: left; text-align: right; width: 29%;">';
+		echo '<p class="normal_text" style="margin: 0; padding: 4px;">' .  _Ti('input_search_org') . '</p>';
+		echo "</div>\n";
+
+		echo '<div style="float: right; width: 69%;">';
+		echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" autocomplete="off" name="orgsearchkey" id="orgsearchkey" size="25" />' . "</p>\n";
+		echo '<span id="autocomplete-org-popup" class="autocomplete" style="position: absolute; visibility: hidden;"><span></span></span>';
+		echo '</div>';
+
+		echo '<div style="clear: right;"></div>';
+
+		echo '<div id="autocomplete-org-data"></div>' . "\n";
+		echo "</div>\n";
+
+		echo '<div id="autocomplete-org-alt">';
+		$org = new LcmOrgInfoUI();
+		$org->printEdit();
+		echo '</div>';
+
+		echo "<script type=\"text/javascript\">
+			autocomplete('orgsearchkey', 'autocomplete-org-popup', 'ajax.php', 'autocomplete-org-data', 'autocomplete-org-alt')
+			</script>\n";
+
+		echo "</div>\n"; // closes box that hides this form by default
+
 	}
 }
 
