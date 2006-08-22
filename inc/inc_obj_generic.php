@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_generic.php,v 1.4 2006/08/17 14:10:51 mlutfy Exp $
+	$Id: inc_obj_generic.php,v 1.5 2006/08/22 12:33:35 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -54,7 +54,7 @@ class LcmObject {
 
 	function getDataString($field, $default = '') {
 		if (isset($this->data[$field]))
-			return $this->data[$field];
+			return trim($this->data[$field]);
 
 		if (is_string($default) && $default == '__ASSERT__')
 			lcm_panic("Value does not exist.");
