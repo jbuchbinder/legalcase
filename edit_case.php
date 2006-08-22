@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.90 2006/08/22 17:59:00 mlutfy Exp $
+	$Id: edit_case.php,v 1.91 2006/08/22 21:13:41 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -93,18 +93,11 @@ if ($attach_client) {
 }
 
 if ($attach_org) {
-	$query = "SELECT name
-				FROM lcm_org
-				WHERE id_org = " . $attach_org;
+	$org = new LcmOrg($attach_org);
 
-	$result = lcm_query($query);
-	if ($info = lcm_fetch_array($result)) {
-		// Leave empty if user did the error of leaving it blank
-		if (! isset($_SESSION['form_data']['title']))
-			$_SESSION['form_data']['title'] = $info['name'];
-	} else {
-		lcm_panic("No such organisation #" . $attach_org);
-	}
+	// Leave empty if user did the error of leaving it blank
+	if (! isset($_SESSION['form_data']['title']))
+		$_SESSION['form_data']['title'] = $info['name'];
 }
 
 
@@ -153,14 +146,18 @@ if (! $id_case) {
 		$client->printGeneral(false);
 		$client->printCases();
 		$client->printAttach();
-	} elseif ($attach_org) {
+	}
+	
+	if ($attach_org) {
 		show_page_subtitle(_Th('title_org_view'), 'clients_intro');
 
-		$org = new OrgInfoUI($attach_org);
+		$org = new LcmOrgInfoUI($attach_org);
 		$org->printGeneral(false);
 		$org->printCases();
 		$org->printAttach();
-	} else {
+	}
+
+	if ((! $attach_client) && (! $attach_org)) {
 		//
 		// For to find or create new client for case
 		//
