@@ -19,8 +19,6 @@ if (_request('find_name_client')) {
 	$cpt = 0;
 	$search = _request('find_name_client');
 
-	// $search = 
-
 	$query = "SELECT *
 				FROM lcm_client
 				WHERE name_last LIKE '%$search%'
@@ -42,6 +40,35 @@ if (_request('find_name_client')) {
 
 	echo "</ul>\n";
 	echo "</div>\n";
+} elseif (_request('find_name_org')) {
+	include_lcm('inc_obj_org');
+	echo "<div id=\"autocomplete-org-popup\">";
+
+	$cpt = 0;
+	$search = _request('find_name_org');
+
+	$query = "SELECT *
+				FROM lcm_org
+				WHERE name LIKE '%$search%'
+					OR tax_number LIKE '%$search%'
+					OR court_reg LIKE '%$search%'
+					OR stat_number LIKE '%$search%'";
+
+	$result = lcm_query($query);
+
+	echo "<ul>";
+
+	while (($row = lcm_fetch_array($result))) {
+		echo "<li>" . $row['id_org'] . ": " . $row['name'] . "</li>\n";
+		$cpt++;
+	}
+
+	if (! $cpt)
+		echo "<li>0: No results</li>"; // TRAD
+
+	echo "</ul>\n";
+	echo "</div>\n";
+
 } elseif (_request('find_name_case')) {
 	include_lcm('inc_obj_case');
 	echo "<div id=\"autocomplete-case-popup\">";
