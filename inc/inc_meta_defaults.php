@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_meta_defaults.php,v 1.17 2006/07/27 14:41:23 mlutfy Exp $
+	$Id: inc_meta_defaults.php,v 1.18 2006/08/22 13:46:14 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -95,6 +95,7 @@ function init_default_config() {
 		'case_assignment_date' => 'yes', // = { yes, no } assignment date defaults to case creation date (so no "mandatory" option)
 		'case_alledged_crime' => 'yes_optional', // = { yes_optional, yes_mandatory, no }
 		'case_legal_reason' => 'yes_optional', // = { yes_optional, yes_mandatory, no }
+		'case_new_showorg' => 'no', // = { yes, no } shows 'find/create org' form in 'new case'
 		'case_allow_modif' => 'yes', // = { yes , no }
 		'fu_sum_billed' => 'no', // = { yes , no }
 		'fu_allow_modif' => 'yes', // = { yes , no }
