@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.58 2006/08/14 19:25:59 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.59 2006/08/22 17:55:03 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -175,7 +175,6 @@ function create_database() {
 		"date_update datetime NOT NULL",
 		"date_birth datetime DEFAULT NULL", // may be null
 		"citizen_number text NOT NULL DEFAULT ''",
-		"address text NOT NULL DEFAULT ''",
 		"gender ENUM('female','male', 'unknown') NOT NULL",
 		"civil_status varchar(255) DEFAULT 'unknown' NOT NULL",
 		"income varchar(255) DEFAULT 'unknown' NOT NULL",
@@ -214,7 +213,6 @@ function create_database() {
 		"name text NOT NULL",
 		"date_creation datetime DEFAULT NULL",
 		"date_update datetime DEFAULT NULL",
-		"address text NOT NULL",
 		"notes text NOT NULL DEFAULT ''",
 		"court_reg text NOT NULL DEFAULT ''",
 		"tax_number text NOT NULL DEFAULT ''",
