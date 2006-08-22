@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: config_site.php,v 1.51 2006/08/10 19:16:44 mlutfy Exp $
+	$Id: config_site.php,v 1.52 2006/08/22 13:44:10 mlutfy Exp $
 */
 
 include ("inc/inc.php");
@@ -260,7 +260,7 @@ function show_config_form_policy() {
 		'case_assignment_date' => '', 	'case_alledged_crime' => '',
 		'case_legal_reason' => '', 		'case_allow_modif' => '',
 		'fu_sum_billed' => '', 			'fu_allow_modif' => '',
-		'hide_emails' => ''
+		'hide_emails' => '',			'case_new_showorg' => '',
 	);
 
 	foreach ($meta as $m => $val)
@@ -328,7 +328,9 @@ function show_config_form_policy() {
 		. "<td>" . get_yes_no_mand('case_alledged_crime', $meta['case_alledged_crime']) . "</td></tr>\n";
 	echo "<tr><td> " . _Ti('case_input_legal_reason') ."</td>"
 		. "<td>" . get_yes_no_mand('case_legal_reason', $meta['case_legal_reason']) . "</td></tr>\n";
-	echo "<tr><td>" . _Ti('siteconf_input_case_allow_modif') ."</td>"
+	echo "<tr><td> " . _T('siteconf_input_case_new_showorg') ."</td>"
+		. "<td>" . get_yes_no('case_new_showorg', $meta['case_new_showorg']) . "</td></tr>\n";
+	echo "<tr><td>" . _T('siteconf_input_case_allow_modif') ."</td>"
 		. "<td>" . get_yes_no('case_allow_modif', $meta['case_allow_modif']) . "</td></tr>\n";
 	echo "</table>\n";
 
@@ -495,6 +497,7 @@ function apply_conf_changes_policy() {
 				'case_assignment_date'  => 'case_input_date_assigned',
 				'case_alledged_crime'   => 'case_input_alledged_crime',
 				'case_legal_reason'		=> 'case_input_legal_reason',
+				'case_new_showorg'		=> 'siteconf_input_case_new_shororg',
 				'case_allow_modif'      => 'siteconf_input_case_allow_modif', 
 				'fu_sum_billed'         => 'fu_input_sum_billed',
 				'fu_allow_modif'        => 'siteconf_input_fu_allow_modif');
