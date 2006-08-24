@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_fr.php,v 1.26 2006/08/16 15:35:51 mlutfy Exp $
+    $Id: lcm_fr.php,v 1.27 2006/08/24 17:57:54 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -165,11 +165,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_filter_owner_option_all' => 'Tous les dossiers',
 'case_filter_owner_option_my' => 'Mes dossiers',
 'case_filter_owner_option_public' => 'Dossiers publics',
-'case_filter_period_option_m1' => 'dans le mois précédent',
+'case_filter_period_option_m1' => 'Pour les derniers 30 jours',
 'case_filter_period_option_m3' => 'Pour les 3 derniers mois',
 'case_filter_period_option_m6' => 'Pour les 6 derniers mois',
 'case_filter_period_option_w1' => 'Pour la semaine précédente',
-'case_filter_period_option_y1' => 'Pour l&rsquo;année précédente',
+'case_filter_period_option_y1' => 'Pour l’année précédente',
 'case_filter_period_option_year' => 'Année @year@',
 'case_info_author_assigned' => '@name@: l&rsquo;utilisateur a été ajouté au dossier.',
 'case_info_author_unassigned' => '@name@: l&rsquo;utilisateur a été supprimé du dossier.',
@@ -702,6 +702,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_clients' => 'Clients',
 'menu_main_clients_tooltip' => 'Liste de tous les clients enregistrés dans le système.',
 'menu_main_expenses' => 'Requêtes internes',
+'menu_main_expenses_tooltip' => '<NEW>List of internal requests, such as requests to cover expenses related to a case.',
 'menu_main_orgs' => 'Organisations',
 'menu_main_orgs_tooltip' => 'Liste de toutes les organisations (personnes juridiques) enregistrées dans le système.',
 'menu_profile' => 'Profil',
@@ -855,6 +856,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_admin_email' => '<NEW>E-mail of site administrator:',
 'siteconf_input_available_languages' => '<NEW>Refresh the list of available languages:',
 'siteconf_input_case_allow_modif' => '<NEW>Allow case information to be modified once they are created?',
+'siteconf_input_case_new_showorg' => '<NEW>Display the &ldquo;find/create organisation&rdquo; form when creating a new case?',
 'siteconf_input_citizen_number' => '<NEW>Citizen number (for clients only)',
 'siteconf_input_client_income' => '<NEW>Income',
 'siteconf_input_court_archive' => '<NEW>Court archive ID',
