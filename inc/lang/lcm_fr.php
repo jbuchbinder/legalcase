@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_fr.php,v 1.27 2006/08/24 17:57:54 mlutfy Exp $
+    $Id: lcm_fr.php,v 1.28 2006/08/24 18:06:44 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -747,26 +747,26 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_info_receive_mail' => 'Vous recevrez par courrier plus d’information qui vous aideront à rétablir votre mot de passe.',
 'pass_info_remind_username' => 'Rappel: votre identifiant (login) est «@login@».',
 'pass_info_why_register' => 'Vous devez vous créer un compte personnel pour utiliser ce système de gestion de dossiers juridiques. Pour créer votre compte, veuillez compléter le formulaire ci-dessous.',
-'pass_mail_cookie1' => '<NEW>To retrieve your access to the site:',
-'pass_mail_cookie2' => '<NEW>Please go to the following address:',
-'pass_mail_cookie3' => '<NEW>You can then enter a new password and connect again to the site.',
+'pass_mail_cookie1' => 'Pour re-initialiser votre accès au site:',
+'pass_mail_cookie2' => 'Consulter l&rsquo;adresse Web suivante:',
+'pass_mail_cookie3' => 'Vous pourrez y entrer un nouveau mot de passe afin de pouvoir accéder au système de nouveau.',
 'pass_more_than_5_or_random' => '(Plus de 5 caractères. Si laissé vide, un mot de passe composé de lettres aléatoires vous sera envoyé par courrier électronique.)',
-'pass_title_forgotten_password' => '<NEW>Forgotten password',
-'pass_title_new_pass' => '<NEW>New password',
-'pass_title_personal_identifier' => '<NEW>Personal identifiers',
-'pass_title_register' => '<NEW>Register with the site',
+'pass_title_forgotten_password' => 'Mot de passe oublié',
+'pass_title_new_pass' => 'Nouveau mot de passe',
+'pass_title_personal_identifier' => 'Identifiants personnels',
+'pass_title_register' => 'S&rsquo;enregistrer avec le site',
 'pass_warning_already_registered' => 'Vous êtes déjà enregistré. Si vous avez perdu votre mot de passe, cliquez sur &laquo;mot de passe perdu&raquo; à partir de la page principale.',
-'pass_warning_incorrect' => '<NEW>Incorrect password.',
-'pass_warning_invalid_email' => '<NEW><b>Error:</b> the e-mail <tt>@user_email@</tt> is not valid!',
-'pass_warning_mail_failure' => '<NEW>Mail problem: the identifier could not be sent. Please contact the site administrator by e-mail (@email_admin@).',
-'pass_warning_not_registered' => '<NEW><b>Error:</b> the address <tt>@user_email@</tt> is not registered in this site.',
-'pass_warning_too_short' => '<NEW>The password must be more than 5 characters.',
-'pass_warning_unknown_cookie' => '<NEW><b>Error:</b> this code is unknown.',
-'person_info_years_old' => '<NEW>@years@ years old',
+'pass_warning_incorrect' => 'Mot de passe incorrect.',
+'pass_warning_invalid_email' => '<b>Erreur:</b> l&rsquo;adresse de courrier <tt>@user_email@</tt> n&rsquo;est pas valide!',
+'pass_warning_mail_failure' => 'Erreur de courrier: l&rsquo;identifiant n&rsquo;a pu être envoyé. Veuillez contacter l&rsquo;administrateur du site (@email_admin@).',
+'pass_warning_not_registered' => '<b>Erreur:</b> l&rsquo;adresse <tt>@user_email@</tt> n&rsquo;est pas enregistrée dans ce système.',
+'pass_warning_too_short' => 'Le mot de passe doit être composé d&rsquo;au moins 6 caractères. ',
+'pass_warning_unknown_cookie' => '<b>Erreur:</b> ce code est inconnu.',
+'person_info_years_old' => '@years@ ans',
 'person_input_address' => 'Adresse:',
 'person_input_citizen_number' => 'Numéro d&rsquo;identité:',
 'person_input_civil_status' => 'État civil:',
-'person_input_date_birth' => '<NEW>Date of birth:',
+'person_input_date_birth' => 'Date de naissance:',
 'person_input_gender' => 'Sexe:',
 'person_input_gender_female' => 'femme',
 'person_input_gender_male' => 'homme',
@@ -868,9 +868,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_selfreg_moderated' => '<NEW>Yes, but an administrator must approve (moderate) the request.',
 'siteconf_input_selfreg_no' => '<NEW>No.',
 'siteconf_input_selfreg_yes' => '<NEW>Yes, without moderation.',
-'siteconf_input_site_address' => '<NEW>Internet address or network location:',
-'siteconf_input_site_desc' => '<NEW>Site description:',
-'siteconf_input_site_name' => '<NEW>Site name:',
+'siteconf_input_site_address' => 'Adresse Internet ou adresse réseau:',
+'siteconf_input_site_desc' => 'Descriptif du site:',
+'siteconf_input_site_name' => 'Nom du site:',
 'siteconf_subtitle_case_fields' => '<NEW>Cases',
 'siteconf_subtitle_client_fields' => '<NEW>Clients and users',
 'siteconf_subtitle_collab_work' => '<NEW>Collaborative work',
@@ -885,8 +885,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_tab_general' => '<NEW>General information',
 'siteconf_tab_policy' => '<NEW>Office policy',
 'siteconf_tab_regional' => '<NEW>Regional settings',
-'siteconf_warning' => '<NEW><b>Caution!</b> The settings on this page have a global impact which may influence the functionning of the site.',
-'siteconf_warning_currency' => '<NEW><b>Warning!</b> If you change the currency, the current information entered will <strong>not</strong> be converted.',
+'siteconf_warning' => '<b>Attention!</b> Les configurations dans cette section ont un impact global sur le fonctionnement du système.',
+'siteconf_warning_currency' => '<b>Attention!</b> Si vous modifiez la devise, les informations déjà entrées dans le système ne seront <strong>pas</strong> converties.',
 
 
 // T
@@ -960,12 +960,12 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_already_installed' => 'Le système de gestion d’affaires juridiques est déjà installé.',
 'warning_field_mandatory' => 'Ce champ est obligatoire.',
 'warning_field_mandatory_all' => 'Tous les champs ci-dessous sont obligatoires.',
-'warning_forbidden_area' => '<NEW>Forbidden area',
-'warning_forbidden_not_admin' => '<NEW>Access denied: you do not have the administrative right to access this section.',
-'warning_operation_failed' => '<NEW>The operation failed.',
+'warning_forbidden_area' => 'Accès refusé',
+'warning_forbidden_not_admin' => 'Accès refusé: vous n&rsquo;avez pas les droits administratifs pour accéder à cette section.',
+'warning_operation_failed' => 'L&rsquo;opération a échouée.',
 'warning_panic_is_useful' => 'Une erreur est survenue, mais l&rsquo;information ci-dessous permettra aux développeurs du logiciel à résoudre le problème: copiez-collez le message ci-dessous et envoyez le par courrier-électronique à legalcase-devel@lists.sf.net. Merci de votre compréhension.',
-'warning_sql_connection_failed' => '<NEW>Connection to SQL database server failed.',
-'warning_sql_query_failed' => '<NEW>Error in SQL database query.'
+'warning_sql_connection_failed' => 'La connection à la base de données SQL a échouée.',
+'warning_sql_query_failed' => 'Erreur dans la requête à la base de données.'
 
 );
 
