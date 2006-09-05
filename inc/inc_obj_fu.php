@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.16 2006/08/15 20:28:52 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.17 2006/09/05 22:41:28 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -854,8 +854,10 @@ class LcmFollowupInfoUI extends LcmFollowup {
 
 			if ($_SESSION['fu_app_data']['type'])
 				$default_app = $_SESSION['fu_app_data']['type'];
-			else
-				$default_app = $system_kwg['appointments']['suggest'];
+			else {
+				$app_kwg = get_kwg_from_name('appointments');
+				$default_app = $app_kwg['suggest'];
+			}
 
 			$opts = array();
 			foreach($system_kwg['appointments']['keywords'] as $kw)
@@ -863,7 +865,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			asort($opts);
 
 			foreach($opts as $k => $opt) {
-				$sel = ($k == $default_app ? ' selected="selected"' : '');
+				$sel = isSelected($k == $default_app);
 				echo "<option value='$k'$sel>$opt</option>\n";
 			}
 
