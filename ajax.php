@@ -1,11 +1,37 @@
 <?php
 
+/*
+	This file is part of the Legal Case Management System (LCM).
+	(C) 2004-2006 Free Software Foundation, Inc.
+
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the 
+	Free Software Foundation; either version 2 of the License, or (at your 
+	option) any later version.
+
+	This program is distributed in the hope that it will be useful, but 
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+
+	You should have received a copy of the GNU General Public License along 
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+	$Id: ajax.php,v 1.8 2006/09/05 22:44:49 mlutfy Exp $
+*/
+
 if (! $_COOKIE['lcm_session']) {
 	echo "nologin";
 	return;
 }
 
 include('inc/inc.php');
+
+// NOTE: common mistake(s):
+// - To return xml with &nbsp;, it causes a syntax error. liveUpdated.js makes
+//   an alert with the resulting code, which will look valid, but Firefox will 
+//   show in its javascript console where the xml error is located.
 
 header('Content-Type: text/xml');
 echo '<?xml version="1.0"?>';
@@ -111,9 +137,15 @@ if (_request('find_name_client')) {
 	$org->printAttach();
 } elseif (($action = _request('action'))) {
 	if ($action == 'get_kwg_in') {
-		// Searching keywords to add to a case (experimental)
 		include_lcm('inc_keywords');
 		include_lcm('inc_access');
+
+		// Return a list of sub-keyword-groups 
+		// Or, if the kwg selected has "apply = many", list the sub-kwg and their keywords
+		// Note: currently, it does only for "apply = many".
+
+		// Example: The user selected "matter type = Family", so we will
+		// return the "Type 1" + "Type 2" comboboxes.
 
 		echo '<div id="' . _request('div') . '">';
 
@@ -125,25 +157,44 @@ if (_request('find_name_client')) {
 			$id_obj_sec = _request('id_obj_sec', 0);
 			$sub_kwgs = get_subgroups_in_group_id($id_group);
 
-			$cpt_kw = 99; // XXX
-
 			if (count($sub_kwgs)) {
-				$obj_id_ajax = 'kw_' . create_random_password(15, time());
+				if ($kwg['quantity'] == 'one') {
+					// Show which sub-kwg to select from
+					$obj_id_ajax = 'kw_' . create_random_password(15, time());
 
-				// FIXME
-				$gn = _request('group_name');
-				echo '<select id="nop_kwg_' . $type_obj . $cpt_kw . '" '
-					. 'name="nop_kwg_' . $type_obj . '_value[]" '
-					. "onchange=\"getKeywordInfo('get_kws_in', this.value, '$type_obj', $id_obj, $id_obj_sec, '$obj_id_ajax')\""
-					. '>';
-				echo '<option value="">' . '' . "</option>\n";
+					echo '<select id="nop_kwg_' . $obj_id_ajax . '" '
+						. 'name="nop_kwg_' . $type_obj . '_value[]" '
+						. "onchange=\"getKeywordInfo('get_kws_in', this.value, '$type_obj', $id_obj, $id_obj_sec, '$obj_id_ajax')\""
+						. '>';
+					echo '<option value="">' . '' . "</option>\n";
 
-				foreach ($sub_kwgs as $sg) {
-					echo '<option value="' . $sg['name'] . '">' . _T($sg['title']) . "</option>\n";
+					foreach ($sub_kwgs as $foo_kwg)
+						echo '<option value="' . $foo_kwg['name'] . '">' . _T(remove_number_prefix($foo_kwg['title'])) . "</option>\n";
+
+					echo "</select>\n";
+					echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
+				} else {
+					// Show all sub-kwgs as a seperate combobox
+					foreach ($sub_kwgs as $sg) {
+						$obj_id_ajax = 'kw_' . create_random_password(15, time());
+						$sel_id = 'new_keyword_' . $obj_id_ajax;
+						$sel_name = 'new_keyword_' . $type_obj . '_value[]';
+
+						echo '<input type="hidden" name="new_kwg_' . $type_obj . '_id[]" value="' . $sg['id_group'] . '" />';
+						echo '<label for="' . $sel_id . '">' . _T(remove_number_prefix($sg['title'])) . "</label>";
+
+						$kw_in_subkwgs = get_keywords_in_group_name($sg['name']);
+
+						echo "<select id=\"$sel_id\" name=\"$sel_name\">";
+						echo '<option value="">' . '' . "</option>\n";
+
+						foreach ($kw_in_subkwgs as $foo_kw)
+							echo '<option value="' . $foo_kw['id_keyword'] . '">' . _T(remove_number_prefix($foo_kw['title'])) . "</option>\n";
+
+						echo "</select>\n";
+						echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
+					}
 				}
-
-				echo "</select>\n";
-				echo '<div id="' . $obj_id_ajax . '"></div>' . "\n";
 			}
 		}
 
