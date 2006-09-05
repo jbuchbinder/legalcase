@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.13 2006/08/22 20:47:26 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.14 2006/09/05 22:41:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -412,7 +412,6 @@ class LcmClientInfoUI extends LcmClient {
 		echo "</fieldset>\n";
 	}
 
-	// XXX error checking! ($_SESSION['errors'])
 	function printEdit() {
 		// Get site preferences
 		$client_name_middle = read_meta('client_name_middle');
@@ -563,7 +562,6 @@ class LcmClientInfoUI extends LcmClient {
 		//
 		// Contacts (e-mail, phones, etc.)
 		//
-		
 		echo "<tr>\n";
 		echo '<td colspan="2" align="center" valign="middle">';
 		show_page_subtitle(_T('client_subtitle_contacts'));
