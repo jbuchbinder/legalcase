@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.22 2006/08/22 20:49:12 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.23 2006/09/05 22:41:50 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -841,7 +841,7 @@ class LcmCaseListUI extends LcmObject {
 	var $date_start;
 	var $date_end;
 
-	function LcmCaseList() {
+	function LcmCaseListUI() {
 		$this->LcmObject();
 
 		$this->search = '';
@@ -968,9 +968,10 @@ class LcmCaseListUI extends LcmObject {
 			$this->list_pos = 0;
 
 		// Position to the page info start
-		if ($this->list_pos > 0)
+		if ($this->list_pos > 0) {
 			if (! lcm_data_seek($result, $this->list_pos))
 				lcm_panic("Error seeking position " . $this->list_pos . " in the result");
+		}
 
 		for ($i = 0; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++)
 			show_listcase_item($row, $i, $this->search);
