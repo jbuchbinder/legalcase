@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.38 2006/08/17 15:40:48 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.39 2006/09/05 22:42:59 mlutfy Exp $
 */
 
 
@@ -105,15 +105,27 @@ function add_contact($type_person, $id_person, $type_contact, $value) {
 	if (! $id_person)
 		lcm_panic("add_contact: no id_person was provided");
 
-	if (include_validator_exists('contact')) {
-		include_validator('contact');
-		$foo = new LcmCustomValidateContact();
+	$validator_file = 'contact';
+	$validator_func = 'LcmCustomValidateContact';
+
+	// This way, we can validate 'phone_home' or 'phone_mobile' using validate_contact_phone.php
+	// and class LcmCustomValidateContactPhone()
+	if (preg_match("/^\+?([A-Za-z0-9]+)_/", $type_contact, $regs)) {
+		$validator_file .= '_' . $regs[1];
+		$validator_func .= ucfirst($regs[1]);
+		lcm_debug("*********** MATCHES: " . $type_contact . ":" . $validator_file);
+	}
+
+	if (include_validator_exists($validator_file)) {
+		include_validator($validator_file);
+		$foo = new $validator_func();
+
 		if ($err = $foo->validate($type_contact, $id_person, $type_contact, $value))
 			return $err;
 	}
 
-	if ($type_contact == 'email')
-		$type_contact = get_contact_type_id('email_main');
+	if ($type_contact == '+email')
+		$type_contact = get_contact_type_id('+email_main');
 	else
 		$type_contact = get_contact_type_id($type_contact);
 
@@ -130,21 +142,29 @@ function update_contact($id_contact, $new_value) {
 	if (! $id_contact)
 		lcm_panic("update_contact: no id_contact was provided");
 
-	
-	if (include_validator_exists('contact')) {
-		$old_info = get_contact_by_id($id_contact);
-		$kw = get_kw_from_id($old_info['type_contact']);
-		$type_contact = $kw['name'];
+	$old_info = get_contact_by_id($id_contact);
+	$kw = get_kwg_from_id($old_info['type_contact']);
+	$type_contact = $kw['name'];
+	$validator_file = 'contact';
+	$validator_func = 'LcmCustomValidateContact';
 
-		include_validator('contact');
-		$foo = new LcmCustomValidateContact();
+	// This way, we can validate 'phone_home' or 'phone_mobile' using validate_contact_phone.php
+	if (preg_match("/^\+?([A-Za-z0-9]+)_/", $type_contact, $regs)) {
+		$validator_file .= '_' . $regs[1];
+		$validator_func .= ucfirst($regs[1]);
+		lcm_debug("*********** MATCHES: " . $type_contact . ":" . $validator_file);
+	}
+
+	
+	if (include_validator_exists($validator_file)) {
+		include_validator($validator_file);
+		$foo = new $validator_func();
+
 		if ($err = $foo->validate($old_info['type_person'], $old_info['id_of_person'], $type_contact, $new_value))
 			return $err;
 	}
 
-	$old_contact = get_contact_by_id($id_contact);
-
-	if ($old_contact['value'] != $new_value) {
+	if ($old_info['value'] != $new_value) {
 		$query = "UPDATE lcm_contact
 			SET value = '" . clean_input($new_value) . "', 
 				date_update = NOW()
@@ -245,7 +265,7 @@ function show_existing_contact($c, $num) {
 		. 'class="search_form_txt" size="35" value="' 
 		. (isset($_SESSION['form_data']['contact_value'][$num]) ?  $_SESSION['form_data']['contact_value'][$num] : clean_output($c['value']))
 		. '"/>';
-	echo f_err('email') . "";
+	echo f_err_star('email') . "";
 
 	if ($c['policy'] != 'mandatory') {
 		echo '<label for="id_del_contact' . $num . '">';
@@ -431,7 +451,7 @@ function update_contacts_request($type_person, $id_of_person) {
 		// or else the user can provide a form with false contacts.
 		//
 		$all_contacts = get_contacts($type_person, $id_of_person);
-		for ($cpt = 0; $c_ids[$cpt]; $cpt++) {
+		for ($cpt = 0; isset($c_ids[$cpt]) && $c_ids[$cpt]; $cpt++) {
 			$valid = false;
 
 			foreach ($all_contacts as $c)
