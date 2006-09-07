@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.59 2006/08/22 17:55:03 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.60 2006/09/07 16:38:45 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -252,7 +252,7 @@ function create_database() {
 		"id_of_person bigint(21) NOT NULL",
 		"value text NOT NULL",
 		"type_contact tinyint(2) DEFAULT 0 NOT NULL", // XXX do we really need a default value?
-		"date_update datetime DEFAULT NULL," // may be null (if installation was upgraded)
+		"date_update datetime DEFAULT NULL", // may be null (if installation was upgraded)
 		"PRIMARY KEY (id_contact)"
 	);
 
