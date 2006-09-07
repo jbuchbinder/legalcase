@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.53 2006/08/10 14:56:52 mlutfy Exp $
+	$Id: install.php,v 1.54 2006/09/07 16:34:20 mlutfy Exp $
 */
 
 session_start();
@@ -43,7 +43,7 @@ function put_text_in_textbox($text) {
 		$lines = 2;
 
 	$textbox  = "<form action='get'>\n";
-	$textbox .= "\t<textarea readonly='readonly' cols='60' wrap='off' rows='$lines' dir='ltr'>";
+	$textbox .= "<textarea readonly='readonly' cols='60' wrap='off' rows='$lines' dir='ltr'>";
 	$textbox .= $text;
 	$textbox .= "</textarea>\n";
 	$textbox .= "</form>\n";
@@ -74,8 +74,8 @@ if (include_config_exists('inc_connect')) {
 
 	// forbidden area
 	echo "<div class='box_error'>\n";
-	echo "\t<h3>" . _T('warning_forbidden_area') . "</h3>\n";
-	echo "\t<p>" . _T('warning_already_installed') . "</p>\n";
+	echo "<h3>" . _T('warning_forbidden_area') . "</h3>\n";
+	echo "<p>" . _T('warning_already_installed') . "</p>\n";
 	echo "</div>\n";
 
 	install_html_end();
@@ -467,7 +467,7 @@ function install_step_3() {
 			. _T('install_title_creating_database') . "</h3>\n";
 
 		echo "<div class='box_error'>\n";
-		echo "\t<p>";
+		echo "<p>";
 		echo "<b>" . _T('warning_operation_failed') . "</b> " . _T('install_database_install_failed');
 		echo " " . lcm_help("install_connection") . "</p>\n";
 		echo "</div>\n";
@@ -479,7 +479,7 @@ function install_step_3() {
 			. _T('install_title_creating_database') . "</h3>\n";
 
 		echo "<div class='box_error'>\n";
-		echo "\t<p>" . _T('install_warning_update_impossible', array('old_version' => $old_lcm_version, 'version' => $lcm_version)) . "</p>\n";
+		echo "<p>" . _T('install_warning_update_impossible', array('old_version' => $old_lcm_version, 'version' => $lcm_version)) . "</p>\n";
 		echo "</div>\n";
 
 		// Dump error listing
@@ -489,7 +489,7 @@ function install_step_3() {
 			. _T('install_title_creating_database') . "</h3>\n";
 
 		echo "<div class='box_error'>\n";
-		echo "\t<p> STRUCTURE PROBLEM </p>\n"; // TRAD
+		echo "<p> STRUCTURE PROBLEM </p>\n"; // TRAD
 		echo "</div>\n";
 	} else {
 		// Everything OK
@@ -557,10 +557,10 @@ function install_step_2() {
 		. _T('install_title_select_database') . "</h3>\n";
 
 	echo "<form action='install.php' method='post'>\n";
-	echo "\t<input type='hidden' name='step' value='3' />\n";
-	echo "\t<input type='hidden' name='db_address' value=\"$db_address\" size='40' />\n";
-	echo "\t<input type='hidden' name='db_login' value=\"$db_login\" />\n";
-	echo "\t<input type='hidden' name='db_password' value=\"$db_password\" />\n\n";
+	echo "<input type='hidden' name='step' value='3' />\n";
+	echo "<input type='hidden' name='db_address' value=\"$db_address\" size='40' />\n";
+	echo "<input type='hidden' name='db_login' value=\"$db_login\" />\n";
+	echo "<input type='hidden' name='db_password' value=\"$db_password\" />\n\n";
 
 	$result = lcm_list_databases($db_address, $db_login, $db_password);
 
@@ -619,7 +619,7 @@ function install_step_2() {
 	}
 
 	echo "</fieldset>\n";
-	echo "<br /><div align='$" . $GLOBALS['lcm_lang_right'] . "'>"
+	echo "<br /><div align='" . $GLOBALS['lcm_lang_right'] . "'>"
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
@@ -741,8 +741,8 @@ else if (!$step) {
 	echo "<div align='center'><p>" . $menu_lang . "</p></div>\n";
 
 	echo "<form action='install.php' method='get'>\n";
-	echo "\t<input type='hidden' name='step' value='dirs' />\n";
-	echo "\t<div align='$" . $GLOBALS['lcm_lang_right'] . "'>"
+	echo "<input type='hidden' name='step' value='dirs' />\n";
+	echo "<div align='" . $GLOBALS['lcm_lang_right'] . "'>"
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>";
 	echo "</form>";
