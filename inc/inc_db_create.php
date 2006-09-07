@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.60 2006/09/07 16:38:45 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.61 2006/09/07 16:41:27 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -363,8 +363,8 @@ function create_database() {
 		"description text NOT NULL DEFAULT ''",
 		"notes text NOT NULL DEFAULT ''",
 		"id_author bigint(21) NOT NULL",
-		"date_creation datetime DEFAULT NOT NULL",
-		"date_update datetime DEFAULT NOT NULL",
+		"date_creation datetime NOT NULL",
+		"date_update datetime NOT NULL",
 		"line_src_type text NOT NULL DEFAULT ''",
 		"line_src_name text NOT NULL DEFAULT ''",
 		"col_src_type text NOT NULL DEFAULT ''",
