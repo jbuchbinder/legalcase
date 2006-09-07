@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.24 2006/09/07 19:49:58 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.25 2006/09/07 20:59:19 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -674,7 +674,7 @@ class LcmCaseInfoUI extends LcmCase {
 		// Legal reason
 		if (substr($case_legal_reason, 0, 3) == 'yes') {
 			echo '<tr><td><label for="input_legal_reason">' . f_err_star('legal_reason') . _T('case_input_legal_reason') . "</label>"
-				. "<br/>(" . ($case_legal_reason == 'yes_mandatory' ?  _T('keywords_input_policy_mandatory') : '') . ")"
+				. ($case_legal_reason == 'yes_mandatory' ? '<br/>(' . _T('keywords_input_policy_mandatory') ')' : '')
 				. "</td>\n";
 			echo '<td>';
 			echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
@@ -687,7 +687,7 @@ class LcmCaseInfoUI extends LcmCase {
 		// Alledged crime
 		if (substr($case_alledged_crime, 0, 3) == 'yes') {
 			echo '<tr><td><label for="input_alledged_crime">' . f_err_star('alledged_crime') . _T('case_input_alledged_crime') . "</label>"
-				. "<br/>(" . ($case_alledged_crime == 'yes_mandatory' ?  _T('keywords_input_policy_mandatory') : '') . ")"
+				. ($case_alledged_crime == 'yes_mandatory' ? '<br/>(' . _T('keywords_input_policy_mandatory') . ')' : '')
 				. "</td>\n";
 			echo '<td>';
 			echo '<textarea name="alledged_crime" id="input_alledged_crime" class="frm_tarea" rows="2" cols="60">';
