@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.247 2006/09/05 22:01:05 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.248 2006/09/07 16:51:51 mlutfy Exp $
 */
 
 //
@@ -345,12 +345,12 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 	}
 
 	// Show next appointments
-	$q = "SELECT lcm_app.id_app,start_time,type,title
-		FROM lcm_app, lcm_author_app as a
-		WHERE (a.id_author=" . $GLOBALS['author_session']['id_author'] . "
-			AND lcm_app.id_app=a.id_app
-			AND start_time>='" . date('Y-m-d H:i:s',((int) ceil(time()/86400)) * 86400) ."')
-		ORDER BY reminder ASC
+	$q = "SELECT a.id_app, a.start_time, a.type, a.title
+		FROM lcm_app as a, lcm_author_app as aa
+		WHERE (aa.id_author = " . $GLOBALS['author_session']['id_author'] . "
+			AND a.id_app = aa.id_app
+			AND a.start_time >= '" . date('Y-m-d H:i:s',((int) ceil(time()/86400)) * 86400) ."')
+		ORDER BY a.reminder ASC
 		LIMIT 5";
 
 	$result = lcm_query($q);
