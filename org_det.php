@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.34 2006/08/22 12:37:48 mlutfy Exp $
+	$Id: org_det.php,v 1.35 2006/09/07 20:08:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -35,7 +35,7 @@ if ($org <= 0) {
 
 $q = "SELECT *
 		FROM lcm_org
-		WHERE lcm_org.id_org=$org";
+		WHERE id_org = $org";
 
 $result = lcm_query($q);
 
