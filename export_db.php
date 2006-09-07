@@ -1,32 +1,33 @@
 <?php
 
 /*
-	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+   This file is part of the Legal Case Management System (LCM).
+   (C) 2004-2006 Free Software Foundation, Inc.
 
-	This program is free software; you can redistribute it and/or modify it
-	under the terms of the GNU General Public License as published by the
-	Free Software Foundation; either version 2 of the License, or (at your
-	option) any later version.
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-	This program is distributed in the hope that it will be useful, but
-	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-	for more details.
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+   for more details.
 
-	You should have received a copy of the GNU General Public License along
-	with this program; if not, write to the Free Software Foundation, Inc.,
-	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: export_db.php,v 1.13 2005/12/06 10:11:06 mlutfy Exp $
-*/
+   $Id: export_db.php,v 1.14 2006/09/07 19:08:59 mlutfy Exp $
+ */
 
 include('inc/inc.php');
 include_lcm('inc_filters');
 include_lcm('inc_conditions');
 
 define('DIR_BACKUPS', (isset($_SERVER['LcmDataDir']) ? $_SERVER['LcmDataDir'] : addslashes(getcwd()) . '/inc/data'));
-define('DIR_BACKUPS_PREFIX', DIR_BACKUPS . '/db-');
+define('FILE_PREFIX', 'db-');
+define('DIR_BACKUPS_PREFIX', DIR_BACKUPS . '/' . FILE_PREFIX);
 
 define('DATA_EXT_NAME', '.csv');
 define('DATA_EXT_LEN', strlen(lcm_utf8_decode(DATA_EXT_NAME)));
@@ -188,20 +189,29 @@ function export_database($output_filename = '', $ignore_old = false) {
 
 	if (class_exists("Archive_Tar")) {
 		$tar_worked = true;
-		$tar_object = new Archive_Tar(DIR_BACKUPS_PREFIX . $output_filename . '.tar');
+
+		$old_cwd = getcwd();
+		chdir(DIR_BACKUPS);
+
+		$tar_object = new Archive_Tar(FILE_PREFIX . $output_filename . '.tar');
 
 		$files = array();
-		$file_dir = opendir(DIR_BACKUPS_PREFIX . $output_filename);
+		$file_dir = opendir(FILE_PREFIX . $output_filename);
+
+		if (! $file_dir)
+			lcm_panic("Could not open dir: $file_dir");
 
 		while (($file = readdir($file_dir)))
-			if (is_file(DIR_BACKUPS_PREFIX . $output_filename . '/' . $file))
-				$files[] = DIR_BACKUPS_PREFIX . $output_filename . '/' . $file;
+			if (is_file(FILE_PREFIX . $output_filename . '/' . $file))
+				$files[] = FILE_PREFIX . $output_filename . '/' . $file;
 
 		if (count($files)) {
 			$tar_object->setErrorHandling(PEAR_ERROR_PRINT);
 			$tar_object->create($files)
 				or lcm_panic("Could not add files " . get_var_dump($files));
 		}
+
+		chdir($old_cwd);
 	}
 
 	//

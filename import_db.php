@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.14 2006/05/26 11:06:45 mlutfy Exp $
+	$Id: import_db.php,v 1.15 2006/09/07 19:08:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -325,12 +325,18 @@ function upload_backup_file() {
 
 		if (class_exists("Archive_Tar")) {
 			$tar_worked = true;
+
+			$old_dir = getcwd();
+			chdir(DIR_BACKUPS);
+
 			$tar_object = new Archive_Tar($fname_full);
 			$tar_object->setErrorHandling(PEAR_ERROR_PRINT);
 
 			// XXX is this safe to do this here? What if file exists?
 			// FIXME: check extractList() to modify dest path
 			$tar_object->extract();
+
+			chdir($old_dir);
 
 			lcm_debug("untar should be OK");
 		} else {
