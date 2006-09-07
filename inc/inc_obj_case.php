@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.25 2006/09/07 20:59:19 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.26 2006/09/07 21:00:22 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -674,7 +674,7 @@ class LcmCaseInfoUI extends LcmCase {
 		// Legal reason
 		if (substr($case_legal_reason, 0, 3) == 'yes') {
 			echo '<tr><td><label for="input_legal_reason">' . f_err_star('legal_reason') . _T('case_input_legal_reason') . "</label>"
-				. ($case_legal_reason == 'yes_mandatory' ? '<br/>(' . _T('keywords_input_policy_mandatory') ')' : '')
+				. ($case_legal_reason == 'yes_mandatory' ? '<br/>(' . _T('keywords_input_policy_mandatory') . ')' : '')
 				. "</td>\n";
 			echo '<td>';
 			echo '<textarea name="legal_reason" id="input_legal_reason" class="frm_tarea" rows="2" cols="60">';
