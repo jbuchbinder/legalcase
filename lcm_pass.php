@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.21 2006/05/04 08:15:27 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.22 2006/09/07 21:10:54 mlutfy Exp $
 */
 
 session_start();
@@ -196,6 +196,8 @@ function print_pass_forgotten_form() {
 }
 
 function send_registration_by_email() {
+	global $lcm_lang_left;
+
 	$_SESSION['form_data'] = array();
 	$_SESSION['errors'] = array();
 
@@ -246,7 +248,7 @@ function send_registration_by_email() {
 			echo "<div class='box_error'>" . _T('pass_registration_denied') . "</div>\n";
 		} else {
 			echo "<br />\n";
-			echo "<div class='box_error'>" . _T('pass_warning_already_registered') . "</div>\n";
+			echo "<div class=\"box_error\" align=\"$lcm_lang_left\">" . _T('pass_warning_already_registered') . "</div>\n";
 			return;
 		}
 	}
