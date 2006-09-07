@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.23 2006/09/05 22:41:50 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.24 2006/09/07 19:49:58 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -413,10 +413,10 @@ class LcmCaseInfoUI extends LcmCase {
 			. "</li>\n";
 
 		// Show users assigned to the case
-		$q = "SELECT id_case,lcm_author.id_author,name_first,name_middle,name_last
-				FROM lcm_case_author,lcm_author
+		$q = "SELECT id_case, a.id_author, name_first, name_middle, name_last
+				FROM lcm_case_author as ca, lcm_author as a
 				WHERE (id_case=" . $this->getDataInt('id_case') . "
-				  AND lcm_case_author.id_author=lcm_author.id_author)";
+				  AND ca.id_author = a.id_author)";
 		
 		$authors_result = lcm_query($q);
 		$cpt = 0;

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.176 2006/08/22 17:56:26 mlutfy Exp $
+	$Id: case_det.php,v 1.177 2006/09/07 19:51:44 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -162,9 +162,9 @@ if (! ($case > 0)) {
 				//
 				// Show case organization(s)
 				//
-				$q="SELECT lcm_org.id_org,name
-					FROM lcm_case_client_org,lcm_org
-					WHERE id_case=$case AND lcm_case_client_org.id_org=lcm_org.id_org";
+				$q="SELECT o.id_org,name
+					FROM lcm_case_client_org as cco, lcm_org as o
+					WHERE id_case = $case AND cco.id_org = o.id_org";
 		
 				$result = lcm_query($q);
 

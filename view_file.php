@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: view_file.php,v 1.4 2005/03/15 04:34:30 antzi Exp $
+	$Id: view_file.php,v 1.5 2006/09/07 19:53:49 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,13 +33,13 @@ switch ($type) {
 	// View case attachment
 	//
 	case 'case' :
-		$q = "SELECT lcm_case_attachment.*,lcm_case.public
-			FROM lcm_case_attachment,lcm_case
-			WHERE lcm_case_attachment.id_case=lcm_case.id_case
-				AND id_attachment=$file_id";
+		$q = "SELECT ca.*, c.public
+			FROM lcm_case_attachment as ca, lcm_case as c
+			WHERE ca.id_case = c.id_case
+				AND id_attachment = $file_id";
 		$result = lcm_query($q);
 		
-		if (lcm_num_rows($result) == 0) die("There is no such file!");
+		if (lcm_num_rows($result) == 0) die("There is no such file");
 		
 		$row = lcm_fetch_array($result);
 		
