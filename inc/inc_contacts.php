@@ -18,13 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.39 2006/09/05 22:42:59 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.40 2006/09/07 16:45:12 mlutfy Exp $
 */
 
 
 // Execute only once
 if (defined('_INC_CONTACTS')) return;
 define('_INC_CONTACTS', '1');
+
+include_lcm('inc_keywords');
 
 function get_contact_type_id($name) {
 	$kwg = get_kwg_from_name($name);
