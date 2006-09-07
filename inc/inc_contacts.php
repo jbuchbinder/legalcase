@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.40 2006/09/07 16:45:12 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.41 2006/09/07 16:47:24 mlutfy Exp $
 */
 
 
@@ -29,7 +29,7 @@ define('_INC_CONTACTS', '1');
 include_lcm('inc_keywords');
 
 function get_contact_type_id($name) {
-	$kwg = get_kwg_from_name($name);
+	$kwg = get_kwg_from_name('+' . $name);
 	return $kwg['id_group'];
 }
 
