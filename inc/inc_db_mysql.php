@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_mysql.php,v 1.37 2006/05/26 11:49:21 mlutfy Exp $
+	$Id: inc_db_mysql.php,v 1.38 2006/09/07 19:46:53 mlutfy Exp $
 */
 
 if (defined('_INC_DB_MYSQL')) return;
@@ -160,8 +160,8 @@ function lcm_query_create_table($table, $fields, $keys = array()) {
 		$tmp = $f;
 
 		// MySQL 5.1: foo_field datetime DEFAULT '0000-00-00 00:00:00' NOT NULL -> not allowed
-		// so transform into: foo_field datetime NOT NULL. Default values are bad anyway for datetime.
-		$tmp = preg_replace("/default '0000-00-00 00:00:00'/i", " ", $tmp);
+		// so transform into: foo_field datetime NULL. Default values are bad anyway for datetime.
+		$tmp = preg_replace("/default '0000-00-00 00:00:00' not null/i", "default null", $tmp);
 
 		$new_fields[] = $tmp;
 	}
@@ -186,7 +186,15 @@ function lcm_query_create_table($table, $fields, $keys = array()) {
 	if (! preg_match("/^(4\.0|3\.)/", $ver)) 
 		$query .= " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ";
 
-	return lcm_query($query);
+	// accept query fail because of following scenario:
+	// - user exports database in LCM 0.7.0
+	// - user goes to other server, installs LCM 0.7.1
+	// - user imports the database
+	// - LCM launches upgrade procedure
+	// - Result: there may be new tables in 0.7.1, and the upgrade procedure
+	//   will freak out when trying to create those tables.
+	$accept_fail = (isset($GLOBALS['debug']) && $GLOBALS['debug'] ? false : true);
+	return lcm_query($query, $accept_fail);
 }
 
 function lcm_query_create_unique_index($table, $idx_name, $field) {
