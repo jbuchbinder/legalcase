@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_contacts.php,v 1.41 2006/09/07 16:47:24 mlutfy Exp $
+	$Id: inc_contacts.php,v 1.42 2006/09/08 13:28:23 mlutfy Exp $
 */
 
 
@@ -29,7 +29,7 @@ define('_INC_CONTACTS', '1');
 include_lcm('inc_keywords');
 
 function get_contact_type_id($name) {
-	$kwg = get_kwg_from_name('+' . $name);
+	$kwg = get_kwg_from_name($name);
 	return $kwg['id_group'];
 }
 
@@ -109,6 +109,11 @@ function add_contact($type_person, $id_person, $type_contact, $value) {
 
 	$validator_file = 'contact';
 	$validator_func = 'LcmCustomValidateContact';
+
+	// Because initially contact types did not start with '+', but then
+	// there would always be small parts of the code missing them..
+	if ($type_contact{0} != '+')
+		$type_contact = '+' . $type_contact;
 
 	// This way, we can validate 'phone_home' or 'phone_mobile' using validate_contact_phone.php
 	// and class LcmCustomValidateContactPhone()
@@ -218,6 +223,9 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 		// Thus we can specify more flexible searches
 		switch (gettype($type_contact)) {
 			case "string":
+				if ($type_contact{0} != '+')
+					$type_contact = '+' . $type_contact;
+
 				$type_contact = get_contact_type_id($type_contact);
 			case "integer":
 				$query .= " AND (type_contact = $type_contact)";
@@ -225,21 +233,25 @@ function is_existing_contact($type_person, $id = 0, $type_contact, $value) {
 			case "array":
 				$qs = '';
 				foreach ($type_contact as $tc) {
-					if (gettype($tc)=='string') $tc = get_contact_type_id($tc);
+					if (gettype($tc) == 'string') {
+						if ($tc{0} != '+') $tc = '+' . $tc;
+						$tc = get_contact_type_id($tc);
+					}
+
 					$tc = intval($tc);
 					$qs .= ($qs ? ',' : '') . $tc;
 				}
+
 				$query .= " AND (type_contact IN ($qs)";
 				break;
 			default:
-				echo "Wrong is_existing_contact type_contact ($type_contact)";
+				lcm_panic("Wrong is_existing_contact type_contact ($type_contact)");
 		}
-
 	}
 
 	$query .= ")";
-
 	$result = lcm_query($query);
+
 	return (lcm_num_rows($result) > 0);
 }
 
