@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.60 2006/09/08 17:52:19 mlutfy Exp $
+	$Id: install.php,v 1.61 2006/09/08 17:57:28 mlutfy Exp $
 */
 
 session_start();
@@ -250,21 +250,18 @@ function install_step_5() {
 			send_email("lcmrequests@bidon.ca", "[lcm-news] subscribe " . _session('email'), "[lcm-news] subscribe " . _session('email'));
 		}
 
-	// TODO write message, whether to retry later if no confirmation is
-	// received, or if no mail sent, where to subscribe.
-
 	install_html_start('AUTO', '', 5);
 	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
 
 	echo "<div class='box_success'>\n";
 	echo "<p><b>" . _T('install_info_application_ready') . "</b></p>\n";
 
-	if (_request('getnews' == 'yes'))
-		echo "<p>" . _T('install_info_subscribe_may_fail') . "</p>\n";
+	if (_request('getnews') == 'yes')
+		echo '<p align="' . $lcm_lang_left . '">' . _T('install_info_subscribe_may_fail') . "</p>\n";
 
-	echo "<p>" . _T('install_info_more_about_software') . "</p>\n";
-	echo "<p>" . _T('install_info_do_not_forget') . "</p>\n";
-	echo "</div>\n\n";
+	echo '<p align="' . $lcm_lang_left . '">' . _T('install_info_more_about_software', array("url" => '<a class="content_link" href="http://www.lcm.ngo-bg.org">www.lcm.ngo-bg.org</a>')) . "</p>\n";
+	echo '<p align="center">' . _T('install_info_do_not_forget') . "</p>\n";
+	echo "</div>\n";
 
 	echo "<form action='index.php' method='post'>\n";
 	echo "<div align='" . $GLOBALS['lcm_lang_right'] . "'>"
