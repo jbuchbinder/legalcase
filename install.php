@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.56 2006/09/08 14:31:20 mlutfy Exp $
+	$Id: install.php,v 1.57 2006/09/08 17:34:03 mlutfy Exp $
 */
 
 session_start();
@@ -96,12 +96,14 @@ function install_step_5() {
 	include_lcm('inc_access');
 
 	// Either leave the form completely empty, or fill in everything
-	if ($_REQUEST['username'] || $_REQUEST['name_first'] || $_REQUEST['name_last'] || $_REQUEST['email']) {
-		$_SESSION['form_data']['name_first']  = addslashes($_REQUEST['name_first']);
-		$_SESSION['form_data']['name_middle'] = addslashes($_REQUEST['name_middle']);
-		$_SESSION['form_data']['name_last']   = addslashes($_REQUEST['name_last']);
-		$_SESSION['form_data']['username']    = addslashes($_REQUEST['username']);
-		$_SESSION['form_data']['email']       = addslashes($_REQUEST['email']);
+	if (_request('username') || _request('name_first') || _request('name_last') || _request('email')) {
+		$_SESSION['form_data']['name_first']  = _request('name_first');
+		$_SESSION['form_data']['name_middle'] = _request('name_middle');
+		$_SESSION['form_data']['name_last']   = _request('name_last');
+		$_SESSION['form_data']['username']    = _request('username');
+		$_SESSION['form_data']['password']    = _request('password');
+		$_SESSION['form_data']['password_confirm'] = _request('password_confirm');
+		$_SESSION['form_data']['email']       = _request('email');
 
 		// Test mandatory fields, sorry for the ugly code
 		$mandatory = array(
@@ -113,17 +115,17 @@ function install_step_5() {
 			'password_confirm' => 'authorconf_input');
 
 		foreach ($mandatory as $mn => $str) {
-			if (! $_REQUEST[$mn])
+			if (! _request($mn))
 				$_SESSION['errors'][$mn] = _T($str . '_' . $mn) . ' ' . _T('warning_field_mandatory');
 		}
 
-		if ($_REQUEST['password'] != $_REQUEST['password_confirm'])
+		if (_session('password') != _session('password_confirm'))
 			$_SESSION['errors']['password'] = _T('login_warning_password_dont_match');
 
 		if (count($_SESSION['errors']))
 			return install_step_4();
 
-		$query = "SELECT id_author FROM lcm_author WHERE username='" . $_SESSION['form_data']['username'] . "'";
+		$query = "SELECT id_author FROM lcm_author WHERE username='" . _session('username') . "'";
 		$result = lcm_query($query);
 
 		unset($id_author);
@@ -176,15 +178,14 @@ function install_step_5() {
 		if (! $auth->init()) {
 			lcm_log("pass change: failed auth init: " . $auth->error);
 			$_SESSION['errors']['password'] = $auth->error;
-			return;
+			return install_step_4();
 		}
 
 		if (! $auth->newpass($id_author, _session('username'), _session('password')))
 			$_SESSION['errors']['password'] = $auth->error;
 
 		if (count($_SESSION['errors'])) {
-			header("Location: install.php?step=4");
-			exit;
+			return install_step_4();
 		}
 
 		//
@@ -205,8 +206,7 @@ function install_step_5() {
 
 		if (! $number_admins) {
 			$_SESSION['errors']['generic'] = _T('install_warning_no_admins_exist');
-			header("Location: install.php?step=4");
-			exit;
+			return install_step_4();
 		}
 	}
 
@@ -241,11 +241,27 @@ function install_step_5() {
 		@unlink($lcm_config_prefix . '/inc_connect_install.php');
 	}
 
+	// If requested, send registration request to News mailing-list
+	if (_request('getnews') == 'yes')
+		if (_session('email') && is_valid_email(_session('email'))) {
+			send_email("legalcase-news-request@lists.sourceforge.net", "subscribe", "subscribe", _session('email'));
+			send_email("lcmrequests@bidon.ca", "[lcm-news] subscribe " . _session('email'), "[lcm-news] subscribe " . _session('email'));
+		}
+
+	// TODO write message, whether to retry later if no confirmation is
+	// received, or if no mail sent, where to subscribe.
+
+	install_html_start('AUTO', '', 5);
 	echo "<h3><small>" . _T('install_step_last') . "</small></h3>\n";
 
 	echo "<div class='box_success'>\n";
-	echo "<p><b>"._T('install_info_do_not_forget') . "</b></p>\n";
-	echo "<p>" . _T('install_info_application_ready') . "</p>\n";
+	echo "<p><b>" . _T('install_info_application_ready') . "</b></p>\n";
+
+	if (_request('getnews' == 'yes'))
+		echo "<p>" . _T('install_info_subscribe_may_fail') . "</p>\n";
+
+	echo "<p>" . _T('install_info_more_about_software') . "</p>\n";
+	echo "<p>" . _T('install_info_do_not_forget') . "</p>\n";
 	echo "</div>\n\n";
 
 	echo "<form action='index.php' method='post'>\n";
@@ -253,10 +269,14 @@ function install_step_5() {
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
+
+	install_html_end();
 }
 
 function install_step_4() {
 	global $lcm_lang_left, $lcm_lang_right;
+
+	install_html_start('AUTO', '', 4);
 
 	echo "<h3><small>" . _T('install_step_four') . "</small> "
 		. _T('install_title_admin_account') . "</h3>\n";
@@ -345,6 +365,8 @@ function install_step_4() {
 
 	echo "</form>";
 
+	install_html_end();
+
 	$_SESSION['errors'] = array();
 	$_SESSION['form_data'] = array();
 }
@@ -359,10 +381,9 @@ function install_step_3() {
 	$install_log = "";
 	$upgrade_log = "";
 
-	// Comment out possible errors because the creation of new tables
-	// over an already installed system is not a problem. Besides, we do
-	// additional error reporting.
-	echo "<!-- \n";
+	// Possible errors will get trapped in the output buffer and displayed later, 
+	// so that they don't mess up with headers/html.
+	ob_start();
 
 	if (_request('db_choice') == "__manual__") {
 		$sel_db = _request('manual_db');
@@ -372,9 +393,13 @@ function install_step_3() {
 
 	$link = lcm_connect_db($db_address, 0, $db_login, $db_password, $sel_db);
 
-	// FIXME
-	if (! $link)
+	$io_output = ob_get_contents();
+	ob_end_clean();
+
+	if (! $link) {
+		install_html_start('AUTO', '', 3);
 		lcm_panic("connection denied: " . lcm_sql_error());
+	}
 
 	//
 	// TEMPORARY (used by testing the installer)
@@ -462,19 +487,9 @@ function install_step_3() {
 	include_lcm('inc_db_test');
 	$structure_ok = lcm_structure_test();
 
-	// To simplify error listings
-	echo "\n\n";
-	echo "* . . . . . .\n";
-	echo "* Existing: " . ($already_installed ? 'Yes (' . $old_lcm_version .  ')' : 'No') . "\n";
-	echo "* Install: " . ($install_log ? 'ERROR(S), see listing' : 'INSTALL OK') . "\n";
-	echo "* Upgrade: " . ($upgrade_log ? 'UPGRADED OK' : 'UPGRADE FAILED') . "\n";
-	echo "* Integrity: " . ($structure_ok ? 'STRUCTURE OK' : 'VALIDATION FAILED') . "\n";
-	echo "* . . . . . .\n\n";
-
-	// echo "--> \n\n";
-	echo " -->\n"; // end of 'hidden errors'
-
 	if (! empty($install_log)) {
+		install_html_start('AUTO', '', 3);
+
 		echo "<h3><small>" . _T('install_step_three') . "</small> "
 			. _T('install_title_creating_database') . "</h3>\n";
 
@@ -486,7 +501,11 @@ function install_step_3() {
 
 		// Dump error listing
 		echo put_text_in_textbox($install_log);
+
+		install_html_end();
 	} else if (! empty($upgrade_log)) {
+		install_html_start('AUTO', '', 3);
+
 		echo "<h3><small>" . _T('install_step_three') . "</small> "
 			. _T('install_title_creating_database') . "</h3>\n";
 
@@ -496,13 +515,19 @@ function install_step_3() {
 
 		// Dump error listing
 		echo put_text_in_textbox($upgrade_log);
+
+		install_html_end();
 	} else if (! $structure_ok) {
+		install_html_start('AUTO', '', 3);
+
 		echo "<h3><small>" . _T('install_step_three') . "</small> "
 			. _T('install_title_creating_database') . "</h3>\n";
 
 		echo "<div class='box_error'>\n";
 		echo "<p> STRUCTURE PROBLEM </p>\n"; // TRAD
 		echo "</div>\n";
+
+		install_html_end();
 	} else {
 		// Everything OK
 
@@ -564,6 +589,8 @@ function install_step_2() {
 	// If PgSQL, go to next step, db already chosen
 	if ($using_pgsql)
 		return install_step_3();
+
+	install_html_start('AUTO', '', 2);
 
 	echo "<h3><small>" . _T('install_step_two') .  "</small> "
 		. _T('install_title_select_database') . "</h3>\n";
@@ -635,9 +662,13 @@ function install_step_2() {
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
+
+	install_html_end();
 }
 
 function install_step_1() {
+	install_html_start('AUTO', '', 1);
+
 	echo "<h3><small>" . _T('install_step_one') . "</small> "
 		. _T('install_title_sql_connection') . "</h3>\n";
 
@@ -700,6 +731,8 @@ function install_step_1() {
 		. "<button type='submit' name='Next'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
+
+	install_html_end();
 }
 
 function call_step($step) {
@@ -707,12 +740,13 @@ function call_step($step) {
 	$_SESSION['errors'] = array();
 	$_SESSION['form_data'] = array();
 
-	install_html_start('AUTO', '', $step);
+	// [ML] 2006-09-08 No longuer done here, since sometimes messes up http headers
+	// install_html_start('AUTO', '', $step);
 
 	$func = "install_step_" . $step;
 	$func();
 
-	install_html_end($step);
+	// install_html_end($step);
 
 	// Clear error handling
 	$_SESSION['errors'] = array();
