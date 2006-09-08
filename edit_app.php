@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.48 2006/09/08 12:33:58 mlutfy Exp $
+	$Id: edit_app.php,v 1.49 2006/09/08 12:37:36 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -274,7 +274,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		<!-- Appointment description -->
 		<tr><td valign="top"><?php echo _T('app_input_description'); ?></td>
 			<td><textarea <?php echo $dis; ?> name="description" rows="5" cols="40" class="frm_tarea"><?php
-			echo clean_output($_SESSION['form_data']['description']) . "</textarea></td></tr>\n";
+			echo clean_output(_session('description')) . "</textarea></td></tr>\n";
 
 		// Appointment participants - authors
 		echo "\t\t<tr><td valign=\"top\">";
@@ -309,16 +309,18 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 			(count($author_ids) ? " WHERE id_author NOT IN (" . join(',',$author_ids) . ")" : "") . "
 			ORDER BY name_first,name_middle,name_last";
 		$result = lcm_query($q);
-		echo "\t\t\t<select name=\"author\">\n";
-		echo "\t\t\t\t<option selected='selected' value=\"0\"> ... </option>\n"; // TRAD
+
+		echo '<select name="author">' . "\n";
+		echo '<option selected="selected" value="0"> ... </option>' . "\n";
+
 		while ($row = lcm_fetch_array($result)) {
-			echo "\t\t\t\t<option value=\"" . $row['id_author'] . '">'
+			echo "<option value=\"" . $row['id_author'] . '">'
 				. get_person_name($row)
 				. "</option>\n";
 		}
-		echo "\t\t\t</select>\n";
-		echo "\t\t\t<button name=\"submit\" type=\"submit\" value=\"add_author\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
-		echo "\t\t</td></tr>\n";
+		echo "</select>\n";
+		echo "<button name=\"submit\" type=\"submit\" value=\"add_author\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
+		echo "</td></tr>\n";
 		
 		// Appointment participants - clients
 		echo '<tr><td valign="top">';
@@ -328,7 +330,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		$q = "SELECT c.id_client, c.name_first, c.name_middle, c.name_last, o.id_org, o.name
 			FROM lcm_client as c, lcm_app_client_org aco
 			LEFT JOIN lcm_org as o USING (id_org)
-			WHERE id_app = " . _session('id_app') . "
+			WHERE id_app = " . _session('id_app', 0) . "
 				AND c.id_client = aco.id_client
 			ORDER BY c.name_first, c.name_middle, c.name_last, o.name";
 
@@ -350,7 +352,7 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 			FROM lcm_client AS c
 			LEFT JOIN lcm_client_org AS co USING (id_client)
 			LEFT JOIN lcm_org AS o ON (co.id_org = o.id_org)
-			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client = c.id_client AND aco.id_app = " . _session('id_app') . ")
+			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client = c.id_client AND aco.id_app = " . _session('id_app', 0) . ")
 			WHERE id_app IS NULL
 			ORDER BY c.name_first, c.name_last, o.name";
 		
