@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.49 2006/09/08 12:37:36 mlutfy Exp $
+	$Id: edit_app.php,v 1.50 2006/09/08 12:39:34 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -54,11 +54,11 @@ if (empty($_SESSION['errors'])) {
 			}
 
 			// Get appointment participants
-			$q = "SELECT lcm_author.id_author,name_first,name_middle,name_last
-				FROM lcm_author_app,lcm_author
-				WHERE lcm_author_app.id_author=lcm_author.id_author
+			$q = "SELECT au.id_author, au.name_first, au.name_middle, au.name_last
+				FROM lcm_author_app as ap, lcm_author au
+				WHERE ap.id_author = au.id_author
 					AND id_app=" . _session('id_app') . "
-				ORDER BY name_first,name_middle,name_last";
+				ORDER BY au.name_first, au.name_middle, au.name_last";
 			$result = lcm_query($q);
 
 			while ($row = lcm_fetch_array($result))
