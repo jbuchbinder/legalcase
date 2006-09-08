@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.61 2006/09/08 17:57:28 mlutfy Exp $
+	$Id: install.php,v 1.62 2006/09/08 17:59:40 mlutfy Exp $
 */
 
 session_start();
@@ -94,6 +94,8 @@ function install_step_5() {
 	include_config('inc_connect_install');
 	include_lcm('inc_meta');
 	include_lcm('inc_access');
+
+	global $lcm_lang_left, $lcm_lang_right;
 
 	// Either leave the form completely empty, or fill in everything
 	if (_request('username') || _request('name_first') || _request('name_last') || _request('email')) {
@@ -264,7 +266,7 @@ function install_step_5() {
 	echo "</div>\n";
 
 	echo "<form action='index.php' method='post'>\n";
-	echo "<div align='" . $GLOBALS['lcm_lang_right'] . "'>"
+	echo "<div align='" . $lcm_lang_right . "'>"
 		. "<button type='submit' name='Next'>" . _T('button_next')." >></button>&nbsp;"
 		. "</div>\n";
 	echo "</form>\n";
