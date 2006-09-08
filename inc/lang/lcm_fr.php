@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_fr.php,v 1.28 2006/08/24 18:06:44 mlutfy Exp $
+    $Id: lcm_fr.php,v 1.29 2006/09/08 19:36:19 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -225,7 +225,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_info_delete_org' => 'Supprimer la relation client-organisation.',
 'client_input_id' => 'ID client:',
 'client_input_notes' => 'Notes:',
-'client_subtitle_associated_org' => 'Affilié aux organisations suivantes',
+'client_subtitle_associated_org' => '<MODIF>Affilié aux organisations suivantes',
 'client_subtitle_attachments' => 'Pièces-jointes',
 'client_subtitle_cases' => 'Dossiers impliquant ce client',
 'client_subtitle_contacts' => 'Contacts',
@@ -509,13 +509,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_database_install_failed' => 'Retournez à la page précédente pour vérifier que l’information fournie par votre hébergeur (telles que le nom de l’utilisateur pour la connection à la base de données) ou sélectionnez une autre base de données.',
 'install_database_installed_ok' => 'Votre base de données est prête à être utilisée.',
 'install_enter_name_manually' => 'Vous connaissez le nom exact de la base de données...',
-'install_info_application_ready' => 'Le système est maintenant prêt à être utilisé...',
-'install_info_do_not_forget' => 'N&rsquo;oubliez pas vos codes d&rsquo;accès!',
+'install_info_application_ready' => 'Le système est maintenant prêt à être utilisé',
+'install_info_do_not_forget' => 'N’oubliez pas vos codes d’accès!',
 'install_info_go_back_verify_data' => 'Veuillez retourner à la page précédente et vérifier les informations que vous avez fournies.',
+'install_info_more_about_software' => 'Pour plus d&rsquo;informations sur ce logiciel, tels que les annonces, la documentation pour configurer le logiciel, etc., veuillez visiter @url@. Pour faire des demandes de nouvelles fonctionalités, signaler un bogue ou pour nous faire part de tout autre commentaire, écrire à legalcase-devel@lists.sf.net (vous pouvez y écrire en français). Vos commentaires sont très important pour nous aider à améliorer la qualité du logiciel.',
 'install_info_new_account_1' => 'Le système va maintenant vous créer un accès personalisé pour le site.',
 'install_info_sql_connection' => 'Consulter les informations qui vous ont été fournies par votre administrateur système: si vous hébergeur permet la gestion de bases de données SQL, vous devriez avoir reçu les codes de connection au serveur SQL.',
 'install_info_sql_connection_failed' => '<b>N.B.</b> Certains hébergeurs exigent que vous fassiez d&rsquo;abord une demande d&rsquo;activation de votre accès à la base de données SQL avant que vous puissiez l&rsquo;utiliser.',
+'install_info_subscribe_may_fail' => 'Une requête d&rsquo;abonnement a été envoyée pour abonner votre adresse de courriel aux annonces importantes du logiciel. Parfois, la requête ne fonctionne pas. Si vous ne recevez pas de confirmation dans les 24h, veuillez vous y abonner par notre site web.',
+'install_info_subscribe_to_news_list' => 'Abonner l&rsquo;adresse de courrier ci-dessus aux nouvelles importantes à propos du logiciel? Si oui, vous recevrez par courriel des annonces lorsqu&rsquo;une nouvelle version stable du logiciel est disponible, ainsi que des avertissement si un problème de sécurité est découvert. Ces annonces sont envoyées très rarement (au plus une fois par mois) et ne seront jamais utilisées pour pour des fins publicitaires.',
 'install_input_database_name' => 'Nom:',
+'install_input_getnews' => 'Abonnement à la liste d&rsquo;annonces du logiciel:',
 'install_select_database' => 'Veuillez choisir la base de données que votre service d&rsquo;hébergement vous a attribué',
 'install_select_language' => 'Choisissez la langue qui vous convient puis cliquez sur le bouton «suivant» pour démarrer la procédure d’installation.',
 'install_step_five' => 'Cinquième étape:',
@@ -702,7 +706,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_clients' => 'Clients',
 'menu_main_clients_tooltip' => 'Liste de tous les clients enregistrés dans le système.',
 'menu_main_expenses' => 'Requêtes internes',
-'menu_main_expenses_tooltip' => '<NEW>List of internal requests, such as requests to cover expenses related to a case.',
+'menu_main_expenses_tooltip' => 'Liste de requêtes internes, tels que des requêtes pour couvrir des frais reliés à un dossier.',
 'menu_main_orgs' => 'Organisations',
 'menu_main_orgs_tooltip' => 'Liste de toutes les organisations (personnes juridiques) enregistrées dans le système.',
 'menu_profile' => 'Profil',
@@ -741,7 +745,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_info_enter_email' => 'Veuillez entrer votre adresse de courrier électronique. Vous recevrez par courrier plus d’information qui vous aideront à rétablir votre mot de passe.',
 'pass_info_here_info' => 'Voici vos identifiants pour accéder au site &laquo;@site_name@&raquo; (@site_address@):',
 'pass_info_identifier_mail' => 'Vos identifiants vous ont été envoyés par courrier.',
-'pass_info_moderated' => '<NEW>New registrations required the approval of the system administrator. You will get a response by e-mail as soon as possible.',
+'pass_info_moderated' => 'Les nouveaux enregistrements doivent être authorisées par un administrateur du système. Vous recevrez une réponse par courriel aussitôt que possible.',
 'pass_info_pass_updated' => 'Votre nouveau mot de passe a été enregistré.',
 'pass_info_password_by_mail' => 'Votre mot de passe vous sera envoyé par courrier électronique.',
 'pass_info_receive_mail' => 'Vous recevrez par courrier plus d’information qui vous aideront à rétablir votre mot de passe.',

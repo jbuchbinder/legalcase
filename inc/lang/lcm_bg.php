@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_bg.php,v 1.62 2006/08/16 15:35:51 mlutfy Exp $
+    $Id: lcm_bg.php,v 1.63 2006/09/08 19:36:19 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -225,7 +225,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_info_delete_org' => 'Изтриване на връзката между клиента и организацията.',
 'client_input_id' => 'Идентификатор на клиента:',
 'client_input_notes' => 'Бележки:',
-'client_subtitle_associated_org' => 'Свързани организации',
+'client_subtitle_associated_org' => '<MODIF>Свързани организации',
 'client_subtitle_attachments' => 'Прикачени док.',
 'client_subtitle_cases' => 'Случаи, в които клиентът участва',
 'client_subtitle_contacts' => 'Контакти',
@@ -510,13 +510,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_database_install_failed' => 'Върнете се на предната страница, проверете информацията указана от хоста Ви (като името за връзка с базата за данни) или изберете друга база за данни.',
 'install_database_installed_ok' => 'Вашата база за данни е готова да се използва.',
 'install_enter_name_manually' => 'Знаете точното име на базата за данни...',
-'install_info_application_ready' => 'Системата е готова да се използва...',
+'install_info_application_ready' => 'Системата е готова да се използва',
 'install_info_do_not_forget' => 'Не забравяйте кодовете си за достъп!',
 'install_info_go_back_verify_data' => 'Върнете се на предишната страница и проверете информацията, която сте попълнили.',
+'install_info_more_about_software' => '<NEW>For more information about the software, such as recent announcements, documentation on how to extend the software, etc., please visit @url@. To request features, report bugs or any other feedback, write to legalcase-devel@lists.sf.net. Your feedback is very important to help us improve the quality of the software.',
 'install_info_new_account_1' => 'Сега системата ще Ви даде специален достъп до сайта.',
 'install_info_sql_connection' => 'Прегледайте информацията, която Вашият системен администратор трябва да е предоставил: ако сайтът поддържа SQL, това трябва да са настройките за връзка със сървъра за бази данни.',
 'install_info_sql_connection_failed' => '<b>Внимание:</b> При някои сървъри, трябва да заявите активиране на достъп до базата за данни, преди да можете да ги използвате. Ако не можете да се свържете, уверете се, че сте заявили такова активиране.',
+'install_info_subscribe_may_fail' => '<NEW>A request to subscribe your e-mail to the LCM announcements has been sent. Sometimes, the automated requests may not work. If you do not receive a confirmation by e-mail within the next 24h, please subscribe from our website.',
+'install_info_subscribe_to_news_list' => '<NEW>Subscribe the above e-mail to the receive LCM annoucements? If yes, you will receive by e-mail information about of new stable software releases and important security notifications. Such e-mails are sent very rarely (once every 1-2 months) and will never be used for other purposes, such as advertising.',
 'install_input_database_name' => 'Име:',
+'install_input_getnews' => '<NEW>Subscription to the announcements newsletter:',
 'install_select_database' => 'Изберете базата за данни, която хостът Ви е предоставил',
 'install_select_language' => 'Изберете език и след това натиснете бутон &bdquo;по-нататък&ldquo;, за да стартирате процедурата по инсталацията.',
 'install_step_five' => 'Пета стъпка:',
@@ -703,6 +707,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_clients' => 'Клиенти',
 'menu_main_clients_tooltip' => 'Списък с всички регистрирани в системата клиенти.',
 'menu_main_expenses' => '<NEW>Internal requests',
+'menu_main_expenses_tooltip' => '<NEW>List of internal requests, such as requests to cover expenses related to a case.',
 'menu_main_orgs' => 'Организации',
 'menu_main_orgs_tooltip' => 'Списък с всички регистрирани в системата организации (юридически лица).',
 'menu_profile' => 'Профил',
@@ -857,6 +862,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_admin_email' => 'Адрес на ел. поща на администратора:',
 'siteconf_input_available_languages' => 'Обновяване на списъка с наличните преводи:',
 'siteconf_input_case_allow_modif' => 'Да се позволи ли информацията за случай да се променя от потребителите след въвеждането й?',
+'siteconf_input_case_new_showorg' => '<NEW>Display the &ldquo;find/create organisation&rdquo; form when creating a new case?',
 'siteconf_input_citizen_number' => 'ЕГН/ЛНЧ (само за клиенти)',
 'siteconf_input_client_income' => 'Доход',
 'siteconf_input_court_archive' => 'Номер на дело в съда',

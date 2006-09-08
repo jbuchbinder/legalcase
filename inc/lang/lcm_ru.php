@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_ru.php,v 1.5 2006/08/16 15:35:51 mlutfy Exp $
+    $Id: lcm_ru.php,v 1.6 2006/09/08 19:36:19 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -227,7 +227,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_info_delete_org' => 'Удалить связь клиент-организация.',
 'client_input_id' => 'Код клиента:',
 'client_input_notes' => 'Примечания:',
-'client_subtitle_associated_org' => 'Связанные организации',
+'client_subtitle_associated_org' => '<MODIF>Связанные организации',
 'client_subtitle_attachments' => 'Приложения',
 'client_subtitle_cases' => 'Дела, вовлекающие этого клиента',
 'client_subtitle_contacts' => 'Контакты',
@@ -490,8 +490,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_upgrade_database3' => 'Обновление базы данных успешно.',
 'info_upgrade_database5' => 'Нажмите здесь для возврата на Главную страницу.',
 'info_yes' => 'да',
-'info_yes_mandatory' => '<NEW>yes (mandatory)',
-'info_yes_optional' => '<NEW>yes (optional)',
+'info_yes_mandatory' => '<MODIF>да (mandatory)',
+'info_yes_optional' => '<MODIF>да (optional)',
 'info_your_contact_information' => 'Ваша контактная информация ...',
 'input_connection_identifiers' => 'Ваши идентификаторы соединения ...',
 'input_email' => 'Адрес E-mail:',
@@ -511,13 +511,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_database_install_failed' => 'Вернитесь на предыдущую страницу, проверьте информацию Вашего хоста (такую как имя пользователя при соединении с базой данных) или выберите другую базу данных.',
 'install_database_installed_ok' => 'Ваша база данных теперь готова к использованию.',
 'install_enter_name_manually' => 'Вы знаете точное имя базы данных...',
-'install_info_application_ready' => 'Система готова к использованию...',
+'install_info_application_ready' => 'Система готова к использованию',
 'install_info_do_not_forget' => 'Не забудьте свой собственный код доступа!',
 'install_info_go_back_verify_data' => 'Go back to the previous page, and verify the information you have provided.',
+'install_info_more_about_software' => '<NEW>For more information about the software, such as recent announcements, documentation on how to extend the software, etc., please visit @url@. To request features, report bugs or any other feedback, write to legalcase-devel@lists.sf.net. Your feedback is very important to help us improve the quality of the software.',
 'install_info_new_account_1' => 'Система теперь предоставляет Вам пользовательский доступ к сайту. ',
 'install_info_sql_connection' => 'Ссылка на информацию представленную Вам системным администратором: если Ваш хост поддерживает SQL, он видимо даст Вам коды доступа к SQL-серверу.',
 'install_info_sql_connection_failed' => '<b>N.B.</b> На некоторых серверах, Вы должны запросить активацию Вашего доступа к базе данных SQL до ее использования. Если Вы не можете соединиться, убедитесь, что Вы действительно сделали этот запрос.',
+'install_info_subscribe_may_fail' => '<NEW>A request to subscribe your e-mail to the LCM announcements has been sent. Sometimes, the automated requests may not work. If you do not receive a confirmation by e-mail within the next 24h, please subscribe from our website.',
+'install_info_subscribe_to_news_list' => '<NEW>Subscribe the above e-mail to the receive LCM annoucements? If yes, you will receive by e-mail information about of new stable software releases and important security notifications. Such e-mails are sent very rarely (once every 1-2 months) and will never be used for other purposes, such as advertising.',
 'install_input_database_name' => 'Имя:',
+'install_input_getnews' => '<NEW>Subscription to the announcements newsletter:',
 'install_select_database' => 'Выберите базу данных, которую Ваш хост Вам присвоил',
 'install_select_language' => 'Выберите язык, затем нажмите на кнопке "след.", чтобы начать процедуру установки.',
 'install_step_five' => 'Пятый шаг:',
@@ -704,6 +708,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_clients' => 'Клиенты',
 'menu_main_clients_tooltip' => 'Список всех клиентов, зарегистрированных в системе.',
 'menu_main_expenses' => '<NEW>Internal requests',
+'menu_main_expenses_tooltip' => '<NEW>List of internal requests, such as requests to cover expenses related to a case.',
 'menu_main_orgs' => 'Организации',
 'menu_main_orgs_tooltip' => 'Список всех организаций (юридических лиц) зарегистрированных в системе.',
 'menu_profile' => 'Профиль',
@@ -742,7 +747,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_info_enter_email' => 'Введите ниже адрес e-mail, с которого Вы регистрировались прошлый раз. Вы получите письмо по e-mail, объясняющее, как Вы можете восстановить Ваш доступ.',
 'pass_info_here_info' => 'Это Ваш идентификатор для входа на сайт "@site_name@" (@site_address@):',
 'pass_info_identifier_mail' => 'Ваш новый идентификатор послан на Ваш e-mail и вскоре прибудет к Вам.',
-'pass_info_moderated' => 'Новые регистрации требуют одобрения системного администратора. Вы получите ответ по e-mail так быстро, насколько это возможно.',
+'pass_info_moderated' => '<MODIF>Новые регистрации требуют одобрения системного администратора. Вы получите ответ по e-mail так быстро, насколько это возможно.',
 'pass_info_pass_updated' => 'Ваш новый пароль записан.',
 'pass_info_password_by_mail' => 'Ваш пароль послан Вам по e-mail.',
 'pass_info_receive_mail' => 'Вы можете получить e-mail объясняющий, как Вы можете восстановить Ваш доступ на сайт.',
@@ -857,6 +862,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_admin_email' => 'E-mail администратора сайта:',
 'siteconf_input_available_languages' => 'Обновление списка доступных языков:',
 'siteconf_input_case_allow_modif' => 'Допускать правку информации дела только при создании?',
+'siteconf_input_case_new_showorg' => '<NEW>Display the &ldquo;find/create organisation&rdquo; form when creating a new case?',
 'siteconf_input_citizen_number' => 'Гражданский код (только для клиентов)',
 'siteconf_input_client_income' => 'Доход',
 'siteconf_input_court_archive' => 'Судебный архивный номер',

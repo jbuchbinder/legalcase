@@ -2,6 +2,47 @@
 
 // This is a LCM language file  --  Ceci est un fichier langue de LCM
 
+/*
+    To translate LCM, you may translate this file and send it to legalcase-devel@lists.sf.net.
+    You may also use the Web translation system: http://www.lcm.ngo-bg.org/trad-lang/trad_lang.php
+
+    Some translations need help, they are no longuer maintained. You can update them by fixing
+    this file, and sending it to legalcase-devel@lists.sf.net, or use the Web translation system.
+    (Using the web translation system to update translations is highly recommended!)
+
+    Note: Strings with <NEW> are new strings, which have never been translated.
+          Strings with <MODIF> are strings which have been updated in the English translation.
+
+    If you wish to only modify a few strings for local requirements, please
+    read: http://www.lcm.ngo-bg.org/article136.html
+
+    Also please note that translations contributed to the project must have
+    the copyright notice below. As a recognition to the translators work, we
+    add their name to the 'AUTHORS' file and we announce the new translation
+    on our website (unless explicitely requested otherwise).
+
+   -----------------------------------------------------------------------
+
+    This file is part of the Legal Case Management System (LCM).
+    (C) 2004-2006 Free Software Foundation, Inc.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+    $Id: lcm_de.php,v 1.3 2006/09/08 19:36:19 mlutfy Exp $
+*/ 
+
 $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 
@@ -184,7 +225,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_info_delete_org' => 'Löschen Sie die Mandanten- Organisationsverbindung.',
 'client_input_id' => 'Mandantenkennung:',
 'client_input_notes' => 'Hinweise:',
-'client_subtitle_associated_org' => 'In Verbindung stehende Organisationen ',
+'client_subtitle_associated_org' => '<MODIF>In Verbindung stehende Organisationen ',
 'client_subtitle_attachments' => 'Anlage',
 'client_subtitle_cases' => 'Fälle, die diesen Mandanten betreffen',
 'client_subtitle_contacts' => 'Kontakte',
@@ -468,13 +509,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_database_install_failed' => '<NEW>Go back to the previous page, verify the information provided by your host (such as the database connection username) or select another database.',
 'install_database_installed_ok' => '<NEW>Your database is now ready to use.',
 'install_enter_name_manually' => '<NEW>You know the exact name of the database...',
-'install_info_application_ready' => '<NEW>The system is now ready to be used...',
-'install_info_do_not_forget' => '<NEW>Do not forget your own access codes!',
+'install_info_application_ready' => '<NEW>The system is now ready to be used',
+'install_info_do_not_forget' => '<NEW>Do not forget your access codes!',
 'install_info_go_back_verify_data' => '<NEW>Go back to the previous page, and verify the information you have provided.',
+'install_info_more_about_software' => '<NEW>For more information about the software, such as recent announcements, documentation on how to extend the software, etc., please visit @url@. To request features, report bugs or any other feedback, write to legalcase-devel@lists.sf.net. Your feedback is very important to help us improve the quality of the software.',
 'install_info_new_account_1' => '<NEW>The system will now provide you with a custom access to the site. ',
 'install_info_sql_connection' => '<NEW>Refer to the information provided to you by your system administrator: if your host supports SQL, it should give you the connection codes to the SQL server.',
 'install_info_sql_connection_failed' => '<NEW><b>N.B.</b> On a number of servers, you must request the activation of your access to the SQL database before you can use it. If you are unable to connect, make sure that you actually made this request.',
+'install_info_subscribe_may_fail' => '<NEW>A request to subscribe your e-mail to the LCM announcements has been sent. Sometimes, the automated requests may not work. If you do not receive a confirmation by e-mail within the next 24h, please subscribe from our website.',
+'install_info_subscribe_to_news_list' => '<NEW>Subscribe the above e-mail to the receive LCM annoucements? If yes, you will receive by e-mail information about of new stable software releases and important security notifications. Such e-mails are sent very rarely (once every 1-2 months) and will never be used for other purposes, such as advertising.',
 'install_input_database_name' => '<NEW>Name:',
+'install_input_getnews' => '<NEW>Subscription to the announcements newsletter:',
 'install_select_database' => '<NEW>Select the database that your host has attributed to you',
 'install_select_language' => '<NEW>Select a language then click on the button “next” to start the installation procedure.',
 'install_step_five' => '<NEW>Fifth step:',
@@ -661,6 +706,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_clients' => 'Madanten',
 'menu_main_clients_tooltip' => 'Liste aller registrierten Madanten  im System.',
 'menu_main_expenses' => 'Interne Anträge ',
+'menu_main_expenses_tooltip' => '<NEW>List of internal requests, such as requests to cover expenses related to a case.',
 'menu_main_orgs' => 'Organisationen',
 'menu_main_orgs_tooltip' => '<NEW>List of all organisations (juridical persons) registered in the system.',
 'menu_profile' => 'Profil',
@@ -699,7 +745,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_info_enter_email' => '<NEW>Enter below the e-mail address with which you registered previously. You will receive an e-mail explaining how you can retreive your access.',
 'pass_info_here_info' => '<NEW>Here are your identifiers to enter the site "@site_name@" (@site_address@):',
 'pass_info_identifier_mail' => '<NEW>Your new identifier has just been sent to you by e-mail and should arrive shortly.',
-'pass_info_moderated' => '<NEW>New registrations required the approval of the system administrator. You will get a response by e-mail as soon as possible.',
+'pass_info_moderated' => '<NEW>New registrations require the approval of the system administrator. You will get a response by e-mail as soon as possible.',
 'pass_info_pass_updated' => '<NEW>Your new password has been recorded.',
 'pass_info_password_by_mail' => '<NEW>Your password will be sent to you by e-mail.',
 'pass_info_receive_mail' => '<NEW>You will receive an e-mail explaining how you can retrieve your access to the site.',
@@ -814,6 +860,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_admin_email' => '<NEW>E-mail of site administrator:',
 'siteconf_input_available_languages' => '<NEW>Refresh the list of available languages:',
 'siteconf_input_case_allow_modif' => '<NEW>Allow case information to be modified once they are created?',
+'siteconf_input_case_new_showorg' => '<NEW>Display the &ldquo;find/create organisation&rdquo; form when creating a new case?',
 'siteconf_input_citizen_number' => '<NEW>Citizen number (for clients only)',
 'siteconf_input_client_income' => '<NEW>Income',
 'siteconf_input_court_archive' => '<NEW>Court archive ID',

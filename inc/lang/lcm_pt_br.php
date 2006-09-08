@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_pt_br.php,v 1.15 2006/08/16 15:35:51 mlutfy Exp $
+    $Id: lcm_pt_br.php,v 1.16 2006/09/08 19:36:19 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -230,7 +230,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_info_delete_org' => '<NEW>Delete the client-organisation relation.',
 'client_input_id' => 'ID do cliente:',
 'client_input_notes' => '<NEW>Notes:',
-'client_subtitle_associated_org' => 'Relação com empresa',
+'client_subtitle_associated_org' => '<MODIF>Relação com empresa',
 'client_subtitle_attachments' => '<NEW>Attachments',
 'client_subtitle_cases' => '<NEW>Cases involving this client',
 'client_subtitle_contacts' => '<NEW>Contacts',
@@ -493,8 +493,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_upgrade_database3' => '<NEW>The database upgrade was a success.',
 'info_upgrade_database5' => '<NEW>Click here to go back to the main page.',
 'info_yes' => 'sim',
-'info_yes_mandatory' => '<NEW>yes (mandatory)',
-'info_yes_optional' => '<NEW>yes (optional)',
+'info_yes_mandatory' => '<MODIF>sim (mandatory)',
+'info_yes_optional' => '<MODIF>sim (optional)',
 'info_your_contact_information' => 'Suas informações para contato ...',
 'input_connection_identifiers' => 'Suas identificações de conexão ...',
 'input_email' => 'Endereço de E-mail:',
@@ -514,13 +514,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_database_install_failed' => 'Volte para página alterior, selecione outro banco de dados ou crie um novo. Verique a informação disponibilizada por seu provedor de hospedagem.',
 'install_database_installed_ok' => 'Banco de dados pronto para uso.',
 'install_enter_name_manually' => '<NEW>You know the exact name of the database...',
-'install_info_application_ready' => 'O sistema pronto para uso...',
+'install_info_application_ready' => 'O sistema pronto para uso',
 'install_info_do_not_forget' => 'Não esqueça seus códigos de acesso!',
 'install_info_go_back_verify_data' => 'Volte para página anterior, e verifique a informação disponibilizada.',
+'install_info_more_about_software' => '<NEW>For more information about the software, such as recent announcements, documentation on how to extend the software, etc., please visit @url@. To request features, report bugs or any other feedback, write to legalcase-devel@lists.sf.net. Your feedback is very important to help us improve the quality of the software.',
 'install_info_new_account_1' => 'O sistema prividenciará um acesso padrão ao site.',
 'install_info_sql_connection' => 'Referese a informação disponibilizada a vocâ pelo seu administrador do sistema: se seu servidor suportar SQL, ele deve dar a você os códigos de acesso ao servidor SQL.',
 'install_info_sql_connection_failed' => '<b>N.B.</b> Em vários servidores, voc~e deve requisitar o código de ativação de seu acesso ao banco de dados SQL, antes de poder usa-lo. Se você não conseguir conectar, assegure-se de ter feito essa requisição.',
+'install_info_subscribe_may_fail' => '<NEW>A request to subscribe your e-mail to the LCM announcements has been sent. Sometimes, the automated requests may not work. If you do not receive a confirmation by e-mail within the next 24h, please subscribe from our website.',
+'install_info_subscribe_to_news_list' => '<NEW>Subscribe the above e-mail to the receive LCM annoucements? If yes, you will receive by e-mail information about of new stable software releases and important security notifications. Such e-mails are sent very rarely (once every 1-2 months) and will never be used for other purposes, such as advertising.',
 'install_input_database_name' => '<NEW>Name:',
+'install_input_getnews' => '<NEW>Subscription to the announcements newsletter:',
 'install_select_database' => 'Selecione o banco de dados que seu servidor atribuiu a você',
 'install_select_language' => 'Selecione a linguagem e aperte no botão proceder para iniciar o processo de instalação.',
 'install_step_five' => 'Quinto passo:',
@@ -707,6 +711,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_clients' => 'Clientes',
 'menu_main_clients_tooltip' => '<NEW>List of all clients registered in the system.',
 'menu_main_expenses' => '<NEW>Internal requests',
+'menu_main_expenses_tooltip' => '<NEW>List of internal requests, such as requests to cover expenses related to a case.',
 'menu_main_orgs' => 'Empresas',
 'menu_main_orgs_tooltip' => '<NEW>List of all organisations (juridical persons) registered in the system.',
 'menu_profile' => 'Profile',
@@ -745,7 +750,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_info_enter_email' => 'Coloque seu e-mail com seu registro anterior. Você receberá em seu e-mail a forma de obter novamente seu acesso.',
 'pass_info_here_info' => 'Aqui estão as informações para ter acesso ao site: "@site_name@" (@site_address@):',
 'pass_info_identifier_mail' => 'Sua nova identificação esta sendo enviada a seu e-mail agora mesmo.',
-'pass_info_moderated' => 'Novos registros requerem a autorização pelo administrador do sistema. Você receberá uma confirmação em seu e-mail o mais rápido possível.',
+'pass_info_moderated' => '<MODIF>Novos registros requerem a autorização pelo administrador do sistema. Você receberá uma confirmação em seu e-mail o mais rápido possível.',
 'pass_info_pass_updated' => 'Sua nova senha foi gravada.',
 'pass_info_password_by_mail' => 'Sua senha será enviada para seu e-mail.',
 'pass_info_receive_mail' => 'Você receberá em seu e-mail a forma de obter novamente seu acesso.',
@@ -860,6 +865,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_admin_email' => 'E-mail da administração do site:',
 'siteconf_input_available_languages' => 'Refresh the list of available languages:',
 'siteconf_input_case_allow_modif' => 'Allow case information to be modified once they are created?',
+'siteconf_input_case_new_showorg' => '<NEW>Display the &ldquo;find/create organisation&rdquo; form when creating a new case?',
 'siteconf_input_citizen_number' => 'Número do RG (apenas para clientes)',
 'siteconf_input_client_income' => '<NEW>Income',
 'siteconf_input_court_archive' => 'Nº do Processo no Fôrum',

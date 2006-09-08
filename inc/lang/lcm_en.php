@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_en.php,v 1.125 2006/09/08 18:05:30 mlutfy Exp $
+    $Id: lcm_en.php,v 1.126 2006/09/08 19:36:19 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -745,7 +745,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_info_enter_email' => 'Enter below the e-mail address with which you registered previously. You will receive an e-mail explaining how you can retreive your access.',
 'pass_info_here_info' => 'Here are your identifiers to enter the site "@site_name@" (@site_address@):',
 'pass_info_identifier_mail' => 'Your new identifier has just been sent to you by e-mail and should arrive shortly.',
-'pass_info_moderated' => 'New registrations required the approval of the system administrator. You will get a response by e-mail as soon as possible.',
+'pass_info_moderated' => 'New registrations require the approval of the system administrator. You will get a response by e-mail as soon as possible.',
 'pass_info_pass_updated' => 'Your new password has been recorded.',
 'pass_info_password_by_mail' => 'Your password will be sent to you by e-mail.',
 'pass_info_receive_mail' => 'You will receive an e-mail explaining how you can retrieve your access to the site.',
