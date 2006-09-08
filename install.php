@@ -2,10 +2,11 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
-	Note: This file was initially based on SPIP's install.php3 
-	(http://www.spip.net).
+	This file is a derivative of the SPIP 1.8 install.php3
+	(http://www.spip.net). Licensed under the GNU GPL (C) 2001-2005 
+	Arnaud Martin, Antoine Pitrou, Philippe Riviere, Emmanuel Saint-James
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -21,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.55 2006/09/08 13:26:30 mlutfy Exp $
+	$Id: install.php,v 1.56 2006/09/08 14:31:20 mlutfy Exp $
 */
 
 session_start();
@@ -30,6 +31,7 @@ include('inc/inc_version.php');
 include_lcm('inc_presentation');
 include_lcm('inc_filters');
 include_lcm('inc_db');
+include_lcm('inc_mail'); // for step 4 & 5
 
 //
 // Helper functions
@@ -254,12 +256,14 @@ function install_step_5() {
 }
 
 function install_step_4() {
+	global $lcm_lang_left, $lcm_lang_right;
+
 	echo "<h3><small>" . _T('install_step_four') . "</small> "
 		. _T('install_title_admin_account') . "</h3>\n";
 
 	include_config('inc_connect_install');
 
-	echo '<p class="simple_text">' 
+	echo '<p class="simple_text" align="center">'
 		. _T('install_info_new_account_1') . '<br />'
 		. _T('warning_field_mandatory_all') 
 		. ' ' . lcm_help('install_personal') . "</p>\n";
@@ -293,8 +297,8 @@ function install_step_4() {
 	echo "<td colspan='2'>";
 
 	$email = _session('email');
-	echo "<p><b><label for='email'>" . f_err_star('email') . _T('input_email') . "</label></b><br />\n";
-	echo "<input style='width: 100%;' type='text' id='email' name='email' value=\"$email\" size='40' class='txt_lmnt' /></p>\n";
+	echo "<b><label for='email'>" . f_err_star('email') . _T('input_email') . "</label></b><br />\n";
+	echo "<input style='width: 100%;' type='text' id='email' name='email' value=\"$email\" size='40' class='txt_lmnt' />\n";
 
 	echo "</td>\n";
 	echo "</tr>\n";
@@ -313,21 +317,29 @@ function install_step_4() {
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>";
-	echo "<p><b><label for='password'>" . f_err_star('password') . _T('authorconf_input_password') . "</label></b> \n";
+	echo "<b><label for='password'>" . f_err_star('password') . _T('authorconf_input_password') . "</label></b> \n";
 	echo "<small>" . _T('info_more_than_five')."</small><br />\n";
-	echo "<input style='width: 100%;' type='password' id='password' name='password' value='' size='40' class='txt_lmnt' /></p>\n";
+	echo "<input style='width: 100%;' type='password' id='password' name='password' value='' size='40' class='txt_lmnt' />\n";
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>";
-	echo "<p><b><label for='password_confirm'>" . f_err_star('password') . _T('authorconf_input_password_confirm') . "</label></b> \n";
-	echo "<input style='width: 100%;' type='password' id='password_confirm' name='password_confirm' value='' size='40' class='txt_lmnt' /></p>\n";
+	echo "<b><label for='password_confirm'>" . f_err_star('password') . _T('authorconf_input_password_confirm') . "</label></b> \n";
+	echo "<input style='width: 100%;' type='password' id='password_confirm' name='password_confirm' value='' size='40' class='txt_lmnt' />\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
 
+	// Offer to subscribe to the news/announcements mailing-list
+	if (server_can_send_email()) {
+		echo "<p align=\"$lcm_lang_left\">"
+			. '<input type="checkbox" name="getnews" id="getnews" ' . isChecked(_session('getnews')) . ' />'
+			. '<label for="getnews">' . _T('install_info_subscribe_to_news_list') . '</label>'
+			. "</p>\n";
+	}
+
 	echo "</fieldset>\n\n";
 
-	echo "<br /><div align='" . $GLOBALS['lcm_lang_right'] . "'>"
+	echo "<br /><div align=\"$lcm_lang_right\">"
 		. "<button type='submit' name='validate'>" . _T('button_next') . " >></button>&nbsp;"
 		. "</div>\n";
 
