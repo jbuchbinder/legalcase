@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.26 2006/03/16 14:45:57 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.27 2006/09/08 12:26:57 mlutfy Exp $
 */
 
 
@@ -1793,14 +1793,13 @@ function sql_calendrier_interval_rv($avant, $apres) {
 	$evenements= array();
 	if (!$connect_id_auteur) return $evenements;
 
-	$q = "SELECT lcm_app.*
-				FROM lcm_app, lcm_author_app
-				WHERE (lcm_author_app.id_author='" . $GLOBALS['author_session']['id_author'] . "'
-				AND lcm_app.id_app=lcm_author_app.id_app
-				AND ((end_time >= $avant OR start_time >= $avant) AND start_time <= $apres))
-				GROUP BY lcm_app.id_app
-				ORDER BY start_time";
-//	echo "($q)";
+	$q = "SELECT a.*
+				FROM lcm_app as a, lcm_author_app as ap
+				WHERE (ap.id_author = " . $GLOBALS['author_session']['id_author'] . "
+				AND a.id_app = ap.id_app
+				AND ((a.end_time >= $avant OR a.start_time >= $avant) AND a.start_time <= $apres))
+				GROUP BY a.id_app
+				ORDER BY a.start_time";
 	$result = lcm_query($q);
 
 /*	while($row=spip_fetch_array($result)){
@@ -1872,11 +1871,11 @@ WHERE	(lien.id_message='$id_message'
 		$id_message=$row['id_app'];
 		$cat = 9;
 		$auteurs = array();
-		$result_aut=lcm_query("SELECT	name_first,name_last
-					FROM	lcm_author, lcm_author_app
-					WHERE	(lcm_author_app.id_app=$id_message
-					AND	lcm_author.id_author!=" . $GLOBALS['author_session']['id_author'] . "
-					AND	lcm_author_app.id_author=lcm_author.id_author)");
+		$result_aut=lcm_query("SELECT au.name_first, au.name_last
+					FROM	lcm_author as au, lcm_author_app as ap
+					WHERE	(ap.id_app = $id_message
+					AND	au.id_author != " . $GLOBALS['author_session']['id_author'] . "
+					AND	ap.id_author = au.id_author)");
 		while($row_auteur=lcm_fetch_array($result_aut)){
 			$auteurs[] = get_person_name($row_auteur);
 		}
