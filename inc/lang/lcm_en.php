@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_en.php,v 1.122 2006/08/16 15:35:51 mlutfy Exp $
+    $Id: lcm_en.php,v 1.123 2006/09/08 17:33:14 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -225,7 +225,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'client_info_delete_org' => 'Delete the client-organisation relation.',
 'client_input_id' => 'Client ID:',
 'client_input_notes' => 'Notes:',
-'client_subtitle_associated_org' => 'Related organisations',
+'client_subtitle_associated_org' => 'Related organisation',
 'client_subtitle_attachments' => 'Attachments',
 'client_subtitle_cases' => 'Cases involving this client',
 'client_subtitle_contacts' => 'Contacts',
@@ -509,12 +509,15 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_database_install_failed' => 'Go back to the previous page, verify the information provided by your host (such as the database connection username) or select another database.',
 'install_database_installed_ok' => 'Your database is now ready to use.',
 'install_enter_name_manually' => 'You know the exact name of the database...',
-'install_info_application_ready' => 'The system is now ready to be used...',
+'install_info_application_ready' => 'The system is now ready to be used',
 'install_info_do_not_forget' => 'Do not forget your own access codes!',
 'install_info_go_back_verify_data' => 'Go back to the previous page, and verify the information you have provided.',
+'install_info_more_about_software' => 'For more information about the software, such as recent announcements, documentation on how to extend the software, etc., please visit @url@. To request features, report bugs or any other feedback, write to legalcase-devel@lists.sf.net. Your feedback is very important to help us improve the quality of the software.',
 'install_info_new_account_1' => 'The system will now provide you with a custom access to the site. ',
 'install_info_sql_connection' => 'Refer to the information provided to you by your system administrator: if your host supports SQL, it should give you the connection codes to the SQL server.',
 'install_info_sql_connection_failed' => '<b>N.B.</b> On a number of servers, you must request the activation of your access to the SQL database before you can use it. If you are unable to connect, make sure that you actually made this request.',
+'install_info_subscribe_may_fail' => 'A request to subscribe your e-mail to the LCM announcements has been sent. Sometimes, the automated requests may not work. If you do not receive a confirmation by e-mail within the next 24h, please subscribe from our website.',
+'install_info_subscribe_to_news_list' => 'Subscribe the above e-mail to the receive LCM annoucements? If yes, you will receive by e-mail information about of new stable software releases and important security notifications. Such e-mails are sent very rarely (once every 1-2 months) and will never be used for other purposes, such as advertising.',
 'install_input_database_name' => 'Name:',
 'install_select_database' => 'Select the database that your host has attributed to you',
 'install_select_language' => 'Select a language then click on the button “next” to start the installation procedure.',
@@ -702,6 +705,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_clients' => 'Clients',
 'menu_main_clients_tooltip' => 'List of all clients registered in the system.',
 'menu_main_expenses' => 'Internal requests',
+'menu_main_expenses_tooltip' => 'List of internal requests, such as requests to cover expenses related to a case.',
 'menu_main_orgs' => 'Organisations',
 'menu_main_orgs_tooltip' => 'List of all organisations (juridical persons) registered in the system.',
 'menu_profile' => 'Profile',
@@ -855,6 +859,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_admin_email' => 'E-mail of site administrator:',
 'siteconf_input_available_languages' => 'Refresh the list of available languages:',
 'siteconf_input_case_allow_modif' => 'Allow case information to be modified once they are created?',
+'siteconf_input_case_new_showorg' => 'Display the &ldquo;find/create organisation&rdquo; form when creating a new case?',
 'siteconf_input_citizen_number' => 'Citizen number (for clients only)',
 'siteconf_input_client_income' => 'Income',
 'siteconf_input_court_archive' => 'Court archive ID',
