@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.34 2006/08/17 15:43:27 mlutfy Exp $
+	$Id: inc_login.php,v 1.35 2006/09/08 14:29:55 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -267,7 +267,7 @@ function show_login($cible, $prive = 'prive', $message_login='') {
 
 	// button for "forgotten password"
 	include_lcm('inc_mail');
-	if (tester_mail()) {
+	if (server_can_send_email()) {
 		echo '<a href="lcm_pass.php?pass_forgotten=yes" target="lcm_pass" onclick="' ."javascript:window.open(this.href, 'lcm_pass', 'scrollbars=yes, resizable=yes, width=640, height=280'); return false;\" class=\"link_btn\">" ._T('login_password_forgotten').'</a>';
 	}
 
