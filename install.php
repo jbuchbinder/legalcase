@@ -21,7 +21,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.54 2006/09/07 16:34:20 mlutfy Exp $
+	$Id: install.php,v 1.55 2006/09/08 13:26:30 mlutfy Exp $
 */
 
 session_start();
@@ -177,7 +177,7 @@ function install_step_5() {
 			return;
 		}
 
-		if (! $auth->newpass($id_author, $_SESSION['form_data']['username'], $_REQUEST['password']))
+		if (! $auth->newpass($id_author, _session('username'), _session('password')))
 			$_SESSION['errors']['password'] = $auth->error;
 
 		if (count($_SESSION['errors'])) {
@@ -188,14 +188,14 @@ function install_step_5() {
 		//
 		// Set e-mail for author
 		//
-		if ($_SESSION['form_data']['email']) {
+		if (_session('email')) {
 			include_lcm('inc_contacts');
 
-			if (! is_existing_contact('author', $id_author, 'email_main', $_SESSION['form_data']['email']))
-				add_contact('author', $id_author, 'email_main', $_SESSION['form_data']['email']);
+			if (! is_existing_contact('author', $id_author, 'email_main', _session('email')))
+				add_contact('author', $id_author, 'email_main', _session('email'));
 
 			// Insert email as main system administrator
-			write_meta('email_sysadmin', $_SESSION['form_data']['email']);
+			write_meta('email_sysadmin', _session('email'));
 		}
 	} else {
 		// Test if an administrator already exists
