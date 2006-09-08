@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_en.php,v 1.124 2006/09/08 17:48:46 mlutfy Exp $
+    $Id: lcm_en.php,v 1.125 2006/09/08 18:05:30 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -510,7 +510,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_database_installed_ok' => 'Your database is now ready to use.',
 'install_enter_name_manually' => 'You know the exact name of the database...',
 'install_info_application_ready' => 'The system is now ready to be used',
-'install_info_do_not_forget' => 'Do not forget your own access codes!',
+'install_info_do_not_forget' => 'Do not forget your access codes!',
 'install_info_go_back_verify_data' => 'Go back to the previous page, and verify the information you have provided.',
 'install_info_more_about_software' => 'For more information about the software, such as recent announcements, documentation on how to extend the software, etc., please visit @url@. To request features, report bugs or any other feedback, write to legalcase-devel@lists.sf.net. Your feedback is very important to help us improve the quality of the software.',
 'install_info_new_account_1' => 'The system will now provide you with a custom access to the site. ',
