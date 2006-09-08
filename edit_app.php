@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.47 2006/08/15 20:31:04 mlutfy Exp $
+	$Id: edit_app.php,v 1.48 2006/09/08 12:33:58 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -321,17 +321,20 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		echo "\t\t</td></tr>\n";
 		
 		// Appointment participants - clients
-		echo "\t\t<tr><td valign=\"top\">";
+		echo '<tr><td valign="top">';
 		echo _T('app_input_clients');
 		echo "</td><td>";
-		$q = "SELECT lcm_client.id_client,lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.id_org,lcm_org.name
-			FROM lcm_client,lcm_app_client_org
-			LEFT JOIN lcm_org USING (id_org)
-			WHERE id_app=" . $_SESSION['form_data']['id_app'] . "
-				AND lcm_client.id_client=lcm_app_client_org.id_client
-			ORDER BY lcm_client.name_first,lcm_client.name_middle,lcm_client.name_last,lcm_org.name";
+
+		$q = "SELECT c.id_client, c.name_first, c.name_middle, c.name_last, o.id_org, o.name
+			FROM lcm_client as c, lcm_app_client_org aco
+			LEFT JOIN lcm_org as o USING (id_org)
+			WHERE id_app = " . _session('id_app') . "
+				AND c.id_client = aco.id_client
+			ORDER BY c.name_first, c.name_middle, c.name_last, o.name";
+
 		$result = lcm_query($q);
 		$q = '';
+
 		while ($row = lcm_fetch_array($result)) {
 			// $q .= ($q ? ', ' : '');
 			$q .= get_person_name($row) . ( ($row['name']) ? " of " . $row['name'] : ''); // TRAD
@@ -339,31 +342,35 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 			$q .= '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" alt="Remove?" title="Remove?" /></label>&nbsp;';
 			$q .= '<input type="checkbox" id="id_rem_client' . $row['id_client'] . ':' . $row['id_org'] . '" name="rem_client[]" value="' . $row['id_client'] . ':' . $row['id_org'] . '"/>)<br />';	// TRAD
 		}
+
 		echo "\t\t\t$q\n";
 		
 		// List rest of the clients to add
-		$q = "SELECT c.id_client,c.name_first,c.name_last,co.id_org,o.name
+		$q = "SELECT c.id_client, c.name_first, c.name_last, co.id_org, o.name
 			FROM lcm_client AS c
 			LEFT JOIN lcm_client_org AS co USING (id_client)
-			LEFT JOIN lcm_org AS o ON (co.id_org=o.id_org)
-			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client=c.id_client AND aco.id_app=" . $_SESSION['form_data']['id_app'] . ")
+			LEFT JOIN lcm_org AS o ON (co.id_org = o.id_org)
+			LEFT JOIN lcm_app_client_org AS aco ON (aco.id_client = c.id_client AND aco.id_app = " . _session('id_app') . ")
 			WHERE id_app IS NULL
-			ORDER BY c.name_first,c.name_last,o.name";
+			ORDER BY c.name_first, c.name_last, o.name";
 		
 		$result = lcm_query($q);
-		echo "\t\t\t<select name=\"client\">\n";
-		echo "\t\t\t\t<option selected='selected' value=\"0\"> ... </option>\n"; // TRAD
+
+		echo '<select name="client">' . "\n";
+		echo '<option selected="selected" value="0"> ... </option>' . "\n";
+
 		while ($row = lcm_fetch_array($result)) {
-			echo "\t\t\t\t<option value=\"" . $row['id_client'] . ':' . $row['id_org'] . '">'
+			echo '<option value="' . $row['id_client'] . ':' . $row['id_org'] . '">'
 				. get_person_name($row)
 				. ($row['name'] ? ' of ' . $row['name'] : '') // TRAD
 				. "</option>\n";
 		}
-		echo "\t\t\t</select>\n";
-		echo "\t\t\t<button name=\"submit\" type=\"submit\" value=\"add_client\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
-		echo "\t\t</td></tr>\n";
 
-		echo "	</table>\n";
+		echo "</select>\n";
+		echo "<button name=\"submit\" type=\"submit\" value=\"add_client\" class=\"simple_form_btn\">" . 'Add' . "</button>\n"; // TRAD
+		echo "</td></tr>\n";
+
+		echo "</table>\n";
 
 		// Submit buttons
 		echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
