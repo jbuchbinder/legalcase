@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.62 2006/09/08 17:59:40 mlutfy Exp $
+	$Id: install.php,v 1.63 2006/09/08 18:02:20 mlutfy Exp $
 */
 
 session_start();
@@ -257,12 +257,12 @@ function install_step_5() {
 
 	echo "<div class='box_success'>\n";
 	echo "<p><b>" . _T('install_info_application_ready') . "</b></p>\n";
+	echo '<p align="center">' . _T('install_info_do_not_forget') . "</p>\n";
 
 	if (_request('getnews') == 'yes')
 		echo '<p align="' . $lcm_lang_left . '">' . _T('install_info_subscribe_may_fail') . "</p>\n";
 
 	echo '<p align="' . $lcm_lang_left . '">' . _T('install_info_more_about_software', array("url" => '<a class="content_link" href="http://www.lcm.ngo-bg.org">www.lcm.ngo-bg.org</a>')) . "</p>\n";
-	echo '<p align="center">' . _T('install_info_do_not_forget') . "</p>\n";
 	echo "</div>\n";
 
 	echo "<form action='index.php' method='post'>\n";
