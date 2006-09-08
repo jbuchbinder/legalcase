@@ -31,7 +31,6 @@ select,button,input,option,textarea {
 .box_success {
 	width: 450px;
 	border: 1px solid #009900;
-	color: #090;
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
 	padding-left: 10px;
