@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.59 2006/09/08 17:49:37 mlutfy Exp $
+	$Id: install.php,v 1.60 2006/09/08 17:52:19 mlutfy Exp $
 */
 
 session_start();
@@ -330,6 +330,9 @@ function install_step_4() {
 	echo "<p><b>" . _T('input_connection_identifiers') . "</b></p>\n";
 
 	$username = _session('username');
+	$password = _session('password');
+	$password_confirm = _session('password_confirm');
+
 	echo "<table border='0' cellpadding='0' cellspacing='5' width='80%'>\n";
 	echo "<tr>\n";
 	echo "<td>";
@@ -341,12 +344,12 @@ function install_step_4() {
 	echo "<td>";
 	echo "<b><label for='password'>" . f_err_star('password') . _T('authorconf_input_password') . "</label></b> \n";
 	echo "<small>" . _T('info_more_than_five')."</small><br />\n";
-	echo "<input style='width: 100%;' type='password' id='password' name='password' value='' size='40' class='txt_lmnt' />\n";
+	echo "<input style='width: 100%;' type='password' id='password' name='password' value='$password' size='40' class='txt_lmnt' />\n";
 	echo "</td>\n";
 	echo "</tr><tr>\n";
 	echo "<td>";
 	echo "<b><label for='password_confirm'>" . f_err_star('password') . _T('authorconf_input_password_confirm') . "</label></b> \n";
-	echo "<input style='width: 100%;' type='password' id='password_confirm' name='password_confirm' value='' size='40' class='txt_lmnt' />\n";
+	echo "<input style='width: 100%;' type='password' id='password_confirm' name='password_confirm' value='$password_confirm' size='40' class='txt_lmnt' />\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
