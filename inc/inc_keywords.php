@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.39 2006/09/05 22:40:44 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.40 2006/09/11 22:26:13 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -92,7 +92,7 @@ function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 
 	if ($id_obj) {
 		if ($type_obj == 'stage') {
-			$query = "SELECT DISTINCT kwg.id_group, kwg.title, kwg.quantity, kwg.policy
+			$query = "SELECT DISTINCT kwg.id_group, kwg.id_parent, kwg.title, kwg.quantity, kwg.policy
 					FROM lcm_keyword_case as ko, lcm_keyword as k, lcm_keyword_group as kwg
 					WHERE k.id_keyword = ko.id_keyword
 					  AND k.id_group = kwg.id_group
@@ -100,7 +100,7 @@ function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 					  AND ko.id_stage = " . $id_obj_sec . "
 					  AND kwg.quantity = 'one'";
 		} else {
-			$query = "SELECT DISTINCT kwg.id_group, kwg.title, kwg.quantity, kwg.policy
+			$query = "SELECT DISTINCT kwg.id_group, kwg.id_parent, kwg.title, kwg.quantity, kwg.policy
 					FROM lcm_keyword_" . $type_obj . " as ko, lcm_keyword as k, lcm_keyword_group as kwg
 					WHERE k.id_keyword = ko.id_keyword
 					  AND k.id_group = kwg.id_group
@@ -111,15 +111,25 @@ function get_kwg_applicable_for($type_obj, $id_obj, $id_obj_sec = 0) {
 		$result = lcm_query($query);
 	
 		$not_in_list = array();
-		while ($row = lcm_fetch_array($result))
+		while ($row = lcm_fetch_array($result)) {
 			array_push($not_in_list, $row['id_group']);
+
+			if ($row['id_parent']) {
+				// Add parents info to 'not in' list, so that it is not shown as new kwg
+				$tmp_id_kwg = $row['id_parent'];
+
+				do {
+					array_push($not_in_list, $tmp_id_kwg);
+					$kwg_parent = get_kwg_from_id($tmp_id_kwg);
+					$tmp_id_kwg = $kwg_parent['id_parent'];
+				} while ($tmp_id_kwg);
+			}
+		}
 		
 		$not_in_str = implode(',', $not_in_list);
 	}
 
 	// Get list of keyword groups which can be applied to object
-	// [ML] 2006-03-15 the select and "group by" on so many fields is 
-	// required by PostgreSQL
 	$query = "SELECT kwg.id_group, kwg.name, kwg.title, kwg.policy, kwg.suggest, kwg.quantity
 				FROM lcm_keyword_group as kwg
 				WHERE kwg.ac_author = 'Y' AND kwg.id_parent = 0 AND (type = '$type_obj' ";
@@ -399,16 +409,21 @@ function show_all_keywords($type_obj, $id_obj, $id_obj_sec = 0) {
 	}
 }
 
+function show_edit_keywords_form_kws_in_kwg() {
+
+
+}
+
 function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 	include_lcm('inc_access');
 
 	if (! $GLOBALS['legal_obj'][$type_obj])
 		lcm_panic("Invalid object type requested");
 
-	//
-	// Show current keywords (already attached to object)
-	//
 	if ($id_obj) {
+		//
+		// Show current keywords (already attached to object)
+		//
 		$current_kws = get_keywords_applied_to($type_obj, $id_obj, $id_obj_sec);
 		$cpt = 0;
 	
@@ -419,37 +434,40 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 			echo "<tr>\n";
 			echo "<td>"
 				. "<label for=\"kw_value_$type_obj$cpt\">"
-				. f_err_star('kwg' . $kwg['id_group']) . _Ti($kwg['title']) 
+				. f_err_star('kwg' . $kwg['id_group']) . _Ti(remove_number_prefix($kwg['title']))
 				. "</label>"
 				. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")"
 				. "</td>\n";
 
 			echo "<td>";
-			echo '<input type="hidden" name="kwg_id_' . $type_obj . '[]" value="' . $kwg['id_group'] . '" />' . "\n";
-			echo '<input type="hidden" name="kw_entry_' . $type_obj . '[]" value="' . $kw['id_entry'] . '" />' . "\n";
-			echo '<select id="kw_value_' . $type_obj . $cpt . '" name="kw_value_' . $type_obj . '[]">';
-			echo '<option value="">' . '' . "</option>\n";
 
 			$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
-			foreach ($kw_for_kwg as $kw1) {
-				if ($kw1['hasvalue'] == 'Y')
-					$show_kw_value = true;
 
-				if (isset($_SESSION['form_data']['kw_value_' . $type_obj][$cpt])
-					&& $_SESSION['form_data']['kw_value_' . $type_obj][$cpt] == $kw1['id_keyword'])
-				{
-					$sel = ' selected="selected" ';
-				} elseif ($kw1['id_keyword'] == $kw['id_keyword']) {
-					$sel = ' selected="selected" ';
-				} else {
+			if (count($kw_for_kwg)) {
+				echo '<input type="hidden" name="kwg_id_' . $type_obj . '[]" value="' . $kwg['id_group'] . '" />' . "\n";
+				echo '<input type="hidden" name="kw_entry_' . $type_obj . '[]" value="' . $kw['id_entry'] . '" />' . "\n";
+				echo '<select id="kw_value_' . $type_obj . $cpt . '" name="kw_value_' . $type_obj . '[]">';
+				echo '<option value="">' . '' . "</option>\n";
+
+				foreach ($kw_for_kwg as $kw1) {
+					if ($kw1['hasvalue'] == 'Y')
+						$show_kw_value = true;
+
 					$sel = '';
-				}
-					
-				// $sel = ($kw1['id_keyword'] == $kw['id_keyword'] ? ' selected="selected"' : '');
-				echo '<option value="' . $kw1['id_keyword'] . '"' . $sel . '>' . _T(remove_number_prefix($kw1['title'])) . "</option>\n";
-			}
 
-			echo "</select>\n";
+					if (isset($_SESSION['form_data']['kw_value_' . $type_obj][$cpt])
+							&& $_SESSION['form_data']['kw_value_' . $type_obj][$cpt] == $kw1['id_keyword'])
+					{
+						$sel = ' selected="selected" ';
+					} elseif ($kw1['id_keyword'] == $kw['id_keyword']) {
+						$sel = ' selected="selected" ';
+					}
+
+					echo '<option value="' . $kw1['id_keyword'] . '"' . $sel . '>' . _T(remove_number_prefix($kw1['title'])) . "</option>\n";
+				}
+
+				echo "</select>\n";
+			}
 
 			// Check if keyword policy = mandatory, and quantity = one
 			$kwg = get_kwg_from_id($kw['id_group']);
@@ -488,15 +506,13 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 		echo '<td><label for="new_keyword_' . $type_obj . $cpt_kw . '">'
 			. f_err_star('keyword_' . $type_obj . $cpt_kw) // probably not used (DEPRECATED)
 			. f_err_star('kwg' . $kwg['id_group'])
-			. _Ti($kwg['title']) . '</label>'
+			. _Ti(remove_number_prefix($kwg['title'])) . '</label>'
 			. "<br />(" . _T('keywords_input_policy_' . $kwg['policy']) . ")</td>\n";
 
 		echo "<td>";
 
-		//
-		// Keywords
-		//
 		$kw_for_kwg = get_keywords_in_group_id($kwg['id_group']);
+
 		if (count($kw_for_kwg)) {
 			$obj_id_ajax = 'kw_' . create_random_password(15, time());
 
@@ -514,14 +530,14 @@ function show_edit_keywords_form($type_obj, $id_obj, $id_obj_sec = 0) {
 					$show_kw_value = true;
 
 				// For default value, use the form_data (if present), else use suggested keyword
+				$sel = '';
+
 				if (isset($_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw])
 					&& $_SESSION['form_data']['new_keyword_' . $type_obj . '_value'][$cpt_kw] == $kw['id_keyword']) 
 				{
 					$sel = ' selected="selected" ';
 				} elseif ($kwg['suggest'] == $kw['name']) {
 					$sel = ' selected="selected" ';
-				} else {
-					$sel = '';
 				}
 
 				// $sel = ($kwg['suggest'] == $kw['name'] ? ' selected="selected" ' : '');
