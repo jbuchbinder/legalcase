@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.17 2006/09/05 22:41:28 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.18 2006/09/11 14:49:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -511,9 +511,12 @@ class LcmFollowupInfoUI extends LcmFollowup {
 	function printEdit() {
 		global $prefs; 
 
-		$admin = allowed($this->data['id_case'], 'a'); // FIXME
-		$edit  = allowed($this->data['id_case'], 'e'); // FIXME
-		$write = allowed($this->data['id_case'], 'w'); // FIXME (put in constructor)
+		$admin = allowed($this->getDataInt('id_case'), 'a'); // FIXME
+		$edit  = allowed($this->getDataInt('id_case'), 'e'); // FIXME
+		$write = allowed($this->getDataInt('id_case'), 'w'); // FIXME (put in constructor)
+
+		// FIXME: not sure whether this works as previously
+		$dis = isDisabled(! ($admin || $edit));
 	
 		echo '<table class="tbl_usr_dtl" width="99%">' . "\n";
 		echo '<tr><td>';
@@ -733,7 +736,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo get_fu_description($this->data);
 		} else {
 			echo '<textarea ' . $dis . ' name="description" rows="15" cols="60" class="frm_tarea">';
-			echo clean_output($this->data['description']);
+			echo clean_output($this->getDataString('description'));
 			echo "</textarea>";
 		}
 
@@ -842,7 +845,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo f_err_star('app_title') . _T('app_input_title');
 			echo "</td><td>";
 			echo '<input type="text" ' . $title_onfocus . $dis . ' name="app_title" size="50" value="';
-			echo clean_output($this->data['app_title']) . '" class="search_form_txt" />';
+			echo clean_output($this->getDataString('app_title')) . '" class="search_form_txt" />';
 			echo "</td></tr>\n";
 
 			echo "<!-- Appointment type -->\n\t\t<tr><td>";

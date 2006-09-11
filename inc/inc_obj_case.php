@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.26 2006/09/07 21:00:22 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.27 2006/09/11 14:49:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -701,7 +701,7 @@ class LcmCaseInfoUI extends LcmCase {
 		show_edit_keywords_form('case', $this->getDataInt('id_case'));
 		
 		$id_stage = 0; // new case, stage not yet known
-		if ($this->data['stage']) {
+		if ($this->getDataString('stage')) {
 			$stage = get_kw_from_name('stage', $this->getDataString('stage', '__ASSERT__'));
 			$id_stage = $stage['id_keyword'];
 		}
