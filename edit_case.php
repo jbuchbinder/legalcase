@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.91 2006/08/22 21:13:41 mlutfy Exp $
+	$Id: edit_case.php,v 1.92 2006/09/11 14:24:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -66,7 +66,7 @@ if (empty($_SESSION['errors'])) {
 		$_SESSION['form_data']['date_assignment'] = date('Y-m-d H:i:s');
 		$_SESSION['form_data']['public'] = (int) (read_meta('case_default_read') == 'yes');
 		$_SESSION['form_data']['pub_write'] = (int) (read_meta('case_default_write') == 'yes');
-		$_SESSION['form_data']['status'] = 'draft';
+		$_SESSION['form_data']['status'] = 'open';
 
 		$_SESSION['form_data']['admin'] = true;
 
