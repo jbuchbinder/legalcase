@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.47 2006/09/14 22:02:31 mlutfy Exp $
+	$Id: keywords.php,v 1.48 2006/09/14 23:17:47 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -401,6 +401,7 @@ function show_keyword_id($id_keyword = 0) {
 		lcm_page_start(_T('title_keyword_new'));
 	} else {
 		$kw = get_kw_from_id($id_keyword);
+		$kwg = get_kwg_from_id($kw['id_group']);
 		lcm_page_start(_T('title_keyword_edit'));
 	}
 
@@ -446,10 +447,12 @@ function show_keyword_id($id_keyword = 0) {
 		. get_yes_no('kw_ac_author', $kw['ac_author'])
 		. "</li>\n";
 	
-	echo '<li>'
-		. "Does the keyword have a specific value?" . ' '  // TRAD
-		. get_yes_no('kw_hasvalue', $kw['hasvalue'])
-		. "</li>\n";
+	if ((! $id_keyword) || ($id_keyword && ($kwg['type'] != 'system'))) {
+		echo '<li>'
+			. "Does the keyword have a specific value?" . ' '  // TRAD
+			. get_yes_no('kw_hasvalue', $kw['hasvalue'])
+			. "</li>\n";
+	}
 
 	echo '<button name="submit" type="submit" value="submit" class="simple_form_btn">' . _T('button_validate') . "</button>\n";
 	echo "</form>\n";
@@ -612,14 +615,20 @@ function update_keyword($id_keyword) {
 	// Apply to database
 	//
 
+	$fl = "description = '$kw_desc',
+			title = '$kw_title' ";
+
+	if ($kw_ac_author == 'Y' || $kw_ac_author == 'N')
+		$fl .= ", ac_author = '$kw_ac_author'";
+
+	if ($kw_hasvalue == 'Y' || $kw_hasvalue == 'N')
+		$query .= ", hasvalue = '$kw_hasvalue'";
+
 	if (! $id_keyword) { // new
 		$query = "INSERT INTO lcm_keyword
 				SET id_group = $kw_idgroup, 
 					name = '$kw_name',
-					title = '$kw_title',
-					description = '$kw_desc',
-					ac_author = '$kw_ac_author',
-					hasvalue = '$kw_hasvalue'";
+					$fl ";
 
 		lcm_query($query);
 		$id_keyword = lcm_insert_id('lcm_keyword', 'id_keyword');
@@ -627,14 +636,7 @@ function update_keyword($id_keyword) {
 	} else {
 		// Get current info about keyword (don't trust the user)
 		$kw_info = get_kw_from_id($id_keyword);
-	
-		$fl = "description = '$kw_desc',
-				title = '$kw_title',
-			 	hasvalue = '$kw_hasvalue'";
 		
-		if ($kw_ac_author == 'Y' || $kw_ac_author == 'N')
-			$fl .= ", ac_author = '$kw_ac_author'";
-	
 		$query = "UPDATE lcm_keyword
 					SET $fl
 					WHERE id_keyword = " . $id_keyword;
