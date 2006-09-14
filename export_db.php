@@ -18,7 +18,7 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-   $Id: export_db.php,v 1.14 2006/09/07 19:08:59 mlutfy Exp $
+   $Id: export_db.php,v 1.15 2006/09/14 19:36:21 mlutfy Exp $
  */
 
 include('inc/inc.php');
@@ -32,9 +32,9 @@ define('DIR_BACKUPS_PREFIX', DIR_BACKUPS . '/' . FILE_PREFIX);
 define('DATA_EXT_NAME', '.csv');
 define('DATA_EXT_LEN', strlen(lcm_utf8_decode(DATA_EXT_NAME)));
 
-$tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
-		array('name' => _T('archives_tab_export'), 'url' => 'export_db.php'),
-		array('name' => _T('archives_tab_import'), 'url' => 'import_db.php')
+$tabs = array (
+			array('name' => _T('archives_tab_export'), 'url' => 'export_db.php'),
+			array('name' => _T('archives_tab_import'), 'url' => 'import_db.php')
 	);
 
 function show_export_form_partial() {
@@ -110,7 +110,7 @@ function show_export_form() {
 	global $tabs;
 
 	lcm_page_start(_T('title_archives'), '', '', 'archives_export');
-	show_tabs_links($tabs,1);
+	show_tabs_links($tabs, 0);
 	lcm_bubble('archive_create');
 	show_export_form_partial();
 	lcm_page_end();
@@ -218,7 +218,7 @@ function export_database($output_filename = '', $ignore_old = false) {
 	// Finished
 	//
 	lcm_page_start(_T('title_archives'), '', '', 'archives_export');
-	show_tabs_links($tabs, 1);
+	show_tabs_links($tabs, 0);
 	echo '<div class="sys_msg_box">' . "\n";
 
 	if ($tar_worked) {

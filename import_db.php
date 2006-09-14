@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: import_db.php,v 1.15 2006/09/07 19:08:59 mlutfy Exp $
+	$Id: import_db.php,v 1.16 2006/09/14 19:36:21 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -34,16 +34,16 @@ define('DATA_EXT_LEN', strlen(lcm_utf8_decode(DATA_EXT_NAME)));
 if (! isset($_SESSION['errors']))
 	$_SESSION['errors'] = array();
 
-$tabs = array(	array('name' => _T('archives_tab_all_cases'), 'url' => 'archive.php'),
-		array('name' => _T('archives_tab_export'), 'url' => 'export_db.php'),
-		array('name' => _T('archives_tab_import'), 'url' => 'import_db.php')
+$tabs = array(
+			array('name' => _T('archives_tab_export'), 'url' => 'export_db.php'),
+			array('name' => _T('archives_tab_import'), 'url' => 'import_db.php')
 	);
 
 function show_import_form() {
 	lcm_page_start(_T('title_archives'), '', '', 'archives_import');
 
 	global $tabs;
-	show_tabs_links($tabs, 2);
+	show_tabs_links($tabs, 1);
 	lcm_bubble('archive_restore');
 
 	// Show the errors (if any)
@@ -117,7 +117,7 @@ function import_database($input_filename) {
 		if ($_POST['conf']!=='yes') {
 			// Print confirmation form
 			lcm_page_start(_T('title_archives'), '', '', 'archives_import');
-			show_tabs_links($tabs,2,true);
+			show_tabs_links($tabs, 1, true);
 
 			echo "<fieldset class='info_box'>\n";
 			show_page_subtitle(_T('generic_subtitle_warning'), 'archives_import');
@@ -198,7 +198,7 @@ function import_database($input_filename) {
 		lcm_page_start(_T('title_archives'), '', '', 'archives_import');
 		
 		// Show tabs
-		show_tabs_links($tabs,2,true);
+		show_tabs_links($tabs, 1, true);
 
 		// Show tab header
 		echo "Version mismatch!\n"; // TRAD
@@ -263,7 +263,7 @@ function import_database($input_filename) {
 	write_metas();
 
 	lcm_page_start(_T('title_archives'), '', '', 'archives_import'); // FIXME?
-	show_tabs_links($tabs,2,true);
+	show_tabs_links($tabs, 1, true);
 
 	echo '<div class="sys_msg_box">' . "\n";
 	show_page_subtitle("Import finished", 'archives_import'); // FIXME TRAD? 
