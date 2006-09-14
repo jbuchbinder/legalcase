@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.248 2006/09/07 16:51:51 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.249 2006/09/14 19:18:29 mlutfy Exp $
 */
 
 //
@@ -1599,14 +1599,19 @@ function show_page_subtitle($subtitle, $help_code = '', $help_target = '') {
 	echo "</div>\n";
 }
 
-function show_attachments_list($type, $id_type) {
+function show_attachments_list($type, $id_type, $id_author = 0) {
 	if (! ($type == 'case' || $type == 'client' || $type == 'org')) 
 		lcm_panic("unknown type -" . $type . "-");
 
 	$q = "SELECT * 
 			FROM lcm_" . $type . "_attachment 
-			WHERE content IS NOT NULL
-			AND id_" . $type . " = " . intval($id_type);
+			WHERE content IS NOT NULL ";
+	
+	if ($id_type)
+		$q .= " AND id_" . $type . " = " . intval($id_type);
+	
+	if ($id_author)
+		$q .= " AND id_author = " . intval($id_author);
 
 	$result = lcm_query($q);
 	$i = lcm_num_rows($result);
@@ -1614,6 +1619,10 @@ function show_attachments_list($type, $id_type) {
 	if ($i > 0) {
 		echo '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
 		echo "<tr>\n";
+
+		if ($id_author)
+			echo '<th class="heading" width="1%">' . _Th($type . '_input_id') . "</th>\n";
+
 		echo '<th class="heading">' . _Th('file_input_type') . "</th>\n";
 		echo '<th class="heading">' . _Th('file_input_description') . "</th>\n";
 		echo '<th class="heading">' . _Th('file_input_size') . "</th>\n";
@@ -1623,12 +1632,22 @@ function show_attachments_list($type, $id_type) {
 		for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
 			echo "<tr>\n";
 
+			if ($id_author) {
+				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '" align="left">';
+				
+				echo '<a href="' . $type . '_det.php?' . $type . '=' . $row['id_' . $type] . '" class="content_link">'
+					. $row['id_' . $type] 
+					. '</a>';
+
+				echo "</td>\n";
+			}
+
 			// Mimetype
 			// [ML] We were using the mimetype sent by the browser, but it
 			// ends up being rather useless, since MSIE and Firefox don't agree on
 			// the mimetypes.. ex: .jpg = image/jpeg (FFx), but under MSIE is image/pjeg
 			// So may as well just use the extention of the file, even if not reliable.
-			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '" align="center">';
+			echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '" align="left">';
 			echo '<a title="' . $row['type'] . '" '
 				. 'href="view_file.php?type=' . $type . '&amp;file_id=' .  $row['id_attachment'] . '">';
 
@@ -1684,70 +1703,10 @@ function show_attachments_list($type, $id_type) {
 function show_author_attachments($id_author) {
 
 	// List attachments of every type
-	foreach( array('case','org','client') as $type ) {
-	
-		$q = "SELECT * 
-			FROM lcm_" . $type . "_attachment 
-			WHERE content IS NOT NULL";
-			
-		if ($id_author > 0)
-			$q .= " AND id_author = " . intval($id_author);
-
-		$result = lcm_query($q);
-		$i = lcm_num_rows($result);
-
-		echo '<p>' . _T('file_info_type',$type) . "\n";
-		
-		if ($i > 0) {
-			echo '<table border="0" align="center" class="tbl_usr_dtl" width="99%">' . "\n";
-			echo "<tr>\n";
-			echo '<th class="heading">' . _Th('file_input_obj_id') . "</th>\n";
-			echo '<th class="heading">' . _Th('file_input_name') . "</th>\n";
-			echo '<th class="heading">' . _Th('file_input_type') . "</th>\n";
-			echo '<th class="heading">' . _Th('file_input_size') . "</th>\n";
-			echo '<th class="heading">' . _Th('file_input_description') . "</th>\n";
-			echo '<th class="heading">' . "</th>\n";
-			echo "</tr>\n";
-
-			for ($i=0 ; $row = lcm_fetch_array($result) ; $i++) {
-				echo "<tr>\n";
-				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
-					. '<a href="' . $type . '_det.php?' . $type . '=' . $row['id_' . $type]
-					. '" class="content_link">' . $row['id_' . $type] . '</a></td>';
-				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">'
-					. '<a href="view_file.php?type=' . $type . '&amp;file_id=' . $row['id_attachment']
-					. '" class="content_link">' . $row['filename'] . '</a></td>';
-				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['type'] . '</td>';
-				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . $row['size'] . '</td>';
-				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">' . clean_output($row['description']) . '</td>';
-
-				// Delete icon
-				echo '<td class="tbl_cont_' . ($i % 2 ? "dark" : "light") . '">';
-
-				if ( ($GLOBALS['author_session']['status'] == 'admin') || (($row['id_author'] == $GLOBALS['author_session']['id_author']) && ($type == 'case' ? allowed($row['id_case'],'e') : true)) )
-				{
-					echo '<label for="id_rem_file' . $row['id_attachment'] . '">';
-					echo '<img src="images/jimmac/stock_trash-16.png" width="16" height="16" '
-						. 'alt="' . _T('file_info_delete') . '" title="' .  _T('file_info_delete') . '" />';
-					echo '</label>&nbsp;';
-					echo '<input type="checkbox" onclick="lcm_show(\'btn_delete\')" '
-						. 'id="id_rem_file' . $row['id_attachment'] . '" name="rem_file[]" '
-						. 'value="' . $row['id_attachment'] . '" />';
-				}
-
-				echo '</td>';
-				echo "</tr>\n";
-			}
-
-			echo "</table>\n";
-
-			echo '<p align="right" style="visibility: hidden">';
-			echo '<input type="submit" name="submit" id="btn_delete" value="' . _T('button_validate') . '" class="search_form_btn" />';
-			echo "</p>\n";
-		} else {
-			echo '<p class="normal_text">' . _T('file_info_emptylist') . "</p>\n";
-		}
-		echo "</p>\n";
+	// TODO: if meta for hide_org is active, don't show them
+	foreach( array('case','client','org') as $type ) {
+		show_page_subtitle(_T('menu_main_' . $type . 's'), 'tools_documents');
+		show_attachments_list($type, 0, $id_author);
 	}
 }
 
