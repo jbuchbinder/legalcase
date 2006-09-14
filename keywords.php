@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.46 2006/08/15 15:20:35 mlutfy Exp $
+	$Id: keywords.php,v 1.47 2006/09/14 22:02:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -698,8 +698,8 @@ lcm_bubble('keyword_list');
 // Tabs
 //
 $groups = array('system' => _T('keywords_tab_system'),
-				'user'   => _T('keywords_tab_user'),
 				'contact' => _T('keywords_tab_contact'),
+				'user'   => _T('keywords_tab_user'),
 				'maint'  => _T('keywords_tab_maintenance'));
 $tab = _request('tab', 'system');
 
