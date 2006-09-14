@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.105 2006/08/14 19:26:34 mlutfy Exp $
+	$Id: inc_version.php,v 1.106 2006/09/14 23:25:51 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -425,6 +425,8 @@ function lcm_query($query, $accept_fail = false) {
 		if (!$GLOBALS['db_ok'])
 			return;
 	}
+
+	$GLOBALS['db_query_count']++;
 
 	return lcm_query_db($query, $accept_fail);
 }

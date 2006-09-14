@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.59 2006/08/22 17:52:19 mlutfy Exp $
+	$Id: inc.php,v 1.60 2006/09/14 23:25:51 mlutfy Exp $
 */
 
 include ('inc/inc_version.php');
@@ -28,6 +28,9 @@ if (! include_config_exists('inc_connect')) {
 	header('Location: install.php');
 	exit;
 }
+
+// For profiling: count the number of SQL queries
+$GLOBALS['db_query_count'] = 0;
 
 include_lcm('inc_auth');
 include_lcm('inc_acc');

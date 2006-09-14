@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.249 2006/09/14 19:18:29 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.250 2006/09/14 23:25:51 mlutfy Exp $
 */
 
 //
@@ -531,6 +531,9 @@ function lcm_page_end($credits = '') {
 				'distributed' => '<a href="http://www.lcm.ngo-bg.org/" class="prefs_normal_lnk">' . _T('info_free_software1') . '</a>',
 				'license' => lcm_help_string('about_license', _T('info_free_software2'))))
 		. "</div>\n";
+
+	if ($GLOBALS['debug'])
+		echo "<p align='left'>Debug (" . $GLOBALS['debug'] . "): SQL Queries: " . $GLOBALS['db_query_count'] . "</p>\n";
 
 	echo "</body>\n";
 	echo "</html>\n";
