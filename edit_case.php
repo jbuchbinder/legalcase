@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.94 2006/09/15 15:21:54 mlutfy Exp $
+	$Id: edit_case.php,v 1.95 2006/09/15 15:32:01 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -163,11 +163,6 @@ if (! $id_case) {
 	
 	if ((! $attach_client) && (! $attach_org)) {
 		//
-		// For to find or create new client for case
-		//
-		show_page_subtitle(_Th('title_client_view'), 'clients_intro');
-
-		//
 		// Find or create an organisation for case
 		//
 		if (read_meta('case_new_showorg') == 'yes') {
@@ -207,6 +202,11 @@ if (! $id_case) {
 	
 			echo "</div>\n"; // closes box that hides this form by default
 		}
+
+		//
+		// For to find or create new client for case
+		//
+		show_page_subtitle(_Th('title_client_view'), 'clients_intro');
 
 		echo '<p class="normal_text">';
 		echo '<input type="checkbox"' . isChecked(_session('add_client')) . 'name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
