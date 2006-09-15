@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_org.php,v 1.2 2006/08/22 21:19:57 mlutfy Exp $
+	$Id: inc_obj_org.php,v 1.3 2006/09/15 15:52:24 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -222,7 +222,10 @@ class LcmOrg extends LcmObject {
 		} else {
 			$q = "INSERT INTO lcm_org SET date_update = NOW(), date_creation = NOW(), $ol";
 			$result = lcm_query($q);
-			$_SESSION['form_data']['id_org'] = lcm_insert_id('lcm_org', 'id_org');
+			$this->setDataInt('id_org', lcm_insert_id('lcm_org', 'id_org'));
+
+			// Just by precaution
+			$_SESSION['form_data']['id_org'] = $this->getDataInt('id_org');
 	
 			// If there is an error (ex: in contacts), we should send back to 'org_det.php?org=XX'
 			// not to 'org_det.php?org=0'.
