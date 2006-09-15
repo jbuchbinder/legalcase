@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.93 2006/09/11 14:40:23 mlutfy Exp $
+	$Id: edit_case.php,v 1.94 2006/09/15 15:21:54 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -143,15 +143,6 @@ if ($attach_client || $attach_org)
 echo '<form action="upd_case.php" method="post">' . "\n";
 
 if (! $id_case) {
-	if ($attach_client) {
-		show_page_subtitle(_Th('title_client_view'), 'clients_intro');
-
-		$client = new LcmClientInfoUI($attach_client);
-		$client->printGeneral(false);
-		$client->printCases();
-		$client->printAttach();
-	}
-	
 	if ($attach_org) {
 		show_page_subtitle(_Th('title_org_view'), 'clients_intro');
 
@@ -161,48 +152,23 @@ if (! $id_case) {
 		$org->printAttach();
 	}
 
+	if ($attach_client) {
+		show_page_subtitle(_Th('title_client_view'), 'clients_intro');
+
+		$client = new LcmClientInfoUI($attach_client);
+		$client->printGeneral(false);
+		$client->printCases();
+		$client->printAttach();
+	}
+	
 	if ((! $attach_client) && (! $attach_org)) {
 		//
 		// For to find or create new client for case
 		//
 		show_page_subtitle(_Th('title_client_view'), 'clients_intro');
 
-		echo '<p class="normal_text">';
-		echo '<input type="checkbox"' . isChecked(_session('add_client')) . 'name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
-		echo '<label for="box_new_client">' . _T('case_button_add_client') . '</label>';
-		echo "</p>\n";
-
-		// Open box that hides this form by default
-		echo '<div id="new_client" ' . (_session('add_client') ? '' : ' style="display: none;"') . '>';
-
-		echo "<div style='overflow: hidden; width: 100%;'>";
-		echo '<div style="float: left; text-align: right; width: 29%;">';
-		echo '<p class="normal_text" style="margin: 0; padding: 4px;">' .  _Ti('input_search_client') . '</p>';
-		echo "</div>\n";
-
-		echo '<div style="float: right; width: 69%;">';
-		echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" autocomplete="off" name="clientsearchkey" id="clientsearchkey" size="25" />' . "</p>\n";
-		echo '<span id="autocomplete-client-popup" class="autocomplete" style="position: absolute; visibility: hidden;"><span></span></span>';
-		echo '</div>';
-
-		echo '<div style="clear: right;"></div>';
-
-		echo '<div id="autocomplete-client-data"></div>' . "\n";
-		echo "</div>\n";
-
-		echo '<div id="autocomplete-client-alt">';
-		$client = new LcmClientInfoUI();
-		$client->printEdit();
-		echo '</div>';
-
-		echo "<script type=\"text/javascript\">
-			autocomplete('clientsearchkey', 'autocomplete-client-popup', 'ajax.php', 'autocomplete-client-data', 'autocomplete-client-alt')
-			</script>\n";
-
-		echo "</div>\n"; // closes box that hides this form by default
-
 		//
-		// Find of create an organisation for case
+		// Find or create an organisation for case
 		//
 		if (read_meta('case_new_showorg') == 'yes') {
 			show_page_subtitle(_Th('title_org_view'), 'clients_intro');
@@ -241,6 +207,40 @@ if (! $id_case) {
 	
 			echo "</div>\n"; // closes box that hides this form by default
 		}
+
+		echo '<p class="normal_text">';
+		echo '<input type="checkbox"' . isChecked(_session('add_client')) . 'name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
+		echo '<label for="box_new_client">' . _T('case_button_add_client') . '</label>';
+		echo "</p>\n";
+
+		// Open box that hides this form by default
+		echo '<div id="new_client" ' . (_session('add_client') ? '' : ' style="display: none;"') . '>';
+
+		echo "<div style='overflow: hidden; width: 100%;'>";
+		echo '<div style="float: left; text-align: right; width: 29%;">';
+		echo '<p class="normal_text" style="margin: 0; padding: 4px;">' .  _Ti('input_search_client') . '</p>';
+		echo "</div>\n";
+
+		echo '<div style="float: right; width: 69%;">';
+		echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" autocomplete="off" name="clientsearchkey" id="clientsearchkey" size="25" />' . "</p>\n";
+		echo '<span id="autocomplete-client-popup" class="autocomplete" style="position: absolute; visibility: hidden;"><span></span></span>';
+		echo '</div>';
+
+		echo '<div style="clear: right;"></div>';
+
+		echo '<div id="autocomplete-client-data"></div>' . "\n";
+		echo "</div>\n";
+
+		echo '<div id="autocomplete-client-alt">';
+		$client = new LcmClientInfoUI();
+		$client->printEdit();
+		echo '</div>';
+
+		echo "<script type=\"text/javascript\">
+			autocomplete('clientsearchkey', 'autocomplete-client-popup', 'ajax.php', 'autocomplete-client-data', 'autocomplete-client-alt')
+			</script>\n";
+
+		echo "</div>\n"; // closes box that hides this form by default
 	}
 }
 
