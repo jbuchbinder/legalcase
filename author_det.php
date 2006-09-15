@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: author_det.php,v 1.34 2006/09/15 16:02:52 mlutfy Exp $
+	$Id: author_det.php,v 1.35 2006/09/15 16:05:26 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -492,7 +492,7 @@ lcm_page_start(_T('title_author_view') . ' ' . $fullname, '', '', 'authors_intro
 				
 				echo "</p>\n";
 
-				if ($author_session['id_author'] == $author)
+				if ($author_session['id_author'] == $author)
 					echo '<p><a href="edit_app.php?app=0" class="create_new_lnk">' . _T('app_button_new') . '</a></p>';
 
 				break;
