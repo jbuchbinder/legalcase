@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.24 2006/09/18 15:09:15 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.25 2006/09/18 15:20:26 mlutfy Exp $
 */
 
 session_start();
@@ -135,7 +135,7 @@ function send_cookie_by_email($my_email) {
 			WHERE c.id_of_person = a.id_author
 			and type_person = 'author' 
 			and value ='$my_email' 
-			and type_contact = " . $kw_email['id_keyword'];
+			and type_contact = " . $kw_email['id_keyword']);
 	
 	$row = lcm_fetch_array($res);
 
