@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.26 2006/09/18 15:28:50 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.27 2006/09/18 15:38:45 mlutfy Exp $
 */
 
 session_start();
@@ -28,6 +28,7 @@ include('inc/inc_version.php');
 include_lcm('inc_meta');
 include_lcm('inc_presentation');
 include_lcm('inc_session');
+include_lcm('inc_keywords');
 
 // Returns a unique username based on what the user proposed
 // For example, if username "joe" exists, it will return "joe1".
@@ -202,7 +203,6 @@ function send_registration_by_email() {
 	$_SESSION['form_data'] = array();
 	$_SESSION['errors'] = array();
 
-	include_lcm('inc_keywords');
 	$kwg_email = get_kwg_from_name('+email_main');
 
 	$form_items = array (
