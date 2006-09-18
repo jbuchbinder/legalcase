@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_pass.php,v 1.23 2006/09/07 21:39:16 mlutfy Exp $
+	$Id: lcm_pass.php,v 1.24 2006/09/18 15:09:15 mlutfy Exp $
 */
 
 session_start();
@@ -127,6 +127,7 @@ function send_cookie_by_email($my_email) {
 	}
 
 	$my_email = clean_input($my_email);
+	$kw_email = get_kw_from_name('contacts', '+email_main');
 
 	// Find the ID + info of the author
 	$res = lcm_query("SELECT id_of_person, username, status, password
@@ -134,7 +135,7 @@ function send_cookie_by_email($my_email) {
 			WHERE c.id_of_person = a.id_author
 			and type_person = 'author' 
 			and value ='$my_email' 
-			and type_contact = " . $system_kwg['contacts']['keywords']['email_main']['id_keyword']);
+			and type_contact = " . $kw_email['id_keyword'];
 	
 	$row = lcm_fetch_array($res);
 
@@ -202,7 +203,7 @@ function send_registration_by_email() {
 	$_SESSION['errors'] = array();
 
 	include_lcm('inc_keywords');
-	$kw_email = get_kw_from_name('contacts', 'email_main');
+	$kw_email = get_kw_from_name('contacts', '+email_main');
 
 	$form_items = array (
 		'name_first' => 'person_input_name_first',
