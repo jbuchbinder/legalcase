@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.49 2006/09/19 16:32:04 mlutfy Exp $
+	$Id: keywords.php,v 1.50 2006/09/19 16:59:39 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -308,7 +308,7 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	echo "<strong>" . f_err_star('name') . _T('keywords_input_name') . "</strong> " 
 		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
 	
-	echo '<input ' . $disabled . ' type="text" style="width:99%;" id="kwg_name" name="kwg_name" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
+	echo '<input ' . $disabled . ' type="text" style="width:99%;" id="kwg_name" name="kwg_name" size="45" value="' . $kwg['name'] . '" class="search_form_txt" />' . "\n";
 
 	echo "</p>\n";
 
@@ -317,7 +317,7 @@ function show_keyword_group_id($id_group, $id_parent = 0) {
 	//
 	echo "<p class='normal_text'>";
 	echo "<strong>" . f_err_star('title') . _T('keywords_input_title') . "</strong><br />\n";
-	echo "<input type='text' style='width:99%;' id='kwg_title' name='kwg_title' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
+	echo "<input type='text' style='width:99%;' id='kwg_title' name='kwg_title' size='45' value='" .  $kwg['title'] . "' class='search_form_txt' />\n";
 	echo "</p>\n";
 
 	//
@@ -426,12 +426,12 @@ function show_keyword_id($id_keyword = 0) {
 		. "(short identifier, unique to this keyword group)" . "<br />\n"; // TRAD
 
 	$disabled = isDisabled($id_keyword);
-	echo '<input ' . $disabled . ' type="text" id="kw_name" name="kw_name" value="' . $kw['name'] . '" class="search_form_txt" />' . "\n";
+	echo '<input ' . $disabled . ' type="text" id="kw_name" name="kw_name" size="45" value="' . $kw['name'] . '" class="search_form_txt" />' . "\n";
 	echo "<br /><br />\n";
 	
 	// Title
 	echo "<strong>" . f_err_star('title') . _T('keywords_input_title') . "</strong><br />\n";
-	echo "<input type='text' id='kw_title' name='kw_title' value='" .  $kw['title'] . "' class='search_form_txt' />\n";
+	echo "<input type='text' id='kw_title' name='kw_title' size='45' value='" .  $kw['title'] . "' class='search_form_txt' />\n";
 	echo "<br /><br />\n";
 
 	// Description
