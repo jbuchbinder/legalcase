@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.48 2006/09/14 23:17:47 mlutfy Exp $
+	$Id: keywords.php,v 1.49 2006/09/19 16:32:04 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -102,14 +102,14 @@ function show_kwg_info($kwg, $level = 0) {
 
 	// New keyword
 	if ($kwg['type'] != 'contact') {
-		echo '<a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
+		echo ' <a class="edit_lnk" href="keywords.php?action=edit_keyword&amp;id_keyword=0&amp;'
 			. 'id_group=' . $kwg['id_group'] . '">'
 			. _T('keywords_button_kw_new') . '</a>';
 	}
 
 	// New sub-group
 	if ($kwg['type'] != 'system' && $kwg['type'] != 'contact') {
-		echo '<a class="edit_lnk" href="keywords.php?action=edit_group&amp;id_group=0&amp;'
+		echo ' <a class="edit_lnk" href="keywords.php?action=edit_group&amp;id_group=0&amp;'
 			. 'id_parent=' . $kwg['id_group'] . '">'
 			. _T('keywords_button_subkwg_new') . '</a>';
 	}
