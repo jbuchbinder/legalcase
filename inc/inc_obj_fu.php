@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2006 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.18 2006/09/11 14:49:07 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.19 2006/10/13 19:37:50 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -111,6 +111,9 @@ class LcmFollowup extends LcmObject {
 
 		if (($unix_date_start < 0) || ! checkdate_sql($this->getDataString('date_start')))
 			$errors['date_start'] = _Ti('time_input_date_start') . 'Invalid start date.'; // TRAD
+
+		if (! is_numeric($this->getDataFloat('sumbilled')))
+			$errors['sumbilled'] = _Ti('fu_input_sum_billed') . 'Incorrect format, must be 00000.00'; // TRAD
 
 		// * Check end date
 		// [ML] This is probably very buggy, because I re-wrote parts of it
