@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.250 2006/09/14 23:25:51 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.251 2006/10/26 13:16:50 mlutfy Exp $
 */
 
 //
@@ -467,7 +467,6 @@ function lcm_page_end($credits = '') {
 		show_find_box('org', $find_org_string, '', 'narrow');
 	
 		echo "<br />
-			<!-- the font size experiment -->
 			<div class=\"prefs_column_menu_head\"><div class=\"sm_font_size\">" . _T('menu_fontsize') . "</div>
 			</div>
 			<ul class=\"font_size_buttons\">
