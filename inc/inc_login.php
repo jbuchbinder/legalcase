@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_login.php,v 1.35 2006/09/08 14:29:55 mlutfy Exp $
+	$Id: inc_login.php,v 1.36 2006/10/26 20:55:49 mlutfy Exp $
 */
 
 if (defined('_INC_LOGIN')) return;
@@ -30,7 +30,7 @@ include_lcm('inc_filters');
 include_lcm('inc_text');
 
 function get_optional_html_login() {
-	$html_file = "custom/html/login.html";
+	$html_file = "inc/config/custom/html/login.html";
 	$text = "";
 
 	if (is_readable($html_file))

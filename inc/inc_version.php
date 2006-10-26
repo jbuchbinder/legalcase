@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_version.php,v 1.106 2006/09/14 23:25:51 mlutfy Exp $
+	$Id: inc_version.php,v 1.107 2006/10/26 20:55:49 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -117,12 +117,12 @@ function include_data($file) {
 }
 
 function include_validator_exists($file) {
-	$lcmfile = 'custom/validation/validate_' . $file . '.php';
+	$lcmfile = 'inc/config/custom/validation/validate_' . $file . '.php';
 	return @file_exists($lcmfile);
 }
 
 function include_validator($file) {
-	$lcmfile = 'custom/validation/validate_' . $file . '.php';
+	$lcmfile = 'inc/config/custom/validation/validate_' . $file . '.php';
 
 	// This does not work correctly on PHP5, and who knows for PHP4..
 	if (! isset($GLOBALS['included_files'][$file]))
@@ -140,12 +140,12 @@ function include_validator($file) {
 }
 
 function include_custom_report_exists($file) {
-	$lcmfile = 'custom/reports/' . $file . '.php';
+	$lcmfile = 'inc/config/custom/reports/' . $file . '.php';
 	return @file_exists($lcmfile);
 }
 
 function include_custom_report($file) {
-	$lcmfile = 'custom/reports/' . $file . '.php';
+	$lcmfile = 'inc/config/custom/reports/' . $file . '.php';
 
 	// This does not work correctly on PHP5, and who knows for PHP4..
 	if (! isset($GLOBALS['included_files'][$file]))

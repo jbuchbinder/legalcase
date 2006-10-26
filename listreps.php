@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: listreps.php,v 1.16 2006/04/04 21:52:14 mlutfy Exp $
+	$Id: listreps.php,v 1.17 2006/10/26 20:56:03 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -108,10 +108,10 @@ echo '<p><a href="edit_rep.php?rep=0" class="create_new_lnk">' . _T('rep_button_
 //
 
 $custom_reports = array();
-$handle = opendir("custom/reports");
+$handle = opendir("inc/config/custom/reports");
 
 while (($f = readdir($handle)) != '') {
-	if (is_file("custom/reports/" . $f)) {
+	if (is_file("inc/config/custom/reports/" . $f)) {
 		// matches: custom/reports/alpha-num_name.php
 		if (preg_match("/^([_a-zA-Z0-9]+)\.php/", $f, $regs)) {
 			$custom_reports[] = $regs[1];
