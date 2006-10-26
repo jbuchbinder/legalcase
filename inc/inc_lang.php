@@ -242,7 +242,7 @@ function init_codes_langues() {
 	'de2' => "Deutsch (2)", // [ML] 2006-10-25 Temporary, we have two different deutsch translations
 	'dz' => "Bhutani",
 	'el' => "&#949;&#955;&#955;&#951;&#957;&#953;&#954;&#940;",
-	'en' => "English",
+	'en' => "English (Euro)",
 	'en_uk' => "English (UK)",
 	'en_us' => "English (USA)",
 	'eo' => "Esperanto",
