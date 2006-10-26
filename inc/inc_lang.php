@@ -239,6 +239,7 @@ function init_codes_langues() {
 	'cy' => "Welsh",
 	'da' => "dansk",
 	'de' => "Deutsch",
+	'de2' => "Deutsch (2)", // [ML] 2006-10-25 Temporary, we have two different deutsch translations
 	'dz' => "Bhutani",
 	'el' => "&#949;&#955;&#955;&#951;&#957;&#953;&#954;&#940;",
 	'en' => "English",
@@ -546,7 +547,7 @@ function init_languages($force_init = false) {
 	if ($force_init || !$all_langs || !$langue_site) {
 		if (!$d = @opendir('inc/lang')) return;
 		while ($f = readdir($d)) {
-			if (ereg('^lcm_([a-z_]+)\.php?$', $f, $regs))
+			if (ereg('^lcm_([a-z_]+[0-9]*)\.php?$', $f, $regs))
 				$list_all_langs[] = $regs[1];
 		}
 

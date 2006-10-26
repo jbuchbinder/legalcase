@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: lcm_cookie.php,v 1.28 2006/08/17 15:44:16 mlutfy Exp $
+	$Id: lcm_cookie.php,v 1.29 2006/10/26 13:35:36 mlutfy Exp $
 */
 
 include("inc/inc_version.php");
@@ -209,7 +209,7 @@ if ($cookie_session) {
 // of a mess because of the session handling stuff.. 
 if (isset($_REQUEST['var_lang_lcm'])) {
 	// ex: bg, fr, en, en_uk, etc. nothing else is accepted
-	if (preg_match("/^[_A-Za-z]+$/", $_REQUEST['var_lang_lcm'])) {
+	if (preg_match("/^[_A-Za-z]+[0-9]*$/", $_REQUEST['var_lang_lcm'])) {
 		include_lcm('inc_lang');
 		include_lcm('inc_session');
 
