@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_de2.php,v 1.2 2006/11/14 16:11:17 mlutfy Exp $
+    $Id: lcm_de2.php,v 1.3 2006/11/14 16:40:47 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -165,11 +165,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_filter_owner_option_all' => 'Alle Fälle,Mandanten',
 'case_filter_owner_option_my' => 'Meine Fälle,Mandanten',
 'case_filter_owner_option_public' => 'Öffentliche Fälle',
-'case_filter_period_option_m1' => 'im letzten Monat',
-'case_filter_period_option_m3' => 'in den letzten 3 Monate',
-'case_filter_period_option_m6' => 'in den letzten 6 Monate',
-'case_filter_period_option_w1' => 'in der letzten Woche',
-'case_filter_period_option_y1' => 'im letztem Jahr',
+'case_filter_period_option_m1' => 'Im letzten Monat',
+'case_filter_period_option_m3' => 'In den letzten 3 Monate',
+'case_filter_period_option_m6' => 'In den letzten 6 Monate',
+'case_filter_period_option_w1' => 'In der letzten Woche',
+'case_filter_period_option_y1' => 'Im letztem Jahr',
 'case_filter_period_option_year' => 'Jahr @year@',
 'case_info_author_assigned' => '@name@: Der Benutzer,Bearbeiter ist dem Fall zugeteilt worden.',
 'case_info_author_unassigned' => '@name@: Der Benutzer, Sachbearbeiter ist aus dem Fall entfernt worden.',
@@ -512,7 +512,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_info_application_ready' => 'Das System ist jetzt bereit, Sie können es benutzen ...',
 'install_info_do_not_forget' => 'Vergessen Sie nicht Ihre eigenen Zugangsschlüssel',
 'install_info_go_back_verify_data' => 'Zur vorherigen Seite zurückgehen und überprüfen Sie die Information,die Sie geliefert haben.',
-'install_info_more_about_software' => 'Zwecks weiterer Information über die Software, wie die Ankündigung, Erweiterung der Software, Dokumentation usw,besuchen Sie bitte @URL@.Wir bitten um Anregungen,Verbesserungen sowie Fehlerbeseitigung,ihrer Wünsche, um eine Rückmeldung an, legalcase-deve@lists.sf.net. Ihre Rückmeldung ist sehr wichtig, sie helfen uns, die Qualität der Software zu verbessern.',
+'install_info_more_about_software' => 'Zwecks weiterer Information über die Software, wie die Ankündigung, Erweiterung der Software, Dokumentation usw, besuchen Sie bitte @url@. Wir bitten um Anregungen, Verbesserungen sowie Fehlerbeseitigung, ihrer Wünsche, um eine Rückmeldung an, legalcase-devel@lists.sf.net. Ihre Rückmeldung ist sehr wichtig, sie helfen uns, die Qualität der Software zu verbessern.',
 'install_info_new_account_1' => 'Das System liefert Ihnen jetzt das Gewohnheitsrecht zum Standort.',
 'install_info_sql_connection' => 'Beziehen Sie sich auf die Ihnen von Ihrem Systemadministrator gelieferte Information: wenn Ihr Gastgeber SQL unterstützt, sollte es Ihnen die Verbindungscodes zum SQL-Server geben.',
 'install_info_sql_connection_failed' => '<b>N.B.</b> Auf einer Anzahl von Servern müssen Sie die Aktivierung Ihres Zugangs zur SQL-Datenbank fordern, bevor Sie es verwenden können. Wenn Sie nicht in der Lage sind sich zu verbinden, vergewissern sie sich, ihren Kontaktwunsch, -aufbau.',
@@ -537,7 +537,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_warning_no_databases_1' => 'Der Systemverantwortliche konnte die Namen der verfügbaren Datenbanken nicht lesen.',
 'install_warning_no_databases_2' => 'Entweder gibt es keine verfügbaren Datenbanken oder das Merkmal, das die Auflistung der Datenbanken öffnet, war aus Sicherheitsgründen behindert (der Fall wird genutzt durch viele Programmnutzern, Empfängern).',
 'install_warning_no_databases_3' => 'Falls die zweite Alternative richtig war, ist es möglich, dass sie eine Datenbank benannten, nachdem sie sich anmeldeten:',
-'install_warning_update_impossible' => '<b>Achtung </b>!Gescheitert, die SQL-Datenbank von Version @old_version@ zu Version @version@, Vielleicht ein Problem auf der Datenbank, ohne Erlaubnis . Bitte wenden Sie sich an Ihren Verwalter. Eine volle technische Auflistung der möglichen Fehler wird mitgeliefert.',
+'install_warning_update_impossible' => '<b>Achtung!</b> Gescheitert, die SQL-Datenbank von Version @old_version@ zu Version @version@, Vielleicht ein Problem auf der Datenbank, ohne Erlaubnis. Bitte wenden Sie sich an Ihren Verwalter. Eine volle technische Auflistung der möglichen Fehler wird mitgeliefert.',
 
 
 // K
@@ -609,11 +609,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw_conclusion_notguilty_title' => 'Nicht schuldig ',
 'kw_conclusion_reinvestigation_title' => 'Re-Untersuchung ',
 'kw_contacts_addressmain_title' => 'Heim Adresse ',
-'kw_contacts_emailalternate_title' => 'E-mail (alternativ)',
+'kw_contacts_emailalternate_title' => 'E-mail (Alternativ)',
 'kw_contacts_emailmain_title' => 'E-mail',
-'kw_contacts_phonehome_title' => 'Telefon (heim)',
-'kw_contacts_phonemobile_title' => 'Telefon (mobil)',
-'kw_contacts_phoneoffice_title' => 'Telefon (büro)',
+'kw_contacts_phonehome_title' => 'Telefon (Heim)',
+'kw_contacts_phonemobile_title' => 'Telefon (Mobil)',
+'kw_contacts_phoneoffice_title' => 'Telefon (Büro)',
 'kw_followups__title' => '-',
 'kw_followups_assignment_title' => 'Anweisung, Aufgabe ',
 'kw_followups_conclusion_title' => 'Zusammenfassung, Folgerung, Beschluß ',
