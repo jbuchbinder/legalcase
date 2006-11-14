@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.19 2006/10/13 19:37:50 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.20 2006/11/14 19:16:05 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -792,7 +792,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		if (! _request('followup')) {
 			echo "<!-- Add appointment? -->\n";
 			echo '<p class="normal_text">';
-			echo '<input type="checkbox" name="add_appointment" id="box_new_app" onclick="display_block(\'new_app\', \'flip\')"; />';
+			echo '<input type="checkbox" name="add_appointment" id="box_new_app" onclick="display_block(\'new_app\', \'flip\')" />';
 			echo '<label for="box_new_app">' . _T('fu_info_add_future_activity') . '</label>';
 			echo "</p>\n";
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.14 2006/09/05 22:41:07 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.15 2006/11/14 19:15:47 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -479,7 +479,7 @@ class LcmClientInfoUI extends LcmClient {
 		if (substr($client_citizen_number, 0, 3) == 'yes') {
 			echo "<tr>\n";
 			echo '<td>' . f_err_star('citizen_number') .  _T('person_input_citizen_number') . '</td>';
-			echo '<td><input name="citizen_number" value="' . clean_output($this->getDataString('citizen_number')) . '" class="search_form_txt"></td>';
+			echo '<td><input name="citizen_number" value="' .  clean_output($this->getDataString('citizen_number')) . '" class="search_form_txt" /></td>';
 			echo "</tr>\n";
 		}
 		
