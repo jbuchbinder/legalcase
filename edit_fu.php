@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_fu.php,v 1.115 2006/10/30 19:23:56 mlutfy Exp $
+	$Id: edit_fu.php,v 1.116 2006/11/14 19:14:11 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -142,8 +142,9 @@ $_SESSION['form_data']['ref_edit_fu'] = _request('ref');
 
 				// Get appointment client(s)
 				$q = "SELECT aco.*, c.name_first, c.name_middle, c.name_last, o.name
-					FROM lcm_app_client_org as aco, lcm_client as c
-					LEFT JOIN lcm_org as o ON (id_org) " /* ON (o.id_org = aco.id_org) */ . "
+					FROM lcm_app_client_org as aco
+					NATURAL JOIN lcm_client as c
+					LEFT JOIN lcm_org as o ON (o.id_org = aco.id_org)
 					WHERE (id_app = $app AND aco.id_client = c.id_client)";
 
 				$res_client = lcm_query($q);
