@@ -326,6 +326,11 @@ a.prefs_normal_lnk {
 
 /* Form elements */
 
+span.autocomplete {
+	position: absolute;
+	z-index: 9000;
+}
+
 .autocomplete ul {
 	padding: 0;
 	margin: 0;
@@ -333,7 +338,7 @@ a.prefs_normal_lnk {
 	background-color: #ffc;
 	list-style: none;
 	border: thin outset black;
-	z-index: 10;
+	cursor: pointer;
 }
 
 .autocomplete ul li.selected {
