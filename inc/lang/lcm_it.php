@@ -1,6 +1,47 @@
 <?php
 
-// This is a LCM language file  --  Questo è un file lingua di LCM
+// This is a LCM language file  --  Ceci est un fichier langue de LCM
+
+/*
+    To translate LCM, you may translate this file and send it to legalcase-devel@lists.sf.net.
+    You may also use the Web translation system: http://www.lcm.ngo-bg.org/trad-lang/trad_lang.php
+
+    Some translations need help, they are no longuer maintained. You can update them by fixing
+    this file, and sending it to legalcase-devel@lists.sf.net, or use the Web translation system.
+    (Using the web translation system to update translations is highly recommended!)
+
+    Note: Strings with <NEW> are new strings, which have never been translated.
+          Strings with <MODIF> are strings which have been updated in the English translation.
+
+    If you wish to only modify a few strings for local requirements, please
+    read: http://www.lcm.ngo-bg.org/article136.html
+
+    Also please note that translations contributed to the project must have
+    the copyright notice below. As a recognition to the translators work, we
+    add their name to the 'AUTHORS' file and we announce the new translation
+    on our website (unless explicitely requested otherwise).
+
+   -----------------------------------------------------------------------
+
+    This file is part of the Legal Case Management System (LCM).
+    (C) 2004-2006 Free Software Foundation, Inc.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
+
+    $Id: lcm_it.php,v 1.3 2006/11/14 17:52:18 mlutfy Exp $
+*/ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
 
@@ -303,6 +344,24 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'error_no_read_permission' => 'Non hai il permesso di visualizzare questo caso!',
 'error_no_such_case' => 'Il caso non esiste!',
 'error_no_such_user' => 'L\'utente non esiste nel database. Come è stato effettuato l\'accesso?',
+'expense_button_comment' => '<NEW>Add a comment',
+'expense_button_edit' => '<NEW>Edit request',
+'expense_button_new' => '<NEW>New request',
+'expense_filter_owner_option_all' => '<NEW>All requests',
+'expense_filter_owner_option_my' => '<NEW>My requests',
+'expense_filter_owner_option_public' => '<NEW>Public requests',
+'expense_input_comment' => '<NEW>Comment:',
+'expense_input_cost' => '<NEW>Cost:',
+'expense_input_description' => '<NEW>Description:',
+'expense_input_id' => '<NEW>Request ID:',
+'expense_input_status' => '<NEW>Status:',
+'expense_input_type' => '<NEW>Type:',
+'expense_status_option_deleted' => '<NEW>deleted',
+'expense_status_option_granted' => '<NEW>granted',
+'expense_status_option_pending' => '<NEW>pending',
+'expense_status_option_refused' => '<NEW>refused',
+'expenses_subtitle_comment' => '<NEW>Comment',
+'expenses_subtitle_comments' => '<NEW>Comments',
 'export_button_case' => 'Esporta i dati sul caso',
 'export_button_client' => 'Esporta i dati sul cliente',
 'export_button_followup' => 'Esporta i dati sui follow-up',
@@ -331,6 +390,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'fu_button_desc_less' => 'Mostra solo l\'inizio delle descrizioni.',
 'fu_button_desc_more' => 'Mostra l\'intero testo delle descrizioni.',
 'fu_button_edit' => 'Modifica il follow-up',
+'fu_button_stats_less' => '<NEW>Hide the detailed statistics.',
+'fu_button_stats_more' => '<NEW>Show more detailed statistics.',
 'fu_info_add_future_activity' => 'Aggiungi un\'attività al follow-up.',
 'fu_info_after_event' => 'In relazione all\'evento @title@ del @date@, che coinvolge @participants@ ...',
 'fu_info_delete' => 'Elimina l\'aggiornamento.',
@@ -381,6 +442,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'help_intro_case_ac' => 'Ogni utente assegnato al caso può avere uno specifico livello di accesso allo stesso. Per esempio, un utente può avere il diritto di consultare (leggere), contribuire (scrivere), o correggere (modificare) oppure di amministrare il caso (cambiare la fase/lo stato del caso, aggiungere/rimuovere altri utenti per il caso ecc.). Da qui è anche possibile rimuovere un utente da un caso.',
 'help_intro_case_list' => 'Elenco dei casi da te gestiti. Clicca sul titolo del caso nell\'elenco sottostante per visualizzare la pagina dei dettagli. L\'elenco dei casi può essere variato mediante l\'utilizzo dei filtri.',
 'help_intro_client_list' => 'Elenco di tutti i clienti registrati nel sistema. Clicca sul nome dell\'utente per vederne i dettagli. Per inserire un nuovo cliente usa il pulsante in basso.',
+'help_intro_expenses_list' => '<NEW>List of internal requests, such as requests to cover expenses related to a case, which are waiting for approval from office administrators or have recently been approved. You can click on the expense description in the list below to view more information about it.',
 'help_intro_keyword_list' => 'Le parole chiave servono a personalizzare alcune caratteristiche del sistema per adattarle al contesto specifico. Fanno normalmente riferimento ad informazioni statistiche, quindi offrono un insieme limitato di opzioni. Le parole chiave di "sistema" vengono usate per le caratteristiche di sistema, come i tipi di follow-up, i contatti o gli appuntamenti. Le parole chiave di "utente" possono essere usate per aggiungere nuovi raggruppamenti statistici ad alcuni elemeti del sistema, come i casi, i clienti o le società.',
 'help_intro_org_list' => 'Elenco di tutte le società registrate nel sistema. Clicca sul nome della società per vederne i dettagli. Per inserire un nuovo cliente usa il pulsante in basso.',
 'help_title_about' => 'Informazioni ...',
@@ -446,6 +508,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'info_upgrade_database3' => 'L\'aggiornamento del database è stato eseguito con successo.',
 'info_upgrade_database5' => 'Clicca qui per tornare alla pagina principale.',
 'info_yes' => 'sì',
+'info_yes_mandatory' => '<NEW>yes (mandatory)',
+'info_yes_optional' => '<NEW>yes (optional)',
 'info_your_contact_information' => 'I tuoi dati di contatto ...',
 'input_connection_identifiers' => 'I tuoi identificatori per la connessione ...',
 'input_email' => 'Indirizzo email:',
@@ -453,6 +517,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'input_search_author' => 'Trova utente:',
 'input_search_case' => 'Trova caso:',
 'input_search_client' => 'Trova cliente:',
+'input_search_exp' => '<NEW>Find a request:',
 'input_search_org' => 'Trova società:',
 'input_search_organisation' => 'Trova società:',
 'input_search_rep' => 'Trova rapporto:',
@@ -467,10 +532,14 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'install_info_application_ready' => 'Il sistema è ora pronto all\'uso...',
 'install_info_do_not_forget' => 'Non dimenticarti i codici d\'accesso!',
 'install_info_go_back_verify_data' => 'Torna alla pagina precedente e verifica le informazioni fornite.',
+'install_info_more_about_software' => '<NEW>For more information about the software, such as recent announcements, documentation on how to extend the software, etc., please visit @url@. To request features, report bugs or any other feedback, write to legalcase-devel@lists.sf.net. Your feedback is very important to help us improve the quality of the software.',
 'install_info_new_account_1' => 'Il sistema ti fornirà ora un accesso personalizzato al sito. ',
 'install_info_sql_connection' => 'Fai riferimento alle informazioni fornite dall\'amministratore di sistema: se il tuo host supporta SQL dovrebbe indicarti i codici per la connessione al server SQL.',
 'install_info_sql_connection_failed' => '<b>N.B.</b> Su alcuni server va richiesta l\'attivazione dell\'accesso al database SQL prima di poterlo usare. Se non riesci a connetterti, verifica di aver fatto tale richiesta.',
+'install_info_subscribe_may_fail' => '<NEW>A request to subscribe your e-mail to the LCM announcements has been sent. Sometimes, the automated requests may not work. If you do not receive a confirmation by e-mail within the next 24h, please subscribe from our website.',
+'install_info_subscribe_to_news_list' => '<NEW>Subscribe the above e-mail to the receive LCM annoucements? If yes, you will receive by e-mail information about of new stable software releases and important security notifications. Such e-mails are sent very rarely (once every 1-2 months) and will never be used for other purposes, such as advertising.',
 'install_input_database_name' => 'Nome:',
+'install_input_getnews' => '<NEW>Subscription to the announcements newsletter:',
 'install_select_database' => 'Seleziona il database che l\'host ti ha attribuito',
 'install_select_language' => 'Seleziona una lingua e poi clicca sul pulsante "successivo" per iniziare la procedura d\'installazione.',
 'install_step_five' => 'Quinta fase:',
@@ -495,7 +564,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // K
 'keywords_button_kw_new' => 'Aggiungi una nuova parola chiave al gruppo',
+'keywords_button_kwg_edit' => '<NEW>Modify field group',
 'keywords_button_kwg_new' => 'Crea un nuovo gruppo di parole chiave',
+'keywords_button_subkwg_new' => '<NEW>Create a new sub-group',
 'keywords_info_kw_ac_author' => 'Possono gli utenti usare questa parola chiave? (altrimenti verrà nascosta)',
 'keywords_info_kw_hidden' => 'nascosto',
 'keywords_info_kwg_ac_author' => 'Possono gli utenti usare questo gruppo di parole chiave? (altrimenti verrà nascosto)',
@@ -515,12 +586,14 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'keywords_input_type_case' => 'Casi',
 'keywords_input_type_client' => 'Clienti',
 'keywords_input_type_client_org' => 'Clienti e Società',
+'keywords_input_type_contact' => '<NEW>Contacts',
 'keywords_input_type_followup' => 'Follow-up',
 'keywords_input_type_org' => 'Società',
 'keywords_input_type_stage' => 'Fase',
 'keywords_input_type_system' => 'Sistema',
 'keywords_option_quantity_many' => 'più parole chiave',
 'keywords_option_quantity_one' => 'una parola chiave',
+'keywords_tab_contact' => '<NEW>Contact types',
 'keywords_tab_maintenance' => 'Manutenzione',
 'keywords_tab_system' => 'Parole chiave di sistema',
 'keywords_tab_user' => 'Parole chiave personalizzate',
@@ -535,6 +608,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw__crimresults_res006_title' => 'Detenuto (Stopped)',
 'kw__crimresults_res007_title' => 'Ordinanza (Ruling)',
 'kw__crimresults_res008_title' => 'Altro',
+'kw__exptypes__exptypes01_title' => '<NEW>Type 1',
+'kw__exptypes__exptypes02_title' => '<NEW>Type 2',
+'kw__exptypes__exptypes_other_title' => '<NEW>Other',
 'kw__institutions_001_title' => 'Istituzione A',
 'kw__institutions_002_title' => 'Istituzione B',
 'kw__institutions_003_title' => 'Istituzione C',
@@ -591,6 +667,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw_stage_second_appeal_title' => 'Secondo appello',
 'kw_stage_trial_title' => 'Processo',
 'kwg__crimresults_title' => 'Risultati del caso',
+'kwg__exptypes_title' => '<NEW>Internal request',
 'kwg__institutions_title' => 'Istituzione',
 'kwg__refnumbers_title' => 'Numero di riferimento',
 'kwg_appointments_title' => 'Scadenze (Appointments)',
@@ -653,6 +730,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'menu_main_cases_tooltip' => 'Elenco dei casi su cui stai lavorando.',
 'menu_main_clients' => 'Clienti',
 'menu_main_clients_tooltip' => 'Elenco di tutti i clienti registrati nel sistema.',
+'menu_main_expenses' => '<NEW>Internal requests',
+'menu_main_expenses_tooltip' => '<NEW>List of internal requests, such as requests to cover expenses related to a case.',
 'menu_main_orgs' => 'Società',
 'menu_main_orgs_tooltip' => 'Elenco di tutte le societa\' (persone giuridiche) registrate nel sistema.',
 'menu_profile' => 'Profilo',
@@ -714,9 +793,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'pass_warning_not_registered' => '<b>Errore:</b> l\'indirizzo <tt>@user_email@</tt> non è registrato su questo sito.',
 'pass_warning_too_short' => 'La password deve contenere più di 5 caratteri.',
 'pass_warning_unknown_cookie' => '<b>Errore:</b> codice sconosciuto.',
+'person_info_years_old' => '<NEW>@years@ years old',
 'person_input_address' => 'Indirizzo:',
 'person_input_citizen_number' => 'Codice fiscale (Citizen number):',
 'person_input_civil_status' => 'Stato civile:',
+'person_input_date_birth' => '<NEW>Date of birth:',
 'person_input_gender' => 'Sesso:',
 'person_input_gender_female' => 'F',
 'person_input_gender_male' => 'M',
@@ -785,6 +866,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_info_followups_fields' => 'Informazioni da associare ad ogni follow-up.',
 'siteconf_info_hide_emails' => 'Nascondi le email dell\'utente',
 'siteconf_info_languages_refreshed' => 'L\'elenco delle traduzioni disponibili è stato aggiornato.',
+'siteconf_info_name_format_1' => '<NEW>John J. Doe',
+'siteconf_info_name_format_10' => '<NEW>Doe, John J.',
 'siteconf_info_now_and_before' => 'è stato impostato a "@now@", prima era "@before@".',
 'siteconf_info_self_registration' => 'Abilitare gli utenti alla creazione del proprio account sul sito?',
 'siteconf_info_site_desc' => 'Visualizzata sotto il nome del sito, ma non sui rapporti.',
@@ -806,6 +889,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_assignment_date' => 'Data di assegnazione',
 'siteconf_input_available_languages' => 'Aggiorna l\'elenco delle lingue disponibili:',
 'siteconf_input_case_allow_modif' => 'Consentire la modifica dei dati di un caso una volta creati?',
+'siteconf_input_case_new_showorg' => '<NEW>Display the &ldquo;find/create organisation&rdquo; form when creating a new case?',
 'siteconf_input_citizen_number' => 'Codice fiscale (solo per i clienti)',
 'siteconf_input_civil_status' => 'Stato civile',
 'siteconf_input_client_income' => 'Reddito',
@@ -813,6 +897,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'siteconf_input_currency' => 'Valuta:',
 'siteconf_input_default_lang' => 'Lingua predefinita:',
 'siteconf_input_fu_allow_modif' => 'Consentire la modifica dei dati di un follow-up una volta creati?',
+'siteconf_input_name_format' => '<NEW>Name format:',
 'siteconf_input_name_middle' => 'Secondo nome o iniziale',
 'siteconf_input_selfreg_moderated' => 'Sì, ma un amministratore deve approvare la richiesta.',
 'siteconf_input_selfreg_no' => 'No.',
@@ -847,6 +932,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'time_input_date_creation' => 'Data di creazione:',
 'time_input_date_end' => 'Fine:',
 'time_input_date_start' => 'Inizio:',
+'time_input_date_updated' => '<NEW>Updated:',
 'time_input_duration' => 'Durata:',
 'time_input_length' => 'Lunghezza:',
 'time_input_time_at' => 'alle',
@@ -873,6 +959,10 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_client_new' => 'Nuovo cliente',
 'title_client_view' => 'Cliente:',
 'title_error' => 'Errore',
+'title_expense_comment' => '<NEW>Request update',
+'title_expense_new' => '<NEW>New internal request',
+'title_expense_view' => '<NEW>Request details',
+'title_expenses' => '<NEW>Internal requests',
 'title_fu_change_stage' => 'Cambio fase del caso',
 'title_fu_change_status' => 'Cambio stato del caso',
 'title_fu_edit' => 'Modifica follow-up',
@@ -916,7 +1006,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'warning_operation_failed' => 'L\'operazione è fallita.',
 'warning_panic_is_useful' => 'Si è verificato un errore inaspettato, ma le informazioni che seguono possono aiutare gli sviluppatori del software a correggere l\'errore. Per favore copiare il messaggio sottostante ed incollarlo in una email da spedire a legalcase-devel@lists.sf.net.',
 'warning_sql_connection_failed' => 'La connessione al server di database SQL è fallita.',
-'warning_sql_query_failed' => 'Errore nella query sul database SQL.',
+'warning_sql_query_failed' => 'Errore nella query sul database SQL.'
 
 );
 
