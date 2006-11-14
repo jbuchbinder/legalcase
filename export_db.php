@@ -18,7 +18,7 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-   $Id: export_db.php,v 1.15 2006/09/14 19:36:21 mlutfy Exp $
+   $Id: export_db.php,v 1.16 2006/11/14 21:23:25 mlutfy Exp $
  */
 
 include('inc/inc.php');
@@ -177,7 +177,16 @@ function export_database($output_filename = '', $ignore_old = false) {
 					OPTIONALLY ENCLOSED BY '\"'
 					ESCAPED BY '\\\\'
 				LINES TERMINATED BY '\r\n'";
-		$res = lcm_query($q);
+		$res = lcm_query($q, true);
+
+		if (! $res) {
+			die("<p>Configuration error: please make sure that your MySQL user
+			has 'File_priv' = 'Y'. For example, in phpmyadmin or using the
+			command line mysql tool, go to the mysql.user table, and update
+			the File_priv of your LCM database account. Do not forget to
+			execute 'flush privileges' afterwards. For more information,
+			please refer to: <a href='http://www.lcm.ngo-bg.org/article147.html'>http://www.lcm.ngo-bg.org/article147.html</a></p>"); // TRAD 
+		}
 	}
 
 	// By default, in most installations, directory will have 0777 mode
