@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_case.php,v 1.95 2006/09/15 15:32:01 mlutfy Exp $
+	$Id: edit_case.php,v 1.96 2006/11/14 19:14:48 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -169,7 +169,7 @@ if (! $id_case) {
 			show_page_subtitle(_Th('title_org_view'), 'clients_intro');
 	
 			echo '<p class="normal_text">';
-			echo '<input type="checkbox"' . isChecked(_session('add_org')) .  'name="add_org" id="box_new_org" onclick="display_block(\'new_org\', \'flip\')"; />';
+			echo '<input type="checkbox"' . isChecked(_session('add_org')) .  'name="add_org" id="box_new_org" onclick="display_block(\'new_org\', \'flip\')" />';
 			echo '<label for="box_new_org">' . _T('case_button_add_org') . '</label>';
 			echo "</p>\n";
 	
@@ -209,7 +209,7 @@ if (! $id_case) {
 		show_page_subtitle(_Th('title_client_view'), 'clients_intro');
 
 		echo '<p class="normal_text">';
-		echo '<input type="checkbox"' . isChecked(_session('add_client')) . 'name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')"; />';
+		echo '<input type="checkbox"' . isChecked(_session('add_client')) . 'name="add_client" id="box_new_client" onclick="display_block(\'new_client\', \'flip\')" />';
 		echo '<label for="box_new_client">' . _T('case_button_add_client') . '</label>';
 		echo "</p>\n";
 
@@ -222,8 +222,8 @@ if (! $id_case) {
 		echo "</div>\n";
 
 		echo '<div style="float: right; width: 69%;">';
-		echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" autocomplete="off" name="clientsearchkey" id="clientsearchkey" size="25" />' . "</p>\n";
-		echo '<span id="autocomplete-client-popup" class="autocomplete" style="position: absolute; visibility: hidden;"><span></span></span>';
+		echo '<p class="normal_text" style="margin: 0; padding: 4px;"><input type="text" name="clientsearchkey" id="clientsearchkey" size="25" />' . "</p>\n";
+		echo '<span id="autocomplete-client-popup" class="autocomplete" style="visibility: hidden;"><span></span></span>';
 		echo '</div>';
 
 		echo '<div style="clear: right;"></div>';
@@ -282,7 +282,7 @@ echo "<script type=\"text/javascript\">
 //
 if (! $id_case) {
 	echo '<p class="normal_text">';
-	echo '<input type="checkbox"' . isChecked(_session('add_fu')) . 'name="add_fu" id="box_new_followup" onclick="display_block(\'new_followup\', \'flip\')"; />';
+	echo '<input type="checkbox"' . isChecked(_session('add_fu')) . 'name="add_fu" id="box_new_followup" onclick="display_block(\'new_followup\', \'flip\')" />';
 	echo '<label for="box_new_followup">' . "Add a follow-up to the case" . '</label>'; // TRAD
 	echo "</p>\n";
 
