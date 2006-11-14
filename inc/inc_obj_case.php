@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.27 2006/09/11 14:49:07 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.28 2006/11/14 19:15:34 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -653,7 +653,7 @@ class LcmCaseInfoUI extends LcmCase {
 				. "</td></tr>\n";
 		}
 		
-		echo '<tr><td><label for="input_title">' 
+		echo '<tr><td><label for="input_case_title">' 
 			. f_err_star('title') . _T('case_input_title')
 			. "</label></td>\n";
 		echo '<td><input size="35" name="title" id="input_case_title" value="'
@@ -710,7 +710,7 @@ class LcmCaseInfoUI extends LcmCase {
 		
 		// Notes
 		echo "<tr>\n";
-		echo "<td><label for='input_notes'>" . f_err_star('case_notes') . _Ti('case_input_notes') . "</label></td>\n";
+		echo "<td><label for='input_case_notes'>" . f_err_star('case_notes') . _Ti('case_input_notes') . "</label></td>\n";
 		echo '<td><textarea name="case_notes" id="input_case_notes" class="frm_tarea" rows="3" cols="60">'
 			. clean_output($this->getDataString('notes'))
 			. "</textarea>\n"
