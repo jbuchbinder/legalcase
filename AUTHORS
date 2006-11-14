@@ -15,16 +15,20 @@
 # 	with this program; if not, write to the Free Software Foundation, Inc.,
 # 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 # 
-# 	$Id: AUTHORS,v 1.5 2006/04/17 20:45:12 mlutfy Exp $
+# 	$Id: AUTHORS,v 1.6 2006/11/14 18:03:03 mlutfy Exp $
 
 Main authors:
-	Mathieu Lutfy (mathieu -at- ngo-bg.org, www.bidon.ca), maintainer + php/sql
+	Mathieu Lutfy (mathieu -at- bidon.ca, www.bidon.ca), maintainer + php/sql
 	Anastas Giokov (antzi -at- antzi.bg, www.antzi.bg), php/sql 
 	Krasimir Makaveev (krasi -at- makaveev.com, www.makaveev.com), html/css dev+design
 
 Translators:
 	Alexander Shopov (ash -at- contact.bg), Bulgarian
 	Maria Velichkova (mariavel -at- ngo-bg.org), Bulgarian
+	Mathieu Lutfy (mathieu -at- bidon.ca), French
+	Kilian Huber (me -at- kil.ch), German
+	André Grötschel (a.groetschel -at- inet-service.org), German
+	Rodolfo Cappa (rodolfocappa -at- tiscali.it), Italian
 	Mateusz Hołysz (mateusz_holysz -at- o2.pl), Polish
 	Luís André Beckhauser (luisandre -at- beckhauser.adv.br), Portuguese of Brasil
 	Sergey Salnikov (salnsg -at- gmail.com), Russian
