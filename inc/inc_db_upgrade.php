@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.72 2006/11/15 02:03:12 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.73 2006/11/15 02:05:10 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1150,8 +1150,6 @@ function upgrade_database($old_db_version) {
 		// date at which a given contact was updated.
 		lcm_query("UPDATE lcm_contact SET date_update = NULL");
 	} 
-
-	// TODO: remove lcm_author.htpass field
 
 	// Update the meta, lcm_fields, keywords, etc.
 	lcm_log("Updating LCM default configuration (meta/keywords/repfields/..)", 'upgrade');
