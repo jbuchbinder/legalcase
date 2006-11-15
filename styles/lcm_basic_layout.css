@@ -353,6 +353,12 @@ td input.search_form_txt, td textarea {
 	width: 85%;
 }
 
+/* [ML] testing */
+.ac_loading {
+	background : url('../images/lcm/indicator.gif') right center no-repeat;
+}
+
+
 fieldset input.search_form_txt, fieldset textarea {
 	width: 60%;
 }
