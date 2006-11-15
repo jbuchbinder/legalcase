@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.71 2006/09/07 21:31:43 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.72 2006/11/15 02:03:12 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -174,8 +174,8 @@ function upgrade_database($old_db_version) {
 			id_keyword bigint(21) NOT NULL auto_increment,
 			id_group bigint(21) NOT NULL DEFAULT 0,
 			name VARCHAR(255) NOT NULL,
-			title text NOT NULL DEFAULT '',
-			description text NOT NULL DEFAULT '',
+			title text NOT NULL,
+			description text NOT NULL,
 			ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
 			PRIMARY KEY (id_keyword))";
 		$result = lcm_query($query);
@@ -186,11 +186,11 @@ function upgrade_database($old_db_version) {
 		$query = "CREATE TABLE lcm_keyword_group (
 			id_group bigint(21) NOT NULL auto_increment,
 			name VARCHAR(255) NOT NULL,
-			title text NOT NULL DEFAULT '',
-			description text NOT NULL DEFAULT '',
+			title text NOT NULL,
+			description text NOT NULL,
 			type ENUM('system', 'case', 'followup', 'client', 'org', 'author'),
 			policy ENUM('optional', 'recommended', 'mandatory') DEFAULT 'optional',
-			suggest text NOT NULL DEFAULT '',
+			suggest text NOT NULL,
 			quantity ENUM('one', 'many') DEFAULT 'one',
 			ac_admin ENUM('Y', 'N') DEFAULT 'Y',
 			ac_author ENUM('Y', 'N') DEFAULT 'Y',
@@ -336,11 +336,11 @@ function upgrade_database($old_db_version) {
 
 	if ($lcm_db_version_current < 18) {
 		lcm_query("ALTER TABLE lcm_report
-				ADD description text NOT NULL DEFAULT '',
-				ADD line_src_type text NOT NULL DEFAULT '',
-				ADD line_src_name text NOT NULL DEFAULT '',
-				ADD col_src_type text NOT NULL DEFAULT '',
-				ADD col_src_name text NOT NULL DEFAULT '' ");
+				ADD description text NOT NULL,
+				ADD line_src_type text NOT NULL,
+				ADD line_src_name text NOT NULL,
+				ADD col_src_type text NOT NULL,
+				ADD col_src_name text NOT NULL ");
 
 		lcm_query("CREATE TABLE lcm_rep_line (
 				id_line bigint(21) NOT NULL auto_increment,
@@ -375,7 +375,7 @@ function upgrade_database($old_db_version) {
 		lcm_query("drop table lcm_rep_cols");
 
 		lcm_query("ALTER TABLE lcm_fields
-				ADD enum_type text NOT NULL DEFAULT ''");
+				ADD enum_type text NOT NULL");
 
 		lcm_query("INSERT INTO lcm_fields (table_name, field_name, description, enum_type)
 				VALUES
@@ -669,14 +669,14 @@ function upgrade_database($old_db_version) {
 			PRIMARY KEY (id_entry),
 			KEY id_org (id_org))");
 
-		lcm_query("ALTER TABLE lcm_case ADD notes text NOT NULL DEFAULT '' AFTER alledged_crime");
-		lcm_query("ALTER TABLE lcm_client ADD notes text NOT NULL DEFAULT ''");
+		lcm_query("ALTER TABLE lcm_case ADD notes text NOT NULL AFTER alledged_crime");
+		lcm_query("ALTER TABLE lcm_client ADD notes text NOT NULL");
 
 		lcm_query("ALTER TABLE lcm_org 
-						ADD notes text NOT NULL default '',
-						ADD court_reg text NOT NULL default '',
-						ADD tax_number text NOT NULL default '',
-						ADD stat_number text NOT NULL default ''");
+						ADD notes text NOT NULL,
+						ADD court_reg text NOT NULL,
+						ADD tax_number text NOT NULL,
+						ADD stat_number text NOT NULL");
 
 		// Remove lcm_client.address = lcm_org.address and move to lcm_contacts
 		// If no one complains, we can remove the fields at the next upgrade
@@ -742,7 +742,7 @@ function upgrade_database($old_db_version) {
 	if ($lcm_db_version_current < 33) {
 		lcm_query("ALTER TABLE lcm_keyword_case
 					ADD id_stage bigint(21) not null default 0 AFTER id_case,
-					ADD value text not null default ''");
+					ADD value text not null");
 
 		upgrade_db_version (33);
 	}
@@ -760,7 +760,7 @@ function upgrade_database($old_db_version) {
 	}
 
 	if ($lcm_db_version_current < 35) {
-		lcm_query("ALTER TABLE lcm_fields CHANGE filter filter text NOT NULL DEFAULT ''");
+		lcm_query("ALTER TABLE lcm_fields CHANGE filter filter text NOT NULL");
 		include_lcm('inc_repfields_defaults');
 
 		$fields = get_default_repfields();
@@ -770,7 +770,7 @@ function upgrade_database($old_db_version) {
 	}
 	
 	if ($lcm_db_version_current < 36) {
-		lcm_query("ALTER TABLE lcm_report ADD notes text NOT NULL DEFAULT '' AFTER description");
+		lcm_query("ALTER TABLE lcm_report ADD notes text NOT NULL AFTER description");
 		upgrade_db_version (36);
 	}
 
@@ -800,7 +800,7 @@ function upgrade_database($old_db_version) {
 			kw_result varchar(255) NOT NULL DEFAULT '',
 			kw_conclusion varchar(255) NOT NULL DEFAULT '',
 			kw_sentence varchar(255) NOT NULL DEFAULT '',
-			sentence_val text NOT NULL DEFAULT '',
+			sentence_val text NOT NULL,
 			date_agreement datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 			latest tinyint(1) DEFAULT '0' NOT NULL,
 			PRIMARY KEY (id_entry),
@@ -938,10 +938,10 @@ function upgrade_database($old_db_version) {
 	// LCM 0.7.0
 	if ($lcm_db_version_current < 43) {
 		lcm_query("ALTER TABLE lcm_keyword_client
-					ADD value text NOT NULL DEFAULT ''");
+					ADD value text NOT NULL");
 
 		lcm_query("ALTER TABLE lcm_keyword_org
-					ADD value text NOT NULL DEFAULT ''");
+					ADD value text NOT NULL");
 
 		upgrade_db_version (43);
 	}
@@ -969,7 +969,7 @@ function upgrade_database($old_db_version) {
 			"status ENUM('pending', 'granted', 'refused', 'deleted') NOT NULL",
 			"type varchar(255) NOT NULL", // will use system-keyword
 			"cost decimal(19,4) NOT NULL DEFAULT 0",
-			"description text NOT NULL DEFAULT ''",
+			"description text NOT NULL",
 			"date_creation datetime NOT NULL",
 			"date_update datetime NOT NULL",
 			"pub_read tinyint(1) NOT NULL",
@@ -996,7 +996,7 @@ function upgrade_database($old_db_version) {
 			"id_author bigint(21) NOT NULL",
 			"date_creation datetime NOT NULL",
 			"date_update datetime NOT NULL",
-			"comment text NOT NULL DEFAULT ''",
+			"comment text NOT NULL",
 			"PRIMARY KEY  (id_comment)"
 		);
 
@@ -1008,7 +1008,7 @@ function upgrade_database($old_db_version) {
 
 	if ($lcm_db_version_current < 45) {
 		lcm_query("ALTER TABLE lcm_report
-					ADD filecustom text NOT NULL DEFAULT ''");
+					ADD filecustom text NOT NULL");
 
 		upgrade_db_version (45);
 	}
@@ -1040,7 +1040,7 @@ function upgrade_database($old_db_version) {
 			"id_entry bigint(21) NOT NULL auto_increment",
 			"id_keyword bigint(21) NOT NULL default 0",
 			"id_followup bigint(21) NOT NULL default 0",
-			"value text NOT NULL default ''",
+			"value text NOT NULL",
 			"PRIMARY KEY (id_entry)"
 		);
 	
@@ -1149,7 +1149,9 @@ function upgrade_database($old_db_version) {
 		// and better to show 'unknown'. In the future, it will show the latest
 		// date at which a given contact was updated.
 		lcm_query("UPDATE lcm_contact SET date_update = NULL");
-	}
+	} 
+
+	// TODO: remove lcm_author.htpass field
 
 	// Update the meta, lcm_fields, keywords, etc.
 	lcm_log("Updating LCM default configuration (meta/keywords/repfields/..)", 'upgrade');
