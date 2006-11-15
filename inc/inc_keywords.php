@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.41 2006/11/15 02:07:18 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.42 2006/11/15 19:44:20 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -64,14 +64,13 @@ function get_kwg_all($type, $exclude_empty = false, $show_subgroups = false) {
 		if ($in_type)
 			$query .= " WHERE type $in_type ";
 
-		if (! $show_subgroups)
+		// [ML] If importing an old DB (ex: form 0.6.4) in LCM 0.7.x, 
+		// ignore this, or the import will panic.
+		if ((! $show_subgroups) && read_meta('lcm_db_version') >= 47)
 			$query .= " AND id_parent = 0 ";
 	}
 
-	// [ML] 2006-11-14 Sometimes fails after upgrade, because id_parent 
-	// doesn't yet exist. For now, adding this.
-	$accept_fail = (isset($GLOBALS['debug']) && $GLOBALS['debug'] ? false : true);
-	$result = lcm_query($query, $accept_fail);
+	$result = lcm_query($query);
 
 	while ($row = lcm_fetch_array($result)) {
 		$ret[$row['title']] = $row;
