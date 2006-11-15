@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.73 2006/11/15 02:05:10 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.74 2006/11/15 19:43:46 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1092,18 +1092,18 @@ function upgrade_database($old_db_version) {
 		// [ML] Intentionally not using inc_keywords.php functions, so that it
 		// is more error resistant (i.e. to avoid lcm_panic if there is an error).
 		$result = lcm_query("SELECT id_group FROM lcm_keyword_group WHERE name = 'contacts'");
-		if (($row = lcm_fetch_array($result))) {
-			$id_group = $row['id_group'];
+		if (($row0 = lcm_fetch_array($result))) {
+			$id_group = $row0['id_group'];
+
+			lcm_log("UPGRADE: Found kwg = $id_group");
 
 			lcm_query("INSERT INTO lcm_keyword_group 
 				(name, title, description, type, policy, quantity, suggest, ac_admin, ac_author)
 				SELECT CONCAT('+', name), title, description, 'contact', 'optional', 'many', 'none', 'Y', ac_author
 				  FROM lcm_keyword
 				 WHERE id_group = $id_group");
-	
-			lcm_query("UPDATE lcm_keyword_group
-						SET policy = 'recommended'
-						WHERE name IN ('+address_main', '+phone_home')");
+
+			lcm_log("UPGRADE: added a few new groups.");
 
 			// Create table to convert IDs in lcm_contact
 			// Note: we use the date_update to know whether an entry has been
@@ -1113,25 +1113,36 @@ function upgrade_database($old_db_version) {
 			// (will show 'unknown' in interface)
 			$table_kw1 = array();
 			$result1 = lcm_query("SELECT id_keyword, name FROM lcm_keyword WHERE id_group = $id_group");
-			while (($row = lcm_fetch_array($result1)))
-				$table_kw1[$row['id_keyword']] = '+' . $row['name'];
+			while (($row1 = lcm_fetch_array($result1))) {
+				$table_kw1[$row1['id_keyword']] = '+' . $row1['name'];
+				lcm_log("UPGRADE: load old kw .. " . $row1['id_keyword'] . " = " . $row1['name']);
+			}
 
 			$table_kw2 = array();
-			$result1 = lcm_query("SELECT id_group, name FROM lcm_keyword_group WHERE type = 'contact'");
-			while (($row = lcm_fetch_array($result1)))
-				$table_kw2[$row['name']] = $row['id_keyword'];
+			$result2 = lcm_query("SELECT id_group, name FROM lcm_keyword_group WHERE type = 'contact'");
+			while (($row2 = lcm_fetch_array($result2))) {
+				$table_kw2[$row2['name']] = $row2['id_group'];
+				lcm_log("UPGRADE: load new kwg .. " . $row2['id_group'] . " = " . $row2['name']);
+			}
 
-			$result = lcm_query("SELECT id_contact, type_contact
-							FROM lcm_contact
-							WHERE date_update is not null
+			$result3 = lcm_query("SELECT id_contact, type_contact, value
+							FROM lcm_contact " /* [ML] made no sense, since field is new anyway, but can mess-up imports
+							WHERE date_update is not null */ . "
 							ORDER BY id_contact ASC");
 
-			while (($row1 = lcm_fetch_array($result1))) {
-				if ($table_kw2[$table_kw1[$row['type_contact']]]) {
+			while (($row3 = lcm_fetch_array($result3))) {
+				lcm_log("UPGRADE: contact id " . $row3['id_contact']
+					. " type: "
+					. $row3['type_contact']
+					. " value: " . $row3['value'] . " ->> " . $table_kw2[$table_kw1[$row3['type_contact']]]);
+
+				if ($table_kw2[$table_kw1[$row3['type_contact']]]) {
 					lcm_query("UPDATE lcm_contact
-								SET type_contact = " . $table_kw2[$table_kw1[$row['type_contact']]] . ",
+								SET type_contact = " . $table_kw2[$table_kw1[$row3['type_contact']]] . ",
 								    date_update = NOW()
-								WHERE id_contact = " . $row['id_contact']);
+								WHERE id_contact = " . $row3['id_contact']);
+				} else {
+					lcm_log("UPGRADE: contact ignored.");
 				}
 			}
 	
@@ -1142,6 +1153,10 @@ function upgrade_database($old_db_version) {
 				. "You may have to re-create your contacts manually. "
 				. "Please e-mail legalcase-devel@lists.sf.net to warn us that this happened.");
 		}
+
+		lcm_query("UPDATE lcm_keyword_group
+					SET policy = 'recommended'
+					WHERE name IN ('+address_main', '+phone_home')");
 
 		upgrade_db_version(51);
 
