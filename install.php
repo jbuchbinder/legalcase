@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: install.php,v 1.63 2006/09/08 18:02:20 mlutfy Exp $
+	$Id: install.php,v 1.64 2006/11/15 02:02:18 mlutfy Exp $
 */
 
 session_start();
@@ -153,18 +153,19 @@ function install_step_5() {
 			lcm_query_db($query);
 		} else {
 			$query = "INSERT INTO lcm_author "
-				. "(name_first, name_middle, name_last, username, date_update, "
-				.  "password, alea_actuel, alea_futur, status, date_creation)"
+				. "(name_first, name_middle, name_last, username, prefs, cookie_recall, pgp, "
+				.  "password, alea_actuel, alea_futur, status, date_update, date_creation)"
 				. "VALUES ("
 				. "'" . _session('name_first') . "',"
 				. "'" . _session('name_middle') . "',"
 				. "'" . _session('name_last') . "',"
 				. "'" . _session('username') . "',"
-				. "NOW(),"
+				. "'', '', '', "  // prefs, cookie_recall, pgp
 				. "'temp',"
 				. "'',"
 				. "FLOOR(32000*RAND()),"
 				. "'admin',"
+				. "NOW(),"
 				. "NOW()"
 				. ")";
 
