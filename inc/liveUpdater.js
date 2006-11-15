@@ -130,6 +130,23 @@ function createLiveUpdaterFunction(uriFunc, postFunc, preFunc)
 					if(nodes[i].nodeType == 1 && nodes[i].getAttribute("id") != null) {
 						var id = nodes[i].getAttribute("id");
 
+						if (id == 'autocomplete-org-popup') {
+							// inputField.className = '';
+							var truc;
+							truc = document.getElementById("orgsearchkey");
+							truc.className = '';
+						} else if (id == 'autocomplete-client-popup') {
+							// inputField.className = '';
+							var truc;
+							truc = document.getElementById("clientsearchkey");
+							truc.className = '';
+						} else {
+							// inputField.className = '';
+							var truc;
+							truc = document.getElementById("casesearchkey");
+							truc.className = '';
+						}
+
 						if(isIE && nodes[i].nodeName == 'tr') {
 							recreateTR(document.getElementById(id), nodes[i]);
 						} else if(isIE && nodes[i].nodeName == 'tbody') {
@@ -368,6 +385,8 @@ function autocomplete(id, popupId, uri, popupData, hideAlt)
 
 			if (id == 'clientsearchkey')
 				action = 'id_client';
+			else if (id == 'orgsearchkey')
+				action = 'id_org';
 			else if (id == 'casesearchkey')
 				action = 'id_case';
 
@@ -500,11 +519,13 @@ function autocomplete(id, popupId, uri, popupData, hideAlt)
 
 				if (id == 'clientsearchkey')
 					action = 'id_client';
+				else if (id == 'orgsearchkey') 
+					action = 'id_org';
 				else if (id == 'casesearchkey')
 					action = 'id_case';
 
 				xmlHttp1 = new XMLHttpRequest();
-				xmlHttp1.open('GET', 'ajax.php?' + action + '=' + foo[0], true);
+				xmlHttp1.open('GET', 'ajax.php?test=1&' + action + '=' + foo[0], true);
 				xmlHttp1.onreadystatechange = updateClient2;
 				xmlHttp1.send(null);
 			}
@@ -515,6 +536,7 @@ function autocomplete(id, popupId, uri, popupData, hideAlt)
 				e.preventDefault();
 			}
 		} else {
+			inputField.className = 'ac_loading'; // [ML]
 			timeout = window.setTimeout(updater, 300);
 		}
 	}
