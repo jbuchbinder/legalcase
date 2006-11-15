@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_keywords.php,v 1.40 2006/09/11 22:26:13 mlutfy Exp $
+	$Id: inc_keywords.php,v 1.41 2006/11/15 02:07:18 mlutfy Exp $
 */
 
 if (defined('_INC_KEYWORDS')) return;
@@ -68,7 +68,10 @@ function get_kwg_all($type, $exclude_empty = false, $show_subgroups = false) {
 			$query .= " AND id_parent = 0 ";
 	}
 
-	$result = lcm_query($query);
+	// [ML] 2006-11-14 Sometimes fails after upgrade, because id_parent 
+	// doesn't yet exist. For now, adding this.
+	$accept_fail = (isset($GLOBALS['debug']) && $GLOBALS['debug'] ? false : true);
+	$result = lcm_query($query, $accept_fail);
 
 	while ($row = lcm_fetch_array($result)) {
 		$ret[$row['title']] = $row;
