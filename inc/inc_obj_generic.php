@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_generic.php,v 1.7 2006/11/22 23:37:27 mlutfy Exp $
+	$Id: inc_obj_generic.php,v 1.8 2006/11/22 23:48:43 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -43,8 +43,8 @@ class LcmObject {
 	}
 
 	function getDataFloat($field, $default = 0.00) {
-		if (isset($this->data[$field]) && $this->data[$field])
-			return $this->data[$field];
+		if (isset($this->data[$field]) && trim($this->data[$field]))
+			return trim($this->data[$field]);
 
 		if (is_string($default) && $default == '__ASSERT__')
 			lcm_panic("Value does not exist.");
