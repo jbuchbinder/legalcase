@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.21 2006/11/22 23:37:27 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.22 2006/11/22 23:49:07 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -112,7 +112,7 @@ class LcmFollowup extends LcmObject {
 		if (($unix_date_start < 0) || ! checkdate_sql($this->getDataString('date_start')))
 			$errors['date_start'] = _Ti('time_input_date_start') . 'Invalid start date.'; // TRAD
 
-		if ($this->getDataFloat('sumbilled') && (! is_numeric($this->getDataFloat('sumbilled'))))
+		if (! is_numeric($this->getDataFloat('sumbilled', 0.0)))
 			$errors['sumbilled'] = _Ti('fu_input_sum_billed') . 'Incorrect format, must be 00000.00'; // TRAD
 
 		// * Check end date
