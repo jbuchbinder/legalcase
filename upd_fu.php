@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_fu.php,v 1.56 2006/03/21 17:52:30 mlutfy Exp $
+	$Id: upd_fu.php,v 1.57 2006/11/22 23:37:06 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -155,13 +155,13 @@ $errs = $fu->save();
 if (count ($errs))
 	$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
 
-if (! $id_followup)
-	$id_followup = $fu->getDataInt('id_followup', '__ASSERT__');
-
 if (count($_SESSION['errors'])) {
     lcm_header("Location: " . $_SERVER['HTTP_REFERER']);
     exit;
 }
+
+if (! $id_followup)
+	$id_followup = $fu->getDataInt('id_followup', '__ASSERT__');
 
 //
 // Update stage keywords
