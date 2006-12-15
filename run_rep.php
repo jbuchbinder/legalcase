@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.34 2006/04/17 21:35:06 mlutfy Exp $
+	$Id: run_rep.php,v 1.35 2006/12/15 20:45:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -454,7 +454,7 @@ $_SESSION['errors'] = array();
 $rep = intval(_request('rep', 0));
 
 if (! $rep) {
-	header('Location: listreps.php');
+	lcm_header('Location: listreps.php');
 	exit;
 }
 
@@ -469,11 +469,11 @@ $q = "SELECT *
 $result = lcm_query($q);
 
 if (! ($rep_info = lcm_fetch_array($result)))
-	lcm_panic("Report # " . $report->getId() . " doest not exist.");
+	lcm_panic("Report # " . $rep . " doest not exist.");
 
 if ((! $rep_info['line_src_name']) && (! $rep_info['filecustom'])) {
 	$_SESSION['errors']['rep_line'] = _T('rep_warning_atleastlineinfo');
-	lcm_header('Location: rep_det.php?rep=' . $report->getId());
+	lcm_header('Location: rep_det.php?rep=' . $rep);
 	exit;
 }
 
