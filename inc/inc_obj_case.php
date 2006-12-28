@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.28 2006/11/14 19:15:34 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.29 2006/12/28 16:19:11 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -256,11 +256,15 @@ class LcmCase extends LcmObject {
 		// Create the case in the database
 		//
 
+		/* [ML] Note: the 'case_notes' field is refered to as only 'notes'
+		 * since the constructor of the class strips 'case_' prefixes
+		 */
+
 		$fl = "title='"              . $this->getDataString('title')            . "',
 				date_assignment = '" . $this->getDataString('date_assignment')  . "',
 				legal_reason='"      . $this->getDataString('legal_reason')     . "',
 				alledged_crime='"    . $this->getDataString('alledged_crime')   . "',
-				notes = '"           . $this->getDataString('case_notes')       . "',
+				notes = '"           . $this->getDataString('notes')            . "',
 			    status='"            . $this->getDataString('status')           . "',
 			    stage='"             . $this->getDataString('stage')            . "'";
 
