@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2007 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_client.php,v 1.20 2006/03/17 18:03:12 mlutfy Exp $
+	$Id: upd_client.php,v 1.21 2007/01/12 17:34:51 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -33,7 +33,7 @@ $_SESSION['form_data'] = array();
 foreach($_POST as $key => $value)
 	$_SESSION['form_data'][$key] = $value;
 
-$ref_upd_client = 'edit_client.php?client=' . _session('id_client');
+$ref_upd_client = 'edit_client.php?client=' . _session('id_client', 0);
 if ($_SERVER['HTTP_REFERER'])
 	$ref_upd_client = $_SERVER['HTTP_REFERER'];
 
@@ -41,8 +41,8 @@ if ($_SERVER['HTTP_REFERER'])
 // Update data
 //
 
-$client = new LcmClient(_session('id_client'));
-$errs = $client->save();
+$obj_client = new LcmClient(_session('id_client'));
+$errs = $obj_client->save();
 
 if (count($errs)) {
 	$_SESSION['errors'] = array_merge($_SESSION['errors'], $errs);
@@ -51,7 +51,17 @@ if (count($errs)) {
 }
 
 //
+// Attach to case
+//
+if (_session('attach_case')) {
+	lcm_query("INSERT INTO lcm_case_client_org
+				SET id_case = " . _session('attach_case') . ",
+					id_client = " . $obj_client->getDataInt('id_client'));
+}
+
+//
 // Add organisation
+// [ML] 2007-01-11: not clear what this does. probably w.r.t "client represents orgs".
 //
 if (_session('new_org')) {
 	$q = "REPLACE INTO lcm_client_org
@@ -65,9 +75,9 @@ if (_session('new_org')) {
 
 // small reminder, if the client was created from the "add client to case" (Case details)
 $attach = "";
-if (isset($_SESSION['form_data']['attach_case']))
-	$attach = "&attach_case=" . $_SESSION['form_data']['attach_case'];
+if (_session('attach_case'))
+	$attach = "&attach_case=" . _session('attach_case');
 
-lcm_header('Location: client_det.php?client=' . $client->getDataInt('id_client', '__ASSERT__') . $attach);
+lcm_header('Location: client_det.php?client=' . $obj_client->getDataInt('id_client', '__ASSERT__') . $attach);
 
 ?>

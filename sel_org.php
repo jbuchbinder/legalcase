@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2006 Free Software Foundation, Inc.
+	(C) 2004-2007 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,16 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_org.php,v 1.10 2006/08/22 20:16:29 mlutfy Exp $
+	$Id: sel_org.php,v 1.11 2007/01/12 17:35:20 mlutfy Exp $
 */
 
 include('inc/inc.php');
-lcm_page_start("Select organisation(s)");
 
 $case = intval(_request('case'));
 
 if (! $case > 0)
-	die("There's no such case!");
+	die("ERROR: There is no such case.");
 
 $q = "SELECT *
 	FROM lcm_case_client_org
@@ -37,7 +36,7 @@ $result = lcm_query($q);
 
 $q = "SELECT id_org,name
 	  FROM lcm_org
-	  WHERE id_org NOT IN (0";
+	  WHERE (id_org NOT IN (0";
 
 // Add org in NOT IN list
 while ($row = lcm_fetch_array($result)) 
@@ -45,34 +44,82 @@ while ($row = lcm_fetch_array($result))
 
 $q .= ')';
 
+// Add search criteria if any
+$find_org_string = _request('find_org_string');
+
+if (strlen($find_org_string)>1) {
+	// XXX add more criteria ? (id, tax num, etc.)
+	// should be centralised with function, i.e. get_sql_find_org($string)
+	$q .= " AND (name LIKE '%$find_org_string%')";
+}
+
+$q .= ")";
+
+// Sort organisations by name
+$order_name = 'ASC';
+if (_request('order_name') == 'ASC' || _request('order_name') == 'DESC')
+	$order_name = _request('order_name');
+
+$q .= " ORDER BY name " . $order_name;
+
 $result = lcm_query($q);
+
+lcm_page_start(_T('title_case_add_org'));
 
 show_context_start();
 show_context_case_title($case);
 show_context_case_involving($case);
 show_context_end();
 
-?>
-<form action="add_client.php" method="post">
+// Get the number of rows in the result
+$number_of_rows = lcm_num_rows($result);
 
-	<table border="0" class="tbl_usr_dtl">
-		<tr>
-			<th class="heading">&nbsp;</th>
-			<th class="heading" width="350"><?php echo _Th('org_input_name'); ?></th>
-		</tr>
-<?php
-	while ($row = lcm_fetch_array($result)) {
-		echo "<tr>\n";
-		echo '<td><input type="checkbox" name="orgs[]" id="org_' . $row['id_org'] . '" value="' . $row['id_org'] . '"></td>';
-		echo '<td><label for="org_' . $row['id_org'] . '">' . $row['name'] . "</label></td>\n";
-		echo "</tr>\n";
-	}
+// Check for correct start position of the list
+if ($list_pos >= $number_of_rows) $list_pos = 0;
+
+// Position to the page info start
+if ($list_pos>0)
+	if (!lcm_data_seek($result,$list_pos))
+		die("Error seeking position $list_pos in the result");
+
+show_find_box('org', $find_org_string, '__self__');
+echo '<form action="add_client.php" method="post">' . "\n";
+
+$headers[0]['title'] = "";
+$headers[0]['order'] = 'no_order';
+$headers[1]['title'] = _Th('org_input_name');
+$headers[1]['order'] = 'order_name';
+$headers[1]['default'] = 'ASC';
+
+show_list_start($headers);
+
+for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+	echo "<tr>\n";
+
+	// Show checkbox
+	echo "<td width='1%' class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo "<input type='checkbox' name='orgs[]' value='" . $row['id_org'] . "'>";
+	echo "</td>\n";
+
+	// Show org name
+	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo '<a href="org_det.php?org=' . $row['id_org'] . '" class="content_link">';
+	echo highlight_matches(clean_output($row['name']), $find_org_string);
+	echo "</a>";
+	echo "</td>\n";
+
+	echo "</tr>\n";
+}
+
+echo "<tr>\n";
+echo '<td colspan="2"><p><a href="edit_org.php?attach_case=' . $case . '" class="create_new_lnk">' 
+	. _T('org_button_new_for_case')
+	.  '</a></p></td>' . "\n";
+echo "</tr>\n";
+
+show_list_end($list_pos, $number_of_rows);
+
 ?>
-		<tr>
-			<td>&nbsp;</td>
-			<td><a href="edit_org.php" class="content_link"><?php echo _T('org_button_new'); ?></a></td>
-		</tr>
-	</table>
 
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
 	<input type="hidden" name="ref_sel_org" value="<?php echo $_SERVER['HTTP_REFERER']; ?>">

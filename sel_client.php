@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2007 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,15 +18,15 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.17 2005/05/20 12:20:38 mlutfy Exp $
+	$Id: sel_client.php,v 1.18 2007/01/12 17:35:46 mlutfy Exp $
 */
 
 include('inc/inc.php');
 
-$case = intval($_REQUEST['case']);
+$case = intval(_request('case'));
 
 if (! $case > 0)
-	die("There's no such case!");
+	die("ERROR: There is no such case.");
 
 // Get case data
 $q = "SELECT id_case, title
@@ -58,6 +58,8 @@ while ($row = lcm_fetch_array($result)) {
 $q2 .= ')';
 
 // Add search criteria if any
+$find_client_string = _request('find_client_string');
+
 if (strlen($find_client_string)>1) {
 	$q2 .= " AND ((name_first LIKE '%$find_client_string%')"
 		. " OR (name_middle LIKE '%$find_client_string%')"
@@ -67,11 +69,10 @@ if (strlen($find_client_string)>1) {
 
 $q2 .= ")";
 
-// Sort organisations by name
+// Sort client by name_first
 $order_name = 'ASC';
-if (isset($_REQUEST['order_name']))
-	if ($_REQUEST['order_name'] == 'ASC' || $_REQUEST['order_name'] == 'DESC')
-		$order_name = $_REQUEST['order_name'];
+if (_request('order_name') == 'ASC' || _request('order_name') == 'DESC')
+	$order_name = _request('order_name');
 
 $q2 .= " ORDER BY name_first " . $order_name;
 
@@ -88,7 +89,7 @@ show_context_end();
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
-if ($list_pos>=$number_of_rows) $list_pos = 0;
+if ($list_pos >= $number_of_rows) $list_pos = 0;
 
 // Position to the page info start
 if ($list_pos>0)
@@ -108,19 +109,22 @@ show_list_start($headers);
 
 // Process the output of the query
 for ($i = 0 ; (($i < $prefs['page_rows']) && ($row = lcm_fetch_array($result))) ; $i++) {
+	echo "<tr>";
+
 	// Show checkbox
-	echo "\t<tr><td width='1%' class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo "<td width='1%' class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo "<input type='checkbox' name='clients[]' value='" . $row['id_client'] . "'>";
 	echo "</td>\n";
 
 	// Show client name
-	echo "\t\t<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
+	echo "<td class='tbl_cont_" . ($i % 2 ? "dark" : "light") . "'>";
 	echo '<a href="client_det.php?client=' . $row['id_client'] . '" class="content_link">';
 	echo highlight_matches(clean_output($row['name_first'] . ' ' . $row['name_middle'] . ' '
-		. $row['name_last']),$find_author_string);
+		. $row['name_last']), $find_client_string);
 	echo "</a>";
 	echo "</td>\n";
-	echo "\t</tr>\n";
+
+	echo "</tr>\n";
 }
 
 echo "<tr>\n";
@@ -134,7 +138,7 @@ show_list_end($list_pos, $number_of_rows);
 ?>
 
 	<input type="hidden" name="case" value="<?php echo $case; ?>">
-	<input type="hidden" name="ref_sel_client" value="<?php echo $GLOBALS['HTTP_REFERER']; ?>">
+	<input type="hidden" name="ref_sel_client" value="<?php echo $_SERVER['HTTP_REFERER']; ?>">
 	<p><button name="submit" type="submit" value="submit" class="simple_form_btn"><?php echo _T('button_validate'); ?></button></p>
 </form>
 

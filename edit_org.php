@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_org.php,v 1.27 2006/08/22 12:37:48 mlutfy Exp $
+	$Id: edit_org.php,v 1.28 2007/01/12 17:36:42 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -57,10 +57,15 @@ if ($org)
 else
 	lcm_page_start(_T('title_org_new'), '', '', 'clients_neworg');
 
-// Show the errors (if any)
 echo show_all_errors($_SESSION['errors']);
 
 echo '<form action="upd_org.php" method="post">' . "\n";
+
+if (_request('attach_case')) {
+	echo '<input type="hidden" name="attach_case" id="attach_case" value="'
+		. _request('attach_case')
+		. '" />' . "\n";
+}
 
 $obj_org = new LcmOrgInfoUI($org);
 $obj_org->printEdit();

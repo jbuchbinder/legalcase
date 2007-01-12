@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: org_det.php,v 1.35 2006/09/07 20:08:46 mlutfy Exp $
+	$Id: org_det.php,v 1.36 2007/01/12 17:36:15 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -26,10 +26,10 @@ include_lcm('inc_acc');
 include_lcm('inc_contacts');
 include_lcm('inc_obj_org');
 
-$org = (isset($_REQUEST['org']) ? intval($_REQUEST['org']) : 0);
+$org = intval(_request('org'));
 
-if ($org <= 0) {
-	header("Location: listorgs.php");
+if (! ($org > 0)) {
+	lcm_header("Location: listorgs.php");
 	exit;
 }
 
@@ -40,7 +40,7 @@ $q = "SELECT *
 $result = lcm_query($q);
 
 if (! ($row = lcm_fetch_array($result))) 
-	die("There's no such organisation!");
+	die("ERROR: There is no such organisation in the database.");
 
 lcm_page_start(_T('title_org_view') . ' ' . $row['name'], '', '', 'clients_intro');
 
@@ -61,6 +61,24 @@ if (! $ac['r'])
 
 	$tab = ( isset($_GET['tab']) ? $_GET['tab'] : 'general' );
 	show_tabs($groups,$tab,$_SERVER['REQUEST_URI']);
+
+	if ($c = intval(_request('attach_case', 0))) {
+		$q = "SELECT title
+				FROM lcm_case
+				WHERE id_case = " . $c;
+		$result = lcm_query($q);
+
+		while ($row1 = lcm_fetch_array($result)) {
+			echo '<div class="sys_msg_box">';
+			echo '<ul>';
+			echo '<li>' . _Ti('org_info_created_attached')
+				. '<a class="content_link" href="case_det.php?case=' . $c . '">' 
+				. $row1['title'] 
+				. "</a></li>\n";
+			echo "</ul>\n";
+			echo "</div>\n";
+		}
+	}
 
 	switch ($tab) {
 		//
