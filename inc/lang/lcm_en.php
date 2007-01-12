@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_en.php,v 1.126 2006/09/08 19:36:19 mlutfy Exp $
+    $Id: lcm_en.php,v 1.127 2007/01/12 17:55:13 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -724,6 +724,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'org_button_add_rep' => 'Add a representative',
 'org_button_edit' => 'Edit the organisation\'s information',
 'org_button_new' => 'Register a new organisation',
+'org_button_new_for_case' => 'Register a new organisation and attach to this case',
+'org_info_created_attached' => 'The organisation was registered and attached to the case:',
 'org_info_delete_client' => 'Delete the client-organisation relation.',
 'org_input_court_reg' => 'Court registration:',
 'org_input_id' => 'Organisation ID:',
@@ -918,6 +920,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_calendar_view' => 'Calendar',
 'title_case_add_author' => 'Add a user to the case',
 'title_case_add_client' => 'Add a client to the case',
+'title_case_add_org' => 'Add an organisation to the case',
 'title_case_details' => 'Case details:',
 'title_case_edit' => 'Edit case details',
 'title_case_edit_ac' => 'Edit access rights',
