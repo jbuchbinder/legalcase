@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.27 2006/09/08 12:26:57 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.28 2007/01/16 19:15:51 mlutfy Exp $
 */
 
 
@@ -1793,78 +1793,21 @@ function sql_calendrier_interval_rv($avant, $apres) {
 	$evenements= array();
 	if (!$connect_id_auteur) return $evenements;
 
+	/* [ML] 2007-01-16: "group by a.id_app" was commented out because in
+		theory there should not be multiple identical rows for (id_app, id_author)
+		but who knows, there are mysterious bugs sometimes.. 
+		NOTE: if someone adds the 'group by', dont forget to group by on all 'select'
+		fields, otherwise postgresql panics. */
 	$q = "SELECT a.*
 				FROM lcm_app as a, lcm_author_app as ap
 				WHERE (ap.id_author = " . $GLOBALS['author_session']['id_author'] . "
 				AND a.id_app = ap.id_app
 				AND ((a.end_time >= $avant OR a.start_time >= $avant) AND a.start_time <= $apres))
-				GROUP BY a.id_app
+	" /*			GROUP BY a.id_app */ . "
 				ORDER BY a.start_time";
 	$result = lcm_query($q);
 
-/*	while($row=spip_fetch_array($result)){
-		$date_heure=$row["date_heure"];
-		$date_fin=$row["date_fin"];
-		$type=$row["type"];
-		$id_message=$row['id_message'];
-		if ($type=="pb")
-		  $cat = 2;
-		else {
-		  if ($type=="affich")
-		  $cat = 4;
-		  else {
-		    if ($type!="normal")
-		      $cat = 12;
-		    else {
-		      $cat = 9;
-		      $auteurs = array();
-		      $result_aut=spip_query("
-SELECT	auteurs.nom 
-FROM	spip_auteurs AS auteurs,
-	spip_auteurs_messages AS lien 
-WHERE	(lien.id_message='$id_message' 
-  AND	(auteurs.id_auteur!='$connect_id_auteur'
-  AND	lien.id_auteur=auteurs.id_auteur))");
-			while($row_auteur=spip_fetch_array($result_aut)){
-				$auteurs[] = $row_auteur['nom'];
-			}
-		    }
-		  }
-		}
-
-		$jour_avant = substr($avant, 9,2);
-		$mois_avant = substr($avant, 6,2);
-		$annee_avant = substr($avant, 1,4);
-		$jour_apres = substr($apres, 9,2);
-		$mois_apres = substr($apres, 6,2);
-		$annee_apres = substr($apres, 1,4);
-		$ical_apres = sql_calendrier_jour_ical("$annee_apres-$mois_apres-".sprintf("%02d",$jour_apres));
-
-		// Calcul pour les semaines a cheval sur deux mois 
- 		$j = 0;
-		$amj = sql_calendrier_jour_ical("$annee_avant-$mois_avant-".sprintf("%02d", $j+($jour_avant)));
-
-		while ($amj <= $ical_apres) {
-			if (!($amj == sql_calendrier_jour_ical($date_fin) AND ereg("00:00:00", $date_fin)))  // Ne pas prendre la fin a minuit sur jour precedent
-			$evenements[$amj][$id_message]=
-			  array(
-				'URL' => "message.php3?id_message=$id_message",
-				'DTSTART' => date_ical($date_heure),
-				'DTEND' => date_ical($date_fin),
-				'DESCRIPTION' => $row['texte'],
-				'SUMMARY' => $row['titre'],
-				'CATEGORIES' => $cat,
-				'ATTENDEE' => (count($auteurs) == 0) ? '' : join($auteurs,", "));
-			$j ++; 
-			$ladate = date("Y-m-d",mktime (1,1,1,$mois_avant, ($j + $jour_avant), $annee_avant));
-			
-			$amj = sql_calendrier_jour_ical($ladate);
-
-		}
-
-	} */
 	while($row=lcm_fetch_array($result)){
-//		var_dump($row);
 		$date_heure=$row["start_time"];
 		$date_fin=$row["end_time"];
 		$type=$row["type"];
