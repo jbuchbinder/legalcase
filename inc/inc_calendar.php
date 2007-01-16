@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2006 Free Software Foundation, Inc.
+	(C) 2004-2007 Free Software Foundation, Inc.
 
 	This file is a derivative of the SPIP 1.8 ecrire/inc_calendrier.php3
 	(http://www.spip.net). Licensed under the GNU GPL (C) 2001-2005 
@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.28 2007/01/16 19:15:51 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.29 2007/01/16 19:22:30 mlutfy Exp $
 */
 
 
