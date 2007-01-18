@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2005 Free Software Foundation, Inc.
+	(C) 2004-2007 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.22 2006/03/21 16:50:59 mlutfy Exp $
+	$Id: upd_app.php,v 1.23 2007/01/18 17:18:19 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -161,7 +161,7 @@ if (count($_SESSION['errors'])) {
 		// Add ID of the creator
 		$q .= 'id_author = ' . $GLOBALS['author_session']['id_author'] . ',';
 		// Add the rest of the fields
-		$q .= "$fl, date_creation = NOW()";
+		$q .= "$fl, date_update = NOW(), date_creation = NOW()";
 
 		$result = lcm_query($q);
 
@@ -183,6 +183,7 @@ if (count($_SESSION['errors'])) {
 
 		lcm_query($q, true); // ignore errors
 		$_SESSION['errors']['author_added'] = "An author was added to the participants of this appointment."; // TRAD
+		// FIXME use $_SESSION['info'] instead
 	}
 
 	// Remove appointment participants (authors)
