@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_pt_br.php,v 1.16 2006/09/08 19:36:19 mlutfy Exp $
+    $Id: lcm_pt_br.php,v 1.17 2007/02/16 22:13:53 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -316,7 +316,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_wday_short_5' => 'Se',
 'date_wday_short_6' => 'Sá',
 'date_wday_short_7' => 'Do',
-'directories_bad_rights' => 'neste diretório você não tem permissão para editar',
+'directories_bad_rights' => 'neste diretório você não tem permissão para editar:',
 'directories_bad_rights_cause' => 'Para mudanças, utilize o seu cliente SSH/SFTP  para ordenar as permissões de acesso para cada diretório. O procedimento é detalhado no guia de instalação.',
 'directories_continue' => 'Uma vez lido, você poderá atualizar esta página.',
 'directories_missing' => 'Os seguintes diretórios não foram encontrados',
@@ -586,7 +586,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw__crimresults_res001_title' => '<NEW>Sentence',
 'kw__crimresults_res002_title' => '<NEW>Decision',
 'kw__crimresults_res003_title' => '<NEW>Agreement',
-'kw__crimresults_res004_title' => '<NEW>Dismissal of criminal responsability',
+'kw__crimresults_res004_title' => '<NEW>Dismissal',
 'kw__crimresults_res005_title' => '<NEW>Cessation',
 'kw__crimresults_res006_title' => '<NEW>Stopped',
 'kw__crimresults_res007_title' => '<NEW>Ruling',
@@ -674,7 +674,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_link_reload_page' => 'Atualizar esta página',
 'login_login' => 'Login',
 'login_other_identifier' => 'conectar com outra identificação',
-'login_password' => 'Senha',
+'login_password' => 'Senha:',
 'login_password_confirm' => 'Confirmar a senha',
 'login_password_forgotten' => 'Esqueceu sua senha?',
 'login_password_incorrect' => 'Login ou senha incorretos.',
@@ -729,6 +729,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'org_button_add_rep' => '<NEW>Add a representative',
 'org_button_edit' => '<NEW>Edit the organisation\'s information',
 'org_button_new' => '<NEW>Register a new organisation',
+'org_button_new_for_case' => '<NEW>Register a new organisation and attach to this case',
+'org_info_created_attached' => '<NEW>The organisation was registered and attached to the case:',
 'org_info_delete_client' => '<NEW>Delete the client-organisation relation.',
 'org_input_court_reg' => '<NEW>Court registration:',
 'org_input_id' => '<NEW>Organisation ID:',
@@ -745,7 +747,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // P
 'pass_back_to_site' => 'Volta a entrada do site',
 'pass_close_this_window' => 'Feche esta janela',
-'pass_enter_new_pass' => 'Por favor escolha sua nova senha',
+'pass_enter_new_pass' => '<MODIF>Por favor escolha sua nova senha',
 'pass_info_automated_msg' => '(Esta é uma mensagem automâtica)',
 'pass_info_enter_email' => 'Coloque seu e-mail com seu registro anterior. Você receberá em seu e-mail a forma de obter novamente seu acesso.',
 'pass_info_here_info' => 'Aqui estão as informações para ter acesso ao site: "@site_name@" (@site_address@):',
@@ -923,6 +925,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_calendar_view' => '<NEW>Calendar',
 'title_case_add_author' => '<NEW>Add a user to the case',
 'title_case_add_client' => '<NEW>Add a client to the case',
+'title_case_add_org' => '<NEW>Add an organisation to the case',
 'title_case_details' => 'Detalhes do caso:',
 'title_case_edit' => 'Editar detalhes do caso',
 'title_case_edit_ac' => '<NEW>Edit access rights',
@@ -959,7 +962,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_site_configuration' => 'Configuração do Site',
 'title_software' => 'Legal Case Management',
 'title_software_description' => 'para centros de aconselhamento legal sem fins lucrativos',
-'title_technical_message' => 'Mensagem técnica',
+'title_technical_message' => 'Mensagem técnica:',
 'title_technical_problem' => 'Problema Técnico',
 'title_upgrade_database' => '<NEW>Database upgrade',
 'typo_column' => ':',

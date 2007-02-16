@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_pl.php,v 1.7 2006/09/08 19:36:19 mlutfy Exp $
+    $Id: lcm_pl.php,v 1.8 2007/02/16 22:12:00 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -313,7 +313,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_wday_short_5' => 'Pi',
 'date_wday_short_6' => 'So',
 'date_wday_short_7' => 'Ni',
-'directories_bad_rights' => 'W następujących katalogach nie została określona możliwość zapisu',
+'directories_bad_rights' => 'W następujących katalogach nie została określona możliwość zapisu:',
 'directories_bad_rights_cause' => 'Aby to zmienić uzyj klienta SSH/SFTP i ustaw możliwość zapisu dla wszystkich z tych katalogów. Spoósb postępowania jest szczegółowo opisany w przewodniku do instalacji.',
 'directories_continue' => 'Gdy będziesz gotów, odświerz tę stronę.',
 'directories_missing' => 'Następujące katalogi nie zostały odnalezione',
@@ -671,7 +671,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_link_reload_page' => 'odświerz tę stronę',
 'login_login' => 'Login',
 'login_other_identifier' => 'Połącz za pomocą innego loginu',
-'login_password' => 'Hasło',
+'login_password' => 'Hasło:',
 'login_password_confirm' => 'Potwierdź hasło',
 'login_password_forgotten' => 'Zapomniałeś hasła?',
 'login_password_incorrect' => 'Niewłaściwy login lub hasło.',
@@ -726,6 +726,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'org_button_add_rep' => 'Dodaj reprezentanta',
 'org_button_edit' => 'Zmień informacje o organizacji',
 'org_button_new' => 'Zarejestruj nową organizację',
+'org_button_new_for_case' => '<NEW>Register a new organisation and attach to this case',
+'org_info_created_attached' => '<NEW>The organisation was registered and attached to the case:',
 'org_info_delete_client' => 'Usuń powiązanie klient-organizacja.',
 'org_input_court_reg' => 'Nr KRS:',
 'org_input_id' => 'ID Organizacji:',
@@ -742,7 +744,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // P
 'pass_back_to_site' => 'Wróć do strony logowania',
 'pass_close_this_window' => 'Zamknij to okno',
-'pass_enter_new_pass' => 'Proszę wybierz twoje nowe hasło',
+'pass_enter_new_pass' => 'Proszę wybierz twoje nowe hasło:',
 'pass_info_automated_msg' => '(to jest wiadomość wygenerowana automatycznie)',
 'pass_info_enter_email' => 'Wpisz poniżej twój adres e - mail, który podałeś przy rejestracji. Wkrótce otrzymasz maila z wyjaśnieniem w jaki sposób odzyskać dostęp.',
 'pass_info_here_info' => 'Oto dane potrzebne do wejścia na stronę"@site_name@" (@site_address@):',
@@ -807,7 +809,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'rep_filter_text_eq' => '=',
 'rep_filter_text_neq' => '!=',
 'rep_info_select_source_first' => 'To apply filters, you must first select the content that will be used for the report line and columns.',
-'rep_info_source_keyword' => '<MODIF>Keyword:',
+'rep_info_source_keyword' => '<NEW>Custom field:',
 'rep_info_source_table' => 'Table:',
 'rep_info_table_lcm_author' => 'Prawnik',
 'rep_info_table_lcm_case' => 'Sprawa',
@@ -920,6 +922,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_calendar_view' => 'Kalendarz',
 'title_case_add_author' => 'Przydziel prawnika do sprawy',
 'title_case_add_client' => 'Powiąż klienta ze sprawą',
+'title_case_add_org' => '<NEW>Add an organisation to the case',
 'title_case_details' => 'Szczegóły sprawy:',
 'title_case_edit' => 'Zmień szczegóły sprawy',
 'title_case_edit_ac' => 'Zmień uprawnienia dostępu',
@@ -956,7 +959,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_site_configuration' => 'Konfiguracja strony',
 'title_software' => 'Legal Case Management',
 'title_software_description' => 'dla organizacji non profit',
-'title_technical_message' => 'Informacja systemowa',
+'title_technical_message' => 'Informacja systemowa:',
 'title_technical_problem' => 'Problem systemowy',
 'title_upgrade_database' => 'Aktualizacja bazy danych',
 'typo_column' => ':',
