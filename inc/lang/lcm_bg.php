@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_bg.php,v 1.64 2007/02/16 21:45:29 mlutfy Exp $
+    $Id: lcm_bg.php,v 1.65 2007/02/16 21:48:12 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -743,7 +743,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // P
 'pass_back_to_site' => 'Обратно към входа към сайта',
 'pass_close_this_window' => 'Затваряне на прозореца',
-'pass_enter_new_pass' => '<MODIF>Изберете нова парола',
+'pass_enter_new_pass' => 'Изберете нова парола:',
 'pass_info_automated_msg' => '(това съобщение е изпратено автоматично)',
 'pass_info_enter_email' => 'Попълнете по-долу адреса на електронна поща, с който вече сте се регистрирали. Ще получите писмо, в което е обяснено как да отново да получите достъп.',
 'pass_info_here_info' => 'Тук е информацията за идентификация при влизане в сайта „@site_name@“ (@site_address@):',
