@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_fr.php,v 1.31 2007/02/16 21:59:54 mlutfy Exp $
+    $Id: lcm_fr.php,v 1.32 2007/02/16 22:24:03 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -667,7 +667,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_identifier_unknown' => 'L&rsquo;identificateur «@login@» est inconnu.',
 'login_info_login' => 'identifiant pour se connecter au système',
 'login_link_reload_page' => 'recharger cette page',
-'login_login' => 'Identifiant',
+'login_login' => 'Identifiant:',
 'login_other_identifier' => 'se connecter avec un autre identifiant',
 'login_password' => 'Mot de passe:',
 'login_password_confirm' => 'Confirmer le mot de passe',

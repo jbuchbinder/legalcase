@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_ru.php,v 1.6 2006/09/08 19:36:19 mlutfy Exp $
+    $Id: lcm_ru.php,v 1.7 2007/02/16 22:24:03 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -313,7 +313,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_wday_short_5' => 'Пя',
 'date_wday_short_6' => 'Су',
 'date_wday_short_7' => 'Во',
-'directories_bad_rights' => 'Следующие директории не имеют прав записи',
+'directories_bad_rights' => 'Следующие директории не имеют прав записи:',
 'directories_bad_rights_cause' => 'Чтобы изменить это, используйте Ваш SSH/SFTP -клиент, чтобы установить права доступа для каждой из этих директорий. Эта процедура детально описана в Руководстве по установке.',
 'directories_continue' => 'Как только Вы будете готовы, Вы можете перезагрузить эту страницу.',
 'directories_missing' => 'Следующие директории не найдены',
@@ -583,7 +583,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw__crimresults_res001_title' => '<NEW>Sentence',
 'kw__crimresults_res002_title' => '<NEW>Decision',
 'kw__crimresults_res003_title' => '<NEW>Agreement',
-'kw__crimresults_res004_title' => '<NEW>Dismissal of criminal responsability',
+'kw__crimresults_res004_title' => '<NEW>Dismissal',
 'kw__crimresults_res005_title' => '<NEW>Cessation',
 'kw__crimresults_res006_title' => '<NEW>Stopped',
 'kw__crimresults_res007_title' => '<NEW>Ruling',
@@ -669,9 +669,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_identifier_unknown' => 'Идентификатор "@login@" неизвестен.',
 'login_info_login' => 'идентификатор входа на сайт',
 'login_link_reload_page' => 'перезагрузка этой страницы',
-'login_login' => 'Имя пользователя',
+'login_login' => 'Имя пользователя:',
 'login_other_identifier' => 'соединиться с другим идентификатором',
-'login_password' => 'Пароль',
+'login_password' => 'Пароль:',
 'login_password_confirm' => 'Подтвердить пароль',
 'login_password_forgotten' => 'Пароль забыт?',
 'login_password_incorrect' => 'Неверный логин или пароль.',
@@ -726,6 +726,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'org_button_add_rep' => 'Добавить представителя',
 'org_button_edit' => 'Править информацию об организации',
 'org_button_new' => 'Зарегистрировать новую организацию',
+'org_button_new_for_case' => '<NEW>Register a new organisation and attach to this case',
+'org_info_created_attached' => '<NEW>The organisation was registered and attached to the case:',
 'org_info_delete_client' => 'Удалить связь клиент-организация.',
 'org_input_court_reg' => 'Судебная регистрация:',
 'org_input_id' => 'Код организации:',
@@ -742,7 +744,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // P
 'pass_back_to_site' => 'Вернуться на вход сайта',
 'pass_close_this_window' => 'Закрыть это окно',
-'pass_enter_new_pass' => 'Пожалуйста, выберите Ваш пароль',
+'pass_enter_new_pass' => 'Пожалуйста, выберите Ваш пароль:',
 'pass_info_automated_msg' => '(это автоматическое сообщение)',
 'pass_info_enter_email' => 'Введите ниже адрес e-mail, с которого Вы регистрировались прошлый раз. Вы получите письмо по e-mail, объясняющее, как Вы можете восстановить Ваш доступ.',
 'pass_info_here_info' => 'Это Ваш идентификатор для входа на сайт "@site_name@" (@site_address@):',
@@ -920,6 +922,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_calendar_view' => 'Календарь',
 'title_case_add_author' => 'Добавить пользователя в дело',
 'title_case_add_client' => '<NEW>Add a client to the case',
+'title_case_add_org' => '<NEW>Add an organisation to the case',
 'title_case_details' => 'Детали дела:',
 'title_case_edit' => 'Правка деталей дела',
 'title_case_edit_ac' => 'Редактирование прав доступа',
@@ -956,7 +959,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_site_configuration' => 'Конфигурация сайта',
 'title_software' => 'Управление судебными делами',
 'title_software_description' => 'для некоммерческих центров юридической помощи',
-'title_technical_message' => 'Техническое сообщение',
+'title_technical_message' => 'Техническое сообщение:',
 'title_technical_problem' => 'Техническая проблема',
 'title_upgrade_database' => 'Обновление базы данных',
 'typo_column' => ':',
