@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_de2.php,v 1.3 2006/11/14 16:40:47 mlutfy Exp $
+    $Id: lcm_de2.php,v 1.4 2007/02/16 21:51:04 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -116,6 +116,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'authorconf_input_time_interval_absolute' => 'Absolutes (Anfangszeit - Endzeit)',
 'authorconf_input_time_interval_relative' => 'Endsprechend (beginnen mit Zeit+Dauer)',
 'authorconf_input_time_intervals_notation' => 'Zeitintervall darstellen',
+'authorconf_input_time_intervals_notation_floatdays_floathours_minutes' => 'Tage, Stunden, integer Minuten (0-59)',
 'authorconf_input_time_intervals_notation_floatdays_hours_minutes' => 'In Tage, ganze Stunden (0-23), ganze Minuten (0-59)',
 'authorconf_input_time_intervals_notation_hours_only' => 'Dauer nur in Stunden (zB: 5 = 5 Stunden, oder 0.2 = 12 Minuten)',
 'authorconf_input_ui_time' => 'Eingangsmethode für Zeitintervalle:',
@@ -311,7 +312,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_wday_short_5' => 'Fr',
 'date_wday_short_6' => 'Sa',
 'date_wday_short_7' => 'So',
-'directories_bad_rights' => 'Folgende Verzeichnisse haben keine Schreibberechtigung',
+'directories_bad_rights' => 'Folgende Verzeichnisse haben keine Schreibberechtigung:',
 'directories_bad_rights_cause' => 'Um dieses zu ändern, benutzen Sie Ihren SSH/SFTP, um Mandanten, Kunden Zugangserlaubnis für jedes dieser Verzeichnisse zu setzen. Das Verfahren ist detailliert im Installationsführer.',
 'directories_continue' => 'Sobald Sie bereit sind, können Sie diese Seite neu laden.',
 'directories_missing' => 'Die folgende Verzeichnisse sind nicht gefunden worden',
@@ -323,6 +324,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // E
 'edit' => 'Ändern',
 'edit_case_information' => 'Ändern Mandanteninformation',
+'edit_filter_details' => 'Filter-Details bearbeiten',
 'error_add_auth_no_rights' => 'Sie haben keine Erlaubnis, für diesem Fall Zugriffsrechte hinzuzufügen!',
 'error_no_case_specified' => 'Kein Fall wurde angegeben',
 'error_no_edit_permission' => 'Sie haben keine Erlaubnis, für diesen Fall Daten herauszugeben!',
@@ -581,7 +583,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw__crimresults_res001_title' => 'Satz ',
 'kw__crimresults_res002_title' => 'Entscheidung ',
 'kw__crimresults_res003_title' => 'Vereinbarung ',
-'kw__crimresults_res004_title' => 'Ablehnung von strafbarem Verhalten, Verantwortung',
+'kw__crimresults_res004_title' => 'Abweisung',
 'kw__crimresults_res005_title' => 'Einstellung',
 'kw__crimresults_res006_title' => 'Gestoppt ',
 'kw__crimresults_res007_title' => 'Anordnen ',
@@ -669,7 +671,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_link_reload_page' => 'Starte Seite neu',
 'login_login' => 'Login,Anmelden',
 'login_other_identifier' => 'Mit einem anderen ID verbinden',
-'login_password' => 'Kennwort',
+'login_password' => 'Kennwort:',
 'login_password_confirm' => 'Kennwort bestätigen',
 'login_password_forgotten' => 'Kennwort vergessen',
 'login_password_incorrect' => 'Falscher Login oder Kennwort',
@@ -724,6 +726,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'org_button_add_rep' => 'Einen Repräsentanten hinzufügen',
 'org_button_edit' => 'Die Informationen der Organisation ändern',
 'org_button_new' => 'Registriere eine neue Organisation',
+'org_button_new_for_case' => 'Neue Organisation registrieren und zu diesem Fall anhängen',
+'org_info_created_attached' => 'Die Organisation wurde registriert und zum Fall  angehangen:',
 'org_info_delete_client' => 'Lösche die Madanten-Organisations Verbindung',
 'org_input_court_reg' => 'Gerichtsregistrierung, Mandantenregistrierung:',
 'org_input_id' => 'Organisation ID:',
@@ -740,7 +744,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // P
 'pass_back_to_site' => 'Zurück zum Seiten Eingang',
 'pass_close_this_window' => 'Schließe dieses Fenster',
-'pass_enter_new_pass' => 'Bitte geben sie ein neues Kennwort ein',
+'pass_enter_new_pass' => 'Bitte geben sie ein neues Kennwort ein:',
 'pass_info_automated_msg' => '(das ist eine automatische Nachricht)',
 'pass_info_enter_email' => 'Tragen sie die E-Mail-Adresse ein,mit der sie sich zuvor angemeldet haben. Sie erhalten eine E-Mail, die erklärt, wie Sie ihren Zugang erhalten/herstellen.',
 'pass_info_here_info' => 'Hier sind ihre Kennzeichnungen, um mit dem Standort zu beginnen &bdquo;@site_name@&ldquo; (@site_address@):',
@@ -918,6 +922,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_calendar_view' => 'Kalender',
 'title_case_add_author' => 'Einen Benutzer dem Fall hinzufügen ',
 'title_case_add_client' => 'Fügen Sie dem Fall einen Kunden, Mandanten hinzu ',
+'title_case_add_org' => 'Organisation zum Fall hinzufügen',
 'title_case_details' => 'Falleinzelheiten, Details: ',
 'title_case_edit' => 'Falldetails,Einzelheiten ändern',
 'title_case_edit_ac' => 'Änderungsrechte,Zugriffsrechte herausgaben',
@@ -954,7 +959,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_site_configuration' => 'Seiten Konfikuration',
 'title_software' => 'Legal Case Management',
 'title_software_description' => 'für profitlose Rechtsberatungmittel',
-'title_technical_message' => 'Technische Nachricht',
+'title_technical_message' => 'Technische Nachricht:',
 'title_technical_problem' => 'Technisches Problem',
 'title_upgrade_database' => 'Datenbank aktualisieren',
 'typo_column' => ':',
