@@ -21,7 +21,7 @@ function bad_dirs($bad_dirs, $test_dir, $install) {
 	echo "<div align='right'>". menu_languages('var_lang_lcm') ."</div>\n";
 
 	echo "<div class='box_error'>\n";
-	echo "<p>". _T('directories_bad_rights') . _T('typo_column') ."</p>\n";
+	echo "<p>". _T('directories_bad_rights') . "</p>\n";
 	echo "<ul>". $bad_dirs ."</ul>\n";
 	echo "<p>". _T('directories_bad_rights_cause') . lcm_help('install_permissions') . "</p>\n";
 	echo "</div>\n";

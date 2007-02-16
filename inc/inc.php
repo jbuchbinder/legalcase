@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc.php,v 1.60 2006/09/14 23:25:51 mlutfy Exp $
+	$Id: inc.php,v 1.61 2007/02/16 21:37:28 mlutfy Exp $
 */
 
 include ('inc/inc_version.php');
@@ -150,7 +150,7 @@ if ($installed_db_version < $lcm_db_version) {
 	lcm_page_start(_T('title_upgrade_database'));
 
 	echo "<div class='box_warning'>\n";
-	echo '<p class="normal_text"><b>' . _T('title_technical_message') . _T('typo_column') . "</b> "
+	echo '<p class="normal_text"><b>' . _T('title_technical_message') . "</b> "
 		. _T('info_upgrade_database1') . ' '
 		. '<a class="content_link" href="lcm_upgrade.php">' . _T('info_upgrade_database2') . "</a>"
 		. "</p>";
