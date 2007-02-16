@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_en.php,v 1.127 2007/01/12 17:55:13 mlutfy Exp $
+    $Id: lcm_en.php,v 1.128 2007/02/16 21:39:19 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -311,7 +311,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'date_wday_short_5' => 'Fr',
 'date_wday_short_6' => 'Sa',
 'date_wday_short_7' => 'Su',
-'directories_bad_rights' => 'The following directories do not have write permission',
+'directories_bad_rights' => 'The following directories do not have write permission:',
 'directories_bad_rights_cause' => 'To change this, use your SSH/SFTP client in order to set access permissions for each of these directories. The procedure is detailed in the install guide.',
 'directories_continue' => 'Once you are ready, you can reload this page.',
 'directories_missing' => 'The following directories have not been found',
@@ -581,7 +581,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kw__crimresults_res001_title' => 'Sentence',
 'kw__crimresults_res002_title' => 'Decision',
 'kw__crimresults_res003_title' => 'Agreement',
-'kw__crimresults_res004_title' => 'Dismissal of criminal responsability',
+'kw__crimresults_res004_title' => 'Dismissal',
 'kw__crimresults_res005_title' => 'Cessation',
 'kw__crimresults_res006_title' => 'Stopped',
 'kw__crimresults_res007_title' => 'Ruling',
@@ -669,7 +669,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'login_link_reload_page' => 'reload this page',
 'login_login' => 'Login',
 'login_other_identifier' => 'connect with another identifier',
-'login_password' => 'Password',
+'login_password' => 'Password:',
 'login_password_confirm' => 'Confirm password',
 'login_password_forgotten' => 'Password forgotten?',
 'login_password_incorrect' => 'Incorrect login or password.',
@@ -742,7 +742,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 // P
 'pass_back_to_site' => 'Back to the site entrance',
 'pass_close_this_window' => 'Close this window',
-'pass_enter_new_pass' => 'Please choose your new password',
+'pass_enter_new_pass' => 'Please choose your new password:',
 'pass_info_automated_msg' => '(this is an automated message)',
 'pass_info_enter_email' => 'Enter below the e-mail address with which you registered previously. You will receive an e-mail explaining how you can retreive your access.',
 'pass_info_here_info' => 'Here are your identifiers to enter the site "@site_name@" (@site_address@):',
@@ -957,7 +957,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'title_site_configuration' => 'Site configuration',
 'title_software' => 'Legal Case Management',
 'title_software_description' => 'for not-for-profit legal advice centres',
-'title_technical_message' => 'Technical message',
+'title_technical_message' => 'Technical message:',
 'title_technical_problem' => 'Technical problem',
 'title_upgrade_database' => 'Database upgrade',
 'typo_column' => ':',
