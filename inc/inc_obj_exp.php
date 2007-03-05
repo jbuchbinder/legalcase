@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.9 2006/04/21 16:00:34 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.10 2007/03/05 17:02:26 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -671,7 +671,7 @@ class LcmExpenseListUI {
 	var $list_pos;
 	var $number_of_rows;
 
-	function LcmExpenseList() {
+	function LcmExpenseListUI() {
 		$this->search = '';
 		$this->list_pos = intval(_request('list_pos', 0));
 		$this->number_of_rows = 0;
@@ -812,9 +812,10 @@ class LcmExpenseListUI {
 			$this->list_pos = 0;
 
 		// Position to the page info start
-		if ($this->list_pos > 0)
+		if ($this->list_pos > 0) {
 			if (! lcm_data_seek($result, $this->list_pos))
 				lcm_panic("Error seeking position " . $this->list_pos . " in the result");
+		}
 
 		for ($i = 0; (($i<$prefs['page_rows']) && ($row = lcm_fetch_array($result))); $i++) {
 			$css = ($i % 2 ? "dark" : "light");
