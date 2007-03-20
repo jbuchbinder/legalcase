@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_exp.php,v 1.3 2006/04/21 15:03:47 mlutfy Exp $
+	$Id: edit_exp.php,v 1.4 2007/03/20 14:16:59 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -82,7 +82,7 @@ $status     = _request('new_exp_status');
 
 if ($status || $id_comment || _request('edit_comment')) {
 	$obj_exp = new LcmExpenseInfoUI($id_expense);
-	$obj_exp->printGeneral();
+	$obj_exp->printGeneral(false); // with minimal UI (no edit button)
 
 	show_page_subtitle(_T('expenses_subtitle_comment'), 'expenses_comment');
 
