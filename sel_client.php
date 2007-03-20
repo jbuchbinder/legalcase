@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_client.php,v 1.18 2007/01/12 17:35:46 mlutfy Exp $
+	$Id: sel_client.php,v 1.19 2007/03/20 18:33:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -89,6 +89,7 @@ show_context_end();
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
+$list_pos = intval(_request('list_pos', 0));
 if ($list_pos >= $number_of_rows) $list_pos = 0;
 
 // Position to the page info start

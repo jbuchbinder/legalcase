@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: sel_org.php,v 1.11 2007/01/12 17:35:20 mlutfy Exp $
+	$Id: sel_org.php,v 1.12 2007/03/20 18:33:30 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -47,7 +47,7 @@ $q .= ')';
 // Add search criteria if any
 $find_org_string = _request('find_org_string');
 
-if (strlen($find_org_string)>1) {
+if ($find_org_string) {
 	// XXX add more criteria ? (id, tax num, etc.)
 	// should be centralised with function, i.e. get_sql_find_org($string)
 	$q .= " AND (name LIKE '%$find_org_string%')";
@@ -75,11 +75,12 @@ show_context_end();
 $number_of_rows = lcm_num_rows($result);
 
 // Check for correct start position of the list
+$list_pos = intval(_request('list_pos', 0));
 if ($list_pos >= $number_of_rows) $list_pos = 0;
 
 // Position to the page info start
-if ($list_pos>0)
-	if (!lcm_data_seek($result,$list_pos))
+if ($list_pos > 0)
+	if (!lcm_data_seek($result, $list_pos))
 		die("Error seeking position $list_pos in the result");
 
 show_find_box('org', $find_org_string, '__self__');
