@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2006 Free Software Foundation, Inc.
+	(C) 2004-2007 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_exp.php,v 1.11 2007/03/05 17:04:59 mlutfy Exp $
+	$Id: inc_obj_exp.php,v 1.12 2007/03/20 15:51:36 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -226,6 +226,7 @@ class LcmExpense extends LcmObject {
 			$q = "UPDATE lcm_expense
 				SET $cl 
 				WHERE id_expense = " . $this->getDataInt('id_expense', '__ASSERT__');
+
 		
 			lcm_query($q);
 		} else {
@@ -354,11 +355,11 @@ class LcmExpenseInfoUI extends LcmExpense {
 
 		// Expense status
 		if (! $is_status_change && ! _request('edit_comment') && $obj_acc->getAdmin()) {
+			echo '<li>';
 			echo '<form action="edit_exp.php" method="get">'
 				. '<input type="hidden" name="expense" value="' . $this->getDataInt('id_expense') . '" />';
 
-			echo '<li>'
-				. '<span class="label2">' . _Ti('expense_input_status') . '</span>'
+			echo '<span class="label2">' . _Ti('expense_input_status') . '</span>'
 				. '<span class="value2">';
 	
 			echo '<select name="new_exp_status" class="sel_frm" onchange="lcm_show(\'submit_exp_status\')">';
@@ -373,9 +374,9 @@ class LcmExpenseInfoUI extends LcmExpense {
 			echo '</select>';
 			echo "<button type='submit' name='submit' id='submit_exp_status' value='set_exp_status' style='visibility: hidden;' class='simple_form_btn'>" . _T('button_validate') . "</button>\n";
 	
-			echo '</span>'
-				. "</li>\n";
+			echo '</span>';
 			echo '</form>';
+			echo "</li>\n";
 		} else {
 			echo '<li>'
 				. '<span class="label2">' . _Ti('expense_input_status') . '</span>'
@@ -427,11 +428,15 @@ class LcmExpenseInfoUI extends LcmExpense {
 		if (! $cpt)
 			echo "<p>No comments</p>"; // TRAD
 
+		// [ML] FIXME : show_list_end() had the habit of closing tables,
+		// because everthing used to have tables. This is obviously wrong
+		// and will be fixed when other lists are non-taled.
+		echo "<table><tr><td></td></tr>\n";
 		show_list_end($my_list_pos, $this->getCommentTotal());
 
 		if ($full_ui) {
 			if ($obj_acc->getEdit())
-				echo '<p><a href="edit_exp.php?edit_comment=1&expense=' . $this->getDataInt('id_expense') . '" class="edit_lnk">' . _T('expense_button_comment') . '</a></p>' . "\n";
+				echo '<p><a href="edit_exp.php?edit_comment=1&amp;expense=' . $this->getDataInt('id_expense') . '" class="edit_lnk">' . _T('expense_button_comment') . '</a></p>' . "\n";
 		}
 	}
 
@@ -633,7 +638,7 @@ class LcmExpenseCommentInfoUI extends LcmExpenseComment {
 			echo "<div style='float: right;'>";
 			echo '<a title="Edit this comment" '
 					. 'class="edit_lnk" href="edit_exp.php?expense=' . $this->getDataInt('id_expense', '__ASSERT__') 
-					. '&c=' . $this->getDataInt('id_comment', '__ASSERT__')
+					. '&amp;c=' . $this->getDataInt('id_comment', '__ASSERT__')
 					. '">' . _T('edit') . '</a>'; // TRAD
 			echo "</div>\n";
 		}
