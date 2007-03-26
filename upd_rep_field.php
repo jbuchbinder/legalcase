@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_rep_field.php,v 1.14 2006/04/17 20:01:14 mlutfy Exp $
+	$Id: upd_rep_field.php,v 1.15 2007/03/26 14:52:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -97,8 +97,10 @@ if (_request('add')) {
 				SET id_report = $rep,
 					id_field = $id_field,
 					col_order = $order,
-					header = '$header',
-					sort = '$sort'";
+					header = '$header' ";
+
+		if ($sort)
+			$query .= ", sort = '$sort'";
 	
 		lcm_query($query);
 		$ref_tag = "#col";
