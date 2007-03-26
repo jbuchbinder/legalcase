@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.37 2006/08/11 14:30:22 mlutfy Exp $
+	$Id: fu_det.php,v 1.38 2007/03/26 16:13:57 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -65,10 +65,11 @@ show_context_case_involving($fu_data['id_case']);
 
 // Show parent appointment, if any
 // [ML] todo put in inc_presentation
-$q = "SELECT lcm_app.* FROM lcm_app_fu,lcm_app
-		WHERE lcm_app_fu.id_followup=$followup 
-		  AND lcm_app_fu.id_app=lcm_app.id_app 
-		  AND lcm_app_fu.relation='child'";
+$q = "SELECT app.*
+		FROM lcm_app_fu as af, lcm_app as app
+		WHERE af.id_followup = $followup 
+		  AND af.id_app = app.id_app 
+		  AND af.relation = 'child'";
 $res_app = lcm_query($q);
 
 if ($app = lcm_fetch_array($res_app)) {
@@ -79,10 +80,10 @@ if ($app = lcm_fetch_array($res_app)) {
 
 // Show child appointment, if any
 $q = "SELECT lcm_app.* 
-		FROM lcm_app_fu,lcm_app 
-		WHERE lcm_app_fu.id_followup = $followup 
-		  AND lcm_app_fu.id_app = lcm_app.id_app 
-		  AND lcm_app_fu.relation = 'parent'";
+		FROM lcm_app_fu as af, lcm_app as app
+		WHERE af.id_followup = $followup 
+		  AND af.id_app = app.id_app 
+		  AND af.relation = 'parent'";
 
 $res_app = lcm_query($q);
 
