@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: fu_det.php,v 1.38 2007/03/26 16:13:57 mlutfy Exp $
+	$Id: fu_det.php,v 1.39 2007/03/26 16:14:32 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -79,7 +79,7 @@ if ($app = lcm_fetch_array($res_app)) {
 }
 
 // Show child appointment, if any
-$q = "SELECT lcm_app.* 
+$q = "SELECT app.* 
 		FROM lcm_app_fu as af, lcm_app as app
 		WHERE af.id_followup = $followup 
 		  AND af.id_app = app.id_app 
