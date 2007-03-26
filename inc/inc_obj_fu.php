@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.22 2006/11/22 23:49:07 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.23 2007/03/26 16:16:47 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -105,6 +105,14 @@ class LcmFollowup extends LcmObject {
 		// * Check for id_case
 		if (! ($this->getDataInt('id_case') > 0))
 			$errors['id_case'] = "Internal error: No id_case found";
+
+		// * Check for fu type
+		if (! $this->getDataString('type'))
+			$errors['type'] = _Ti('fu_input_type') . _T('warning_field_mandatory');
+
+		// * Check if fu type exists
+		if (! get_kw_from_name('followups', $this->getDataString('type')))
+			$errors['type'] = _Ti('fu_input_type') . "Unknown type"; // TRAD
 
 		// * Check start date
 		$unix_date_start = strtotime($this->getDataString('date_start'));
