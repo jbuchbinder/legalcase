@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.93 2006/08/22 17:51:24 mlutfy Exp $
+	$Id: inc_filters.php,v 1.94 2007/03/26 14:20:58 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -199,11 +199,17 @@ function format_money($money, $two_cents = true, $show_currency_sign = false) {
 	else // i.e. "not money" (ex: file size)
 		$str_cents = preg_replace("/0+$/", "", $cents);
 
-	$str_hundreds = $hundreds % 1000;
+	$str_hundreds = sprintf('%03u', ($hundreds % 1000));
 
+	// Test with values: 1000, 100000 etc.
+	// Before 0.7.3, it would print "1,0.00" for 1000$
+	// Reported by BM on 2007-03-24.
 	while ($hundreds > 999) {
 		$hundreds /= 1000;
-		$str_hundreds = ($hundreds % 1000) . $seperator_hundreds . $str_hundreds;
+		if ($hundreds > 1000)
+			$str_hundreds = sprintf('%03u', ($hundreds % 1000)) . $seperator_hundreds . $str_hundreds;
+		else
+			$str_hundreds = ($hundreds % 1000) . $seperator_hundreds . $str_hundreds;
 	}
 
 	$str_final = $str_hundreds;
