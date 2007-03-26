@@ -7,46 +7,6 @@ define("_INC_TEXTE", "1");
 
 include_lcm('inc_filters');
 
-//
-// Initialisation de quelques variables globales
-// (on peut les modifier globalement dans mes_fonctions.php,
-//  OU individuellement pour chaque type de page dans article.php,
-//  rubrique.php3, etc. cf doc...)
-// Par securite ne pas accepter les variables passees par l'utilisateur
-//
-function tester_variable($nom_var, $val){
-	if (!isset($GLOBALS[$nom_var])
-		OR $_GET[$nom_var] OR $GLOBALS['HTTP_GET_VARS'][$nom_var]
-		OR $_PUT[$nom_var] OR $GLOBALS['HTTP_PUT_VARS'][$nom_var]
-		OR $_POST[$nom_var] OR $GLOBALS['HTTP_POST_VARS'][$nom_var]
-		OR $_COOKIE[$nom_var] OR $GLOBALS['HTTP_COOKIE_VARS'][$nom_var]
-		OR $_REQUEST[$nom_var]) {
-		$GLOBALS[$nom_var] = $val;
-		return false;
-	}
-	return true;
-}
-
-tester_variable('debut_intertitre', "\n<h3 class=\"spip\">");
-tester_variable('fin_intertitre', "</h3>\n");
-tester_variable('ligne_horizontale', "\n<hr class=\"spip\" />\n");
-tester_variable('ouvre_ref', '&nbsp;[');
-tester_variable('ferme_ref', ']');
-tester_variable('ouvre_note', '[');
-tester_variable('ferme_note', '] ');
-tester_variable('les_notes', '');
-tester_variable('compt_note', 0);
-tester_variable('nombre_surligne', 4);
-tester_variable('url_glossaire_externe', "http://@lang@.wikipedia.org/wiki/");
-
-
-// On ne prend la $puce_rtl par defaut que si $puce n'a pas ete redefinie
-
-//if (!tester_variable('puce', "<li class='spip_puce' style='list-style-image: url(puce.gif)'>")) {
-if (!tester_variable('puce', "<img class='spip_puce' src='puce.gif' alt='-' border='0'>&nbsp;")) {
-	tester_variable('puce_rtl', "<img class='spip_puce' src='puce_rtl.gif' alt='-' border='0'>&nbsp;");
-}
-
 
 //
 // Trouver une locale qui marche
