@@ -18,11 +18,24 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: run_rep.php,v 1.35 2006/12/15 20:45:17 mlutfy Exp $
+	$Id: run_rep.php,v 1.36 2007/03/26 15:34:31 mlutfy Exp $
 */
 
 include('inc/inc.php');
 include_lcm('inc_obj_reportgen');
+
+function panic_not_implemented($table1, $table2) {
+	// [ML] Eventually we should print a more user-friendly message,
+	// but for now, lcm_panic() is the easiest to debug.
+
+	$GLOBALS['errors']['join'] = "Report not implemented: join of $table1 and $table2.
+	Please write to legalcase-devel@lists.sf.net and explain the report you are
+	trying to generate. If possible, please send a sample report with fictive
+	values. It is possible that either it is possible to generate this report
+	by another way, or that it may be necessary to write a custom report.";
+
+	lcm_panic($GLOBALS['errors']['join']);
+}
 
 function get_table_suffix($table) {
 	if ($table == 'lcm_author')
@@ -87,7 +100,7 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0, $report = null, 
 		"lcm_keyword_case" => "id_keyword");
 
 	if ($table1 == $table2)
-		lcm_panic("Linking with self: not yet supported");
+		panic_not_implemented($table1, $table2);
 
 	switch($table1) {
 		case 'lcm_author':
@@ -102,10 +115,10 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0, $report = null, 
 					$where .= " a.id_author = fu.id_author ";
 					break;
 				case 'lcm_client':
-					lcm_panic("not implemented");
+					panic_not_implemented($table1, $table2);
 					break;
 				case 'lcm_org':
-					lcm_panic("not implemented");
+					panic_not_implemented($table1, $table2);
 					break;
 				case 'lcm_stage':
 					/* TESTCASE: Count number of cases concluded by author
@@ -120,7 +133,7 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0, $report = null, 
 				case '':
 					break;
 				default:
-					lcm_panic("case not implemented ($table2)");
+					panic_not_implemented($table1, $table2);
 					break;
 			}
 
@@ -133,8 +146,14 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0, $report = null, 
 				case 'lcm_followup':
 					$where .= " c.id_case = fu.id_case ";
 					break;
+				case 'lcm_author':
+					// [ML] This may not generate anything interested. Was implemented just for fun.
+					$from   = " , lcm_case_author as ca ";
+					$from_glue .= " c.id_case = ca.id_case AND ca.id_author = a.id_author ";
+					$where .= " ca.id_author = a.id_author ";
+					break;
 				default:
-					lcm_panic("not coded");
+					panic_not_implemented($table1, $table2);
 			}
 
 			break;
@@ -147,7 +166,7 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0, $report = null, 
 					$where .= " fu.id_author = a.id_author ";
 					break;
 				default:
-					lcm_panic("not coded");
+					panic_not_implemented($table1, $table2);
 			}
 
 			break;
@@ -162,14 +181,14 @@ function join_tables($table1, $table2 = '', $id1 = 0, $id2 = 0, $report = null, 
 					$where .= " cl.id_client = cco.id_client ";
 					break;
 				default:
-					lcm_panic("not coded");
+					panic_not_implemented($table1, $table2);
 			}
 			break;
 
 		case 'lcm_org':
 			switch($table2) {
 				default:
-					lcm_panic("not coded");
+					panic_not_implemented($table1, $table2);
 			}
 
 			break;
