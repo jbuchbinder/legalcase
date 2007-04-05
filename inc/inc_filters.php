@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.94 2007/03/26 14:20:58 mlutfy Exp $
+	$Id: inc_filters.php,v 1.95 2007/04/05 19:54:16 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -178,6 +178,18 @@ function format_money($money, $two_cents = true, $show_currency_sign = false) {
 	// this is very stupid i18n because windows does not have strfmon,
 	// altough we cannot depend on locales on all servers for all languages
 	// so for our small needs, this should be good enough.
+	//
+	// FIXME: $two_cents usually means that it is money, not a file size.
+	// This should be documented more clearly.
+	//
+	// FIXME: put this in a contrib, somewhere else. Allow to override using
+	// a syntax such as format_money_$func(...) and provide a default function
+	// for those who wish to use money_format() of PHP (linux only).
+	if ($two_cents && isset($GLOBALS['format_money_function'])) {
+		$f = 'format_money_' . $GLOBALS['format_money_function'];
+		return $f($money, $two_cents, $show_currency_sign);
+	}
+
 	if (is_string($money))
 		$money = trim($money);
 
@@ -210,6 +222,56 @@ function format_money($money, $two_cents = true, $show_currency_sign = false) {
 			$str_hundreds = sprintf('%03u', ($hundreds % 1000)) . $seperator_hundreds . $str_hundreds;
 		else
 			$str_hundreds = ($hundreds % 1000) . $seperator_hundreds . $str_hundreds;
+	}
+
+	$str_final = $str_hundreds;
+
+	if ($str_cents)
+		$str_final .= $seperator_cents . $str_cents;
+
+	if ($show_currency_sign)
+		$str_final = _T('currency_format_placement',
+				array('currency' => htmlspecialchars(read_meta('currency')), 'money' => $str_final));
+
+	return $str_final;
+}
+
+function format_money_india($money, $two_cents = true, $show_currency_sign = false) {
+	// See format_money() above.
+	// This version formats money for indian standards.
+	// ex: 10000 is 1,00,00.00  -- not 10,000.00
+	if (is_string($money))
+		$money = trim($money);
+
+	if (! $money)
+		$money = 0.0;
+
+	if (! ($money===0.0 || is_numeric($money)) )
+		lcm_panic("parameter is not a valid number: " . $money);
+	
+	$seperator_cents    = _T('currency_format_seperator_cents');
+	$seperator_hundreds = _T('currency_format_seperator_hundreds');
+
+	$hundreds = (int) $money;
+	$cents = round(($money - $hundreds) * 100); // only two last digits
+
+	// format as text
+	if ($two_cents) // i.e. "is money"
+		$str_cents = sprintf('%02u', $cents);
+	else // i.e. "not money" (ex: file size)
+		$str_cents = preg_replace("/0+$/", "", $cents);
+
+	$str_hundreds = sprintf('%02u', ($hundreds % 100));
+
+	// Test with values: 1000, 100000 etc.
+	// Before 0.7.3, it would print "1,0.00" for 1000$
+	// Reported by BM on 2007-03-24.
+	while ($hundreds > 99) {
+		$hundreds /= 100;
+		if ($hundreds > 100)
+			$str_hundreds = sprintf('%02u', ($hundreds % 100)) . $seperator_hundreds . $str_hundreds;
+		else
+			$str_hundreds = ($hundreds % 100) . $seperator_hundreds . $str_hundreds;
 	}
 
 	$str_final = $str_hundreds;
@@ -428,6 +490,17 @@ function get_fu_description($item, $make_short = true) {
 		$short_description = _T('info_not_available');
 
 	return $short_description;
+}
+
+function show_case_id($cid) {
+	if (isset($GLOBALS['show_case_id_function'])) {
+		$f = 'show_case_id_' . $GLOBALS['show_case_id_function'];
+		return $f($cid);
+	}
+
+	// else, TODO, search keywords which have "show in case id string" option
+	// this is not implemented at all.
+	return $cid;
 }
 
 // Dirty hack: utf8_decode is mainly used for strlen(),
