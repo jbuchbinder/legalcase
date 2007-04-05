@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.29 2006/12/28 16:19:11 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.30 2007/04/05 19:53:56 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -407,7 +407,7 @@ class LcmCaseInfoUI extends LcmCase {
 		// Case ID
 		echo '<li>'
 			. '<span class="label1">' . _Ti('case_input_id') . '</span>'
-			. '<span class="value1">' . $this->getDataInt('id_case') . '</span>'
+			. '<span class="value1">' . show_case_id($this->getDataInt('id_case')) . '</span>'
 			. "</li>\n";
 
 		// Case title
