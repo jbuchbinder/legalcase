@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_en.php,v 1.129 2007/02/16 22:16:37 mlutfy Exp $
+    $Id: lcm_en.php,v 1.130 2007/11/16 16:24:15 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -55,14 +55,17 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 // A
 'add_user_case' => 'Add a user to the case',
-'app_button_edit' => 'Edit this appointment',
+'app_button_edit' => 'Edit this activity',
 'app_button_new' => 'Enter a new activity',
+'app_info_delete' => 'Delete this activity.',
+'app_info_is_deleted' => 'This activity is deleted.',
+'app_info_is_deleted2' => 'To undelete it, edit the activity then uncheck the delete box.',
 'app_info_see_cal_for_day_tooltip' => 'Go to the calendar page of this day.',
 'app_input_authors' => 'Participant users:',
 'app_input_clients' => 'Participant clients:',
 'app_input_created_by' => 'Created by:',
 'app_input_description' => 'Description:',
-'app_input_for_case' => 'Appointment to case:',
+'app_input_for_case' => 'Activity related to case:',
 'app_input_involving_clients' => 'Involving:',
 'app_input_related_to_case' => 'In connection with case:',
 'app_input_reminder' => 'Reminder:',
@@ -648,7 +651,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'kwg__exptypes_title' => 'Internal request',
 'kwg__institutions_title' => 'Institution',
 'kwg__refnumbers_title' => 'Reference number',
-'kwg_appointments_title' => 'Appointments',
+'kwg_appointments_title' => 'Activities',
 'kwg_civilstatus_title' => 'Civil status',
 'kwg_conclusion_title' => 'Case conclusion',
 'kwg_contacts_title' => 'Contact fields',
@@ -908,8 +911,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'time_input_time_at' => 'at',
 'time_warning_invalid_format' => 'The time lenght is not valid.',
 'title_agenda_list' => 'Agenda',
-'title_app_edit' => 'Edit appointment',
-'title_app_new' => 'New appointment',
+'title_app_edit' => 'Edit activity',
+'title_app_new' => 'New activity',
 'title_app_view' => 'Activity details:',
 'title_archives' => 'Archives',
 'title_author_edit' => 'Edit user:',
