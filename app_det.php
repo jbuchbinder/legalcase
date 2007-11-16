@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: app_det.php,v 1.23 2006/03/21 16:04:30 mlutfy Exp $
+	$Id: app_det.php,v 1.24 2007/11/16 16:28:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -49,6 +49,18 @@ echo '<p class="normal_text">' . "\n";
 	
 	echo _Ti('app_input_title') . $row['title'] . "<br />\n";
 	echo _Ti('app_input_type') . _Tkw('appointments', $row['type']) . "<br />\n";
+
+	if ($row['hidden'] == 'Y') {
+		echo '<p class="normal_text"><strong>' . _T('app_info_is_deleted') . "</strong>";
+
+		if ($ac['a'])
+			echo " " . _T('app_info_is_deleted2');
+
+		echo "</p>\n";
+	}
+
+	show_page_subtitle(_T('generic_subtitle_general'), 'tools_agenda');
+
 	echo _Ti('app_input_description') . nl2br($row['description']) . "<br />\n";
 
 	echo "<br />\n";

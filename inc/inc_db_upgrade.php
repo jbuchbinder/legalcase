@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.74 2006/11/15 19:43:46 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.75 2007/11/16 16:25:55 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1165,6 +1165,13 @@ function upgrade_database($old_db_version) {
 		// date at which a given contact was updated.
 		lcm_query("UPDATE lcm_contact SET date_update = NULL");
 	} 
+
+	if ($lcm_db_version_current < 52) {
+		lcm_query("ALTER TABLE lcm_app
+					ADD hidden ENUM('N', 'Y') not null default 'N' AFTER date_update");
+
+		upgrade_db_version(52);
+	}
 
 	// Update the meta, lcm_fields, keywords, etc.
 	lcm_log("Updating LCM default configuration (meta/keywords/repfields/..)", 'upgrade');

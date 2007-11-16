@@ -22,7 +22,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_calendar.php,v 1.29 2007/01/16 19:22:30 mlutfy Exp $
+	$Id: inc_calendar.php,v 1.30 2007/11/16 16:25:55 mlutfy Exp $
 */
 
 
@@ -1802,6 +1802,7 @@ function sql_calendrier_interval_rv($avant, $apres) {
 				FROM lcm_app as a, lcm_author_app as ap
 				WHERE (ap.id_author = " . $GLOBALS['author_session']['id_author'] . "
 				AND a.id_app = ap.id_app
+				AND a.hidden != 'Y'
 				AND ((a.end_time >= $avant OR a.start_time >= $avant) AND a.start_time <= $apres))
 	" /*			GROUP BY a.id_app */ . "
 				ORDER BY a.start_time";
@@ -1929,6 +1930,7 @@ function sql_calendrier_agenda ($mois, $annee) {
 					FROM lcm_app as app, lcm_author_app as aut
 					WHERE aut.id_author = " . $GLOBALS['author_session']['id_author'] . "
 					AND app.id_app = aut.id_app
+					AND app.hidden != 'Y'
 					AND app.start_time >= '$annee-$mois-01'
 					AND app.start_time < " . lcm_query_date_add_interval("$annee-$mois-01", '+', 'month', 1));
 

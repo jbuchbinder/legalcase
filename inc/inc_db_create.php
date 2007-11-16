@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.61 2006/09/07 16:41:27 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.62 2007/11/16 16:25:55 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -416,6 +416,7 @@ function create_database() {
 		"reminder datetime DEFAULT NULL", // may be null
 		"date_creation datetime NOT NULL",
 		"date_update datetime NOT NULL",
+		"hidden ENUM('N', 'Y') NOT NULL DEFAULT 'N'",
 		"PRIMARY KEY  (id_app)"
 	);
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: edit_app.php,v 1.50 2006/09/08 12:39:34 mlutfy Exp $
+	$Id: edit_app.php,v 1.51 2007/11/16 16:28:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -128,6 +128,12 @@ if (empty($_SESSION['errors'])) {
 	$_SESSION['authors'] = array();
 	while ($row = lcm_fetch_array($result))
 		$_SESSION['authors'][$row['id_author']] = $row;
+}
+
+// [ML] not clean hack, fix "delete" option
+if (! empty($_SESSION['errors'])) {
+	if ($_SESSION['form_data']['hidden'])
+		$_SESSION['form_data']['hidden'] = 'Y';
 }
 
 if (_session('id_app', 0) > 0)
@@ -373,6 +379,17 @@ $dis = ($edit ? '' : 'disabled="disabled"');
 		echo "</td></tr>\n";
 
 		echo "</table>\n";
+
+		// Delete appointment
+		if (_session('id_app', 0)) {
+			// $checked = ($this->getDataString('hidden') == 'Y' ? ' checked="checked" ' : '');
+			$checked = ($_SESSION['form_data']['hidden'] == 'Y' ? ' checked="checked" ' : '');
+
+			echo '<p class="normal_text">';
+			echo '<input type="checkbox"' . $checked . ' name="hidden" id="box_delete" />';
+			echo '<label for="box_delete">' . _T('app_info_delete') . '</label>';
+			echo "</p>\n";
+		}
 
 		// Submit buttons
 		echo '<button name="submit" type="submit" value="adddet" class="simple_form_btn">' . _T('button_validate') . "</button>\n";

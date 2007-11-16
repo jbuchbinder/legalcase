@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: upd_app.php,v 1.23 2007/01/18 17:18:19 mlutfy Exp $
+	$Id: upd_app.php,v 1.24 2007/11/16 16:28:17 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -141,7 +141,8 @@ if (count($_SESSION['errors'])) {
 		description = '" . _session('description') . "',
 		start_time  = '" . _session('start_time') . "',
 		end_time    = '" . _session('end_time') . "',
-		reminder    = '" . _session('reminder') . "'
+		reminder    = '" . _session('reminder') . "',
+		hidden      = '" . (_session('hidden', '') ? 'Y' : 'N') . "'
 		";
 
 	// Insert/update appointment
