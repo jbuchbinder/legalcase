@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.62 2007/11/16 16:25:55 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.63 2008/01/30 19:48:50 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -95,7 +95,7 @@ function create_database() {
 		"kw_result varchar(255) NOT NULL DEFAULT ''",
 		"kw_conclusion varchar(255) NOT NULL DEFAULT ''",
 		"kw_sentence varchar(255) NOT NULL DEFAULT ''",
-		"sentence_val text NOT NULL DEFAULT ''",
+		"sentence_val text",
 		"date_agreement datetime DEFAULT NULL", // may be null
 		"latest tinyint(1) DEFAULT 0 NOT NULL",
 		"PRIMARY KEY (id_entry)"
@@ -278,7 +278,7 @@ function create_database() {
 		"id_keyword bigint(21) NOT NULL",
 		"id_case bigint(21) NOT NULL",
 		"id_stage bigint(21) NOT NULL DEFAULT 0",
-		"value text NOT NULL DEFAULT ''",
+		"value text",
 		"PRIMARY KEY (id_entry)"
 	);
 

@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.75 2007/11/16 16:25:55 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.76 2008/01/30 19:48:50 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1171,6 +1171,16 @@ function upgrade_database($old_db_version) {
 					ADD hidden ENUM('N', 'Y') not null default 'N' AFTER date_update");
 
 		upgrade_db_version(52);
+	}
+
+	if ($lcm_db_version_current < 53) {
+		lcm_query("ALTER TABLE lcm_stage
+						CHANGE sentence_val sentence_val text");
+
+		lcm_query("ALTER TABLE lcm_keyword_case
+						CHANGE value value text");
+
+		upgrade_db_version(53);
 	}
 
 	// Update the meta, lcm_fields, keywords, etc.
