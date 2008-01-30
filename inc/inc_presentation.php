@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.251 2006/10/26 13:16:50 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.252 2008/01/30 19:49:13 mlutfy Exp $
 */
 
 //
@@ -1278,7 +1278,7 @@ function show_listcase_item($item, $cpt, $find_case_string = '', $url = '__DEFAU
 
 	// Case ID
 	echo "<td class='tbl_cont_" . $css . "'>";
-	echo highlight_matches($item['id_case'],$find_case_string);
+	echo highlight_matches(show_case_id($item['id_case']),$find_case_string);
 	echo "</td>\n";
 
 	// Date creation
