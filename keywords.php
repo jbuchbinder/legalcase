@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: keywords.php,v 1.50 2006/09/19 16:59:39 mlutfy Exp $
+	$Id: keywords.php,v 1.51 2008/01/30 22:16:03 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -684,6 +684,8 @@ switch (_request('action')) {
 		create_groups($system_keyword_groups);
 		write_metas(); // regenerate inc/data/inc_meta_cache.php
 
+		$_SESSION['info']['refresh'] = 'Keywords cache refreshed'; // TRAD
+
 		break;
 	case '':
 		// Do Nothing
@@ -695,6 +697,8 @@ switch (_request('action')) {
 
 lcm_page_start(_T('menu_admin_keywords'), '', '', 'keywords_intro');
 lcm_bubble('keyword_list');
+
+echo show_all_errors();
 
 //
 // Tabs
@@ -718,7 +722,8 @@ switch ($tab) {
 		echo '<form method="post" action="' . $_SERVER['REQUEST_URI'] . '">' . "\n";
 		echo '<p>' . _T('keywords_info_maintenance') . "</p>\n";
 
-		echo '<button type="submit" name="action" value="refresh" class="simple_form_btn">'
+		echo '<input type="hidden" name="action" value="refresh" />' . "\n";
+		echo '<button type="submit" name="submit_button" value="refresh" class="simple_form_btn">'
 			. _T('button_validate')
 			. "</button>\n";
 		echo "</form>\n";
