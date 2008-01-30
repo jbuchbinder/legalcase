@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.96 2008/01/30 21:45:30 mlutfy Exp $
+	$Id: inc_filters.php,v 1.97 2008/01/30 22:10:53 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -323,22 +323,42 @@ function f_err_star($fn) {
 	return (isset($_SESSION['errors'][$fn]) ? '<a name="' . $fn . '"></a><span style="color: #ff0000">*</span>' : '');
 }
 
-function show_all_errors($all_errors = array()) {
-	$ret = '<div align="left" class="err_box">'
-		. '<p class="normal_text">' . _Ti('title_error') . '</p>'
-		. '<ul class="err_list">';
+function show_all_errors() {
+	$ret = '';
 
-	if (! count($all_errors))
-		if (isset($_SESSION['errors']))
-			$all_errors = $_SESSION['errors'];
+	if (isset($_SESSION['errors'])) {
+		$all_errors = $_SESSION['errors'];
+		$_SESSION['errors'] = array();
+	}
 
-	if (! count($all_errors))
-		return '';
+	if (count($all_errors)) {
+		$ret .= '<div align="left" class="err_box">'
+			 . '<p class="normal_text">' . _Ti('title_error') . '</p>'
+			 . '<ul class="err_list">';
 
-	foreach ($all_errors as $key => $error)
-		$ret .= "<li><a href='#$key'>" . $error . "</a></li>\n";
-	
-	$ret .= "</ul></div>\n";
+
+		foreach ($all_errors as $key => $error)
+			$ret .= "<li><a href='#$key'>" . $error . "</a></li>\n";
+
+		$ret .= "</ul></div>\n";
+	}
+
+	if (isset($_SESSION['info'])) {
+		$all_info = $_SESSION['info'];
+		$_SESSION['info'] = array();
+	}
+
+	if (count($all_info)) {
+		$ret .= '<div align="left" class="sys_msg_box">'
+			 . '<div>' . _T('siteconf_info_changes_made') . '</div>'
+			 . '<ul>';
+
+		foreach ($all_info as $key => $info)
+			$ret .= "<li><a href='#$key'>" . $info . "</a></li>\n";
+
+		$ret .= "</ul></div>\n";
+	}
+
 	return $ret;
 }
 
