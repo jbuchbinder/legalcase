@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.23 2007/03/26 16:16:47 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.24 2008/01/30 22:53:42 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -83,7 +83,7 @@ class LcmFollowup extends LcmObject {
 		}
 
 		// If any, populate with session variables (for error reporting)
-		if (isset($_SESSION['form_data'])) {
+		if (isset($_SESSION['form_data']) && count($_SESSION['errors'])) {
 			foreach($_SESSION['form_data'] as $key => $value) {
 				$nkey = $key;
 
@@ -473,9 +473,12 @@ class LcmFollowupInfoUI extends LcmFollowup {
 		show_all_keywords('followup', $this->getDataInt('id_followup'));
 		
 		// Conclusion for case/status change
+		/* [ML] 2008-01-30 Should not be necessary, done by get_fu_description()
 		if ($this->data['type'] == 'status_change' || $this->data['type'] == 'stage_change') {
 			$tmp = lcm_unserialize($this->data['description']);
-		
+
+			var_dump($tmp);
+
 			echo '<li>'
 				. '<span class="label2">' . _Ti('fu_input_conclusion') .  '</span>';
 
@@ -492,12 +495,13 @@ class LcmFollowupInfoUI extends LcmFollowup {
 				. '<span class="value2">' . _Tkw('sentence', $tmp['sentence']) . '</span>'
 				. "</li>\n";
 		}
+		*/
 		
 		// Description
 		$desc = get_fu_description($this->data, false);
 		
 		echo '<li class="large">'
-			. '<span class="label2">' . _T('fu_input_description') . '</span>'
+			. '<span class="label2">' . _Ti('fu_input_description') . '</span>'
 			. '<span class="value2">' . $desc . '</span>'
 			. "</li>\n";
 		
