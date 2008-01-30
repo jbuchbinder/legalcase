@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.95 2007/04/05 19:54:16 mlutfy Exp $
+	$Id: inc_filters.php,v 1.96 2008/01/30 21:45:30 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -211,14 +211,17 @@ function format_money($money, $two_cents = true, $show_currency_sign = false) {
 	else // i.e. "not money" (ex: file size)
 		$str_cents = preg_replace("/0+$/", "", $cents);
 
-	$str_hundreds = sprintf('%03u', ($hundreds % 1000));
+	if ($hundreds >= 1000)
+		$str_hundreds = sprintf('%03u', ($hundreds % 1000));
+	else
+		$str_hundreds = $hundreds;
 
 	// Test with values: 1000, 100000 etc.
 	// Before 0.7.3, it would print "1,0.00" for 1000$
 	// Reported by BM on 2007-03-24.
-	while ($hundreds > 999) {
+	while ($hundreds >= 1000) {
 		$hundreds /= 1000;
-		if ($hundreds > 1000)
+		if ($hundreds >= 1000)
 			$str_hundreds = sprintf('%03u', ($hundreds % 1000)) . $seperator_hundreds . $str_hundreds;
 		else
 			$str_hundreds = ($hundreds % 1000) . $seperator_hundreds . $str_hundreds;
@@ -239,7 +242,7 @@ function format_money($money, $two_cents = true, $show_currency_sign = false) {
 function format_money_india($money, $two_cents = true, $show_currency_sign = false) {
 	// See format_money() above.
 	// This version formats money for indian standards.
-	// ex: 10000 is 1,00,00.00  -- not 10,000.00
+	// ex: 100000 is 1,00,000.00  -- not 100,000.00
 	if (is_string($money))
 		$money = trim($money);
 
@@ -261,14 +264,19 @@ function format_money_india($money, $two_cents = true, $show_currency_sign = fal
 	else // i.e. "not money" (ex: file size)
 		$str_cents = preg_replace("/0+$/", "", $cents);
 
-	$str_hundreds = sprintf('%02u', ($hundreds % 100));
+	// Start with the first 3 digits
+	if ($hundreds >= 1000)
+		$str_hundreds = sprintf('%03u', ($hundreds % 1000));
+	else
+		$str_hundreds = $hundreds;
 
-	// Test with values: 1000, 100000 etc.
-	// Before 0.7.3, it would print "1,0.00" for 1000$
-	// Reported by BM on 2007-03-24.
+	// not clean hack because it will go into the loop below
+	$hundreds /= 10;
+	$hundreds = intval($hundreds);
+
 	while ($hundreds > 99) {
 		$hundreds /= 100;
-		if ($hundreds > 100)
+		if ($hundreds >= 100)
 			$str_hundreds = sprintf('%02u', ($hundreds % 100)) . $seperator_hundreds . $str_hundreds;
 		else
 			$str_hundreds = ($hundreds % 100) . $seperator_hundreds . $str_hundreds;
