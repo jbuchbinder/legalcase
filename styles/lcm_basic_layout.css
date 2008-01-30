@@ -610,6 +610,11 @@ ul.err_list li {
 	margin-bottom: 10px;
 }
 
+.sys_msg_box ul li a {
+	color: #060;
+	text-decoration: none;
+}
+
 /* For the Small/Normal/Large Font size list */
 
 ul.font_size_buttons {
