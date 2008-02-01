@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_client.php,v 1.17 2008/02/01 20:36:27 mlutfy Exp $
+	$Id: inc_obj_client.php,v 1.18 2008/02/01 20:40:58 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -465,7 +465,7 @@ class LcmClientInfoUI extends LcmClient {
 			echo "<tr>\n";
 			echo "<td>" . f_err_star('date_birth') . _Ti('person_input_date_birth') . "</td>\n";
 			echo "<td>" 
-				. get_date_inputs('date_birth', $this->getDataString('date_birth'), false)
+				. get_date_inputs('date_birth', $this->getDataString('date_birth'), true)
 				. "</td>\n";
 			echo "</tr>\n";
 		}
