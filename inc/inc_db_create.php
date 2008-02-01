@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.63 2008/01/30 19:48:50 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.64 2008/02/01 20:24:46 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -43,14 +43,15 @@ function create_database() {
 
 	$fields = array (
 		"id_case bigint(21) NOT NULL auto_increment",
+		"id_stage bigint(21) NOT NULL",
 		"title text NOT NULL",
 		"date_creation datetime NOT NULL",
 		"date_assignment datetime NOT NULL",
 		"date_update datetime NOT NULL",
-		"legal_reason text DEFAULT '' NOT NULL",
-		"alledged_crime text DEFAULT '' NOT NULL",
-		"notes text DEFAULT '' NOT NULL",
-		"status text NOT NULL",
+		"legal_reason text",
+		"alledged_crime text",
+		"notes text",
+		"status text",
 		"stage varchar(255) NOT NULL",
 		"public tinyint(1) DEFAULT 0 NOT NULL",
 		"pub_write tinyint(1) DEFAULT 0 NOT NULL",
@@ -111,12 +112,13 @@ function create_database() {
 
 	$fields = array (
 		"id_followup bigint(21) NOT NULL auto_increment",
-		"id_case bigint(21) DEFAULT 0 NOT NULL",
-		"id_author bigint(21) DEFAULT 0 NOT NULL",
+		"id_case bigint(21) NOT NULL",
+		"id_stage bigint(21) NOT NULL",
+		"id_author bigint(21) NOT NULL",
 		"date_start datetime NOT NULL",
 		"date_end datetime DEFAULT NULL", // may be null
 		"type varchar(255) NOT NULL",
-		"description text DEFAULT '' NOT NULL",
+		"description text",
 		"case_stage varchar(255) NOT NULL",
 		"sumbilled decimal(19,4) NOT NULL DEFAULT 0",
 		"hidden ENUM('N', 'Y') NOT NULL DEFAULT 'N'",
@@ -135,24 +137,24 @@ function create_database() {
 	$fields = array (
 		"id_author bigint(21) NOT NULL auto_increment",
 		"id_office bigint(21) DEFAULT 0 NOT NULL",
-		"name_first text NOT NULL",
-		"name_middle text DEFAULT '' NOT NULL",
-		"name_last text NOT NULL",
+		"name_first text",
+		"name_middle text",
+		"name_last text",
 		"date_creation datetime NOT NULL",
 		"date_update datetime NOT NULL",
 		"username VARCHAR(255) NOT NULL", /* [ML] 0.7.0 removed 'BINARY', I see no use for it */
 		"password tinytext NOT NULL",
 		"lang VARCHAR(10) DEFAULT 'en' NOT NULL",
-		"prefs text NOT NULL DEFAULT ''",
+		"prefs text",
 		"status ENUM('admin', 'normal', 'external', 'trash', 'waiting', 'suspended') NOT NULL DEFAULT 'normal'",
-		"cookie_recall tinytext NOT NULL DEFAULT ''",
+		"cookie_recall tinytext",
 
 		"maj TIMESTAMP",
-		"pgp blob NOT NULL DEFAULT ''",
+		"pgp blob",
 		"imessage VARCHAR(3) NOT NULL DEFAULT ''",
 		"messagerie VARCHAR(3) NOT NULL DEFAULT ''",
-		"alea_actuel tinytext NOT NULL DEFAULT ''",
-		"alea_futur tinytext NOT NULL DEFAULT ''",
+		"alea_actuel tinytext",
+		"alea_futur tinytext",
 
 		"PRIMARY KEY (id_author)"
 	);
@@ -168,17 +170,17 @@ function create_database() {
 
 	$fields = array (
 		"id_client bigint(21) NOT NULL auto_increment",
-		"name_first text NOT NULL",
-		"name_middle text NOT NULL DEFAULT ''",
-		"name_last text NOT NULL",
+		"name_first text",
+		"name_middle text",
+		"name_last text",
 		"date_creation datetime NOT NULL",
 		"date_update datetime NOT NULL",
 		"date_birth datetime DEFAULT NULL", // may be null
-		"citizen_number text NOT NULL DEFAULT ''",
+		"citizen_number text",
 		"gender ENUM('female','male', 'unknown') NOT NULL",
 		"civil_status varchar(255) DEFAULT 'unknown' NOT NULL",
 		"income varchar(255) DEFAULT 'unknown' NOT NULL",
-		"notes text DEFAULT '' NOT NULL",
+		"notes text",
 		"PRIMARY KEY (id_client)"
 	);
 
@@ -210,13 +212,13 @@ function create_database() {
 
 	$fields = array (
 		"id_org bigint(21) NOT NULL auto_increment",
-		"name text NOT NULL",
+		"name text",
 		"date_creation datetime DEFAULT NULL",
 		"date_update datetime DEFAULT NULL",
-		"notes text NOT NULL DEFAULT ''",
-		"court_reg text NOT NULL DEFAULT ''",
-		"tax_number text NOT NULL DEFAULT ''",
-		"stat_number text NOT NULL DEFAULT ''",
+		"notes text",
+		"court_reg text",
+		"tax_number text",
+		"stat_number text",
 		"PRIMARY KEY (id_org)"
 	);
 
@@ -264,7 +266,7 @@ function create_database() {
 		"id_group bigint(21) NOT NULL",
 		"name VARCHAR(255) NOT NULL",
 		"title text NOT NULL",
-		"description text NOT NULL DEFAULT ''",
+		"description text",
 		"hasvalue ENUM('Y', 'N') NOT NULL DEFAULT 'N'",
 		"ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y'",
 		"PRIMARY KEY (id_keyword)"
@@ -293,7 +295,7 @@ function create_database() {
 		"id_entry bigint(21) NOT NULL auto_increment",
 		"id_keyword bigint(21) NOT NULL",
 		"id_client bigint(21) NOT NULL",
-		"value text NOT NULL DEFAULT ''",
+		"value text",
 		"PRIMARY KEY (id_entry)"
 	);
 
@@ -309,7 +311,7 @@ function create_database() {
 		"id_entry bigint(21) NOT NULL auto_increment",
 		"id_keyword bigint(21) NOT NULL",
 		"id_followup bigint(21) NOT NULL",
-		"value text NOT NULL DEFAULT ''",
+		"value text",
 		"PRIMARY KEY (id_entry)"
 	);
 
@@ -325,7 +327,7 @@ function create_database() {
 		"id_entry bigint(21) NOT NULL auto_increment",
 		"id_keyword bigint(21) NOT NULL",
 		"id_org bigint(21) NOT NULL",
-		"value text NOT NULL DEFAULT ''",
+		"value text",
 		"PRIMARY KEY (id_entry)"
 	);
 
@@ -343,11 +345,11 @@ function create_database() {
 		"id_parent bigint(21) NOT NULL DEFAULT 0",
 		"name VARCHAR(255) NOT NULL",
 		"title text NOT NULL",
-		"description text NOT NULL DEFAULT ''",
+		"description text",
 		"type ENUM('system', 'contact', 'case', 'stage', 'followup', 'client', 'org', 'client_org', 'author') NOT NULL",
 		"policy ENUM('optional', 'recommended', 'mandatory') NOT NULL DEFAULT 'optional'",
 		"quantity ENUM('one', 'many') NOT NULL DEFAULT 'one'",
-		"suggest text NOT NULL DEFAULT ''",
+		"suggest text",
 		"ac_admin ENUM('Y', 'N') NOT NULL DEFAULT 'Y'",
 		"ac_author ENUM('Y', 'N') NOT NULL DEFAULT 'Y'",
 		"PRIMARY KEY (id_group)"
@@ -360,16 +362,16 @@ function create_database() {
 	$fields = array (
 		"id_report bigint(21) NOT NULL auto_increment",
 		"title varchar(255) NOT NULL",
-		"description text NOT NULL DEFAULT ''",
-		"notes text NOT NULL DEFAULT ''",
+		"description text",
+		"notes text",
 		"id_author bigint(21) NOT NULL",
 		"date_creation datetime NOT NULL",
 		"date_update datetime NOT NULL",
-		"line_src_type text NOT NULL DEFAULT ''",
-		"line_src_name text NOT NULL DEFAULT ''",
-		"col_src_type text NOT NULL DEFAULT ''",
-		"col_src_name text NOT NULL DEFAULT ''",
-		"filecustom text NOT NULL DEFAULT ''",
+		"line_src_type text",
+		"line_src_name text",
+		"col_src_type text",
+		"col_src_name text",
+		"filecustom text",
 		"PRIMARY KEY  (id_report)"
 	);
 
@@ -383,7 +385,7 @@ function create_database() {
 		"field_name varchar(255) NOT NULL DEFAULT ''",
 		"description varchar(255) NOT NULL DEFAULT ''",
 		"filter ENUM('none','date','number','text','currency') NOT NULL DEFAULT 'none'",
-		"enum_type text NOT NULL DEFAULT ''",
+		"enum_type text",
 		"PRIMARY KEY  (id_field)"
 	);
 
@@ -410,7 +412,7 @@ function create_database() {
 		"id_author bigint(21) NOT NULL DEFAULT 0",
 		"type varchar(255) NOT NULL DEFAULT ''",
 		"title varchar(255) NOT NULL",
-		"description text NOT NULL DEFAULT ''",
+		"description text",
 		"start_time datetime NOT NULL",
 		"end_time datetime NOT NULL",
 		"reminder datetime DEFAULT NULL", // may be null
@@ -438,7 +440,7 @@ function create_database() {
 		"status ENUM('pending', 'granted', 'refused', 'deleted') NOT NULL",
 		"type varchar(255) NOT NULL", // will use system-keyword
 		"cost decimal(19,4) NOT NULL DEFAULT 0",
-		"description text NOT NULL DEFAULT ''",
+		"description text",
 		"date_creation datetime NOT NULL",
 		"date_update datetime NOT NULL",
 		"pub_read tinyint(1) NOT NULL",
@@ -460,7 +462,7 @@ function create_database() {
 		"id_author bigint(21) NOT NULL",
 		"date_creation datetime NOT NULL",
 		"date_update datetime NOT NULL",
-		"comment text NOT NULL DEFAULT ''",
+		"comment text",
 		"PRIMARY KEY  (id_comment)"
 	);
 
