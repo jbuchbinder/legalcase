@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.97 2008/01/30 22:10:53 mlutfy Exp $
+	$Id: inc_filters.php,v 1.98 2008/02/01 20:45:55 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -296,7 +296,7 @@ function format_money_india($money, $two_cents = true, $show_currency_sign = fal
 
 function years_diff($start, $end = '') {
 	if (! $end)
-		$end = date("Y-m-d", mktime()); // Today
+		$end = date("Y-m-d"); // Today
 
 	$s = recup_date($start);
 	$e = recup_date($end);
