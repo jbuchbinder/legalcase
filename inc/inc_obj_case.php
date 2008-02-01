@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.30 2007/04/05 19:53:56 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.31 2008/02/01 21:07:30 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -323,7 +323,7 @@ class LcmCase extends LcmObject {
 			}
 		} else {
 			// This is new case
-			$q = "INSERT INTO lcm_case SET date_creation = NOW(), date_update = NOW(), $fl,$public_access_rights";
+			$q = "INSERT INTO lcm_case SET id_stage = 0, date_creation = NOW(), date_update = NOW(), $fl,$public_access_rights";
 			$result = lcm_query($q);
 			$id_case = lcm_insert_id('lcm_case', 'id_case');
 			$id_author = $author_session['id_author'];
@@ -331,26 +331,29 @@ class LcmCase extends LcmObject {
 			$this->data['id_case'] = $id_case;
 
 			// Insert new case_author relation
+			// [AG] The user creating case should always have 'admin' access right, otherwise only admin could add new user(s) to the case
 			$q = "INSERT INTO lcm_case_author SET
-				id_case=$id_case,
-				id_author=$id_author,
+				id_case = $id_case,
+				id_author = $id_author,
 				ac_read=1,
 				ac_write=1,
 				ac_edit=" . (int)(read_meta('case_allow_modif') == 'yes') . ",
 				ac_admin=1";
-			// [AG] The user creating case should always have 'admin' access right, otherwise only admin could add new user(s) to the case
+
 			$result = lcm_query($q);
 
 			// Get author information
 			$q = "SELECT *
 				FROM lcm_author
 				WHERE id_author=$id_author";
+
 			$result = lcm_query($q);
 			$author_data = lcm_fetch_array($result);
 
 			// Add 'assignment' followup to the case
 			$q = "INSERT INTO lcm_followup
 				SET id_case = $id_case, 
+					id_stage = 0,
 					id_author = $id_author,
 					type = 'assignment',
 					case_stage = '" . $this->getDataString('stage') . "',
@@ -370,6 +373,11 @@ class LcmCase extends LcmObject {
 						id_fu_creation = $id_followup";
 
 			lcm_query($q);
+			$id_stage = lcm_insert_id('lcm_stage', 'id_entry');
+
+			// Update the id_stage entry for lcm_case
+			lcm_query("UPDATE lcm_case SET id_stage = $id_stage WHERE id_case = $id_case");
+			lcm_query("UPDATE lcm_followup SET id_stage = $id_stage WHERE id_followup = $id_followup");
 		}
 
 		// Keywords
