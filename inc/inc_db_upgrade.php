@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.76 2008/01/30 19:48:50 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.77 2008/02/01 20:23:54 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1036,6 +1036,12 @@ function upgrade_database($old_db_version) {
 	}
 
 	if ($lcm_db_version_current < 49) {
+		// If user installs LCM 0.7.0, then imports a 0.6.4 database, the 
+		// lcm_expense table will already exist. It is better to drop and 
+		// re-create because we may "ALTER" the table later. On the other 
+		// hand, there is a risk that we accidently drop a table with data.
+		lcm_query("DROP TABLE lcm_keyword_followup", true);
+
 		$fields = array (
 			"id_entry bigint(21) NOT NULL auto_increment",
 			"id_keyword bigint(21) NOT NULL default 0",
@@ -1173,6 +1179,10 @@ function upgrade_database($old_db_version) {
 		upgrade_db_version(52);
 	}
 
+	//
+	// LCM 0.7.3
+	//
+
 	if ($lcm_db_version_current < 53) {
 		lcm_query("ALTER TABLE lcm_stage
 						CHANGE sentence_val sentence_val text");
@@ -1181,6 +1191,97 @@ function upgrade_database($old_db_version) {
 						CHANGE value value text");
 
 		upgrade_db_version(53);
+	}
+
+	if ($lcm_db_version_current < 54) {
+		lcm_query("ALTER TABLE lcm_case
+					ADD id_stage bigint(21) NOT NULL AFTER id_case");
+
+		lcm_query("ALTER TABLE lcm_followup
+					ADD id_stage bigint(21) NOT NULL AFTER id_case");
+
+		// Populate id_stage in lcm_case
+		// the "where" and "order" statements make it easier to recuperate
+		// if the database has a very large number of cases
+		$query = "SELECT c.id_case, c.stage, s.id_entry as id_stage
+					FROM lcm_case as c
+					LEFT JOIN lcm_stage as s ON (c.stage = s.kw_case_stage AND c.id_case = s.id_case)
+					WHERE c.id_stage = 0 
+					ORDER by id_case asc";
+
+		$res   = lcm_query($query);
+
+		while (($row = lcm_fetch_array($res))) {
+			// exception for very early versions of LCM
+			if (! $row['id_stage'])
+				$row['id_stage'] = 0;
+
+			$upd = "UPDATE lcm_case
+					   SET id_stage = " . $row['id_stage'] . "
+					 WHERE id_case  = " . $row['id_case'];
+
+			lcm_query($upd);
+		}
+
+		// Populate id_stage in lcm_followup
+		$query = "SELECT f.id_followup, f.id_case, f.case_stage, s.id_entry as id_stage
+					FROM lcm_followup as f
+					LEFT JOIN lcm_stage as s ON (f.case_stage = s.kw_case_stage AND f.id_case = s.id_case)
+					WHERE f.id_stage = 0 
+					ORDER by id_followup asc";
+
+		$res   = lcm_query($query);
+
+		while (($row = lcm_fetch_array($res))) {
+			// exception for very early versions of LCM
+			if (! $row['id_stage'])
+				$row['id_stage'] = 0;
+
+			$upd = "UPDATE lcm_followup
+					   SET id_stage = " . $row['id_stage'] . "
+					 WHERE id_followup  = " . $row['id_followup'];
+
+			lcm_query($upd);
+		}
+
+		upgrade_db_version(54);
+	}
+
+	if ($lcm_db_version_current < 55) {
+		include_lcm('inc_keywords');
+
+		// Fix id_stage entries in lcm_keyword_case
+		// They use to have the id_keyword of the keyword associated to that stage
+		// .. doesn't make much sense, should be the lcm_stage.id_entry
+		$query = "SELECT id_entry as id_kw_entry, id_keyword, id_case, id_stage
+				  	FROM lcm_keyword_case
+				   WHERE id_stage != 0
+				   ORDER BY id_entry ASC";
+
+		$result = lcm_query($query);
+
+		while (($row = lcm_fetch_array($result))) {
+			// get the keyword name associated with the id_keyword
+			// so that we can get the lcm_stage.id_entry
+			$kw = get_kw_from_id($row['id_stage']);
+
+			$query2 = "SELECT id_entry
+						 FROM lcm_stage
+						WHERE id_case = " . $row['id_case'] . "
+						  AND kw_case_stage = '" . $kw['name'] . "'";
+
+			$result2 = lcm_query($query2);
+
+			if (($row2 = lcm_fetch_array($result2))) {
+				$upd = "UPDATE lcm_keyword_case
+						   SET id_stage = " . $row2['id_entry'] . "
+						 WHERE id_entry = " . $row['id_kw_entry'];
+
+				lcm_query($upd);
+			}
+		}
+
+		upgrade_db_version(55);
 	}
 
 	// Update the meta, lcm_fields, keywords, etc.
