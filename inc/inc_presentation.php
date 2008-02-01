@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_presentation.php,v 1.252 2008/01/30 19:49:13 mlutfy Exp $
+	$Id: inc_presentation.php,v 1.253 2008/02/01 17:29:06 mlutfy Exp $
 */
 
 //
@@ -275,10 +275,9 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 	echo "</div>\n";
 
 	if ($connect_status == 'admin') {
-		echo "		
-					<div class=\"nav_menu_box\">
-						<div class=\"nav_column_menu_head\"><div class=\"mm_admin\">" . _T('menu_admin') . "</div></div>
-						<ul class=\"nav_menu_list\">";
+		echo "<div class=\"nav_menu_box\">\n";
+		echo "<div class=\"nav_column_menu_head\"><div class=\"mm_admin\">" . _T('menu_admin') . "</div></div>\n";
+		echo "<ul class=\"nav_menu_list\">";
 
 		show_navmenu_item("config_site.php", "admin_siteconf");
 		show_navmenu_item("archive.php", "admin_archives");
@@ -290,99 +289,102 @@ function lcm_page_start($title = "", $css_files = "", $meta = '', $help_code = '
 	}
 
 	// Show today's date
-	echo "\n";
-	echo "<div class=\"nav_menu_box\">
-			<div class=\"nav_column_menu_head\">
-				<div class=\"mm_calendar\">" . _T('menu_calendar') . "</div>
-			</div>";
+	if ($title != _T('title_upgrade_database')) {
+		echo "<div class=\"nav_menu_box\">\n";
+		echo "<div class=\"nav_column_menu_head\">\n";
+		echo "<div class=\"mm_calendar\">" . _T('menu_calendar') . "</div>\n";
+	 	echo "</div>\n";
 
-	// Show calendar
-	include_lcm('inc_calendar');
-	$now = date('Y-m-d');
+		// Show calendar
+		include_lcm('inc_calendar');
+		$now = date('Y-m-d');
 
-	echo "<table border='0' align='center'><tr><td>\n"; // Temporary? [ML]
-	echo http_calendrier_agenda(mois($now), annee($now), jour($now), mois($now), annee($now), false, 'calendar.php');
-	echo "</td></tr></table>\n";
+		echo "<table border='0' align='center'><tr><td>\n"; // Temporary? [ML]
+		echo http_calendrier_agenda(mois($now), annee($now), jour($now), mois($now), annee($now), false, 'calendar.php');
+		echo "</td></tr></table>\n";
 
-	echo "</div>\n";
-	
-	// Start agenda box
-	echo '<div class="nav_menu_box">' . "\n";
+		echo "</div>\n";
+
+		// Start agenda box
+		echo '<div class="nav_menu_box">' . "\n";
+
 		echo '<div class="nav_column_menu_head">';
-			echo '<div class="mm_agenda">'. _T('menu_agenda') . '</div>
-			</div>';
-	$events = false;
+		echo '<div class="mm_agenda">'. _T('menu_agenda') . "</div>\n";
+		echo "</div>\n";
 
-	// Show appointments for today
-	$q = "SELECT app.id_app, start_time, type, title
+		$events = false;
+
+		// Show appointments for today
+		$q = "SELECT app.id_app, start_time, type, title
 			FROM lcm_app as app, lcm_author_app as aut
 			WHERE aut.id_author=" . $GLOBALS['author_session']['id_author'] . "
-				AND app.id_app = aut.id_app
-				AND " . lcm_query_trunc_field('app.start_time', 'day') . "
-					= " . lcm_query_trunc_field('NOW()', 'day') . "
+			AND app.id_app = aut.id_app
+			AND " . lcm_query_trunc_field('app.start_time', 'day') . "
+			= " . lcm_query_trunc_field('NOW()', 'day') . "
 			ORDER BY app.reminder ASC";
 
-	$result = lcm_query($q);
+		$result = lcm_query($q);
 
-	if (lcm_num_rows($result) > 0) {
-		$events = true;
-		$today = getdate(time());
-		
-		echo "<p class=\"nav_column_text\">\n"
-			. '<strong><a class="content_link" href="calendar.php?type=jour'
-			. "&amp;jour=" . $today['mday']
-			. "&amp;mois=" . $today['mon']
-			. "&amp;annee=" . $today['year'] . '">'
-			. _Th('calendar_button_now') . "</a></strong><br />\n";
-		echo "</p>\n";
-		echo "<ul class=\"small_agenda\">\n";
-		while ($row=lcm_fetch_array($result)) {
-			echo "<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
-				. heures($row['start_time']) . ':' . minutes($row['start_time']) . " - " . $row['title'] . "</a></li>\n";
+		if (lcm_num_rows($result) > 0) {
+			$events = true;
+			$today = getdate(time());
+
+			echo "<p class=\"nav_column_text\">\n"
+				. '<strong><a class="content_link" href="calendar.php?type=jour'
+				. "&amp;jour=" . $today['mday']
+				. "&amp;mois=" . $today['mon']
+				. "&amp;annee=" . $today['year'] . '">'
+				. _Th('calendar_button_now') . "</a></strong><br />\n";
+			echo "</p>\n";
+			echo "<ul class=\"small_agenda\">\n";
+			while ($row=lcm_fetch_array($result)) {
+				echo "<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
+					. heures($row['start_time']) . ':' . minutes($row['start_time']) . " - " . $row['title'] . "</a></li>\n";
+			}
+			echo "</ul>\n";
+			echo "<hr class=\"hair_line\" />\n";
 		}
-		echo "</ul>\n";
-		echo "<hr class=\"hair_line\" />\n";
-	}
 
-	// Show next appointments
-	$q = "SELECT a.id_app, a.start_time, a.type, a.title
-		FROM lcm_app as a, lcm_author_app as aa
-		WHERE (aa.id_author = " . $GLOBALS['author_session']['id_author'] . "
-			AND a.id_app = aa.id_app
-			AND a.start_time >= '" . date('Y-m-d H:i:s',((int) ceil(time()/86400)) * 86400) ."')
-		ORDER BY a.reminder ASC
-		LIMIT 5";
+		// Show next appointments
+		$q = "SELECT a.id_app, a.start_time, a.type, a.title
+			FROM lcm_app as a, lcm_author_app as aa
+			WHERE (aa.id_author = " . $GLOBALS['author_session']['id_author'] . "
+					AND a.id_app = aa.id_app
+					AND a.start_time >= '" . date('Y-m-d H:i:s',((int) ceil(time()/86400)) * 86400) ."')
+			ORDER BY a.reminder ASC
+			LIMIT 5";
 
-	$result = lcm_query($q);
+		$result = lcm_query($q);
 
-	if (lcm_num_rows($result)>0) {
-		$events = true;
-		echo "<p class=\"nav_column_text\">\n";
-		echo "<strong>" . _T('calendar_button_nextapps') . "</strong><br />\n";
-		echo "</p>\n";
-		
-		echo "<ul class=\"small_agenda\">\n";
-		while ($row=lcm_fetch_array($result)) {
-			echo "<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
-				. format_date($row['start_time'],'short') . " - " . $row['title'] . "</a></li>\n";
+		if (lcm_num_rows($result)>0) {
+			$events = true;
+			echo "<p class=\"nav_column_text\">\n";
+			echo "<strong>" . _T('calendar_button_nextapps') . "</strong><br />\n";
+			echo "</p>\n";
+
+			echo "<ul class=\"small_agenda\">\n";
+			while ($row=lcm_fetch_array($result)) {
+				echo "<li><a href=\"app_det.php?app=" . $row['id_app'] . "\">"
+					. format_date($row['start_time'],'short') . " - " . $row['title'] . "</a></li>\n";
+			}
+			echo "</ul>\n";
 		}
-		echo "</ul>\n";
-	}
 
-	if (!$events) {
-		echo '<p class="nav_column_text">' . _T('calendar_info_noacts') . "</p>\n";
-	}
-	
-	// my appointments
-	echo '&nbsp;<a href="author_det.php?tab=appointments&amp;author=' . $GLOBALS['author_session']['id_author'] . '" title="' . _T('title_agenda_list') . '">'
-		. '<img src="images/jimmac/stock_show-form-dialog.png" border="0" width="16" height="16" alt="" /></a>';
-	
-	// new appointment
-	echo '&nbsp;<a href="edit_app.php?app=0" title="' . _T('app_button_new') . '">'
-		. '<img src="images/jimmac/stock_new-16.png" border="0" width="16" height="16" alt="" /></a>';
+		if (!$events) {
+			echo '<p class="nav_column_text">' . _T('calendar_info_noacts') . "</p>\n";
+		}
 
-	// End of nav_menu_box for Agenda
-	echo "</div>\n";
+		// my appointments
+		echo '&nbsp;<a href="author_det.php?tab=appointments&amp;author=' . $GLOBALS['author_session']['id_author'] . '" title="' . _T('title_agenda_list') . '">'
+			. '<img src="images/jimmac/stock_show-form-dialog.png" border="0" width="16" height="16" alt="" /></a>';
+
+		// new appointment
+		echo '&nbsp;<a href="edit_app.php?app=0" title="' . _T('app_button_new') . '">'
+			. '<img src="images/jimmac/stock_new-16.png" border="0" width="16" height="16" alt="" /></a>';
+
+		// End of nav_menu_box for Agenda
+		echo "</div>\n";
+	}
 
 	// End of "navigation_menu_column" content
 	echo "</div>
