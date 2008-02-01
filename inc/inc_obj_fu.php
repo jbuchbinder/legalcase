@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.25 2008/02/01 21:43:50 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.26 2008/02/01 21:48:35 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -856,6 +856,8 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo "</td></tr>\n";
 			 */
 
+			// TODO: [ML] a bit of testing to see if this survives an error on new case
+			// I suspect it doesn't..
 			echo "<!-- Appointment title -->\n\t\t<tr><td>";
 			echo f_err_star('app_title') . _T('app_input_title');
 			echo "</td><td>";
@@ -895,7 +897,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo _T('app_input_description');
 			echo "</td><td>";
 			echo '<textarea ' . $dis . ' name="app_description" rows="5" cols="60" class="frm_tarea">';
-			echo clean_output($this->data['app_description']);
+			echo clean_output($this->getDataString('app_description'));
 			echo '</textarea>';
 			echo "</td></tr>\n";
 			echo "</table>\n";
