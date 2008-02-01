@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_filters.php,v 1.98 2008/02/01 20:45:55 mlutfy Exp $
+	$Id: inc_filters.php,v 1.99 2008/02/01 21:36:40 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -325,6 +325,9 @@ function f_err_star($fn) {
 
 function show_all_errors() {
 	$ret = '';
+
+	$all_errors = array();
+	$all_info = array();
 
 	if (isset($_SESSION['errors'])) {
 		$all_errors = $_SESSION['errors'];
