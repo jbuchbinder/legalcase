@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.24 2008/01/30 22:53:42 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.25 2008/02/01 21:43:50 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -859,7 +859,7 @@ class LcmFollowupInfoUI extends LcmFollowup {
 			echo "<!-- Appointment title -->\n\t\t<tr><td>";
 			echo f_err_star('app_title') . _T('app_input_title');
 			echo "</td><td>";
-			echo '<input type="text" ' . $title_onfocus . $dis . ' name="app_title" size="50" value="';
+			echo '<input type="text" ' . $dis . ' name="app_title" size="50" value="';
 			echo clean_output($this->getDataString('app_title')) . '" class="search_form_txt" />';
 			echo "</td></tr>\n";
 
