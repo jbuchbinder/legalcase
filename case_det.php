@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: case_det.php,v 1.177 2006/09/07 19:51:44 mlutfy Exp $
+	$Id: case_det.php,v 1.178 2008/02/09 17:07:00 mlutfy Exp $
 */
 
 include('inc/inc.php');
@@ -338,8 +338,6 @@ if (! ($case > 0)) {
 				echo '<fieldset class="info_box">';
 				show_page_subtitle(_T('case_subtitle_times'), 'reports_intro');
 
-				echo "<p class=\"normal_text\">\n";
-
 				$link_details = new Link();
 				$link_details->addVar('more_times', intval((! $show_more_times)));
 			
@@ -351,7 +349,7 @@ if (! ($case > 0)) {
 					. '<img src="images/spip/' . ($show_more_times ? 'moins' : 'plus') . '.gif" alt="" border="0" />'
 					. '</a>'
 					. "</th>\n";
-				echo "<th class='heading' width='1%' nowrap='nowrap'>" .  _Th('time_input_length') . ' (' . _T('time_info_short_hour') . ")</th>\n";
+				echo "<th class='heading' width='120' nowrap='nowrap' align='right'>" .  _Th('time_input_length') . ' (' . _T('time_info_short_hour') . ")</th>\n";
 
 				$total_time = 0;
 				$total_sum_billed = 0.0;
@@ -359,7 +357,7 @@ if (! ($case > 0)) {
 
 				if ($meta_sum_billed == 'yes') {
 					$currency = read_meta('currency');
-					echo "<th class='heading' width='1%' nowrap='nowrap'>" . _Th('fu_input_sum_billed') . ' (' . $currency . ")</th>\n";
+					echo "<th class='heading' width='120' nowrap='nowrap' align='right'>" . _Th('fu_input_sum_billed') . ' (' . $currency . ")</th>\n";
 				}
 
 				echo "</tr>\n";
@@ -403,14 +401,25 @@ if (! ($case > 0)) {
 							// the text is displayed under the line...
 							// But we should probably scrap the whole table anyway
 							while (($row2 = lcm_fetch_array($r2))) {
-								$html .= "<li style='clear: both; height: 1.4em;'>"
-										. '<div style="width: 69%; float: left; text-align: left;">' 
+								// either:  futype (70%) + length (15%) + sumbilled (15%)
+								// or only: futype (70%) + length (30%)
+
+								$html .= "<li style='clear: both; height: 1.4em; width: 100%;'>";
+
+								$html .= '<div style="float: left; text-align: left;">' 
 										. _Tkw('followups', $row2['type']) . ": "
-										. '</div>'
-										. '<div style="width: 29%; float: right; text-align: right;">' 
+										. '</div>';
+
+								if ($meta_sum_billed == 'yes') 
+									$html .= '<div style="width: 120px; float: right; text-align: right;">' 
+											.  format_money($row2['sumbilled']) 
+											. '</div>';
+
+								$html .= '<div style="width: 120px; float: right; text-align: right;">' 
 										. format_time_interval_prefs($row2['time']) 
-										. '</div>'
-										. "</li>\n";
+										. '</div>';
+
+								$html .= "</li>\n";
 							}
 						}
 
@@ -448,8 +457,9 @@ if (! ($case > 0)) {
 				}
 				
 				echo "</tr>\n";
+				echo "</table>\n";
+				echo "</fieldset>\n";
 
-				echo "\t</table>\n</p></fieldset>\n";
 				break;
 			//
 			// Internal requests (expenses) related to this case
