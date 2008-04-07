@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_fu.php,v 1.26 2008/02/01 21:48:35 mlutfy Exp $
+	$Id: inc_obj_fu.php,v 1.27 2008/04/07 19:13:03 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -273,7 +273,7 @@ class LcmFollowup extends LcmObject {
 			$result = lcm_query($q);
 
 			// Get stage of the follow-up entry
-			$q = "SELECT case_stage FROM lcm_followup WHERE id_followup = $id_followup";
+			$q = "SELECT id_stage, case_stage FROM lcm_followup WHERE id_followup = $id_followup";
 			$result = lcm_query($q);
 
 			if ($row = lcm_fetch_array($result)) {
@@ -300,11 +300,12 @@ class LcmFollowup extends LcmObject {
 				lcm_panic("You don't have permission to add information to this case. (" . $this->getDataInt('id_case') . ")");
 
 			// Get the current case stage
-			$q = "SELECT stage FROM lcm_case WHERE id_case=" . $this->getDataInt('id_case', '__ASSERT__');
+			$q = "SELECT id_stage, stage FROM lcm_case WHERE id_case=" . $this->getDataInt('id_case', '__ASSERT__');
 			$result = lcm_query($q);
 
 			if ($row = lcm_fetch_array($result)) {
 				$case_stage = lcm_assert_value($row['stage']);
+				$case_stage_id = lcm_assert_value($row['id_stage']);
 			} else {
 				lcm_panic("There is no such case (" . $this->getDataInt('id_case') . ")");
 			}
@@ -312,9 +313,10 @@ class LcmFollowup extends LcmObject {
 			// Add the new follow-up
 			$q = "INSERT INTO lcm_followup
 					SET id_case=" . $this->getDataInt('id_case') . ",
-					id_author=" . $GLOBALS['author_session']['id_author'] . ",
-					$fl,
-					case_stage='$case_stage'";
+						id_author=" . $GLOBALS['author_session']['id_author'] . ",
+						$fl,
+						id_stage = $case_stage_id,
+						case_stage='$case_stage'";
 	
 			lcm_query($q);
 			$this->data['id_followup'] = lcm_insert_id('lcm_followup', 'id_followup');
