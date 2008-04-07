@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_create.php,v 1.64 2008/02/01 20:24:46 mlutfy Exp $
+	$Id: inc_db_create.php,v 1.65 2008/04/07 19:24:03 mlutfy Exp $
 */
 
 if (defined('_INC_DB_CREATE')) return;
@@ -107,8 +107,7 @@ function create_database() {
 	);
 
 	lcm_query_create_table('lcm_stage', $fields, $keys);
-	lcm_query_create_unique_index('lcm_stage', 'idx_case_stage', 'id_case, kw_case_stage');
-
+	// [ML] 0.7.3 lcm_query_create_unique_index('lcm_stage', 'idx_case_stage', 'id_case, kw_case_stage');
 
 	$fields = array (
 		"id_followup bigint(21) NOT NULL auto_increment",

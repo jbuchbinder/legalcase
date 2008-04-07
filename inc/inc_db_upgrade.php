@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_db_upgrade.php,v 1.77 2008/02/01 20:23:54 mlutfy Exp $
+	$Id: inc_db_upgrade.php,v 1.78 2008/04/07 19:24:03 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -1282,6 +1282,22 @@ function upgrade_database($old_db_version) {
 		}
 
 		upgrade_db_version(55);
+	}
+
+	if ($lcm_db_version_current < 56) {
+		// should have been done a long time ago
+		lcm_query("ALTER TABLE lcm_case
+					DROP id_court_archive", true);
+
+		upgrade_db_version(56);
+	}
+
+	if ($lcm_db_version_current < 57) {
+		// should have been done a long time ago
+		lcm_query("ALTER TABLE lcm_stage
+					DROP key idx_case_stage");
+
+		upgrade_db_version(57);
 	}
 
 	// Update the meta, lcm_fields, keywords, etc.
