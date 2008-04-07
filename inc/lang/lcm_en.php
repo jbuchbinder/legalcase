@@ -40,7 +40,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-    $Id: lcm_en.php,v 1.130 2007/11/16 16:24:15 mlutfy Exp $
+    $Id: lcm_en.php,v 1.131 2008/04/07 19:09:32 mlutfy Exp $
 */ 
 
 $GLOBALS[$GLOBALS['idx_lang']] = array(
@@ -214,6 +214,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'case_subtitle_followups' => 'Case follow-ups (completed activities for this case)',
 'case_subtitle_general' => 'General case information',
 'case_subtitle_recent_followups' => 'Recent follow-ups',
+'case_subtitle_stage' => 'Stage history',
 'case_subtitle_times' => 'Total time spent on the case',
 'case_subtitle_times_by_agenda' => 'Time spent on other administrative tasks',
 'case_subtitle_times_by_case' => 'Time spent by case',
