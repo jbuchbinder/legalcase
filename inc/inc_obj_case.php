@@ -2,7 +2,7 @@
 
 /*
 	This file is part of the Legal Case Management System (LCM).
-	(C) 2004-2006 Free Software Foundation, Inc.
+	(C) 2004-2008 Free Software Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published by the 
@@ -18,7 +18,7 @@
 	with this program; if not, write to the Free Software Foundation, Inc.,
 	59 Temple Place, Suite 330, Boston, MA  02111-1307, USA
 
-	$Id: inc_obj_case.php,v 1.31 2008/02/01 21:07:30 mlutfy Exp $
+	$Id: inc_obj_case.php,v 1.32 2008/04/07 19:14:08 mlutfy Exp $
 */
 
 // Execute this file only once
@@ -410,6 +410,29 @@ class LcmCaseInfoUI extends LcmCase {
 		$edit  = allowed($this->data['case'], 'e');
 		$admin = allowed($this->data['case'], 'a');
 
+		//
+		// Show various stages info
+		//
+		$q = "SELECT * FROM lcm_stage WHERE id_case = " . $this->data['case'] . " ORDER BY date_creation DESC";
+		$result = lcm_query($q);
+
+		echo '<div style="float: right; width: 180px;">';
+		show_page_subtitle(_T('case_subtitle_stage'), 'cases_intro');
+		echo '<ul>';
+
+		while (($row = lcm_fetch_array($result))) {
+			echo '<li>'
+				. format_date($row['date_creation'], 'date_short') .  ': <br/>'
+				. _Tkw('stage', $row['kw_case_stage'])
+				. '</li>';
+		}
+
+		echo "</ul>\n";
+		echo "</div>\n";
+
+		//
+		// Show case info
+		//
 		echo '<ul class="info">';
 
 		// Case ID
@@ -644,6 +667,9 @@ class LcmCaseInfoUI extends LcmCase {
 		echo "</ul>\n";
 		echo "</li>\n";
 		echo "</ul>\n";
+
+		// clear the right column with stage info
+		echo "<div style='clear: right;'></div>\n";
 	}
 
 	// XXX error checking! ($_SESSION['errors'])
