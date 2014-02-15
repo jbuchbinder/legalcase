@@ -272,7 +272,7 @@ $hash_recherche_strict = '';
 $php_version = explode('.', phpversion());
 $php_version_maj = intval($php_version[0]);
 $php_version_med = intval($php_version[1]);
-if (ereg('([0-9]+)', $php_version[2], $match)) $php_version_min = intval($match[1]);
+if (preg_match('/([0-9]+)/', $php_version[2], $match)) $php_version_min = intval($match[1]);
 
 $flag_levenshtein = ($php_version_maj >= 4);
 $flag_uniqid2 = ($php_version_maj > 3 OR $php_version_min >= 13);
@@ -283,7 +283,7 @@ $flag_ini_get = (function_exists("ini_get")
 	&& (@ini_get('max_execution_time') > 0));	// verifier pas desactivee
 $flag_gz = function_exists("gzopen");
 $flag_ob = ($flag_ini_get
-	&& !ereg("ob_", ini_get('disable_functions'))
+	&& !preg_match("/ob_/", ini_get('disable_functions'))
 	&& function_exists("ob_start"));
 $flag_obgz = ($flag_ob && function_exists("ob_gzhandler"));
 $flag_pcre = function_exists("preg_replace");
@@ -312,7 +312,7 @@ $flag_gd = $flag_ImageGif || $flag_ImageJpeg || $flag_ImagePng;
 //
 function lcm_setcookie ($name='', $value='', $expire=0, $path='AUTO', $domain='', $secure='') {
 	lcm_log("setcookie here.. name = $name, value = $value");
-	$name = ereg_replace ('^lcm', $GLOBALS['cookie_prefix'], $name);
+	$name = preg_replace ('/^lcm/', $GLOBALS['cookie_prefix'], $name);
 	if ($path == 'AUTO') $path=$GLOBALS['cookie_path'];
 
 	if ($secure)
@@ -332,15 +332,15 @@ function lcm_setcookie ($name='', $value='', $expire=0, $path='AUTO', $domain=''
 if ($cookie_prefix != 'lcm') {
 	reset ($HTTP_COOKIE_VARS);
 	while (list($name,$value) = each($HTTP_COOKIE_VARS)) {
-		if (ereg('^lcm', $name)) {
+		if (preg_match('/^lcm/', $name)) {
 			unset($HTTP_COOKIE_VARS[$name]);
 			unset($$name);
 		}
 	}
 	reset ($HTTP_COOKIE_VARS);
 	while (list($name,$value) = each($HTTP_COOKIE_VARS)) {
-		if (ereg('^'.$cookie_prefix, $name)) {
-			$spipname = ereg_replace ('^'.$cookie_prefix, 'lcm', $name);
+		if (preg_match('/^'.$cookie_prefix.'/', $name)) {
+			$spipname = preg_replace ('/^'.$cookie_prefix.'/', 'lcm', $name);
 			$HTTP_COOKIE_VARS[$spipname] = $value;
 			$$spipname = $value;
 		}
@@ -356,7 +356,7 @@ if ($cookie_prefix != 'lcm') {
 /* [ML] DEPRECATED ?
 $os_server = '';
 
-if (eregi('\(Win', $_SERVER['SERVER_SOFTWARE']))
+if (preg_match('/\(Win/i', $_SERVER['SERVER_SOFTWARE']))
 	$os_server = 'windows';
 */
 
@@ -440,9 +440,9 @@ function spip_query($query) {
 //
 
 // cf. list of sapi_name - http://www.php.net/php_sapi_name
-$php_module = (($flag_sapi_name AND eregi("apache", @php_sapi_name())) OR
-	ereg("^Apache.* PHP", $SERVER_SOFTWARE));
-$php_cgi = ($flag_sapi_name AND eregi("cgi", @php_sapi_name()));
+$php_module = (($flag_sapi_name AND preg_match("/apache/i", @php_sapi_name())) OR
+	preg_match("/^Apache.* PHP/", $SERVER_SOFTWARE));
+$php_cgi = ($flag_sapi_name AND preg_match("/cgi/i", @php_sapi_name()));
 
 function http_status($status) {
 	global $php_cgi, $REDIRECT_STATUS;
@@ -462,7 +462,7 @@ function http_status($status) {
 function http_last_modified($lastmodified, $expire = 0) {
 	$gmoddate = gmdate("D, d M Y H:i:s", $lastmodified);
 	if ($GLOBALS['HTTP_IF_MODIFIED_SINCE']) {
-		$if_modified_since = ereg_replace(';.*$', '', $GLOBALS['HTTP_IF_MODIFIED_SINCE']);
+		$if_modified_since = preg_replace('/;.*$/', '', $GLOBALS['HTTP_IF_MODIFIED_SINCE']);
 		$if_modified_since = trim(str_replace('GMT', '', $if_modified_since));
 		if ($if_modified_since == $gmoddate) {
 			http_status(304);
@@ -498,18 +498,18 @@ if ($auto_compress && $flag_obgz) {
 
 	/* [ML] HTTP_VIA does not always exist?
 	// special proxy bug
-	else if (eregi("NetCache|Hasd_proxy", $HTTP_VIA))
+	else if (preg_match("/NetCache|Hasd_proxy/i", $HTTP_VIA))
 		$use_gz = false;
 	*/
 
 	// special bug Netscape Win 4.0x
-	else if (eregi("Mozilla/4\.0[^ ].*Win", $_SERVER['HTTP_USER_AGENT']))
+	else if (preg_match("/Mozilla\/4\.0[^ ].*Win/i", $_SERVER['HTTP_USER_AGENT']))
 		$use_gz = false;
 
 	// special bug Apache2x
-	else if (eregi("Apache(-[^ ]+)?/2", $_SERVER['SERVER_SOFTWARE']))
+	else if (preg_match("/Apache(-[^ ]+)?\/2/i", $_SERVER['SERVER_SOFTWARE']))
 		$use_gz = false;
-	else if ($flag_sapi_name && ereg("^apache2", @php_sapi_name()))
+	else if ($flag_sapi_name && preg_match("/^apache2/i", @php_sapi_name()))
 		$use_gz = false;
 	
 	if ($use_gz) {
@@ -558,7 +558,7 @@ class Link {
 					list($name, $value) = split('=', $var, 2);
 					$name = urldecode($name);
 					$value = urldecode($value);
-					if (ereg('^(.*)\[\]$', $name, $regs)) {
+					if (preg_match('/^(.*)\[\]$/', $name, $regs)) {
 						$this->arrays[$regs[1]][] = $value;
 					}
 					else {
@@ -595,7 +595,7 @@ class Link {
 				list($name, $value) = split('=', $var, 2);
 				$name = urldecode($name);
 				$value = urldecode($value);
-				if (ereg('^(.*)\[\]$', $name, $regs)) {
+				if (preg_match('/^(.*)\[\]$/', $name, $regs)) {
 					$vars[$regs[1]][] = $value;
 				}
 				else {
@@ -763,7 +763,7 @@ class Link {
 		if (is_array($vars)) {
 			reset($vars);
 			while (list($name, $value) = each($vars)) {
-				$value = ereg_replace('&amp;(#[0-9]+;)', '&\1', htmlspecialchars($value));
+				$value = preg_replace('/&amp;(#[0-9]+;)/', '&\1', htmlspecialchars($value));
 				$form .= "<input type=\"hidden\" name=\"$name\" value=\"$value\" />\n";
 			}
 		}
@@ -772,7 +772,7 @@ class Link {
 			while (list($name, $table) = each($this->vars)) {
 				reset($table);
 				while (list(, $value) = each($table)) {
-					$value = ereg_replace('&amp;(#[0-9]+;)', '&\1', htmlspecialchars($value));
+					$value = preg_replace('/&amp;(#[0-9]+;)/', '&\1', htmlspecialchars($value));
 					$form .= "<input type=\"hidden\" name=\"".$name."[]\" value=\"$value\" />\n";
 				}
 			}
@@ -861,9 +861,9 @@ function is_valid_email($address) {
 		while (list(, $address) = each($many_addresses)) {
 			// clean certain formats
 			// "Marie Toto <Marie@toto.com>"
-			$address = eregi_replace("^[^<>\"]*<([^<>\"]+)>$", "\\1", $address);
+			$address = preg_replace("/^[^<>\"]*<([^<>\"]+)>$/i", "\\1", $address);
 			// RFC 822
-			if (!eregi('^[^()<>@,;:\\"/[:space:]]+(@([-_0-9a-z]+\.)*[-_0-9a-z]+)?$', trim($address)))
+			if (!preg_match('/^[^()<>@,;:\\"\/[:space:]]+(@([-_0-9a-z]+\.)*[-_0-9a-z]+)?$/i', trim($address)))
 				return false;
 		}
 		return true;
@@ -1002,7 +1002,7 @@ $lcm_lang = $langue_site;
 function lcm_log($message, $type = 'lcm') {
 	$pid = '(pid '.@getmypid().')';
 	if (!$ip = $_SERVER['REMOTE_ADDR']) $ip = '-';
-	$message = date("M d H:i:s") . " $ip $pid " . ereg_replace("\n*$", "\n", $message);
+	$message = date("M d H:i:s") . " $ip $pid " . preg_replace("/\n*$/", "\n", $message);
 	$rotate = false;
 
 	// Admins can put "SetEnv LcmLogDir /var/log/..." in their apache.conf or vhost
@@ -1089,24 +1089,24 @@ function timeout($lock=false, $action=true, $connect_mysql=true) {
 // Tests on the name of the browser
 function verif_butineur() {
 	global $HTTP_USER_AGENT, $browser_name, $browser_version, $browser_description, $browser_rev;
-	ereg("^([A-Za-z]+)/([0-9]+\.[0-9]+) (.*)$", $HTTP_USER_AGENT, $match);
+	preg_match("/^([A-Za-z]+)\/([0-9]+\.[0-9]+) (.*)$/", $HTTP_USER_AGENT, $match);
 	$browser_name = $match[1];
 	$browser_version = $match[2];
 	$browser_description = $match[3];
 
-	if (eregi("opera", $browser_description)) {
-		eregi("Opera ([^\ ]*)", $browser_description, $match);
+	if (preg_match("/opera/i", $browser_description)) {
+		preg_match("/Opera ([^\ ]*)/i", $browser_description, $match);
 		$browser_name = "Opera";
 		$browser_version = $match[1];
 	}
-	else if (eregi("msie", $browser_description)) {
-		eregi("MSIE ([^;]*)", $browser_description, $match);
+	else if (preg_match("/msie/i", $browser_description)) {
+		preg_match("/MSIE ([^;]*)/i", $browser_description, $match);
 		$browser_name = "MSIE";
 		$browser_version = $match[1];
 	}
-	else if (eregi("mozilla", $browser_name) AND $browser_version >= 5) {
+	else if (preg_match("/mozilla/i", $browser_name) AND $browser_version >= 5) {
 		// Authentic Mozilla version
-		if (ereg("rv:([0-9]+\.[0-9]+)", $browser_description, $match))
+		if (preg_match("/rv:([0-9]+\.[0-9]+)/i", $browser_description, $match))
 			$browser_rev = doubleval($match[1]);
 		// Other Geckos => equivalent to 1.4 by default (Galeon, etc.)
 		else if (strpos($browser_description, "Gecko") and !strpos($browser_description, "KHTML"))

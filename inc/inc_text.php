@@ -30,7 +30,7 @@ function ereg_remplace($cherche_tableau, $remplace_tableau, $texte) {
 	$n = count($cherche_tableau);
 
 	for ($i = 0; $i < $n; $i++) {
-		$texte = ereg_replace(substr($cherche_tableau[$i], 1, -1), $remplace_tableau[$i], $texte);
+		$texte = preg_replace('/' . substr($cherche_tableau[$i], 1, -1) . '/', $remplace_tableau[$i], $texte);
 	}
 	return $texte;
 }
@@ -68,7 +68,7 @@ function spip_apres_typo ($letexte) {
 
 	// relecture des &nbsp;
 	if ($GLOBALS['flag_ecrire'] AND $GLOBALS['revision_nbsp'])
-		$letexte = ereg_replace('&nbsp;', '<span class="spip-nbsp">&nbsp;</span>', $letexte);
+		$letexte = preg_replace('/&nbsp;/', '<span class="spip-nbsp">&nbsp;</span>', $letexte);
 
 	if (@function_exists('apres_typo'))
 		return apres_typo ($letexte);
@@ -99,7 +99,7 @@ function echappe_html($letexte, $source, $no_transform=false) {
 	}
 
 	while (($flag_pcre && preg_match($regexp_echap, $letexte, $regs))
-		|| (!$flag_pcre && eregi($regexp_echap, $letexte, $regs))) {
+		|| (!$flag_pcre && preg_match($regexp_echap, $letexte, $regs))) {
 		$num_echap++;
 
 		if ($no_transform) {	// echappements bruts
@@ -116,7 +116,7 @@ function echappe_html($letexte, $source, $no_transform=false) {
 			$lecode = entites_html($regs[5]);
 
 			// supprimer les sauts de ligne debut/fin (mais pas les espaces => ascii art).
-			$lecode = ereg_replace("^\n+|\n+$", "", $lecode);
+			$lecode = preg_replace("/^\n+|\n+$/", "", $lecode);
 
 			// ne pas mettre le <div...> s'il n'y a qu'une ligne
 			if (is_int(strpos($lecode,"\n")))
@@ -124,8 +124,8 @@ function echappe_html($letexte, $source, $no_transform=false) {
 			else
 				$lecode = "<span class='spip_code' dir='ltr'>".$lecode."</span>";
 
-			$lecode = ereg_replace("\t", "&nbsp; &nbsp; &nbsp; &nbsp; ", $lecode);
-			$lecode = ereg_replace("  ", " &nbsp;", $lecode);
+			$lecode = preg_replace("/\t/", "&nbsp; &nbsp; &nbsp; &nbsp; ", $lecode);
+			$lecode = preg_replace("/  /", " &nbsp;", $lecode);
 			$les_echap[$num_echap] = "<tt>".$lecode."</tt>";
 		}
 		else
@@ -139,9 +139,9 @@ function echappe_html($letexte, $source, $no_transform=false) {
 		else
 		if ($regs[12]) {
 			$lecode = $regs[14];
-			$lecode = ereg_replace("\n[[:space:]]*\n", "\n&nbsp;\n",$lecode);
-			$lecode = ereg_replace("\r", "\n", $lecode);
-			$lecode = "<div class=\"spip_poesie\"><div>".ereg_replace("\n+", "</div>\n<div>", $lecode)."</div></div>";
+			$lecode = preg_replace("/\n[[:space:]]*\n/", "\n&nbsp;\n",$lecode);
+			$lecode = preg_replace("/\r/", "\n", $lecode);
+			$lecode = "<div class=\"spip_poesie\"><div>".preg_replace("/\n+/", "</div>\n<div>", $lecode)."</div></div>";
 			$les_echap[$num_echap] = propre($lecode);
 		} 
 
@@ -160,19 +160,19 @@ function echappe_html($letexte, $source, $no_transform=false) {
 	//
 	// Insertion d'images et de documents utilisateur
 	//
-	while (eregi("<(IMG|DOC|EMB)([0-9]+)(\|([^\>]*))?".">", $letexte, $match)) {
+	while (preg_match("/<(IMG|DOC|EMB)([0-9]+)(\|([^\>]*))?/i".">", $letexte, $match)) {
 		include_ecrire("inc_documents.php3");
 		$num_echap++;
 
 		$letout = quotemeta($match[0]);
-		$letout = ereg_replace("\|", "\|", $letout);
+		$letout = preg_replace("/\|/", "\|", $letout);
 		$id_document = $match[2];
 		$align = $match[4];
-		if (eregi("emb", $match[1]))
+		if (preg_match("/emb/i", $match[1]))
 			$rempl = embed_document($id_document, $align);
 		else
 			$rempl = integre_image($id_document, $align, $match[1]);
-		$letexte = ereg_replace($letout, "@@SPIP_$source$num_echap@@", $letexte);
+		$letexte = preg_replace($letout, "@@SPIP_$source$num_echap@@", $letexte);
 		$les_echap[$num_echap] = $rempl;
 	}
 
@@ -191,7 +191,7 @@ function echappe_html($letexte, $source, $no_transform=false) {
 					.substr($letexte,$pos+strlen($les_echap[$num_echap]));
 			}
 	} else {
-		while (ereg($regexp_echap, $letexte, $reg)) {
+		while (preg_match($regexp_echap, $letexte, $reg)) {
 			$num_echap++;
 			$les_echap[$num_echap] = $reg[0];
 			$pos = strpos($letexte, $les_echap[$num_echap]);
@@ -205,7 +205,7 @@ function echappe_html($letexte, $source, $no_transform=false) {
 
 // Traitement final des echappements
 function echappe_retour($letexte, $les_echap, $source) {
-	while (ereg("@@SPIP_$source([0-9]+)@@", $letexte, $match)) {
+	while (preg_match("/@@SPIP_$source([0-9]+)@@/i", $letexte, $match)) {
 		$lenum = $match[1];
 		$cherche = $match[0];
 		$pos = strpos($letexte, $cherche);
@@ -224,11 +224,11 @@ function couper($texte, $taille=50) {
 	$texte = str_replace("\r", "\n", $texte);
 
 	// sauts de ligne et paragraphes
-	$texte = ereg_replace("\n\n+", "\r", $texte);
-	$texte = ereg_replace("<(p|br)( [^>]*)?".">", "\r", $texte);
+	$texte = preg_replace("/\n\n+/", "\r", $texte);
+	$texte = preg_replace("/<(p|br)( [^>]*)?/".">", "\r", $texte);
 
 	// supprimer les traits, lignes etc
-	$texte = ereg_replace("(^|\r|\n)(-[-#\*]*|_ )", "\r", $texte);
+	$texte = preg_replace("/(^|\r|\n)(-[-#\*]*|_ )/", "\r", $texte);
 
 	// supprimer les tags
 	$texte = supprimer_tags($texte);
@@ -239,28 +239,28 @@ function couper($texte, $taille=50) {
 	$texte = filtrer_entites($texte);
 
 	// supprimer les liens
-	$texte = ereg_replace("\[->([^]]*)\]","\\1", $texte); // liens sans texte
-	$texte = ereg_replace("\[([^\[]*)->([^]]*)\]","\\1", $texte);
+	$texte = preg_replace("/\[->([^]]*)\]/","\\1", $texte); // liens sans texte
+	$texte = preg_replace("/\[([^\[]*)->([^]]*)\]/","\\1", $texte);
 
 	// supprimer les notes
-	$texte = ereg_replace("\[\[([^]]|\][^]])*\]\]", "", $texte);
+	$texte = preg_replace("/[\[([^]]|\][^]])*\]\]/", "", $texte);
 
 	// supprimer les codes typos
-	$texte = ereg_replace("[{}]", "", $texte);
+	$texte = preg_replace("/[{}]/", "", $texte);
 
 	// supprimer les tableaux
-	$texte = ereg_replace("(^|\r)\|.*\|\r", "\r", $texte);
+	$texte = preg_replace("/(^|\r)\|.*\|\r/", "\r", $texte);
 
 	// couper au mot precedent
 	$long = substr($texte, 0, max($taille-4,1));
-	$court = ereg_replace("([^[:space:]][[:space:]]+)[^[:space:]]*\n?$", "\\1", $long);
+	$court = preg_replace("/([^[:space:]][[:space:]]+)[^[:space:]]*\n?$/", "\\1", $long);
 	$points = '&nbsp;(...)';
 
 	// trop court ? ne pas faire de (...)
 	if (strlen($court) < max(0.75 * $taille,2)) {
 		$points = '';
-		$long = ereg_replace("&#?[a-z0-9]*;?$", "", substr($texte, 0, $taille));
-		$texte = ereg_replace("([^[:space:]][[:space:]]+)[^[:space:]]*$", "\\1", $long);
+		$long = preg_replace("/&#?[a-z0-9]*;?$/", "", substr($texte, 0, $taille));
+		$texte = preg_replace("/([^[:space:]][[:space:]]+)[^[:space:]]*$/", "\\1", $long);
 		// encore trop court ? couper au caractere
 		if (strlen($texte) < 0.75 * $taille)
 			$texte = $long;
@@ -271,14 +271,14 @@ function couper($texte, $taille=50) {
 		$points = '';
 
 	// remettre les paragraphes
-	$texte = ereg_replace("\r+", "\n\n", $texte);
+	$texte = preg_replace("/\r+/", "\n\n", $texte);
 
 	return trim($texte).$points;
 }
 
 // prendre <intro>...</intro> sinon couper a la longueur demandee
 function couper_intro($texte, $long) {
-	$texte = eregi_replace("(</?)intro>", "\\1intro>", $texte); // minuscules
+	$texte = preg_replace("/(<\/?)intro>/i", "\\1intro>", $texte); // minuscules
 	while ($fin = strpos($texte, "</intro>")) {
 		$zone = substr($texte, 0, $fin);
 		$texte = substr($texte, $fin + strlen("</intro>"));
@@ -293,7 +293,7 @@ function couper_intro($texte, $long) {
 		$intro = couper($texte, $long);
 
 	// supprimer un eventuel chapo redirecteur =http:/.....
-	$intro = ereg_replace("^=[^[:space:]]+","",$intro);
+	$intro = preg_replace("/^=[^[:space:]]+/","",$intro);
 
 	return $intro;
 }
@@ -305,7 +305,7 @@ function couper_intro($texte, $long) {
 
 // Securite : empecher l'execution de code PHP
 function interdire_scripts($source) {
-	$source = eregi_replace("<(\%|\?|([[:space:]]*)script)", "&lt;\\1", $source);
+	$source = preg_replace("/<(\%|\?|([[:space:]]*)script)/i", "&lt;\\1", $source);
 	return $source;
 }
 
@@ -358,7 +358,7 @@ function typo_fr($letexte) {
 		/* 5 */		'\0~'
 	);
 	$letexte = ereg_remplace($cherche1, $remplace1, $letexte);
-	$letexte = ereg_replace(" *~+ *", "~", $letexte);
+	$letexte = preg_replace("/ *~+ */", "~", $letexte);
 
 	$cherche2 = array(
 		'/([^-\n]|^)--([^-]|$)/',
@@ -387,7 +387,7 @@ function typo_en($letexte) {
 	$letexte = ereg_remplace($cherche1, $remplace1, $letexte);
 
 	$letexte = str_replace("&nbsp;", "~", $letexte);
-	$letexte = ereg_replace(" *~+ *", "~", $letexte);
+	$letexte = preg_replace("/ *~+ */", "~", $letexte);
 
 	$cherche2 = array(
 		'/([^-\n]|^)--([^-]|$)/',

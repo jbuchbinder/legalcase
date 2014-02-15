@@ -50,7 +50,7 @@ function hash_env() {
 // Calculate the name of the session file
 //
 function get_session_file($id_session, $alea) {
-	if (ereg("^([0-9]+_)", $id_session, $regs))
+	if (preg_match("/^([0-9]+_)/", $id_session, $regs))
 		$id_author = $regs[1];
 
 	$session_file = 'session_'.$id_author.md5($id_session.' '.$alea).'.php';
@@ -210,7 +210,7 @@ function zap_sessions($id_author, $zap) {
 	$t = time();
 	while(($item = readdir($dir)) != '') {
 		$fullname = "$dirname$item";
-		if (ereg("^session_([0-9]+_)?([a-z0-9]+)\.php$", $item, $regs)) {
+		if (preg_match("/^session_([0-9]+_)?([a-z0-9]+)\.php$/", $item, $regs)) {
 
 			// If it is an old session, we throw away
 			if (($t - filemtime($fullname)) > 48 * 3600)

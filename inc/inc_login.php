@@ -112,7 +112,7 @@ function show_login($cible, $prive = 'prive', $message_login='') {
 
 	// The login is memorized in the cookie for a possible future admin login
 	if ((!$login) && isset($_COOKIE['lcm_admin'])) {
-		if (ereg("^@(.*)$", $_COOKIE['lcm_admin'], $regs))
+		if (preg_match("/^@(.*)$/", $_COOKIE['lcm_admin'], $regs))
 			$login = $regs[1];
 	} else if ($login == '-1')
 		$login = '';

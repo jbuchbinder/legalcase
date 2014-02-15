@@ -2134,7 +2134,7 @@ function unicode2charset($texte, $charset='AUTO') {
 		while ($a = strpos(' '.$texte, '&')) {
 			$traduit .= substr($texte,0,$a-1);
 			$texte = substr($texte,$a-1);
-			if (eregi('^&#0*([0-9]+);',$texte,$match) AND ($s = $CHARSET_REVERSE[$charset][$match[1]]))
+			if (preg_match('/^&#0*([0-9]+);/i',$texte,$match) AND ($s = $CHARSET_REVERSE[$charset][$match[1]]))
 				$texte = str_replace($match[0], chr($s), $texte);
 			// avancer d'un cran
 			$traduit .= $texte[0];
@@ -2224,7 +2224,7 @@ function utf_8_to_unicode($source) {
 				}
 				$thisPos++;
 			}
-			$encodedLetter = "&#". ereg_replace('^0+', '', $decimalCode) . ';';
+			$encodedLetter = "&#". preg_replace('/^0+/', '', $decimalCode) . ';';
 			$encodedString .= $encodedLetter;
 		}
 	}
@@ -2266,7 +2266,7 @@ function caractere_utf_8($num) {
 function unicode_to_utf_8($texte) {
 	
 
-	while (ereg('&#x0*([0-9A-F]+);', $texte, $regs) AND !$vux[$regs[1]]) {
+	while (preg_match('/&#x0*([0-9A-F]+);/', $texte, $regs) AND !$vux[$regs[1]]) {
 		$num =  $regs[1];
 		$num_dec = hexdec($num);
 		$vux[$num_dec] = true;
@@ -2275,7 +2275,7 @@ function unicode_to_utf_8($texte) {
 
 		$texte = str_replace($regs[0], $s, $texte);
 	}
-	while (ereg('&#0*([0-9]+);', $texte, $regs) AND !$vu[$regs[1]]) {
+	while (preg_match('/&#0*([0-9]+);/', $texte, $regs) AND !$vu[$regs[1]]) {
 		$num = $regs[1];
 		$vu[$num] = true;
 		$s = caractere_utf_8($num);
@@ -2286,7 +2286,7 @@ function unicode_to_utf_8($texte) {
 
 // convertit les &#264; en \u0108
 function unicode_to_javascript($texte) {
-	while (ereg('&#0*([0-9]+);', $texte, $regs) AND !$vu[$regs[1]]) {
+	while (preg_match('/&#0*([0-9]+);/', $texte, $regs) AND !$vu[$regs[1]]) {
 		$num = $regs[1];
 		$vu[$num] = true;
 		$s = '\u'.sprintf("%04x", $num);
@@ -2297,13 +2297,13 @@ function unicode_to_javascript($texte) {
 
 // convertit les %uxxxx (envoyes par javascript)
 function javascript_to_unicode ($texte) {
-	while (ereg("%u([0-9A-F][0-9A-F][0-9A-F][0-9A-F])", $texte, $regs))
+	while (preg_match("/%u([0-9A-F][0-9A-F][0-9A-F][0-9A-F])/", $texte, $regs))
 		$texte = str_replace($regs[0],"&#".hexdec($regs[1]).";", $texte);
 	return $texte;
 }
 // convertit les %E9 (envoyes par le browser) en chaine du charset du site (binaire)
 function javascript_to_binary ($texte) {
-	while (ereg("%([0-9A-F][0-9A-F])", $texte, $regs))
+	while (preg_match("/%([0-9A-F][0-9A-F])/", $texte, $regs))
 		$texte = str_replace($regs[0],chr(hexdec($regs[1])), $texte);
 	return $texte;
 }
@@ -2346,7 +2346,7 @@ function translitteration($texte, $charset='AUTO', $complexe='') {
 	// Le probleme d'iconv c'est qu'il risque de nous renvoyer des ? alors qu'on
 	// prefere garder l'utf-8 pour que la chaine soit indexable.
 	// 3. Translitterer grace a iconv
-	if ($GLOBALS['flag_iconv'] && ereg('&#0*([0-9]+);', $texte)) {
+	if ($GLOBALS['flag_iconv'] && preg_match('/&#0*([0-9]+);/', $texte)) {
 		$texte = iconv('utf-8', 'ascii//translit', $texte);
 	}
 */

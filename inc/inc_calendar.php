@@ -142,7 +142,7 @@ function http_calendrier_ics($evenements, $amj = "")
 				{
 				  if ($sum)
 				    $sum = "<span style='color: black'>" .
-						ereg_replace(' +','&nbsp;', typo($sum)) .
+						preg_replace('/ +/','&nbsp;', typo($sum)) .
 						"</span>";
 				  else {
 				    if ($desc) $sum .= " <span style='font-size: 10px'>$desc</span>"; 
@@ -361,7 +361,7 @@ function http_calendrier_navigation($jour, $mois, $annee, $partie_cal, $echelle,
 
 	$script = http_calendrier_retire_args($script);
 
-	if (!ereg('[?&]$', $script))
+	if (!preg_match('/[?&]$/', $script))
 		$script .= (strpos($script,'?') ? '&' : '?');
 
 	$args = "jour=$jour&mois=$mois&annee=$annee$ancre";
@@ -443,7 +443,7 @@ function http_calendrier_navigation($jour, $mois, $annee, $partie_cal, $echelle,
 	else $condition = ($annee == $annee_today && $mois == $mois_today && $jour == $jour_today);
 	
 	// Button: 'today' view + mouseover of 3-month cal + previous/future months in year
-	$id = 'nav-agenda' .ereg_replace('[^A-Za-z0-9]', '', $ancre);
+	$id = 'nav-agenda' .preg_replace('/[^A-Za-z0-9]/', '', $ancre);
 	$retour .= "<span onmouseover=\"lcm_show('$id');\">";
 	$retour .= http_href_img($script . "type=$type&echelle=$echelle&$arguments",
 				 "cal-today.gif",
@@ -617,7 +617,7 @@ function http_calendrier_mois($mois, $annee, $premier_jour, $dernier_jour, $part
 		$periode = affdate_mois_annee("$annee-$mois-1");
 	}
 
-	if (ereg('^(.*)(#[^=&]*)$',$script, $m)) {
+	if (preg_match('/^(.*)(#[^=&]*)$/',$script, $m)) {
 		$script = $m[1];
 		$ancre = $m[2];
 	} else {
@@ -748,7 +748,7 @@ function http_calendrier_sans_clics($annee, $mois, $jour, $clic, $script)
 
 function http_calendrier_clics_jour_semaine($annee, $mois, $jour, $clic, $script)
 {
-  if (ereg('^(.*)(#[^=&]*)$',$script,$m)) {
+  if (preg_match('/^(.*)(#[^=&]*)$/',$script,$m)) {
     $script = $m[1];
     $ancre = $m[2];
   } else $ancre = '';
@@ -758,7 +758,7 @@ function http_calendrier_clics_jour_semaine($annee, $mois, $jour, $clic, $script
   $annee = date("Y", $d);
   $jour = date("d", $d);
   $commun = $script . "jour=$jour&mois=$mois&annee=$annee";
-  ereg('^(.*>)[^<>]+(<.*)$',$clic,$m);
+  preg_match('/^(.*>)[^<>]+(<.*)$/',$clic,$m);
   $semaine = $m[1] . "S" . date("W", $d) . $m[2];
   return 
     "<table width='98%'>\n<tr><td align='left'>".
@@ -1211,7 +1211,7 @@ function http_calendrier_jour_ics($debut, $fin, $largeur, $detcolor, $echelle, $
 				$desc = propre($evenement['DESCRIPTION']);
 				$perso = $evenement['ATTENDEE'];
 				$lieu = $evenement['LOCATION'];
-				$sum = ereg_replace(' +','&nbsp;', typo($evenement['SUMMARY']));
+				$sum = preg_replace('/ +/','&nbsp;', typo($evenement['SUMMARY']));
 				if (!$sum) { $sum = $desc; $desc = '';}
 				if (!$sum) { $sum = $lieu; $lieu = '';}
 				if (!$sum) { $sum = $perso; $perso = '';}
@@ -1551,7 +1551,7 @@ function http_calendrier_semaine($jour_today,$mois_today,$annee_today)
 function http_calendrier_message($evenement)
 {
   global $calendrier_message_fermeture;
-  if (ereg("=$calendrier_message_fermeture$", $evenement['URL']))
+  if (preg_match("/=${calendrier_message_fermeture}$/", $evenement['URL']))
     {return array('white', 'black');}
   else
     {
@@ -1584,7 +1584,7 @@ function http_calendrier_rv($messages, $type) {
 	$total = '';
 	if (!$messages) return $total;
 	foreach ($messages as $row) {
-		if (ereg("^=([^[:space:]]+)$",$row['texte'],$match))
+		if (preg_match("/^=([^[:space:]]+)$/",$row['texte'],$match))
 			$url = $match[1];
 		else
 			$url = "message.php3?id_message=".$row['id_message'];
@@ -1837,7 +1837,7 @@ function sql_calendrier_interval_rv($avant, $apres) {
 		$amj = sql_calendrier_jour_ical("$annee_avant-$mois_avant-".sprintf("%02d", $j+($jour_avant)));
 	
 		while ($amj <= $ical_apres) {
-			if (!($amj == sql_calendrier_jour_ical($date_fin) AND ereg("00:00:00", $date_fin)))  // Ne pas prendre la fin a minuit sur jour precedent
+			if (!($amj == sql_calendrier_jour_ical($date_fin) AND preg_match("/00:00:00/", $date_fin)))  // Ne pas prendre la fin a minuit sur jour precedent
 				$evenements[$amj][$id_message]=
 				array(
 					'URL' => "app_det.php?app=$id_message",

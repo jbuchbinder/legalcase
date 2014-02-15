@@ -79,7 +79,7 @@ function format_date($timestamp = '', $format = 'full') {
 	// $day_of_w = strftime("%u", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
 	$day_of_w = date("w", mktime(0, 0, 0, $dd[1], $dd[2], $dd[0]));
 
-	if ($format == 'short' && ereg('[0-9]{2}([0-9]{2})', $dd[0], $regs))
+	if ($format == 'short' && preg_match('/[0-9]{2}([0-9]{2})/', $dd[0], $regs))
 		$dd[0] = $regs[1];
 
 	// [ML] Important for backwards compatiblity in code
@@ -546,14 +546,14 @@ function lcm_utf8_decode($string) {
 
 // [ML] This is Spip's "supprimer_numero"
 function remove_number_prefix($string) {
-	$string = ereg_replace("^[[:space:]]*[0-9]+[.)".chr(176)."][[:space:]]+", "", $string);
+	$string = preg_replace("/^[[:space:]]*[0-9]+[.)".chr(176)."][[:space:]]+/", "", $string);
 	return $string; 
 }
 
 function recup_date($numdate) {
 	if (! $numdate) return array('', '', '');
 
-	if (ereg('([0-9]{1,2})/([0-9]{1,2})/([0-9]{1,2})', $numdate, $regs)) {
+	if (preg_match('/([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{1,2})/', $numdate, $regs)) {
 		$day = $regs[1];
 		$month = $regs[2];
 		$year = $regs[3];
@@ -563,11 +563,11 @@ function recup_date($numdate) {
 		} else {
 			$year = 1900 + $year ;
 		}
-	} elseif (ereg('([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})',$numdate, $regs)) {
+	} elseif (preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$numdate, $regs)) {
 		$year = $regs[1];
 		$month = $regs[2];
 		$day = $regs[3];
-	} elseif (ereg('([0-9]{4})-([0-9]{2})', $numdate, $regs)){
+	} elseif (preg_match('/([0-9]{4})-([0-9]{2})/', $numdate, $regs)){
 		$year = $regs[1];
 		$month = $regs[2];
 	}
@@ -584,7 +584,7 @@ function recup_date($numdate) {
 function recup_time($numdate) {
 	if (!$numdate) return '';
 
-	if (ereg('([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})', $numdate, $regs)) {
+	if (preg_match('/([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})/', $numdate, $regs)) {
 		$hours = $regs[1];
 		$minutes = $regs[2];
 		$seconds = $regs[3];
@@ -768,11 +768,11 @@ function checkdate_sql($date) {
 // (generees par les butineurs lorsqu'on rentre des caracteres n'appartenant
 // pas au charset de la page [iso-8859-1 par defaut])
 function corriger_entites_html($texte) {
-	return ereg_replace('&amp;(#[0-9]+;)', '&\1', $texte);
+	return preg_replace('/&amp;(#[0-9]+;)/', '&\1', $texte);
 }
 // idem mais corriger aussi les &amp;eacute; en &eacute; (etait pour backends, mais n'est plus utilisee)
 function corriger_toutes_entites_html($texte) {
-	return eregi_replace('&amp;(#?[a-z0-9]+;)', '&\1', $texte);
+	return preg_replace('/&amp;(#?[a-z0-9]+;)/i', '&\1', $texte);
 }
 
 function entites_html($texte) {
@@ -820,26 +820,26 @@ function texte_backend($texte) {
 // Suppression basique et brutale de tous les <...>
 function supprimer_tags($texte, $rempl = "") {
 	// super gavant : la regexp ci-dessous plante sous php3, genre boucle infinie !
-	// $texte = ereg_replace("<([^>\"']*|\"[^\"]*\"|'[^']*')*>", $rempl, $texte);
-	$texte = ereg_replace("<[^>]*>", $rempl, $texte);
+	// $texte = preg_replace("/<([^>\"']*|\"[^\"]*\"|'[^']*')*>/", $rempl, $texte);
+	$texte = preg_replace("/<[^>]*>/", $rempl, $texte);
 	return $texte;
 }
 
 // Convertit les <...> en la version lisible en HTML
 function echapper_tags($texte, $rempl = "") {
-	$texte = ereg_replace("<([^>]*)>", "&lt;\\1&gt;", $texte);
+	$texte = preg_replace("/<([^>]*)>/", "&lt;\\1&gt;", $texte);
 	return $texte;
 }
 
 // Convertit un texte HTML en texte brut
 function textebrut($texte) {
-	$texte = ereg_replace("[\n\r]+", " ", $texte);
-	$texte = eregi_replace("<(p|br)([[:space:]][^>]*)?".">", "\n\n", $texte);
-	$texte = ereg_replace("^\n+", "", $texte);
-	$texte = ereg_replace("\n+$", "", $texte);
-	$texte = ereg_replace("\n +", "\n", $texte);
+	$texte = preg_replace("/[\n\r]+/", " ", $texte);
+	$texte = preg_replace("/<(p|br)([[:space:]][^>]*)?/i".">", "\n\n", $texte);
+	$texte = preg_replace("/^\n+/", "", $texte);
+	$texte = preg_replace("/\n+$/", "", $texte);
+	$texte = preg_replace("/\n +/", "\n", $texte);
 	$texte = supprimer_tags($texte);
-	$texte = ereg_replace("(&nbsp;| )+", " ", $texte);
+	$texte = preg_replace("/(&nbsp;| )+/", " ", $texte);
 	// nettoyer l'apostrophe curly qui pose probleme a certains rss-readers, lecteurs de mail...
 	$texte = str_replace("&#8217;","'",$texte);
 	return $texte;
@@ -947,13 +947,13 @@ function texte_script($texte) {
 
 // Rend une chaine utilisable sans dommage comme attribut HTML
 function attribut_html($texte) {
-	$texte = ereg_replace('"', '&quot;', supprimer_tags($texte));
+	$texte = preg_replace('/"/', '&quot;', supprimer_tags($texte));
 	return $texte;
 }
 
 // Vider les url nulles comme 'http://' ou 'mailto:'
 function vider_url($url) {
-	if (eregi("^(http:?/?/?|mailto:?)$", trim($url)))
+	if (preg_match("/^(http:?\/?\/?|mailto:?)$/i", trim($url)))
 		return false;
 	else
 		return $url;
@@ -963,7 +963,7 @@ function vider_url($url) {
 function antispam($texte) {
 	include_ecrire ("inc_acces.php3");
 	$masque = creer_pass_aleatoire(3);
-	return ereg_replace("@", " $masque ", $texte);
+	return preg_replace("/@/", " $masque ", $texte);
 }
 
 
@@ -974,23 +974,23 @@ function antispam($texte) {
 function normaliser_date($date) {
 	if ($date) {
 		$date = vider_date($date);
-		if (ereg("^[0-9]{8,10}$", $date))
+		if (preg_match("/^[0-9]{8,10}$/", $date))
 			$date = date("Y-m-d H:i:s", $date);
-		if (ereg("^([12][0-9]{3})([-/]00)?( [-0-9:]+)?$", $date, $regs))
+		if (preg_match("/^([12][0-9]{3})([-\/]00)?( [-0-9:]+)?$/", $date, $regs))
 			$date = $regs[1]."-01-01".$regs[3];
-		else if (ereg("^([12][0-9]{3}[-/][01]?[0-9])([-/]00)?( [-0-9:]+)?$", $date, $regs))
-			$date = ereg_replace("/","-",$regs[1])."-01".$regs[3];
+		else if (preg_match("/^([12][0-9]{3}[-\/][01]?[0-9])([-\/]00)?( [-0-9:]+)?$/", $date, $regs))
+			$date = preg_replace("/\//","-",$regs[1])."-01".$regs[3];
 		else if ($GLOBALS['flag_strtotime']) {
 			$date = date("Y-m-d H:i:s", strtotime($date));
 		}
-		else $date = ereg_replace('[^-0-9/: ]', '', $date);
+		else $date = preg_replace('/[^-0-9\/: ]/', '', $date);
 	}
 	return $date;
 }
 
 function vider_date($letexte) {
-	if (ereg("^0000-00-00", $letexte)) return;
-	if (ereg("^1970-01-01", $letexte)) return;	// eviter le bug GMT-1
+	if (preg_match("/^0000-00-00/", $letexte)) return;
+	if (preg_match("/^1970-01-01/", $letexte)) return;	// eviter le bug GMT-1
 	return $letexte;
 }
 
@@ -1179,8 +1179,8 @@ function affdate_heure($numdate) {
 //
 
 function aligner($letexte,$justif) {
-	$letexte = eregi_replace("<p([^>]*)", "<p\\1 align='$justif'", trim($letexte));
-	if ($letexte AND !ereg("^[[:space:]]*<p", $letexte)) {
+	$letexte = preg_replace("/<p([^>]*)/i", "<p\\1 align='$justif'", trim($letexte));
+	if ($letexte AND !preg_match("/^[[:space:]]*<p/", $letexte)) {
 		$letexte = "<p class='spip' align='$justif'>" . $letexte . "</p>";
 	}
 	return $letexte;
@@ -1194,8 +1194,8 @@ function filtrer_ical($texte) {
 	include_lcm('inc_charsets');
 	$texte = html2unicode($texte);
 	$texte = unicode2charset(charset2unicode($texte, read_meta('charset'), 1), 'utf-8');
-	$texte = ereg_replace("\n", " ", $texte);
-	$texte = ereg_replace(",", "\,", $texte);
+	$texte = preg_replace("/\n/", " ", $texte);
+	$texte = preg_replace("/,/", "\,", $texte);
 
 	return $texte;
 }
@@ -1237,7 +1237,7 @@ function post_autobr($texte, $delim="\n_ ") {
 			$debut .= $delim;
 		else
 			$debut .= "\n";
-		if (ereg("^\n+", $suite, $regs)) {
+		if (preg_match("/^\n+/", $suite, $regs)) {
 			$debut.=$regs[0];
 			$suite = substr($suite, strlen($regs[0]));
 		}
@@ -1260,7 +1260,7 @@ function multi_trad ($lang, $trads) {
 		$retour = $trads[$lang];
 
 	}	// cas des langues xx_yy
-	else if (ereg('^([a-z]+)_', $lang, $regs) AND isset($trads[$regs[1]])) {
+	else if (preg_match('/^([a-z]+)_/', $lang, $regs) AND isset($trads[$regs[1]])) {
 		$retour = $trads[$regs[1]];
 
 	}	// sinon, renvoyer la premiere du tableau
@@ -1318,7 +1318,7 @@ function ajoute_popup_multi($langue_demandee, $trads, $texte) {
 	while (list($lang,$bloc) = each($trads)) {
 		if ($lang != $langue_demandee)
 			$survol .= "[$lang] ".supprimer_tags(couper($bloc,20))."\n";
-		$texte_popup .= "<br /><b>".translate_language_name($lang)."</b> ".ereg_replace("\n+","<br />", supprimer_tags(couper(propre($bloc),200)));
+		$texte_popup .= "<br /><b>".translate_language_name($lang)."</b> ".preg_replace("/\n+/","<br />", supprimer_tags(couper(propre($bloc),200)));
 	}
 
 	if ($survol) {

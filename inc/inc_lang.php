@@ -74,7 +74,7 @@ function lcm_set_language($lang) {
 
 	$liste_langues = $all_langs.','.read_meta('available_languages');
 
- 	if ($lang && ereg(",$lang,", ",$liste_langues,")) {
+ 	if ($lang && preg_match("/,$lang,/", ",$liste_langues,")) {
 		$GLOBALS['lcm_lang'] = $lang;
 
 		$lcm_lang_rtl =   lang_dir($lang, '', '_rtl');
@@ -101,7 +101,7 @@ function lcm_set_language_from_browser() {
 
 	if (is_array($accept_langs)) {
 		while(list(, $s) = each($accept_langs)) {
-			if (eregi('^([a-z]{2,3})(-[a-z]{2,3})?(;q=[0-9.]+)?$', trim($s), $r)) {
+			if (preg_match('/^([a-z]{2,3})(-[a-z]{2,3})?(;q=[0-9.]+)?$/i', trim($s), $r)) {
 				$lang = strtolower($r[1]);
 				if (lcm_set_language($lang)) return $lang;
 			}
@@ -135,7 +135,7 @@ function translate_string($code, $args) {
 	// list of modules to process (ex: "module:my_string")
 	$modules = array('lcm');
 	if (strpos($code, ':')) {
-		if (ereg("^([a-z/]+):(.*)$", $code, $regs)) {
+		if (preg_match("/^([a-z\/]+):(.*)$/i", $code, $regs)) {
 			$modules = explode("/",$regs[1]);
 			$code = $regs[2];
 		}
@@ -165,7 +165,7 @@ function translate_string($code, $args) {
 	// The preg_match check for code starting with [a-z] is to weed out
 	// text which should not be translated anyway.
 	if ($lcm_lang <> 'en') {
-		$text = ereg_replace("^<(NEW|MODIF)>", "", $text);
+		$text = preg_replace("/^<(NEW|MODIF)>/", "", $text);
 		if ((! $text) && (preg_match("/^[a-z]/", $code))) {
 			lcm_debug($code . ": not found, falling back on english");
 
@@ -401,7 +401,7 @@ function lang_typo($lang) {
 function changer_typo($lang = '', $source = '') {
 	global $lang_typo, $lang_dir, $dir_lang;
 
-	if (ereg("^(article|rubrique|breve|auteur)([0-9]+)", $source, $regs)) {
+	if (preg_match("/^(article|rubrique|breve|auteur)([0-9]+)/", $source, $regs)) {
 		$r = lcm_fetch_array(lcm_query("SELECT lang FROM spip_".$regs[1]."s WHERE id_".$regs[1]."=".$regs[2]));
 		$lang = $r['lang'];
 	}
@@ -547,7 +547,7 @@ function init_languages($force_init = false) {
 	if ($force_init || !$all_langs || !$langue_site) {
 		if (!$d = @opendir('inc/lang')) return;
 		while ($f = readdir($d)) {
-			if (ereg('^lcm_([a-z_]+[0-9]*)\.php?$', $f, $regs))
+			if (preg_match('/^lcm_([a-z_]+[0-9]*)\\.php?$/', $f, $regs))
 				$list_all_langs[] = $regs[1];
 		}
 
@@ -560,7 +560,7 @@ function init_languages($force_init = false) {
 			$all_langs = $all_langs2;
 			if (! $langue_site) {
 				// Initialisation: English by default, else the first language found
-				if (ereg(',en,', ",$all_langs,")) $langue_site = 'en';
+				if (preg_match('/,en,/', ",$all_langs,")) $langue_site = 'en';
 				else list(, $langue_site) = each($list_all_langs);
 
 				if (defined('_INC_META'))

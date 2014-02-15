@@ -388,7 +388,7 @@ function liste_rv($query, $type) {
 		echo "<table width='100%' border='0' cellpadding='0' cellspacing='2'>";
 		while ($row = spip_fetch_array($result)) {
 		
-			if (ereg("^=([^[:space:]]+)$",$row['texte'],$match))
+			if (preg_match("/^=([^[:space:]]+)$/",$row['texte'],$match))
 				$url = $match[1];
 			else
 				$url = "message.php3?id_message=".$row['id_message'];

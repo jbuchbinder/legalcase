@@ -216,11 +216,11 @@ function process_query($query) {
 		$query = preg_replace('/([,\s])lcm_/', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
 	}
 	else {
-		if (eregi('[[:space:]](VALUES|WHERE)[[:space:]]', $query, $regs)) {
+		if (preg_match('/[[:space:]](VALUES|WHERE)[[:space:]]/i', $query, $regs)) {
 			$suite = strstr($query, $regs[0]);
 			$query = substr($query, 0, -strlen($suite));
 		}
-		$query = ereg_replace('([[:space:],])lcm_', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
+		$query = preg_replace('/([[:space:],])lcm_/', '\1'.$db.$GLOBALS['table_prefix'].'_', $query) . $suite;
 	}
 
 	// Change RAND() to RANDOM() for MySQL -> PosgreSQL unification

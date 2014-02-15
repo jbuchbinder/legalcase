@@ -111,7 +111,7 @@ function read_meta_upd($name) {
 		reset($meta);
 		while (list($key, $val) = each($meta)) {
 			$key = addslashes($key);
-			$val = ereg_replace("([\\\\'])", "\\\\1", $val);
+			$val = preg_replace("/([\\\\'])/", "\\\\1", $val);
 			$s .= "\$GLOBALS['meta']['$key'] = '$val';\n";
 		}
 		$s .= "\n";
@@ -136,7 +136,7 @@ function read_meta_upd($name) {
 			// returns the two types of arrays
 			if (! is_numeric($key)) {
 				$key = addslashes($key);
-				$val = ereg_replace("([\\\\'])", "\\\\1", $val);
+				$val = preg_replace("/([\\\\'])/", "\\\\1", $val);
 				$s .= "\$GLOBALS['system_kwg']['" . $kwg_all[$key0]['name'] . "']['$key'] = '$val';\n";
 			}
 		}
@@ -154,7 +154,7 @@ function read_meta_upd($name) {
 			while (list($key, $val) = each($kw)) {
 				if (! is_numeric($key)) {
 					$key = addslashes($key);
-					$val = ereg_replace("([\\\\'])", "\\\\1", $val);
+					$val = preg_replace("/([\\\\'])/", "\\\\1", $val);
 					$s .= "\$GLOBALS['system_kwg']['" . $kwg['name'] .  "']['keywords']['$kw_name']['$key'] = '$val';\n";
 				}
 			}

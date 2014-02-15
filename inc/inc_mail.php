@@ -86,8 +86,8 @@ function send_email($email, $subject, $texte, $from = "", $headers = "") {
 	if ($flag_wordwrap) $texte = wordwrap($texte);
 
 	if ($os_serveur == 'windows') {
-		$texte = ereg_replace ("\r*\n","\r\n", $texte);
-		$headers = ereg_replace ("\r*\n","\r\n", $headers);
+		$texte = preg_replace ("/\r*\n/","\r\n", $texte);
+		$headers = preg_replace ("/\r*\n/","\r\n", $headers);
 	}
 
 	switch($hebergeur) {
@@ -114,7 +114,7 @@ function send_email($email, $subject, $texte, $from = "", $headers = "") {
 }
 
 function nettoyer_titre_email($titre) {
-	$titre = ereg_replace("\n", ' ', supprimer_tags($titre));
+	$titre = preg_replace("/\n/", ' ', supprimer_tags($titre));
 	return ($titre);
 }
 
